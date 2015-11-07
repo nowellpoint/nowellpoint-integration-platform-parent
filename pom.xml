@@ -12,6 +12,7 @@
 
     <modules>
         <module>nowellpoint-aws-idp</module>
+        <module>nowellpoint-aws-sforce</module>
     </modules>
 
     <build>
