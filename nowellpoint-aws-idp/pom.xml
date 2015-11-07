@@ -65,7 +65,7 @@
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.0.1</version>
 		</dependency>
-    	<dependency>
+    	        <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.12</version>
@@ -107,23 +107,6 @@
 					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<id>deploy</id>
-								<phase>package</phase>
-								<goals>
-									<goal>java</goal>
-								</goals>
-								<configuration>
-									<mainClass>com.nowellpoint.aws.Deployer</mainClass>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
 						<version>1.5</version>
 						<executions>
@@ -154,26 +137,6 @@
 								</configuration>
 							</execution>
 						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>config</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
-						<configuration>
-							<executable>java</executable>
-							<arguments>
-								<argument>-classpath</argument>
-								<classpath />
-								<argument>com.nowellpoint.aws.ConfigurationFileGenerator</argument>
-							</arguments>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>

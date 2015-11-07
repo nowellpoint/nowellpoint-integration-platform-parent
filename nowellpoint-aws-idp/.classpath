@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
-	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="var" path="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0.1/javax.ws.rs-api-2.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.32/aws-java-sdk-lambda-1.10.32.jar"/>
