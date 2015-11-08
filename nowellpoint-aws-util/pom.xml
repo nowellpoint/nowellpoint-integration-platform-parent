@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nowellpoint</groupId>
 	<artifactId>nowellpoint-aws-util</artifactId>
-	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>Nowellpoint Utility Services</name>
 	<description>Nowellpoint Utility Services</description>
 	<properties>
@@ -12,6 +12,11 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

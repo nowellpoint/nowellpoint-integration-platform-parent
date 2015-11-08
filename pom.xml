@@ -9,8 +9,15 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <name>Nowellpoint AWS Parent Project</name>
+    
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 
     <modules>
+        <module>nowellpoint-aws-rest-client</module>
         <module>nowellpoint-aws-idp</module>
         <module>nowellpoint-aws-sforce</module>
         <module>nowellpoint-aws-util</module>
