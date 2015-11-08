@@ -11,11 +11,11 @@ import com.amazonaws.services.apigateway.model.UnauthorizedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.http.Configuration;
+import com.nowellpoint.aws.util.Configuration;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.lambda.idp.model.Token;
-import com.nowellpoint.aws.http.IntegrationRequest;
+import com.nowellpoint.aws.model.IntegrationRequest;
 
 public class UsernamePasswordAuthentication implements RequestHandler<IntegrationRequest, Token> {
 	
