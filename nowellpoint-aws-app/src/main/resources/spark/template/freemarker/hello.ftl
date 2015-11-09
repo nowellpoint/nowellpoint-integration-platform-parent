@@ -8,13 +8,12 @@
     Name: <input type="text" name="name" /> <br/>
     City: <input type="text" name="city" />       <br/>
     <input type="submit" value="Save" />
-  </form>
-
-  <table class="datatable">
-    <tr>
-        <th>ID</th>  <th>Name</th> <th>City</th>
-    </tr>
+    <a href="<#if (content.rootpath)??>${content.rootpath}<#else></#if>https://rsbjc5t3q4.execute-api.us-east-1.amazonaws.com/v1/salesforce/oauth/authorize">Sign-In</a>
     
-  </table>
+    <button type="button" class="btn btn-default" aria-label="Left Align">
+  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>Sign-In
+</button>
+    
+  </form>
 </body>
 </html>
