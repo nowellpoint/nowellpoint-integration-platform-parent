@@ -5,40 +5,30 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.core.MediaType;
 
-import com.amazonaws.AmazonServiceException.ErrorType;
-import com.amazonaws.services.apigateway.model.BadRequestException;
-import com.amazonaws.services.apigateway.model.UnauthorizedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.util.Configuration;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.lambda.idp.model.GetTokenRequest;
+import com.nowellpoint.aws.lambda.idp.model.GetTokenResponse;
+import com.nowellpoint.aws.lambda.idp.model.IdpException;
 import com.nowellpoint.aws.lambda.idp.model.Token;
-import com.nowellpoint.aws.model.IntegrationRequest;
+import com.nowellpoint.aws.util.Configuration;
 
-public class UsernamePasswordAuthentication implements RequestHandler<IntegrationRequest, Token> {
+public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
 	private static final Logger log = Logger.getLogger(UsernamePasswordAuthentication.class.getName());
 	private static final String endpoint = "https://api.stormpath.com/v1/applications";
 
 	@Override
-	public Token handleRequest(IntegrationRequest request, Context context) { 
-		
+	public GetTokenResponse handleRequest(GetTokenRequest tokenRequest, Context context) { 
+			
 		/**
 		 * 
 		 */
 		
-		if (request.getParameter("username") == null || request.getParameter("password") == null) {
-			BadRequestException exception = new BadRequestException("Request must include username and password");
-			exception.setStatusCode(400);
-			exception.setErrorType(ErrorType.Client);
-			exception.setRequestId(context.getAwsRequestId());
-			exception.setServiceName(context.getFunctionName());
-			exception.setErrorCode("INVALID_REQUEST");
-			throw exception;
-		}
-			
+		GetTokenResponse tokenResponse = new GetTokenResponse();
+		
 		/**
 		 * 
 		 */
@@ -52,8 +42,8 @@ public class UsernamePasswordAuthentication implements RequestHandler<Integratio
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.parameter("grant_type", "password")
-					.parameter("username", request.getParameter("username"))
-					.parameter("password", request.getParameter("password"))
+					.parameter("username", tokenRequest.getUsername())
+					.parameter("password", tokenRequest.getPassword())
 					.execute();
 			
 			log.info("Status Code: " + response.getStatusCode() + " Target: " + response.getURL());			
@@ -61,29 +51,24 @@ public class UsernamePasswordAuthentication implements RequestHandler<Integratio
 			/**
 			 * 
 			 */
+			
+			tokenResponse.setStatusCode(response.getStatusCode());
 				
-			if (response.getStatusCode() != 200) {		
-				ObjectNode errorResponse = response.getEntity(ObjectNode.class);
-				log.severe(errorResponse.toString());
-				UnauthorizedException exception = new UnauthorizedException(errorResponse.get("message").asText());
-				exception.setStatusCode(errorResponse.get("status").asInt());
-				exception.setErrorType(ErrorType.Client);
-				exception.setRequestId(context.getAwsRequestId());
-				exception.setServiceName(context.getFunctionName());
-				exception.setErrorCode(errorResponse.get("error").asText());
-				throw exception;
+			if (response.getStatusCode() == 200) {						
+				tokenResponse.setToken(response.getEntity(Token.class));
+			} else {
+				IdpException exception = response.getEntity(IdpException.class);
+				tokenResponse.setErrorCode(exception.getError());
+				tokenResponse.setErrorMessage(exception.getMessage());
 			}
 			
-			return response.getEntity(Token.class);
-			
 		} catch (IOException e) {
-			BadRequestException exception = new BadRequestException(e.getMessage());
-			exception.setStatusCode(400);
-			exception.setErrorType(ErrorType.Client);
-			exception.setRequestId(context.getAwsRequestId());
-			exception.setServiceName(context.getFunctionName());
-			exception.setErrorCode("INVALID_REQUEST");
-			throw exception;
+			log.severe(e.getMessage());
+			tokenResponse.setStatusCode(400);
+			tokenResponse.setErrorCode("invalid_request");
+			tokenResponse.setErrorMessage(e.getMessage());
 		}
+		
+		return tokenResponse;
 	}
 }

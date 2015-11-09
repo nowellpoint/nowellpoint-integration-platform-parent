@@ -1,44 +1,35 @@
 package com.nowellpoint.aws.idp;
 
-import java.io.IOException;
+import java.nio.charset.Charset;
 
-import javax.ws.rs.core.MediaType;
-
-import static org.junit.Assert.assertNotNull;
-
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.lambda.idp.model.ExpandedJwt;
-import com.nowellpoint.aws.lambda.idp.model.Token;
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.AWSLambdaClient;
+import com.amazonaws.services.lambda.model.InvocationType;
+import com.amazonaws.services.lambda.model.InvokeRequest;
+import com.amazonaws.services.lambda.model.InvokeResult;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class TestIdp {
+	
+	private static AWSLambda lambda = new AWSLambdaClient(new EnvironmentVariableCredentialsProvider());
 
 	public void main() {
-		HttpResponse response;
-		try {
-			response = RestResource.post("https://bx3sf8ukg1.execute-api.us-east-1.amazonaws.com/v1")
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.accept(MediaType.APPLICATION_JSON)
-					.parameter("username", System.getenv("STORMPATH_USERNAME"))
-					.parameter("password", System.getenv("STORMPATH_PASSWORD"))
-					.execute();
-			
-			Token token = response.getEntity(Token.class);
-			
-			assertNotNull(token);
-			
-			System.out.println(token.getAccessToken());
-			
-			response = RestResource.get("https://bx3sf8ukg1.execute-api.us-east-1.amazonaws.com/v1/token")
-					.bearerAuthorization(token.getAccessToken())
-					.execute();
-			
-			ExpandedJwt expandedJwt = response.getEntity(ExpandedJwt.class);
-			
-			assertNotNull(expandedJwt);
-			 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		long start = System.currentTimeMillis();
+		
+		String payload = JsonNodeFactory.instance.objectNode()
+				.put("username", System.getenv("STORMPATH_USERNAME"))
+				.put("password", System.getenv("STORMPATH_PASSWORD"))
+				.toString();
+		
+		InvokeRequest invokeRequest = new InvokeRequest();
+		invokeRequest.setInvocationType(InvocationType.RequestResponse);
+		invokeRequest.setFunctionName("IDP_UsernamePasswordAuthentication");
+		invokeRequest.setPayload(payload);
+		
+		InvokeResult invokeResult = lambda.invoke(invokeRequest);
+		
+		System.out.println("Result: " + new String(invokeResult.getPayload().array(), Charset.forName("UTF-8")));
+		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 	}
 }
