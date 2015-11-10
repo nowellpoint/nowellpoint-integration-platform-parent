@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${applicationTitle}</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-default">
@@ -47,6 +47,9 @@
         <input type="text" class="form-control" name="username" placeholder="Username">
         <input type="password" class="form-control" name="password" placeholder="Password">
         <a href="login" role="button" class="btn btn-success btn-large">Log-In</a>
+<button type="button" class="btn btn-default" aria-label="Left Align">
+  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
