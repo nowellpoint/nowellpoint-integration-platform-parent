@@ -39,17 +39,14 @@
           </ul>
         </li>
       </ul>
-      <form class="navbar-form navbar-left" role="search">
+      <form class="navbar-form navbar-left" role="search" action="/login">
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search">
         </div>
         <a href="https://rsbjc5t3q4.execute-api.us-east-1.amazonaws.com/v1/salesforce/oauth/authorize" role="button" class="btn btn-success btn-large">Sign-In</a>
         <input type="text" class="form-control" name="username" placeholder="Username">
         <input type="password" class="form-control" name="password" placeholder="Password">
-        <a href="login" role="button" class="btn btn-success btn-large">Log-In</a>
-<button type="button" class="btn btn-default" aria-label="Left Align">
-  <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-</button>
+        <button type="submit" class="btn btn-success btn-large">Log-In</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
