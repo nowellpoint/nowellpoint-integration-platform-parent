@@ -109,24 +109,30 @@ public class OutboundMessageEvent implements Callable<OutboundMessageEventRespon
 			 * 
 			 */
 			
-			HttpResponse queryResponse = RestResource.get(SalesforceUrlFactory.queryURL(partnerURL))
+			HttpResponse response = RestResource.get(SalesforceUrlFactory.queryURL(partnerURL))
 					.acceptCharset(StandardCharsets.UTF_8)
 					.bearerAuthorization(sessionId)
 					.accept(MediaType.APPLICATION_JSON)
 					.queryParameter("q", query)
 					.execute();
 			
-			logger.log("Authentication response status: " + queryResponse.getStatusCode() + " Target: " + queryResponse.getURL());
+			logger.log("Query response status: " + response.getStatusCode() + " Target: " + response.getURL());
 			
-			if (queryResponse.getStatusCode() != 200) {
-				throw new IOException("Query failed: " + queryResponse.getEntity());
+			if (response.getStatusCode() != 200) {
+				throw new IOException("Query failed: " + response.getEntity());
 			} 
- 			
+			
+			/**
+			 * 
+			 */
+			
+			JsonNode jsonNode = response.getEntity(JsonNode.class);
+
 			/**
 			 * 
 			 */
 
-			Document document = convertToDocument(mapping.getFieldMappingEntries(), queryResponse.getEntity(JsonNode.class), collectionName, notification.getSobject().getId());
+			Document document = convertToDocument(mapping.getFieldMappingEntries(), jsonNode, collectionName, notification.getSobject().getId());
 			
 			/**
 			 * 
@@ -196,8 +202,9 @@ public class OutboundMessageEvent implements Callable<OutboundMessageEventRespon
 	
 	private Mapping getMapping(String sourceType) throws JsonParseException, JsonMappingException, IOException {
 		Mapping mapping = mappingCache.get(sourceType);
+		
 		if (mapping == null) {
-			Optional<Document> query = Optional.of(new MongoQuery().withMongoDatabase(mongoDatabase)
+			Optional<Document> query = Optional.ofNullable(new MongoQuery().withMongoDatabase(mongoDatabase)
 					.withCollectionName("mappings")
 					.withFilter( Filters.eq ( "sourceType", sourceType ) )
 					.find());
@@ -208,6 +215,7 @@ public class OutboundMessageEvent implements Callable<OutboundMessageEventRespon
 
 			mappingCache.put(sourceType, mapping);
 		}
+		
 		return mapping;
 	}
 	
@@ -237,18 +245,18 @@ public class OutboundMessageEvent implements Callable<OutboundMessageEventRespon
 	}
 	
 	private Document convertToDocument(List<FieldMappingEntry> fieldMappingEntries, JsonNode source, String collectionName, String salesforceId) throws JsonProcessingException, IOException {
-		
+
 		JsonNode records = source.get("records");
 
 		Map<String, Object> record = objectMapper.readValue(records.get(0).traverse(), new TypeReference<Map<String, Object>>() {});
-
+		
 		Date timestamp = new Date();
 		
-		Optional<Document> query = Optional.of(new MongoQuery().withMongoDatabase(mongoDatabase)
+		Optional<Document> query = Optional.ofNullable(new MongoQuery().withMongoDatabase(mongoDatabase)
 				.withCollectionName(collectionName)
-				.withSalesforceId(notification.getSobject().getId())
+				.withSalesforceId(salesforceId)
 				.find());
-		
+
 		Document destination = query.orElse(new Document().append("createdDate", timestamp)
 				.append("createdById", userId)
 				.append("organizationId", organizationId)
@@ -258,11 +266,10 @@ public class OutboundMessageEvent implements Callable<OutboundMessageEventRespon
 		destination.append("version", destination.getInteger("version") + 1)
 				.append("lastModifiedDate", timestamp)
 				.append("lastModifiedById", userId);
-		
+	
 		Map<String, FieldMappingEntry> fieldMap = fieldMappingEntries.stream().collect(Collectors.toMap(FieldMappingEntry::getSource, entry -> entry));
 
 		for (String key : record.keySet()) {
-			System.out.println("key: " + key);
 			if ("attributes".equals(key)) {
 				destination.append("attributes", record.get("attributes"));
 			} else {

@@ -2,8 +2,10 @@ package com.nowellpoint.aws.lambda.idp.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+   
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IdpException implements Serializable {
 
 	/**
@@ -12,10 +14,10 @@ public class IdpException implements Serializable {
 	
 	private static final long serialVersionUID = -7674275110589489002L;
 	
-	@JsonProperty(value="error")
+	@JsonProperty(value="message")
 	private String error;
 	
-	@JsonProperty(value="message")
+	@JsonProperty(value="developerMessage")
 	private String message;
 	
 	public IdpException() {
