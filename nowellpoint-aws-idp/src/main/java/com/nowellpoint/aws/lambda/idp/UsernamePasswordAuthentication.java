@@ -11,7 +11,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.lambda.idp.model.GetTokenRequest;
 import com.nowellpoint.aws.lambda.idp.model.GetTokenResponse;
-import com.nowellpoint.aws.lambda.idp.model.IdpException;
+import com.nowellpoint.aws.lambda.idp.model.IdpServiceException;
 import com.nowellpoint.aws.lambda.idp.model.Token;
 import com.nowellpoint.aws.util.Configuration;
 
@@ -57,7 +57,7 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 			if (response.getStatusCode() == 200) {						
 				tokenResponse.setToken(response.getEntity(Token.class));
 			} else {
-				IdpException exception = response.getEntity(IdpException.class);
+				IdpServiceException exception = response.getEntity(IdpServiceException.class);
 				tokenResponse.setErrorCode(exception.getError());
 				tokenResponse.setErrorMessage(exception.getMessage());
 			}

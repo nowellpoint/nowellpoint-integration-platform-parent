@@ -1,17 +1,19 @@
 package com.nowellpoint.aws.app;
 
 import static spark.Spark.get;
+import static spark.Spark.port;
+import static spark.Spark.ipAddress;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
-import static spark.Spark.port;
 
-
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
+import spark.ModelAndView;
+import spark.template.freemarker.FreeMarkerEngine;
 
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.services.lambda.AWSLambda;
@@ -24,12 +26,12 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.nowellpoint.aws.lambda.idp.model.GetTokenResponse;
 import com.nowellpoint.aws.lambda.sforce.model.Token;
 
-
 import freemarker.template.Configuration;
-import spark.ModelAndView;
-import spark.template.freemarker.FreeMarkerEngine;
 
-public class Application {
+public class Bootstrap {
+	
+	private static final String IP_ADDRESS = Optional.ofNullable(System.getenv("OPENSHIFT_DIY_IP")).orElse("localhost");
+    private static final String PORT = Optional.ofNullable(System.getenv("OPENSHIFT_DIY_PORT")).orElse("8080");
 
 	public static void main(String[] args) {
 		
@@ -43,15 +45,16 @@ public class Application {
 		// set configuration options
 		//
 		
-		cfg.setClassForTemplateLoading(Application.class, "/views");
+		cfg.setClassForTemplateLoading(Bootstrap.class, "/views");
 		cfg.setDefaultEncoding("UTF-8");
 		cfg.setLocale(Locale.US);
 		
 		//
-		// set port
+		// set ip address and port
 		//
 		
-		port(8443);
+		ipAddress(IP_ADDRESS);
+		port(Integer.parseInt(PORT));
 		
 		//
 		// add static file location
@@ -60,13 +63,22 @@ public class Application {
 		staticFileLocation("/public");
 		
 		//
+		//
+		//
+		
+		addRoutes(cfg);
+    }	
+	
+	private static void addRoutes(Configuration cfg) {
+		
+		//
 		// add resource bundle
 		//
 		
 		ResourceBundle messages = ResourceBundle.getBundle("messages", Locale.US);
 		
 		//
-		//
+		// add properties to model
 		//
 		
 		Map<String, Object> attributes = new HashMap<>();
@@ -119,12 +131,12 @@ public class Application {
 			if (getTokenResponse.getStatusCode() == 200) {
 				response.cookie("nowellpoint.token", new ObjectMapper().writeValueAsString(getTokenResponse.getToken()), 0, Boolean.TRUE);
 			} else {
-				System.out.println(getTokenResponse.getErrorMessage());
+				System.out.println(getTokenResponse.getErrorCode());
 			}
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			return new ModelAndView(attributes, "index.ftl");
 			
 		}, new FreeMarkerEngine(cfg));
-    }	
+	}
 }

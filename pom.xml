@@ -21,6 +21,7 @@
         <module>nowellpoint-aws-idp</module>
         <module>nowellpoint-aws-sforce</module>
         <module>nowellpoint-aws-util</module>
+        <module>nowellpoint-aws-app</module>
     </modules>
 
     <build>

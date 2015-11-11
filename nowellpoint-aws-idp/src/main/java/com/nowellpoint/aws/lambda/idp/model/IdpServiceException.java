@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
    
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IdpException implements Serializable {
+public class IdpServiceException implements Serializable {
 
 	/**
 	 * 
@@ -20,7 +20,7 @@ public class IdpException implements Serializable {
 	@JsonProperty(value="developerMessage")
 	private String message;
 	
-	public IdpException() {
+	public IdpServiceException() {
 		
 	}
 
