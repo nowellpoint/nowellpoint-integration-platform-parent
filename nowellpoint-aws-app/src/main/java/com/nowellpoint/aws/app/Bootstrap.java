@@ -14,7 +14,6 @@ import java.util.ResourceBundle;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClient;
 import com.amazonaws.services.lambda.model.InvocationType;
@@ -78,6 +77,7 @@ public class Bootstrap {
 		
 		Map<String, Object> attributes = new HashMap<>();
         attributes.put("applicationTitle", messages.getString("application.title"));
+        attributes.put("services", messages.getString("services"));
         
         //
         //
