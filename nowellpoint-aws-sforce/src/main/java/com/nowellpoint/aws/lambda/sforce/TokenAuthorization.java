@@ -13,34 +13,22 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.lambda.sforce.model.GetAuthorizationRequest;
 import com.nowellpoint.aws.lambda.sforce.model.Token;
-import com.nowellpoint.aws.model.IntegrationRequest;
 import com.nowellpoint.aws.util.Configuration;
 
-public class TokenAuthorization implements RequestHandler<IntegrationRequest, Token> {
+public class TokenAuthorization implements RequestHandler<GetAuthorizationRequest, Token> {
 	
 	private static final Logger log = Logger.getLogger(TokenAuthorization.class.getName());
 
 	@Override
-	public Token handleRequest(IntegrationRequest request, Context context) { 
+	public Token handleRequest(GetAuthorizationRequest request, Context context) { 
 		
 		/**
 		 * 
 		 */
 		
-		if (request.getParameter("code") == null) {
-			BadRequestException exception = new BadRequestException("Request must include code for obtaining a Salesforce Token");
-			exception.setStatusCode(401);
-			exception.setErrorType(ErrorType.Client);
-			exception.setRequestId(context.getAwsRequestId());
-			exception.setServiceName(context.getFunctionName());
-			exception.setErrorCode("INVALID_REQUEST");
-			throw exception;
-		}
-			
-		/**
-		 * 
-		 */
+		log.info(Configuration.getRedirectUri());
 		
 		HttpResponse response = null;
 		try {
@@ -49,7 +37,7 @@ public class TokenAuthorization implements RequestHandler<IntegrationRequest, To
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType("application/x-www-form-urlencoded")
 					.parameter("grant_type", "authorization_code")
-					.parameter("code", request.getParameter("code"))
+					.parameter("code", request.getCode())
 					.parameter("client_id", Configuration.getSalesforceClientId())
 					.parameter("client_secret", Configuration.getSalesforceClientSecret())
 					.parameter("redirect_uri", Configuration.getRedirectUri())

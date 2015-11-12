@@ -2,7 +2,6 @@ package com.nowellpoint.aws.app;
 
 import static spark.Spark.get;
 import static spark.Spark.port;
-import static spark.Spark.ipAddress;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
@@ -29,9 +28,6 @@ import com.nowellpoint.aws.lambda.sforce.model.Token;
 import freemarker.template.Configuration;
 
 public class Bootstrap {
-	
-	private static final String IP_ADDRESS = Optional.ofNullable(System.getenv("OPENSHIFT_DIY_IP")).orElse("localhost");
-    private static final String PORT = Optional.ofNullable(System.getenv("OPENSHIFT_DIY_PORT")).orElse("8080");
 
 	public static void main(String[] args) {
 		
@@ -53,8 +49,7 @@ public class Bootstrap {
 		// set ip address and port
 		//
 		
-		ipAddress(IP_ADDRESS);
-		port(Integer.parseInt(PORT));
+		port(getPort());
 		
 		//
 		// add static file location
@@ -88,7 +83,7 @@ public class Bootstrap {
         //
         //
         
-        AWSLambda lambda = new AWSLambdaClient(new EnvironmentVariableCredentialsProvider());
+        AWSLambda lambda = new AWSLambdaClient();
 		
 		//
 		// add routes for root
@@ -102,10 +97,23 @@ public class Bootstrap {
 		//
 		//
 		
-		post("/callback", (request, response) -> {
-			Token token = new ObjectMapper().readValue(request.body(),Token.class);
-			System.out.println(token.getAccessToken());
-			return new ModelAndView(attributes, "hello.ftl");
+		get("/callback", (request, response) -> {
+			
+			String payload = JsonNodeFactory.instance.objectNode()
+					.put("code", request.queryParams("code"))
+					.toString();
+			
+			InvokeRequest invokeRequest = new InvokeRequest();
+			invokeRequest.setInvocationType(InvocationType.RequestResponse);
+			invokeRequest.setFunctionName("SalesforceTokenRequest");
+			invokeRequest.setPayload(payload);
+			
+			InvokeResult invokeResult = lambda.invoke(invokeRequest);
+			
+			System.out.println(new String(invokeResult.getPayload().array()));
+			
+			return new ModelAndView(attributes, "index.ftl");
+			
 		}, new FreeMarkerEngine(cfg));
         
 		//
@@ -138,5 +146,10 @@ public class Bootstrap {
 			return new ModelAndView(attributes, "index.ftl");
 			
 		}, new FreeMarkerEngine(cfg));
+	}
+	
+	private static int getPort() {
+		String port = Optional.ofNullable(System.getenv().get("PORT")).orElse("8080");
+		return Integer.parseInt(port);
 	}
 }

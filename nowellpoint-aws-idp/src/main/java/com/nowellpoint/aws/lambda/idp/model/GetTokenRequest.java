@@ -35,12 +35,12 @@ public class GetTokenRequest implements Serializable {
 	}
 	
 	public GetTokenRequest withUsername(String username) {
-		this.username = username;
+		setUsername(username);
 		return this;
 	}
 	
 	public GetTokenRequest withPassword(String password) {
-		this.password = password;
+		setPassword(password);
 		return this;
 	}
 }
