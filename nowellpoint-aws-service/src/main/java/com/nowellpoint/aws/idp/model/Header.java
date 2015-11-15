@@ -14,28 +14,28 @@ public class Header implements Serializable {
 	private static final long serialVersionUID = 1795806639590884186L;
 	
 	@JsonProperty("kid")
-	private String keyId;
+	private String kid;
 	
 	@JsonProperty("alg")
-	private String algorithm;
+	private String alg;
 	
 	public Header() {
 		
 	}
 
 	public String getKeyId() {
-		return keyId;
+		return kid;
 	}
 
 	public void setKeyId(String keyId) {
-		this.keyId = keyId;
+		this.kid = keyId;
 	}
 
 	public String getAlgorithm() {
-		return algorithm;
+		return alg;
 	}
 
 	public void setAlgorithm(String algorithm) {
-		this.algorithm = algorithm;
+		this.alg = algorithm;
 	}
 }

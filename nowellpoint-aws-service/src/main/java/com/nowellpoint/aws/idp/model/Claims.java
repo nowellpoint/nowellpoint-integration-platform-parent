@@ -7,80 +7,76 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Claims implements Serializable {
-
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = 8576239688810821366L;
 	
 	@JsonProperty(value="jti")
-	private String tokenId;
+	private String jti;
 	
 	@JsonProperty(value="iat")
-	private Long issuedAt;
+	private Long iat;
 	
 	@JsonProperty(value="iss")
-	private String issuer;
+	private String iss;
 	
 	@JsonProperty(value="sub")
-	private String subject;
+	private String sub;
 	
 	@JsonProperty(value="exp")
-	private Long expirationTime;
+	private Long exp;
 	
 	@JsonProperty(value="rti")
-	private String refreshTokenId;
+	private String rti;
 	
 	public Claims() {
 		
 	}
 
 	public String getTokenId() {
-		return tokenId;
+		return jti;
 	}
 
 	public void setTokenId(String tokenId) {
-		this.tokenId = tokenId;
+		this.jti = tokenId;
 	}
 
 	public Long getIssuedAt() {
-		return issuedAt;
+		return iat;
 	}
 
 	public void setIssuedAt(Long issuedAt) {
-		this.issuedAt = issuedAt;
+		this.iat = issuedAt;
 	}
 
 	public String getIssuer() {
-		return issuer;
+		return iss;
 	}
 
 	public void setIssuer(String issuer) {
-		this.issuer = issuer;
+		this.iss = issuer;
 	}
 
 	public String getSubject() {
-		return subject;
+		return sub;
 	}
 
 	public void setSubject(String subject) {
-		this.subject = subject;
+		this.sub = subject;
 	}
 
 	public Long getExpirationTime() {
-		return expirationTime;
+		return exp;
 	}
 
 	public void setExpirationTime(Long expirationTime) {
-		this.expirationTime = expirationTime;
+		this.exp = expirationTime;
 	}
 
 	public String getRefreshTokenId() {
-		return refreshTokenId;
+		return rti;
 	}
 
 	public void setRefreshTokenId(String refreshTokenId) {
-		this.refreshTokenId = refreshTokenId;
+		this.rti = refreshTokenId;
 	}
 }
