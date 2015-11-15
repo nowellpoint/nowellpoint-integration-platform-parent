@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
@@ -50,12 +49,8 @@ public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdenti
 			
 			response.setStatusCode(httpResponse.getStatusCode());
 			
-			String json = httpResponse.getEntity();
-			
-			log.info(json);
-			
 			if (response.getStatusCode() < 400) {		
-				response.setIdentity(new ObjectMapper().readValue(json, Identity.class));
+				response.setIdentity(httpResponse.getEntity(Identity.class));
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
 				response.setErrorCode(errorResponse.get("error").asText());

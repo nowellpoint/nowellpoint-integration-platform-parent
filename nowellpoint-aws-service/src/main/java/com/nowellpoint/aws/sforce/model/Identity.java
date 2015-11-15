@@ -185,64 +185,64 @@ public class Identity implements Serializable {
 	private String id;
 
 	@JsonProperty("asserted_user")
-	private Boolean assertedUser;
+	private Boolean asserted_user;
 
 	@JsonProperty("user_id")
-	private String userId;
+	private String user_id;
 
 	@JsonProperty("organization_id")
-	private String organizationId;
+	private String organization_id;
 
 	@JsonProperty("username")
 	private String username;
 
 	@JsonProperty("nick_name")
-	private String nickName;
+	private String nick_name;
 
 	@JsonProperty("display_name")
-	private String displayName;
+	private String display_name;
 
 	@JsonProperty("email")
 	private String email;
 	
 	@JsonProperty("email_verified")
-	private Boolean emailVerified;
+	private Boolean email_verified;
 	
 	@JsonProperty("first_name")
-	private String firstName;
+	private String first_name;
 	
 	@JsonProperty("last_name")
-	private String lastName;
+	private String last_name;
 	
 	@JsonProperty("status")
 	private Status status;
 	
 	@JsonProperty("addr_street")
-	private String addrStreet;
+	private String addr_street;
 	
 	@JsonProperty("addr_city")
-	private String addrCity;
+	private String addr_city;
 	
 	@JsonProperty("addr_country")
-	private String addrCountry;
+	private String addr_country;
 	
 	@JsonProperty("addr_state")
-	private String addrState;
+	private String addr_state;
 	
 	@JsonProperty("addr_zip")
-	private String addrZip;
+	private String addr_zip;
 	
 	@JsonProperty("mobile_phone")
-	private String mobilePhone;
+	private String mobile_phone;
 	
 	@JsonProperty("mobile_phone_verified")
-	private Boolean mobilePhoneVerified;
+	private Boolean mobile_phone_verified;
 
 	@JsonProperty("active")
 	private Boolean active;
 
 	@JsonProperty("user_type")
-	private String userType;
+	private String user_type;
 
 	@JsonProperty("language")
 	private String language;
@@ -272,27 +272,27 @@ public class Identity implements Serializable {
 	}
 
 	public Boolean getAssertedUser() {
-		return assertedUser;
+		return asserted_user;
 	}
 
-	public void setAssertedUser(Boolean assertedUser) {
-		this.assertedUser = assertedUser;
+	public void setAssertedUser(Boolean asserted_user) {
+		this.asserted_user = asserted_user;
 	}
 
 	public String getUserId() {
-		return userId;
+		return user_id;
 	}
 
 	public void setUserId(String userId) {
-		this.userId = userId;
+		this.user_id = userId;
 	}
 
 	public String getOrganizationId() {
-		return organizationId;
+		return organization_id;
 	}
 
 	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
+		this.organization_id = organizationId;
 	}
 
 	public String getUsername() {
@@ -304,19 +304,19 @@ public class Identity implements Serializable {
 	}
 
 	public String getNickName() {
-		return nickName;
+		return nick_name;
 	}
 
 	public void setNickName(String nickName) {
-		this.nickName = nickName;
+		this.nick_name = nickName;
 	}
 
 	public String getDisplayName() {
-		return displayName;
+		return display_name;
 	}
 
 	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+		this.display_name = displayName;
 	}
 
 	public String getEmail() {
@@ -328,27 +328,27 @@ public class Identity implements Serializable {
 	}
 
 	public Boolean getEmailVerified() {
-		return emailVerified;
+		return email_verified;
 	}
 
 	public void setEmailVerified(Boolean emailVerified) {
-		this.emailVerified = emailVerified;
+		this.email_verified = emailVerified;
 	}
 
 	public String getFirstName() {
-		return firstName;
+		return first_name;
 	}
 
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		this.first_name = firstName;
 	}
 
 	public String getLastName() {
-		return lastName;
+		return last_name;
 	}
 
 	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		this.last_name = lastName;
 	}
 
 	public Status getStatus() {
@@ -360,59 +360,59 @@ public class Identity implements Serializable {
 	}
 
 	public String getAddrStreet() {
-		return addrStreet;
+		return addr_street;
 	}
 
 	public void setAddrStreet(String addrStreet) {
-		this.addrStreet = addrStreet;
+		this.addr_street = addrStreet;
 	}
 
 	public String getAddrCity() {
-		return addrCity;
+		return addr_city;
 	}
 
 	public void setAddrCity(String addrCity) {
-		this.addrCity = addrCity;
+		this.addr_city = addrCity;
 	}
 
 	public String getAddrCountry() {
-		return addrCountry;
+		return addr_country;
 	}
 
 	public void setAddrCountry(String addrCountry) {
-		this.addrCountry = addrCountry;
+		this.addr_country = addrCountry;
 	}
 
 	public String getAddrState() {
-		return addrState;
+		return addr_state;
 	}
 
 	public void setAddrState(String addrState) {
-		this.addrState = addrState;
+		this.addr_state = addrState;
 	}
 
 	public String getAddrZip() {
-		return addrZip;
+		return addr_zip;
 	}
 
 	public void setAddrZip(String addrZip) {
-		this.addrZip = addrZip;
+		this.addr_zip = addrZip;
 	}
 
 	public String getMobilePhone() {
-		return mobilePhone;
+		return mobile_phone;
 	}
 
 	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
+		this.mobile_phone = mobilePhone;
 	}
 
 	public Boolean getMobilePhoneVerified() {
-		return mobilePhoneVerified;
+		return mobile_phone_verified;
 	}
 
 	public void setMobilePhoneVerified(Boolean mobilePhoneVerified) {
-		this.mobilePhoneVerified = mobilePhoneVerified;
+		this.mobile_phone_verified = mobilePhoneVerified;
 	}
 
 	public Urls getUrls() {
@@ -432,11 +432,11 @@ public class Identity implements Serializable {
 	}
 
 	public String getUserType() {
-		return userType;
+		return user_type;
 	}
 
 	public void setUserType(String userType) {
-		this.userType = userType;
+		this.user_type = userType;
 	}
 
 	public String getLanguage() {

@@ -211,7 +211,7 @@ public class Urls implements Serializable {
 	private String feeds;
 
 	@JsonProperty("feed_items")
-	private String feedItems;
+	private String feed_items;
 
 	@JsonProperty("groups")
 	private String groups;
@@ -300,11 +300,11 @@ public class Urls implements Serializable {
 	}
 
 	public String getFeedItems() {
-		return feedItems;
+		return feed_items;
 	}
 
 	public void setFeedItems(String feedItems) {
-		this.feedItems = feedItems;
+		this.feed_items = feedItems;
 	}
 
 	public String getGroups() {

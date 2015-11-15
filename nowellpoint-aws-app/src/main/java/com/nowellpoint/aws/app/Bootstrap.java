@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.idp.model.GetTokenRequest;
 import com.nowellpoint.aws.idp.model.GetTokenResponse;
 import com.nowellpoint.aws.service.IdentityProviderService;
-import com.nowellpoint.aws.service.SforceService;
+import com.nowellpoint.aws.service.SalesforceService;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationRequest;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationResponse;
 import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
@@ -30,7 +30,7 @@ public class Bootstrap {
 	
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	
-	private static SforceService sforceService = new SforceService();
+	private static SalesforceService sforceService = new SalesforceService();
 	
 	private static IdentityProviderService identityProviderService = new IdentityProviderService();
 

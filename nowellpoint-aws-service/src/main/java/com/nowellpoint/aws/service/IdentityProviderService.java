@@ -18,7 +18,7 @@ public class IdentityProviderService extends AbstractService {
 		InvokeRequest invokeRequest = new InvokeRequest();
 		invokeRequest.setInvocationType(InvocationType.RequestResponse);
 		invokeRequest.setFunctionName("IDP_UsernamePasswordAuthentication");
-		invokeRequest.setPayload(tokenRequest.getAsJson());
+		invokeRequest.setPayload(tokenRequest.asJson());
 		
 		InvokeResult invokeResult = invoke(invokeRequest);
 		

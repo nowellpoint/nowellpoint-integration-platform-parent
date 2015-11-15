@@ -186,7 +186,7 @@ public class Status implements Serializable {
 	private static final long serialVersionUID = 7322572957863846555L;
 	
 	@JsonProperty("created_date")
-	private Date createdDate;
+	private Date created_date;
 	
 	@JsonProperty("body")
 	private String body;
@@ -196,11 +196,11 @@ public class Status implements Serializable {
 	}
 
 	public Date getCreatedDate() {
-		return createdDate;
+		return created_date;
 	}
 
 	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+		this.created_date = createdDate;
 	}
 
 	public String getBody() {
