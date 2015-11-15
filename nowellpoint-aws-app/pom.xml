@@ -108,7 +108,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>../nowellpoint-aws-rest-client/src/main/java</source>
+								<source>../nowellpoint-aws-service/src/main/java</source>
 							</sources>
 						</configuration>
 					</execution>

@@ -7,6 +7,7 @@
     <project>nowellpoint-aws-sforce</project>
     <project>nowellpoint-aws-util</project>
     <project>nowellpoint-aws-rest-client</project>
+    <project>nowellpoint-aws-service</project>
   </projects>
   <buildSpec>
     <buildCommand>
