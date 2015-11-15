@@ -11,7 +11,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.node.ObjectNode;import com.nowellpoint.aws.util.Configuration;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.lambda.idp.model.AuthToken;
+import com.nowellpoint.aws.idp.model.AuthToken;
 import com.nowellpoint.aws.model.IntegrationRequest;
 
 public class VerifyToken implements RequestHandler<IntegrationRequest, AuthToken> {

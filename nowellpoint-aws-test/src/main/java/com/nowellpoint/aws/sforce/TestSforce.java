@@ -14,10 +14,10 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.lambda.sforce.model.Field;
-import com.nowellpoint.aws.lambda.sforce.model.Identity;
-import com.nowellpoint.aws.lambda.sforce.model.SObjectMapping;
-import com.nowellpoint.aws.lambda.sforce.model.Token;
+import com.nowellpoint.aws.sforce.model.Field;
+import com.nowellpoint.aws.sforce.model.Identity;
+import com.nowellpoint.aws.sforce.model.SObjectMapping;
+import com.nowellpoint.aws.sforce.model.Token;
 
 public class TestSforce {
 

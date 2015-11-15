@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.model.IntegrationRequest;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.lambda.idp.model.Token;
+import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.util.Configuration;
 
 public class RevokeToken implements RequestHandler<IntegrationRequest, Token> {
