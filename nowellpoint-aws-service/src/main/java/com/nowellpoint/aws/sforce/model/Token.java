@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token implements Serializable {
-
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = -33102212500608631L;
 	

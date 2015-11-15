@@ -1,8 +1,9 @@
 package com.nowellpoint.aws.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class AbstractRequest implements Serializable {
@@ -16,8 +17,9 @@ public abstract class AbstractRequest implements Serializable {
 	public AbstractRequest() {
 		
 	}
-
-	public String getAsJson() throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(this).toString();
+	
+	@JsonIgnore
+	public String getAsJson() throws IOException {
+		return new ObjectMapper().writeValueAsString(this);
 	}
 }

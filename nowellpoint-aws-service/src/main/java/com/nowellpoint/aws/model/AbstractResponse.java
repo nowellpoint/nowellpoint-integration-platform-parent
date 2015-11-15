@@ -1,6 +1,10 @@
 package com.nowellpoint.aws.model;
 
+import java.io.IOException;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class AbstractResponse implements Serializable {
 	
@@ -42,5 +46,10 @@ public abstract class AbstractResponse implements Serializable {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+	
+	@JsonIgnore
+	public String getAsJson() throws IOException {
+		return new ObjectMapper().writeValueAsString(this);
 	}
 }

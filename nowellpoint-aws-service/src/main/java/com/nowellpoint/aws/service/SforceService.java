@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.amazonaws.services.lambda.model.InvocationType;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationRequest;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationResponse;
 import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
@@ -51,6 +52,8 @@ public class SforceService extends AbstractService {
 		invokeRequest.setPayload(identityRequest.getAsJson());
 		
 		InvokeResult invokeResult = invoke(invokeRequest);
+		
+		System.out.println(new ObjectMapper().writeValueAsString( invokeResult.getPayload().array()));
 		
 		GetIdentityResponse identityResponse = readInvokeResult(GetIdentityResponse.class, invokeResult);
 		

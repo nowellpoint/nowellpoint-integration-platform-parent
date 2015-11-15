@@ -19,6 +19,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<aws.sdk.version>1.10.34</aws.sdk.version>
+		<junit.version>4.12</junit.version>
 	</properties>
 
 	<modules>
@@ -28,16 +29,8 @@
 		<module>nowellpoint-aws-sforce</module>
 		<module>nowellpoint-aws-util</module>
 		<module>nowellpoint-aws-app</module>
+		<module>nowellpoint-aws-test</module>
 	</modules>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 
 	<build>
 		<pluginManagement>

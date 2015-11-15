@@ -6,7 +6,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry including="**/*.java" kind="src" path="src/test/resources"/>
 	<classpathentry excluding="**/*.java" including="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="var" path="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0.1/javax.ws.rs-api-2.0.1.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-idp"/>
@@ -54,6 +54,13 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-service"/>
+	<classpathentry kind="src" output="target/classes" path="Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-service/src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>

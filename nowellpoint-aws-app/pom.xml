@@ -35,13 +35,14 @@
 			<version>2.3</version>
 		</dependency>
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-lambda</artifactId>
+		<groupId>com.nowellpoint</groupId>
+			<artifactId>nowellpoint-aws-service</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-rest-client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

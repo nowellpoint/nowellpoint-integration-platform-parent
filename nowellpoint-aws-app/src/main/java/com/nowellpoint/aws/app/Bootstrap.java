@@ -151,7 +151,6 @@ public class Bootstrap {
 		//
 		
 		get("/login", (request, response) -> {
-			long start = System.currentTimeMillis();
 			
 			GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(request.queryParams("username"))
 					.withPassword(request.queryParams("password"));
@@ -166,7 +165,6 @@ public class Bootstrap {
 				response.body(getTokenResponse.getErrorMessage());
 			}
 			
-			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			return new ModelAndView(attributes, "index.ftl");
 			
 		}, new FreeMarkerEngine(cfg));
