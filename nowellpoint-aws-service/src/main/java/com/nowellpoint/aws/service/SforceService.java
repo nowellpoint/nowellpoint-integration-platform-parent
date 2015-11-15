@@ -9,11 +9,26 @@ import com.nowellpoint.aws.sforce.model.GetAuthorizationRequest;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationResponse;
 import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
 import com.nowellpoint.aws.sforce.model.GetIdentityResponse;
+import com.nowellpoint.aws.sforce.model.GetTokenRequest;
+import com.nowellpoint.aws.sforce.model.GetTokenResponse;
 
 public class SforceService extends AbstractService {
 	
 	public SforceService() {
 		
+	}
+	
+	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws IOException {
+		InvokeRequest invokeRequest = new InvokeRequest();
+		invokeRequest.setInvocationType(InvocationType.RequestResponse);
+		invokeRequest.setFunctionName("SalesforceAuthenticationRequest");
+		invokeRequest.setPayload(tokenRequest.getAsJson());
+		
+		InvokeResult invokeResult = invoke(invokeRequest);
+		
+		GetTokenResponse tokenResponse = readInvokeResult(GetTokenResponse.class, invokeResult);
+		
+		return tokenResponse;
 	}
 
 	public GetAuthorizationResponse authorize(GetAuthorizationRequest authorizationRequest) throws IOException {
@@ -32,7 +47,7 @@ public class SforceService extends AbstractService {
 	public GetIdentityResponse getIdentity(GetIdentityRequest identityRequest) throws IOException {
 		InvokeRequest invokeRequest = new InvokeRequest();
 		invokeRequest.setInvocationType(InvocationType.RequestResponse);
-		invokeRequest.setFunctionName("SalesforceTokenRequest");
+		invokeRequest.setFunctionName("SalesforceIdentityRequest");
 		invokeRequest.setPayload(identityRequest.getAsJson());
 		
 		InvokeResult invokeResult = invoke(invokeRequest);

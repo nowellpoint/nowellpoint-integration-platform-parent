@@ -1,10 +1,8 @@
 package com.nowellpoint.aws.sforce.model;
 
-import java.io.Serializable;
-
 import com.nowellpoint.aws.model.AbstractResponse;
 
-public class GetIdentityResponse extends AbstractResponse implements Serializable {
+public class GetIdentityResponse extends AbstractResponse {
 
 	/**
 	 * 
