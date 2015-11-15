@@ -2,11 +2,8 @@ package com.nowellpoint.aws.app;
 
 import static spark.Spark.get;
 import static spark.Spark.port;
-import static spark.Spark.post;
-import static spark.Spark.secure;
 import static spark.Spark.staticFileLocation;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -16,16 +13,11 @@ import java.util.ResourceBundle;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import com.amazonaws.services.lambda.AWSLambda;
-import com.amazonaws.services.lambda.AWSLambdaClient;
-import com.amazonaws.services.lambda.model.InvocationType;
-import com.amazonaws.services.lambda.model.InvokeRequest;
-import com.amazonaws.services.lambda.model.InvokeResult;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.nowellpoint.aws.idp.model.GetTokenRequest;
 import com.nowellpoint.aws.idp.model.GetTokenResponse;
+import com.nowellpoint.aws.service.IdentityProviderService;
+import com.nowellpoint.aws.service.SforceService;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationRequest;
 import com.nowellpoint.aws.sforce.model.GetAuthorizationResponse;
 import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
@@ -37,6 +29,10 @@ import freemarker.template.Configuration;
 public class Bootstrap {
 	
 	private static ObjectMapper objectMapper = new ObjectMapper();
+	
+	private static SforceService sforceService = new SforceService();
+	
+	private static IdentityProviderService identityProviderService = new IdentityProviderService();
 
 	public static void main(String[] args) {
 		
@@ -89,12 +85,6 @@ public class Bootstrap {
 		Map<String, Object> attributes = new HashMap<>();
         attributes.put("applicationTitle", messages.getString("application.title"));
         attributes.put("services", messages.getString("services"));
-        
-        //
-        //
-        //
-        
-        AWSLambda lambda = new AWSLambdaClient();
 		
 		//
 		// add routes for root
@@ -112,31 +102,27 @@ public class Bootstrap {
 			
 			GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest().withCode(request.queryParams("code"));
 			
-			InvokeRequest invokeRequest = new InvokeRequest();
-			invokeRequest.setInvocationType(InvocationType.RequestResponse);
-			invokeRequest.setFunctionName("SalesforceTokenRequest");
-			invokeRequest.setPayload(authorizationRequest.getAsJson());
+			GetAuthorizationResponse authorizationResponse = sforceService.authorize(authorizationRequest);
 			
-			InvokeResult invokeResult = lambda.invoke(invokeRequest);
+			response.status(authorizationResponse.getStatusCode());
 			
-			GetAuthorizationResponse getAuthorizationResponse = readInvokeResult(GetAuthorizationResponse.class, invokeResult);
-			
-			response.status(getAuthorizationResponse.getStatusCode());
-			
-			if (getAuthorizationResponse.getStatusCode() == 200) {
-				Token token = getAuthorizationResponse.getToken();
-				String body = JsonNodeFactory.instance.objectNode()
-						.put("id", token.getId())
-						.put("accessToken", token.getAccessToken())
-						.toString();
+			if (authorizationResponse.getStatusCode() == 200) {
+				Token token = authorizationResponse.getToken();
 				
-				response.body(body);
-				response.redirect("/identity");
-			} else {
-			    response.body(getAuthorizationResponse.getErrorMessage());
+				GetIdentityRequest identityRequest = new GetIdentityRequest().withAccessToken(token.getAccessToken())
+						.withId(token.getId());
+				
+				GetIdentityResponse identityResponse = sforceService.getIdentity(identityRequest);
+				
+				if (identityResponse.getStatusCode() < 400) {
+					attributes.put("identity", identityResponse.getIdentity());
+				} else {
+					attributes.put("exception", identityResponse.getErrorMessage());
+				}
+				
 			}
 			
-			return "ok";
+			return new ModelAndView(attributes, "identity.ftl");
 			
 		});
 		
@@ -149,19 +135,12 @@ public class Bootstrap {
 			GetIdentityRequest identityRequest = new GetIdentityRequest().withAccessToken(request.headers("Authorization").replaceFirst("Bearer", "").trim())
 					.withId(request.queryParams("id"));
 			
-			InvokeRequest invokeRequest = new InvokeRequest();
-			invokeRequest.setInvocationType(InvocationType.RequestResponse);
-			invokeRequest.setFunctionName("SalesforceTokenRequest");
-			invokeRequest.setPayload(identityRequest.getAsJson());
+			GetIdentityResponse identityResponse = sforceService.getIdentity(identityRequest);
 			
-			InvokeResult invokeResult = lambda.invoke(invokeRequest);
-			
-			GetIdentityResponse getIdentityResponse = readInvokeResult(GetIdentityResponse.class, invokeResult);
-			
-			if (getIdentityResponse.getStatusCode() < 400) {
-				attributes.put("identity", getIdentityResponse.getIdentity());
+			if (identityResponse.getStatusCode() < 400) {
+				attributes.put("identity", identityResponse.getIdentity());
 			} else {
-				attributes.put("exception", getIdentityResponse.getErrorMessage());
+				attributes.put("exception", identityResponse.getErrorMessage());
 			}
 			
 			return new ModelAndView(attributes, "identity.ftl");
@@ -173,19 +152,11 @@ public class Bootstrap {
 		
 		get("/login", (request, response) -> {
 			long start = System.currentTimeMillis();
-			String payload = JsonNodeFactory.instance.objectNode()
-					.put("username", request.queryParams("username"))
-					.put("password", request.queryParams("password"))
-					.toString();
 			
-			InvokeRequest invokeRequest = new InvokeRequest();
-			invokeRequest.setInvocationType(InvocationType.RequestResponse);
-			invokeRequest.setFunctionName("IDP_UsernamePasswordAuthentication");
-			invokeRequest.setPayload(payload);
+			GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(request.queryParams("username"))
+					.withPassword(request.queryParams("password"));
 			
-			InvokeResult invokeResult = lambda.invoke(invokeRequest);
-			
-			GetTokenResponse getTokenResponse = readInvokeResult(GetTokenResponse.class, invokeResult);
+			GetTokenResponse getTokenResponse = identityProviderService.authenticate(tokenRequest);
 			
 			response.status(getTokenResponse.getStatusCode());
 			
@@ -199,10 +170,6 @@ public class Bootstrap {
 			return new ModelAndView(attributes, "index.ftl");
 			
 		}, new FreeMarkerEngine(cfg));
-	}
-	
-	private static <T> T readInvokeResult(Class<T> type, InvokeResult invokeResult) throws JsonParseException, JsonMappingException, IOException {
-		return objectMapper.readValue(invokeResult.getPayload().array(), type);
 	}
 	
 	private static int getPort() {

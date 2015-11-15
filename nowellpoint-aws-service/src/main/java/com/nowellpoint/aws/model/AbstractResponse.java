@@ -2,7 +2,7 @@ package com.nowellpoint.aws.model;
 
 import java.io.Serializable;
 
-public class AbstractResponse implements Serializable {
+public abstract class AbstractResponse implements Serializable {
 	
 	/**
 	 * 

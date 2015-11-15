@@ -4,6 +4,7 @@
   <comment>Nowellpoint AWS Application. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>nowellpoint-aws-rest-client</project>
+    <project>nowellpoint-aws-service</project>
   </projects>
   <buildSpec>
     <buildCommand>
