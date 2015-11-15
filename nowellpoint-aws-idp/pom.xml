@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-idp</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint IDP Services</name>
-	<description>Nowellpoint Identity Provider Services</description>
+	<name>Nowellpoint Identity Provider Services</name>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
@@ -22,7 +23,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
@@ -107,7 +108,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>add-source</id>
+								<id>add-rest-client</id>
 								<phase>generate-sources</phase>
 								<goals>
 									<goal>add-source</goal>
@@ -115,6 +116,18 @@
 								<configuration>
 									<sources>
 										<source>../nowellpoint-aws-rest-client/src/main/java</source>
+									</sources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>add-service</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>../nowellpoint-aws-service/src/main/java</source>
 									</sources>
 								</configuration>
 							</execution>
