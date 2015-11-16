@@ -62,9 +62,8 @@ public class TestIdentityProviderService {
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
-			System.out.println(verifyTokenResponse.asJson());
-			
-			assertTrue(tokenResponse.getStatusCode() == 200);
+			assertTrue(verifyTokenResponse.getStatusCode() == 200);
+			assertNotNull(verifyTokenResponse.getAuthToken());
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,6 +82,7 @@ public class TestIdentityProviderService {
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
 			assertTrue(refreshTokenResponse.getStatusCode() == 200);
+			assertNotNull(refreshTokenResponse.getToken());
 			
 		} catch (IOException e) {
 			e.printStackTrace();

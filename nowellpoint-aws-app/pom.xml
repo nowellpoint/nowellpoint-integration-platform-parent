@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-app</artifactId>
 	<name>Nowellpoint AWS Application</name>
-	<description>Nowellpoint AWS Application</description>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
