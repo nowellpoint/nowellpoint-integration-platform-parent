@@ -23,6 +23,7 @@
 	</properties>
 
 	<modules>
+	    <module>nowellpoint-aws-tools</module>
 		<module>nowellpoint-aws-rest-client</module>
 		<module>nowellpoint-aws-service</module>
 		<module>nowellpoint-aws-idp</module>

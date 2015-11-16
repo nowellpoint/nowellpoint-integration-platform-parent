@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-idp</artifactId>
 	<packaging>jar</packaging>
@@ -29,7 +29,6 @@
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-lambda</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-lambda-java-core</artifactId>
@@ -56,11 +55,17 @@
 			<version>2.0.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.nowellpoint</groupId>
+			<artifactId>nowellpoint-aws-tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<profiles>
 		<profile>
 			<id>default</id>
@@ -126,6 +131,26 @@
 									<sources>
 										<source>../nowellpoint-aws-service/src/main/java</source>
 									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>package</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+								<arguments>
+								<argument>${project.build.finalName}</argument>
+								</arguments>
+									<mainClass>com.nowellpoint.aws.idp.lambda.Deployer</mainClass>
 								</configuration>
 							</execution>
 						</executions>

@@ -33,13 +33,14 @@ public class Deployer {
 	private static AmazonS3 s3Client = new AmazonS3Client(new EnvironmentVariableCredentialsProvider());
 	private static AWSLambdaAsync lambdaClient = new AWSLambdaAsyncClient(new EnvironmentVariableCredentialsProvider());
 
-	public static void main(String[] args) {	
+	//public static void main(String[] args) {
+	public void doDeploy(String jar) {
 		
-		String[] jars = {
-				"../nowellpoint-aws/nowellpoint-aws-idp/target/nowellpoint-aws-idp-0.0.2-SNAPSHOT.jar",
-				"../nowellpoint-aws/nowellpoint-aws-sforce/target/nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
-				"../nowellpoint-aws/nowellpoint-aws-util/target/nowellpoint-aws-util-0.0.2-SNAPSHOT.jar"
-		};
+		//String[] jars = {
+		//		"../nowellpoint-aws/nowellpoint-aws-idp/target/nowellpoint-aws-idp-0.0.2-SNAPSHOT.jar",
+		//		"../nowellpoint-aws/nowellpoint-aws-sforce/target/nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+		//		"../nowellpoint-aws/nowellpoint-aws-util/target/nowellpoint-aws-util-0.0.2-SNAPSHOT.jar"
+		//};
 		
 		s3Client.setRegion(Region.getRegion(Regions.US_EAST_1));
 		lambdaClient.setRegion(Region.getRegion(Regions.US_EAST_1));
@@ -52,7 +53,7 @@ public class Deployer {
 		
 		logger.info("connect time: " + (System.currentTimeMillis() - startTime));
 		
-		Arrays.asList(jars).forEach( jar -> {
+		//Arrays.asList(jars).forEach( jar -> {
 			
 			File file = new File(jar);
 			
@@ -60,7 +61,7 @@ public class Deployer {
 	    	
 	    	s3Client.putObject(putObjectRequest);
 	    	
-		} );
+		//} );
 		
 		FindIterable<Document> documents = mongoDatabase.getCollection("aws.lambda.functions").find();
 		
