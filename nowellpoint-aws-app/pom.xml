@@ -38,11 +38,6 @@
 			<artifactId>nowellpoint-aws-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.nowellpoint</groupId>
-			<artifactId>nowellpoint-aws-rest-client</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 	</dependencies>
 
 	<build>

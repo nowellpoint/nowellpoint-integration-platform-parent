@@ -14,7 +14,7 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.3/httpcore-4.4.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.0.3/mongodb-driver-3.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.0.3/mongodb-driver-3.0.3.jar" sourcepath="M2_REPO/org/mongodb/mongodb-driver/3.0.3/mongodb-driver-3.0.3-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.0.3/mongodb-driver-core-3.0.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.0.3/bson-3.0.3.jar"/>
 </classpath>

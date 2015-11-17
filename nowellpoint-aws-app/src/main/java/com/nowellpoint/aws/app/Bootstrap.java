@@ -91,6 +91,9 @@ public class Bootstrap {
 		//
 		
 		get("/", (request, response) -> {
+			System.out.println(request.protocol());
+			System.out.println(request.uri());
+			
 	        return new ModelAndView(attributes, "index.ftl");
 	    }, new FreeMarkerEngine(cfg));
 		
