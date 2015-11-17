@@ -106,7 +106,7 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>add-rest-client</id>
+								<id>add-source</id>
 								<phase>generate-sources</phase>
 								<goals>
 									<goal>add-source</goal>
@@ -114,29 +114,7 @@
 								<configuration>
 									<sources>
 										<source>../nowellpoint-aws-rest-client/src/main/java</source>
-									</sources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>add-tools</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
 										<source>../nowellpoint-aws-tools/src/main/java</source>
-									</sources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>add-service</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
 										<source>../nowellpoint-aws-service/src/main/java</source>
 									</sources>
 								</configuration>
