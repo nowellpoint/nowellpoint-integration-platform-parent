@@ -32,18 +32,14 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-lambda-java-core</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-lambda-java-events</artifactId>
 			<version>1.1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver</artifactId>
-			<version>3.0.3</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
@@ -55,9 +51,9 @@
 			<version>2.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nowellpoint</groupId>
-			<artifactId>nowellpoint-aws-tools</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>3.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -122,6 +118,18 @@
 								</configuration>
 							</execution>
 							<execution>
+								<id>add-tools</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>../nowellpoint-aws-tools/src/main/java</source>
+									</sources>
+								</configuration>
+							</execution>
+							<execution>
 								<id>add-service</id>
 								<phase>generate-sources</phase>
 								<goals>
@@ -142,15 +150,16 @@
 						<executions>
 							<execution>
 								<id>deploy</id>
-								<phase>package</phase>
+								<phase>install</phase>
 								<goals>
 									<goal>java</goal>
 								</goals>
 								<configuration>
-								<arguments>
-								<argument>${project.build.finalName}</argument>
-								</arguments>
-									<mainClass>com.nowellpoint.aws.idp.lambda.Deployer</mainClass>
+									<arguments>
+										<argument>${project.basedir}/target/${project.build.finalName}.jar</argument>
+										<argument>${project.basedir}/src/main/resources/nowellpoint-aws-deploy.json</argument>
+									</arguments>
+									<mainClass>com.nowellpoint.aws.idp.lambda.Main</mainClass>
 								</configuration>
 							</execution>
 						</executions>

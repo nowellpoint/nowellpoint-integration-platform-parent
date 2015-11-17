@@ -118,6 +118,18 @@
 								</configuration>
 							</execution>
 							<execution>
+								<id>add-tools</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>../nowellpoint-aws-tools/src/main/java</source>
+									</sources>
+								</configuration>
+							</execution>
+							<execution>
 								<id>add-service</id>
 								<phase>generate-sources</phase>
 								<goals>
@@ -127,6 +139,27 @@
 									<sources>
 										<source>../nowellpoint-aws-service/src/main/java</source>
 									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<arguments>
+										<argument>${project.basedir}/target/${project.build.finalName}.jar</argument>
+										<argument>${project.basedir}/src/main/resources/nowellpoint-aws-deploy.json</argument>
+									</arguments>
+									<mainClass>com.nowellpoint.aws.sforce.lambda.Main</mainClass>
 								</configuration>
 							</execution>
 						</executions>

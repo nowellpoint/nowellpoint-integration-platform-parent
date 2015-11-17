@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.idp.lambda;
+package com.nowellpoint.aws.tools.model;
 
 public class Code {
 
