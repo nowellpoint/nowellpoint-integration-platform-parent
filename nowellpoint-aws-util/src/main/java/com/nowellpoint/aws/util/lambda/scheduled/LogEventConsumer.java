@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.scheduled;
+package com.nowellpoint.aws.util.lambda.scheduled;
 
 import java.io.IOException;
 import java.io.InputStream;
