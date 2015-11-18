@@ -30,10 +30,7 @@
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-lambda</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-logs</artifactId>
@@ -54,9 +51,14 @@
 			<version>2.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>nowellpoint-aws-tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>nowellpoint-aws-rest-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	
@@ -104,19 +106,6 @@
 											<directory>/Users/jherson/Dropbox/config</directory>
 										</resource>
 									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>add-source</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>../nowellpoint-aws-rest-client/src/main/java</source>
-										<source>../nowellpoint-aws-tools/src/main/java</source>
-									</sources>
 								</configuration>
 							</execution>
 						</executions>

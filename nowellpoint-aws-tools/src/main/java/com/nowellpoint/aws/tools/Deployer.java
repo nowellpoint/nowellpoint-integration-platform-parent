@@ -54,7 +54,7 @@ public class Deployer {
 				Configuration configuration = f.getConfiguration();
 				Code code = f.getCode();
 				
-				System.out.println(new Date() + configuration.getFunctionName() );
+				System.out.println(new Date() + " " + configuration.getFunctionName() );
 				
 				GetFunctionRequest functionRequest = new GetFunctionRequest().withFunctionName(configuration.getFunctionName());
 				
@@ -62,7 +62,7 @@ public class Deployer {
 					
 					GetFunctionResult functionResult = lambdaClient.getFunction(functionRequest);
 					
-					System.out.println(new Date() + functionResult.getConfiguration().getFunctionArn());
+					System.out.println(new Date() + " " + functionResult.getConfiguration().getFunctionArn());
 					
 					UpdateFunctionConfigurationRequest updateFunctionConfigurationRequest = new UpdateFunctionConfigurationRequest().withFunctionName(configuration.getFunctionName())
 							.withHandler(configuration.getHandler())
@@ -97,7 +97,7 @@ public class Deployer {
 					
 					CreateFunctionResult createFunctionResult = lambdaClient.createFunction(createFunctionRequest);
 					
-					System.out.println(new Date() + createFunctionResult.getFunctionArn());
+					System.out.println(new Date() + " " + createFunctionResult.getFunctionArn());
 				}
 			});
 		} catch (IOException e) {
