@@ -2,8 +2,8 @@ package com.nowellpoint.aws.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Region;
@@ -29,11 +29,16 @@ import com.nowellpoint.aws.tools.model.Function;
 
 public class Deployer {
 	
-	private static Logger logger = Logger.getLogger(Deployer.class.getName());
 	private static AmazonS3 s3Client = new AmazonS3Client(new EnvironmentVariableCredentialsProvider());
 	private static AWSLambdaAsync lambdaClient = new AWSLambdaAsyncClient(new EnvironmentVariableCredentialsProvider());
+	
+	public static void main(String[] args) {
+		System.out.println(new Date() + " running deployer for: ".concat(args[0]).concat(" with config file: " + args[1]));
+		Deployer deployer = new Deployer();
+		deployer.doDeploy(new File(args[0]), new File(args[1]));
+	}
 
-	public void doDeploy(File jar, File function) {
+	private void doDeploy(File jar, File config) {
 		
 		s3Client.setRegion(Region.getRegion(Regions.US_EAST_1));
 		lambdaClient.setRegion(Region.getRegion(Regions.US_EAST_1));
@@ -43,13 +48,13 @@ public class Deployer {
 		s3Client.putObject(objectRequest);
 	    	
 		try {
-			List<Function> functions = new ObjectMapper().readValue(function, new TypeReference<List<Function>>() { });
+			List<Function> functions = new ObjectMapper().readValue(config, new TypeReference<List<Function>>() { });
 			functions.forEach( f -> {
 				
 				Configuration configuration = f.getConfiguration();
 				Code code = f.getCode();
 				
-				logger.info( configuration.getFunctionName() );
+				System.out.println(new Date() + configuration.getFunctionName() );
 				
 				GetFunctionRequest functionRequest = new GetFunctionRequest().withFunctionName(configuration.getFunctionName());
 				
@@ -57,7 +62,7 @@ public class Deployer {
 					
 					GetFunctionResult functionResult = lambdaClient.getFunction(functionRequest);
 					
-					logger.info(functionResult.getConfiguration().getFunctionArn());
+					System.out.println(new Date() + functionResult.getConfiguration().getFunctionArn());
 					
 					UpdateFunctionConfigurationRequest updateFunctionConfigurationRequest = new UpdateFunctionConfigurationRequest().withFunctionName(configuration.getFunctionName())
 							.withHandler(configuration.getHandler())
@@ -92,7 +97,7 @@ public class Deployer {
 					
 					CreateFunctionResult createFunctionResult = lambdaClient.createFunction(createFunctionRequest);
 					
-					logger.info(createFunctionResult.getFunctionArn());
+					System.out.println(new Date() + createFunctionResult.getFunctionArn());
 				}
 			});
 		} catch (IOException e) {

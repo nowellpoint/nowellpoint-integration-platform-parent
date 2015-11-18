@@ -139,7 +139,7 @@
 										<argument>${project.basedir}/target/${project.build.finalName}.jar</argument>
 										<argument>${project.basedir}/src/main/resources/nowellpoint-aws-deploy.json</argument>
 									</arguments>
-									<mainClass>com.nowellpoint.aws.idp.lambda.Main</mainClass>
+									<mainClass>com.nowellpoint.aws.tools.Deployer</mainClass>
 								</configuration>
 							</execution>
 						</executions>
