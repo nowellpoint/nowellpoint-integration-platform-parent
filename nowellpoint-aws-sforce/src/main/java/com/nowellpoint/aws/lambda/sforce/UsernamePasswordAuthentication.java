@@ -11,9 +11,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.sforce.model.GetTokenRequest;
-import com.nowellpoint.aws.sforce.model.GetTokenResponse;
-import com.nowellpoint.aws.sforce.model.Token;
+import com.nowellpoint.aws.model.sforce.GetTokenRequest;
+import com.nowellpoint.aws.model.sforce.GetTokenResponse;
+import com.nowellpoint.aws.model.sforce.Token;
 import com.nowellpoint.aws.util.Configuration;
 
 public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {

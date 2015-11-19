@@ -14,15 +14,15 @@ import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.idp.model.GetTokenRequest;
-import com.nowellpoint.aws.idp.model.GetTokenResponse;
+import com.nowellpoint.aws.model.idp.GetTokenRequest;
+import com.nowellpoint.aws.model.idp.GetTokenResponse;
+import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
+import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
+import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
+import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
+import com.nowellpoint.aws.model.sforce.Token;
 import com.nowellpoint.aws.service.IdentityProviderService;
 import com.nowellpoint.aws.service.SalesforceService;
-import com.nowellpoint.aws.sforce.model.GetAuthorizationRequest;
-import com.nowellpoint.aws.sforce.model.GetAuthorizationResponse;
-import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
-import com.nowellpoint.aws.sforce.model.GetIdentityResponse;
-import com.nowellpoint.aws.sforce.model.Token;
 
 import freemarker.template.Configuration;
 

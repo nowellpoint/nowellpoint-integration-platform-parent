@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.sforce.model.Notification;
+import com.nowellpoint.aws.model.sforce.Notification;
 
 public class OutboundMessageEventRequest {
 	

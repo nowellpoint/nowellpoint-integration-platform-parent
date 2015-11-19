@@ -8,13 +8,13 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
+import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
+import com.nowellpoint.aws.model.sforce.GetTokenRequest;
+import com.nowellpoint.aws.model.sforce.GetTokenResponse;
+import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
+import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
 import com.nowellpoint.aws.service.SalesforceService;
-import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
-import com.nowellpoint.aws.sforce.model.GetIdentityResponse;
-import com.nowellpoint.aws.sforce.model.GetTokenRequest;
-import com.nowellpoint.aws.sforce.model.GetTokenResponse;
-import com.nowellpoint.aws.sforce.model.RevokeTokenRequest;
-import com.nowellpoint.aws.sforce.model.RevokeTokenResponse;
 
 public class TestSalesforceService {
 	

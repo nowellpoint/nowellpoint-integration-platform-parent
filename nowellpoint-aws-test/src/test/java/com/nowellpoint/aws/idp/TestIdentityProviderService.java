@@ -7,14 +7,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.nowellpoint.aws.idp.model.GetTokenRequest;
-import com.nowellpoint.aws.idp.model.GetTokenResponse;
-import com.nowellpoint.aws.idp.model.RefreshTokenRequest;
-import com.nowellpoint.aws.idp.model.RefreshTokenResponse;
-import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
-import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
-import com.nowellpoint.aws.idp.model.VerifyTokenRequest;
-import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
+import com.nowellpoint.aws.model.idp.GetTokenRequest;
+import com.nowellpoint.aws.model.idp.GetTokenResponse;
+import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
+import com.nowellpoint.aws.model.idp.RefreshTokenResponse;
+import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
+import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
+import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
+import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
 import com.nowellpoint.aws.service.IdentityProviderService;
 
 public class TestIdentityProviderService {

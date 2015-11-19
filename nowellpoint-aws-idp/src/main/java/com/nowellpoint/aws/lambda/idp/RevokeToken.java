@@ -14,8 +14,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
-import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
+import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
+import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
 import com.nowellpoint.aws.util.Configuration;
 
 public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTokenResponse> {

@@ -11,9 +11,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.sforce.model.GetIdentityRequest;
-import com.nowellpoint.aws.sforce.model.GetIdentityResponse;
-import com.nowellpoint.aws.sforce.model.Identity;
+import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
+import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
+import com.nowellpoint.aws.model.sforce.Identity;
 
 public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdentityResponse> {
 	

@@ -31,7 +31,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.FieldMappingEntry;
 import com.nowellpoint.aws.model.Mapping;
-import com.nowellpoint.aws.sforce.model.Notification;
+import com.nowellpoint.aws.model.sforce.Notification;
 import com.nowellpoint.aws.util.MongoQuery;
 import com.nowellpoint.aws.util.SalesforceUrlFactory;
 

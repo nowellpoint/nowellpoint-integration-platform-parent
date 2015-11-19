@@ -11,9 +11,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.sforce.model.GetAuthorizationRequest;
-import com.nowellpoint.aws.sforce.model.GetAuthorizationResponse;
-import com.nowellpoint.aws.sforce.model.Token;
+import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
+import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
+import com.nowellpoint.aws.model.sforce.Token;
 import com.nowellpoint.aws.util.Configuration;
 
 public class TokenAuthorization implements RequestHandler<GetAuthorizationRequest, GetAuthorizationResponse> {
