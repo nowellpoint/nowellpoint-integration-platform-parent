@@ -1,0 +1,128 @@
+[
+  {
+    "configuration": {
+      "functionName": "OutboundMessageHandler",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:OutboundMessageHandler",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.s3.OutboundMessageHandler::handleEvent",
+      "description": "Salesforce Outbound Message Handler that is called by the Salesforce Outbound Message Listener application",
+      "timeout": 60,
+      "memorySize": 512,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "SalesforceAuthenticationRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:SalesforceAuthenticationRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.sforce.UsernamePasswordAuthentication::handleRequest",
+      "description": "Salesforce Authentication Request Function",
+      "timeout": 8,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "SalesforceRevokeTokenRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:SalesforceRevokeTokenRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.sforce.RevokeToken::handleRequest",
+      "description": "Salesforce Revoke Token Request",
+      "timeout": 15,
+      "memorySize": 512,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "SalesforceIdentityRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:SalesforceIdentityRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.sforce.GetIdentity::handleRequest",
+      "description": "Salesforce Identity Request",
+      "timeout": 15,
+      "memorySize": 512,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "SalesforceTokenRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:SalesforceTokenRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.sforce.TokenAuthorization::handleRequest",
+      "description": "Salesforce OAuth Token Request",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "SalesforceRefreshTokenRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:SalesforceRefreshTokenRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.sforce.RefreshToken::handleRequest",
+      "description": "Salesforce Refresh Token Request",
+      "timeout": 15,
+      "memorySize": 512,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "OutboundMessageListener",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:OutboundMessageListener",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.sforce.OutboundMessageListener::handleRequest",
+      "description": "Salesforce Outbound Message Listener Function",
+      "timeout": 15,
+      "memorySize": 512,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  }
+]

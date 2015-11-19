@@ -2,10 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>nowellpoint-aws-sforce</artifactId>
+	<artifactId>nowellpoint-aws-data</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint Salesforce Services</name>
-	<description>Nowellpoint Salesforce Services jar</description>
+	<name>Nowellpoint Data Services</name>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
@@ -32,14 +31,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-sns</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-lambda-java-core</artifactId>
 			<version>1.1.0</version>
 		</dependency>
@@ -56,11 +47,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>nowellpoint-aws-tools</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>nowellpoint-aws-rest-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
