@@ -49,7 +49,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-service"/>
 	<classpathentry kind="src" output="target/classes" path="Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-rest-client/src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -69,5 +68,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

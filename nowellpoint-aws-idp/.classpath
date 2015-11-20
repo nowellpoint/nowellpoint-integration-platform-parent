@@ -27,11 +27,11 @@
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.10.34/aws-java-sdk-dynamodb-1.10.34.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.5.1/jjwt-0.5.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.6/slf4j-api-1.7.6.jar"/>
-	<classpathentry kind="src" path="/nowellpoint-aws-service"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-tools"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-rest-client"/>
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.0.3/mongodb-driver-3.0.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.0.3/mongodb-driver-core-3.0.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.0.3/bson-3.0.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
