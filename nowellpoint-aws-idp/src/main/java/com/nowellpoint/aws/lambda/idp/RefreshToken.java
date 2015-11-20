@@ -13,7 +13,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
 import com.nowellpoint.aws.model.idp.RefreshTokenResponse;
 import com.nowellpoint.aws.model.idp.Token;
-import com.nowellpoint.aws.util.Configuration;
+import com.nowellpoint.aws.tools.Configuration;
 
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	

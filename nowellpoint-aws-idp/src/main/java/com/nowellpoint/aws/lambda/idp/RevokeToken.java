@@ -16,7 +16,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
 import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
-import com.nowellpoint.aws.util.Configuration;
+import com.nowellpoint.aws.tools.Configuration;
 
 public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTokenResponse> {
 	

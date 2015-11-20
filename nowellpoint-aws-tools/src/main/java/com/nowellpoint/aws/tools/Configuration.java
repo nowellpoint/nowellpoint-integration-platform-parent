@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.util;
+package com.nowellpoint.aws.tools;
 
 import java.io.IOException;
 import java.util.logging.Logger;

@@ -2,7 +2,7 @@ package com.nowellpoint.aws.tools.model;
 
 public class Function {
 
-	private Configuration configuration;
+	private Lambda configuration;
 	
 	private Code code;
 	
@@ -10,11 +10,11 @@ public class Function {
 		
 	}
 
-	public Configuration getConfiguration() {
+	public Lambda getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(Configuration configuration) {
+	public void setConfiguration(Lambda configuration) {
 		this.configuration = configuration;
 	}
 

@@ -14,7 +14,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.util.Configuration;
+import com.nowellpoint.aws.tools.Configuration;
 
 public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	

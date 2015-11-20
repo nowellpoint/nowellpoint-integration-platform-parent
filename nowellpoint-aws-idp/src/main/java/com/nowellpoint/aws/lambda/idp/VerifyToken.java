@@ -11,7 +11,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.AuthToken;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
-import com.nowellpoint.aws.util.Configuration;
+import com.nowellpoint.aws.tools.Configuration;
 
 public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTokenResponse> {
 	

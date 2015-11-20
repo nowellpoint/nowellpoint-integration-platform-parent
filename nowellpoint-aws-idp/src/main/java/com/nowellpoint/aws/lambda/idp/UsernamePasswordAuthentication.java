@@ -13,7 +13,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.Token;
-import com.nowellpoint.aws.util.Configuration;
+import com.nowellpoint.aws.tools.Configuration;
 
 public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	

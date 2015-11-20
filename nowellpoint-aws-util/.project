@@ -2,7 +2,10 @@
 <projectDescription>
   <name>nowellpoint-aws-util</name>
   <comment>Nowellpoint Utility Services. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects/>
+  <projects>
+    <project>nowellpoint-aws-tools</project>
+    <project>nowellpoint-aws-rest-client</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>

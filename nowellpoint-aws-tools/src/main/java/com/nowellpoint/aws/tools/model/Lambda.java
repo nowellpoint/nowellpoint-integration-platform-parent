@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.tools.model;
 
-public class Configuration {
+public class Lambda {
 	
 	private String functionName;
 	
@@ -20,7 +20,7 @@ public class Configuration {
 	
 	private String version;
 	
-	public Configuration() {
+	public Lambda() {
 		
 	}
 

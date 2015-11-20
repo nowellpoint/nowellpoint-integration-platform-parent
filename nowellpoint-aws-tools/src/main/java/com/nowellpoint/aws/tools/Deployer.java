@@ -24,7 +24,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.tools.model.Code;
-import com.nowellpoint.aws.tools.model.Configuration;
+import com.nowellpoint.aws.tools.model.Lambda;
 import com.nowellpoint.aws.tools.model.Function;
 
 public class Deployer {
@@ -51,7 +51,7 @@ public class Deployer {
 			List<Function> functions = new ObjectMapper().readValue(config, new TypeReference<List<Function>>() { });
 			functions.forEach( f -> {
 				
-				Configuration configuration = f.getConfiguration();
+				Lambda configuration = f.getConfiguration();
 				Code code = f.getCode();
 				
 				System.out.println(new Date() + " " + configuration.getFunctionName() );
