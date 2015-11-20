@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.nowellpoint</groupId>
-			<artifactId>nowellpoint-aws-service</artifactId>
+			<artifactId>nowellpoint-aws-service-broker</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
