@@ -2,14 +2,19 @@ package com.nowellpoint.aws.data;
 
 import java.util.logging.Logger;
 
+import org.bson.Document;
+
+import static com.mongodb.client.model.Updates.currentTimestamp;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
+import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
-import com.nowellpoint.aws.tools.Configuration;
 
 public class CreateDocument implements RequestHandler<CreateDocumentRequest, CreateDocumentResponse> {
 	
@@ -17,6 +22,8 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 
 	@Override
 	public CreateDocumentResponse handleRequest(CreateDocumentRequest request, Context context) {
+		
+		CreateDocumentResponse response = new CreateDocumentResponse();
 		
 		long start = System.currentTimeMillis();
 		
@@ -38,8 +45,25 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 
 		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
 		
+		log.info(request.getCollectionName());
+		
+		Document document = Document.parse(request.getDocument());
+		
+		try{
+		mongoDatabase.getCollection(request.getCollectionName()).insertOne(document);
+		} catch (MongoException e) {
+			e.printStackTrace();
+		}
+		
+		log.info(document.getObjectId("_id").toString());
+		
 		log.info("execution time: " + (System.currentTimeMillis() - start));
 		
-		return null;
+		response.setStatusCode(200);
+		response.setId(document.getObjectId("_id").toString());
+		
+		mongoClient.close();
+		
+		return response;
 	}
 }

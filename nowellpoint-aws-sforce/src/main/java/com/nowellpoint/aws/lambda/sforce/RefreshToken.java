@@ -8,10 +8,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.sforce.RefreshTokenRequest;
 import com.nowellpoint.aws.model.sforce.RefreshTokenResponse;
 import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.tools.Configuration;
 
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	

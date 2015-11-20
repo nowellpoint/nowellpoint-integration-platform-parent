@@ -8,6 +8,6 @@ import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 public class DocumentService extends AbstractService {
 
 	public CreateDocumentResponse create(CreateDocumentRequest documentRequest) throws IOException {
-		return invoke("IDP_UsernamePasswordAuthentication", documentRequest, CreateDocumentResponse.class);
+		return invoke("CreateDocument", documentRequest, CreateDocumentResponse.class);
 	}
 }
