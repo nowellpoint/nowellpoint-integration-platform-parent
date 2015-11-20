@@ -27,6 +27,7 @@
 	<modules>
 	    <module>nowellpoint-aws-tools</module>
 		<module>nowellpoint-aws-rest-client</module>
+		<module>nowellpoint-aws-core</module>
 		<module>nowellpoint-aws-service-broker</module>
 		<module>nowellpoint-aws-idp</module>
 		<module>nowellpoint-aws-sforce</module>
