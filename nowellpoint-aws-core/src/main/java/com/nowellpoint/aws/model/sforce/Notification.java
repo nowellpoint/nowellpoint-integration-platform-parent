@@ -9,12 +9,12 @@ public class Notification implements Serializable {
 	 */
 
 	private static final long serialVersionUID = -6669913219066631132L;
-
+	
 	/**
 	 * 
 	 */
-
-	private String outboundMessageId;
+	
+	private String id;
 
 	/**
 	 * 
@@ -26,12 +26,12 @@ public class Notification implements Serializable {
 
 	}
 
-	public String getOutboundMessageId() {
-		return outboundMessageId;
+	public String getId() {
+		return id;
 	}
 
-	public void setOutboundMessageId(String outboundMessageId) {
-		this.outboundMessageId = outboundMessageId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public SObject getSobject() {

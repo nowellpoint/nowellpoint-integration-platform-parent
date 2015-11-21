@@ -7,8 +7,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -24,14 +23,10 @@ import org.xml.sax.SAXException;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.document.Attribute;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
-import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
@@ -51,9 +46,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.model.sforce.Notification;
-import com.nowellpoint.aws.model.sforce.OutboundMessage;
-import com.nowellpoint.aws.model.sforce.SObject;
+import com.nowellpoint.aws.model.TransactionStatus;
+import com.nowellpoint.aws.model.TransactionType;
 
 public class OutboundMessageListener implements RequestStreamHandler {
 	
@@ -93,7 +87,6 @@ public class OutboundMessageListener implements RequestStreamHandler {
 			outboundMessage = convertToJson(xml);
 			saveOutboundMessage(outboundMessage);
 			//putOutboundMessage(outboundMessage);
-			//convertToDynamoDBObject(xml);
 			response = getAckMessage(Boolean.TRUE);
 		} catch (ParserConfigurationException | SAXException | AmazonClientException e) {
 			e.printStackTrace();
@@ -183,15 +176,17 @@ public class OutboundMessageListener implements RequestStreamHandler {
 		
 		String payload = Base64.encodeAsString(ciphertext.array());
 		
-		System.out.println("Payload: " + payload);
+		Table table = dynamoDB.getTable("Transactions");
 		
-		Table table = dynamoDB.getTable("OutboundMessages");
+		PrimaryKey primaryKey = new PrimaryKey("Id", UUID.randomUUID().toString());
 		
-		PrimaryKey primaryKey = new PrimaryKey("OutboundMessageId", UUID.randomUUID().toString());
+		Item item = new Item().withPrimaryKey(primaryKey)
+				.withString("Type", TransactionType.OUTBOUND_MESSAGE.name())
+				.withString("TransactionDate", Instant.now().toString())
+				.withString("Status", TransactionStatus.NEW.name())
+				.withString("Payload", payload);
 		
-		Item item = new Item().withPrimaryKey(primaryKey).withString("Payload", payload);
-		
-		table.putItem(item);		
+		table.putItem(item);	
 	}
 	
 	private void putOutboundMessage(JsonNode outboundMessage) {
@@ -214,74 +209,5 @@ public class OutboundMessageListener implements RequestStreamHandler {
 	
 	private String getAckMessage(Boolean result) {
 		return JsonNodeFactory.instance.objectNode().put("body", ACK_RESPONSE.replace("#ack", String.valueOf(result)).replace("\\", "")).toString();
-	}
-	
-	private void convertToDynamoDBObject(String xml) throws ParserConfigurationException, SAXException, IOException {		
-		
-		Table table = dynamoDB.getTable("OutboundMessages");
-		
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
-		document.getDocumentElement().normalize();
-		
-		NodeList nodes = document.getElementsByTagName("notifications");
-		
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node node = nodes.item(i);
-			
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				
-				Element element = (Element) node;
-				
-				PrimaryKey primaryKey = new PrimaryKey("OutboundMessageId", UUID.randomUUID().toString());
-				
-				Item outboundMessage = new Item().withPrimaryKey(primaryKey)
-						.withString("OrganizationId", element.getElementsByTagName("OrganizationId").item(0).getTextContent())
-						.withString("ActionId", element.getElementsByTagName("ActionId").item(0).getTextContent())
-						.withString("SessionId", element.getElementsByTagName("SessionId").item(0).getTextContent())
-						.withString("EnterpriseUrl", element.getElementsByTagName("EnterpriseUrl").item(0).getTextContent())
-						.withString("PartnerUrl", element.getElementsByTagName("PartnerUrl").item(0).getTextContent());
-				
-				table.putItem(outboundMessage);
-				
-				addNotificationsD(primaryKey, element);
-			}
-		}
-	}
-	
-	private void addNotificationsD(PrimaryKey primaryKey, Element element) {
-		NodeList nodes = element.getElementsByTagName("Notification");
-		
-		Table table = dynamoDB.getTable("Notifications");
-		
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node node = nodes.item(i);
-			
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Item notification = new Item();
-				notification.withPrimaryKey(primaryKey);
-				notification.withString("Id", ((Element) node).getElementsByTagName("Id").item(0).getTextContent());
-				addSObjectD(primaryKey, element);
-				table.putItem(notification);
-			}
-		}
-	}
-	
-	private void addSObjectD(PrimaryKey primaryKey, Element element) {
-		NodeList nodes = element.getElementsByTagName("sObject");
-		
-		Table table = dynamoDB.getTable("SObjects");
-		
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node node = nodes.item(i);
-			
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Item sobject = new Item();
-				sobject.withPrimaryKey(primaryKey);
-				sobject.withString("Type", ((Element) node).getAttribute("xsi:type").replace("sf:", ""));
-				sobject.withString("Id", ((Element) node).getElementsByTagName("sf:Id").item(0).getTextContent());
-				table.putItem(sobject);
-			}
-		}
 	}
 }
