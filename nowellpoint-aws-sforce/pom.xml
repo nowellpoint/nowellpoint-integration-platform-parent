@@ -36,6 +36,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-dynamodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-sns</artifactId>
 		</dependency>
 		<dependency>
@@ -86,9 +90,6 @@
 								<goals>
 									<goal>shade</goal>
 								</goals>
-								<configuration>
-									<minimizeJar>true</minimizeJar>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>

@@ -10,11 +10,17 @@ public class OutboundMessage implements Serializable {
 	 */
 
 	private static final long serialVersionUID = -7684111059843154971L;
+	
+	/**
+	 * 
+	 */
+	
+	private String outboundMessageId;
 
 	/**
 	 * 
 	 */
-
+	
 	private String organizationId;
 
 	/**
@@ -44,12 +50,20 @@ public class OutboundMessage implements Serializable {
 	/**
 	 * 
 	 */
-
+	
 	private List<Notification> notifications;
 
 
 	public OutboundMessage() {
 
+	}
+
+	public String getOutboundMessageId() {
+		return outboundMessageId;
+	}
+
+	public void setOutboundMessageId(String outboundMessageId) {
+		this.outboundMessageId = outboundMessageId;
 	}
 
 	public String getOrganizationId() {

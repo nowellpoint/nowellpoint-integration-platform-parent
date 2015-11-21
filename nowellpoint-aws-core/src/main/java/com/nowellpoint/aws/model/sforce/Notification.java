@@ -14,7 +14,7 @@ public class Notification implements Serializable {
 	 * 
 	 */
 
-	private String id;
+	private String outboundMessageId;
 
 	/**
 	 * 
@@ -26,12 +26,12 @@ public class Notification implements Serializable {
 
 	}
 
-	public String getId() {
-		return id;
+	public String getOutboundMessageId() {
+		return outboundMessageId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setOutboundMessageId(String outboundMessageId) {
+		this.outboundMessageId = outboundMessageId;
 	}
 
 	public SObject getSobject() {
