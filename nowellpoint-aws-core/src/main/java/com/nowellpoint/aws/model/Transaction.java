@@ -41,6 +41,12 @@ public class Transaction {
 	@DynamoDBAttribute(attributeName="Payload")
 	private String payload;
 	
+	@DynamoDBAttribute(attributeName="RecordCount")
+	private Integer recordCount;
+	
+	@DynamoDBAttribute(attributeName="ExecutionTime")
+	private Long executionTime;
+	
 	@DynamoDBAttribute(attributeName="ErrorMessage")
 	private String errorMessage;
 	
@@ -102,6 +108,22 @@ public class Transaction {
 
 	public void setPayload(String payload) {
 		this.payload = payload;
+	}
+
+	public Integer getRecordCount() {
+		return recordCount;
+	}
+
+	public void setRecordCount(Integer recordCount) {
+		this.recordCount = recordCount;
+	}
+
+	public Long getExecutionTime() {
+		return executionTime;
+	}
+
+	public void setExecutionTime(Long executionTime) {
+		this.executionTime = executionTime;
 	}
 
 	public String getErrorMessage() {
