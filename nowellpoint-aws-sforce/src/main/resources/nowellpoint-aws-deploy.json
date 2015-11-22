@@ -1,12 +1,12 @@
 [
 {
     "configuration": {
-      "functionName": "OutboundMessageProcessor",
-      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:OutboundMessageProcessor",
+      "functionName": "TransactionEventHandler",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:TransactionEventHandler",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.dynamodb.OutboundMessageHandler::handleEvent",
-      "description": "Salesforce Outbound Message Processor",
+      "handler": "com.nowellpoint.aws.lambda.dynamodb.TransactionEventHandler::handleEvent",
+      "description": "Transaction Event Handler Function to execute business logic for integration transactions",
       "timeout": 300,
       "memorySize": 1536,
       "version": "$LATEST"

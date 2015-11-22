@@ -32,7 +32,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.lambda.s3.OutboundMessageEvent;
 import com.nowellpoint.aws.lambda.s3.OutboundMessageEventRequest;
 import com.nowellpoint.aws.lambda.s3.OutboundMessageEventResponse;
 import com.nowellpoint.aws.model.Configuration;
@@ -41,7 +40,7 @@ import com.nowellpoint.aws.model.sforce.OutboundMessage;
 import com.nowellpoint.aws.sforce.SalesforceResource;
 import com.nowellpoint.aws.util.MongoQuery;
 
-public class OutboundMessageHandler {
+public class TransactionEventHandler {
 	
 	private static DynamoDBMapper mapper;
 	private static AWSKMS kms;
@@ -52,7 +51,7 @@ public class OutboundMessageHandler {
 	private static ObjectId organizationId;
 	private static ObjectId userId;
 	
-	public OutboundMessageHandler() {
+	public TransactionEventHandler() {
 		mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 		kms = new AWSKMSClient();
 		salesforceResource = new SalesforceResource();
@@ -89,7 +88,6 @@ public class OutboundMessageHandler {
 	        		} catch (IOException e) {
 	        			transaction.setStatus(Transaction.TransactionStatus.ERROR.name());
 	        			transaction.setErrorMessage(e.getMessage());
-	        			e.printStackTrace();
 	        		} finally {
 	        			transaction.setOrganizationId(organizationId.toString());
 	        			transaction.setUserId(userId.toString());
@@ -146,7 +144,7 @@ public class OutboundMessageHandler {
 			 * 
 			 */
 
-			Set<OutboundMessageEvent> outboundMessageEvents = new HashSet<OutboundMessageEvent>();
+			Set<TransactionEvent> outboundMessageEvents = new HashSet<TransactionEvent>();
 
 			/**
 			 * 
@@ -168,7 +166,7 @@ public class OutboundMessageHandler {
 							.withSessionId(outboundMessage.getSessionId())
 							.withUserId(userId);
 					
-					outboundMessageEvents.add(new OutboundMessageEvent(outboundMessageEventRequest));
+					outboundMessageEvents.add(new TransactionEvent(outboundMessageEventRequest));
 					
 				});
 

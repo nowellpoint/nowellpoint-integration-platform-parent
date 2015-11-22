@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.s3;
+package com.nowellpoint.aws.lambda.dynamodb;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -29,13 +29,15 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.lambda.s3.OutboundMessageEventRequest;
+import com.nowellpoint.aws.lambda.s3.OutboundMessageEventResponse; 
 import com.nowellpoint.aws.model.FieldMappingEntry;
 import com.nowellpoint.aws.model.Mapping;
 import com.nowellpoint.aws.model.sforce.Notification;
 import com.nowellpoint.aws.util.MongoQuery;
 import com.nowellpoint.aws.util.SalesforceUrlFactory;
 
-public class OutboundMessageEvent implements Callable<OutboundMessageEventResponse> {
+public class TransactionEvent implements Callable<OutboundMessageEventResponse> {
 	
 	private static Map<String,Mapping> mappingCache = new HashMap<String,Mapping>();
 	
@@ -55,7 +57,7 @@ public class OutboundMessageEvent implements Callable<OutboundMessageEventRespon
 	
 	private Notification notification;
 
-	public OutboundMessageEvent(OutboundMessageEventRequest outboundMessageProcessorRequest) {
+	public TransactionEvent(OutboundMessageEventRequest outboundMessageProcessorRequest) {
 		this.logger = outboundMessageProcessorRequest.getLogger();
 		this.partnerURL = outboundMessageProcessorRequest.getPartnerURL();
 		this.sessionId = outboundMessageProcessorRequest.getSessionId();
