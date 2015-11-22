@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.UUID;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -22,23 +22,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
-import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
 import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import com.amazonaws.services.s3.AmazonS3Encryption;
-import com.amazonaws.services.s3.AmazonS3EncryptionClient;
-import com.amazonaws.services.s3.model.CryptoConfiguration;
-import com.amazonaws.services.s3.model.KMSEncryptionMaterialsProvider;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,14 +36,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.model.TransactionStatus;
-import com.nowellpoint.aws.model.TransactionType;
+import com.nowellpoint.aws.model.Transaction;
 
 public class OutboundMessageListener implements RequestStreamHandler {
 	
 	private static final Logger log = Logger.getLogger(OutboundMessageListener.class.getName());
 	private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	private static DynamoDB dynamoDB = new DynamoDB(new AmazonDynamoDBClient());
+	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 	
 	private static String ACK_RESPONSE = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
 			+ "<soapenv:Body>"
@@ -86,7 +75,6 @@ public class OutboundMessageListener implements RequestStreamHandler {
 		try {
 			outboundMessage = convertToJson(xml);
 			saveOutboundMessage(outboundMessage);
-			//putOutboundMessage(outboundMessage);
 			response = getAckMessage(Boolean.TRUE);
 		} catch (ParserConfigurationException | SAXException | AmazonClientException e) {
 			e.printStackTrace();
@@ -176,35 +164,13 @@ public class OutboundMessageListener implements RequestStreamHandler {
 		
 		String payload = Base64.encodeAsString(ciphertext.array());
 		
-		Table table = dynamoDB.getTable("Transactions");
+		Transaction transaction = new Transaction();
+		transaction.setType(Transaction.TransactionType.OUTBOUND_MESSAGE.name());
+		transaction.setStatus(Transaction.TransactionStatus.NEW.name());
+		transaction.setTransactionDate(Date.from(Instant.now()));
+		transaction.setPayload(payload);
 		
-		PrimaryKey primaryKey = new PrimaryKey("Id", UUID.randomUUID().toString());
-		
-		Item item = new Item().withPrimaryKey(primaryKey)
-				.withString("Type", TransactionType.OUTBOUND_MESSAGE.name())
-				.withString("TransactionDate", Instant.now().toString())
-				.withString("Status", TransactionStatus.NEW.name())
-				.withString("Payload", payload);
-		
-		table.putItem(item);	
-	}
-	
-	private void putOutboundMessage(JsonNode outboundMessage) {
-		String keyId = "arn:aws:kms:us-east-1:600862814314:key/534e1894-56e5-413b-97fc-a3d6bbc0c51b";
-		String bucketName = "salesforce-outbound-messages"; 
-        String objectKey = UUID.randomUUID().toString();
-       
-        AmazonS3Encryption encryptionClient = new AmazonS3EncryptionClient(
-        		new EnvironmentVariableCredentialsProvider(), 
-        		new KMSEncryptionMaterialsProvider(keyId), 
-        		new CryptoConfiguration());
-        
-        byte[] bytes = outboundMessage.toString().getBytes();
-        
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(bytes.length);
-        
-        encryptionClient.putObject(new PutObjectRequest(bucketName, objectKey, new ByteArrayInputStream(bytes), objectMetadata));
+		mapper.save(transaction);	
 	}
 	
 	private String getAckMessage(Boolean result) {

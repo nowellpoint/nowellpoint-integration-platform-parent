@@ -19,14 +19,12 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
-import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
 import com.amazonaws.services.kms.model.DecryptRequest;
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.amazonaws.util.Base64;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,14 +36,14 @@ import com.nowellpoint.aws.lambda.s3.OutboundMessageEvent;
 import com.nowellpoint.aws.lambda.s3.OutboundMessageEventRequest;
 import com.nowellpoint.aws.lambda.s3.OutboundMessageEventResponse;
 import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.TransactionStatus;
+import com.nowellpoint.aws.model.Transaction;
 import com.nowellpoint.aws.model.sforce.OutboundMessage;
 import com.nowellpoint.aws.sforce.SalesforceResource;
 import com.nowellpoint.aws.util.MongoQuery;
 
 public class OutboundMessageHandler {
 	
-	private static DynamoDB dynamoDB;
+	private static DynamoDBMapper mapper;
 	private static AWSKMS kms;
 	private static SalesforceResource salesforceResource;
 	private static MongoClientURI mongoClientURI;	
@@ -55,48 +53,53 @@ public class OutboundMessageHandler {
 	private static ObjectId userId;
 	
 	public OutboundMessageHandler() {
-		dynamoDB = new DynamoDB(new AmazonDynamoDBClient());
+		mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 		kms = new AWSKMSClient();
 		salesforceResource = new SalesforceResource();
 	}
 
 	public String handleEvent(DynamodbEvent event, Context context) {
-		context.getLogger().log(new Date() + " DynamodbEvent received...");
-		event.getRecords().forEach(record -> {
-			record.getDynamodb().getKeys().forEach( (key, value) -> {
-				
-				context.getLogger().log(new Date() + " Processing Transaction Id: " + value.getS());
-				
-				PrimaryKey primaryKey = new PrimaryKey("Id", value.getS());
-				
-				Table table = dynamoDB.getTable("Transactions");
-				
-				Item item = table.getItem(primaryKey);
-				String payload = item.getString("Payload");
-				
-				ByteBuffer ciphertext = ByteBuffer.wrap(Base64.decode(payload.getBytes()));
-				DecryptRequest decryptRequest = new DecryptRequest().withCiphertextBlob(ciphertext);
-				ByteBuffer plainText = kms.decrypt(decryptRequest).getPlaintext();
-				
-				String decrypted = new String(plainText.array(), Charset.forName("UTF-8"));
-				
-				try {
-					OutboundMessage outboundMessage = new ObjectMapper().readValue(decrypted, OutboundMessage.class);
-					processOutboundMessage(outboundMessage, context);
-					item.withString("Status", TransactionStatus.COMPLETE.name());
-				} catch (Exception e) {
-					item.withString("Status", TransactionStatus.ERROR.name());
-					item.withString("ErrorMessage", e.getMessage());
-					e.printStackTrace();
-				} finally {
-					item.withString("OrganizationId", organizationId.toString());
-					item.withString("UserId", userId.toString());
-					table.putItem(item);
-				}
-			});
+		LambdaLogger logger = context.getLogger();
+		
+		event.getRecords().stream().filter(record -> "INSERT".equals(record.getEventName())).forEach(record -> {
+			
+			logger.log(new Date() + " DynamodbEvent received...Event Id: "
+					.concat(record.getEventID())
+					.concat(" Event Name: " + record.getEventName()));
+	        
+	        record.getDynamodb().getKeys().forEach( (key, value) -> {	        	
+	        	
+	        	String id = value.getS();
+	        		
+	        	logger.log(new Date() + " Processing Transaction Id: " + id);
+	        		
+	        	Transaction transaction = mapper.load(Transaction.class, id);
+	        		
+	        	if (transaction != null) {
+	        		ByteBuffer ciphertext = ByteBuffer.wrap(Base64.decode(transaction.getPayload().getBytes()));
+	        		DecryptRequest decryptRequest = new DecryptRequest().withCiphertextBlob(ciphertext);
+	        		ByteBuffer plainText = kms.decrypt(decryptRequest).getPlaintext();
+	        			
+	        		String decrypted = new String(plainText.array(), Charset.forName("UTF-8"));
+	        			
+	        		try {
+	        			OutboundMessage outboundMessage = new ObjectMapper().readValue(decrypted, OutboundMessage.class);
+	        			processOutboundMessage(outboundMessage, context);
+	        			transaction.setStatus(Transaction.TransactionStatus.COMPLETE.name());
+	        		} catch (IOException e) {
+	        			transaction.setStatus(Transaction.TransactionStatus.ERROR.name());
+	        			transaction.setErrorMessage(e.getMessage());
+	        			e.printStackTrace();
+	        		} finally {
+	        			transaction.setOrganizationId(organizationId.toString());
+	        			transaction.setUserId(userId.toString());
+	        			mapper.save(transaction);
+	        		}
+	        	}
+	        });
 		});
 		
-		return context.getAwsRequestId();
+		return "Successfully processed " + event.getRecords().size() + " records.";
 	}
 	
 	private void processOutboundMessage(OutboundMessage outboundMessage, Context context) throws IOException {

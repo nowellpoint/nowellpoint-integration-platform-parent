@@ -19,24 +19,6 @@
   },
   {
     "configuration": {
-      "functionName": "OutboundMessageHandler",
-      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:OutboundMessageHandler",
-      "runtime": "java8",
-      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.s3.OutboundMessageHandler::handleEvent",
-      "description": "Salesforce Outbound Message Handler that is called by the Salesforce Outbound Message Listener application",
-      "timeout": 60,
-      "memorySize": 512,
-      "version": "$LATEST"
-    },
-    "code": {
-      "s3Bucket": "aws-microservices",
-      "s3Key": "nowellpoint-aws-sforce-0.0.2-SNAPSHOT.jar",
-      "s3ObjectVersion": null
-    }
-  },
-  {
-    "configuration": {
       "functionName": "SalesforceAuthenticationRequest",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:SalesforceAuthenticationRequest",
       "runtime": "java8",
