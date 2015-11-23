@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.s3;
+package com.nowellpoint.aws.lambda.dynamodb;
 
 import org.bson.types.ObjectId;
 
@@ -6,7 +6,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.model.sforce.Notification;
 
-public class OutboundMessageEventRequest {
+public class TransactionEventRequest {
 	
 	private LambdaLogger logger;
 	
@@ -22,41 +22,41 @@ public class OutboundMessageEventRequest {
 	
 	private Notification notification;
 	
-	public OutboundMessageEventRequest() {
+	public TransactionEventRequest() {
 		
 	}
 	
-	public OutboundMessageEventRequest withLogger(LambdaLogger logger) {
+	public TransactionEventRequest withLogger(LambdaLogger logger) {
 		this.logger = logger;
 		return this;
 	}
 	
-	public OutboundMessageEventRequest withPartnerURL(String partnerURL) {
+	public TransactionEventRequest withPartnerURL(String partnerURL) {
 		this.partnerURL = partnerURL;
 		return this;
 	}
 	
-	public OutboundMessageEventRequest withSessionId(String sessionId) {
+	public TransactionEventRequest withSessionId(String sessionId) {
 		this.sessionId = sessionId;
 		return this;
 	}
 	
-	public OutboundMessageEventRequest withMongoDatabase(MongoDatabase mongoDatabase) {
+	public TransactionEventRequest withMongoDatabase(MongoDatabase mongoDatabase) {
 		this.mongoDatabase = mongoDatabase;
 		return this;
 	}
 
-	public OutboundMessageEventRequest withUserId(ObjectId userId) {
+	public TransactionEventRequest withUserId(ObjectId userId) {
 		this.userId = userId;
 		return this;
 	}
 	
-	public OutboundMessageEventRequest withOrganizationId(ObjectId organizationId) {
+	public TransactionEventRequest withOrganizationId(ObjectId organizationId) {
 		this.organizationId = organizationId;
 		return this;
 	}
 	
-	public OutboundMessageEventRequest withNotification(Notification notification) {
+	public TransactionEventRequest withNotification(Notification notification) {
 		this.notification = notification;
 		return this;
 	}

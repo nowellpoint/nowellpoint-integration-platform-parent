@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -13,15 +14,15 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.data.CreateDocumentRequest;
-import com.nowellpoint.aws.model.data.CreateDocumentResponse;
+import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
+import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
-public class CreateDocument implements RequestHandler<CreateDocumentRequest, CreateDocumentResponse> {
+public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, UpdateDocumentResponse> {
 	
-	private static final Logger log = Logger.getLogger(CreateDocument.class.getName());
+	private static final Logger log = Logger.getLogger(UpdateDocument.class.getName());
 
 	@Override
-	public CreateDocumentResponse handleRequest(CreateDocumentRequest request, Context context) {
+	public UpdateDocumentResponse handleRequest(UpdateDocumentRequest request, Context context) {
 		
 		/**
 		 * 
@@ -33,7 +34,7 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 		
-		CreateDocumentResponse response = new CreateDocumentResponse();
+		UpdateDocumentResponse response = new UpdateDocumentResponse();
 		
 		/**
 		 * 
@@ -58,11 +59,11 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		Date now = Date.from(Instant.now());
 		
 		Document document = Document.parse(request.getDocument());
-		document.put("createdDate", now);
+		document.put("_id", new ObjectId(request.getId()));
 		document.put("lastModifiedDate", now);
 		
 		try{
-			mongoDatabase.getCollection(request.getCollectionName()).insertOne(document);
+			mongoDatabase.getCollection(request.getCollectionName()).findOneAndReplace(new Document("_id", document.getObjectId("_id")), document);
 		} catch (MongoException e) {
 			e.printStackTrace();
 		}
@@ -71,7 +72,7 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		
 		log.info("execution time: " + (System.currentTimeMillis() - startTime));
 		
-		response.setStatusCode(201);
+		response.setStatusCode(200);
 		response.setId(document.getObjectId("_id").toString());
 		response.setDocument(document.toJson());
 		

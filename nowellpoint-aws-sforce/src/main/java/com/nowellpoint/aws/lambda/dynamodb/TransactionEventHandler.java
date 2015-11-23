@@ -33,8 +33,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.lambda.s3.OutboundMessageEventRequest;
-import com.nowellpoint.aws.lambda.s3.OutboundMessageEventResponse;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.Transaction;
 import com.nowellpoint.aws.model.TransactionResult;
@@ -194,7 +192,7 @@ public class TransactionEventHandler {
 				
 				outboundMessage.getNotifications().stream().forEach(notification -> {
 					
-					OutboundMessageEventRequest outboundMessageEventRequest = new OutboundMessageEventRequest().withLogger(context.getLogger())
+					TransactionEventRequest outboundMessageEventRequest = new TransactionEventRequest().withLogger(context.getLogger())
 							.withPartnerURL(outboundMessage.getPartnerUrl())
 							.withMongoDatabase(mongoDatabase)
 							.withNotification(notification)
@@ -210,7 +208,7 @@ public class TransactionEventHandler {
 				 * process outbound message events
 				 */
 
-				List<Future<OutboundMessageEventResponse>> outboundMessageEventResponses = service.invokeAll(outboundMessageEvents);
+				List<Future<TransactionEventResponse>> outboundMessageEventResponses = service.invokeAll(outboundMessageEvents);
 				service.shutdown();
 				service.awaitTermination(30, TimeUnit.SECONDS);
 				
@@ -219,7 +217,7 @@ public class TransactionEventHandler {
 				 */
 
 				List<Document> events = new ArrayList<Document>();
-				for (Future<OutboundMessageEventResponse> outboundMessageEventResponse : outboundMessageEventResponses) {
+				for (Future<TransactionEventResponse> outboundMessageEventResponse : outboundMessageEventResponses) {
 					
 					Document event = new Document().append("organizationId", organizationId)
 							.append("userId", userId)

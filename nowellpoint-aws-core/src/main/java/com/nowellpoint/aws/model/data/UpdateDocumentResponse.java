@@ -3,7 +3,7 @@ package com.nowellpoint.aws.model.data;
 import com.amazonaws.util.Base64;
 import com.nowellpoint.aws.model.AbstractResponse;
 
-public class CreateDocumentResponse extends AbstractResponse {
+public class UpdateDocumentResponse extends AbstractResponse {
 
 	private static final long serialVersionUID = -6801344091393248864L;
 	
@@ -11,7 +11,7 @@ public class CreateDocumentResponse extends AbstractResponse {
 	
 	private String document;
 	
-	public CreateDocumentResponse() {
+	public UpdateDocumentResponse() {
 		
 	}
 

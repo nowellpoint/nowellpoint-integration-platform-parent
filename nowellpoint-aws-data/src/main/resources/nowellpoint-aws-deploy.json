@@ -6,7 +6,25 @@
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.data.CreateDocument::handleRequest",
-      "description": "Function that creates a new document",
+      "description": "Create Document: Function that creates a new document in MongoDB",
+      "timeout": 60,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-data-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "UpdateDocument",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:UpdateDocument",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.data.UpdateDocument::handleRequest",
+      "description": "Update Document: Function that creates a new document in MongoDB",
       "timeout": 60,
       "memorySize": 1536,
       "version": "$LATEST"

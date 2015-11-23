@@ -29,15 +29,13 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.lambda.s3.OutboundMessageEventRequest;
-import com.nowellpoint.aws.lambda.s3.OutboundMessageEventResponse; 
 import com.nowellpoint.aws.model.FieldMappingEntry;
 import com.nowellpoint.aws.model.Mapping;
 import com.nowellpoint.aws.model.sforce.Notification;
 import com.nowellpoint.aws.util.MongoQuery;
 import com.nowellpoint.aws.util.SalesforceUrlFactory;
 
-public class TransactionEvent implements Callable<OutboundMessageEventResponse> {
+public class TransactionEvent implements Callable<TransactionEventResponse> {
 	
 	private static Map<String,Mapping> mappingCache = new HashMap<String,Mapping>();
 	
@@ -57,7 +55,7 @@ public class TransactionEvent implements Callable<OutboundMessageEventResponse> 
 	
 	private Notification notification;
 
-	public TransactionEvent(OutboundMessageEventRequest outboundMessageProcessorRequest) {
+	public TransactionEvent(TransactionEventRequest outboundMessageProcessorRequest) {
 		this.logger = outboundMessageProcessorRequest.getLogger();
 		this.partnerURL = outboundMessageProcessorRequest.getPartnerURL();
 		this.sessionId = outboundMessageProcessorRequest.getSessionId();
@@ -68,7 +66,7 @@ public class TransactionEvent implements Callable<OutboundMessageEventResponse> 
 	}
 
 	@Override
-	public OutboundMessageEventResponse call() {
+	public TransactionEventResponse call() {
 		
 		/**
 		 * 
@@ -151,16 +149,16 @@ public class TransactionEvent implements Callable<OutboundMessageEventResponse> 
 			 * 
 			 */
 
-			OutboundMessageEventResponse.Action action = document.getInteger("version") > 1 ? 
-					OutboundMessageEventResponse.Action.UPDATE : 
-						OutboundMessageEventResponse.Action.CREATE;
+			TransactionEventResponse.Action action = document.getInteger("version") > 1 ? 
+					TransactionEventResponse.Action.UPDATE : 
+						TransactionEventResponse.Action.CREATE;
 			
 			/**
 			 * 
 			 */
 
-			OutboundMessageEventResponse outboundMessageEventResponse = new OutboundMessageEventResponse().withObjectId(document.getObjectId("_id"))
-					.withStatus(OutboundMessageEventResponse.Status.SUCCESS)
+			TransactionEventResponse outboundMessageEventResponse = new TransactionEventResponse().withObjectId(document.getObjectId("_id"))
+					.withStatus(TransactionEventResponse.Status.SUCCESS)
 					.withAction(action)
 					.withCollection(collectionName)
 					.withExecutionTime((System.currentTimeMillis() - startTime));
@@ -189,8 +187,8 @@ public class TransactionEvent implements Callable<OutboundMessageEventResponse> 
 			 * 
 			 */
 			
-			OutboundMessageEventResponse outboundMessageEventResponse = new OutboundMessageEventResponse()
-					.withStatus(OutboundMessageEventResponse.Status.FAIL)
+			TransactionEventResponse outboundMessageEventResponse = new TransactionEventResponse()
+					.withStatus(TransactionEventResponse.Status.FAIL)
 					.withExceptionMessage(e.getMessage())
 					.withExecutionTime(System.currentTimeMillis() - startTime);
 			

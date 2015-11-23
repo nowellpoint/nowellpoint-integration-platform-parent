@@ -1,8 +1,8 @@
-package com.nowellpoint.aws.lambda.s3;
+package com.nowellpoint.aws.lambda.dynamodb;
 
 import org.bson.types.ObjectId;
 
-public class OutboundMessageEventResponse {
+public class TransactionEventResponse {
 	
 	public enum Status {
 		SUCCESS,
@@ -27,36 +27,36 @@ public class OutboundMessageEventResponse {
 	
 	private String exceptionMessage;
 	
-	public OutboundMessageEventResponse() {
+	public TransactionEventResponse() {
 		
 	}
 	
-	public OutboundMessageEventResponse withStatus(Status status) {
+	public TransactionEventResponse withStatus(Status status) {
 		this.status = status;
 		return this;
 	}
 	
-	public OutboundMessageEventResponse withAction(Action action) {
+	public TransactionEventResponse withAction(Action action) {
 		this.action = action;
 		return this;
 	}
 	
-	public OutboundMessageEventResponse withCollection(String collection) {
+	public TransactionEventResponse withCollection(String collection) {
 		this.collection = collection;
 		return this;
 	}
 	
-	public OutboundMessageEventResponse withObjectId(ObjectId objectId) {
+	public TransactionEventResponse withObjectId(ObjectId objectId) {
 		this.objectId = objectId;
 		return this;
 	}
 	
-	public OutboundMessageEventResponse withExecutionTime(Long executionTime) {
+	public TransactionEventResponse withExecutionTime(Long executionTime) {
 		this.executionTime = executionTime;
 		return this;
 	}
 	
-	public OutboundMessageEventResponse withExceptionMessage(String exceptionMessage) {
+	public TransactionEventResponse withExceptionMessage(String exceptionMessage) {
 		this.exceptionMessage = exceptionMessage;
 		return this;
 	}

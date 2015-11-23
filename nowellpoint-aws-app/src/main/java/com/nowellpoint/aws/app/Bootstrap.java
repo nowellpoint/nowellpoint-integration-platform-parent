@@ -197,8 +197,7 @@ public class Bootstrap {
 	}
 
 	private static int getPort() {
-		String port = Optional.ofNullable(System.getenv().get("PORT")).orElse(
-				"8080");
+		String port = Optional.ofNullable(System.getenv().get("PORT")).orElse("8080");
 		return Integer.parseInt(port);
 	}
 }
