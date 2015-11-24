@@ -11,10 +11,28 @@ import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
+import com.nowellpoint.aws.model.idp.GetTokenRequest;
+import com.nowellpoint.aws.model.idp.GetTokenResponse;
 
 public class DocumentService extends AbstractService {
 	
 	private String accessToken;
+	
+	public DocumentService() {
+		long startTime = System.currentTimeMillis();
+		//String clientCredentials = System.getenv("NOWELLPOINT_API_KEY_ID").concat(":").concat(System.getenv("NOWELLPOINT_API_KEY_SECRET"));
+		
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
+				.withPassword(System.getenv("STORMPATH_PASSWORD"));
+		
+		GetTokenResponse tokenResponse;
+		try {
+			tokenResponse = invoke("IDP_UsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(System.currentTimeMillis() - startTime);
+	}
 	
 	public DocumentService(String accessToken) {
 		this.accessToken = accessToken;

@@ -23,29 +23,22 @@ public class TestDataService {
 	@Test
 	public void testCreateAndUpdateParty() {
 		
-		IdentityProviderService identityProviderService = new IdentityProviderService();
-		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
-				.withPassword(System.getenv("STORMPATH_PASSWORD"));
-		
-		GetTokenResponse tokenResponse = null;
-		try {
-			tokenResponse = identityProviderService.authenticate(tokenRequest);
-			
-			assertTrue(tokenResponse.getStatusCode() == 200);
-			assertNotNull(tokenResponse.getToken().getAccessToken());
-			assertNotNull(tokenResponse.getToken().getExpiresIn());
-			assertNotNull(tokenResponse.getToken().getStormpathAccessTokenHref());
-			assertNotNull(tokenResponse.getToken().getRefreshToken());
-			assertNotNull(tokenResponse.getToken().getTokenType());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		IdentityProviderService identityProviderService = new IdentityProviderService();
+//		
+//		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
+//				.withPassword(System.getenv("STORMPATH_PASSWORD"));
+//		
+//		GetTokenResponse tokenResponse = null;
+//		try {
+//			tokenResponse = identityProviderService.authenticate(tokenRequest);
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		
 		long startTime = System.currentTimeMillis();
 		
-		DocumentService documentService = new DocumentService(tokenResponse.getToken().getAccessToken());
+		DocumentService documentService = new DocumentService();
 		
 		ObjectNode json = JsonNodeFactory.instance.objectNode()
 				.put("sicCode", "300")
