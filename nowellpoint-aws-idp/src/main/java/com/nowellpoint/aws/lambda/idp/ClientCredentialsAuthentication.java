@@ -1,7 +1,11 @@
 package com.nowellpoint.aws.lambda.idp;
 
+import javax.ws.rs.core.MediaType;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.stormpath.sdk.api.ApiAuthenticationResult;
@@ -17,35 +21,22 @@ import com.stormpath.sdk.impl.util.Base64;
 
 public class ClientCredentialsAuthentication implements RequestHandler<GetAccountRequest, GetAccountResponse> {
 	
-	private static final Client client;
-	private static final Application application;
-
-	static {
-		client = Clients.builder()
-				.setApiKey(ApiKeys.builder()
-						.setId(System.getenv("STORMPATH_API_KEY_ID"))
-						.setSecret(System.getenv("STORMPATH_API_KEY_SECRET"))
-						.build())
-					.build();
-
-		application = client.getResource(System.getenv("STORMPATH_APPLICATION"), Application.class);
-	}
+	private static final String endpoint = "https://api.stormpath.com/v1/applications";
 	
 	@Override
 	public GetAccountResponse handleRequest(GetAccountRequest request, Context context) { 
-		String clientCredentials = System.getenv("NOWELLPOINT_API_KEY_ID").concat(":").concat(System.getenv("NOWELLPOINT_API_KEY_SECRET"));
-		String basicToken = new String(Base64.encodeBase64(clientCredentials.getBytes()));
-
-		HttpRequest httpRequest = HttpRequests.method(HttpMethod.POST)
-				.addHeader("grant_type", new String[] {"client_credentials"})
-				.addHeader("Authorization", new String[] {"Basic " + basicToken})
-				.build();
-		
-		 ApiAuthenticationResult result = Applications.apiRequestAuthenticator(application).authenticate(httpRequest);
-		 
-		 GetAccountResponse response = new GetAccountResponse();
-		 //response.setAccount(result.getAccount());
-		 
-		 return response;
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.post(endpoint)
+					.path(Configuration.getStormpathApplicationId())
+					.path("oauth/token")
+					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.parameter("grant_type", "client_credentials")
+					.parameter("username", request.getUsername())
+					.parameter("password", request.getPassword())
+					.execute();
+		return null;
 	}	
 }
