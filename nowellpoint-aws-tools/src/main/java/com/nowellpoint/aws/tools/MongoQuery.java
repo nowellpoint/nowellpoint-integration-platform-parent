@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.util;
+package com.nowellpoint.aws.tools;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;

@@ -13,30 +13,12 @@ import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
-import com.nowellpoint.aws.model.idp.GetTokenRequest;
-import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.service.DocumentService;
-import com.nowellpoint.aws.service.IdentityProviderService;
 
 public class TestDataService {
 
 	@Test
 	public void testCreateAndUpdateParty() {
-		
-//		IdentityProviderService identityProviderService = new IdentityProviderService();
-//		
-//		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
-//				.withPassword(System.getenv("STORMPATH_PASSWORD"));
-//		
-//		GetTokenResponse tokenResponse = null;
-//		try {
-//			tokenResponse = identityProviderService.authenticate(tokenRequest);
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-		long startTime = System.currentTimeMillis();
 		
 		DocumentService documentService = new DocumentService();
 		
@@ -47,32 +29,26 @@ public class TestDataService {
 				.put("partyNumber", "228919")
 				.put("version", 0);
 		
-		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
-		
 		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withCollectionName("parties").withDocument(json.toString());
 		
-		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
-		
 		try {
-			CreateDocumentResponse createDocumentResponse = documentService.create(createDocumentRequest);
+			long startTime = System.currentTimeMillis();
+			CreateDocumentResponse createDocumentResponse = documentService.create(createDocumentRequest);	
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
-			
 			System.out.println("id: " + createDocumentResponse.getId());
 			System.out.println("document: " + createDocumentResponse.getDocument());
 			
 			json.put("partyType", "ORGANIZATION");
 			
-			startTime = System.currentTimeMillis();
-			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withCollectionName("parties")
 					.withId(createDocumentResponse.getId())
 					.withDocument(json.toString());
 			
+			startTime = System.currentTimeMillis();
 			UpdateDocumentResponse updateDocumentResponse = documentService.update(updateDocumentRequest);
 			
-			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
-			
+			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));			
 			System.out.println("id: " + updateDocumentResponse.getId());
 			System.out.println("document: " + updateDocumentResponse.getDocument());
 			

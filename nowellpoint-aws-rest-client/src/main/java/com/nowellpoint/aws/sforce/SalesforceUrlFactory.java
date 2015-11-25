@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.util;
+package com.nowellpoint.aws.sforce;
 
 import java.net.MalformedURLException;
 import java.net.URL;

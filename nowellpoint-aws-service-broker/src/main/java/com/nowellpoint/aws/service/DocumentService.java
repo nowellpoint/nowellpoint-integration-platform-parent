@@ -20,7 +20,6 @@ public class DocumentService extends AbstractService {
 	
 	public DocumentService() {
 		long startTime = System.currentTimeMillis();
-		//String clientCredentials = System.getenv("NOWELLPOINT_API_KEY_ID").concat(":").concat(System.getenv("NOWELLPOINT_API_KEY_SECRET"));
 		
 		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
@@ -28,10 +27,12 @@ public class DocumentService extends AbstractService {
 		GetTokenResponse tokenResponse;
 		try {
 			tokenResponse = invoke("IDP_UsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
+			accessToken = tokenResponse.getToken().getAccessToken();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(System.currentTimeMillis() - startTime);
+		
+		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
 	}
 	
 	public DocumentService(String accessToken) {

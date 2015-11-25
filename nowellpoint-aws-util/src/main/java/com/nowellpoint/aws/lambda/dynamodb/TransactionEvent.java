@@ -12,10 +12,9 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.core.MediaType;
-
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import com.nowellpoint.aws.http.MediaType;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -32,8 +31,8 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.FieldMappingEntry;
 import com.nowellpoint.aws.model.Mapping;
 import com.nowellpoint.aws.model.sforce.Notification;
-import com.nowellpoint.aws.util.MongoQuery;
-import com.nowellpoint.aws.util.SalesforceUrlFactory;
+import com.nowellpoint.aws.sforce.SalesforceUrlFactory;
+import com.nowellpoint.aws.tools.MongoQuery;
 
 public class TransactionEvent implements Callable<TransactionEventResponse> {
 	

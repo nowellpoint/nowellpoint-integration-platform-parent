@@ -38,7 +38,7 @@ import com.nowellpoint.aws.model.Transaction;
 import com.nowellpoint.aws.model.TransactionResult;
 import com.nowellpoint.aws.model.sforce.OutboundMessage;
 import com.nowellpoint.aws.sforce.SalesforceResource;
-import com.nowellpoint.aws.util.MongoQuery;
+import com.nowellpoint.aws.tools.MongoQuery;
 
 public class TransactionEventHandler {
 	

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Base64;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.ws.rs.core.HttpHeaders;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
