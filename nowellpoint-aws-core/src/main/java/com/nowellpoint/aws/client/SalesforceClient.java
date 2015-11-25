@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.service;
+package com.nowellpoint.aws.client;
 
 import java.io.IOException;
 
@@ -11,9 +11,9 @@ import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
 import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
 
-public class SalesforceService extends AbstractService {
+public class SalesforceClient extends AbstractClient {
 	
-	public SalesforceService() {
+	public SalesforceClient() {
 		
 	}
 	

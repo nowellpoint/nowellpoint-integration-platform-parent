@@ -8,22 +8,22 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
 import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
 import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
-import com.nowellpoint.aws.service.SalesforceService;
 
-public class TestSalesforceService {
+public class TestSalesforceClient {
 	
 	@Test
 	public void testAuthenticateSucess() {
 		
 		long start;
 		
-		SalesforceService salesforceService = new SalesforceService();
+		SalesforceClient client = new SalesforceClient();
 		
 		start = System.currentTimeMillis();
 		
@@ -33,7 +33,7 @@ public class TestSalesforceService {
 		
 		GetTokenResponse tokenResponse = null;
 		try {
-			tokenResponse = salesforceService.authenticate(tokenRequest);
+			tokenResponse = client.authenticate(tokenRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));		
 			
@@ -59,7 +59,7 @@ public class TestSalesforceService {
 		
 		GetIdentityResponse identityResponse = null;
 		try {
-			identityResponse = salesforceService.getIdentity(identityRequest);
+			identityResponse = client.getIdentity(identityRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));		
 			
@@ -82,7 +82,7 @@ public class TestSalesforceService {
 		
 		RevokeTokenResponse revokeTokenResponse = null;
 		try {
-			revokeTokenResponse = salesforceService.revoke(revokeTokenRequest);
+			revokeTokenResponse = client.revoke(revokeTokenRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			

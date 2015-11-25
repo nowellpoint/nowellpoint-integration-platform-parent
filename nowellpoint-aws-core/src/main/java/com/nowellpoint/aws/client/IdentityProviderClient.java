@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.service;
+package com.nowellpoint.aws.client;
 
 import java.io.IOException;
 
@@ -11,9 +11,9 @@ import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
 
-public class IdentityProviderService extends AbstractService {
+public class IdentityProviderClient extends AbstractClient {
 
-	public IdentityProviderService() {
+	public IdentityProviderClient() {
 		
 	}
 	

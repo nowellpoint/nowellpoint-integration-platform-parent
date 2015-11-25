@@ -9,18 +9,18 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
-import com.nowellpoint.aws.service.DocumentService;
 
-public class TestDataService {
+public class TestDataClient {
 
 	@Test
 	public void testCreateAndUpdateParty() {
 		
-		DocumentService documentService = new DocumentService();
+		DataClient client = new DataClient();
 		
 		ObjectNode json = JsonNodeFactory.instance.objectNode()
 				.put("sicCode", "300")
@@ -36,7 +36,7 @@ public class TestDataService {
 			
 			long startTime = System.currentTimeMillis();
 			
-			CreateDocumentResponse createDocumentResponse = documentService.create(createDocumentRequest);	
+			CreateDocumentResponse createDocumentResponse = client.create(createDocumentRequest);	
 			
 			assertTrue(createDocumentResponse.getStatusCode() == 201);
 			assertNotNull(createDocumentResponse.getId());
@@ -54,7 +54,7 @@ public class TestDataService {
 			
 			startTime = System.currentTimeMillis();
 			
-			UpdateDocumentResponse updateDocumentResponse = documentService.update(updateDocumentRequest);
+			UpdateDocumentResponse updateDocumentResponse = client.update(updateDocumentRequest);
 			
 			assertTrue(updateDocumentResponse.getStatusCode() == 200);
 			assertNotNull(updateDocumentRequest.getId());

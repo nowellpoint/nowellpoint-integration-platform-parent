@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
@@ -15,16 +16,15 @@ import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
 import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
-import com.nowellpoint.aws.service.IdentityProviderService;
 
-public class TestIdentityProviderService {
+public class TestIdentityProviderClient {
 
 	@Test
 	public void testAuthenticateSuccess() {
 		
 		long start;
 		
-		IdentityProviderService identityProviderService = new IdentityProviderService();
+		IdentityProviderClient client = new IdentityProviderClient();
 		
 		System.out.println("get token test");
 		
@@ -35,7 +35,7 @@ public class TestIdentityProviderService {
 		
 		GetTokenResponse tokenResponse = null;
 		try {
-			tokenResponse = identityProviderService.authenticate(tokenRequest);
+			tokenResponse = client.authenticate(tokenRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -58,7 +58,7 @@ public class TestIdentityProviderService {
 		
 		VerifyTokenResponse verifyTokenResponse = null;
 		try {
-			verifyTokenResponse = identityProviderService.verify(verifyTokenRequest);
+			verifyTokenResponse = client.verify(verifyTokenRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -77,7 +77,7 @@ public class TestIdentityProviderService {
 		
 		RefreshTokenResponse refreshTokenResponse = null;		
 		try {
-			refreshTokenResponse = identityProviderService.refresh(refreshTokenRequest);
+			refreshTokenResponse = client.refresh(refreshTokenRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -96,7 +96,7 @@ public class TestIdentityProviderService {
 		
 		RevokeTokenResponse revokeTokenResponse = null;
 		try {
-			revokeTokenResponse = identityProviderService.revoke(revokeTokenRequest);
+			revokeTokenResponse = client.revoke(revokeTokenRequest);
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			

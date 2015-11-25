@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.service;
+package com.nowellpoint.aws.client;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -14,11 +14,11 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 
-public class DocumentService extends AbstractService {
+public class DataClient extends AbstractClient {
 	
 	private String accessToken;
 	
-	public DocumentService() {
+	public DataClient() {
 		long startTime = System.currentTimeMillis();
 		
 		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
@@ -35,7 +35,7 @@ public class DocumentService extends AbstractService {
 		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
 	}
 	
-	public DocumentService(String accessToken) {
+	public DataClient(String accessToken) {
 		this.accessToken = accessToken;
 	}
 

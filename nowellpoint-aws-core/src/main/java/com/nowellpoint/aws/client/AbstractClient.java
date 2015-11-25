@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.service;
+package com.nowellpoint.aws.client;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.AbstractRequest;
 import com.nowellpoint.aws.model.AbstractResponse;
 
-public abstract class AbstractService {
+public abstract class AbstractClient {
 	
 	private static AWSLambda lambda = new AWSLambdaClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();
