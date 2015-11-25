@@ -29,16 +29,23 @@ public class TestDataService {
 				.put("partyNumber", "228919")
 				.put("version", 0);
 		
-		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withCollectionName("parties").withDocument(json.toString());
-		
 		try {
+			
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withCollectionName("parties")
+					.withDocument(json.toString());
+			
 			long startTime = System.currentTimeMillis();
+			
 			CreateDocumentResponse createDocumentResponse = documentService.create(createDocumentRequest);	
+			
+			assertTrue(createDocumentResponse.getStatusCode() == 201);
+			assertNotNull(createDocumentResponse.getId());
+			assertNotNull(createDocumentResponse.getDocument());
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
 			System.out.println("id: " + createDocumentResponse.getId());
 			System.out.println("document: " + createDocumentResponse.getDocument());
-			
+						
 			json.put("partyType", "ORGANIZATION");
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withCollectionName("parties")
@@ -46,7 +53,12 @@ public class TestDataService {
 					.withDocument(json.toString());
 			
 			startTime = System.currentTimeMillis();
+			
 			UpdateDocumentResponse updateDocumentResponse = documentService.update(updateDocumentRequest);
+			
+			assertTrue(updateDocumentResponse.getStatusCode() == 200);
+			assertNotNull(updateDocumentRequest.getId());
+			assertNotNull(updateDocumentRequest.getDocument());
 			
 			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));			
 			System.out.println("id: " + updateDocumentResponse.getId());
