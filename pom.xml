@@ -25,7 +25,6 @@
 	</properties>
 
 	<modules>
-	    <module>nowellpoint-aws-tools</module>
 		<module>nowellpoint-aws-rest-client</module>
 		<module>nowellpoint-aws-core</module>	
 		<module>nowellpoint-aws-data</module>
