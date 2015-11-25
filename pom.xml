@@ -6,7 +6,7 @@
 	<artifactId>aws</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.2-SNAPSHOT</version>
-	<name>Nowellpoint AWS Parent Project</name>
+	<name>Nowellpoint Parent Project</name>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<aws.sdk.version>1.10.35</aws.sdk.version>
+		<aws.sdk.version>1.10.37</aws.sdk.version>
 		<jackson.version>2.6.2</jackson.version>
 		<mongodb.driver.version>3.1.1</mongodb.driver.version>
 		<junit.version>4.12</junit.version>
@@ -27,8 +27,7 @@
 	<modules>
 	    <module>nowellpoint-aws-tools</module>
 		<module>nowellpoint-aws-rest-client</module>
-		<module>nowellpoint-aws-core</module>
-		<module>nowellpoint-aws-service-broker</module>
+		<module>nowellpoint-aws-core</module>	
 		<module>nowellpoint-aws-data</module>
 		<module>nowellpoint-aws-idp</module>
 		<module>nowellpoint-aws-sforce</module>

@@ -21,6 +21,5 @@
 	<classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-service-broker"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
