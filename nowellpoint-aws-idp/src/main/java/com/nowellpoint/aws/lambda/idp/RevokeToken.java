@@ -1,12 +1,8 @@
 package com.nowellpoint.aws.lambda.idp;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
+import static com.nowellpoint.aws.tools.TokenParser.parseToken;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -65,11 +61,5 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 		}
 		
 		return response;
-	}
-	
-	public Jws<Claims> parseToken(String token) throws SignatureException {
-		return Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(Configuration.getStormpathApiKeySecret().getBytes()))
-				.parseClaimsJws(token);
 	}
 }

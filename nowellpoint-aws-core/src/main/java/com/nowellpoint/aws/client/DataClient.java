@@ -1,11 +1,10 @@
 package com.nowellpoint.aws.client;
 
+import static com.nowellpoint.aws.tools.TokenParser.parseToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 
 import java.io.IOException;
-import java.util.Base64;
 
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
@@ -47,11 +46,5 @@ public class DataClient extends AbstractClient {
 	
 	public UpdateDocumentResponse update(UpdateDocumentRequest documentRequest) throws IOException {
 		return invoke("UpdateDocument", documentRequest, UpdateDocumentResponse.class);
-	}
-	
-	private Jws<Claims> parseToken(String token) {
-		return Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getenv("STORMPATH_API_KEY_SECRET").getBytes()))
-				.parseClaimsJws(token);
 	}
 }
