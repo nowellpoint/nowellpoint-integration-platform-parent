@@ -1,10 +1,7 @@
 package com.nowellpoint.aws.data;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.logging.Logger;
 
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -13,19 +10,18 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.UpdateResult;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
-import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
+import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
+import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 
-public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, UpdateDocumentResponse> {
+public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, DeleteDocumentResponse> {
 	
-	private static final Logger log = Logger.getLogger(UpdateDocument.class.getName());
+	private static final Logger log = Logger.getLogger(DeleteDocument.class.getName());
 
 	@Override
-	public UpdateDocumentResponse handleRequest(UpdateDocumentRequest request, Context context) {
-		
-		log.info(context.toString());
+	public DeleteDocumentResponse handleRequest(DeleteDocumentRequest request, Context context) {
 		
 		/**
 		 * 
@@ -55,31 +51,16 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		 * 
 		 */
 		
-		log.info("connection time: " + (System.currentTimeMillis() - startTime));
+		DeleteDocumentResponse response = new DeleteDocumentResponse();
 		
 		/**
 		 * 
 		 */
-		
-		UpdateDocumentResponse response = new UpdateDocumentResponse();
-		
-		/**
-		 * 
-		 */
-		
-		log.info(request.getCollectionName());
-		
-		Date now = Date.from(Instant.now());
-		
-		Document document = Document.parse(request.getDocument());
-		document.put("_id", new ObjectId(request.getId()));
-		document.put("lastModifiedDate", now);
 		
 		try{
-			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getObjectId("_id")), new Document("$set", document));
-			if (result.getModifiedCount() == 1) {
+			DeleteResult result = mongoDatabase.getCollection(request.getCollectionName()).deleteOne( Filters.eq ( "_id", new ObjectId( request.getId() ) ) );
+			if (result.getDeletedCount() == 1) {
 				response.setStatusCode(200);
-				response.setId(document.getObjectId("_id").toString());
 			} else {
 				response.setStatusCode(404);
 				response.setErrorCode("not_found");
@@ -95,7 +76,7 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		}
 		
 		log.info("execution time: " + (System.currentTimeMillis() - startTime));
-
+		
 		return response;
 	}
 }

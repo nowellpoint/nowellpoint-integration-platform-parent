@@ -2,14 +2,13 @@ package com.nowellpoint.aws.model.data;
 
 import com.nowellpoint.aws.model.AbstractRequest;
 
-public class GetDocumentRequest extends AbstractRequest {
-
-	private static final long serialVersionUID = -8063355241890824157L;
+public class DeleteDocumentRequest extends AbstractRequest {
 	
+	private static final long serialVersionUID = -6090910215991875135L;
 	private String id;
 	private String collectionName;
 	
-	public GetDocumentRequest() {
+	public DeleteDocumentRequest() {
 		
 	}
 
@@ -29,12 +28,12 @@ public class GetDocumentRequest extends AbstractRequest {
 		this.collectionName = collectionName;
 	}
 	
-	public GetDocumentRequest withId(String id) {
+	public DeleteDocumentRequest withId(String id) {
 		setId(id);
 		return this;
 	}
 
-	public GetDocumentRequest withCollectionName(String collectionName) {
+	public DeleteDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);
 		return this;
 	}

@@ -14,6 +14,8 @@ import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
+import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
+import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 
 public class DataClient extends AbstractClient {
 	
@@ -40,17 +42,21 @@ public class DataClient extends AbstractClient {
 		this.accessToken = accessToken;
 	}
 
-	public CreateDocumentResponse create(CreateDocumentRequest documentRequest) throws IOException {
+	public CreateDocumentResponse create(CreateDocumentRequest createDocumentRequest) throws IOException {
 		Jws<Claims> claims = parseToken(accessToken);
 		System.out.println(claims.getBody().getSubject());
-		return invoke("CreateDocument", documentRequest, CreateDocumentResponse.class);
+		return invoke("CreateDocument", createDocumentRequest, CreateDocumentResponse.class);
 	}
 	
-	public UpdateDocumentResponse update(UpdateDocumentRequest documentRequest) throws IOException {
-		return invoke("UpdateDocument", documentRequest, UpdateDocumentResponse.class);
+	public UpdateDocumentResponse update(UpdateDocumentRequest updateDocumentRequest) throws IOException {
+		return invoke("UpdateDocument", updateDocumentRequest, UpdateDocumentResponse.class);
 	}
 	
-	public GetDocumentResponse get(GetDocumentRequest documentRequest) throws IOException {
-		return invoke("GetDocument", documentRequest, GetDocumentResponse.class);
+	public GetDocumentResponse get(GetDocumentRequest getDocumentRequest) throws IOException {
+		return invoke("GetDocument", getDocumentRequest, GetDocumentResponse.class);
+	}
+	
+	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws IOException {
+		return invoke("DeleteDocument", deleteDocumentRequest, DeleteDocumentResponse.class);
 	}
 }

@@ -18,6 +18,8 @@ import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
+import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
+import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 
 public class TestDataClient {
 	
@@ -67,7 +69,7 @@ public class TestDataClient {
 			
 			startTime = System.currentTimeMillis();
 			
-			GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withCollection("parties")
+			GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withCollectionName("parties")
 					.withId(createDocumentResponse.getId());
 			
 			GetDocumentResponse getDocumentResponse = client.get(getDocumentRequest);
@@ -82,6 +84,16 @@ public class TestDataClient {
 			
 			System.out.println(getDocumentResponse.getDocument());
 			
+			DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withCollectionName("parties")
+					.withId(createDocumentResponse.getId());
+			
+			DeleteDocumentResponse deleteDocumentResponse = client.delete(deleteDocumentRequest);
+			
+			assertEquals(Integer.valueOf(getDocumentResponse.getStatusCode()), Integer.valueOf(200));
+			
+			assertNull(deleteDocumentResponse.getErrorCode());
+			assertNull(deleteDocumentResponse.getErrorMessage());
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +104,7 @@ public class TestDataClient {
 		
 		try {
 			
-			GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withCollection("parties")
+			GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withCollectionName("parties")
 					.withId("5656fc2ad53d130001a15bc6");
 			
 			long startTime = System.currentTimeMillis();
@@ -108,6 +120,39 @@ public class TestDataClient {
 			assertNull(getDocumentResponse.getId());
 			
 			System.out.println(getDocumentResponse.getErrorCode());
+			
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withCollectionName("parties")
+					.withId("5656fc2ad53d130001a15bc6");
+			
+			startTime = System.currentTimeMillis();
+			
+			UpdateDocumentResponse updateDocumentResponse = client.update(updateDocumentRequest);
+			
+			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));	
+			
+			assertEquals(Integer.valueOf(updateDocumentResponse.getStatusCode()), Integer.valueOf(404));
+			assertEquals(updateDocumentResponse.getErrorCode(), "not_found");
+			assertNotNull(updateDocumentResponse.getErrorMessage());
+			assertNull(getDocumentResponse.getDocument());
+			assertNull(getDocumentResponse.getId());
+			
+			System.out.println(updateDocumentResponse.getErrorCode());
+			
+			
+			DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withCollectionName("parties")
+					.withId("5656fc2ad53d130001a15bc6");
+			
+			startTime = System.currentTimeMillis();
+			
+			DeleteDocumentResponse deleteDocumentResponse = client.delete(deleteDocumentRequest);
+			
+			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));	
+			
+			assertEquals(Integer.valueOf(deleteDocumentResponse.getStatusCode()), Integer.valueOf(404));
+			assertEquals(deleteDocumentResponse.getErrorCode(), "not_found");
+			assertNotNull(deleteDocumentResponse.getErrorMessage());
+			
+			System.out.println(deleteDocumentResponse.getErrorCode());
 			
 		} catch (IOException e) {
 			e.printStackTrace();
