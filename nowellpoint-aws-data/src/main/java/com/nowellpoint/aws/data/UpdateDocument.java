@@ -24,17 +24,13 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 	@Override
 	public UpdateDocumentResponse handleRequest(UpdateDocumentRequest request, Context context) {
 		
+		log.info(context.toString());
+		
 		/**
 		 * 
 		 */
 		
 		long startTime = System.currentTimeMillis();
-		
-		/**
-		 * 
-		 */
-		
-		UpdateDocumentResponse response = new UpdateDocumentResponse();
 		
 		/**
 		 * 
@@ -54,6 +50,22 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 
 		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
 		
+		/**
+		 * 
+		 */
+		
+		log.info("connection time: " + (System.currentTimeMillis() - startTime));
+		
+		/**
+		 * 
+		 */
+		
+		UpdateDocumentResponse response = new UpdateDocumentResponse();
+		
+		/**
+		 * 
+		 */
+		
 		log.info(request.getCollectionName());
 		
 		Date now = Date.from(Instant.now());
@@ -62,22 +74,23 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		document.put("_id", new ObjectId(request.getId()));
 		document.put("lastModifiedDate", now);
 		
+		document.keySet();
+		
 		try{
-			mongoDatabase.getCollection(request.getCollectionName()).findOneAndReplace(new Document("_id", document.getObjectId("_id")), document);
+			mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getObjectId("_id")), new Document("$set", document));
+			response.setStatusCode(200);
+			response.setId(document.getObjectId("_id").toString());
 		} catch (MongoException e) {
+			response.setStatusCode(500);
+			response.setErrorCode("unexpected_exception");
+			response.setErrorMessage(e.getMessage());
 			e.printStackTrace();
+		} finally {
+			mongoClient.close();
 		}
 		
-		log.info(document.getObjectId("_id").toString());
-		
 		log.info("execution time: " + (System.currentTimeMillis() - startTime));
-		
-		response.setStatusCode(200);
-		response.setId(document.getObjectId("_id").toString());
-		response.setDocument(document.toJson());
-		
-		mongoClient.close();
-		
+
 		return response;
 	}
 }

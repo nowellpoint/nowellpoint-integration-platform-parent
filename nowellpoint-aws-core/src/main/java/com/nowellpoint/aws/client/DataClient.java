@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
+import com.nowellpoint.aws.model.data.GetDocumentRequest;
+import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -46,5 +48,9 @@ public class DataClient extends AbstractClient {
 	
 	public UpdateDocumentResponse update(UpdateDocumentRequest documentRequest) throws IOException {
 		return invoke("UpdateDocument", documentRequest, UpdateDocumentResponse.class);
+	}
+	
+	public GetDocumentResponse get(GetDocumentRequest documentRequest) throws IOException {
+		return invoke("GetDocument", documentRequest, GetDocumentResponse.class);
 	}
 }

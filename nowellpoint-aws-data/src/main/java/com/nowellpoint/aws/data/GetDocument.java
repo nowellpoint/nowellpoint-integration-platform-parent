@@ -1,10 +1,10 @@
 package com.nowellpoint.aws.data;
 
-import java.time.Instant;
-import java.util.Date;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -12,16 +12,17 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.data.CreateDocumentRequest;
-import com.nowellpoint.aws.model.data.CreateDocumentResponse;
+import com.nowellpoint.aws.model.data.GetDocumentRequest;
+import com.nowellpoint.aws.model.data.GetDocumentResponse;
 
-public class CreateDocument implements RequestHandler<CreateDocumentRequest, CreateDocumentResponse> {
+public class GetDocument implements RequestHandler<GetDocumentRequest, GetDocumentResponse> {
 	
-	private static final Logger log = Logger.getLogger(CreateDocument.class.getName());
+	private static final Logger log = Logger.getLogger(GetDocument.class.getName());
 
 	@Override
-	public CreateDocumentResponse handleRequest(CreateDocumentRequest request, Context context) {
+	public GetDocumentResponse handleRequest(GetDocumentRequest request, Context context) {
 		
 		/**
 		 * 
@@ -51,24 +52,23 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 		
-		CreateDocumentResponse response = new CreateDocumentResponse();
-
+		GetDocumentResponse response = new GetDocumentResponse();
+		
 		/**
 		 * 
 		 */
 		
-		log.info(request.getCollectionName());
-		
-		Date now = Date.from(Instant.now());
-		
-		Document document = Document.parse(request.getDocument());
-		document.put("createdDate", now);
-		document.put("lastModifiedDate", now);
-		
 		try{
-			mongoDatabase.getCollection(request.getCollectionName()).insertOne(document);
-			response.setStatusCode(201);
-			response.setId(document.getObjectId("_id").toString());
+			Optional<Document> document = Optional.ofNullable(mongoDatabase.getCollection(request.getCollectionName()).find(Filters.eq ( "_id", new ObjectId( request.getId() ))).first());
+			if (document.isPresent()) {
+				response.setStatusCode(200);
+				response.setId(document.get().getObjectId("_id").toString());
+				response.setDocument(document.get().toJson());
+			} else {
+				response.setStatusCode(404);
+				response.setErrorCode("not_found");
+				response.setErrorMessage(String.format("Document of type %s for Id: %s was not found", new Object[] {request.getCollectionName(), request.getId()}));
+			}
 		} catch (MongoException e) {
 			response.setStatusCode(500);
 			response.setErrorCode("unexpected_exception");
