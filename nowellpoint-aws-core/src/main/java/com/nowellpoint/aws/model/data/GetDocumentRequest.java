@@ -1,32 +1,27 @@
 package com.nowellpoint.aws.model.data;
 
-import com.nowellpoint.aws.model.AbstractRequest;
-
-public class GetDocumentRequest extends AbstractRequest {
+public class GetDocumentRequest extends AbstractDocumentRequest {
 
 	private static final long serialVersionUID = -8063355241890824157L;
-	
-	private String id;
-	private String collectionName;
 	
 	public GetDocumentRequest() {
 		
 	}
 
 	public String getId() {
-		return id;
+		return super.getId();
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		super.setId(id);
 	}
 	
 	public String getCollectionName() {
-		return collectionName;
+		return super.getCollectionName();
 	}
 
 	public void setCollectionName(String collectionName) {
-		this.collectionName = collectionName;
+		super.setCollectionName(collectionName);
 	}
 	
 	public GetDocumentRequest withId(String id) {

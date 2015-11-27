@@ -24,16 +24,16 @@ import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 public class TestDataClient {
 	
 	private static DataClient client = new DataClient();
+	
+	private static ObjectNode json = JsonNodeFactory.instance.objectNode()
+			.put("sicCode", "300")
+			.put("hqBranchInd", "yes")
+			.put("partyName", "Red Hat")
+			.put("partyNumber", "228919")
+			.put("version", 0);
 
 	@Test
 	public void testCreateAndUpdateParty() {
-		
-		ObjectNode json = JsonNodeFactory.instance.objectNode()
-				.put("sicCode", "300")
-				.put("hqBranchInd", "yes")
-				.put("partyName", "Red Hat")
-				.put("partyNumber", "228919")
-				.put("version", 0);
 		
 		try {
 			
@@ -122,7 +122,8 @@ public class TestDataClient {
 			System.out.println(getDocumentResponse.getErrorCode());
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withCollectionName("parties")
-					.withId("5656fc2ad53d130001a15bc6");
+					.withId("5656fc2ad53d130001a15bc6")
+					.withDocument(json.toString());
 			
 			startTime = System.currentTimeMillis();
 			

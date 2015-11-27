@@ -3,29 +3,38 @@ package com.nowellpoint.aws.model.data;
 import com.amazonaws.util.Base64;
 import com.nowellpoint.aws.model.AbstractRequest;
 
-public abstract class DocumentRequest extends AbstractRequest {
+public abstract class AbstractDocumentRequest extends AbstractRequest {
 	
 	private static final long serialVersionUID = 7500788112443398317L;
+	private String id;
 	private String collectionName;
 	private String document;
 
-	public DocumentRequest() {
+	public AbstractDocumentRequest() {
 		
 	}
 	
-	public String getCollectionName() {
+	protected String getId() {
+		return id;
+	}
+
+	protected void setId(String id) {
+		this.id = id;
+	}
+	
+	protected String getCollectionName() {
 		return collectionName;
 	}
 
-	public void setCollectionName(String collectionName) {
+	protected void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
 	}
 	
-	public String getDocument() {
+	protected String getDocument() {
 		return new String(Base64.decode(document));
 	}
 
-	public void setDocument(String document) {
+	protected void setDocument(String document) {
 		this.document = Base64.encodeAsString(document.getBytes());
 	}
 }

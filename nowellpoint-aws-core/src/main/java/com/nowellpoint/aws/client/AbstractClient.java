@@ -20,7 +20,7 @@ public abstract class AbstractClient {
 		InvokeRequest invokeRequest = new InvokeRequest();
 		invokeRequest.setInvocationType(InvocationType.RequestResponse);
 		invokeRequest.setFunctionName(functionName);
-		invokeRequest.setPayload(request.asJson());
+		invokeRequest.setPayload(objectMapper.writeValueAsString(request));
 		
 		InvokeResult invokeResult = lambda.invoke(invokeRequest);
 		

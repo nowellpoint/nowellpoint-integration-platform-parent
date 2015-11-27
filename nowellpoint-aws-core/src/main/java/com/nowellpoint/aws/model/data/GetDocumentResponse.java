@@ -1,39 +1,26 @@
 package com.nowellpoint.aws.model.data;
 
-import java.util.Base64;
-import java.util.Optional;
-
-import com.nowellpoint.aws.model.AbstractResponse;
-
-public class GetDocumentResponse extends AbstractResponse {
+public class GetDocumentResponse extends AbstractDocumentResponse {
 
 	private static final long serialVersionUID = 6117232788854302357L;
-
-	private String id;
-	
-	private String document;
 	
 	public GetDocumentResponse() {
 		
 	}
 
 	public String getId() {
-		return id;
+		return super.getId();
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		super.setId(id);
 	}
 
 	public String getDocument() {
-		if (Optional.ofNullable(document).isPresent()) {
-			return new String(Base64.getDecoder().decode(document));
-		} else {
-			return null;
-		}
+		return super.getDocument();
 	}
 
 	public void setDocument(String document) {
-		this.document = Base64.getEncoder().encodeToString(document.getBytes());
+		super.setDocument(document);
 	}
 }
