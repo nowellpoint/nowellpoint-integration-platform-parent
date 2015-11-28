@@ -17,7 +17,6 @@ import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
 public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTokenResponse> {
 	
 	private static final Logger log = Logger.getLogger(RevokeToken.class.getName());
-	private static final String endpoint = "https://api.stormpath.com/v1/accessTokens";
 
 	@Override
 	public RevokeTokenResponse handleRequest(RevokeTokenRequest request, Context context) { 
@@ -34,7 +33,8 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.delete(endpoint)
+			httpResponse = RestResource.delete(Configuration.getStormpathApiEndpoint())
+					.path("accessTokens")
 					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
 					.path(parseToken(request.getAccessToken()).getBody().getId())
 					.execute();

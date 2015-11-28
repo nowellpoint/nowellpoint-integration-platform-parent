@@ -72,4 +72,13 @@ public class Token implements Serializable {
 	public void setStormpathAccessTokenHref(String stormpathAccessTokenHref) {
 		this.stormpath_access_token_href = stormpathAccessTokenHref;
 	}
+
+	@Override
+	public String toString() {
+		return "Token [access_token=" + access_token + ", refresh_token="
+				+ refresh_token + ", token_type=" + token_type
+				+ ", expires_in=" + expires_in
+				+ ", stormpath_access_token_href="
+				+ stormpath_access_token_href + "]";
+	}
 }

@@ -1,9 +1,9 @@
 package com.nowellpoint.aws.model.data;
 
 import com.amazonaws.util.Base64;
-import com.nowellpoint.aws.model.AbstractRequest;
+import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
-public abstract class AbstractDocumentRequest extends AbstractRequest {
+public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 	
 	private static final long serialVersionUID = 7500788112443398317L;
 	private String id;

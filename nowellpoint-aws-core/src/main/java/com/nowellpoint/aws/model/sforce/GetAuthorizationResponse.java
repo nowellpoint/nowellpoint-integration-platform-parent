@@ -1,10 +1,10 @@
 package com.nowellpoint.aws.model.sforce;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.model.AbstractResponse;
+import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GetAuthorizationResponse extends AbstractResponse {
+public class GetAuthorizationResponse extends AbstractLambdaResponse {
 
 	/**
 	 * 

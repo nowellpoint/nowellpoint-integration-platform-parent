@@ -1,8 +1,8 @@
 package com.nowellpoint.aws.model.sforce;
 
-import com.nowellpoint.aws.model.AbstractResponse;
+import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
-public class GetIdentityResponse extends AbstractResponse {
+public class GetIdentityResponse extends AbstractLambdaResponse {
 
 	/**
 	 * 

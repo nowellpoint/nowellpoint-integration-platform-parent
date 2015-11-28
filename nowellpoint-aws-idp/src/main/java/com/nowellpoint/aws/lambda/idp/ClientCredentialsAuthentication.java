@@ -11,13 +11,12 @@ import com.nowellpoint.aws.model.idp.GetAccountResponse;
 
 public class ClientCredentialsAuthentication implements RequestHandler<GetAccountRequest, GetAccountResponse> {
 	
-	private static final String endpoint = "https://api.stormpath.com/v1/applications";
 	
 	@Override
 	public GetAccountResponse handleRequest(GetAccountRequest request, Context context) { 
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(endpoint)
+			httpResponse = RestResource.post(Configuration.getStormpathApiEndpoint())
 					.path(Configuration.getStormpathApplicationId())
 					.path("oauth/token")
 					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())

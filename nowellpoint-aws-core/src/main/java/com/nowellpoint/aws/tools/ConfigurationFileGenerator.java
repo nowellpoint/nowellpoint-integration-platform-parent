@@ -20,6 +20,8 @@ public class ConfigurationFileGenerator {
 					.put("stormpath_api_key_id", System.getenv("STORMPATH_API_KEY_ID"))
 					.put("stormpath_api_key_secret", System.getenv("STORMPATH_API_KEY_SECRET"))
 					.put("stormpath_application_id", System.getenv("STORMPATH_APPLICATION_ID"))
+					.put("stormpath_api_endpoint", System.getenv("STORMPATH_API_ENDPOINT"))
+					.put("stormpath_directory_id", System.getenv("STORMPATH_DIRECTORY_ID"))
 					.put("stormpath_directory", System.getenv("STORMPATH_DIRECTORY"))
 					.put("redirect_uri", System.getenv("REDIRECT_URI"))
 					.put("mongo_client_uri", System.getenv("MONGO_CLIENT_URI"))

@@ -2,9 +2,9 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
-import com.nowellpoint.aws.model.AbstractRequest;
+import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
-public class GetIdentityRequest extends AbstractRequest implements Serializable {
+public class GetIdentityRequest extends AbstractLambdaRequest implements Serializable {
 
 	/**
 	 * 

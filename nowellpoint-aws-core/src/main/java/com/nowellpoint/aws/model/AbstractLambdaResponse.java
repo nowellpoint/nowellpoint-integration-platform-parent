@@ -2,7 +2,10 @@ package com.nowellpoint.aws.model;
 
 import java.io.Serializable;
 
-public abstract class AbstractResponse implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public abstract class AbstractLambdaResponse implements Serializable {
 	
 	/**
 	 * 
@@ -16,7 +19,7 @@ public abstract class AbstractResponse implements Serializable {
 	
 	private String errorMessage;
 	
-	public AbstractResponse() {
+	public AbstractLambdaResponse() {
 		
 	}
 

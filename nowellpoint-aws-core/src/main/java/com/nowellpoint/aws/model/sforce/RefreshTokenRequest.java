@@ -2,9 +2,9 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
-import com.nowellpoint.aws.model.AbstractRequest;
+import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
-public class RefreshTokenRequest extends AbstractRequest implements Serializable {
+public class RefreshTokenRequest extends AbstractLambdaRequest implements Serializable {
 	
 	private static final long serialVersionUID = -3186641818593860386L;
 	

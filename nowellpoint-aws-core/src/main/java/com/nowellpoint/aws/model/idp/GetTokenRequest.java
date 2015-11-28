@@ -1,8 +1,8 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractRequest;
+import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
-public class GetTokenRequest extends AbstractRequest {
+public class GetTokenRequest extends AbstractLambdaRequest {
 
 	/**
 	 * 

@@ -17,7 +17,6 @@ import com.nowellpoint.aws.model.idp.Token;
 public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
 	private static final Logger log = Logger.getLogger(UsernamePasswordAuthentication.class.getName());
-	private static final String endpoint = "https://api.stormpath.com/v1/applications";
 
 	@Override
 	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
@@ -34,7 +33,8 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(endpoint)
+			httpResponse = RestResource.post(Configuration.getStormpathApiEndpoint())
+					.path("applications")
 					.path(Configuration.getStormpathApplicationId())
 					.path("oauth/token")
 					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())

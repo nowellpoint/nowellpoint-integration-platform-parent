@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -158,5 +159,10 @@ public class TestDataClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@AfterClass
+	public static void cleanUp() {
+		client.close();
 	}
 }

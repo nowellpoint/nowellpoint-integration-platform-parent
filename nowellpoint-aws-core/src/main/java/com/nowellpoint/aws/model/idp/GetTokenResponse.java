@@ -1,10 +1,10 @@
 package com.nowellpoint.aws.model.idp;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.model.AbstractResponse;
+import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GetTokenResponse extends AbstractResponse {
+public class GetTokenResponse extends AbstractLambdaResponse {
 	
 	/**
 	 * 
@@ -24,5 +24,12 @@ public class GetTokenResponse extends AbstractResponse {
 
 	public void setToken(Token token) {
 		this.token = token;
+	}
+	
+	@Override
+	public String toString() {
+		return "GetTokenResponse [token=" + token + ", getStatusCode()="
+				+ getStatusCode() + ", getErrorCode()=" + getErrorCode()
+				+ ", getErrorMessage()=" + getErrorMessage() + "]";
 	}
 }

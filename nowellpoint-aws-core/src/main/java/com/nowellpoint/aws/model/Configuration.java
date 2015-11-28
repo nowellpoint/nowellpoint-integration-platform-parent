@@ -26,8 +26,9 @@ public class Configuration {
 				mongoClientUri = node.get("mongo_client_uri").asText();
 				stormpathApiKeyId = node.get("stormpath_api_key_id").asText();
 				stormpathApiKeySecret = node.get("stormpath_api_key_secret").asText();
+				stormpathApiEndpoint = node.get("stormpath_api_endpoint").asText();
 				stormpathApplicationId = node.get("stormpath_application_id").asText();
-				stormpathDirectory = node.get("stormpath_directory").asText();
+				stormpathDirectoryId = node.get("stormpath_directory_id").asText();
 				awsKmsKeyId = node.get("aws_kms_key_id").asText();
 				salesforceTokenUri = node.get("salesforce_token_uri").asText();
 				salesforceRefreshUri = node.get("salesforce_refresh_uri").asText();
@@ -41,7 +42,8 @@ public class Configuration {
 				stormpathApiKeyId = System.getenv("STORMPATH_API_KEY_ID");
 				stormpathApiKeySecret = System.getenv("STORMPATH_API_KEY_SECRET");
 				stormpathApplicationId = System.getenv("STORMPATH_APPLICATION_ID");
-				stormpathDirectory = System.getenv("STORMPATH_DIRECTORY");
+				stormpathDirectoryId = System.getenv("STORMPATH_DIRECTORY_ID");
+				stormpathApiEndpoint = System.getenv("STORMPATH_API_ENDPOINT");
 				awsKmsKeyId = System.getenv("AWS_KMS_KEY_ID");
 				salesforceTokenUri = System.getenv("SALESFORCE_TOKEN_URI");
 				salesforceRefreshUri = System.getenv("SALESFORCE_REFRESH_URI");
@@ -62,7 +64,8 @@ public class Configuration {
 	private static String stormpathApiKeyId;
 	private static String stormpathApiKeySecret;
 	private static String stormpathApplicationId;
-	private static String stormpathDirectory;
+	private static String stormpathDirectoryId;
+	private static String stormpathApiEndpoint;
 	private static String awsKmsKeyId;
 	private static String salesforceTokenUri;
 	private static String salesforceRefreshUri;
@@ -84,9 +87,11 @@ public class Configuration {
 	
 	public static String getStormpathApiKeySecret() { return stormpathApiKeySecret; }
 	
+	public static String getStormpathApiEndpoint() { return stormpathApiEndpoint; }
+	
 	public static String getStormpathApplicationId() { return stormpathApplicationId; }
 	
-	public static String getStormpathDirectory() { return stormpathDirectory; }
+	public static String getStormpathDirectoryId() { return stormpathDirectoryId; }
 	
 	public static String getAwsKmsKeyId() { return awsKmsKeyId; }
 	

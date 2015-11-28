@@ -1,11 +1,10 @@
 package com.nowellpoint.aws.client;
 
-import static com.nowellpoint.aws.tools.TokenParser.parseToken;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-
 import java.io.IOException;
 
+import redis.clients.jedis.Jedis;
+
+import com.nowellpoint.aws.tools.RedisSerializer;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.GetDocumentRequest;
@@ -14,14 +13,17 @@ import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
+import com.nowellpoint.aws.model.idp.Token;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
 import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 
 public class DataClient extends AbstractClient {
 	
+	private Jedis jedis;
 	private String accessToken;
 	
 	public DataClient() {
+		
 		long startTime = System.currentTimeMillis();
 		
 		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
@@ -31,6 +33,18 @@ public class DataClient extends AbstractClient {
 		try {
 			tokenResponse = invoke("IDP_UsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
 			accessToken = tokenResponse.getToken().getAccessToken();
+			
+			long cacheStartTime = System.currentTimeMillis();
+			
+			jedis = new Jedis("pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 10497);
+			jedis.auth(System.getenv("REDIS_PASSWORD"));
+			
+			System.out.println("Authenticate Redis: " + (System.currentTimeMillis() - cacheStartTime));
+			
+			jedis.set(accessToken.getBytes(), RedisSerializer.serialize(tokenResponse.getToken()));
+			
+			System.out.println("set object: " + (System.currentTimeMillis() - cacheStartTime));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -43,9 +57,7 @@ public class DataClient extends AbstractClient {
 	}
 
 	public CreateDocumentResponse create(CreateDocumentRequest createDocumentRequest) throws IOException {
-		Jws<Claims> claims = parseToken(accessToken);
-		System.out.println(claims.getBody().getSubject());
-		return invoke("CreateDocument", createDocumentRequest, CreateDocumentResponse.class);
+		return invoke("CreateDocument", createDocumentRequest, CreateDocumentResponse.class, accessToken);
 	}
 	
 	public UpdateDocumentResponse update(UpdateDocumentRequest updateDocumentRequest) throws IOException {
@@ -58,5 +70,13 @@ public class DataClient extends AbstractClient {
 	
 	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws IOException {
 		return invoke("DeleteDocument", deleteDocumentRequest, DeleteDocumentResponse.class);
+	}
+	
+	public void close() {
+		long cacheStartTime = System.currentTimeMillis();
+		Token token = (Token) RedisSerializer.deserialize(jedis.get(accessToken.getBytes()));
+		System.out.println("Authenticate: " + (System.currentTimeMillis() - cacheStartTime));
+		System.out.println(token.toString());
+		jedis.close();
 	}
 }

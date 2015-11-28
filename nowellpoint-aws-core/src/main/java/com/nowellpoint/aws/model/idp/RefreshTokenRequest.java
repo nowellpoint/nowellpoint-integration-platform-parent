@@ -1,8 +1,8 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractRequest;
+import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
-public class RefreshTokenRequest extends AbstractRequest {
+public class RefreshTokenRequest extends AbstractLambdaRequest {
 	
 	private static final long serialVersionUID = -3186641818593860386L;
 	

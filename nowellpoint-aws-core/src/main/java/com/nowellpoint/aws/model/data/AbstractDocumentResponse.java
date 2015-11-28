@@ -3,9 +3,9 @@ package com.nowellpoint.aws.model.data;
 import java.util.Base64;
 import java.util.Optional;
 
-import com.nowellpoint.aws.model.AbstractResponse;
+import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
-public abstract class AbstractDocumentResponse extends AbstractResponse {
+public abstract class AbstractDocumentResponse extends AbstractLambdaResponse {
 
 	private static final long serialVersionUID = 906350726714634877L;
 	

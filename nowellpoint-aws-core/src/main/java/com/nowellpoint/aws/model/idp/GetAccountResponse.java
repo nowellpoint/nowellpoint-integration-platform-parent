@@ -1,8 +1,8 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractResponse;
+import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
-public class GetAccountResponse extends AbstractResponse {
+public class GetAccountResponse extends AbstractLambdaResponse {
 	
 	private static final long serialVersionUID = 7454196046925853087L;
 	private Account account;

@@ -2,23 +2,25 @@ package com.nowellpoint.aws.data;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import org.bson.Document;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 
+import static com.nowellpoint.aws.tools.TokenParser.parseToken;
+
 public class CreateDocument implements RequestHandler<CreateDocumentRequest, CreateDocumentResponse> {
-	
-	private static final Logger log = Logger.getLogger(CreateDocument.class.getName());
 
 	@Override
 	public CreateDocumentResponse handleRequest(CreateDocumentRequest request, Context context) {
@@ -27,8 +29,35 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 		
+		LambdaLogger logger = context.getLogger();
+		
+		/**
+		 * 
+		 */
+		
 		long startTime = System.currentTimeMillis();
 		
+		/**
+		 * 
+		 */
+		
+		String accessToken = context.getClientContext().getCustom().get("accessToken");
+		String href = parseToken(accessToken).getBody().getSubject();
+		
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.get(href)
+					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
+					.execute();
+				
+			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			logger.log(httpResponse.getEntity());
+		} catch (Exception e) {
+			
+		}
+		
+		logger.log(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
+
 		/**
 		 * 
 		 */
@@ -57,7 +86,11 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 		
-		log.info(request.getCollectionName());
+		logger.log(Instant.now() + " " + context.getAwsRequestId() + " creating document in:" + request.getCollectionName());
+		
+		/**
+		 * 
+		 */
 		
 		Date now = Date.from(Instant.now());
 		
@@ -78,7 +111,11 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 			mongoClient.close();
 		}
 		
-		log.info("execution time: " + (System.currentTimeMillis() - startTime));
+		logger.log(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
+		
+		/**
+		 * 
+		 */
 		
 		return response;
 	}

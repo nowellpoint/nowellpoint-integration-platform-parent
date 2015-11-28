@@ -16,7 +16,6 @@ import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
 public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTokenResponse> {
 	
 	private static final Logger log = Logger.getLogger(VerifyToken.class.getName());
-	private static final String endpoint = "https://api.stormpath.com/v1/applications";
 
 	@Override
 	public VerifyTokenResponse handleRequest(VerifyTokenRequest request, Context context) { 
@@ -33,7 +32,8 @@ public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTok
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.get(endpoint)
+			httpResponse = RestResource.get(Configuration.getStormpathApiEndpoint())
+					.path("applications")
 					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
 					.path(Configuration.getStormpathApplicationId())
 					.path("authTokens")

@@ -17,7 +17,6 @@ import com.nowellpoint.aws.model.idp.Token;
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	
 	private static final Logger log = Logger.getLogger(RefreshToken.class.getName());
-	private static final String endpoint = "https://api.stormpath.com/v1/applications";
 
 	@Override
 	public RefreshTokenResponse handleRequest(RefreshTokenRequest request, Context context) { 
@@ -34,7 +33,8 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(endpoint)
+			httpResponse = RestResource.post(Configuration.getStormpathApiEndpoint())
+					.path("applications")
 					.path(Configuration.getStormpathApplicationId())
 					.path("oauth/token")
 					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
