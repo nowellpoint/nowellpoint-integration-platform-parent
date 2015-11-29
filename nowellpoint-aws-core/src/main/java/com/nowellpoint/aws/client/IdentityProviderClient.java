@@ -18,7 +18,7 @@ public class IdentityProviderClient extends AbstractClient {
 	}
 	
 	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws IOException {
-		return invoke("IDP_UsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
+		return invoke("IdentityProviderUsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
 	}
 	
 	public VerifyTokenResponse verify(VerifyTokenRequest verifyTokenRequest) throws IOException {
@@ -31,5 +31,11 @@ public class IdentityProviderClient extends AbstractClient {
 	
 	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws IOException {
 		return invoke("RevokeToken", revokeTokenRequest, RevokeTokenResponse.class);
+	}
+
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }

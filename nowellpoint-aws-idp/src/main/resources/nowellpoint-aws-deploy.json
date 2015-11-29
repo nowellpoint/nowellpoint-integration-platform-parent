@@ -19,12 +19,12 @@
   },
   {
     "configuration": {
-      "functionName": "IDP_UsernamePasswordAuthentication",
-      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IDP_UsernamePasswordAuthentication",
+      "functionName": "IdentityProviderUsernamePasswordAuthentication",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderUsernamePasswordAuthentication",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.UsernamePasswordAuthentication::handleRequest",
-      "description": "Identity Provider Authentication Request",
+      "description": "IdentityProviderUsernamePasswordAuthentication: Authenticates a username and password combination to return an OAuth Token",
       "timeout": 4,
       "memorySize": 1536,
       "version": "$LATEST"
@@ -43,6 +43,24 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.ClientCredentialsAuthentication::handleRequest",
       "description": "IdentityProviderClientCredentialsAuthentication: Authenticates an ApiKeyId and ApiKeySecret and will return the associated user account",
+      "timeout": 4,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "function:IdentityProviderGetCustomData",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderGetCustomData",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.GetCustomData::handleRequest",
+      "description": "IdentityProviderGetCustomData: Gets the custom data for an access token that is associated with a user account",
       "timeout": 4,
       "memorySize": 1536,
       "version": "$LATEST"

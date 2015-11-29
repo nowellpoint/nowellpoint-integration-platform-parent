@@ -12,13 +12,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
-
-import static com.nowellpoint.aws.tools.TokenParser.parseToken;
 
 public class CreateDocument implements RequestHandler<CreateDocumentRequest, CreateDocumentResponse> {
 
@@ -36,27 +32,6 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 */
 		
 		long startTime = System.currentTimeMillis();
-		
-		/**
-		 * 
-		 */
-		
-		String accessToken = context.getClientContext().getCustom().get("accessToken");
-		String href = parseToken(accessToken).getBody().getSubject();
-		
-		HttpResponse httpResponse = null;
-		try {
-			httpResponse = RestResource.get(href)
-					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
-					.execute();
-				
-			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-			logger.log(httpResponse.getEntity());
-		} catch (Exception e) {
-			
-		}
-		
-		logger.log(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
 
 		/**
 		 * 
