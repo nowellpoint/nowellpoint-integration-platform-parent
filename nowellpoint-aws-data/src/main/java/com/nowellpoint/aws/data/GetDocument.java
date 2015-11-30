@@ -13,7 +13,6 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 
@@ -34,7 +33,7 @@ public class GetDocument implements RequestHandler<GetDocumentRequest, GetDocume
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://".concat(Configuration.getMongoClientUri()));
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
 		
 		/**
 		 * 

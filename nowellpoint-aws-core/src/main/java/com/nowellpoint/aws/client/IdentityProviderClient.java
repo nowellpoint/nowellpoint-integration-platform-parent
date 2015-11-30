@@ -2,6 +2,8 @@ package com.nowellpoint.aws.client;
 
 import java.io.IOException;
 
+import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
+import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
@@ -17,8 +19,12 @@ public class IdentityProviderClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws IOException {
+	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws IOException {		
 		return invoke("IdentityProviderUsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
+	}
+	
+	public GetCustomDataResponse customData(GetCustomDataRequest customDataRequest) throws IOException {
+		return invoke("IdentityProviderGetCustomData", customDataRequest, GetCustomDataResponse.class);
 	}
 	
 	public VerifyTokenResponse verify(VerifyTokenRequest verifyTokenRequest) throws IOException {
@@ -31,11 +37,5 @@ public class IdentityProviderClient extends AbstractClient {
 	
 	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws IOException {
 		return invoke("RevokeToken", revokeTokenRequest, RevokeTokenResponse.class);
-	}
-
-	@Override
-	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 }

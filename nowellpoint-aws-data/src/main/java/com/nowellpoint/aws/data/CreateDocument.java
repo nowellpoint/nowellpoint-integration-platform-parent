@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -12,7 +13,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 
@@ -37,7 +37,7 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://".concat(Configuration.getMongoClientUri()));
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
 		
 		/**
 		 * 
@@ -68,10 +68,13 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 */
 		
 		Date now = Date.from(Instant.now());
+		ObjectId userId = new ObjectId(request.getUserContext().getUserId());
 		
 		Document document = Document.parse(request.getDocument());
 		document.put("createdDate", now);
 		document.put("lastModifiedDate", now);
+		document.put("createdById", userId);
+		document.put("lastModifiedById", userId);
 		
 		try{
 			mongoDatabase.getCollection(request.getCollectionName()).insertOne(document);

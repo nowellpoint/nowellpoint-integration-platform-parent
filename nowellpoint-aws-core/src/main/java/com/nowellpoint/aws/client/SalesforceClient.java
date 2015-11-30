@@ -32,10 +32,4 @@ public class SalesforceClient extends AbstractClient {
 	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws IOException {
 		return invoke("SalesforceRevokeTokenRequest", revokeTokenRequest, RevokeTokenResponse.class);
 	}
-
-	@Override
-	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
 }

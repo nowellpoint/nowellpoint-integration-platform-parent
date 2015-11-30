@@ -24,6 +24,11 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 		super.setCollectionName(collectionName);
 	}
 	
+	public GetDocumentRequest withUserContext(UserContext userContext) {
+		setUserContext(userContext);
+		return this;
+	}
+	
 	public GetDocumentRequest withId(String id) {
 		setId(id);
 		return this;

@@ -32,6 +32,11 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 		super.setDocument(document);
 	}
 	
+	public UpdateDocumentRequest withUserContext(UserContext userContext) {
+		setUserContext(userContext);
+		return this;
+	}
+	
 	public UpdateDocumentRequest withId(String id) {
 		setId(id);
 		return this;

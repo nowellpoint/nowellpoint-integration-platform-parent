@@ -24,6 +24,11 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 		super.setCollectionName(collectionName);
 	}
 	
+	public DeleteDocumentRequest withUserContext(UserContext userContext) {
+		setUserContext(userContext);
+		return this;
+	}
+	
 	public DeleteDocumentRequest withId(String id) {
 		setId(id);
 		return this;

@@ -15,6 +15,11 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 	public String getDocument() {
 		return super.getDocument();
 	}
+	
+	public CreateDocumentRequest withUserContext(UserContext userContext) {
+		setUserContext(userContext);
+		return this;
+	}
 
 	public CreateDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);

@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.client;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
-public abstract class AbstractClient implements Closeable {
+public abstract class AbstractClient {
 	
 	private static AWSLambda lambda = new AWSLambdaClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();

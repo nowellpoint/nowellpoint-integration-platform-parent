@@ -12,7 +12,6 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
 import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 
@@ -33,7 +32,7 @@ public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, Del
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://".concat(Configuration.getMongoClientUri()));
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
 		
 		/**
 		 * 

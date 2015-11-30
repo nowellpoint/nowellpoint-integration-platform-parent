@@ -24,6 +24,9 @@ public class CustomData implements Serializable {
 	@JsonProperty(value="modifiedAt")
 	private Date modifiedAt;
 	
+	@JsonProperty(value="applicationUserId")
+	private String applicationUserId;
+	
 	@JsonProperty(value="mongodbConnectUri")
 	private String mongodbConnectUri;
 
@@ -53,6 +56,14 @@ public class CustomData implements Serializable {
 
 	public void setModifiedAt(Date modifiedAt) {
 		this.modifiedAt = modifiedAt;
+	}
+
+	public String getApplicationUserId() {
+		return applicationUserId;
+	}
+
+	public void setApplicationUserId(String applicationUserId) {
+		this.applicationUserId = applicationUserId;
 	}
 
 	public String getMongodbConnectUri() {

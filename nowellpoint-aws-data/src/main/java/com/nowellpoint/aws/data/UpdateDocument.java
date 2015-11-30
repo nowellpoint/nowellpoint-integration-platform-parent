@@ -14,7 +14,6 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
@@ -24,8 +23,6 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 
 	@Override
 	public UpdateDocumentResponse handleRequest(UpdateDocumentRequest request, Context context) {
-		
-		log.info(context.toString());
 		
 		/**
 		 * 
@@ -37,7 +34,7 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://".concat(Configuration.getMongoClientUri()));
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
 		
 		/**
 		 * 
@@ -70,10 +67,12 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		log.info(request.getCollectionName());
 		
 		Date now = Date.from(Instant.now());
+		ObjectId userId = new ObjectId(request.getUserContext().getUserId());
 		
 		Document document = Document.parse(request.getDocument());
 		document.put("_id", new ObjectId(request.getId()));
 		document.put("lastModifiedDate", now);
+		document.put("lastModifiedById", userId);
 		
 		try{
 			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getObjectId("_id")), new Document("$set", document));
