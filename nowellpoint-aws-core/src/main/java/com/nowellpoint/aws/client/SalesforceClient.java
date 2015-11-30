@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.client;
 
-import java.io.IOException;
-
+import com.nowellpoint.aws.model.LambdaResponseException;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
 import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
@@ -17,19 +16,19 @@ public class SalesforceClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws IOException {
+	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws LambdaResponseException {
 		return invoke("SalesforceAuthenticationRequest", tokenRequest, GetTokenResponse.class);
 	}
 
-	public GetAuthorizationResponse authorize(GetAuthorizationRequest authorizationRequest) throws IOException {
+	public GetAuthorizationResponse authorize(GetAuthorizationRequest authorizationRequest) throws LambdaResponseException {
 		return invoke("SalesforceTokenRequest", authorizationRequest, GetAuthorizationResponse.class);
 	}
 	
-	public GetIdentityResponse getIdentity(GetIdentityRequest identityRequest) throws IOException {
+	public GetIdentityResponse getIdentity(GetIdentityRequest identityRequest) throws LambdaResponseException {
 		return invoke("SalesforceIdentityRequest", identityRequest, GetIdentityResponse.class);
 	}
 	
-	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws IOException {
+	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws LambdaResponseException {
 		return invoke("SalesforceRevokeTokenRequest", revokeTokenRequest, RevokeTokenResponse.class);
 	}
 }

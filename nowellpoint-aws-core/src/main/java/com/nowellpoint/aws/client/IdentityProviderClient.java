@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.client;
 
-import java.io.IOException;
-
+import com.nowellpoint.aws.model.LambdaResponseException;
 import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -19,23 +18,23 @@ public class IdentityProviderClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws IOException {		
+	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws LambdaResponseException {		
 		return invoke("IdentityProviderUsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
 	}
 	
-	public GetCustomDataResponse customData(GetCustomDataRequest customDataRequest) throws IOException {
+	public GetCustomDataResponse customData(GetCustomDataRequest customDataRequest) throws LambdaResponseException {
 		return invoke("IdentityProviderGetCustomData", customDataRequest, GetCustomDataResponse.class);
 	}
 	
-	public VerifyTokenResponse verify(VerifyTokenRequest verifyTokenRequest) throws IOException {
+	public VerifyTokenResponse verify(VerifyTokenRequest verifyTokenRequest) throws LambdaResponseException {
 		return invoke("VerifyTokenRequest", verifyTokenRequest, VerifyTokenResponse.class);
 	}
 	
-	public RefreshTokenResponse refresh(RefreshTokenRequest refreshTokenRequest) throws IOException {
+	public RefreshTokenResponse refresh(RefreshTokenRequest refreshTokenRequest) throws LambdaResponseException {
 		return invoke("RefreshTokenRequest", refreshTokenRequest, RefreshTokenResponse.class);
 	}
 	
-	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws IOException {
+	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws LambdaResponseException {
 		return invoke("RevokeToken", revokeTokenRequest, RevokeTokenResponse.class);
 	}
 }

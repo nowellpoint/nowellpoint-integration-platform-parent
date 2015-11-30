@@ -3,8 +3,6 @@ package com.nowellpoint.aws.idp;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
@@ -33,22 +31,16 @@ public class TestIdentityProviderClient {
 		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
-		GetTokenResponse tokenResponse = null;
-		try {
-			tokenResponse = client.authenticate(tokenRequest);
+		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
 			
-			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
+		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
-			assertTrue(tokenResponse.getStatusCode() == 200);
-			assertNotNull(tokenResponse.getToken().getAccessToken());
-			assertNotNull(tokenResponse.getToken().getExpiresIn());
-			assertNotNull(tokenResponse.getToken().getStormpathAccessTokenHref());
-			assertNotNull(tokenResponse.getToken().getRefreshToken());
-			assertNotNull(tokenResponse.getToken().getTokenType());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		assertTrue(tokenResponse.getStatusCode() == 200);
+		assertNotNull(tokenResponse.getToken().getAccessToken());
+		assertNotNull(tokenResponse.getToken().getExpiresIn());
+		assertNotNull(tokenResponse.getToken().getStormpathAccessTokenHref());
+		assertNotNull(tokenResponse.getToken().getRefreshToken());
+		assertNotNull(tokenResponse.getToken().getTokenType());
 		
 		System.out.println("verify token test");
 		
@@ -56,18 +48,12 @@ public class TestIdentityProviderClient {
 		
 		VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest().withAccessToken(tokenResponse.getToken().getAccessToken());
 		
-		VerifyTokenResponse verifyTokenResponse = null;
-		try {
-			verifyTokenResponse = client.verify(verifyTokenRequest);
+		VerifyTokenResponse verifyTokenResponse = client.verify(verifyTokenRequest);
 			
-			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
+		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
-			assertTrue(verifyTokenResponse.getStatusCode() == 200);
-			assertNotNull(verifyTokenResponse.getAuthToken());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		assertTrue(verifyTokenResponse.getStatusCode() == 200);
+		assertNotNull(verifyTokenResponse.getAuthToken());
 		
 		System.out.println("refresh token test");
 		
@@ -75,18 +61,12 @@ public class TestIdentityProviderClient {
 		
 		RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest().withRefreshToken(tokenResponse.getToken().getRefreshToken());
 		
-		RefreshTokenResponse refreshTokenResponse = null;		
-		try {
-			refreshTokenResponse = client.refresh(refreshTokenRequest);
+		RefreshTokenResponse refreshTokenResponse = client.refresh(refreshTokenRequest);
 			
-			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
+		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
-			assertTrue(refreshTokenResponse.getStatusCode() == 200);
-			assertNotNull(refreshTokenResponse.getToken());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		assertTrue(refreshTokenResponse.getStatusCode() == 200);
+		assertNotNull(refreshTokenResponse.getToken());
 		
 		System.out.println("revoke token test");
 		
@@ -94,16 +74,10 @@ public class TestIdentityProviderClient {
 		
 		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withAccessToken(refreshTokenResponse.getToken().getAccessToken());
 		
-		RevokeTokenResponse revokeTokenResponse = null;
-		try {
-			revokeTokenResponse = client.revoke(revokeTokenRequest);
+		RevokeTokenResponse revokeTokenResponse = client.revoke(revokeTokenRequest);
 			
-			System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
+		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
-			assertTrue(revokeTokenResponse.getStatusCode() == 204);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		assertTrue(revokeTokenResponse.getStatusCode() == 204);
 	}
 }

@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.client;
 
-import java.io.IOException;
-
+import com.nowellpoint.aws.model.LambdaResponseException;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
@@ -13,25 +12,23 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
 public class DataClient extends AbstractClient {
 	
-	private String accessToken;
-	
 	public DataClient() {
 		
 	}
 
-	public CreateDocumentResponse create(CreateDocumentRequest createDocumentRequest) throws IOException {
-		return invoke("CreateDocument", createDocumentRequest, CreateDocumentResponse.class, accessToken);
+	public CreateDocumentResponse create(CreateDocumentRequest createDocumentRequest) throws LambdaResponseException {
+		return invoke("CreateDocument", createDocumentRequest, CreateDocumentResponse.class);
 	}
 	
-	public UpdateDocumentResponse update(UpdateDocumentRequest updateDocumentRequest) throws IOException {
+	public UpdateDocumentResponse update(UpdateDocumentRequest updateDocumentRequest) throws LambdaResponseException {
 		return invoke("UpdateDocument", updateDocumentRequest, UpdateDocumentResponse.class);
 	}
 	
-	public GetDocumentResponse get(GetDocumentRequest getDocumentRequest) throws IOException {
+	public GetDocumentResponse get(GetDocumentRequest getDocumentRequest) throws LambdaResponseException {
 		return invoke("GetDocument", getDocumentRequest, GetDocumentResponse.class);
 	}
 	
-	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws IOException {
+	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws LambdaResponseException {
 		return invoke("DeleteDocument", deleteDocumentRequest, DeleteDocumentResponse.class);
 	}
 }
