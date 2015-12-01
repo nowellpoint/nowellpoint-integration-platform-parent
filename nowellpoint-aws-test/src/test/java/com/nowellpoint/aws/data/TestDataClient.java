@@ -93,7 +93,7 @@ public class TestDataClient {
 			
 		CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
 			
-		assertTrue(createDocumentResponse.getStatusCode() == 201);
+		assertTrue(createDocumentResponse.getStatusCode() == 200);
 		assertNotNull(createDocumentResponse.getId());
 			
 		System.out.println("CreateDocumentResponse - execution time: " + String.valueOf(System.currentTimeMillis() - startTime));

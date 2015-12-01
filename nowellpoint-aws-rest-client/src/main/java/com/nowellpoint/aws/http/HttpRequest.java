@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Base64;
+import java.util.Optional;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -27,6 +28,7 @@ public abstract class HttpRequest {
 	private Map<String,String> headers;
 	private Map<String,String> parameters;
 	private Map<String,String> queryParameters;
+	private String body;
 	
 	public HttpRequest(HttpMethod httpMethod, String target) {
 		this.objectMapper = new ObjectMapper();
@@ -101,7 +103,12 @@ public abstract class HttpRequest {
 		headers.put(HttpHeaders.ACCEPT, accept);
 		return this;
 	}
-	
+
+	public HttpRequest body(String body) {
+		this.body = body;
+		return this;
+	}
+
 	public JsonNode asJson() throws IOException {
 		HttpResponse response = new HttpResponseImpl();
 		return objectMapper.readValue(response.getEntity(), JsonNode.class);
@@ -162,19 +169,23 @@ public abstract class HttpRequest {
 			});
 			
 			if (! parameters.isEmpty()) {
-				StringBuilder body = new StringBuilder();
+				StringBuilder sb = new StringBuilder();
 				parameters.keySet().forEach(param -> {
-					body.append(param);
-					body.append("=");
-					body.append(parameters.get(param));
-					body.append("&");
+					sb.append(param);
+					sb.append("=");
+					sb.append(parameters.get(param));
+					sb.append("&");
 				});
+				
+				body = sb.toString();
+			} 
+			
+			if (Optional.ofNullable(body).isPresent()) {
 				
 				connection.setDoOutput(true);
 				
-				byte[] outputInBytes = body.toString().getBytes("UTF-8");
 				OutputStream os = connection.getOutputStream();
-				os.write( outputInBytes );    
+				os.write( body.getBytes() );    
 				os.close();
 			}
 

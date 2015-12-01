@@ -2,11 +2,6 @@ package com.nowellpoint.aws.http;
 
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 
 public class PostRequest extends HttpRequest {
 
@@ -64,9 +59,7 @@ public class PostRequest extends HttpRequest {
 	}
 	
 	public PostRequest body(String body) {
-		super.parameters(URLEncodedUtils.parse(body, StandardCharsets.UTF_8)
-				.stream()
-				.collect(Collectors.toMap(NameValuePair::getName, (p) -> p.getValue())));
+		super.body(body);
 		return this;
 	}
 }
