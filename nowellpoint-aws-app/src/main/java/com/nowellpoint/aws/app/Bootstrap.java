@@ -40,15 +40,15 @@ public class Bootstrap {
 		// Configure FreeMarker
 		//
 
-		Configuration cfg = new Configuration();
+		//Configuration cfg = new Configuration();
 
 		//
 		// set configuration options
 		//
 
-		cfg.setClassForTemplateLoading(Bootstrap.class, "/views");
-		cfg.setDefaultEncoding("UTF-8");
-		cfg.setLocale(Locale.US);
+		//cfg.setClassForTemplateLoading(Bootstrap.class, "/views");
+		//cfg.setDefaultEncoding("UTF-8");
+		//cfg.setLocale(Locale.US);
 
 		//
 		// port and keystore
@@ -68,7 +68,7 @@ public class Bootstrap {
 		//
 		//
 
-		addRoutes(cfg);
+		//addRoutes(cfg);
 	}
 
 	private static void addRoutes(Configuration cfg) {

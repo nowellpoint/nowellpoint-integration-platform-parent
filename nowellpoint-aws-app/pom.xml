@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-app</artifactId>
 	<name>Nowellpoint AWS Application</name>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
@@ -42,9 +42,13 @@
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
-			<artifactId>javaee-web-api</artifactId>
+			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>wildfly-swarm-undertow</artifactId>
+			<version>1.0.0.Alpha5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
@@ -52,9 +56,9 @@
 			<version>1.0.0.Alpha5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>wildfly-swarm-undertow</artifactId>
-			<version>1.0.0.Alpha5</version>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>${mongodb.driver.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -65,44 +69,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
-				<configuration>
-					<executable>java</executable>
-					<arguments>
-						<argument>-classpath</argument>
-						<classpath />
-						<argument>com.nowellpoint.aws.app.Bootstrap</argument>
-					</arguments>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<createDependencyReducedPom>true</createDependencyReducedPom>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}</finalName>
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.nowellpoint.aws.app.Bootstrap</mainClass>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -124,6 +90,12 @@
 				<groupId>org.wildfly.swarm</groupId>
 				<artifactId>wildfly-swarm-plugin</artifactId>
 				<version>1.0.0.Alpha5</version>
+				<configuration>
+					<properties>
+						
+					</properties>
+					<mainClass>com.nowellpoint.aws.app.Main</mainClass>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

@@ -4,6 +4,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -20,7 +22,7 @@ public class RegistrationResource {
 
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String findAll() {
+    public Response findAll() {
 		
 		long startTime = System.currentTimeMillis();
 		
@@ -28,13 +30,20 @@ public class RegistrationResource {
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
 		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
-			
-		String accessToken = tokenResponse.getToken().getAccessToken();
-			
+		
 		System.out.println("Authenticating...success: " + tokenResponse.getToken().getStormpathAccessTokenHref());
+		
+		Object entity;
+		if (tokenResponse.getStatusCode() == Status.OK.getStatusCode()) {
+			entity = tokenResponse.getToken();
+		} else {
+			entity = tokenResponse.getErrorMessage();
+		}
 		
 		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
 		
-        return "Authenticating...success: " + tokenResponse.getToken().getStormpathAccessTokenHref();
+		return Response.status(tokenResponse.getStatusCode())
+				.entity(entity)
+				.type(MediaType.APPLICATION_JSON).build();
     }
 }
