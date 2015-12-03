@@ -3,9 +3,10 @@ package com.nowellpoint.aws.model.idp;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Token implements Serializable {
 
 	/**
@@ -14,19 +15,14 @@ public class Token implements Serializable {
 	
 	private static final long serialVersionUID = 7118882001234268808L;
 	
-	@JsonProperty(value="access_token")
 	private String access_token;
 	
-	@JsonProperty(value="refresh_token")
 	private String refresh_token;
 	
-	@JsonProperty(value="token_type")
 	private String token_type;
 	
-	@JsonProperty(value="expires_in")
 	private Long expires_in;
 	
-	@JsonProperty(value="stormpath_access_token_href")
 	private String stormpath_access_token_href;
 	
 	public Token() {

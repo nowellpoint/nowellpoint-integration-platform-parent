@@ -173,10 +173,12 @@ package com.nowellpoint.aws.model.sforce;
 import java.io.Serializable;
 import java.util.Locale;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Identity implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;
