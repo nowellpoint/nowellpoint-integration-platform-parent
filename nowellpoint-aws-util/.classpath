@@ -29,7 +29,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.1.1/mongodb-driver-core-3.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.1.1/bson-3.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.35/aws-java-sdk-lambda-1.10.35.jar"/>
-	<classpathentry kind="src" path="/nowellpoint-aws-tools"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-rest-client"/>
 	<classpathentry kind="output" path="target/classes"/>
