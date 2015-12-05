@@ -3,6 +3,7 @@
 	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/com/sparkjava/spark-core/2.3/spark-core-2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.12/slf4j-api-1.7.12.jar"/>
@@ -22,8 +23,26 @@
 	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/websocket/websocket-servlet/9.3.2.v20150730/websocket-servlet-9.3.2.v20150730.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sparkjava/spark-template-freemarker/2.3/spark-template-freemarker-2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/freemarker/freemarker/2.3.23/freemarker-2.3.23.jar"/>
-	<classpathentry kind="var" path="M2_REPO/javax/javaee-web-api/7.0/javaee-web-api-7.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-jaxrs/1.0.0.Alpha5/wildfly-swarm-jaxrs-1.0.0.Alpha5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.0.RC6/stormpath-sdk-api-1.0.RC6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-httpclient/1.0.RC6/stormpath-sdk-httpclient-1.0.RC6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.0.RC6/stormpath-sdk-impl-1.0.RC6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.5.1/jjwt-0.5.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.4.2/jackson-databind-2.4.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.4.0/jackson-annotations-2.4.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.4.2/jackson-core-2.4.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.1/joda-time-2.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.2.2/httpclient-4.2.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.3.3/httpcore-4.3.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.6/commons-codec-1.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.8/jcl-over-slf4j-1.7.8.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-oauth/1.0.RC6/stormpath-sdk-oauth-1.0.RC6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.authzserver/1.0.0/org.apache.oltu.oauth2.authzserver-1.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.common/1.0.0/org.apache.oltu.oauth2.common-1.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/json/json/20131018/json-20131018.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.resourceserver/1.0.0/org.apache.oltu.oauth2.resourceserver-1.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-undertow/1.0.0.Alpha5/wildfly-swarm-undertow-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-container/1.0.0.Alpha5/wildfly-swarm-container-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-bootstrap/1.0.0.Alpha5/wildfly-swarm-bootstrap-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/sql/jboss-javax-sql-api_7.0_spec/2.0.0.Final/jboss-javax-sql-api_7.0_spec-2.0.0.Final.jar"/>
@@ -41,34 +60,33 @@
 	<classpathentry kind="var" path="M2_REPO/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-impl-base/2.0.0-alpha-8/shrinkwrap-descriptors-impl-base-2.0.0-alpha-8.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/shrinkwrap/descriptors/shrinkwrap-descriptors-spi/2.0.0-alpha-8/shrinkwrap-descriptors-spi-2.0.0-alpha-8.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/ow2/asm/asm-all/5.0.4/asm-all-5.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-jaxrs-modules/1.0.0.Alpha5/wildfly-swarm-jaxrs-modules-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-undertow-modules/1.0.0.Alpha5/wildfly-swarm-undertow-modules-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-logging-modules/1.0.0.Alpha5/wildfly-swarm-logging-modules-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-io-modules/1.0.0.Alpha5/wildfly-swarm-io-modules-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-ee-modules/1.0.0.Alpha5/wildfly-swarm-ee-modules-1.0.0.Alpha5.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-naming-modules/1.0.0.Alpha5/wildfly-swarm-naming-modules-1.0.0.Alpha5.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-security-modules/1.0.0.Alpha5/wildfly-swarm-security-modules-1.0.0.Alpha5.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-undertow/1.0.0.Alpha5/wildfly-swarm-undertow-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-logging/1.0.0.Alpha5/wildfly-swarm-logging-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-io/1.0.0.Alpha5/wildfly-swarm-io-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-ee/1.0.0.Alpha5/wildfly-swarm-ee-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-naming/1.0.0.Alpha5/wildfly-swarm-naming-1.0.0.Alpha5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-naming-modules/1.0.0.Alpha5/wildfly-swarm-naming-modules-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/enterprise/concurrent/jboss-concurrency-api_1.0_spec/1.0.0.Final/jboss-concurrency-api_1.0_spec-1.0.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/servlet/jboss-servlet-api_3.1_spec/1.0.0.Final/jboss-servlet-api_3.1_spec-1.0.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/websocket/jboss-websocket-api_1.1_spec/1.1.1.Final/jboss-websocket-api_1.1_spec-1.1.1.Final.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-jaxrs/1.0.0.Alpha5/wildfly-swarm-jaxrs-1.0.0.Alpha5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-jaxrs-modules/1.0.0.Alpha5/wildfly-swarm-jaxrs-modules-1.0.0.Alpha5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-security-modules/1.0.0.Alpha5/wildfly-swarm-security-modules-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/wildfly-swarm-security/1.0.0.Alpha5/wildfly-swarm-security-1.0.0.Alpha5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/annotation/jboss-annotations-api_1.2_spec/1.0.0.Final/jboss-annotations-api_1.2_spec-1.0.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/ws/rs/jboss-jaxrs-api_2.0_spec/1.0.0.Final/jboss-jaxrs-api_2.0_spec-1.0.0.Final.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.34/aws-java-sdk-lambda-1.10.34.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.10.34/aws-java-sdk-core-1.10.34.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.1.1/mongodb-driver-3.1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.1.1/mongodb-driver-core-3.1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.1.1/bson-3.1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.37/aws-java-sdk-lambda-1.10.37.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.10.37/aws-java-sdk-core-1.10.37.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.3.6/httpclient-4.3.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.3.3/httpcore-4.3.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.6/commons-codec-1.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.5.0/jackson-annotations-2.5.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.10.37/aws-java-sdk-dynamodb-1.10.37.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.10.37/aws-java-sdk-s3-1.10.37.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.10.37/aws-java-sdk-kms-1.10.37.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

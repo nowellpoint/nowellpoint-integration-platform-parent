@@ -13,37 +13,13 @@ import com.nowellpoint.aws.model.idp.GetTokenResponse;
 
 @Path("/registration")
 public class RegistrationResource {
-	
-	private static IdentityProviderClient identityProviderClient = new IdentityProviderClient();
-	
-	public RegistrationResource() {
-		
-	}
 
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		
-		long startTime = System.currentTimeMillis();
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
-				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
-		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
-		
-		System.out.println("Authenticating...success: " + tokenResponse.getToken().getStormpathAccessTokenHref());
-		
-		Object entity;
-		if (tokenResponse.getStatusCode() == Status.OK.getStatusCode()) {
-			entity = tokenResponse.getToken();
-		} else {
-			entity = tokenResponse.getErrorMessage();
-		}
-		
-		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
-		
-		return Response.status(tokenResponse.getStatusCode())
-				.entity(entity)
-				.type(MediaType.APPLICATION_JSON).build();
+		return null;
     }
 }
