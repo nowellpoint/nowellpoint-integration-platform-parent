@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<aws.sdk.version>1.10.37</aws.sdk.version>
+		<aws.sdk.version>1.10.39</aws.sdk.version>
 		<jackson.version>2.6.2</jackson.version>
 		<mongodb.driver.version>3.1.1</mongodb.driver.version>
 		<junit.version>4.12</junit.version>

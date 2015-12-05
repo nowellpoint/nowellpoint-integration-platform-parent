@@ -6,10 +6,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
-import com.nowellpoint.aws.app.api.JaxRsActivator;
-
 public class Main {
-
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -27,15 +24,16 @@ public class Main {
         container.start();
         
         //
-        // create the JAXRS archive
+        // create the JAX-RS deployment archive
         // 
         
-        JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class);
-        deployment.addPackage(JaxRsActivator.class.getPackage());
-        deployment.addAllDependencies();
+        JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
+        		.addPackage("com.nowellpoint.aws.app.api")
+        		.addPackage("com.nowellpoint.aws.app.data")
+        		.addAllDependencies();
         
         //
-        // deploy archieves
+        // deploy archives
         //
  
         container.deploy(deployment);
