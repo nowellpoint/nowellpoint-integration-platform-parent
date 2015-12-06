@@ -19,7 +19,12 @@ public class IsoCountryCodec implements CollectibleCodec<IsoCountry> {
 
 	@Override
 	public void encode(BsonWriter writer, IsoCountry value, EncoderContext encoderContext) {
-		
+		writer.writeStartDocument();
+		writer.writeObjectId("_id", new ObjectId(value.getId()));
+		writer.writeString("code", value.getCode());
+		writer.writeString("name", value.getName());
+		writer.writeString("description", value.getDescription());
+		writer.writeEndDocument();
 	}
 
 	@Override
@@ -30,15 +35,16 @@ public class IsoCountryCodec implements CollectibleCodec<IsoCountry> {
 	@Override
 	public IsoCountry decode(BsonReader reader, DecoderContext decoderContext) {
 		reader.readStartDocument();
-		
-		IsoCountry isoCountry = new IsoCountry().id(reader.readObjectId("_id").toString())
-				.code(reader.readString("code"))
-				.name(reader.readString("name"))
-				.description(reader.readString("description"));
-		
+		String id = reader.readObjectId("_id").toString();
+		String code = reader.readString("code");
+		String name = reader.readString("name");
+		String description = reader.readString("description");		
 		reader.readEndDocument();
 		
-		return isoCountry;
+		return new IsoCountry().id(id)
+				.code(code)
+				.name(name)
+				.description(description);
 	}
 
 	@Override

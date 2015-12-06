@@ -1,10 +1,13 @@
 package com.nowellpoint.aws.http;
 
+import static java.util.Optional.ofNullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -12,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Base64;
-import java.util.Optional;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -156,12 +158,18 @@ public abstract class HttpRequest {
 		
 		private InputStream entity;
 		
-		private HttpsURLConnection connection;
+		private HttpURLConnection connection;
 		
 		private URL url;
 		
 		public HttpResponseImpl() throws IOException {
-			connection = (HttpsURLConnection) buildTarget().openConnection();
+			URL url = buildTarget();
+			if ("https".equals(url.getProtocol())) {
+				connection = (HttpsURLConnection) url.openConnection();
+			} else {
+				connection = (HttpURLConnection) url.openConnection();
+			}
+			
 			connection.setRequestMethod(httpMethod.toString());
 			
 			headers.keySet().forEach(key -> {
@@ -180,7 +188,7 @@ public abstract class HttpRequest {
 				body = sb.toString();
 			} 
 			
-			if (Optional.ofNullable(body).isPresent()) {
+			if (ofNullable(body).isPresent()) {
 				
 				connection.setDoOutput(true);
 				
