@@ -8,6 +8,8 @@ public class IsoCountry implements Serializable {
 	
 	private String id;
 	
+	private String language;
+	
 	private String code;
 	
 	private String name;
@@ -24,6 +26,14 @@ public class IsoCountry implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getCode() {
@@ -52,6 +62,11 @@ public class IsoCountry implements Serializable {
 	
 	public IsoCountry id(String id) {
 		setId(id);
+		return this;
+	}
+	
+	public IsoCountry language(String language) {
+		setLanguage(language);
 		return this;
 	}
 	

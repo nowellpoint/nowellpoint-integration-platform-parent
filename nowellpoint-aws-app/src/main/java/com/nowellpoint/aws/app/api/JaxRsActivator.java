@@ -19,7 +19,6 @@ public class JaxRsActivator extends Application {
         resources.add(RegistrationResource.class);
         resources.add(TokenResource.class);
         resources.add(IsoCountryResource.class);
-        resources.add(IsoCountries.class);
         return resources;
 	}
 }
