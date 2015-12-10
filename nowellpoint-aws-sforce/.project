@@ -3,7 +3,7 @@
   <name>nowellpoint-aws-sforce</name>
   <comment>Nowellpoint Salesforce Services jar. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>nowellpoint-aws-tools</project>
+    <project>nowellpoint-aws-core</project>
     <project>nowellpoint-aws-rest-client</project>
   </projects>
   <buildSpec>

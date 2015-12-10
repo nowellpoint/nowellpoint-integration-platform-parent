@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>nowellpoint-aws-app</artifactId>
-	<name>Nowellpoint AWS Application</name>
+	<artifactId>nowellpoint-aws-api</artifactId>
+	<name>Nowellpoint Rest Api</name>
 	<packaging>jar</packaging>
 
 	<parent>

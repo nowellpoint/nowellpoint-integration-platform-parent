@@ -1,0 +1,1 @@
+web: java -jar target/nowellpoint-aws-api-0.0.2-SNAPSHOT-swarm.jar

@@ -3,8 +3,8 @@
   <name>nowellpoint-aws-util</name>
   <comment>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>nowellpoint-aws-service</project>
-    <project>nowellpoint-aws-tools</project>
+    <project>nowellpoint-aws-rest-client</project>
+    <project>nowellpoint-aws-core</project>
   </projects>
   <buildSpec>
     <buildCommand>

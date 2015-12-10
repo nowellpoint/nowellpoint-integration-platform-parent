@@ -31,7 +31,7 @@
 		<module>nowellpoint-aws-idp</module>
 		<module>nowellpoint-aws-sforce</module>
 		<module>nowellpoint-aws-util</module>
-		<module>nowellpoint-aws-app</module>
+		<module>nowellpoint-aws-api</module>
 		<module>nowellpoint-aws-test</module>
 	</modules>
 
