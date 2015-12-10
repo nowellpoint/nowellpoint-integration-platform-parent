@@ -1,0 +1,7 @@
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/Application.java
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/Main.java
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/api/HealthCheckResource.java
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/api/RegistrationResource.java
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/Bootstrap.java
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/api/JaxRsActivator.java
+/Users/jherson/workspace/nowellpoint-aws/nowellpoint-aws-app/src/main/java/com/nowellpoint/aws/app/servlet/HelloServlet.java

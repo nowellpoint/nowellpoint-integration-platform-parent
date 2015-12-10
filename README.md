@@ -1,2 +1,6 @@
 # nowellpoint-aws
-Nowellpoint AWS Projects 
+Nowellpoint Small Business Integration Platform
+
+Salesforce Outbound Message Receiver:
+
+endpoint: https://inbound.nowellpoint.com/salesforce/outbound-message/ 
