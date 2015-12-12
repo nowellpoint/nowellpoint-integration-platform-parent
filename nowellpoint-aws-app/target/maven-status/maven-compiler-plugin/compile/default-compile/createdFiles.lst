@@ -1,9 +1,0 @@
-com/nowellpoint/aws/app/data/IsoCountryCodec.class
-com/nowellpoint/aws/app/data/ApplicationEventListener.class
-com/nowellpoint/aws/app/api/IsoCountryResource.class
-com/nowellpoint/aws/app/api/HealthCheckResource.class
-com/nowellpoint/aws/app/Main.class
-com/nowellpoint/aws/app/api/TokenResource.class
-com/nowellpoint/aws/app/api/RegistrationResource.class
-com/nowellpoint/aws/app/data/Datastore.class
-com/nowellpoint/aws/app/api/JaxRsActivator.class
