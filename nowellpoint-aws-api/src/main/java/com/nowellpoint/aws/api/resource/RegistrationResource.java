@@ -1,6 +1,6 @@
-package com.nowellpoint.aws.app.api;
+package com.nowellpoint.aws.api.resource;
 
-import static com.nowellpoint.aws.app.data.EventHandler.persist;
+import static com.nowellpoint.aws.api.data.EventHandler.persist;
 
 import java.net.URI;
 
@@ -29,9 +29,7 @@ public class RegistrationResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createRegistration(Registration registration) {
-		
-		System.out.println(registration.getFirstName());
+    public Response register(Registration registration) {
 		
 		//
 		//

@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.app;
+package com.nowellpoint.aws.api;
 
 import java.util.Optional;
 
@@ -28,8 +28,8 @@ public class Main {
         // 
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
-        		.addPackage("com.nowellpoint.aws.app.api")
-        		.addPackage("com.nowellpoint.aws.app.data")
+        		.addPackage("com.nowellpoint.aws.api.data")
+        		.addPackage("com.nowellpoint.aws.api.resource")
         		.addAllDependencies();
         
         //

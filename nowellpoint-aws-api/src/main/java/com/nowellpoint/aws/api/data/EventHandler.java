@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.app.data;
+package com.nowellpoint.aws.api.data;
 
 import java.time.Instant;
 import java.util.Date;
@@ -13,7 +13,6 @@ import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.Event;
 
 public class EventHandler {
 	

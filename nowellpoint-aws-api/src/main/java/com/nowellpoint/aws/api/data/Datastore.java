@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.app.data;
+package com.nowellpoint.aws.api.data;
 
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -18,7 +18,7 @@ public class Datastore {
 	
 	static {
 		
-		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+		CodecRegistry codecRegistry = CodecRegistries.fromRegistries (
 			    MongoClient.getDefaultCodecRegistry(),
 			    CodecRegistries.fromCodecs(new IsoCountryCodec())
 		);

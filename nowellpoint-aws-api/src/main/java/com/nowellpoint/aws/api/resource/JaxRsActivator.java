@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.app.api;
+package com.nowellpoint.aws.api.resource;
 
 import java.util.Set;
 

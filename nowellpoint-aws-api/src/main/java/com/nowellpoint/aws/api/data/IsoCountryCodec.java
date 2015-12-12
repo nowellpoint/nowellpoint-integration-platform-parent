@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.app.data;
+package com.nowellpoint.aws.api.data;
 
 import org.bson.BsonReader;
 import org.bson.BsonString;

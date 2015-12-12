@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.app.api;
+package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
-import com.nowellpoint.aws.app.data.Datastore;
+import com.nowellpoint.aws.api.data.Datastore;
 import com.nowellpoint.aws.model.IsoCountry;
 
 @Path("/iso-country")

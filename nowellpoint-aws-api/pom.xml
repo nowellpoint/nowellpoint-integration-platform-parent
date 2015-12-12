@@ -46,10 +46,10 @@
 			<version>7.0</version>
 		</dependency>
 		<dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-dynamodb-encryption-java</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-        </dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-dynamodb-encryption-java</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>wildfly-swarm-undertow</artifactId>
@@ -99,7 +99,7 @@
 					<properties>
 
 					</properties>
-					<mainClass>com.nowellpoint.aws.app.Main</mainClass>
+					<mainClass>com.nowellpoint.aws.api.Main</mainClass>
 				</configuration>
 				<executions>
 					<execution>

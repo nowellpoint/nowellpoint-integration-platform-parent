@@ -1,8 +1,8 @@
-package com.nowellpoint.aws.app.data;
+package com.nowellpoint.aws.api.data;
 
 
-import static com.nowellpoint.aws.app.data.Datastore.connect;
-import static com.nowellpoint.aws.app.data.Datastore.close;
+import static com.nowellpoint.aws.api.data.Datastore.close;
+import static com.nowellpoint.aws.api.data.Datastore.connect;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
