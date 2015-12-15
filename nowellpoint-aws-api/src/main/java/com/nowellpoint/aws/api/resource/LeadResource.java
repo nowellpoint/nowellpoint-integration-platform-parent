@@ -14,25 +14,26 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nowellpoint.aws.model.Registration;
+import com.nowellpoint.aws.model.Lead;
 
-@Path("/registration")
-public class RegistrationResource {
-	
+@Path("/lead")
+public class LeadResource {
+
 	@Context
 	private UriInfo uriInfo;
+	
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response register(Registration registration) {
+    public Response capture(Lead lead) {
 		
 		//
 		//
 		//
 		
 		try {
-			registration.save();
+			lead.save();
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
@@ -42,14 +43,14 @@ public class RegistrationResource {
 		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(RegistrationResource.class)
+				.path(LeadResource.class)
 				.path("/{id}")
-				.build(registration.getId());
+				.build(lead.getId());
 		
 		//
 		//
 		//
 		
 		return Response.created(uri).build();
-    }
+	}
 }

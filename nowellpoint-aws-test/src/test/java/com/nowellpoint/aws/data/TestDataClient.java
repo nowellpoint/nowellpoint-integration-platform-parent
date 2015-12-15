@@ -50,7 +50,7 @@ public class TestDataClient {
 		
 		jedis = new Jedis("pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 10497);
 		jedis.auth(System.getenv("REDIS_PASSWORD"));
-		jedis.flushAll();
+		//jedis.flushAll();
 		
 		long startTime = System.currentTimeMillis();
 		

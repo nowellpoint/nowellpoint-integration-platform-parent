@@ -1,11 +1,14 @@
 package com.nowellpoint.aws.api.data;
 
+import static com.mongodb.MongoClient.getDefaultCodecRegistry;
+import static com.mongodb.MongoClientOptions.builder;
+import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
@@ -18,12 +21,9 @@ public class Datastore {
 	
 	static {
 		
-		CodecRegistry codecRegistry = CodecRegistries.fromRegistries (
-			    MongoClient.getDefaultCodecRegistry(),
-			    CodecRegistries.fromCodecs(new IsoCountryCodec())
-		);
+		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(new IsoCountryCodec()));
 		
-		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getenv("MONGO_CLIENT_URI")), MongoClientOptions.builder().codecRegistry(codecRegistry));
+		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getenv("MONGO_CLIENT_URI")), builder().codecRegistry(codecRegistry));
 		mongoClient = new MongoClient(mongoClientURI);		
 	}
 	

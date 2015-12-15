@@ -2,6 +2,8 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.nowellpoint.aws.tools.RedisSerializer.deserialize;
+import static com.nowellpoint.aws.tools.RedisSerializer.serialize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
+import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.data.Datastore;
 import com.nowellpoint.aws.model.IsoCountry;
 
@@ -27,14 +30,25 @@ public class IsoCountryResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("unchecked")
     public Response findAll() {
 		
-		MongoCollection<IsoCountry> collection = Datastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
+		List<IsoCountry> countries;
 		
-		List<IsoCountry> countries = StreamSupport.stream(collection.find().spliterator(), false)
-				.collect(Collectors.toList());
+		byte[] bytes = CacheManager.getCache().get(COLLECTION_NAME.getBytes());
+		
+		if (bytes != null) {
+			countries = (List<IsoCountry>) deserialize(bytes);
+		} else {
+			MongoCollection<IsoCountry> collection = Datastore.getDatabase()
+					.getCollection(COLLECTION_NAME)
+					.withDocumentClass(IsoCountry.class);
+			
+			countries = StreamSupport.stream(collection.find().spliterator(), false)
+					.collect(Collectors.toList());
+			
+			CacheManager.getCache().set(COLLECTION_NAME.getBytes(), serialize(countries));
+		}
 		
 		return Response.ok(countries).build();
     }

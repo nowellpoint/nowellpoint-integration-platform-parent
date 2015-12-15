@@ -17,7 +17,7 @@ import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 
-@Path("/oauth/token")
+@Path("/oauth")
 public class TokenResource {
 	
 	@Context
@@ -26,6 +26,7 @@ public class TokenResource {
 	private static IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 	
 	@POST
+	@Path("/token")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response authenticate() {
@@ -43,7 +44,7 @@ public class TokenResource {
 		}
 		
 		//
-		// parset the authorization token to get the base64 basic token
+		// parse the authorization token to get the base64 basic token
 		//
 		
 		String basicToken = new String(Base64.getDecoder().decode(authorization.get().replace("Basic ", "")));

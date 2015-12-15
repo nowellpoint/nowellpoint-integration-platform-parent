@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.api.data;
 
-
 import static com.nowellpoint.aws.api.data.Datastore.close;
 import static com.nowellpoint.aws.api.data.Datastore.connect;
 
@@ -18,7 +17,7 @@ public class ApplicationEventListener implements ServletContextListener {
 		// close datastore connection
 		//
 		
-		close();		
+		close();	
 	}
 
 	@Override

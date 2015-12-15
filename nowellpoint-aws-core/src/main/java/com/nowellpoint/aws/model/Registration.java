@@ -1,11 +1,9 @@
 package com.nowellpoint.aws.model;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Registration implements Serializable {
+public class Registration extends AbstractPayload {
 
 	/**
 	 * 
@@ -13,7 +11,6 @@ public class Registration implements Serializable {
 	
 	private static final long serialVersionUID = -1686297355289665371L;
 	
-	private String id;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -29,14 +26,6 @@ public class Registration implements Serializable {
 
 	public Registration() {
 		
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getFirstName() {
