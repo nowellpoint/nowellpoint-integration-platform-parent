@@ -5,6 +5,10 @@ import static com.mongodb.MongoClientOptions.builder;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 
@@ -13,7 +17,8 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
 
-public class Datastore {
+@WebListener
+public class Datastore implements ServletContextListener {
 	
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
@@ -27,12 +32,22 @@ public class Datastore {
 		mongoClient = new MongoClient(mongoClientURI);		
 	}
 	
-	private Datastore() {
+	public Datastore() {
 		
 	}
 	
-	public static void connect() {		
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
 		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
+	}
+	
+	@Override
+	public void contextDestroyed(ServletContextEvent event) {
+		mongoClient.close();
+	}
+	
+	public static MongoDatabase getDatabase() {			
+		return mongoDatabase;
 	}
 	
 	public static void checkStatus() {
@@ -41,13 +56,5 @@ public class Datastore {
 		} catch (MongoCommandException ignore) {
 			
 		}
-	}
-
-	public static MongoDatabase getDatabase() {			
-		return mongoDatabase;
-	}
-	
-	public static void close() {
-		mongoClient.close();
 	}
 }

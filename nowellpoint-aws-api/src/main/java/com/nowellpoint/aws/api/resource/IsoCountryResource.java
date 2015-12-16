@@ -16,8 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.bson.Document;
-
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.data.Datastore;
@@ -62,7 +60,7 @@ public class IsoCountryResource {
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 		
-		List<IsoCountry> countries = StreamSupport.stream(collection.find(new Document("language", language)).spliterator(), false)
+		List<IsoCountry> countries = StreamSupport.stream(collection.find( eq ( "language", language ) ).spliterator(), false)
 				.collect(Collectors.toList());
 		
 		return Response.ok(countries).build();
