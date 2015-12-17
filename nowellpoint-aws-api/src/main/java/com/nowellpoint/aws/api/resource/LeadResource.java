@@ -15,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.model.Lead;
+import com.nowellpoint.aws.model.data.EventStore;
 
 @Path("/lead")
 public class LeadResource {
@@ -22,18 +23,19 @@ public class LeadResource {
 	@Context
 	private UriInfo uriInfo;
 	
+	private EventStore eventStore = new EventStore();
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response capture(Lead lead) {
+    public Response create(Lead lead) {
 		
 		//
 		//
 		//
 		
 		try {
-			lead.save();
+			eventStore.save(lead);
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}

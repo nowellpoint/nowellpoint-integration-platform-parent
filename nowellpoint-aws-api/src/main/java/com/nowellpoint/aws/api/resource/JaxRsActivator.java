@@ -17,7 +17,6 @@ public class JaxRsActivator extends Application {
         Set<Class<?>> resources = new java.util.HashSet<>();
         resources.add(HealthCheckResource.class);
         resources.add(LeadResource.class);
-        resources.add(RegistrationResource.class);
         resources.add(TokenResource.class);
         resources.add(IsoCountryResource.class);
         return resources;
