@@ -13,7 +13,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.Lead;
 import com.nowellpoint.aws.model.data.EventStore;
 
@@ -34,11 +37,31 @@ public class LeadResource {
 		//
 		//
 		
-		try {
-			eventStore.save(lead);
+		lead.setId(new ObjectId().toString());
+		
+		//
+		//
+		//
+				
+		String payload = null;
+		try {			
+			payload = new ObjectMapper().writeValueAsString(lead);
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
+		
+		//
+		//
+		//
+		
+		String organizationId = System.getenv("DEFAULT_ORGANIZATION_ID");
+		String userId = System.getenv("DEFAULT_USER_ID");
+		
+		//
+		//
+		//
+		
+		eventStore.processEvent(Lead.class, organizationId, userId, payload);
 		
 		//
 		//
