@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.idp.GetAccountRequest;
+import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
@@ -54,6 +56,25 @@ public class TestIdentityProviderClient {
 			
 		assertTrue(verifyTokenResponse.getStatusCode() == 200);
 		assertNotNull(verifyTokenResponse.getAuthToken());
+		
+		System.out.println("get account test");
+		
+		start = System.currentTimeMillis();
+		
+		GetAccountRequest getAccountRequest = new GetAccountRequest().withAccessToken(tokenResponse.getToken().getAccessToken());
+		
+		GetAccountResponse getAccountResponse = client.account(getAccountRequest);
+		
+		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
+		
+		assertTrue(getAccountResponse.getStatusCode() == 200);
+		assertNotNull(getAccountResponse.getAccount());
+		assertNotNull(getAccountResponse.getAccount().getEmail());
+		assertNotNull(getAccountResponse.getAccount().getFullName());
+		assertNotNull(getAccountResponse.getAccount().getGivenName());
+		assertNotNull(getAccountResponse.getAccount().getHref());		
+		assertNotNull(getAccountResponse.getAccount().getStatus());
+		assertNotNull(getAccountResponse.getAccount().getSurname());
 		
 		System.out.println("refresh token test");
 		

@@ -1,6 +1,8 @@
 package com.nowellpoint.aws.client;
 
 import com.nowellpoint.aws.model.LambdaResponseException;
+import com.nowellpoint.aws.model.idp.GetAccountRequest;
+import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -20,6 +22,10 @@ public class IdentityProviderClient extends AbstractClient {
 	
 	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws LambdaResponseException {		
 		return invoke("IdentityProviderUsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
+	}
+	
+	public GetAccountResponse account(GetAccountRequest accountRequest) throws LambdaResponseException {		
+		return invoke("IdentityProviderGetAccount", accountRequest, GetAccountResponse.class);
 	}
 	
 	public GetCustomDataResponse customData(GetCustomDataRequest customDataRequest) throws LambdaResponseException {

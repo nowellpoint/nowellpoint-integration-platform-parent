@@ -9,6 +9,8 @@ public class GetAccountRequest extends AbstractLambdaRequest {
 	 */
 	
 	private static final long serialVersionUID = 350380797564170812L;
+	
+	private String accessToken;
 
 	private String apiKeyId;
 	
@@ -16,6 +18,14 @@ public class GetAccountRequest extends AbstractLambdaRequest {
 	
 	public GetAccountRequest() {
 		
+	}
+	
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
 	public String getApiKeyId() {
@@ -32,6 +42,11 @@ public class GetAccountRequest extends AbstractLambdaRequest {
 
 	public void setApiKeySecret(String apiKeySecret) {
 		this.apiKeySecret = apiKeySecret;
+	}
+	
+	public GetAccountRequest withAccessToken(String accessToken) {
+		setAccessToken(accessToken);
+		return this;
 	}
 	
 	public GetAccountRequest withApiKeyId(String apiKeyId) {

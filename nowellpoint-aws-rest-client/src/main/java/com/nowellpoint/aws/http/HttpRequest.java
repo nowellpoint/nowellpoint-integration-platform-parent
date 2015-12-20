@@ -160,8 +160,6 @@ public abstract class HttpRequest {
 		
 		private HttpURLConnection connection;
 		
-		private URL url;
-		
 		public HttpResponseImpl() throws IOException {
 			URL url = buildTarget();
 			if ("https".equals(url.getProtocol())) {
@@ -214,7 +212,7 @@ public abstract class HttpRequest {
 		}
 		
 		public URL getURL() {
-			return url;
+			return connection.getURL();
 		}
 	
 		public String getEntity() throws IOException {
