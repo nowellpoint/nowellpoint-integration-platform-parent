@@ -12,8 +12,6 @@ public class TestRestApi {
 
 	@Test
 	public void testAuthentication() {
-		//"https://api.nowellpoint.com/rest/v1"
-		//"http://localhost:9090/rest"
 		
 		try {
 			HttpResponse httpResponse = RestResource.post("https://api.nowellpoint.com/rest/v1")
