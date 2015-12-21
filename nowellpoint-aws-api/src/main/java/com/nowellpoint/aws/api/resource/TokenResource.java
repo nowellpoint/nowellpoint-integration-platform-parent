@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.util.Base64;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
@@ -28,32 +28,18 @@ public class TokenResource {
 	@Context
 	private HttpServletRequest servletRequest;
 	
-	private static IdentityProviderClient identityProviderClient = new IdentityProviderClient();
+	private static final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 	
 	@POST
 	@Path("/token")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response authenticate() {
 		
-		Response response;
-		
 		//
-		// ensure the request has an Authorization header parameter
+		// get basic token from the header
 		//
 		
-		Optional<String> authorization = Optional.ofNullable(servletRequest.getHeader("Authorization"));
-		
-		if (! authorization.isPresent()) {
-			return Response.status(Status.BAD_REQUEST)
-					.entity("Invalid Request - Missing Authorization Header")
-					.build();
-		}
-		
-		//
-		// parse the authorization token to get the base64 basic token
-		//
-		
-		String basicToken = new String(Base64.getDecoder().decode(authorization.get().replace("Basic ", "")));
+		String basicToken = HttpServletRequestUtil.getBasicToken(servletRequest);
 		
 		//
 		// ensure that the token has both a username and password parameter
@@ -82,6 +68,8 @@ public class TokenResource {
 		// build and return the response
 		//
 		
+		Response response;
+		
 		if (tokenResponse.getStatusCode() != 200) {
 			response = Response.status(tokenResponse.getStatusCode())
 					.entity(tokenResponse.getErrorMessage())
@@ -102,33 +90,28 @@ public class TokenResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verify() {
 		
-		Response response;
-		
 		//
-		// ensure the request has an Authorization header parameter
+		// get the bearer token from the header
 		//
 		
-		Optional<String> authorization = Optional.ofNullable(servletRequest.getHeader("Authorization"));
-		
-		if (! authorization.isPresent()) {
-			return Response.status(Status.BAD_REQUEST)
-					.entity("Invalid Request - Missing Authorization Header")
-					.build();
-		}
+		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
 		
 		//
-		// parse the authorization header to get the bearer token
+		// build the token verification request
 		//
-		
-		String bearerToken = new String(authorization.get().replace("Bearer ", ""));
 		
 		VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest().withAccessToken(bearerToken);
+		
+		//
+		// execute the token verification request
 		
 		VerifyTokenResponse verifyTokenResponse = identityProviderClient.verify(verifyTokenRequest);
 		
 		//
 		// build and return the response
 		//
+		
+		Response response;
 		
 		if (verifyTokenResponse.getStatusCode() != 200) {
 			response = Response.status(verifyTokenResponse.getStatusCode())

@@ -45,7 +45,7 @@ public class TokenAuthorization implements RequestHandler<GetAuthorizationReques
 					.parameter("redirect_uri", Configuration.getRedirectUri())
 					.execute();
 			
-			log.info("Identity response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			log.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 				
 			/**
 			 * 
