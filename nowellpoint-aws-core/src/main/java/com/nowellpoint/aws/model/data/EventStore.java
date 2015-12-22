@@ -13,17 +13,27 @@ import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.Encry
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.Setup;
 
 public class EventStore {
 	
-	private static AmazonDynamoDB dynamoDB = new AmazonDynamoDBClient();
-	private static AWSKMS kms = new AWSKMSClient();
-
-	public void processEvent(Class<?> type, String organizationId, String userId, String payload) {
+	private static DynamoDBMapper mapper;
+	
+	static {
 		String keyId = System.getenv("AWS_KMS_KEY_ID");
 		
+		AmazonDynamoDB dynamoDB = new AmazonDynamoDBClient();
+		AWSKMS kms = new AWSKMSClient();
 		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(kms, keyId, null);
-		DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB, DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
+		
+		mapper = new DynamoDBMapper(dynamoDB, DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
+	}
+	
+	public EventStore() {
+		
+	}
+
+	public void processEvent(Class<?> type, String organizationId, String userId, String payload) {
 		
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
@@ -33,5 +43,9 @@ public class EventStore {
 				.withPayload(payload);
 		
 		mapper.save(event);
+	}
+	
+	public void saveConfiguration(Setup setup) {
+		mapper.save(setup);
 	}
 }

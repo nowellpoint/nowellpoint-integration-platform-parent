@@ -42,17 +42,17 @@ public class GetAccount implements RequestHandler<GetAccountRequest, GetAccountR
 		 * 
 		 */
 		
-		if (request.getAccessToken() == null || request.getAccessToken().trim().isEmpty()) {
-			throw new IllegalArgumentException("Missing access token");
-		}
-		
-		String href = parseToken(request.getAccessToken()).getBody().getSubject();
-		
-		/**
-		 * 
-		 */
-		
 		try {
+			
+			/**
+			 * 
+			 */
+			
+			String href = parseToken(request.getAccessToken()).getBody().getSubject();
+			
+			/**
+			 * 
+			 */
 			
 			HttpResponse httpResponse = RestResource.get(href)
 					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())

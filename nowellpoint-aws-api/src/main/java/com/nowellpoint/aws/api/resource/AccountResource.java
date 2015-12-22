@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.resource;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -32,6 +33,14 @@ public class AccountResource {
 		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
 		
 		//
+		// throw exception if the bearerToken is null or missing 
+		//
+		
+		if (bearerToken == null || bearerToken.trim().isEmpty()) {
+			throw new BadRequestException("Missing bearer token");
+		}
+		
+		//
 		// build the GetAccountRequest
 		//
 		
@@ -46,22 +55,6 @@ public class AccountResource {
 		//
 		// build and return the response
 		//
-		
-//		Response response;
-//		
-//		if (getAccountResponse.getStatusCode() != 200) {
-//			response = Response.status(getAccountResponse.getStatusCode())
-//					.entity(getAccountResponse.getErrorMessage())
-//					.type(MediaType.APPLICATION_JSON)
-//					.build();
-//		} else {
-//			response = Response.status(getAccountResponse.getStatusCode())
-//					.entity(getAccountResponse.getAccount())
-//					.type(MediaType.APPLICATION_JSON)
-//					.build();
-//		}
-//		
-//		return response;
 		
 		return Response.status(getAccountResponse.getStatusCode())
 				.entity((getAccountResponse.getStatusCode() != 200 ? getAccountResponse.getErrorMessage() : getAccountResponse.getAccount()))
