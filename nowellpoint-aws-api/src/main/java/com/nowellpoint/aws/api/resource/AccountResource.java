@@ -44,9 +44,28 @@ public class AccountResource {
 		GetAccountResponse getAccountResponse = identityProviderClient.account(getAccountRequest);
 		
 		//
-		// return the account
+		// build and return the response
 		//
 		
-		return Response.ok(getAccountResponse.getAccount()).build();
+//		Response response;
+//		
+//		if (getAccountResponse.getStatusCode() != 200) {
+//			response = Response.status(getAccountResponse.getStatusCode())
+//					.entity(getAccountResponse.getErrorMessage())
+//					.type(MediaType.APPLICATION_JSON)
+//					.build();
+//		} else {
+//			response = Response.status(getAccountResponse.getStatusCode())
+//					.entity(getAccountResponse.getAccount())
+//					.type(MediaType.APPLICATION_JSON)
+//					.build();
+//		}
+//		
+//		return response;
+		
+		return Response.status(getAccountResponse.getStatusCode())
+				.entity((getAccountResponse.getStatusCode() != 200 ? getAccountResponse.getErrorMessage() : getAccountResponse.getAccount()))
+				.type(MediaType.APPLICATION_JSON)
+				.build();
 	}
 }
