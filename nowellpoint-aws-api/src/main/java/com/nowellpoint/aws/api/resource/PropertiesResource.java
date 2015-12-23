@@ -1,8 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.net.URI;
-import java.time.Instant;
-import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -15,30 +13,34 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.joda.time.Instant;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.Lead;
+import com.nowellpoint.aws.model.config.Configuration;
+import com.nowellpoint.aws.model.config.Properties;
 
-@Path("/lead")
-public class LeadResource {
+@Path("/properties")
+public class PropertiesResource {
 
 	@Context
 	private UriInfo uriInfo;
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Lead lead) {
+    public Response create(Properties resource) {
 		
 		//
 		//
 		//
-				
+		
 		String payload = null;
-		try {			
-			payload = new ObjectMapper().writeValueAsString(lead);
+		try {
+			payload = objectMapper.writeValueAsString(resource);
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
@@ -47,30 +49,24 @@ public class LeadResource {
 		//
 		//
 		
-		String organizationId = System.getenv("DEFAULT_ORGANIZATION_ID");
-		String userId = System.getenv("DEFAULT_USER_ID");
-		
-		//
-		//
-		//
-		
-		Event event = new Event().withEventDate(Date.from(Instant.now()))
-				.withEventStatus(Event.EventStatus.NEW)
-				.withType(Lead.class.getName())
-				.withOrganizationId(organizationId)
-				.withUserId(userId)
+		Configuration configuration = new Configuration().withCreatedDate(Instant.now().toDate())
+				.withLastModifiedDate(Instant.now().toDate())
 				.withPayload(payload);
 		
-		DynamoDBMapperProvider.getDynamoDBMapper().save(event);
+		//
+		//
+		//
+		
+		DynamoDBMapperProvider.getDynamoDBMapper().save(configuration);
 		
 		//
 		//
 		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(LeadResource.class)
+				.path(PropertiesResource.class)
 				.path("/{id}")
-				.build(event.getId());
+				.build(configuration.getId());
 		
 		//
 		//

@@ -1,9 +1,11 @@
 package com.nowellpoint.aws.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Registration extends AbstractPayload {
+public class Registration implements Serializable {
 
 	/**
 	 * 

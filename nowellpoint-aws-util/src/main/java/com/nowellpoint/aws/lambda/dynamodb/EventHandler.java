@@ -1,6 +1,8 @@
 package com.nowellpoint.aws.lambda.dynamodb;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -15,12 +17,20 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
+import com.nowellpoint.aws.model.config.Properties;
+import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
+import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
+import com.nowellpoint.aws.model.sforce.GetTokenRequest;
+import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 
 public class EventHandler {
 	
+	private static final Logger log = Logger.getLogger(EventHandler.class.getName());
+			
 	private static AmazonDynamoDB dynamoDB = new AmazonDynamoDBClient();
 	private static AWSKMS kms = new AWSKMSClient();
 	private static DynamoDBMapper mapper;
@@ -53,8 +63,7 @@ public class EventHandler {
 			
 			try {
 				if (Lead.class.getName().equals(event.getType())) {
-					Lead lead = objectMapper.readValue(event.getPayload(), Lead.class);
-					logger.log("First Name: " + lead.getFirstName());
+					processLead(event.getPayload());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -62,5 +71,33 @@ public class EventHandler {
 		});
 		
 		return null;
+	}
+	
+	private void processLead(String json) {
+		log.info("lead: " + json);
+		com.nowellpoint.aws.model.config.Configuration configuration = mapper.load(com.nowellpoint.aws.model.config.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
+		Properties properties = null;
+		try {
+			properties = objectMapper.readValue(configuration.getPayload(), Properties.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		SalesforceClient client = new SalesforceClient();
+		
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(properties.getSalesforce().getUsername())
+				.withPassword(properties.getSalesforce().getPassword())
+				.withSecurityToken(properties.getSalesforce().getSecurityToken());
+		
+		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
+		
+		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
+				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
+				.withSObject(json)
+				.withType("Lead");
+		
+		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
+		
+		log.info(createSObjectResponse.getId());
 	}
 }

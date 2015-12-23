@@ -1,9 +1,11 @@
 package com.nowellpoint.aws.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Lead extends AbstractPayload {
+public class Lead implements Serializable {
 	
 	private static final long serialVersionUID = 7199045654991076942L;
 	

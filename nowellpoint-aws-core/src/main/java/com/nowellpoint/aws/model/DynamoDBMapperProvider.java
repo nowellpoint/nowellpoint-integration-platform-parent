@@ -1,7 +1,4 @@
-package com.nowellpoint.aws.model.data;
-
-import java.time.Instant;
-import java.util.Date;
+package com.nowellpoint.aws.model;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -12,10 +9,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.Direc
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.EncryptionMaterialsProvider;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.Setup;
 
-public class EventStore {
+public class DynamoDBMapperProvider {
 	
 	private static DynamoDBMapper mapper;
 	
@@ -29,23 +24,11 @@ public class EventStore {
 		mapper = new DynamoDBMapper(dynamoDB, DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
 	}
 	
-	public EventStore() {
+	private DynamoDBMapperProvider() {
 		
-	}
-
-	public void processEvent(Class<?> type, String organizationId, String userId, String payload) {
-		
-		Event event = new Event().withEventDate(Date.from(Instant.now()))
-				.withEventStatus(Event.EventStatus.NEW)
-				.withType(type.getName())
-				.withOrganizationId(organizationId)
-				.withUserId(userId)
-				.withPayload(payload);
-		
-		mapper.save(event);
 	}
 	
-	public void saveConfiguration(Setup setup) {
-		mapper.save(setup);
+	public static DynamoDBMapper getDynamoDBMapper() {
+		return mapper;
 	}
 }

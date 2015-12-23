@@ -9,6 +9,8 @@ import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
 import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
+import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
+import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
 
 public class SalesforceClient extends AbstractClient {
 	
@@ -30,5 +32,9 @@ public class SalesforceClient extends AbstractClient {
 	
 	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws LambdaResponseException {
 		return invoke("SalesforceRevokeTokenRequest", revokeTokenRequest, RevokeTokenResponse.class);
+	}
+	
+	public CreateSObjectResponse createSObject(CreateSObjectRequest createSObjectRequest) throws LambdaResponseException {
+		return invoke("SalesforceCreateSObject", createSObjectRequest, CreateSObjectResponse.class);
 	}
 }
