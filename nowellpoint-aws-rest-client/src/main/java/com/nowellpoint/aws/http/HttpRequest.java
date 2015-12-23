@@ -30,7 +30,7 @@ public abstract class HttpRequest {
 	private Map<String,String> headers;
 	private Map<String,String> parameters;
 	private Map<String,String> queryParameters;
-	private String body;
+	private Object body;
 	
 	public HttpRequest(HttpMethod httpMethod, String target) {
 		this.objectMapper = new ObjectMapper();
@@ -106,7 +106,7 @@ public abstract class HttpRequest {
 		return this;
 	}
 
-	public HttpRequest body(String body) {
+	public HttpRequest body(Object body) {
 		this.body = body;
 		return this;
 	}
@@ -187,11 +187,24 @@ public abstract class HttpRequest {
 			} 
 			
 			if (ofNullable(body).isPresent()) {
+								
+				byte[] bytes = null;
+				
+				if (body.getClass().isAssignableFrom(String.class)) {
+					bytes = String.valueOf(body).getBytes();
+				} else {
+					if (headers.get(HttpHeaders.CONTENT_TYPE).equals(MediaType.APPLICATION_JSON)) {
+						bytes = objectMapper.writeValueAsString(body).getBytes();
+					}
+				}
 				
 				connection.setDoOutput(true);
+				connection.setRequestProperty("Content-Length", Integer.toString(bytes.length));
+				
+				System.out.println("length: " + Integer.toString(bytes.length));
 				
 				OutputStream os = connection.getOutputStream();
-				os.write( body.getBytes() );    
+				os.write( bytes );    
 				os.close();
 			}
 

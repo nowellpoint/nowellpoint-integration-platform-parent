@@ -29,12 +29,19 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 		 * 
 		 */
 		
+		log.info("AccessToken: " + request.getAccessToken());
+		log.info("Type: " + request.getType());
+		log.info("INstance URL: " + request.getInstanceUrl());
+		log.info("SObject: " + request.getSobject());
+		
 		HttpResponse httpResponse = null;
 		try {
 			httpResponse = RestResource.post(request.getInstanceUrl())
-					.path("services/data/v35.0/sobjects/Lead/")
+					.path("services/data/v35.0/sobjects/")
+					.path(request.getType())
 					.header("Content-type", MediaType.APPLICATION_JSON)
 					.bearerAuthorization(request.getAccessToken())
+					.body(request.getSobject())
 					.execute();
 			
 			log.info("Create SObject status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
@@ -42,15 +49,26 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 			/**
 			 * 
 			 */
-				
+			
 			response.setStatusCode(httpResponse.getStatusCode());
 			
-			if (response.getStatusCode() < 400) {		
-				response.setId(httpResponse.getEntity());
+			/**
+			 * 
+			 */
+			
+			if (response.getStatusCode() < 400) {	
+				JsonNode node = httpResponse.getEntity(JsonNode.class);
+				log.info(node.toString());
+				if (node.get("success").asBoolean()) {
+					response.setId(node.get("id").asText());
+				} else {
+					response.setErrorMessage(node.get("errors").asText());
+				}
 			} else {
+				//[{"message":"POST requires content-length","errorCode":"UNKNOWN_EXCEPTION"}]
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
-				response.setErrorCode(errorResponse.get("error").asText());
-				response.setErrorMessage(errorResponse.get("error_description").asText());
+				//response.setErrorCode(errorResponse.get("errorCode").asText());
+				response.setErrorMessage(errorResponse.toString());
 			}
 			
 		} catch (IOException e) {

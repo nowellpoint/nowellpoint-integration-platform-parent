@@ -74,7 +74,7 @@ public class EventHandler {
 	}
 	
 	private void processLead(String json) {
-		log.info("lead: " + json);
+		
 		com.nowellpoint.aws.model.config.Configuration configuration = mapper.load(com.nowellpoint.aws.model.config.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
 		Properties properties = null;
 		try {
@@ -91,6 +91,11 @@ public class EventHandler {
 		
 		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
 		
+		log.info(tokenResponse.getErrorMessage());
+		log.info("status code: " + tokenResponse.getStatusCode());
+		
+		log.info("lead: " + json);
+		
 		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
 				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
 				.withSObject(json)
@@ -98,6 +103,8 @@ public class EventHandler {
 		
 		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
 		
+		log.info("status code: " + createSObjectResponse.getStatusCode());
+		log.info(createSObjectResponse.getErrorMessage());
 		log.info(createSObjectResponse.getId());
 	}
 }

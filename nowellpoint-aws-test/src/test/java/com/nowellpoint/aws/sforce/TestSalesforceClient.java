@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.SalesforceClient;
+import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
+import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
 import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
 import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
@@ -62,6 +64,17 @@ public class TestSalesforceClient {
 		assertNotNull(identityResponse.getIdentity().getAddrStreet());
 		assertNotNull(identityResponse.getIdentity().getAddrZip());
 		
+		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
+				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
+				.withSObject("{\"firstName\":\"John\",\"lastName\":\"Herson\",\"phone\":\"6787730798\",\"description\":\"lead\",\"company\":\"Nowellpoint\",\"email\":\"john.d.herson@gmail.com\",\"status\":\"New\"}")
+				.withType("Lead");
+		
+		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
+		
+		System.out.println("status code: " + createSObjectResponse.getStatusCode());
+		System.out.println(createSObjectResponse.getErrorMessage());
+		System.out.println(createSObjectResponse.getId());
+		
 		start = System.currentTimeMillis();
 		
 		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withAccessToken(tokenResponse.getToken().getAccessToken());
@@ -71,5 +84,7 @@ public class TestSalesforceClient {
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
 		assertTrue(revokeTokenResponse.getStatusCode() == 200);
+		
+		
 	}
 }

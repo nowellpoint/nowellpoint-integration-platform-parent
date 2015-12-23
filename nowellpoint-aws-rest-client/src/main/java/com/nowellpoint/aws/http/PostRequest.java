@@ -58,7 +58,7 @@ public class PostRequest extends HttpRequest {
 		return this;
 	}
 	
-	public PostRequest body(String body) {
+	public PostRequest body(Object body) {
 		super.body(body);
 		return this;
 	}
