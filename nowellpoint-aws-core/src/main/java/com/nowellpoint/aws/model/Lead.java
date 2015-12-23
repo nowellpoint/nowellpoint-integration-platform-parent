@@ -3,8 +3,11 @@ package com.nowellpoint.aws.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_NULL)
 public class Lead implements Serializable {
 	
 	private static final long serialVersionUID = 7199045654991076942L;
@@ -14,7 +17,7 @@ public class Lead implements Serializable {
 	private String email;
 	private String mobilePhone;
 	private String phone;
-	private String companyName;
+	private String company;
 	private String title;
 	private String address1;
 	private String address2;
@@ -22,7 +25,7 @@ public class Lead implements Serializable {
 	private String state;
 	private String postalCode;
 	private String country;
-	private String interest;
+	private String description;
 	private String status;
 	
 	public Lead() {
@@ -69,12 +72,12 @@ public class Lead implements Serializable {
 		this.phone = phone;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+	public String getCompany() {
+		return company;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setCompany(String company) {
+		this.company = company;
 	}
 
 	public String getTitle() {
@@ -133,12 +136,12 @@ public class Lead implements Serializable {
 		this.country = country;
 	}
 
-	public String getInterest() {
-		return interest;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setInterest(String interest) {
-		this.interest = interest;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getStatus() {
