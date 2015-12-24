@@ -18,8 +18,8 @@ import org.joda.time.Instant;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
-import com.nowellpoint.aws.model.config.Configuration;
-import com.nowellpoint.aws.model.config.Properties;
+import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
 
 @Path("/properties")
 public class PropertiesResource {

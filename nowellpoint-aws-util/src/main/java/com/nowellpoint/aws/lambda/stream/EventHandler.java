@@ -13,7 +13,7 @@ import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
-import com.nowellpoint.aws.model.config.Properties;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
 import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
@@ -60,7 +60,7 @@ public class EventHandler {
 	
 	private void processLead(String json) {
 		
-		com.nowellpoint.aws.model.config.Configuration configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(com.nowellpoint.aws.model.config.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
+		com.nowellpoint.aws.model.admin.Configuration configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(com.nowellpoint.aws.model.admin.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
 		Properties properties = null;
 		try {
 			properties = objectMapper.readValue(configuration.getPayload(), Properties.class);

@@ -11,6 +11,13 @@
 		<artifactId>aws</artifactId>
 		<version>0.0.2-SNAPSHOT</version>
 	</parent>
+	
+	<properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<wildfly.swarm.version>1.0.0.Alpha5</wildfly.swarm.version>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -48,12 +55,12 @@
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>wildfly-swarm-undertow</artifactId>
-			<version>1.0.0.Alpha5</version>
+			<version>${wildfly.swarm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>wildfly-swarm-jaxrs</artifactId>
-			<version>1.0.0.Alpha5</version>
+			<version>${wildfly.swarm.version}</version>
 		</dependency>
 		<dependency>
             <groupId>redis.clients</groupId>
@@ -94,10 +101,9 @@
 			<plugin>
 				<groupId>org.wildfly.swarm</groupId>
 				<artifactId>wildfly-swarm-plugin</artifactId>
-				<version>1.0.0.Alpha5</version>
+				<version>${wildfly.swarm.version}</version>
 				<configuration>
 					<properties>
-
 					</properties>
 					<mainClass>com.nowellpoint.aws.api.Main</mainClass>
 				</configuration>

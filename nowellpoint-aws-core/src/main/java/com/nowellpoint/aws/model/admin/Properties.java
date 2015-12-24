@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.model.config;
+package com.nowellpoint.aws.model.admin;
 
 import java.io.Serializable;
 
