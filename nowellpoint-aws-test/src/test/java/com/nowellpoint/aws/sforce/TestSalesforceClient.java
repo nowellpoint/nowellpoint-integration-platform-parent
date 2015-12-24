@@ -71,8 +71,10 @@ public class TestSalesforceClient {
 		
 		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
 		
+		assertTrue(createSObjectResponse.getStatusCode() == 201);
+		assertNotNull(createSObjectResponse.getId());
+		
 		System.out.println("status code: " + createSObjectResponse.getStatusCode());
-		System.out.println(createSObjectResponse.getErrorMessage());
 		System.out.println(createSObjectResponse.getId());
 		
 		start = System.currentTimeMillis();
@@ -84,7 +86,6 @@ public class TestSalesforceClient {
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
 		assertTrue(revokeTokenResponse.getStatusCode() == 200);
-		
 		
 	}
 }

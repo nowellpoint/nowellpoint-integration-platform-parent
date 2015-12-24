@@ -11,6 +11,7 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
 import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
+import com.nowellpoint.aws.model.sforce.ErrorResponse;
 
 public class CreateSObject implements RequestHandler<CreateSObjectRequest, CreateSObjectResponse> {
 	
@@ -28,11 +29,6 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 		/**
 		 * 
 		 */
-		
-		log.info("AccessToken: " + request.getAccessToken());
-		log.info("Type: " + request.getType());
-		log.info("INstance URL: " + request.getInstanceUrl());
-		log.info("SObject: " + request.getSobject());
 		
 		HttpResponse httpResponse = null;
 		try {
@@ -58,7 +54,6 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 			
 			if (response.getStatusCode() < 400) {	
 				JsonNode node = httpResponse.getEntity(JsonNode.class);
-				log.info(node.toString());
 				if (node.get("success").asBoolean()) {
 					response.setId(node.get("id").asText());
 				} else {
@@ -66,9 +61,9 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 				}
 			} else {
 				//[{"message":"POST requires content-length","errorCode":"UNKNOWN_EXCEPTION"}]
-				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
-				//response.setErrorCode(errorResponse.get("errorCode").asText());
-				response.setErrorMessage(errorResponse.toString());
+				ErrorResponse[] errors = httpResponse.getEntity(ErrorResponse[].class);
+				response.setErrorCode(errors[0].getErrorCode());
+				response.setErrorMessage(errors[0].getMessage());
 			}
 			
 		} catch (IOException e) {

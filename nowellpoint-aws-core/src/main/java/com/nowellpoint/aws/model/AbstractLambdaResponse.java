@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AbstractLambdaResponse implements Serializable {
+public abstract class AbstractLambdaResponse extends Base64EncoderDecoder implements Serializable {
 	
 	/**
 	 * 

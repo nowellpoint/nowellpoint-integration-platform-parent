@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.model.data;
 
-import com.amazonaws.util.Base64;
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
@@ -40,10 +39,10 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 	}
 	
 	protected String getDocument() {
-		return new String(Base64.decode(document));
+		return decode(document);
 	}
 
 	protected void setDocument(String document) {
-		this.document = Base64.encodeAsString(document.getBytes());
+		this.document = encode(document);
 	}
 }

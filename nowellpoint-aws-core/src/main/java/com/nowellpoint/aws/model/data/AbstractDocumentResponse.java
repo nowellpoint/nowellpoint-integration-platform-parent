@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.model.data;
 
-import java.util.Base64;
 import java.util.Optional;
 
 import com.nowellpoint.aws.model.AbstractLambdaResponse;
@@ -27,13 +26,13 @@ public abstract class AbstractDocumentResponse extends AbstractLambdaResponse {
 	
 	protected String getDocument() {
 		if (Optional.ofNullable(document).isPresent()) {
-			return new String(Base64.getDecoder().decode(document));
+			return decode(document);
 		} else {
 			return null;
 		}
 	}
 	
 	protected void setDocument(String document) {
-		this.document = Base64.getEncoder().encodeToString(document.getBytes());
+		this.document = encode(document);
 	}
 }

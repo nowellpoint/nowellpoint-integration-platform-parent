@@ -201,8 +201,6 @@ public abstract class HttpRequest {
 				connection.setDoOutput(true);
 				connection.setRequestProperty("Content-Length", Integer.toString(bytes.length));
 				
-				System.out.println("length: " + Integer.toString(bytes.length));
-				
 				OutputStream os = connection.getOutputStream();
 				os.write( bytes );    
 				os.close();

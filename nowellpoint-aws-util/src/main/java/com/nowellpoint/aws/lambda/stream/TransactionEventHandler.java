@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.dynamodb;
+package com.nowellpoint.aws.lambda.stream;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

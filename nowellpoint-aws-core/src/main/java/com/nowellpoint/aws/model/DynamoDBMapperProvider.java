@@ -16,6 +16,9 @@ public class DynamoDBMapperProvider {
 	
 	static {
 		String keyId = System.getenv("AWS_KMS_KEY_ID");
+		if (keyId == null) {
+			keyId = System.getProperty("aws.kms.key.id");
+		}
 		
 		AmazonDynamoDB dynamoDB = new AmazonDynamoDBClient();
 		AWSKMS kms = new AWSKMSClient();

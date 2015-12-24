@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
-import java.util.Base64;
 
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
@@ -42,11 +41,11 @@ public class CreateSObjectRequest extends AbstractLambdaRequest implements Seria
 	}
 
 	public String getSobject() {
-		return new String(Base64.getDecoder().decode(sobject));
+		return decode(sobject);
 	}
 
 	public void setSobject(String sobject) {
-		this.sobject = Base64.getEncoder().encodeToString(sobject.getBytes());
+		this.sobject = encode(sobject);
 	}
 
 	public String getType() {

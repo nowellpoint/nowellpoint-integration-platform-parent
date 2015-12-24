@@ -35,7 +35,6 @@ public class SalesforceClient extends AbstractClient {
 	}
 	
 	public CreateSObjectResponse createSObject(CreateSObjectRequest createSObjectRequest) throws LambdaResponseException {
-		System.out.println("client: " + createSObjectRequest.getSobject());
 		return invoke("SalesforceCreateSObject", createSObjectRequest, CreateSObjectResponse.class);
 	}
 }
