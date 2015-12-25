@@ -13,7 +13,7 @@ import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.Options;
 import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
 import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
@@ -48,48 +48,60 @@ public class EventHandler {
 			
 			try {
 				if (Lead.class.getName().equals(event.getType())) {
-					processLead(event.getPayload());
+					Lead lead = objectMapper.readValue(event.getPayload(), Lead.class);
+					processLead(lead);
+					event.setPayload(objectMapper.writeValueAsString(lead));
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				event.setEventStatus(Event.EventStatus.COMPLETE.toString());
+			} catch (IOException e) {
+				event.setErrorMessage(e.getMessage());
+				event.setEventStatus(Event.EventStatus.ERROR.toString());
+			} finally {
+				DynamoDBMapperProvider.getDynamoDBMapper().save(event);
 			}
 		});
 		
 		return null;
 	}
 	
-	private void processLead(String json) {
+	private void processLead(Lead lead) throws IOException {
 		
 		com.nowellpoint.aws.model.admin.Configuration configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(com.nowellpoint.aws.model.admin.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
-		Properties properties = null;
-		try {
-			properties = objectMapper.readValue(configuration.getPayload(), Properties.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
+		System.out.println(configuration.getPayload());
+		Options options = objectMapper.readValue(configuration.getPayload(), Options.class);
+		
+		
+		
+		lead.setOwnerId(options.getSalesforce().getLeadOwnerId());
 		
 		SalesforceClient client = new SalesforceClient();
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(properties.getSalesforce().getUsername())
-				.withPassword(properties.getSalesforce().getPassword())
-				.withSecurityToken(properties.getSalesforce().getSecurityToken());
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(options.getSalesforce().getUsername())
+				.withPassword(options.getSalesforce().getPassword())
+				.withSecurityToken(options.getSalesforce().getSecurityToken());
 		
 		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
 		
 		log.info(tokenResponse.getErrorMessage());
 		log.info("status code: " + tokenResponse.getStatusCode());
 		
-		log.info("lead: " + json);
+		log.info("lead: " + objectMapper);
 		
 		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
 				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
-				.withSObject(json)
+				.withSObject(objectMapper.writeValueAsString(lead))
 				.withType("Lead");
 		
 		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
 		
 		log.info("status code: " + createSObjectResponse.getStatusCode());
+		if (createSObjectResponse.getStatusCode() != 201) {
+			throw new IOException(createSObjectResponse.getErrorMessage());
+		}
 		log.info(createSObjectResponse.getErrorMessage());
 		log.info(createSObjectResponse.getId());
+		
+		lead.setId(createSObjectResponse.getId());
 	}
 }

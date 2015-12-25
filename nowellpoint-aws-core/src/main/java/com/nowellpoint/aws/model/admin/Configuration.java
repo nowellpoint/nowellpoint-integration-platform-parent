@@ -61,6 +61,11 @@ public class Configuration {
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
+	
+	public Configuration withId(String id) {
+		setId(id);
+		return this;
+	}
 
 	public Configuration withPayload(String payload) {
 		setPayload(payload);

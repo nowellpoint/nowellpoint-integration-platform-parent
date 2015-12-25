@@ -12,6 +12,7 @@ public class Lead implements Serializable {
 	
 	private static final long serialVersionUID = 7199045654991076942L;
 	
+	private String id;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -27,9 +28,18 @@ public class Lead implements Serializable {
 	private String country;
 	private String description;
 	private String status;
+	private String ownerId;
 	
 	public Lead() {
 		
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -150,5 +160,13 @@ public class Lead implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 	}
 }
