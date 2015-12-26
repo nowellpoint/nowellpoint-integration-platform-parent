@@ -13,7 +13,7 @@ public class CreateConfiguration {
 		
 		JSONObject node = null;
 		try {
-			node = new JSONObject().put("salesforce", new JSONObject().put("leadOwnerId", "00G30000002tkYtEAI")
+			node = new JSONObject().put("salesforce", new JSONObject()
 					.put("username", System.getenv("SALESFORCE_USERNAME"))
 					.put("password", System.getenv("SALESFORCE_PASSWORD"))
 					.put("securityToken", System.getenv("SALESFORCE_SECURITY_TOKEN")));

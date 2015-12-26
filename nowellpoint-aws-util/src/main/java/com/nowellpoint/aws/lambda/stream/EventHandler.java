@@ -8,7 +8,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.nowellpoint.aws.client.SalesforceClient;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
@@ -67,13 +71,8 @@ public class EventHandler {
 	private void processLead(Lead lead) throws IOException {
 		
 		com.nowellpoint.aws.model.admin.Configuration configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(com.nowellpoint.aws.model.admin.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
-		
-		System.out.println(configuration.getPayload());
+	
 		Options options = objectMapper.readValue(configuration.getPayload(), Options.class);
-		
-		
-		
-		lead.setOwnerId(options.getSalesforce().getLeadOwnerId());
 		
 		SalesforceClient client = new SalesforceClient();
 		
@@ -83,25 +82,39 @@ public class EventHandler {
 		
 		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
 		
-		log.info(tokenResponse.getErrorMessage());
-		log.info("status code: " + tokenResponse.getStatusCode());
+		log.info("tokenResponse status code: " + tokenResponse.getStatusCode());
 		
-		log.info("lead: " + objectMapper);
+		log.info("lead: " + objectMapper.writeValueAsString(lead));
 		
-		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
-				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
-				.withSObject(objectMapper.writeValueAsString(lead))
-				.withType("Lead");
-		
-		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
-		
-		log.info("status code: " + createSObjectResponse.getStatusCode());
-		if (createSObjectResponse.getStatusCode() != 201) {
-			throw new IOException(createSObjectResponse.getErrorMessage());
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.post(tokenResponse.getToken().getInstanceUrl())
+					.path("services/apexrest/nowellpoint/lead")
+					.header("Content-type", MediaType.APPLICATION_JSON)
+					.bearerAuthorization(tokenResponse.getToken().getAccessToken())
+					.body(objectMapper.writeValueAsString(lead))
+					.execute();
+		} catch (IOException e) {
+			log.severe(e.getMessage());
 		}
-		log.info(createSObjectResponse.getErrorMessage());
-		log.info(createSObjectResponse.getId());
 		
-		lead.setId(createSObjectResponse.getId());
+		log.info("Create Lead status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		log.info("return value" + httpResponse.getEntity());
+//		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
+//				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
+//				.withSObject(objectMapper.writeValueAsString(lead))
+//				.withType("Lead");
+//		
+//		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
+//		
+//		log.info("status code: " + createSObjectResponse.getStatusCode());
+//		if (createSObjectResponse.getStatusCode() != 201) {
+//			throw new IOException(createSObjectResponse.getErrorMessage());
+//		}
+//		log.info(createSObjectResponse.getErrorMessage());
+//		log.info(createSObjectResponse.getId());
+		
+		//lead.setId(createSObjectResponse.getId());
 	}
 }
