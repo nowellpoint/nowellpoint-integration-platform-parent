@@ -20,8 +20,7 @@ public class Lead implements Serializable {
 	private String phone;
 	private String company;
 	private String title;
-	private String address1;
-	private String address2;
+	private String street;
 	private String city;
 	private String state;
 	private String postalCode;
@@ -29,6 +28,7 @@ public class Lead implements Serializable {
 	private String description;
 	private String status;
 	private String ownerId;
+	private String leadSource;
 	
 	public Lead() {
 		
@@ -98,20 +98,12 @@ public class Lead implements Serializable {
 		this.title = title;
 	}
 
-	public String getAddress1() {
-		return address1;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setAddress1(String address1) {
-		this.address1 = address1;
-	}
-
-	public String getAddress2() {
-		return address2;
-	}
-
-	public void setAddress2(String address2) {
-		this.address2 = address2;
+	public void setStreet(String street) {
+		this.street = street;
 	}
 
 	public String getCity() {
@@ -168,5 +160,13 @@ public class Lead implements Serializable {
 
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	public String getLeadSource() {
+		return leadSource;
+	}
+
+	public void setLeadSource(String leadSource) {
+		this.leadSource = leadSource;
 	}
 }

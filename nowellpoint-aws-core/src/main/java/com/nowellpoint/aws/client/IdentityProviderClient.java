@@ -1,6 +1,8 @@
 package com.nowellpoint.aws.client;
 
 import com.nowellpoint.aws.model.LambdaResponseException;
+import com.nowellpoint.aws.model.idp.CreateAccountRequest;
+import com.nowellpoint.aws.model.idp.CreateAccountResponse;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
@@ -20,27 +22,31 @@ public class IdentityProviderClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws LambdaResponseException {		
-		return invoke("IdentityProviderUsernamePasswordAuthentication", tokenRequest, GetTokenResponse.class);
+	public GetTokenResponse authenticate(GetTokenRequest request) throws LambdaResponseException {		
+		return invoke("IdentityProviderUsernamePasswordAuthentication", request, GetTokenResponse.class);
 	}
 	
-	public GetAccountResponse account(GetAccountRequest accountRequest) throws LambdaResponseException {		
-		return invoke("IdentityProviderGetAccount", accountRequest, GetAccountResponse.class);
+	public GetAccountResponse account(GetAccountRequest request) throws LambdaResponseException {		
+		return invoke("IdentityProviderGetAccount", request, GetAccountResponse.class);
 	}
 	
-	public GetCustomDataResponse customData(GetCustomDataRequest customDataRequest) throws LambdaResponseException {
-		return invoke("IdentityProviderGetCustomData", customDataRequest, GetCustomDataResponse.class);
+	public CreateAccountResponse account(CreateAccountRequest request) throws LambdaResponseException {
+		return invoke("IdentityProviderCreateAccount", request, CreateAccountResponse.class);
 	}
 	
-	public VerifyTokenResponse verify(VerifyTokenRequest verifyTokenRequest) throws LambdaResponseException {
-		return invoke("VerifyTokenRequest", verifyTokenRequest, VerifyTokenResponse.class);
+	public GetCustomDataResponse customData(GetCustomDataRequest request) throws LambdaResponseException {
+		return invoke("IdentityProviderGetCustomData", request, GetCustomDataResponse.class);
 	}
 	
-	public RefreshTokenResponse refresh(RefreshTokenRequest refreshTokenRequest) throws LambdaResponseException {
-		return invoke("RefreshTokenRequest", refreshTokenRequest, RefreshTokenResponse.class);
+	public VerifyTokenResponse verify(VerifyTokenRequest request) throws LambdaResponseException {
+		return invoke("VerifyTokenRequest", request, VerifyTokenResponse.class);
 	}
 	
-	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws LambdaResponseException {
-		return invoke("RevokeToken", revokeTokenRequest, RevokeTokenResponse.class);
+	public RefreshTokenResponse refresh(RefreshTokenRequest request) throws LambdaResponseException {
+		return invoke("RefreshTokenRequest", request, RefreshTokenResponse.class);
+	}
+	
+	public RevokeTokenResponse revoke(RevokeTokenRequest request) throws LambdaResponseException {
+		return invoke("RevokeToken", request, RevokeTokenResponse.class);
 	}
 }

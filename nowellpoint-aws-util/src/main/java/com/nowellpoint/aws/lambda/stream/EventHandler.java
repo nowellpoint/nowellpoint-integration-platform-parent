@@ -8,7 +8,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -18,8 +18,9 @@ import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
 import com.nowellpoint.aws.model.admin.Options;
-import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
-import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
+import com.nowellpoint.aws.model.idp.Account;
+import com.nowellpoint.aws.model.idp.CreateAccountRequest;
+import com.nowellpoint.aws.model.idp.CreateAccountResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 
@@ -55,6 +56,10 @@ public class EventHandler {
 					Lead lead = objectMapper.readValue(event.getPayload(), Lead.class);
 					processLead(lead);
 					event.setPayload(objectMapper.writeValueAsString(lead));
+				} else if (Account.class.getName().equals(event.getType())) {
+					Account account = objectMapper.readValue(event.getPayload(), Account.class);
+					createAccount(account);
+					event.setPayload(objectMapper.writeValueAsString(account));
 				}
 				event.setEventStatus(Event.EventStatus.COMPLETE.toString());
 			} catch (IOException e) {
@@ -98,23 +103,36 @@ public class EventHandler {
 			log.severe(e.getMessage());
 		}
 		
+		// [{"errorCode":"APEX_ERROR","message":"System.DmlException: Insert failed. First exception on row 0; first error: REQUIRED_FIELD_MISSING, Required fields are missing: [DurationInMinutes]: [DurationInMinutes]\n\nClass.LeadResource.doPost: line 49, column 1"}]
 		log.info("Create Lead status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
 		log.info("return value" + httpResponse.getEntity());
-//		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
-//				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
-//				.withSObject(objectMapper.writeValueAsString(lead))
-//				.withType("Lead");
-//		
-//		CreateSObjectResponse createSObjectResponse = client.createSObject(createSObjectRequest);
-//		
-//		log.info("status code: " + createSObjectResponse.getStatusCode());
-//		if (createSObjectResponse.getStatusCode() != 201) {
-//			throw new IOException(createSObjectResponse.getErrorMessage());
-//		}
-//		log.info(createSObjectResponse.getErrorMessage());
-//		log.info(createSObjectResponse.getId());
+	}
+	
+	private void createAccount(Account account) throws IOException {
 		
-		//lead.setId(createSObjectResponse.getId());
+		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
+		
+		//
+		// build the CreateAccountRequest
+		//
+		
+		CreateAccountRequest createAccountRequest = new CreateAccountRequest().withAccount(account)
+				.withApiKeyId(Configuration.getStormpathApiKeyId())
+				.withApiKeySecret(Configuration.getStormpathApiKeySecret());
+		
+		//
+		// execute the CreateAcountRequest
+		//
+		
+		CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
+		
+		//
+		// throw exception for any issue with the identity provider
+		
+		if (createAccountResponse.getStatusCode() != 201) {
+			throw new IOException(createAccountResponse.getErrorMessage());
+		}
+		
+		log.info(createAccountResponse.getAccount().getHref());
 	}
 }
