@@ -15,14 +15,14 @@ public class Configuration {
 	@DynamoDBHashKey(attributeName="Id")  
 	private String id;
 	
-	@DynamoDBAttribute(attributeName="Payload")
-	private String payload;
-	
 	@DynamoDBAttribute(attributeName="CreatedDate")  
 	private Date createdDate;
 	
 	@DynamoDBAttribute(attributeName="LastModifiedDate")  
 	private Date lastModifiedDate;
+	
+	@DynamoDBAttribute(attributeName="ConfigurationFile")
+	private String configurationFile;
 	
 	public Configuration() {
 		
@@ -34,14 +34,6 @@ public class Configuration {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getPayload() {
-		return payload;
-	}
-
-	public void setPayload(String payload) {
-		this.payload = payload;
 	}
 
 	@DoNotEncrypt
@@ -61,14 +53,17 @@ public class Configuration {
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
-	
-	public Configuration withId(String id) {
-		setId(id);
-		return this;
+
+	public String getConfigurationFile() {
+		return configurationFile;
 	}
 
-	public Configuration withPayload(String payload) {
-		setPayload(payload);
+	public void setConfigurationFile(String configurationFile) {
+		this.configurationFile = configurationFile;
+	}
+
+	public Configuration withId(String id) {
+		setId(id);
 		return this;
 	}
 	
@@ -79,6 +74,11 @@ public class Configuration {
 	
 	public Configuration withLastModifiedDate(Date lastModifiedDate) {
 		setLastModifiedDate(lastModifiedDate);
+		return this;
+	}
+	
+	public Configuration withConfigurationFile(String configurationFile) {
+		setConfigurationFile(configurationFile);
 		return this;
 	}
 }

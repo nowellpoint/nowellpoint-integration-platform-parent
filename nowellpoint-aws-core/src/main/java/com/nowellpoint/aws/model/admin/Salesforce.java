@@ -12,8 +12,6 @@ public class Salesforce implements Serializable {
 	
 	private String securityToken;
 	
-	private String leadOwnerId;
-	
 	public Salesforce() {
 		
 	}
@@ -40,13 +38,5 @@ public class Salesforce implements Serializable {
 
 	public void setSecurityToken(String securityToken) {
 		this.securityToken = securityToken;
-	}
-
-	public String getLeadOwnerId() {
-		return leadOwnerId;
-	}
-
-	public void setLeadOwnerId(String leadOwnerId) {
-		this.leadOwnerId = leadOwnerId;
 	}
 }

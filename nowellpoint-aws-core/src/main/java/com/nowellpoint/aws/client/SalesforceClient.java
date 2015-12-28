@@ -11,6 +11,8 @@ import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
 import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
 import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
 import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
+import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
+import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
 
 public class SalesforceClient extends AbstractClient {
 	
@@ -36,5 +38,9 @@ public class SalesforceClient extends AbstractClient {
 	
 	public CreateSObjectResponse createSObject(CreateSObjectRequest createSObjectRequest) throws LambdaResponseException {
 		return invoke("SalesforceCreateSObject", createSObjectRequest, CreateSObjectResponse.class);
+	}
+	
+	public CreateLeadResponse createLead(CreateLeadRequest request) throws LambdaResponseException {
+		return invoke("SalesforceCreateLead", request, CreateLeadResponse.class);
 	}
 }

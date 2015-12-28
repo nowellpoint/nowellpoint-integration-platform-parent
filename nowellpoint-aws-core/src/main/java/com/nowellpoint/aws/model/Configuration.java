@@ -33,6 +33,10 @@ public class Configuration {
 				salesforceTokenUri = node.get("salesforce_token_uri").asText();
 				salesforceRefreshUri = node.get("salesforce_refresh_uri").asText();
 				salesforceRevokeUri = node.get("salesforce_revoke_uri").asText();
+				salesforceUsername = node.get("salesforce_username").asText();
+				salesforcePassword = node.get("salesforce_password").asText();
+				salesforceSecurityToken = node.get("salesforce_security_token").asText();
+				sendGridApiKey = node.get("sendgrid_api_key").asText();
 			} else {
 				salesforceClientId = System.getenv("SALESFORCE_CLIENT_ID");
 				salesforceClientSecret = System.getenv("SALESFORCE_CLIENT_SECRET");
@@ -48,6 +52,10 @@ public class Configuration {
 				salesforceTokenUri = System.getenv("SALESFORCE_TOKEN_URI");
 				salesforceRefreshUri = System.getenv("SALESFORCE_REFRESH_URI");
 				salesforceRevokeUri = System.getenv("SALESFORCE_REVOKE_URI");
+				salesforceUsername = System.getenv("SALESFORCE_USERNAME");
+				salesforcePassword = System.getenv("SALESFORCE_PASSWORD");
+				salesforceSecurityToken = System.getenv("SALESFORCE_SECURITY_TOKEN");
+				sendGridApiKey = System.getenv("SENDGRID_API_KEY");
 			}
 			
 		} catch (IOException e) {
@@ -70,6 +78,10 @@ public class Configuration {
 	private static String salesforceTokenUri;
 	private static String salesforceRefreshUri;
 	private static String salesforceRevokeUri;
+	private static String salesforceUsername;
+	private static String salesforcePassword;
+	private static String salesforceSecurityToken;
+	private static String sendGridApiKey;
 	
 	private Configuration() { }
 	
@@ -100,4 +112,12 @@ public class Configuration {
 	public static String getSalesforceRefreshUri() { return salesforceRefreshUri; }
 	
 	public static String getSalesforceRevokeUri() { return salesforceRevokeUri; }
+	
+	public static String getSalesforceUsername() { return salesforceUsername; }
+	
+	public static String getSalesforcePassword() { return salesforcePassword; }
+	
+	public static String getSalesforceSecurityToken() { return salesforceSecurityToken; }
+	
+	public static String getSendGridApiKey() { return sendGridApiKey; }
 }

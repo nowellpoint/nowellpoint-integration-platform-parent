@@ -11,6 +11,8 @@ public class Options implements Serializable {
 	
 	private Salesforce salesforce;
 	
+	private Stormpath stormpath;
+	
 	public Options() {
 		
 	}
@@ -21,5 +23,13 @@ public class Options implements Serializable {
 
 	public void setSalesforce(Salesforce salesforce) {
 		this.salesforce = salesforce;
+	}
+	
+	public Stormpath getStormpath() {
+		return stormpath;
+	}
+	
+	public void setStormpath(Stormpath stormpath) {
+		this.stormpath = stormpath;
 	}
 }

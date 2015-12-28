@@ -16,6 +16,8 @@ import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
+import com.sendgrid.SendGrid;
+import com.sendgrid.SendGridException;
 
 public class CreateAccount implements RequestHandler<CreateAccountRequest, CreateAccountResponse> {
 	
@@ -67,6 +69,33 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			if (httpResponse.getStatusCode() == 201) {
 				Account account = httpResponse.getEntity(Account.class);
 				response.setAccount(account);
+				
+				//
+				// send email
+				//
+				
+				String text = new StringBuilder().append("Username: ")
+						.append(account.getUsername())
+						.append("\n")
+						.append("Password: ")
+						.append(node.get("password").asText())
+						.toString();
+				
+				SendGrid.Email email = new SendGrid.Email();
+				email.addToName(account.getFullName());
+				email.addTo(account.getEmail());
+				email.setFrom("administrator@nowellpoint.com");
+				email.setSubject("Welcome to Nowellpoint!");
+				email.setText(text);
+				
+				SendGrid sendgrid = new SendGrid(Configuration.getSendGridApiKey());
+
+				try {
+					sendgrid.send(email);
+				} catch (SendGridException e) {
+					log.severe(e.getMessage());
+				}
+				
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
 				response.setErrorCode(errorResponse.get("message").asText());

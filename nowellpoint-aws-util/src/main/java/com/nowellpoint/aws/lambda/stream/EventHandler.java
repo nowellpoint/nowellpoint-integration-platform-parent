@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.lambda.stream;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -10,17 +11,15 @@ import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.client.SalesforceClient;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
-import com.nowellpoint.aws.model.admin.Options;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
+import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
+import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 
@@ -66,6 +65,7 @@ public class EventHandler {
 				event.setErrorMessage(e.getMessage());
 				event.setEventStatus(Event.EventStatus.ERROR.toString());
 			} finally {
+				event.setProcessedDate(Date.from(Instant.now()));
 				DynamoDBMapperProvider.getDynamoDBMapper().save(event);
 			}
 		});
@@ -75,40 +75,66 @@ public class EventHandler {
 	
 	private void processLead(Lead lead) throws IOException {
 		
-		com.nowellpoint.aws.model.admin.Configuration configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(com.nowellpoint.aws.model.admin.Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
-	
-		Options options = objectMapper.readValue(configuration.getPayload(), Options.class);
+		//
+		// setup Salesforce client
+		//
 		
-		SalesforceClient client = new SalesforceClient();
+		final SalesforceClient client = new SalesforceClient();
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(options.getSalesforce().getUsername())
-				.withPassword(options.getSalesforce().getPassword())
-				.withSecurityToken(options.getSalesforce().getSecurityToken());
+		//
+		// build the GetTokenRequest
+		//
 		
-		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(Configuration.getSalesforceUsername())
+				.withPassword(Configuration.getSalesforcePassword())
+				.withSecurityToken(Configuration.getSalesforceSecurityToken());
 		
-		log.info("tokenResponse status code: " + tokenResponse.getStatusCode());
+		//
+		// execute the GetTokenRequest
+		//
 		
-		log.info("lead: " + objectMapper.writeValueAsString(lead));
+		GetTokenResponse getTokenResponse = client.authenticate(tokenRequest);
 		
-		HttpResponse httpResponse = null;
-		try {
-			httpResponse = RestResource.post(tokenResponse.getToken().getInstanceUrl())
-					.path("services/apexrest/nowellpoint/lead")
-					.header("Content-type", MediaType.APPLICATION_JSON)
-					.bearerAuthorization(tokenResponse.getToken().getAccessToken())
-					.body(objectMapper.writeValueAsString(lead))
-					.execute();
-		} catch (IOException e) {
-			log.severe(e.getMessage());
+		//
+		// throw an exception if unable to log in
+		//
+		
+		if (getTokenResponse.getStatusCode() != 200) {
+			throw new IOException(getTokenResponse.getErrorMessage());
 		}
 		
-		// [{"errorCode":"APEX_ERROR","message":"System.DmlException: Insert failed. First exception on row 0; first error: REQUIRED_FIELD_MISSING, Required fields are missing: [DurationInMinutes]: [DurationInMinutes]\n\nClass.LeadResource.doPost: line 49, column 1"}]
-		log.info("Create Lead status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		log.info("return value" + httpResponse.getEntity());
+		log.info("GetTokenResponse status code: " + getTokenResponse.getStatusCode());
+		
+		//
+		// build the CreateLeadRequest
+		//
+		
+		CreateLeadRequest createLeadRequest = new CreateLeadRequest().withAccessToken(getTokenResponse.getToken().getAccessToken())
+				.withInstanceUrl(getTokenResponse.getToken().getInstanceUrl())
+				.withLead(lead);
+		
+		//
+		// execute the CreateLeadRequest
+		//
+		
+		CreateLeadResponse createLeadResponse = client.createLead(createLeadRequest);
+		
+		//
+		// throw an exception if there is an issue with creating the lead
+		//
+		
+		if (createLeadResponse.getStatusCode() != 201) {
+			throw new IOException(createLeadResponse.getErrorMessage());
+		}
+		
+		log.info("CreateLeadResponse status code: " + createLeadResponse.getId());
 	}
 	
 	private void createAccount(Account account) throws IOException {
+		
+		//
+		// setup IdentityProviderClient
+		//
 		
 		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 		
@@ -128,6 +154,7 @@ public class EventHandler {
 		
 		//
 		// throw exception for any issue with the identity provider
+		//
 		
 		if (createAccountResponse.getStatusCode() != 201) {
 			throw new IOException(createAccountResponse.getErrorMessage());

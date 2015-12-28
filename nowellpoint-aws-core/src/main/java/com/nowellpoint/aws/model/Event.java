@@ -30,6 +30,9 @@ public class Event {
 	@DynamoDBAttribute(attributeName="EventDate")  
 	private Date eventDate;
 	
+	@DynamoDBAttribute(attributeName="ProcessedDate")  
+	private Date processedDate;
+	
 	@DynamoDBAttribute(attributeName="Type")  
 	private String type;
 	
@@ -76,6 +79,15 @@ public class Event {
 
 	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
+	}
+
+	@DoNotEncrypt
+	public Date getProcessedDate() {
+		return processedDate;
+	}
+
+	public void setProcessedDate(Date processedDate) {
+		this.processedDate = processedDate;
 	}
 
 	@DoNotEncrypt
@@ -146,6 +158,11 @@ public class Event {
 	
 	public Event withEventDate(Date eventDate) {
 		setEventDate(eventDate);
+		return this;
+	}
+	
+	public Event withProcessedDate(Date processedDate) {
+		setProcessedDate(processedDate);
 		return this;
 	}
 	
