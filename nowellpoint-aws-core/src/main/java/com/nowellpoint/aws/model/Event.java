@@ -42,8 +42,8 @@ public class Event {
 	@DynamoDBAttribute(attributeName="Payload")
 	private String payload;
 	
-	@DynamoDBAttribute(attributeName="RecordCount")
-	private Integer recordCount;
+	@DynamoDBAttribute(attributeName="TargetId")
+	private String targetId;
 	
 	@DynamoDBAttribute(attributeName="ExecutionTime")
 	private Long executionTime;
@@ -125,12 +125,12 @@ public class Event {
 	}
 
 	@DoNotEncrypt
-	public Integer getRecordCount() {
-		return recordCount;
+	public String getTargetId() {
+		return targetId;
 	}
 
-	public void setRecordCount(Integer recordCount) {
-		this.recordCount = recordCount;
+	public void setTargetId(String targetId) {
+		this.targetId = targetId;
 	}
 
 	@DoNotEncrypt

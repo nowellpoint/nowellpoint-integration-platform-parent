@@ -37,6 +37,8 @@ public class Configuration {
 				salesforcePassword = node.get("salesforce_password").asText();
 				salesforceSecurityToken = node.get("salesforce_security_token").asText();
 				sendGridApiKey = node.get("sendgrid_api_key").asText();
+				defaultOrganizationId = node.get("default_organization_id").asText();
+				defaultUserId = node.get("default_user_id").asText();
 			} else {
 				salesforceClientId = System.getenv("SALESFORCE_CLIENT_ID");
 				salesforceClientSecret = System.getenv("SALESFORCE_CLIENT_SECRET");
@@ -56,6 +58,8 @@ public class Configuration {
 				salesforcePassword = System.getenv("SALESFORCE_PASSWORD");
 				salesforceSecurityToken = System.getenv("SALESFORCE_SECURITY_TOKEN");
 				sendGridApiKey = System.getenv("SENDGRID_API_KEY");
+				defaultOrganizationId = System.getenv("DEFAULT_ORGANIZATION_ID");
+				defaultUserId = System.getenv("DEFAULT_USER_ID");
 			}
 			
 		} catch (IOException e) {
@@ -82,6 +86,8 @@ public class Configuration {
 	private static String salesforcePassword;
 	private static String salesforceSecurityToken;
 	private static String sendGridApiKey;
+	private static String defaultOrganizationId;
+	private static String defaultUserId;
 	
 	private Configuration() { }
 	
@@ -120,4 +126,8 @@ public class Configuration {
 	public static String getSalesforceSecurityToken() { return salesforceSecurityToken; }
 	
 	public static String getSendGridApiKey() { return sendGridApiKey; }
+	
+	public static String getDefaultOrganizationId() { return defaultOrganizationId; }
+	
+	public static String getDefaultUserId() { return defaultUserId; }
 }

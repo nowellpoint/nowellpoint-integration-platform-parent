@@ -20,10 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.Lead;
+import com.nowellpoint.aws.model.User;
 
-@Path("/lead")
-public class LeadResource {
+@Path("/user")
+public class UserResource {
 
 	@Context
 	private UriInfo uriInfo;
@@ -31,7 +31,7 @@ public class LeadResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Lead lead) {
+    public Response create(User user) {
 		
 		//
 		//
@@ -39,7 +39,7 @@ public class LeadResource {
 				
 		String payload = null;
 		try {			
-			payload = new ObjectMapper().writeValueAsString(lead);
+			payload = new ObjectMapper().writeValueAsString(user);
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
@@ -50,7 +50,7 @@ public class LeadResource {
 		
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
-				.withType(Lead.class.getName())
+				.withType(User.class.getName())
 				.withOrganizationId(Configuration.getDefaultOrganizationId())
 				.withUserId(Configuration.getDefaultUserId())
 				.withPayload(payload);
@@ -62,7 +62,7 @@ public class LeadResource {
 		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(LeadResource.class)
+				.path(UserResource.class)
 				.path("/{id}")
 				.build(event.getId());
 		

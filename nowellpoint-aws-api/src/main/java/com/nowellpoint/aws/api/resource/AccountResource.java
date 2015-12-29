@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.idp.Account;
@@ -97,18 +98,11 @@ public class AccountResource {
 		//
 		//
 		
-		String organizationId = System.getenv("DEFAULT_ORGANIZATION_ID");
-		String userId = System.getenv("DEFAULT_USER_ID");
-		
-		//
-		//
-		//
-		
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
 				.withType(Account.class.getName())
-				.withOrganizationId(organizationId)
-				.withUserId(userId)
+				.withOrganizationId(Configuration.getDefaultOrganizationId())
+				.withUserId(Configuration.getDefaultUserId())
 				.withPayload(payload);
 		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(event);

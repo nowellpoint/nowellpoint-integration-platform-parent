@@ -20,6 +20,16 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 		setUserContext(userContext);
 		return this;
 	}
+	
+	public CreateDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
+		setMongoDBConnectUri(mongoDBConnectUri);
+		return this;
+	}
+	
+	public CreateDocumentRequest withUserId(String userId) {
+		setUserId(userId);
+		return this;
+	}
 
 	public CreateDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);

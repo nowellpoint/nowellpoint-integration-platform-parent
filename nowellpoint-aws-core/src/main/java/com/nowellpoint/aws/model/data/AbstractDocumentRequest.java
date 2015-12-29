@@ -6,6 +6,8 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 	
 	private static final long serialVersionUID = 7500788112443398317L;
 	private UserContext userContext;
+	private String mongoDBConnectUri;
+	private String userId;
 	private String id;
 	private String collectionName;
 	private String document;
@@ -20,6 +22,22 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 
 	public void setUserContext(UserContext userContext) {
 		this.userContext = userContext;
+	}
+	
+	public String getMongoDBConnectUri() {
+		return mongoDBConnectUri;
+	}
+
+	public void setMongoDBConnectUri(String mongoDBConnectUri) {
+		this.mongoDBConnectUri = mongoDBConnectUri;
+	}
+	
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	protected String getId() {
