@@ -32,7 +32,7 @@ public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, Del
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
 		
 		/**
 		 * 

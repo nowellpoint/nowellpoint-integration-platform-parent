@@ -70,5 +70,23 @@
       "s3Key": "nowellpoint-aws-data-0.0.2-SNAPSHOT.jar",
       "s3ObjectVersion": null
     }
+  },
+  {
+    "configuration": {
+      "functionName": "QueryDocument",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:QueryDocument",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.data.QueryDocument::handleRequest",
+      "description": "Get Document: Function that queries for documents in MongoDB",
+      "timeout": 60,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-data-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
   }
 ]

@@ -16,16 +16,6 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 		return super.getDocument();
 	}
 	
-	public CreateDocumentRequest withUserContext(UserContext userContext) {
-		setUserContext(userContext);
-		return this;
-	}
-	
-	public CreateDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
-		setMongoDBConnectUri(mongoDBConnectUri);
-		return this;
-	}
-	
 	public CreateDocumentRequest withUserId(String userId) {
 		setUserId(userId);
 		return this;
@@ -38,6 +28,11 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 	
 	public CreateDocumentRequest withDocument(String document) {
 		setDocument(document);
+		return this;
+	}
+	
+	public CreateDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
+		setMongoDBConnectUri(mongoDBConnectUri);
 		return this;
 	}
 }

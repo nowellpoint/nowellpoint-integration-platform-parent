@@ -5,8 +5,8 @@ import com.nowellpoint.aws.model.AbstractLambdaRequest;
 public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 	
 	private static final long serialVersionUID = 7500788112443398317L;
-	private UserContext userContext;
 	private String mongoDBConnectUri;
+	private String apiKey;
 	private String userId;
 	private String id;
 	private String collectionName;
@@ -16,20 +16,20 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 		
 	}
 	
-	public UserContext getUserContext() {
-		return userContext;
-	}
-
-	public void setUserContext(UserContext userContext) {
-		this.userContext = userContext;
-	}
-	
 	public String getMongoDBConnectUri() {
 		return mongoDBConnectUri;
 	}
 
 	public void setMongoDBConnectUri(String mongoDBConnectUri) {
 		this.mongoDBConnectUri = mongoDBConnectUri;
+	}
+	
+	public String getApiKey() {
+		return apiKey;
+	}
+	
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
 	}
 	
 	public String getUserId() {

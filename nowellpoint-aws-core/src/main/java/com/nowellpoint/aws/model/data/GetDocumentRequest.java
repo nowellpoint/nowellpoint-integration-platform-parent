@@ -24,8 +24,13 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 		super.setCollectionName(collectionName);
 	}
 	
-	public GetDocumentRequest withUserContext(UserContext userContext) {
-		setUserContext(userContext);
+	public GetDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
+		setMongoDBConnectUri(mongoDBConnectUri);
+		return this;
+	}
+	
+	public GetDocumentRequest withApiKey(String apiKey) {
+		setApiKey(apiKey);
 		return this;
 	}
 	

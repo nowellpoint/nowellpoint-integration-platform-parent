@@ -34,7 +34,7 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
 		
 		/**
 		 * 
@@ -66,15 +66,18 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		
 		log.info(request.getCollectionName());
 		
-		Date now = Date.from(Instant.now());
-		ObjectId userId = new ObjectId(request.getUserContext().getUserId());
-		
-		Document document = Document.parse(request.getDocument());
-		document.put("_id", new ObjectId(request.getId()));
-		document.put("lastModifiedDate", now);
-		document.put("lastModifiedById", userId);
-		
 		try{
+			
+			Date now = Date.from(Instant.now());
+			ObjectId userId = new ObjectId(request.getUserId());
+			
+			log.info(request.getDocument());
+			
+			Document document = Document.parse(request.getDocument());
+			document.put("_id", new ObjectId(request.getId()));
+			document.put("lastModifiedDate", now);
+			document.put("lastModifiedById", userId);
+			
 			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getObjectId("_id")), new Document("$set", document));
 			if (result.getModifiedCount() == 1) {
 				response.setStatusCode(200);

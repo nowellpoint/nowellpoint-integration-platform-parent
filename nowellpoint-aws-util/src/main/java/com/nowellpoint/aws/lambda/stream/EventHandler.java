@@ -4,10 +4,12 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
+import com.amazonaws.services.lambda.runtime.events.DynamodbEvent.DynamodbStreamRecord;
 import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
@@ -16,7 +18,7 @@ import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
-import com.nowellpoint.aws.model.User;
+import com.nowellpoint.aws.model.data.User;
 import com.nowellpoint.aws.model.idp.Account;
 
 public class EventHandler {
@@ -35,7 +37,10 @@ public class EventHandler {
 		
 		System.setProperty("aws.kms.key.id", Configuration.getAwsKmsKeyId());
 		
-		dynamodbEvent.getRecords().stream().filter(record -> "INSERT".equals(record.getEventName())).forEach(record -> {
+		Predicate<DynamodbStreamRecord> insert = record -> "INSERT".equals(record.getEventName());
+		//Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());
+		
+		dynamodbEvent.getRecords().stream().filter(insert).forEach(record -> {
 			
 			//
 			// capture the start time

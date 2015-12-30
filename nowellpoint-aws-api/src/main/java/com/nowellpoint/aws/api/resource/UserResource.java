@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.User;
+import com.nowellpoint.aws.model.data.User;
 
 @Path("/user")
 public class UserResource {

@@ -9,6 +9,8 @@ import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
+import com.nowellpoint.aws.model.data.QueryDocumentRequest;
+import com.nowellpoint.aws.model.data.QueryDocumentResponse;
 
 public class DataClient extends AbstractClient {
 	
@@ -30,5 +32,9 @@ public class DataClient extends AbstractClient {
 	
 	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws LambdaResponseException {
 		return invoke("DeleteDocument", deleteDocumentRequest, DeleteDocumentResponse.class);
+	}
+	
+	public QueryDocumentResponse query(QueryDocumentRequest queryDocumentRequest) throws LambdaResponseException {
+		return invoke("QueryDocument", queryDocumentRequest, QueryDocumentResponse.class);
 	}
 }

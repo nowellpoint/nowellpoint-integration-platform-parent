@@ -24,8 +24,8 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 		super.setCollectionName(collectionName);
 	}
 	
-	public DeleteDocumentRequest withUserContext(UserContext userContext) {
-		setUserContext(userContext);
+	public DeleteDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
+		setMongoDBConnectUri(mongoDBConnectUri);
 		return this;
 	}
 	

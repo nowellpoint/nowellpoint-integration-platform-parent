@@ -50,7 +50,6 @@ public class TestDataClient {
 		
 		jedis = new Jedis("pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 10497);
 		jedis.auth(System.getenv("REDIS_PASSWORD"));
-		//jedis.flushAll();
 		
 		long startTime = System.currentTimeMillis();
 		
@@ -87,7 +86,8 @@ public class TestDataClient {
 		
 		long startTime = System.currentTimeMillis();
 		
-		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withUserContext(userContext)
+		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+				.withUserId(userContext.getUserId())
 				.withCollectionName("parties")
 				.withDocument(json.toString());
 			
@@ -101,7 +101,8 @@ public class TestDataClient {
 						
 		json.put("partyType", "ORGANIZATION");
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withUserContext(userContext)
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+				.withUserId(userContext.getUserId())
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId())
 				.withDocument(json.toString());
@@ -119,7 +120,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withUserContext(userContext)
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -137,7 +138,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withUserContext(userContext)
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -156,7 +157,7 @@ public class TestDataClient {
 		
 		UserContext userContext = (UserContext) deserialize(jedis.get(accessToken.getBytes()));
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withUserContext(userContext)
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6");
 			
@@ -174,7 +175,8 @@ public class TestDataClient {
 			
 		System.out.println(getDocumentResponse.getErrorCode());
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withUserContext(userContext)
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+				.withUserId(userContext.getUserId())
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6")
 				.withDocument(json.toString());
@@ -193,7 +195,7 @@ public class TestDataClient {
 			
 		System.out.println(updateDocumentResponse.getErrorCode());
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withUserContext(userContext)
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6");
 			

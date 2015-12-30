@@ -32,8 +32,8 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 		super.setDocument(document);
 	}
 	
-	public UpdateDocumentRequest withUserContext(UserContext userContext) {
-		setUserContext(userContext);
+	public UpdateDocumentRequest withUserId(String userId) {
+		setUserId(userId);
 		return this;
 	}
 	
@@ -49,6 +49,11 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 	
 	public UpdateDocumentRequest withDocument(String document) {
 		setDocument(document);
+		return this;
+	}
+	
+	public UpdateDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
+		setMongoDBConnectUri(mongoDBConnectUri);
 		return this;
 	}
 }

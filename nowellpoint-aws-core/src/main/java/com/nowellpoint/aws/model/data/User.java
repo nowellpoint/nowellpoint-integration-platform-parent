@@ -1,9 +1,20 @@
-package com.nowellpoint.aws.model;
+package com.nowellpoint.aws.model.data;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 
+import org.bson.types.ObjectId;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_EMPTY)
 public class User implements Serializable {
 
 	/**
@@ -11,6 +22,15 @@ public class User implements Serializable {
 	 */
 
 	private static final long serialVersionUID = 3163086585922281575L;
+	
+	/**
+	 * 
+	 */
+	
+	@JsonSerialize(using=ObjectIdSerializer.class)
+	@JsonDeserialize(using=ObjectIdDeserializer.class)
+	@JsonProperty("_id")
+	private ObjectId id;
 
 	/**
 	 * 
@@ -244,6 +264,14 @@ public class User implements Serializable {
 
 	}
 
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+	
+	public ObjectId getId() {
+		return id;
+	}
+	
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
 	}

@@ -33,7 +33,7 @@ public class GetDocument implements RequestHandler<GetDocumentRequest, GetDocume
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI(request.getUserContext().getMongoDBConnectUri());
+		MongoClientURI mongoClientURI = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
 		
 		/**
 		 * 

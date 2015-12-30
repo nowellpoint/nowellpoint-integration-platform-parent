@@ -16,7 +16,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 	@Override
 	public String process(String payload) throws IOException {
 		
-		log.info("starting LeadEventHandler");
+		log.info("starting AccountEventHandler");
 		
 		//
 		// parse the event payload
