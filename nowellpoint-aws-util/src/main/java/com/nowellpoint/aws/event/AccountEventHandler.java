@@ -60,7 +60,11 @@ public class AccountEventHandler implements AbstractEventHandler {
 			// build the CreateAccountRequest
 			//
 			
-			CreateAccountRequest createAccountRequest = new CreateAccountRequest().withAccount(account)
+			CreateAccountRequest createAccountRequest = new CreateAccountRequest().withEmail(account.getEmail())
+					.withGivenName(account.getGivenName())
+					.withMiddleName(account.getMiddleName())
+					.withSurname(account.getSurname())
+					.withUsername(account.getUsername())
 					.withApiKeyId(Configuration.getStormpathApiKeyId())
 					.withApiKeySecret(Configuration.getStormpathApiKeySecret());
 			

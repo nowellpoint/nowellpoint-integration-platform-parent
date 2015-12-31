@@ -46,7 +46,14 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			
 			ObjectMapper objectMapper = new ObjectMapper();
 			
-			ObjectNode node = objectMapper.readValue(objectMapper.writeValueAsString(request.getAccount()), ObjectNode.class);
+			Account account = new Account();
+			account.setEmail(request.getEmail());
+			account.setGivenName(request.getGivenName());
+			account.setMiddleName(request.getMiddleName());
+			account.setSurname(request.getSurname());
+			account.setUsername(request.getUsername());
+			
+			ObjectNode node = objectMapper.readValue(objectMapper.writeValueAsString(account), ObjectNode.class);
 			node.put("password", generatePassword());
 			
 			HttpResponse httpResponse = RestResource.post(Configuration.getStormpathApiEndpoint())
@@ -67,7 +74,7 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			response.setStatusCode(httpResponse.getStatusCode());
 			
 			if (httpResponse.getStatusCode() == 201) {
-				Account account = httpResponse.getEntity(Account.class);
+				account = httpResponse.getEntity(Account.class);
 				response.setAccount(account);
 				
 				//
