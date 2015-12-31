@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.lambda.idp;
 
-import static com.nowellpoint.aws.tools.TokenParser.parseToken;
-
 import java.time.Instant;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -10,7 +8,6 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
@@ -48,14 +45,8 @@ public class GetAccount implements RequestHandler<GetAccountRequest, GetAccountR
 			 * 
 			 */
 			
-			String href = parseToken(request.getAccessToken()).getBody().getSubject();
-			
-			/**
-			 * 
-			 */
-			
-			HttpResponse httpResponse = RestResource.get(href)
-					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
+			HttpResponse httpResponse = RestResource.get(request.getHref())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.execute();
 				
 			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());

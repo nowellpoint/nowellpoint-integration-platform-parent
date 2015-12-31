@@ -27,6 +27,7 @@ import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
+import com.nowellpoint.aws.tools.TokenParser;
 
 @Path("/account")
 public class AccountResource {
@@ -58,10 +59,18 @@ public class AccountResource {
 		}
 		
 		//
+		// parse the bearer token
+		//
+		
+		String href = TokenParser.parseToken(bearerToken).getBody().getSubject();
+		
+		//
 		// build the GetAccountRequest
 		//
 		
-		GetAccountRequest getAccountRequest = new GetAccountRequest().withAccessToken(bearerToken);
+		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(Configuration.getStormpathApiKeyId())
+				.withApiKeySecret(Configuration.getStormpathApiKeySecret())
+				.withHref(href);
 		
 		//
 		// excute the GetAccountRequest

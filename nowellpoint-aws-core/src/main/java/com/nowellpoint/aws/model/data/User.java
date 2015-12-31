@@ -252,7 +252,7 @@ public class User implements Serializable {
 	 * 
 	 */
 
-	private URL accountHref;
+	private String accountHref;
 
 	/**
 	 * 
@@ -561,11 +561,11 @@ public class User implements Serializable {
 		this.salesforceId = salesforceId;
 	}
 
-	public URL getAccountHref() {
+	public String getAccountHref() {
 		return accountHref;
 	}
 
-	public void setAccountHref(URL accountHref) {
+	public void setAccountHref(String accountHref) {
 		this.accountHref = accountHref;
 	}
 

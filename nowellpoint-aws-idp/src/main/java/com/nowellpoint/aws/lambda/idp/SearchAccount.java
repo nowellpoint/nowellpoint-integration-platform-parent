@@ -1,0 +1,127 @@
+package com.nowellpoint.aws.lambda.idp;
+
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.model.Configuration;
+import com.nowellpoint.aws.model.idp.Account;
+import com.nowellpoint.aws.model.idp.SearchAccountRequest;
+import com.nowellpoint.aws.model.idp.SearchAccountResponse;
+
+public class SearchAccount implements RequestHandler<SearchAccountRequest, SearchAccountResponse> {
+	
+	private static final Logger log = Logger.getLogger(SearchAccount.class.getName());
+
+	@Override
+	public SearchAccountResponse handleRequest(SearchAccountRequest request, Context context) {
+		
+		/**
+		 * 
+		 */
+		
+		long startTime = System.currentTimeMillis();
+		
+		/**
+		 * 
+		 */
+		
+		SearchAccountResponse response = new SearchAccountResponse();
+		
+		/**
+		 * 
+		 */
+		
+		try {
+			
+			String query = buildQueryString(request.getAccount());
+			
+			HttpResponse httpResponse = RestResource.get(Configuration.getStormpathApiEndpoint())
+					.accept(MediaType.APPLICATION_JSON)
+					.path("applications")
+					.path(Configuration.getStormpathApplicationId())
+					.path("accounts")
+					.path(query.toString())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
+					.execute();
+				
+			log.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			
+			/**
+			 * 
+			 */
+							
+			response.setStatusCode(httpResponse.getStatusCode());
+			
+			if (httpResponse.getStatusCode() == 200) {
+				ObjectNode successResponse = httpResponse.getEntity(ObjectNode.class);
+				ObjectMapper objectMapper = new ObjectMapper();
+				response.setSize(successResponse.get("size").asInt());
+				response.setHref(successResponse.get("href").asText());
+				response.setItems(objectMapper.readValue(successResponse.get("items").toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, Account.class)));
+			} else {
+				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
+				response.setErrorCode(errorResponse.get("message").asText());
+				response.setErrorMessage(errorResponse.get("developerMessage").asText());
+			}
+			
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			response.setStatusCode(400);
+			response.setErrorCode("invalid_request");
+			response.setErrorMessage(e.getMessage());
+		}
+		
+		log.info(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
+		
+		return response;
+	}
+	
+	private String buildQueryString(Account account) {
+		
+		Map<String,String> queryParams = new HashMap<String,String>();
+		
+		if (Optional.ofNullable(account.getUsername()).isPresent()) {
+			queryParams.put("username", account.getUsername());
+		}
+		
+		if (Optional.ofNullable(account.getEmail()).isPresent()) {
+			queryParams.put("email", account.getEmail());
+		}
+		
+		if (Optional.ofNullable(account.getGivenName()).isPresent()) {
+			queryParams.put("givenName", account.getGivenName());
+		}
+		
+		if (Optional.ofNullable(account.getSurname()).isPresent()) {
+			queryParams.put("surname", account.getSurname());
+		}
+		
+		if (Optional.ofNullable(account.getMiddleName()).isPresent()) {
+			queryParams.put("middleName", account.getMiddleName());
+		}
+		
+		if (Optional.ofNullable(account.getStatus()).isPresent()) {
+			queryParams.put("status", account.getStatus());
+		}
+
+		StringBuilder query = new StringBuilder("?");
+			
+		queryParams.entrySet().stream().map(entry -> query.append( entry.getKey() ).append("=")
+				.append( queryParams.get( entry.getKey() ) ) ).collect( Collectors.joining (",") );
+		
+		return query.toString();
+	}
+}

@@ -2,7 +2,7 @@ package com.nowellpoint.aws.model.idp;
 
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
-public class GetAccountRequest extends AbstractLambdaRequest {
+public class SearchAccountRequest extends AbstractLambdaRequest {
 
 	/**
 	 * 
@@ -14,9 +14,9 @@ public class GetAccountRequest extends AbstractLambdaRequest {
 	
 	private String apiKeySecret;
 	
-	private String href;
+	private Account account;
 	
-	public GetAccountRequest() {
+	public SearchAccountRequest() {
 		
 	}
 
@@ -36,26 +36,26 @@ public class GetAccountRequest extends AbstractLambdaRequest {
 		this.apiKeySecret = apiKeySecret;
 	}
 	
-	public String getHref() {
-		return href;
+	public Account getAccount() {
+		return account;
 	}
-	
-	public void setHref(String href) {
-		this.href = href;
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
-	
-	public GetAccountRequest withApiKeyId(String apiKeyId) {
+
+	public SearchAccountRequest withApiKeyId(String apiKeyId) {
 		setApiKeyId(apiKeyId);
 		return this;
 	}
 	
-	public GetAccountRequest withApiKeySecret(String apiKeySecret) {
+	public SearchAccountRequest withApiKeySecret(String apiKeySecret) {
 		setApiKeySecret(apiKeySecret);
 		return this;
 	}
 	
-	public GetAccountRequest withHref(String href) {
-		setHref(href);
+	public SearchAccountRequest withAccount(Account account) {
+		setAccount(account);
 		return this;
 	}
 }

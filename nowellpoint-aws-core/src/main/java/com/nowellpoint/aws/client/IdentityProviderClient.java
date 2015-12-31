@@ -13,6 +13,10 @@ import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
 import com.nowellpoint.aws.model.idp.RefreshTokenResponse;
 import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
 import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
+import com.nowellpoint.aws.model.idp.SearchAccountRequest;
+import com.nowellpoint.aws.model.idp.SearchAccountResponse;
+import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
+import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
 
@@ -22,8 +26,12 @@ public class IdentityProviderClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest request) throws LambdaResponseException {		
-		return invoke("IdentityProviderUsernamePasswordAuthentication", request, GetTokenResponse.class);
+	public GetTokenResponse authenticate(GetTokenRequest getTokenRequest) throws LambdaResponseException {		
+		return invoke("IdentityProviderUsernamePasswordAuthentication", getTokenRequest, GetTokenResponse.class);
+	}
+	
+	public SearchAccountResponse search(SearchAccountRequest searchAccountRequest) throws LambdaResponseException {		
+		return invoke("IdentityProviderSearchAccount", searchAccountRequest, SearchAccountResponse.class);
 	}
 	
 	public GetAccountResponse account(GetAccountRequest request) throws LambdaResponseException {		
@@ -32,6 +40,10 @@ public class IdentityProviderClient extends AbstractClient {
 	
 	public CreateAccountResponse account(CreateAccountRequest request) throws LambdaResponseException {
 		return invoke("IdentityProviderCreateAccount", request, CreateAccountResponse.class);
+	}
+	
+	public UpdateAccountResponse account(UpdateAccountRequest updateAccountRequest) throws LambdaResponseException {
+		return invoke("IdentityProviderUpdateAccount", updateAccountRequest, UpdateAccountResponse.class);
 	}
 	
 	public GetCustomDataResponse customData(GetCustomDataRequest request) throws LambdaResponseException {
@@ -47,6 +59,6 @@ public class IdentityProviderClient extends AbstractClient {
 	}
 	
 	public RevokeTokenResponse revoke(RevokeTokenRequest request) throws LambdaResponseException {
-		return invoke("RevokeToken", request, RevokeTokenResponse.class);
+		return invoke("IdentityProviderRevokeToken", request, RevokeTokenResponse.class);
 	}
 }
