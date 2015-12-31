@@ -45,8 +45,17 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 		 */
 		
 		try {
+
+			ObjectMapper objectMapper = new ObjectMapper();
 			
-			String query = buildQueryString(request.getAccount());
+			Account account = new Account();
+			account.setEmail(request.getEmail());
+			account.setGivenName(request.getGivenName());
+			account.setMiddleName(request.getMiddleName());
+			account.setSurname(request.getSurname());
+			account.setUsername(request.getUsername());
+			
+			String query = buildQueryString(account);
 			
 			HttpResponse httpResponse = RestResource.get(Configuration.getStormpathApiEndpoint())
 					.accept(MediaType.APPLICATION_JSON)
@@ -67,7 +76,6 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 			
 			if (httpResponse.getStatusCode() == 200) {
 				ObjectNode successResponse = httpResponse.getEntity(ObjectNode.class);
-				ObjectMapper objectMapper = new ObjectMapper();
 				response.setSize(successResponse.get("size").asInt());
 				response.setHref(successResponse.get("href").asText());
 				response.setItems(objectMapper.readValue(successResponse.get("items").toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, Account.class)));

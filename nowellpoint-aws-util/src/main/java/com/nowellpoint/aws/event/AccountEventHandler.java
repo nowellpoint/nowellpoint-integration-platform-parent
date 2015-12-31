@@ -14,6 +14,10 @@ import com.nowellpoint.aws.model.data.User;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
+import com.nowellpoint.aws.model.idp.SearchAccountRequest;
+import com.nowellpoint.aws.model.idp.SearchAccountResponse;
+import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
+import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
 
 public class AccountEventHandler implements AbstractEventHandler {
 	
@@ -37,32 +41,90 @@ public class AccountEventHandler implements AbstractEventHandler {
 		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 		
 		//
-		// build the CreateAccountRequest
+		// search for exsiting account with username
 		//
 		
-		CreateAccountRequest createAccountRequest = new CreateAccountRequest().withAccount(account)
-				.withApiKeyId(Configuration.getStormpathApiKeyId())
-				.withApiKeySecret(Configuration.getStormpathApiKeySecret());
+		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(Configuration.getStormpathApiKeyId())
+				.withApiKeySecret(Configuration.getStormpathApiKeySecret())
+				.withUsername(account.getUsername());
 		
-		//
-		// execute the CreateAcountRequest
-		//
+		SearchAccountResponse searchAccountResponse = identityProviderClient.search(searchAccountRequest);
 		
-		CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
+		log.info("found: " + searchAccountResponse.getSize());
 		
-		//
-		// throw exception for any issue with the identity provider
-		//
+		String href;
 		
-		if (createAccountResponse.getStatusCode() != 201) {
-			throw new IOException(createAccountResponse.getErrorMessage());
+		if (searchAccountResponse.getSize() == 0) {
+			
+			//
+			// build the CreateAccountRequest
+			//
+			
+			CreateAccountRequest createAccountRequest = new CreateAccountRequest().withAccount(account)
+					.withApiKeyId(Configuration.getStormpathApiKeyId())
+					.withApiKeySecret(Configuration.getStormpathApiKeySecret());
+			
+			//
+			// execute the CreateAcountRequest
+			//
+			
+			CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
+			
+			//
+			// throw exception for any issue with the identity provider
+			//
+			
+			if (createAccountResponse.getStatusCode() != 201) {
+				throw new IOException(createAccountResponse.getErrorMessage());
+			}
+			
+			//
+			//
+			//
+			
+			href = createAccountResponse.getAccount().getHref();
+			
+		} else {
+			
+			//
+			// build the UpdateAccountRequest
+			//
+			
+			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(Configuration.getStormpathApiKeyId())
+					.withApiKeySecret(Configuration.getStormpathApiKeySecret())
+					.withGivenName(account.getGivenName())
+					.withEmail(account.getEmail())
+					.withMiddleName(account.getMiddleName())
+					.withSurname(account.getSurname())
+					.withHref(searchAccountResponse.getItems().get(0).getHref());
+			
+			//
+			// execute the UpdateAccountRequest
+			//
+			
+			UpdateAccountResponse updateAccountResponse = identityProviderClient.account(updateAccountRequest);	
+			
+			//
+			// throw exception for any issue with the identity provider
+			//
+			
+			if (updateAccountResponse.getStatusCode() != 200) {
+				throw new IOException(updateAccountResponse.getErrorMessage());
+			}
+			
+			//
+			//
+			//
+			
+			href = updateAccountResponse.getAccount().getHref();
+			
 		}
 		
 		//
 		//
 		//
 		
-		log.info(createAccountResponse.getAccount().getHref());
+		log.info(href);
 		
 		//
 		//
@@ -70,7 +132,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		User user = new User();
 		user.setUsername(account.getUsername());
-		user.setAccountHref(account.getHref());
+		user.setAccountHref(href);
 		
 		//
 		//
@@ -95,6 +157,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		return createAccountResponse.getAccount().getHref();
+		return href;
 	}
 }

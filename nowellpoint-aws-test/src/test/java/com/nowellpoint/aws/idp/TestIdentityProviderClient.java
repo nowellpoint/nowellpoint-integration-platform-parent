@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
-import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -121,12 +120,9 @@ public class TestIdentityProviderClient {
         
         start = System.currentTimeMillis();
 		
-		Account account = new Account();
-		account.setUsername("john.d.herson@gmail.com");
-		
 		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.withApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
-				.withAccount(account);
+				.withUsername("john.d.herson@gmail.com");
 		
 		SearchAccountResponse searchAccountResponse = client.search(searchAccountRequest);
 		
