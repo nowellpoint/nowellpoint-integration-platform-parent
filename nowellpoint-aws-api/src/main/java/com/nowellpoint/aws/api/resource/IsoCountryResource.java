@@ -69,8 +69,7 @@ public class IsoCountryResource {
 	@GET
 	@Path("/{language}/{code}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findByIsoCode(@PathParam("language") String language, 
-			@PathParam("code") String code) {
+	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
 		MongoCollection<IsoCountry> collection = Datastore.getDatabase()
 				.getCollection(COLLECTION_NAME)

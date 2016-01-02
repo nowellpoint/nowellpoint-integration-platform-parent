@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -106,6 +107,12 @@ public class TokenResource {
 		// execute the token verification request
 		
 		VerifyTokenResponse verifyTokenResponse = identityProviderClient.verify(verifyTokenRequest);
+		
+		//
+		// remove the account from the cache
+		//
+		
+		CacheManager.getCache().del(bearerToken.getBytes());
 		
 		//
 		// build and return the response

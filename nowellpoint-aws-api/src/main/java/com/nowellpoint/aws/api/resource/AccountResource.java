@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.resource;
 
+import static com.nowellpoint.aws.tools.RedisSerializer.serialize;
+
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
@@ -19,6 +21,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.Configuration;
@@ -77,6 +80,12 @@ public class AccountResource {
 		//
 		
 		GetAccountResponse getAccountResponse = identityProviderClient.account(getAccountRequest);
+		
+		//
+		// add the account to the cache
+		//
+		
+		CacheManager.getCache().set(bearerToken.getBytes(), serialize(getAccountResponse.getAccount()));
 		
 		//
 		// build and return the response
