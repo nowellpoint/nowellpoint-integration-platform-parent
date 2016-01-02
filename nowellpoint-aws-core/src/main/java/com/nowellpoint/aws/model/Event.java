@@ -51,6 +51,9 @@ public class Event {
 	@DynamoDBAttribute(attributeName="ErrorMessage")
 	private String errorMessage;
 	
+	@DynamoDBAttribute(attributeName="EventSource")
+	private String eventSource;
+	
 	public Event() {
 		
 	}
@@ -151,6 +154,15 @@ public class Event {
 		this.errorMessage = errorMessage;
 	}
 	
+	@DoNotEncrypt
+	public String getEventSource() {
+		return eventSource;
+	}
+
+	public void setEventSource(String eventSource) {
+		this.eventSource = eventSource;
+	}
+
 	public Event withEventStatus(EventStatus eventStatus) {
 		setEventStatus(eventStatus.name());
 		return this;
@@ -183,6 +195,11 @@ public class Event {
 	
 	public Event withPayload(String payload) {
 		setPayload(payload);
+		return this;
+	}
+	
+	public Event withEventSource(String eventSource) {
+		setEventSource(eventSource);
 		return this;
 	}
 }

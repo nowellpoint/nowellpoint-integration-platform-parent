@@ -53,6 +53,7 @@ public class UserResource {
 				.withType(User.class.getName())
 				.withOrganizationId(Configuration.getDefaultOrganizationId())
 				.withUserId(Configuration.getDefaultUserId())
+				.withEventSource(uriInfo.getRequestUri().toString())
 				.withPayload(payload);
 		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(event);

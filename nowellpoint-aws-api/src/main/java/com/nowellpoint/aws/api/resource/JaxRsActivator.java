@@ -21,6 +21,7 @@ public class JaxRsActivator extends Application {
         resources.add(IsoCountryResource.class);
         resources.add(UserResource.class);
         resources.add(AccountResource.class);
+        resources.add(SalesforceResource.class);
         return resources;
 	}
 }

@@ -38,9 +38,9 @@ public class EventHandler {
 		System.setProperty("aws.kms.key.id", Configuration.getAwsKmsKeyId());
 		
 		Predicate<DynamodbStreamRecord> insert = record -> "INSERT".equals(record.getEventName());
-		//Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());
+		Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());
 		
-		dynamodbEvent.getRecords().stream().filter(insert).forEach(record -> {
+		dynamodbEvent.getRecords().stream().filter(insert.or(modify)).forEach(record -> {
 			
 			//
 			// capture the start time

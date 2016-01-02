@@ -251,7 +251,7 @@ public class Urls implements Serializable {
 		this.rest = rest;
 	}
 
-	public String getSObjects() {
+	public String getSobjects() {
 		return sobjects;
 	}
 

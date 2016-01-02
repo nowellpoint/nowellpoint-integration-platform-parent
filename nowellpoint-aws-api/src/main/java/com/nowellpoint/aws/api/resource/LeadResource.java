@@ -53,6 +53,7 @@ public class LeadResource {
 				.withType(Lead.class.getName())
 				.withOrganizationId(Configuration.getDefaultOrganizationId())
 				.withUserId(Configuration.getDefaultUserId())
+				.withEventSource(uriInfo.getRequestUri().toString())
 				.withPayload(payload);
 		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(event);
