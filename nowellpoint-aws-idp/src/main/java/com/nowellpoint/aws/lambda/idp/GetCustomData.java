@@ -10,10 +10,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.CustomData;
 import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class GetCustomData implements RequestHandler<GetCustomDataRequest, GetCustomDataResponse> {
 
@@ -52,7 +52,7 @@ public class GetCustomData implements RequestHandler<GetCustomDataRequest, GetCu
 		try {
 			httpResponse = RestResource.get(href)
 					.path("customData")
-					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
+					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
 					.execute();
 				
 			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());

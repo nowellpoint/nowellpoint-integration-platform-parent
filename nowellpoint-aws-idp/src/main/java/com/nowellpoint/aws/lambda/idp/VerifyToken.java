@@ -8,10 +8,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.AuthToken;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTokenResponse> {
 	
@@ -32,10 +32,10 @@ public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTok
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.get(Configuration.getStormpathApiEndpoint())
+			httpResponse = RestResource.get(ConfigurationProvider.getStormpathApiEndpoint())
 					.path("applications")
-					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
-					.path(Configuration.getStormpathApplicationId())
+					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
+					.path(ConfigurationProvider.getStormpathApplicationId())
 					.path("authTokens")
 					.path(request.getAccessToken())
 					.execute();

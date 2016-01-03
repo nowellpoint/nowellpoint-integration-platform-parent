@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.client.IdentityProviderClient;
-import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.data.User;
 import com.nowellpoint.aws.model.idp.Account;
@@ -18,6 +16,8 @@ import com.nowellpoint.aws.model.idp.SearchAccountRequest;
 import com.nowellpoint.aws.model.idp.SearchAccountResponse;
 import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
 import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class AccountEventHandler implements AbstractEventHandler {
 	
@@ -44,8 +44,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 		// search for exsiting account with username
 		//
 		
-		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(Configuration.getStormpathApiKeyId())
-				.withApiKeySecret(Configuration.getStormpathApiKeySecret())
+		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
+				.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
 				.withUsername(account.getUsername());
 		
 		SearchAccountResponse searchAccountResponse = identityProviderClient.search(searchAccountRequest);
@@ -65,8 +65,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 					.withMiddleName(account.getMiddleName())
 					.withSurname(account.getSurname())
 					.withUsername(account.getUsername())
-					.withApiKeyId(Configuration.getStormpathApiKeyId())
-					.withApiKeySecret(Configuration.getStormpathApiKeySecret());
+					.withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
+					.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret());
 			
 			//
 			// execute the CreateAcountRequest
@@ -94,8 +94,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 			// build the UpdateAccountRequest
 			//
 			
-			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(Configuration.getStormpathApiKeyId())
-					.withApiKeySecret(Configuration.getStormpathApiKeySecret())
+			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
+					.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
 					.withGivenName(account.getGivenName())
 					.withEmail(account.getEmail())
 					.withMiddleName(account.getMiddleName())
@@ -151,8 +151,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
 				.withType(User.class.getName())
-				.withOrganizationId(Configuration.getDefaultOrganizationId())
-				.withUserId(Configuration.getDefaultUserId())
+				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
+				.withUserId(ConfigurationProvider.getDefaultUserId())
 				.withPayload(payload);
 		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(event);

@@ -33,10 +33,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.Transaction;
 import com.nowellpoint.aws.model.TransactionResult;
 import com.nowellpoint.aws.model.sforce.OutboundMessage;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.sforce.SalesforceResource;
 import com.nowellpoint.aws.tools.MongoQuery;
 
@@ -53,7 +53,7 @@ public class TransactionEventHandler {
 		mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 		kms = new AWSKMSClient();
 		salesforceResource = new SalesforceResource();
-		mongoClientURI = new MongoClientURI("mongodb://".concat(Configuration.getMongoClientUri()));
+		mongoClientURI = new MongoClientURI("mongodb://".concat(ConfigurationProvider.getMongoClientUri()));
 		mongoClient = new MongoClient(mongoClientURI);
 		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
 	}

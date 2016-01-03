@@ -8,10 +8,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.sforce.RefreshTokenRequest;
 import com.nowellpoint.aws.model.sforce.RefreshTokenResponse;
 import com.nowellpoint.aws.model.sforce.Token;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	
@@ -32,11 +32,11 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(Configuration.getSalesforceRefreshUri())
+			httpResponse = RestResource.post(ConfigurationProvider.getSalesforceRefreshUri())
 					.header("Content-type", "application/x-www-form-urlencoded")
 					.parameter("grant_type", "refresh_token")
-					.parameter("client_id", Configuration.getSalesforceClientId())
-					.parameter("client_secret", Configuration.getSalesforceClientSecret())
+					.parameter("client_id", ConfigurationProvider.getSalesforceClientId())
+					.parameter("client_secret", ConfigurationProvider.getSalesforceClientSecret())
 					.parameter("refresh_token", request.getRefreshToken())
 					.execute();
 			

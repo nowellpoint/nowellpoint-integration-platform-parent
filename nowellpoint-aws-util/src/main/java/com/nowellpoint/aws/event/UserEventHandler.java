@@ -8,7 +8,6 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nowellpoint.aws.client.DataClient;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
@@ -16,6 +15,7 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.data.QueryDocumentRequest;
 import com.nowellpoint.aws.model.data.QueryDocumentResponse;
 import com.nowellpoint.aws.model.data.User;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class UserEventHandler implements AbstractEventHandler {
 	
@@ -35,7 +35,7 @@ public class UserEventHandler implements AbstractEventHandler {
 		String query = objectMapper.createObjectNode().put("username", user.getUsername()).toString();
 		
 		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest().withCollectionName(USER_COLLECTION)
-				.withMongoDBConnectUri(Configuration.getMongoClientUri())
+				.withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 				.withDocument(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
@@ -48,7 +48,7 @@ public class UserEventHandler implements AbstractEventHandler {
 			
 			user.setId(new ObjectId());
 					
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(Configuration.getMongoClientUri())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 					.withUserId(user.getId().toString())
 					.withCollectionName(USER_COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(user));
@@ -74,7 +74,7 @@ public class UserEventHandler implements AbstractEventHandler {
 				e.printStackTrace();
 			}
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(Configuration.getMongoClientUri())
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 					.withId(user.getId().toString())
 					.withUserId(user.getId().toString())
 					.withCollectionName(USER_COLLECTION)

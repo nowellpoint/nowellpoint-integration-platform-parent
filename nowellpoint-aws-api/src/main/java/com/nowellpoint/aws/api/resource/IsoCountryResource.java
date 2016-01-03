@@ -2,8 +2,8 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.aws.tools.RedisSerializer.deserialize;
-import static com.nowellpoint.aws.tools.RedisSerializer.serialize;
+import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
+import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.util.List;
 import java.util.stream.Collectors;

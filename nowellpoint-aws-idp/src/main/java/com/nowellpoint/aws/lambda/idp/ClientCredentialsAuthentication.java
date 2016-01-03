@@ -9,10 +9,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.Token;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class ClientCredentialsAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
@@ -33,11 +33,11 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(Configuration.getStormpathApiEndpoint())
+			httpResponse = RestResource.post(ConfigurationProvider.getStormpathApiEndpoint())
 					.path("applications")
-					.path(Configuration.getStormpathApplicationId())
+					.path(ConfigurationProvider.getStormpathApplicationId())
 					.path("oauth/token")
-					.basicAuthorization(Configuration.getStormpathApiKeyId(), Configuration.getStormpathApiKeySecret())
+					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.parameter("grant_type", "client_credentials")

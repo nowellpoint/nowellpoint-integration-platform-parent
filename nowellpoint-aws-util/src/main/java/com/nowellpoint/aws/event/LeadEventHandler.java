@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.nowellpoint.aws.client.SalesforceClient;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.Lead;
 import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
 import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class LeadEventHandler implements AbstractEventHandler {
 	
@@ -36,9 +36,9 @@ public class LeadEventHandler implements AbstractEventHandler {
 		// build the GetTokenRequest
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(Configuration.getSalesforceUsername())
-				.withPassword(Configuration.getSalesforcePassword())
-				.withSecurityToken(Configuration.getSalesforceSecurityToken());
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(ConfigurationProvider.getSalesforceUsername())
+				.withPassword(ConfigurationProvider.getSalesforcePassword())
+				.withSecurityToken(ConfigurationProvider.getSalesforceSecurityToken());
 		
 		//
 		// execute the GetTokenRequest

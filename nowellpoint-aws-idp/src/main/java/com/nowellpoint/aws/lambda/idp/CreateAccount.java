@@ -12,10 +12,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridException;
 
@@ -56,10 +56,10 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			ObjectNode node = objectMapper.readValue(objectMapper.writeValueAsString(account), ObjectNode.class);
 			node.put("password", generatePassword());
 			
-			HttpResponse httpResponse = RestResource.post(Configuration.getStormpathApiEndpoint())
+			HttpResponse httpResponse = RestResource.post(ConfigurationProvider.getStormpathApiEndpoint())
 					.contentType(MediaType.APPLICATION_JSON)
 					.path("applications")
-					.path(Configuration.getStormpathApplicationId())
+					.path(ConfigurationProvider.getStormpathApplicationId())
 					.path("accounts")
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.body(node)
@@ -95,7 +95,7 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 				email.setSubject("Welcome to Nowellpoint!");
 				email.setText(text);
 				
-				SendGrid sendgrid = new SendGrid(Configuration.getSendGridApiKey());
+				SendGrid sendgrid = new SendGrid(ConfigurationProvider.getSendGridApiKey());
 
 				try {
 					sendgrid.send(email);

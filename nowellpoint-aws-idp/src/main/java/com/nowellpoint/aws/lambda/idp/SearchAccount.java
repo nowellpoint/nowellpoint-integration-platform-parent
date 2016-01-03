@@ -16,10 +16,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.Configuration;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.SearchAccountRequest;
 import com.nowellpoint.aws.model.idp.SearchAccountResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class SearchAccount implements RequestHandler<SearchAccountRequest, SearchAccountResponse> {
 	
@@ -57,10 +57,10 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 			
 			String query = buildQueryString(account);
 			
-			HttpResponse httpResponse = RestResource.get(Configuration.getStormpathApiEndpoint())
+			HttpResponse httpResponse = RestResource.get(ConfigurationProvider.getStormpathApiEndpoint())
 					.accept(MediaType.APPLICATION_JSON)
 					.path("applications")
-					.path(Configuration.getStormpathApplicationId())
+					.path(ConfigurationProvider.getStormpathApplicationId())
 					.path("accounts")
 					.path(query.toString())
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())

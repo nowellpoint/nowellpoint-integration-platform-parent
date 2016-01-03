@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.data;
 
-import static com.nowellpoint.aws.tools.RedisSerializer.deserialize;
-import static com.nowellpoint.aws.tools.RedisSerializer.serialize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -10,8 +8,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import redis.clients.jedis.Jedis;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,7 +31,7 @@ public class TestDataClient {
 	
 	private static IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 	private static DataClient dataClient = new DataClient();
-	private static Jedis jedis;
+	private static UserContext userContext;
 	private static String accessToken;
 	
 	private static ObjectNode json = JsonNodeFactory.instance.objectNode()
@@ -47,9 +43,6 @@ public class TestDataClient {
 	
 	@BeforeClass
 	public static void init() {
-		
-		jedis = new Jedis("pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 10497);
-		jedis.auth(System.getenv("REDIS_PASSWORD"));
 		
 		long startTime = System.currentTimeMillis();
 		
@@ -69,10 +62,8 @@ public class TestDataClient {
 			
 		GetCustomDataResponse customDataResponse = identityProviderClient.customData(customDataRequest);
 			
-		UserContext userContext = new UserContext().withMongoDBConnectUri(customDataResponse.getCustomData().getMongodbConnectUri())
+		userContext = new UserContext().withMongoDBConnectUri(customDataResponse.getCustomData().getMongodbConnectUri())
 				.withUserId(customDataResponse.getCustomData().getApplicationUserId());
-			
-		jedis.set(accessToken.getBytes(), serialize(userContext));
 			
 		System.out.println("Setting up session...complete");
 		
@@ -81,8 +72,6 @@ public class TestDataClient {
 
 	@Test
 	public void testCreateAndUpdateParty() {
-		
-		UserContext userContext = (UserContext) deserialize(jedis.get(accessToken.getBytes()));
 		
 		long startTime = System.currentTimeMillis();
 		
@@ -154,8 +143,6 @@ public class TestDataClient {
 	
 	@Test
 	public void testNotFound() {
-		
-		UserContext userContext = (UserContext) deserialize(jedis.get(accessToken.getBytes()));
 			
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
 				.withCollectionName("parties")
@@ -214,7 +201,6 @@ public class TestDataClient {
 	
 	@AfterClass
 	public static void cleanUp() {
-		jedis.del(accessToken.getBytes());
-		jedis.close();
+
 	}
 }

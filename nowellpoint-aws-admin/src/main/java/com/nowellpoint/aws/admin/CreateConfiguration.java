@@ -4,8 +4,8 @@ import org.joda.time.Instant;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
-import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class CreateConfiguration {
 
@@ -21,7 +21,6 @@ public class CreateConfiguration {
 					.put("salesforce_refresh_uri", System.getenv("SALESFORCE_REFRESH_URI"))
 					.put("salesforce_revoke_uri", System.getenv("SALESFORCE_REVOKE_URI"))
 					.put("salesforce_token_uri", System.getenv("SALESFORCE_TOKEN_URI"))
-					.put("apiKeyId", System.getenv("STORMPATH_API_KEY_ID"))
 					.put("stormpath_api_key_id", System.getenv("STORMPATH_API_KEY_ID"))
 					.put("stormpath_api_key_secret", System.getenv("STORMPATH_API_KEY_SECRET"))
 					.put("stormpath_api_endpoint", System.getenv("STORMPATH_API_ENDPOINT"))

@@ -14,12 +14,12 @@ import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
 import com.nowellpoint.aws.event.UserEventHandler;
-import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
 import com.nowellpoint.aws.model.data.User;
 import com.nowellpoint.aws.model.idp.Account;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class EventHandler {
 	
@@ -35,7 +35,7 @@ public class EventHandler {
 	
 	public String handleEvent(DynamodbEvent dynamodbEvent, Context context) {
 		
-		System.setProperty("aws.kms.key.id", Configuration.getAwsKmsKeyId());
+		System.setProperty("aws.kms.key.id", ConfigurationProvider.getAwsKmsKeyId());
 		
 		Predicate<DynamodbStreamRecord> insert = record -> "INSERT".equals(record.getEventName());
 		Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());

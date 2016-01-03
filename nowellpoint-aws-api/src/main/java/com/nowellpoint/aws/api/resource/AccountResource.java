@@ -1,10 +1,13 @@
 package com.nowellpoint.aws.api.resource;
 
-import static com.nowellpoint.aws.tools.RedisSerializer.serialize;
+import static com.nowellpoint.aws.api.data.CacheManager.getCache;
+import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
+import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -21,16 +24,18 @@ import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
-import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.tools.TokenParser;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 
 @Path("/account")
 public class AccountResource {
@@ -62,17 +67,43 @@ public class AccountResource {
 		}
 		
 		//
+		// check the cache to see if the account exits
+		//
+		
+		byte[] bytes = getCache().get(bearerToken.getBytes());
+		
+		//
+		// if its not null then return the account
+		//
+		
+		if (bytes != null) {
+			
+			Account account = (Account) deserialize(bytes);
+			
+			return Response.ok(account)
+					.type(MediaType.APPLICATION_JSON)
+					.build();
+		}
+		
+		
+		//
 		// parse the bearer token
 		//
 		
-		String href = TokenParser.parseToken(bearerToken).getBody().getSubject();
+		Jws<Claims> jws = TokenParser.parseToken(bearerToken);
+		
+		//
+		// get the subject from the JWS
+		//
+		
+		String href = jws.getBody().getSubject();
 		
 		//
 		// build the GetAccountRequest
 		//
 		
-		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(Configuration.getStormpathApiKeyId())
-				.withApiKeySecret(Configuration.getStormpathApiKeySecret())
+		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
+				.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
 				.withHref(href);
 		
 		//
@@ -82,10 +113,16 @@ public class AccountResource {
 		GetAccountResponse getAccountResponse = identityProviderClient.account(getAccountRequest);
 		
 		//
+		// calculate the expiration time for the cache entry
+		//
+		
+		Long exp = TimeUnit.MILLISECONDS.toSeconds(jws.getBody().getExpiration().getTime() - System.currentTimeMillis());
+		
+		//
 		// add the account to the cache
 		//
 		
-		CacheManager.getCache().set(bearerToken.getBytes(), serialize(getAccountResponse.getAccount()));
+		getCache().setex(bearerToken.getBytes(), exp.intValue(), serialize(getAccountResponse.getAccount()));
 		
 		//
 		// build and return the response
@@ -119,8 +156,8 @@ public class AccountResource {
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
 				.withType(Account.class.getName())
-				.withOrganizationId(Configuration.getDefaultOrganizationId())
-				.withUserId(Configuration.getDefaultUserId())
+				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
+				.withUserId(ConfigurationProvider.getDefaultUserId())
 				.withPayload(payload);
 		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(event);

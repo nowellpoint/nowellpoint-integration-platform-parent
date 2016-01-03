@@ -17,10 +17,10 @@ import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.Configuration;
-import com.nowellpoint.aws.model.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.data.User;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 @Path("/user")
 public class UserResource {
@@ -51,8 +51,8 @@ public class UserResource {
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
 				.withType(User.class.getName())
-				.withOrganizationId(Configuration.getDefaultOrganizationId())
-				.withUserId(Configuration.getDefaultUserId())
+				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
+				.withUserId(ConfigurationProvider.getDefaultUserId())
 				.withEventSource(uriInfo.getRequestUri().toString())
 				.withPayload(payload);
 		
