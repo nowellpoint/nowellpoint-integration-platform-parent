@@ -18,14 +18,15 @@ public class ConfigurationProvider {
 	
 	public static void loadConfiguration() {
 		
-		log.info("loading configuration");
-		
 		long startTime = System.currentTimeMillis();
 		
 		configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
 		
+		log.info("configuration loaded from database: " + Long.valueOf(System.currentTimeMillis() - startTime));
+		
 		try {
 			JsonNode node = new ObjectMapper().readValue(configuration.getConfigurationFile(), JsonNode.class);
+			log.info("configuration parsed into json: " + Long.valueOf(System.currentTimeMillis() - startTime));
 			salesforceClientId = node.get("salesforce_client_id").asText();
 			salesforceClientSecret = node.get("salesforce_client_secret").asText();
 			redirectUri = node.get("redirect_uri").asText();
@@ -44,14 +45,14 @@ public class ConfigurationProvider {
 			salesforcePassword = node.get("salesforce_password").asText();
 			salesforceSecurityToken = node.get("salesforce_security_token").asText();
 			sendGridApiKey = node.get("sendgrid_api_key").asText();
+			redisPassword = node.get("redis_password").asText();
 			defaultOrganizationId = node.get("default_organization_id").asText();
 			defaultUserId = node.get("default_user_id").asText();
 		} catch (IOException e) {
 			log.severe("Unable to complete configuration setup: " + e.getMessage());
-			e.printStackTrace();
 		}
 		
-		log.info("loading configuration...complete: " + Long.valueOf(System.currentTimeMillis() - startTime));
+		log.info("configuration file loaded: " + Long.valueOf(System.currentTimeMillis() - startTime));
 	}
 	
 	private static String salesforceClientId;
@@ -72,6 +73,7 @@ public class ConfigurationProvider {
 	private static String salesforcePassword;
 	private static String salesforceSecurityToken;
 	private static String sendGridApiKey;
+	private static String redisPassword;
 	private static String defaultOrganizationId;
 	private static String defaultUserId;
 	
@@ -112,6 +114,8 @@ public class ConfigurationProvider {
 	public static String getSalesforceSecurityToken() { return salesforceSecurityToken; }
 	
 	public static String getSendGridApiKey() { return sendGridApiKey; }
+	
+	public static String getRedisPassword() { return redisPassword; }
 	
 	public static String getDefaultOrganizationId() { return defaultOrganizationId; }
 	

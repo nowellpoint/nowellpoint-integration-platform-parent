@@ -3,6 +3,7 @@ package com.nowellpoint.aws.api;
 import java.util.Optional;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
@@ -31,6 +32,8 @@ public class Main {
         		.addPackage("com.nowellpoint.aws.api.data")
         		.addPackage("com.nowellpoint.aws.api.resource")
         		.addPackage("com.nowellpoint.aws.api.util")
+        		.addPackage("com.nowellpoint.aws.api.exception")
+        		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAllDependencies();
         
         //

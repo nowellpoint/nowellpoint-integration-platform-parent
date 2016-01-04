@@ -5,8 +5,10 @@ import java.time.Instant;
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -17,19 +19,25 @@ import javax.ws.rs.core.UriInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.Lead;
+import com.nowellpoint.aws.model.data.Organization;
 import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-@Path("/lead")
-public class LeadResource {
-
+@Path("/organization")
+public class OrganizationResource {
+	
 	@Context
 	private UriInfo uriInfo;
-
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getOrganizations() {
+		throw new WebApplicationException("testing web application exception", 500);
+	}
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Lead lead) {
+	public Response createOrganization(Organization organization) {
 		
 		//
 		//
@@ -37,7 +45,7 @@ public class LeadResource {
 				
 		String payload = null;
 		try {			
-			payload = new ObjectMapper().writeValueAsString(lead);
+			payload = new ObjectMapper().writeValueAsString(organization);
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
@@ -48,7 +56,7 @@ public class LeadResource {
 		
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
-				.withType(Lead.class.getName())
+				.withType(Organization.class.getName())
 				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
 				.withUserId(ConfigurationProvider.getDefaultUserId())
 				.withEventSource(uriInfo.getRequestUri().toString())
@@ -61,7 +69,7 @@ public class LeadResource {
 		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(LeadResource.class)
+				.path(OrganizationResource.class)
 				.path("/{id}")
 				.build(event.getId());
 		
@@ -70,5 +78,6 @@ public class LeadResource {
 		//
 		
 		return Response.created(uri).build();
+		
 	}
 }

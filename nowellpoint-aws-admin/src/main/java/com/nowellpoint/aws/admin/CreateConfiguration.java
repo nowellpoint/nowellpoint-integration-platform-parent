@@ -30,6 +30,7 @@ public class CreateConfiguration {
 					.put("redirect_uri", System.getenv("REDIRECT_URI"))
 					.put("aws_kms_key_id", System.getenv("AWS_KMS_KEY_ID"))
 					.put("sendgrid_api_key", System.getenv("SENDGRID_API_KEY"))
+					.put("redis_password", System.getenv("REDIS_PASSWORD"))
 					.put("default_organization_id", System.getenv("DEFAULT_ORGANIZATION_ID"))
 					.put("default_user_id", System.getenv("DEFAULT_USER_ID"))
 					.put("mongo_client_uri", System.getenv("MONGO_CLIENT_URI"));

@@ -31,7 +31,6 @@ public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdenti
 		
 		GetIdentityResponse response = new GetIdentityResponse();
 		
-		logger.log("Access Token: " + request.getAccessToken());
 		logger.log("Id: " + request.getId());
 		
 		/**
