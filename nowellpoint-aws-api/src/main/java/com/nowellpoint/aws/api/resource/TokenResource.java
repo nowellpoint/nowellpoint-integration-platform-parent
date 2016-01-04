@@ -2,8 +2,6 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.nowellpoint.aws.api.data.CacheManager.getCache;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -23,6 +21,7 @@ import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
 import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 @Path("/oauth")
 public class TokenResource {
@@ -59,7 +58,11 @@ public class TokenResource {
 		// execute the get token request for username and password
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(params[0])
+		GetTokenRequest tokenRequest = new GetTokenRequest().withEndpoint(ConfigurationProvider.getStormpathApiEndpoint())
+				.withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
+				.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
+				.withApplicationId(ConfigurationProvider.getStormpathApplicationId())
+				.withUsername(params[0])
 				.withPassword(params[1]);
 		
 		params = null;
@@ -110,12 +113,6 @@ public class TokenResource {
 		VerifyTokenResponse verifyTokenResponse = identityProviderClient.verify(verifyTokenRequest);
 		
 		//
-		// remove the account from the cache
-		//
-		
-		getCache().del(bearerToken.getBytes());
-		
-		//
 		// build and return the response
 		//
 		
@@ -142,33 +139,35 @@ public class TokenResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response revoke() {
 		
-		Response response;
-		
 		//
-		// ensure the request has an Authorization header parameter
+		// get the bearer token from the header
 		//
 		
-		Optional<String> authorization = Optional.ofNullable(servletRequest.getHeader("Authorization"));
-		
-		if (! authorization.isPresent()) {
-			return Response.status(Status.BAD_REQUEST)
-					.entity("Invalid Request - Missing Authorization Header")
-					.build();
-		}
+		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
 		
 		//
-		// parse the authorization header to get the bearer token
+		// build the revoke token request
 		//
-		
-		String bearerToken = new String(authorization.get().replace("Bearer ", ""));
 		
 		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withAccessToken(bearerToken);
+		
+		//
+		// execute the revoke token request
+		//
 		
 		RevokeTokenResponse revokeTokenResponse = identityProviderClient.revoke(revokeTokenRequest);
 		
 		//
+		// remove the account from the cache
+		//
+		
+		getCache().del(bearerToken.getBytes());
+		
+		//
 		// build and return the response
 		//
+		
+		Response response;
 		
 		if (revokeTokenResponse.getStatusCode() != 200) {
 			response = Response.status(revokeTokenResponse.getStatusCode())

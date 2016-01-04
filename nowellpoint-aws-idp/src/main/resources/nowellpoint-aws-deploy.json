@@ -25,7 +25,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.UsernamePasswordAuthentication::handleRequest",
       "description": "IdentityProviderUsernamePasswordAuthentication: Authenticates a username and password combination to return an OAuth Token",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },
@@ -43,7 +43,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.ClientCredentialsAuthentication::handleRequest",
       "description": "IdentityProviderClientCredentialsAuthentication: Authenticates an ApiKeyId and ApiKeySecret and will return the associated user account",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },
@@ -61,7 +61,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.GetAccount::handleRequest",
       "description": "IdentityProviderGetAccount: Returns the account associated to the access token",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },
@@ -79,7 +79,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.CreateAccount::handleRequest",
       "description": "IdentityProviderCreateAccount: Returns the newly created user account from the Identity Provider",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },
@@ -97,7 +97,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.UpdateAccount::handleRequest",
       "description": "IdentityProviderUpdateAccount: Updates the user account from the Identity Provider",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },
@@ -115,7 +115,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.GetCustomData::handleRequest",
       "description": "IdentityProviderGetCustomData: Gets the custom data for an access token that is associated with a user account",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },
@@ -133,7 +133,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.RevokeToken::handleRequest",
       "description": "IdentityProviderRevokeToken: Revokes access token",
-      "timeout": 5,
+      "timeout": 10,
       "memorySize": 1024,
       "version": "$LATEST"
     },
@@ -151,7 +151,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.idp.VerifyToken::handleRequest",
       "description": "Verify Token Request",
-      "timeout": 5,
+      "timeout": 10,
       "memorySize": 1024,
       "version": "$LATEST"
     },

@@ -2,9 +2,9 @@ package com.nowellpoint.aws.lambda.sforce;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -15,8 +15,6 @@ import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 import com.nowellpoint.aws.model.sforce.Identity;
 
 public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdentityResponse> {
-	
-	private static final Logger log = Logger.getLogger(GetIdentity.class.getName());
 
 	@Override
 	public GetIdentityResponse handleRequest(GetIdentityRequest request, Context context) {
@@ -25,7 +23,16 @@ public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdenti
 		 * 
 		 */
 		
+		LambdaLogger logger = context.getLogger();
+		
+		/**
+		 * 
+		 */
+		
 		GetIdentityResponse response = new GetIdentityResponse();
+		
+		logger.log("Access Token: " + request.getAccessToken());
+		logger.log("Id: " + request.getId());
 		
 		/**
 		 * 
@@ -40,7 +47,7 @@ public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdenti
 					.queryParameter("version", "latest")
 					.execute();
 			
-			log.info("Identity response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			logger.log("Identity response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 			
 			/**
 			 * 
@@ -57,7 +64,7 @@ public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdenti
 			}
 			
 		} catch (IOException e) {
-			log.severe(e.getMessage());
+			logger.log(e.getMessage());
 			response.setStatusCode(400);
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());

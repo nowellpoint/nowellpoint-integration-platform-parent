@@ -2,9 +2,9 @@ package com.nowellpoint.aws.lambda.sforce;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -13,14 +13,17 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
 import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class TokenAuthorization implements RequestHandler<GetAuthorizationRequest, GetAuthorizationResponse> {
-	
-	private static final Logger log = Logger.getLogger(TokenAuthorization.class.getName());
 
 	@Override
 	public GetAuthorizationResponse handleRequest(GetAuthorizationRequest request, Context context) {
+		
+		/**
+		 * 
+		 */
+		
+		LambdaLogger logger = context.getLogger();
 		
 		/**
 		 * 
@@ -34,18 +37,18 @@ public class TokenAuthorization implements RequestHandler<GetAuthorizationReques
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(ConfigurationProvider.getSalesforceTokenUri())
+			httpResponse = RestResource.post(request.getTokenUri())
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType("application/x-www-form-urlencoded")
 					.parameter("grant_type", "authorization_code")
 					.parameter("code", request.getCode())
-					.parameter("client_id", ConfigurationProvider.getSalesforceClientId())
-					.parameter("client_secret", ConfigurationProvider.getSalesforceClientSecret())
-					.parameter("redirect_uri", ConfigurationProvider.getRedirectUri())
+					.parameter("client_id", request.getClientId())
+					.parameter("client_secret", request.getClientSecret())
+					.parameter("redirect_uri", request.getRedirectUri())
 					.execute();
 			
-			log.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			logger.log("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 				
 			/**
 			 * 
@@ -55,14 +58,16 @@ public class TokenAuthorization implements RequestHandler<GetAuthorizationReques
 				
 			if (response.getStatusCode() < 400) {		
 				response.setToken(httpResponse.getEntity(Token.class));
+				logger.log("success: " + response.getToken().getId());
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
 				response.setErrorCode(errorResponse.get("error").asText());
 				response.setErrorMessage(errorResponse.get("error_description").asText());
+				logger.log("error: " + errorResponse.toString());
 			}
 			
 		} catch (IOException e) {
-			log.severe(e.getMessage());
+			logger.log(e.getMessage());
 			response.setStatusCode(400);
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());
