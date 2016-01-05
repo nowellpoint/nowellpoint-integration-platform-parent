@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Base64;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -193,6 +194,10 @@ public abstract class HttpRequest {
 				if (body.getClass().isAssignableFrom(String.class)) {
 					bytes = String.valueOf(body).getBytes();
 				} else {
+					if (! Optional.ofNullable(headers.get(HttpHeaders.CONTENT_TYPE)).isPresent()) {
+						throw new IOException("Missing content type header");
+					}
+					
 					if (headers.get(HttpHeaders.CONTENT_TYPE).equals(MediaType.APPLICATION_JSON)) {
 						bytes = objectMapper.writeValueAsString(body).getBytes();
 					}

@@ -74,7 +74,7 @@ public class Event {
 	public void setEventStatus(String eventStatus) {
 		this.eventStatus = eventStatus;
 	}
-
+	
 	@DoNotEncrypt
 	public Date getEventDate() {
 		return eventDate;

@@ -1,9 +1,12 @@
 package com.nowellpoint.aws.event;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.Date;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.SalesforceClient;
+import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.Lead;
 import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
 import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
@@ -12,19 +15,19 @@ import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class LeadEventHandler implements AbstractEventHandler {
-	
-	private static final Logger log = Logger.getLogger(LeadEventHandler.class.getName());
 
 	@Override
-	public String process(String payload) throws IOException {
+	public void process(Event event, Context context) throws IOException {
 		
-		log.info("starting LeadEventHandler");
+		LambdaLogger logger = context.getLogger();
+		
+		logger.log(new Date() + " starting LeadEventHandler");
 		
 		//
 		// parse the event payload
 		//
 		
-		Lead lead = objectMapper.readValue(payload, Lead.class);
+		Lead lead = objectMapper.readValue(event.getPayload(), Lead.class);
 		
 		//
 		// setup Salesforce client
@@ -54,7 +57,7 @@ public class LeadEventHandler implements AbstractEventHandler {
 			throw new IOException(getTokenResponse.getErrorMessage());
 		}
 		
-		log.info("GetTokenResponse status code: " + getTokenResponse.getStatusCode());
+		logger.log(new Date() + " GetTokenResponse status code: " + getTokenResponse.getStatusCode());
 		
 		//
 		// build the CreateLeadRequest
@@ -78,13 +81,13 @@ public class LeadEventHandler implements AbstractEventHandler {
 			throw new IOException(createLeadResponse.getErrorMessage());
 		}
 		
-		log.info("CreateLeadResponse status code: " + createLeadResponse.getId());
+		logger.log(new Date() + " CreateLeadResponse status code: " + createLeadResponse.getId());
 		
 		//
 		// return the lead id
 		//
 		
-		return createLeadResponse.getId();
+		event.setTargetId(createLeadResponse.getId());
 		
 	}
 }

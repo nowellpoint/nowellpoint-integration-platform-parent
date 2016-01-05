@@ -3,9 +3,10 @@ package com.nowellpoint.aws.event;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
-import java.util.logging.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.data.User;
@@ -20,19 +21,19 @@ import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class AccountEventHandler implements AbstractEventHandler {
-	
-	private static final Logger log = Logger.getLogger(AccountEventHandler.class.getName());
 
 	@Override
-	public String process(String payload) throws IOException {
+	public void process(Event event, Context context) throws IOException {
 		
-		log.info("starting AccountEventHandler");
+		LambdaLogger logger = context.getLogger();
+		
+		logger.log(new Date() + " starting AccountEventHandler");
 		
 		//
 		// parse the event payload
 		//
 		
-		Account account = objectMapper.readValue(payload, Account.class);
+		Account account = objectMapper.readValue(event.getPayload(), Account.class);
 		
 		//
 		// setup IdentityProviderClient
@@ -50,7 +51,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		SearchAccountResponse searchAccountResponse = identityProviderClient.search(searchAccountRequest);
 		
-		log.info("found: " + searchAccountResponse.getSize());
+		logger.log(new Date() + " found: " + searchAccountResponse.getSize());
 		
 		String href;
 		
@@ -128,21 +129,36 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		log.info(href);
+		logger.log(new Date() + " " + href);
+		
+		//
+		//
+		//
+		
+		createUserEvent(event.getEventSource(), account.getUsername(), href);
+		
+		//
+		//
+		//
+		
+		event.setTargetId(href);
+	}
+	
+	private void createUserEvent(String eventSource, String username, String href) throws JsonProcessingException {
 		
 		//
 		//
 		//
 		
 		User user = new User();
-		user.setUsername(account.getUsername());
+		user.setUsername(username);
 		user.setAccountHref(href);
 		
 		//
 		//
 		//
 				
-		payload = new ObjectMapper().writeValueAsString(user);
+		String payload = objectMapper.writeValueAsString(user);
 		
 		//
 		//
@@ -151,16 +167,15 @@ public class AccountEventHandler implements AbstractEventHandler {
 		Event event = new Event().withEventDate(Date.from(Instant.now()))
 				.withEventStatus(Event.EventStatus.NEW)
 				.withType(User.class.getName())
+				.withEventSource(eventSource)
 				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
 				.withUserId(ConfigurationProvider.getDefaultUserId())
 				.withPayload(payload);
 		
+		//
+		//
+		//
+		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(event);
-		
-		//
-		//
-		//
-		
-		return href;
 	}
 }

@@ -30,29 +30,48 @@ public class Organization implements Serializable {
 	@JsonProperty("_id")
 	private ObjectId id;
 	
+	private Attributes attributes;
+	
+	@JsonProperty(value="Division")
 	private String division;
 	
+	@JsonProperty(value="Fax")
 	private String fax;
 	
+	@JsonProperty(value="DefaultLocaleSidKey")
 	private String defaultLocaleSidKey;
 	
+	@JsonProperty(value="FiscalYearStartMonth")
 	private String fiscalYearStartMonth;
 	
+	@JsonProperty(value="InstanceName")
 	private String instanceName;
 	
+	@JsonProperty(value="IsSandbox")
 	private Boolean isSandbox;
 	
+	@JsonProperty(value="LanguageLocaleKey")
 	private String languageLocaleKey;
 	
+	@JsonProperty(value="Name")
 	private String name;
 	
+	@JsonProperty(value="OrganizationType")
 	private String organizationType;
 	
+	@JsonProperty(value="Phone")
 	private String phone;
 	
+	@JsonProperty(value="PrimaryContact")
 	private String primaryContact;
 	
+	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
+
+	@JsonProperty(value="Id")
+	private String salesforceId;
+
+	private String groupHref;
 	
 	public Organization() {
 		
@@ -64,6 +83,14 @@ public class Organization implements Serializable {
 
 	public void setId(ObjectId id) {
 		this.id = id;
+	}
+
+	public Attributes getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Attributes attributes) {
+		this.attributes = attributes;
 	}
 
 	public String getDivision() {
@@ -160,5 +187,21 @@ public class Organization implements Serializable {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
+	}
+
+	public String getSalesforceId() {
+		return salesforceId;
+	}
+
+	public void setSalesforceId(String salesforceId) {
+		this.salesforceId = salesforceId;
+	}
+
+	public String getGroupHref() {
+		return groupHref;
+	}
+
+	public void setGroupHref(String groupHref) {
+		this.groupHref = groupHref;
 	}
 }
