@@ -1,18 +1,11 @@
-package com.nowellpoint.aws.model.data;
+package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
-import org.bson.types.ObjectId;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_EMPTY)
 public class Organization implements Serializable {
 	
 	/**
@@ -21,14 +14,8 @@ public class Organization implements Serializable {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
-	/**
-	 * 
-	 */
-	
-	@JsonSerialize(using=ObjectIdSerializer.class)
-	@JsonDeserialize(using=ObjectIdDeserializer.class)
-	@JsonProperty("_id")
-	private ObjectId id;
+	@JsonProperty("Id")
+	private String id;
 	
 	@JsonProperty(value="attributes")
 	private Attributes attributes;
@@ -68,21 +55,16 @@ public class Organization implements Serializable {
 	
 	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
-
-	@JsonProperty(value="Id")
-	private String salesforceId;
-
-	private String groupHref;
 	
 	public Organization() {
 		
 	}
 
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -188,21 +170,5 @@ public class Organization implements Serializable {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
-	}
-
-	public String getSalesforceId() {
-		return salesforceId;
-	}
-
-	public void setSalesforceId(String salesforceId) {
-		this.salesforceId = salesforceId;
-	}
-
-	public String getGroupHref() {
-		return groupHref;
-	}
-
-	public void setGroupHref(String groupHref) {
-		this.groupHref = groupHref;
 	}
 }
