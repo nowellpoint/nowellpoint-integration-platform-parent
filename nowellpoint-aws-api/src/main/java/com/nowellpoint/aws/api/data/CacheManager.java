@@ -20,11 +20,13 @@ public class CacheManager implements ServletContextListener {
 	private static final Logger log = Logger.getLogger(CacheManager.class.getName());
 	private static Jedis jedis;
 	
-	@Override
-	public void contextInitialized(ServletContextEvent event) {
+	static {
 		jedis = new Jedis("pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 10497);
+	}
+	
+	@Override
+	public void contextInitialized(ServletContextEvent event) {		
 		jedis.auth(ConfigurationProvider.getRedisPassword());
-		
 		log.info("connecting to cache...is connected: " + jedis.isConnected());
 	}
 	
