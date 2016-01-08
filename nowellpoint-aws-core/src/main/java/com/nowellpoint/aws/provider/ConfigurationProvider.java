@@ -20,7 +20,7 @@ public class ConfigurationProvider {
 		
 		long startTime = System.currentTimeMillis();
 		
-		configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
+		configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(Configuration.class, System.getenv("CONFIGURATION_ID"));
 		
 		log.info("configuration loaded from database: " + Long.valueOf(System.currentTimeMillis() - startTime));
 		

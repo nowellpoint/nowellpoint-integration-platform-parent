@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.admin;
 
+import java.util.logging.Logger;
+
 import org.joda.time.Instant;
 
 import com.amazonaws.util.json.JSONException;
@@ -8,6 +10,8 @@ import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class CreateConfiguration {
+	
+	Logger logger = Logger.getLogger(CreateConfiguration.class.getName());
 
 	public CreateConfiguration() {
 		
@@ -35,20 +39,26 @@ public class CreateConfiguration {
 					.put("default_user_id", System.getenv("DEFAULT_USER_ID"))
 					.put("mongo_client_uri", System.getenv("MONGO_CLIENT_URI"));
 			
+			logger.info(node.toString());
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
-		System.out.println(node.toString());
-		
-		Configuration configuration = DynamoDBMapperProvider.getDynamoDBMapper().load(Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
-		configuration.withLastModifiedDate(Instant.now().toDate()).withConfigurationFile(node.toString());
+		Configuration configuration = new Configuration(); //DynamoDBMapperProvider.getDynamoDBMapper().load(Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
+		configuration.withCreatedDate(Instant.now().toDate()).withLastModifiedDate(Instant.now().toDate()).withConfigurationFile(node.toString());
 				
 		/**
 		 * 
 		 */
 		
 		DynamoDBMapperProvider.getDynamoDBMapper().save(configuration);
+		
+		/**
+		 * 
+		 */
+		
+		logger.info("Configuration Id: " + configuration.getId());
 	}
 
 	public static void main(String[] args) {

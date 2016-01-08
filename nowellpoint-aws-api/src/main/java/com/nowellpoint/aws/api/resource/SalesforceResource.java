@@ -31,8 +31,6 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getToken(@QueryParam(value="code") String code) {
 		
-		System.out.println("code: " + code);
-		
 		//
 		// build the get authorization request
 		//
