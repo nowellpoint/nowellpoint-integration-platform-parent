@@ -21,8 +21,68 @@ public class Configuration {
 	@DynamoDBAttribute(attributeName="LastModifiedDate")  
 	private Date lastModifiedDate;
 	
-	@DynamoDBAttribute(attributeName="ConfigurationFile")
-	private String configurationFile;
+	@DynamoDBAttribute(attributeName="SalesforceClientId")
+	private String salesforceClientId;
+	
+	@DynamoDBAttribute(attributeName="SalesforceClientSecret")
+	private String salesforceClientSecret;
+	
+	@DynamoDBAttribute(attributeName="RedirectUri")
+	private String redirectUri;
+	
+	@DynamoDBAttribute(attributeName="LogglyApiKey")
+	private String logglyApiKey;
+	
+	@DynamoDBAttribute(attributeName="MongoClientUri")
+	private String mongoClientUri;
+	
+	@DynamoDBAttribute(attributeName="StormpathApiKeyId")
+	private String stormpathApiKeyId;
+	
+	@DynamoDBAttribute(attributeName="StormpathApiKeySecret")
+	private String stormpathApiKeySecret;
+	
+	@DynamoDBAttribute(attributeName="StormpathApiEndpoint")
+	private String stormpathApiEndpoint;
+	
+	@DynamoDBAttribute(attributeName="StormpathApplicationId")
+	private String stormpathApplicationId;
+	
+	@DynamoDBAttribute(attributeName="StormpathDirectoryId")
+	private String stormpathDirectoryId;
+	
+	@DynamoDBAttribute(attributeName="KmsKeyId")
+	private String kmsKeyId;
+	
+	@DynamoDBAttribute(attributeName="SalesforceTokenUri")
+	private String salesforceTokenUri;
+	
+	@DynamoDBAttribute(attributeName="SalesforceRefreshUri")
+	private String salesforceRefreshUri;
+	
+	@DynamoDBAttribute(attributeName="SalesforceRevokeUri")
+	private String salesforceRevokeUri;
+	
+	@DynamoDBAttribute(attributeName="SalesforceUsername")
+	private String salesforceUsername;
+	
+	@DynamoDBAttribute(attributeName="SalesforcePassword")
+	private String salesforcePassword;
+	
+	@DynamoDBAttribute(attributeName="SalesforceSecurityToken")
+	private String salesforceSecurityToken;
+	
+	@DynamoDBAttribute(attributeName="SendgridApiKey")
+	private String sendGridApiKey;
+	
+	@DynamoDBAttribute(attributeName="RedisPassword")
+	private String redisPassword;
+	
+	@DynamoDBAttribute(attributeName="DefaultOrganizationId")
+	private String defaultOrganizationId;
+	
+	@DynamoDBAttribute(attributeName="DefaultAccountId")
+	private String defaultAccountId;
 	
 	public Configuration() {
 		
@@ -54,31 +114,171 @@ public class Configuration {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
-	public String getConfigurationFile() {
-		return configurationFile;
+	public String getSalesforceClientId() {
+		return salesforceClientId;
 	}
 
-	public void setConfigurationFile(String configurationFile) {
-		this.configurationFile = configurationFile;
+	public void setSalesforceClientId(String salesforceClientId) {
+		this.salesforceClientId = salesforceClientId;
 	}
 
-	public Configuration withId(String id) {
-		setId(id);
-		return this;
+	public String getSalesforceClientSecret() {
+		return salesforceClientSecret;
 	}
-	
-	public Configuration withCreatedDate(Date createdDate) {
-		setCreatedDate(createdDate);
-		return this;
+
+	public void setSalesforceClientSecret(String salesforceClientSecret) {
+		this.salesforceClientSecret = salesforceClientSecret;
 	}
-	
-	public Configuration withLastModifiedDate(Date lastModifiedDate) {
-		setLastModifiedDate(lastModifiedDate);
-		return this;
+
+	public String getRedirectUri() {
+		return redirectUri;
 	}
-	
-	public Configuration withConfigurationFile(String configurationFile) {
-		setConfigurationFile(configurationFile);
-		return this;
+
+	public void setRedirectUri(String redirectUri) {
+		this.redirectUri = redirectUri;
+	}
+
+	public String getLogglyApiKey() {
+		return logglyApiKey;
+	}
+
+	public void setLogglyApiKey(String logglyApiKey) {
+		this.logglyApiKey = logglyApiKey;
+	}
+
+	public String getMongoClientUri() {
+		return mongoClientUri;
+	}
+
+	public void setMongoClientUri(String mongoClientUri) {
+		this.mongoClientUri = mongoClientUri;
+	}
+
+	public String getStormpathApiKeyId() {
+		return stormpathApiKeyId;
+	}
+
+	public void setStormpathApiKeyId(String stormpathApiKeyId) {
+		this.stormpathApiKeyId = stormpathApiKeyId;
+	}
+
+	public String getStormpathApiKeySecret() {
+		return stormpathApiKeySecret;
+	}
+
+	public void setStormpathApiKeySecret(String stormpathApiKeySecret) {
+		this.stormpathApiKeySecret = stormpathApiKeySecret;
+	}
+
+	public String getStormpathApiEndpoint() {
+		return stormpathApiEndpoint;
+	}
+
+	public void setStormpathApiEndpoint(String stormpathApiEndpoint) {
+		this.stormpathApiEndpoint = stormpathApiEndpoint;
+	}
+
+	public String getStormpathApplicationId() {
+		return stormpathApplicationId;
+	}
+
+	public void setStormpathApplicationId(String stormpathApplicationId) {
+		this.stormpathApplicationId = stormpathApplicationId;
+	}
+
+	public String getStormpathDirectoryId() {
+		return stormpathDirectoryId;
+	}
+
+	public void setStormpathDirectoryId(String stormpathDirectoryId) {
+		this.stormpathDirectoryId = stormpathDirectoryId;
+	}
+
+	public String getKmsKeyId() {
+		return kmsKeyId;
+	}
+
+	public void setKmsKeyId(String kmsKeyId) {
+		this.kmsKeyId = kmsKeyId;
+	}
+
+	public String getSalesforceTokenUri() {
+		return salesforceTokenUri;
+	}
+
+	public void setSalesforceTokenUri(String salesforceTokenUri) {
+		this.salesforceTokenUri = salesforceTokenUri;
+	}
+
+	public String getSalesforceRefreshUri() {
+		return salesforceRefreshUri;
+	}
+
+	public void setSalesforceRefreshUri(String salesforceRefreshUri) {
+		this.salesforceRefreshUri = salesforceRefreshUri;
+	}
+
+	public String getSalesforceRevokeUri() {
+		return salesforceRevokeUri;
+	}
+
+	public void setSalesforceRevokeUri(String salesforceRevokeUri) {
+		this.salesforceRevokeUri = salesforceRevokeUri;
+	}
+
+	public String getSalesforceUsername() {
+		return salesforceUsername;
+	}
+
+	public void setSalesforceUsername(String salesforceUsername) {
+		this.salesforceUsername = salesforceUsername;
+	}
+
+	public String getSalesforcePassword() {
+		return salesforcePassword;
+	}
+
+	public void setSalesforcePassword(String salesforcePassword) {
+		this.salesforcePassword = salesforcePassword;
+	}
+
+	public String getSalesforceSecurityToken() {
+		return salesforceSecurityToken;
+	}
+
+	public void setSalesforceSecurityToken(String salesforceSecurityToken) {
+		this.salesforceSecurityToken = salesforceSecurityToken;
+	}
+
+	public String getSendGridApiKey() {
+		return sendGridApiKey;
+	}
+
+	public void setSendGridApiKey(String sendGridApiKey) {
+		this.sendGridApiKey = sendGridApiKey;
+	}
+
+	public String getRedisPassword() {
+		return redisPassword;
+	}
+
+	public void setRedisPassword(String redisPassword) {
+		this.redisPassword = redisPassword;
+	}
+
+	public String getDefaultOrganizationId() {
+		return defaultOrganizationId;
+	}
+
+	public void setDefaultOrganizationId(String defaultOrganizationId) {
+		this.defaultOrganizationId = defaultOrganizationId;
+	}
+
+	public String getDefaultAccountId() {
+		return defaultAccountId;
+	}
+
+	public void setDefaultAccountId(String defaultAccountId) {
+		this.defaultAccountId = defaultAccountId;
 	}
 }

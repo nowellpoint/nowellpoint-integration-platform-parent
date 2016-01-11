@@ -1,8 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.net.URI;
-import java.time.Instant;
-import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,9 +14,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.EventAction;
+import com.nowellpoint.aws.model.EventBuilder;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.data.Organization;
 import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
@@ -29,6 +30,16 @@ public class OrganizationResource {
 	@Context
 	private UriInfo uriInfo;
 	
+	private DynamoDBMapper mapper;
+	
+	private Configuration configuration;
+	
+	public OrganizationResource() {
+		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
+		mapper = mapperProvider.getDynamoDBMapper();
+		configuration = ConfigurationProvider.getConfiguration();
+	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getOrganizations() {
@@ -37,15 +48,23 @@ public class OrganizationResource {
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createOrganization(Organization organization) {
+	public Response createOrganization(Organization resource) {
 		
 		//
 		//
 		//
 				
-		String payload = null;
+		Event event = null;
 		try {			
-			payload = new ObjectMapper().writeValueAsString(organization);
+			event = new EventBuilder().withAccountId(configuration.getDefaultAccountId())
+					.withConfigurationId(configuration.getId())
+					.withEventAction(EventAction.CREATE)
+					.withEventSource(uriInfo.getRequestUri())
+					.withKmsKeyId(configuration.getKmsKeyId())
+					.withOrganizationId(configuration.getDefaultOrganizationId())
+					.withPayload(resource)
+					.withType(Organization.class)
+					.build();
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
@@ -54,15 +73,7 @@ public class OrganizationResource {
 		//
 		//
 		
-		Event event = new Event().withEventDate(Date.from(Instant.now()))
-				.withEventStatus(Event.EventStatus.NEW)
-				.withType(Organization.class.getName())
-				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
-				.withUserId(ConfigurationProvider.getDefaultUserId())
-				.withEventSource(uriInfo.getRequestUri().toString())
-				.withPayload(payload);
-		
-		DynamoDBMapperProvider.getDynamoDBMapper().save(event);
+		mapper.save(event);
 		
 		//
 		//
@@ -77,7 +88,6 @@ public class OrganizationResource {
 		//
 		//
 		
-		return Response.created(uri).build();
-		
+		return Response.created(uri).build();		
 	}
 }

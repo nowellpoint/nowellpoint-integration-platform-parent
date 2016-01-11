@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
@@ -26,6 +27,7 @@ import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class TestDataClient {
 	
@@ -33,6 +35,7 @@ public class TestDataClient {
 	private static DataClient dataClient = new DataClient();
 	private static UserContext userContext;
 	private static String accessToken;
+	private static Configuration configuration;
 	
 	private static ObjectNode json = JsonNodeFactory.instance.objectNode()
 			.put("sicCode", "300")
@@ -54,11 +57,16 @@ public class TestDataClient {
 		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
 			
 		accessToken = tokenResponse.getToken().getAccessToken();
+		
+		configuration = ConfigurationProvider.getConfiguration();
 			
 		System.out.println("Authenticating...success: " + tokenResponse.getToken().getStormpathAccessTokenHref());
 		System.out.println("Setting up session...");
 			
-		GetCustomDataRequest customDataRequest = new GetCustomDataRequest().withAccessToken(accessToken);
+		GetCustomDataRequest customDataRequest = new GetCustomDataRequest().withAccessToken(accessToken)
+				.withApiEndpoint(configuration.getStormpathApiEndpoint())
+				.withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret());
 			
 		GetCustomDataResponse customDataResponse = identityProviderClient.customData(customDataRequest);
 			

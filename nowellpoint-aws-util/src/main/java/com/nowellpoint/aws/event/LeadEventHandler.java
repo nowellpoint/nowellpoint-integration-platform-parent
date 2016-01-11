@@ -7,11 +7,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.Lead;
 import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
 import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
+import com.nowellpoint.aws.model.sforce.Lead;
 import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class LeadEventHandler implements AbstractEventHandler {

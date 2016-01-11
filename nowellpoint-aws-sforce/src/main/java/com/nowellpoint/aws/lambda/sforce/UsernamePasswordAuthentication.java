@@ -13,7 +13,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
@@ -34,13 +33,13 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(ConfigurationProvider.getSalesforceTokenUri())
+			httpResponse = RestResource.post(request.getTokenUri())
 					.contentType("application/x-www-form-urlencoded")
 					.accept(MediaType.APPLICATION_JSON)
 					.acceptCharset(StandardCharsets.UTF_8)
 					.parameter("grant_type", "password")
-					.parameter("client_id", ConfigurationProvider.getSalesforceClientId())
-					.parameter("client_secret", ConfigurationProvider.getSalesforceClientSecret())
+					.parameter("client_id", request.getClientId())
+					.parameter("client_secret", request.getClientSecret())
 					.parameter("username", request.getUsername())
 					.parameter("password", request.getPassword().concat(request.getSecurityToken() != null ? request.getSecurityToken() : ""))
 					.execute();

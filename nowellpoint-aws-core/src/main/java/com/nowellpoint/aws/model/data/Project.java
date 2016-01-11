@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.model;
+package com.nowellpoint.aws.model.data;
 
 import java.io.Serializable;
 import java.util.Date;

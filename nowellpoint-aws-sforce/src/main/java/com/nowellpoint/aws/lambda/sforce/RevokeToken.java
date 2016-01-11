@@ -10,7 +10,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
 import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTokenResponse> {
 	
@@ -31,7 +30,7 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(ConfigurationProvider.getSalesforceRevokeUri())
+			httpResponse = RestResource.post(request.getRevokeTokenUri())
 					.header("Content-type", "application/x-www-form-urlencoded")
 					.parameter("token", request.getAccessToken())
 					.execute();

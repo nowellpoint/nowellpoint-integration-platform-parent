@@ -1,15 +1,18 @@
 package com.nowellpoint.aws.event;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Date;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.data.User;
+import com.nowellpoint.aws.model.EventAction;
+import com.nowellpoint.aws.model.EventBuilder;
+import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
@@ -27,7 +30,17 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		LambdaLogger logger = context.getLogger();
 		
+		//
+		//
+		//
+		
 		logger.log(new Date() + " starting AccountEventHandler");
+		
+		//
+		//
+		//
+		
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
 		
 		//
 		// parse the event payload
@@ -45,8 +58,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 		// search for exsiting account with username
 		//
 		
-		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
-				.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
+		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret())
 				.withUsername(account.getUsername());
 		
 		SearchAccountResponse searchAccountResponse = identityProviderClient.search(searchAccountRequest);
@@ -66,8 +79,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 					.withMiddleName(account.getMiddleName())
 					.withSurname(account.getSurname())
 					.withUsername(account.getUsername())
-					.withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
-					.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret());
+					.withApiKeyId(configuration.getStormpathApiKeyId())
+					.withApiKeySecret(configuration.getStormpathApiKeySecret());
 			
 			//
 			// execute the CreateAcountRequest
@@ -95,8 +108,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 			// build the UpdateAccountRequest
 			//
 			
-			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
-					.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
+			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(configuration.getStormpathApiKeyId())
+					.withApiKeySecret(configuration.getStormpathApiKeySecret())
 					.withGivenName(account.getGivenName())
 					.withEmail(account.getEmail())
 					.withMiddleName(account.getMiddleName())
@@ -135,7 +148,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		createUserEvent(event.getEventSource(), account.getUsername(), href);
+		createUserEvent(event, configuration, account.getUsername(), href);
 		
 		//
 		//
@@ -144,38 +157,41 @@ public class AccountEventHandler implements AbstractEventHandler {
 		event.setTargetId(href);
 	}
 	
-	private void createUserEvent(String eventSource, String username, String href) throws JsonProcessingException {
+	private void createUserEvent(Event parentEvent, Configuration configuration, String username, String href) throws JsonProcessingException {
 		
 		//
 		//
 		//
 		
-		User user = new User();
-		user.setUsername(username);
-		user.setAccountHref(href);
-		
-		//
-		//
-		//
-				
-		String payload = objectMapper.writeValueAsString(user);
+		DynamoDBMapperProvider provider = new DynamoDBMapperProvider();
+		DynamoDBMapper mapper = provider.getDynamoDBMapper();
 		
 		//
 		//
 		//
 		
-		Event event = new Event().withEventDate(Date.from(Instant.now()))
-				.withEventStatus(Event.EventStatus.NEW)
-				.withType(User.class.getName())
-				.withEventSource(eventSource)
-				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
-				.withUserId(ConfigurationProvider.getDefaultUserId())
-				.withPayload(payload);
+		Identity identity = new Identity();
+		identity.setUsername(username);
+		identity.setAccountHref(href);
 		
 		//
 		//
 		//
 		
-		DynamoDBMapperProvider.getDynamoDBMapper().save(event);
+		Event event = new EventBuilder().withAccountId(configuration.getDefaultAccountId())
+				.withConfigurationId(configuration.getId())
+				.withEventAction(EventAction.UPDATE)
+				.withEventSource(parentEvent.getEventSource())
+				.withOrganizationId(configuration.getDefaultOrganizationId())
+				.withPayload(identity)
+				.withType(Identity.class)
+				.withKmsKeyId(parentEvent.getKmsKeyId())
+				.build();
+		
+		//
+		//
+		//
+		
+		mapper.save(event);
 	}
 }

@@ -3,7 +3,6 @@ package com.nowellpoint.aws.model.sforce;
 import java.io.Serializable;
 
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
-import com.nowellpoint.aws.model.Lead;
 
 public class CreateLeadRequest extends AbstractLambdaRequest implements Serializable {
 

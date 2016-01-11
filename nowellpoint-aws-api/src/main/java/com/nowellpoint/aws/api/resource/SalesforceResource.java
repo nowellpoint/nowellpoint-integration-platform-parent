@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
 import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
@@ -25,6 +26,12 @@ public class SalesforceResource {
 	private HttpServletRequest servletRequest;
 	
 	private static SalesforceClient salesforceClient = new SalesforceClient();
+	
+	private Configuration configuration;
+	
+	public SalesforceResource() {
+		configuration = ConfigurationProvider.getConfiguration();
+	}
 
 	@GET
 	@Path("/token")
@@ -35,10 +42,10 @@ public class SalesforceResource {
 		// build the get authorization request
 		//
 		
-		GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest().withTokenUri(ConfigurationProvider.getSalesforceTokenUri())
-				.withClientId(ConfigurationProvider.getSalesforceClientId())
-				.withClientSecret(ConfigurationProvider.getSalesforceClientSecret())
-				.withRedirectUri(ConfigurationProvider.getRedirectUri())
+		GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest().withTokenUri(configuration.getSalesforceTokenUri())
+				.withClientId(configuration.getSalesforceClientId())
+				.withClientSecret(configuration.getSalesforceClientSecret())
+				.withRedirectUri(configuration.getRedirectUri())
 				.withCode(code);
 		
 		//

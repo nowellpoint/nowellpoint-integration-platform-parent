@@ -12,7 +12,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.Token;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class ClientCredentialsAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
@@ -33,11 +32,11 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(ConfigurationProvider.getStormpathApiEndpoint())
+			httpResponse = RestResource.post(request.getApiEndpoint())
 					.path("applications")
-					.path(ConfigurationProvider.getStormpathApplicationId())
+					.path(request.getApplicationId())
 					.path("oauth/token")
-					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.parameter("grant_type", "client_credentials")

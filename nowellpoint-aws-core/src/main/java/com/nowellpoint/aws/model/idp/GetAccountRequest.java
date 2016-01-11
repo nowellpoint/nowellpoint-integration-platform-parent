@@ -1,39 +1,17 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractLambdaRequest;
-
-public class GetAccountRequest extends AbstractLambdaRequest {
+public class GetAccountRequest extends AbstractIdpRequest {
 
 	/**
 	 * 
 	 */
 	
 	private static final long serialVersionUID = 350380797564170812L;
-
-	private String apiKeyId;
-	
-	private String apiKeySecret;
 	
 	private String href;
 	
 	public GetAccountRequest() {
 		
-	}
-
-	public String getApiKeyId() {
-		return apiKeyId;
-	}
-
-	public void setApiKeyId(String apiKeyId) {
-		this.apiKeyId = apiKeyId;
-	}
-
-	public String getApiKeySecret() {
-		return apiKeySecret;
-	}
-
-	public void setApiKeySecret(String apiKeySecret) {
-		this.apiKeySecret = apiKeySecret;
 	}
 	
 	public String getHref() {

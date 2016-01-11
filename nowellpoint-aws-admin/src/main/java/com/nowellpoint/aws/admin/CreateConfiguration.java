@@ -4,8 +4,7 @@ import java.util.logging.Logger;
 
 import org.joda.time.Instant;
 
-import com.amazonaws.util.json.JSONException;
-import com.amazonaws.util.json.JSONObject;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
@@ -15,44 +14,39 @@ public class CreateConfiguration {
 
 	public CreateConfiguration() {
 		
-		JSONObject node = null;
-		try {
-			node = new JSONObject().put("salesforce_username", System.getenv("SALESFORCE_USERNAME"))
-					.put("salesforce_password", System.getenv("SALESFORCE_PASSWORD"))
-					.put("salesforce_security_token", System.getenv("SALESFORCE_SECURITY_TOKEN"))
-					.put("salesforce_client_id", System.getenv("SALESFORCE_CLIENT_ID"))
-					.put("salesforce_client_secret", System.getenv("SALESFORCE_CLIENT_SECRET"))
-					.put("salesforce_refresh_uri", System.getenv("SALESFORCE_REFRESH_URI"))
-					.put("salesforce_revoke_uri", System.getenv("SALESFORCE_REVOKE_URI"))
-					.put("salesforce_token_uri", System.getenv("SALESFORCE_TOKEN_URI"))
-					.put("stormpath_api_key_id", System.getenv("STORMPATH_API_KEY_ID"))
-					.put("stormpath_api_key_secret", System.getenv("STORMPATH_API_KEY_SECRET"))
-					.put("stormpath_api_endpoint", System.getenv("STORMPATH_API_ENDPOINT"))
-					.put("stormpath_application_id", System.getenv("STORMPATH_APPLICATION_ID"))
-					.put("stormpath_directory_id", System.getenv("STORMPATH_DIRECTORY_ID"))
-					.put("loggly_api_key", System.getenv("LOGGLY_API_KEY"))
-					.put("redirect_uri", System.getenv("REDIRECT_URI"))
-					.put("aws_kms_key_id", System.getenv("AWS_KMS_KEY_ID"))
-					.put("sendgrid_api_key", System.getenv("SENDGRID_API_KEY"))
-					.put("redis_password", System.getenv("REDIS_PASSWORD"))
-					.put("default_organization_id", System.getenv("DEFAULT_ORGANIZATION_ID"))
-					.put("default_user_id", System.getenv("DEFAULT_USER_ID"))
-					.put("mongo_client_uri", System.getenv("MONGO_CLIENT_URI"));
-			
-			logger.info(node.toString());
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		DynamoDBMapperProvider provider = new DynamoDBMapperProvider();
+		DynamoDBMapper mapper = provider.getDynamoDBMapper();
 		
-		Configuration configuration = new Configuration(); //DynamoDBMapperProvider.getDynamoDBMapper().load(Configuration.class, "4877db51-fccf-4e8e-b012-6ba76d4d76f7");
-		configuration.withCreatedDate(Instant.now().toDate()).withLastModifiedDate(Instant.now().toDate()).withConfigurationFile(node.toString());
+		Configuration configuration = new Configuration();
+		configuration.setCreatedDate(Instant.now().toDate());
+		configuration.setDefaultAccountId(System.getenv("DEFAULT_ACCOUNT_ID"));
+		configuration.setDefaultOrganizationId(System.getenv("DEFAULT_ORGANIZATION_ID"));
+		configuration.setKmsKeyId(System.getenv("KMS_KEY_ID"));
+		configuration.setLastModifiedDate(Instant.now().toDate());
+		configuration.setLogglyApiKey(System.getenv("LOGGLY_API_KEY"));
+		configuration.setMongoClientUri(System.getenv("MONGO_CLIENT_URI"));
+		configuration.setRedirectUri(System.getenv("REDIRECT_URI"));
+		configuration.setRedisPassword(System.getenv("REDIS_PASSWORD"));
+		configuration.setSalesforceClientId(System.getenv("SALESFORCE_CLIENT_ID"));
+		configuration.setSalesforceClientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"));
+		configuration.setSalesforcePassword(System.getenv("SALESFORCE_PASSWORD"));
+		configuration.setSalesforceRefreshUri(System.getenv("SALESFORCE_REFRESH_URI"));
+		configuration.setSalesforceRevokeUri(System.getenv("SALESFORCE_REVOKE_URI"));
+		configuration.setSalesforceSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"));
+		configuration.setSalesforceTokenUri(System.getenv("SALESFORCE_TOKEN_URI"));
+		configuration.setSalesforceUsername(System.getenv("SALESFORCE_USERNAME"));
+		configuration.setSendGridApiKey(System.getenv("SENDGRID_API_KEY"));
+		configuration.setStormpathApiEndpoint(System.getenv("STORMPATH_API_ENDPOINT"));
+		configuration.setStormpathApiKeyId(System.getenv("STORMPATH_API_KEY_ID"));
+		configuration.setStormpathApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"));
+		configuration.setStormpathApplicationId(System.getenv("STORMPATH_APPLICATION_ID"));
+		configuration.setStormpathDirectoryId(System.getenv("STORMPATH_DIRECTORY_ID"));
 				
 		/**
 		 * 
 		 */
 		
-		DynamoDBMapperProvider.getDynamoDBMapper().save(configuration);
+		mapper.save(configuration);
 		
 		/**
 		 * 

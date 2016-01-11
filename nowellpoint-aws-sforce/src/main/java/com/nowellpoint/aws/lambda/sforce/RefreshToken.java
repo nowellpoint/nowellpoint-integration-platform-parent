@@ -11,7 +11,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.RefreshTokenRequest;
 import com.nowellpoint.aws.model.sforce.RefreshTokenResponse;
 import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	
@@ -32,11 +31,11 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(ConfigurationProvider.getSalesforceRefreshUri())
+			httpResponse = RestResource.post(request.getRefreshTokenUri())
 					.header("Content-type", "application/x-www-form-urlencoded")
 					.parameter("grant_type", "refresh_token")
-					.parameter("client_id", ConfigurationProvider.getSalesforceClientId())
-					.parameter("client_secret", ConfigurationProvider.getSalesforceClientSecret())
+					.parameter("client_id", request.getClientId())
+					.parameter("client_secret", request.getClientSecret())
 					.parameter("refresh_token", request.getRefreshToken())
 					.execute();
 			

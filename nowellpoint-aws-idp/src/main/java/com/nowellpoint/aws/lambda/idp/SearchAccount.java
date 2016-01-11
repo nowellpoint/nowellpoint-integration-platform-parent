@@ -19,7 +19,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.SearchAccountRequest;
 import com.nowellpoint.aws.model.idp.SearchAccountResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class SearchAccount implements RequestHandler<SearchAccountRequest, SearchAccountResponse> {
 	
@@ -57,10 +56,10 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 			
 			String query = buildQueryString(account);
 			
-			HttpResponse httpResponse = RestResource.get(ConfigurationProvider.getStormpathApiEndpoint())
+			HttpResponse httpResponse = RestResource.get(request.getApiEndpoint())
 					.accept(MediaType.APPLICATION_JSON)
 					.path("applications")
-					.path(ConfigurationProvider.getStormpathApplicationId())
+					.path(request.getApplicationId())
 					.path("accounts")
 					.path(query.toString())
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())

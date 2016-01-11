@@ -26,7 +26,7 @@ public class CacheManager implements ServletContextListener {
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {		
-		jedis.auth(ConfigurationProvider.getRedisPassword());
+		jedis.auth(ConfigurationProvider.getConfiguration().getRedisPassword());
 		log.info("connecting to cache...is connected: " + jedis.isConnected());
 	}
 	

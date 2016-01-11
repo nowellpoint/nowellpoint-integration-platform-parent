@@ -15,9 +15,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
-import com.sendgrid.SendGrid;
-import com.sendgrid.SendGridException;
 
 public class CreateAccount implements RequestHandler<CreateAccountRequest, CreateAccountResponse> {
 	
@@ -56,10 +53,10 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			ObjectNode node = objectMapper.readValue(objectMapper.writeValueAsString(account), ObjectNode.class);
 			node.put("password", generatePassword());
 			
-			HttpResponse httpResponse = RestResource.post(ConfigurationProvider.getStormpathApiEndpoint())
+			HttpResponse httpResponse = RestResource.post(request.getApiEndpoint())
 					.contentType(MediaType.APPLICATION_JSON)
 					.path("applications")
-					.path(ConfigurationProvider.getStormpathApplicationId())
+					.path(request.getApplicationId())
 					.path("accounts")
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.body(node)
@@ -76,32 +73,6 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			if (httpResponse.getStatusCode() == 201) {
 				account = httpResponse.getEntity(Account.class);
 				response.setAccount(account);
-				
-				//
-				// send email
-				//
-				
-				String text = new StringBuilder().append("Username: ")
-						.append(account.getUsername())
-						.append("\n")
-						.append("Password: ")
-						.append(node.get("password").asText())
-						.toString();
-				
-				SendGrid.Email email = new SendGrid.Email();
-				email.addToName(account.getFullName());
-				email.addTo(account.getEmail());
-				email.setFrom("administrator@nowellpoint.com");
-				email.setSubject("Welcome to Nowellpoint!");
-				email.setText(text);
-				
-				SendGrid sendgrid = new SendGrid(ConfigurationProvider.getSendGridApiKey());
-
-				try {
-					sendgrid.send(email);
-				} catch (SendGridException e) {
-					log.severe(e.getMessage());
-				}
 				
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);

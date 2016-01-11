@@ -1,21 +1,16 @@
 package com.nowellpoint.aws.model.data;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Date;
-
-import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public class User implements Serializable {
+public class Identity implements Serializable {
 
 	/**
 	 * 
@@ -27,16 +22,8 @@ public class User implements Serializable {
 	 * 
 	 */
 	
-	@JsonSerialize(using=ObjectIdSerializer.class)
-	@JsonDeserialize(using=ObjectIdDeserializer.class)
 	@JsonProperty("_id")
-	private ObjectId id;
-
-	/**
-	 * 
-	 */
-	
-	private String aboutMe;
+	private String id;
 
 	/**
 	 * 
@@ -90,67 +77,7 @@ public class User implements Serializable {
 	 * 
 	 */
 
-	private String street;
-
-	/**
-	 * 
-	 */
-	
-	private String city;
-
-	/**
-	 * 
-	 */
-
-	private String state;
-
-	/**
-	 * 
-	 */
-
-	private String postalCode;
-
-	/**
-	 * 
-	 */
-
-	private String country;
-
-	/**
-	 * 
-	 */
-
-	private String latitude;
-
-	/**
-	 * 
-	 */
-
-	private String longitude;
-
-	/**
-	 * 
-	 */
-
 	private String email;
-
-	/**
-	 * 
-	 */
-
-	private String senderEmail;
-
-	/**
-	 * 
-	 */
-
-	private String senderName;
-
-	/**
-	 * 
-	 */
-
-	private String signature;
 
 	/**
 	 * 
@@ -180,18 +107,6 @@ public class User implements Serializable {
 	 * 
 	 */
 
-	private String alias;
-
-	/**
-	 * 
-	 */
-
-	private String communityNickname;
-
-	/**
-	 * 
-	 */
-
 	private Boolean isActive;
 
 	/**
@@ -216,37 +131,19 @@ public class User implements Serializable {
 	 * 
 	 */
 
-	private Boolean permissionsCustomizeApplication;
-
-	/**
-	 * 
-	 */
-
-	private String userType;
-
-	/**
-	 * 
-	 */
-
 	private String languageLocaleKey;
 
 	/**
 	 * 
 	 */
 
-	private String employeeNumber;
-
-	/**
-	 * 
-	 */
-
 	private Date lastLoginDate;
-
+	
 	/**
 	 * 
 	 */
-
-	private String salesforceId;
+	
+	private Address address;
 
 	/**
 	 * 
@@ -258,26 +155,18 @@ public class User implements Serializable {
 	 * 
 	 */
 
-	private URL groupMembershipHref;
+	private String groupMembershipHref;
 
-	public User() {
+	public Identity() {
 
 	}
 
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
-	
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
-	
-	public void setAboutMe(String aboutMe) {
-		this.aboutMe = aboutMe;
-	}
 
-	public String getAboutMe() {
-		return aboutMe;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -344,92 +233,12 @@ public class User implements Serializable {
 		this.title = title;
 	}
 
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
-
-	public String getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
-
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getSenderEmail() {
-		return senderEmail;
-	}
-
-	public void setSenderEmail(String senderEmail) {
-		this.senderEmail = senderEmail;
-	}
-
-	public String getSenderName() {
-		return senderName;
-	}
-
-	public void setSenderName(String senderName) {
-		this.senderName = senderName;
-	}
-
-	public String getSignature() {
-		return signature;
-	}
-
-	public void setSignature(String signature) {
-		this.signature = signature;
 	}
 
 	public String getPhone() {
@@ -464,22 +273,6 @@ public class User implements Serializable {
 		this.mobilePhone = mobilePhone;
 	}
 
-	public String getAlias() {
-		return alias;
-	}
-
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
-
-	public String getCommunityNickname() {
-		return communityNickname;
-	}
-
-	public void setCommunityNickname(String communityNickname) {
-		this.communityNickname = communityNickname;
-	}
-
 	public Boolean getIsActive() {
 		return isActive;
 	}
@@ -512,37 +305,12 @@ public class User implements Serializable {
 		this.emailEncodingKey = emailEncodingKey;
 	}
 
-	public Boolean getPermissionsCustomizeApplication() {
-		return permissionsCustomizeApplication;
-	}
-
-	public void setPermissionsCustomizeApplication(
-			Boolean permissionsCustomizeApplication) {
-		this.permissionsCustomizeApplication = permissionsCustomizeApplication;
-	}
-
-	public String getUserType() {
-		return userType;
-	}
-
-	public void setUserType(String userType) {
-		this.userType = userType;
-	}
-
 	public String getLanguageLocaleKey() {
 		return languageLocaleKey;
 	}
 
 	public void setLanguageLocaleKey(String languageLocaleKey) {
 		this.languageLocaleKey = languageLocaleKey;
-	}
-
-	public String getEmployeeNumber() {
-		return employeeNumber;
-	}
-
-	public void setEmployeeNumber(String employeeNumber) {
-		this.employeeNumber = employeeNumber;
 	}
 
 	public Date getLastLoginDate() {
@@ -553,12 +321,12 @@ public class User implements Serializable {
 		this.lastLoginDate = lastLoginDate;
 	}
 
-	public String getSalesforceId() {
-		return salesforceId;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setSalesforceId(String salesforceId) {
-		this.salesforceId = salesforceId;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 	public String getAccountHref() {
@@ -569,11 +337,11 @@ public class User implements Serializable {
 		this.accountHref = accountHref;
 	}
 
-	public URL getGroupMembershipHref() {
+	public String getGroupMembershipHref() {
 		return groupMembershipHref;
 	}
 
-	public void setGroupMembershipHref(URL groupMembershipHref) {
+	public void setGroupMembershipHref(String groupMembershipHref) {
 		this.groupMembershipHref = groupMembershipHref;
 	}
 }

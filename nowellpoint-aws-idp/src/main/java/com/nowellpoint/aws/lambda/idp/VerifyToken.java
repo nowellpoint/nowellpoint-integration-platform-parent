@@ -11,7 +11,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.AuthToken;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTokenResponse> {
 	
@@ -32,10 +31,10 @@ public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTok
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.get(ConfigurationProvider.getStormpathApiEndpoint())
+			httpResponse = RestResource.get(request.getApiEndpoint())
 					.path("applications")
-					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
-					.path(ConfigurationProvider.getStormpathApplicationId())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
+					.path(request.getApplicationId())
 					.path("authTokens")
 					.path(request.getAccessToken())
 					.execute();

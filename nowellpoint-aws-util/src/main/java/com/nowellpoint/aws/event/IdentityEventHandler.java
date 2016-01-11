@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.bson.types.ObjectId;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,12 +15,12 @@ import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.data.QueryDocumentRequest;
 import com.nowellpoint.aws.model.data.QueryDocumentResponse;
-import com.nowellpoint.aws.model.data.User;
+import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.provider.ConfigurationProvider;
 
-public class UserEventHandler implements AbstractEventHandler {
+public class IdentityEventHandler implements AbstractEventHandler {
 	
-	private static final String USER = "users";
+	private static final String COLLECTION_NAME = "identities";
 
 	@Override
 	public void process(Event event, Context context) throws IOException {
@@ -33,11 +31,11 @@ public class UserEventHandler implements AbstractEventHandler {
 		
 		final DataClient dataClient = new DataClient();
 		
-		User user = objectMapper.readValue(event.getPayload(), User.class);
+		Identity user = objectMapper.readValue(event.getPayload(), Identity.class);
 		
 		String query = objectMapper.createObjectNode().put("username", user.getUsername()).toString();
 		
-		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest().withCollectionName(USER)
+		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest().withCollectionName(COLLECTION_NAME)
 				.withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 				.withDocument(query);
 		
@@ -49,11 +47,11 @@ public class UserEventHandler implements AbstractEventHandler {
 			
 			logger.log(new Date() + " creating user...");
 			
-			user.setId(new ObjectId());
+			user.setId(event.getId());
 					
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 					.withUserId(user.getId().toString())
-					.withCollectionName(USER)
+					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
 				
 			CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
@@ -71,7 +69,7 @@ public class UserEventHandler implements AbstractEventHandler {
 			logger.log(new Date() + " updating user...");
 			
 			try {
-				List<User> users = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<User>>(){});
+				List<Identity> users = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<Identity>>(){});
 				user.setId(users.get(0).getId());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -80,7 +78,7 @@ public class UserEventHandler implements AbstractEventHandler {
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 					.withId(user.getId().toString())
 					.withUserId(user.getId().toString())
-					.withCollectionName(USER)
+					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
 			
 			UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);

@@ -1,18 +1,12 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractLambdaRequest;
-
-public class CreateAccountRequest extends AbstractLambdaRequest {
+public class CreateAccountRequest extends AbstractIdpRequest {
 
 	/**
 	 * 
 	 */
 	
 	private static final long serialVersionUID = 350380797564170812L;
-
-	private String apiKeyId;
-	
-	private String apiKeySecret;
 	
 	private String username;
 	
@@ -27,21 +21,21 @@ public class CreateAccountRequest extends AbstractLambdaRequest {
 	public CreateAccountRequest() {
 		
 	}
-
-	public String getApiKeyId() {
-		return apiKeyId;
+	
+	public String getApiEndpoint() {
+		return super.getApiEndpoint();
+	}
+	
+	public void setApiEndpoint(String apiEndpoint) {
+		super.setApiEndpoint(apiEndpoint);
 	}
 
-	public void setApiKeyId(String apiKeyId) {
-		this.apiKeyId = apiKeyId;
+	public String getApplicationId() {
+		return super.getApplicationId();
 	}
 
-	public String getApiKeySecret() {
-		return apiKeySecret;
-	}
-
-	public void setApiKeySecret(String apiKeySecret) {
-		this.apiKeySecret = apiKeySecret;
+	public void setApplicationId(String applicationId) {
+		super.setApplicationId(applicationId);
 	}
 
 	public String getUsername() {
@@ -91,6 +85,16 @@ public class CreateAccountRequest extends AbstractLambdaRequest {
 	
 	public CreateAccountRequest withApiKeySecret(String apiKeySecret) {
 		setApiKeySecret(apiKeySecret);
+		return this;
+	}
+	
+	public CreateAccountRequest withApplicationId(String applicationId) {
+		setApplicationId(applicationId);
+		return this;
+	}
+	
+	public CreateAccountRequest withApiEndpoint(String apiEndpoint) {
+		setApiEndpoint(apiEndpoint);
 		return this;
 	}
 	

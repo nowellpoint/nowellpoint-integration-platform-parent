@@ -12,7 +12,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
 import com.nowellpoint.aws.model.idp.RefreshTokenResponse;
 import com.nowellpoint.aws.model.idp.Token;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	
@@ -33,11 +32,11 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(ConfigurationProvider.getStormpathApiEndpoint())
+			httpResponse = RestResource.post(request.getApiEndpoint())
 					.path("applications")
-					.path(ConfigurationProvider.getStormpathApplicationId())
+					.path(request.getApplicationId())
 					.path("oauth/token")
-					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.parameter("grant_type", "refresh_token")

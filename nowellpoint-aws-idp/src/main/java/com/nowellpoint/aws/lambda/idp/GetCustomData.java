@@ -1,8 +1,7 @@
 package com.nowellpoint.aws.lambda.idp;
 
-import static com.nowellpoint.aws.tools.TokenParser.parseToken;
-
 import java.time.Instant;
+import java.util.Base64;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -13,7 +12,10 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.idp.CustomData;
 import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 
 public class GetCustomData implements RequestHandler<GetCustomDataRequest, GetCustomDataResponse> {
 
@@ -42,7 +44,9 @@ public class GetCustomData implements RequestHandler<GetCustomDataRequest, GetCu
 		 * 
 		 */
 		
-		String href = parseToken(request.getAccessToken()).getBody().getSubject();
+		Jws<Claims> jws = Jwts.parser()
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(request.getApiKeySecret().getBytes()))
+				.parseClaimsJws(request.getAccessToken());
 		
 		/**
 		 * 
@@ -50,9 +54,9 @@ public class GetCustomData implements RequestHandler<GetCustomDataRequest, GetCu
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.get(href)
+			httpResponse = RestResource.get(jws.getBody().getSubject())
 					.path("customData")
-					.basicAuthorization(ConfigurationProvider.getStormpathApiKeyId(), ConfigurationProvider.getStormpathApiKeySecret())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.execute();
 				
 			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());

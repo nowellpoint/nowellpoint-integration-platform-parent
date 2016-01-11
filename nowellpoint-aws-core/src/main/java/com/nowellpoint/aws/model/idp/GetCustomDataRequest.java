@@ -1,8 +1,6 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractLambdaRequest;
-
-public class GetCustomDataRequest extends AbstractLambdaRequest {
+public class GetCustomDataRequest extends AbstractIdpRequest {
 
 	/**
 	 * 
@@ -15,7 +13,7 @@ public class GetCustomDataRequest extends AbstractLambdaRequest {
 	public GetCustomDataRequest() {
 		
 	}
-
+	
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -23,9 +21,24 @@ public class GetCustomDataRequest extends AbstractLambdaRequest {
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	
+
 	public GetCustomDataRequest withAccessToken(String accessToken) {
 		setAccessToken(accessToken);
+		return this;
+	}
+	
+	public GetCustomDataRequest withApiEndpoint(String apiEndpoint) {
+		setApiEndpoint(apiEndpoint);
+		return this;
+	}
+
+	public GetCustomDataRequest withApiKeyId(String apiKeyId) {
+		setApiKeyId(apiKeyId);
+		return this;
+	}
+	
+	public GetCustomDataRequest withApiKeySecret(String apiKeySecret) {
+		setApiKeySecret(apiKeySecret);
 		return this;
 	}
 }

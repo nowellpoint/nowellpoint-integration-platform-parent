@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
@@ -30,6 +31,12 @@ public class TokenResource {
 	private HttpServletRequest servletRequest;
 	
 	private static final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
+	
+	private Configuration configuration;
+	
+	public TokenResource() {
+		configuration = ConfigurationProvider.getConfiguration();
+	}
 	
 	@POST
 	@Path("/token")
@@ -58,10 +65,10 @@ public class TokenResource {
 		// execute the get token request for username and password
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withEndpoint(ConfigurationProvider.getStormpathApiEndpoint())
-				.withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
-				.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
-				.withApplicationId(ConfigurationProvider.getStormpathApplicationId())
+		GetTokenRequest tokenRequest = new GetTokenRequest().withApiEndpoint(configuration.getStormpathApiEndpoint())
+				.withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+				.withApplicationId(configuration.getStormpathApplicationId())
 				.withUsername(params[0])
 				.withPassword(params[1]);
 		
@@ -149,7 +156,10 @@ public class TokenResource {
 		// build the revoke token request
 		//
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withAccessToken(bearerToken);
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(configuration.getStormpathApiEndpoint())
+				.withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+				.withAccessToken(bearerToken);
 		
 		//
 		// execute the revoke token request

@@ -32,7 +32,7 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(request.getEndpoint())
+			httpResponse = RestResource.post(request.getApiEndpoint())
 					.path("applications")
 					.path(request.getApplicationId())
 					.path("oauth/token")

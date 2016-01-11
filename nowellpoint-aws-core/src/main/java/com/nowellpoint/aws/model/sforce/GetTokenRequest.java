@@ -12,6 +12,12 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 	
 	private static final long serialVersionUID = 3543119199096532676L;
 	
+	private String tokenUri;
+	
+	private String clientId;
+	
+	private String clientSecret;
+	
 	private String username;
 	
 	private String password;
@@ -20,6 +26,30 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 
 	public GetTokenRequest() {
 		
+	}
+
+	public String getTokenUri() {
+		return tokenUri;
+	}
+
+	public void setTokenUri(String tokenUri) {
+		this.tokenUri = tokenUri;
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getClientSecret() {
+		return clientSecret;
+	}
+
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
 	}
 
 	public String getUsername() {
@@ -44,6 +74,21 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 
 	public void setSecurityToken(String securityToken) {
 		this.securityToken = securityToken;
+	}
+	
+	public GetTokenRequest withTokenUri(String tokenUri) {
+		setTokenUri(tokenUri);
+		return this;
+	}
+	
+	public GetTokenRequest withClientId(String clientId) {
+		setClientId(clientId);
+		return this;
+	}
+	
+	public GetTokenRequest withClientSecret(String clientSecret) {
+		setClientSecret(clientSecret);
+		return this;
 	}
 	
 	public GetTokenRequest withUsername(String username) {

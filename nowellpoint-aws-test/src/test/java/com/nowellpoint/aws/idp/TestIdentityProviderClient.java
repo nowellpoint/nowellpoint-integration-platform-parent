@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -20,11 +21,13 @@ import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
 import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
+import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class TestIdentityProviderClient {
 	
 	private static IdentityProviderClient client = new IdentityProviderClient();
+	private static Configuration configuration = ConfigurationProvider.getConfiguration();
 
 	@Test
 	public void testAuthenticateSuccess() {
@@ -66,7 +69,7 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		String href = TokenParser.parseToken(tokenResponse.getToken().getAccessToken()).getBody().getSubject();
+		String href = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), tokenResponse.getToken().getAccessToken()).getBody().getSubject();
 		
 		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.withApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
@@ -102,7 +105,10 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withAccessToken(refreshTokenResponse.getToken().getAccessToken());
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(configuration.getStormpathApiEndpoint())
+				.withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+				.withAccessToken(refreshTokenResponse.getToken().getAccessToken());
 		
 		RevokeTokenResponse revokeTokenResponse = client.revoke(revokeTokenRequest);
 			

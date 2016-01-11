@@ -1,8 +1,6 @@
 package com.nowellpoint.aws.model.idp;
 
-import com.nowellpoint.aws.model.AbstractLambdaRequest;
-
-public class VerifyTokenRequest extends AbstractLambdaRequest {
+public class VerifyTokenRequest extends AbstractIdpRequest {
 
 	private static final long serialVersionUID = 4462868491415777411L;
 	
@@ -20,8 +18,44 @@ public class VerifyTokenRequest extends AbstractLambdaRequest {
 		this.accessToken = accessToken;
 	}
 	
+	public String getApiEndpoint() {
+		return super.getApiEndpoint();
+	}
+	
+	public void setApiEndpoint(String apiEndpoint) {
+		super.setApiEndpoint(apiEndpoint);
+	}
+	
+	public String getApplicationId() {
+		return super.getApplicationId();
+	}
+	
+	public void setApplicationId(String applicationId) {
+		super.setApplicationId(applicationId);
+	}
+	
 	public VerifyTokenRequest withAccessToken(String accessToken) {
 		setAccessToken(accessToken);
+		return this;
+	}
+	
+	public VerifyTokenRequest withApiEndpoint(String apiEndpoint) {
+		setApiEndpoint(apiEndpoint);
+		return this;
+	}
+
+	public VerifyTokenRequest withApiKeyId(String apiKeyId) {
+		setApiKeyId(apiKeyId);
+		return this;
+	}
+	
+	public VerifyTokenRequest withApiKeySecret(String apiKeySecret) {
+		setApiKeySecret(apiKeySecret);
+		return this;
+	}
+	
+	public VerifyTokenRequest withApplicationId(String applicationId) {
+		setApplicationId(applicationId);
 		return this;
 	}
 }

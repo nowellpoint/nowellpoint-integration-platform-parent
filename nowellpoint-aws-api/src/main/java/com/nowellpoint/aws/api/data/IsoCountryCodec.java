@@ -9,7 +9,7 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.aws.model.IsoCountry;
+import com.nowellpoint.aws.model.data.IsoCountry;
 
 public class IsoCountryCodec implements CollectibleCodec<IsoCountry> {
 	

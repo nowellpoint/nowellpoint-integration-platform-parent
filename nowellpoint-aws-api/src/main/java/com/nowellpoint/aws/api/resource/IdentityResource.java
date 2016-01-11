@@ -5,6 +5,7 @@ import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -18,12 +19,12 @@ import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.admin.Configuration;
-import com.nowellpoint.aws.model.sforce.Lead;
+import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-@Path("/lead")
-public class LeadResource {
+@Path("/identity")
+public class IdentityResource {
 
 	@Context
 	private UriInfo uriInfo;
@@ -32,7 +33,7 @@ public class LeadResource {
 	
 	private Configuration configuration;
 	
-	public LeadResource() {
+	public IdentityResource() {
 		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
 		mapper = mapperProvider.getDynamoDBMapper();
 		configuration = ConfigurationProvider.getConfiguration();
@@ -40,7 +41,8 @@ public class LeadResource {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-    public Response submit(Lead resource) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response signUp(Identity resource) {
 		
 		//
 		//
@@ -50,12 +52,12 @@ public class LeadResource {
 		try {			
 			event = new EventBuilder().withAccountId(configuration.getDefaultAccountId())
 					.withConfigurationId(configuration.getId())
-					.withEventAction(EventAction.ACTIVITY)
+					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getRequestUri())
 					.withKmsKeyId(configuration.getKmsKeyId())
 					.withOrganizationId(configuration.getDefaultOrganizationId())
 					.withPayload(resource)
-					.withType(Lead.class)
+					.withType(Identity.class)
 					.build();
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
@@ -72,7 +74,7 @@ public class LeadResource {
 		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(LeadResource.class)
+				.path(IdentityResource.class)
 				.path("/{id}")
 				.build(event.getId());
 		

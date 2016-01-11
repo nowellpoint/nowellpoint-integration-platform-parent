@@ -11,7 +11,7 @@ import org.bson.codecs.CollectibleCodec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 
-import com.nowellpoint.aws.model.Project;
+import com.nowellpoint.aws.model.data.Project;
 
 public class ProjectCodec implements CollectibleCodec<Project> {
 

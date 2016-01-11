@@ -6,13 +6,11 @@ import io.jsonwebtoken.Jwts;
 
 import java.util.Base64;
 
-import com.nowellpoint.aws.provider.ConfigurationProvider;
-
 public class TokenParser {
 	
-	public static Jws<Claims> parseToken(String token) {
+	public static Jws<Claims> parseToken(String key, String token) {
 		return Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(ConfigurationProvider.getStormpathApiKeySecret().getBytes()))
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(key.getBytes()))
 				.parseClaimsJws(token);
 	}
 }

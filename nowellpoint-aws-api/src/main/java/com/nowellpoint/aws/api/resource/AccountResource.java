@@ -5,8 +5,6 @@ import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
 import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.net.URI;
-import java.time.Instant;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +20,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.EventAction;
+import com.nowellpoint.aws.model.EventBuilder;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
@@ -47,6 +48,16 @@ public class AccountResource {
 	private HttpServletRequest servletRequest;
 	
 	private static final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
+	
+	private DynamoDBMapper mapper;
+	
+	private Configuration configuration;
+	
+	public AccountResource() {
+		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
+		mapper = mapperProvider.getDynamoDBMapper();
+		configuration = ConfigurationProvider.getConfiguration();
+	}
 
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -90,7 +101,7 @@ public class AccountResource {
 		// parse the bearer token
 		//
 		
-		Jws<Claims> jws = TokenParser.parseToken(bearerToken);
+		Jws<Claims> jws = TokenParser.parseToken(configuration.getStormpathApiKeySecret(), bearerToken);
 		
 		//
 		// get the subject from the JWS
@@ -102,8 +113,8 @@ public class AccountResource {
 		// build the GetAccountRequest
 		//
 		
-		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(ConfigurationProvider.getStormpathApiKeyId())
-				.withApiKeySecret(ConfigurationProvider.getStormpathApiKeySecret())
+		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret())
 				.withHref(href);
 		
 		//
@@ -136,31 +147,32 @@ public class AccountResource {
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(Account account) {
+	public Response create(Account resource) {
 		
 		//
 		//
 		//
 				
-		String payload = null;
+		Event event = null;
 		try {			
-			payload = new ObjectMapper().writeValueAsString(account);
+			event = new EventBuilder().withAccountId(configuration.getDefaultAccountId())
+					.withConfigurationId(configuration.getId())
+					.withEventAction(EventAction.CREATE)
+					.withEventSource(uriInfo.getRequestUri())
+					.withKmsKeyId(configuration.getKmsKeyId())
+					.withOrganizationId(configuration.getDefaultOrganizationId())
+					.withPayload(resource)
+					.withType(Account.class)
+					.build();
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
-		
+		 
 		//
 		//
 		//
 		
-		Event event = new Event().withEventDate(Date.from(Instant.now()))
-				.withEventStatus(Event.EventStatus.NEW)
-				.withType(Account.class.getName())
-				.withOrganizationId(ConfigurationProvider.getDefaultOrganizationId())
-				.withUserId(ConfigurationProvider.getDefaultUserId())
-				.withPayload(payload);
-		
-		DynamoDBMapperProvider.getDynamoDBMapper().save(event);
+		mapper.save(event);
 		
 		//
 		//

@@ -3,8 +3,6 @@ package com.nowellpoint.aws.event;
 import java.io.IOException;
 import java.util.Date;
 
-import org.bson.types.ObjectId;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.DataClient;
@@ -51,6 +49,8 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			
 		} else {
 			
+			organization.setId(event.getId());
+			
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
 					.withUserId(event.getUserId())
 					.withCollectionName(COLLECTION)
@@ -62,7 +62,6 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			
 			if (createDocumentResponse.getStatusCode() == 201) {
 				logger.log(new Date() + " Document Id: " + createDocumentResponse.getId());
-				organization.setId(new ObjectId(createDocumentResponse.getId()));
 			} else {
 				throw new IOException(createDocumentResponse.getErrorMessage());
 			}
