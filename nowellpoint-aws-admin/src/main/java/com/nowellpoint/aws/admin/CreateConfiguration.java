@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.admin;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.joda.time.Instant;
@@ -45,6 +47,8 @@ public class CreateConfiguration {
 		configuration.setStormpathApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"));
 		configuration.setStormpathApplicationId(System.getenv("STORMPATH_APPLICATION_ID"));
 		configuration.setStormpathDirectoryId(System.getenv("STORMPATH_DIRECTORY_ID"));
+		
+
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
