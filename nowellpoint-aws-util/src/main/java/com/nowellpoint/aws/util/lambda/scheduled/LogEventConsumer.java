@@ -77,7 +77,7 @@ public class LogEventConsumer implements RequestStreamHandler {
 				
 				try {
 					HttpURLConnection connection = (HttpURLConnection) new URL("http://logs-01.loggly.com/inputs/"
-							.concat(ConfigurationProvider.getLogglyApiKey())
+							.concat(ConfigurationProvider.getConfiguration().getLogglyApiKey())
 							.concat("/tag/")
 							.concat(describeLogStreamsRequest.getLogGroupName())
 							.concat("/")).openConnection();

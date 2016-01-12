@@ -7,6 +7,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.Organization;
@@ -25,13 +26,15 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting OrganizationEventHandler");
 		
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
+		
 		final DataClient dataClient = new DataClient();
 		
 		Organization organization = objectMapper.readValue(event.getPayload(), Organization.class);
 	
 		if (organization.getId() != null) {
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 					.withId(organization.getId().toString())
 					.withUserId(event.getUserId())
 					.withCollectionName(COLLECTION)
@@ -51,7 +54,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			
 			organization.setId(event.getId());
 			
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 					.withUserId(event.getUserId())
 					.withCollectionName(COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(organization));

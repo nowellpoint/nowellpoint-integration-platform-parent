@@ -7,6 +7,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
 import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
@@ -22,6 +23,8 @@ public class LeadEventHandler implements AbstractEventHandler {
 		LambdaLogger logger = context.getLogger();
 		
 		logger.log(new Date() + " starting LeadEventHandler");
+		
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
 		
 		//
 		// parse the event payload
@@ -39,9 +42,9 @@ public class LeadEventHandler implements AbstractEventHandler {
 		// build the GetTokenRequest
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(ConfigurationProvider.getSalesforceUsername())
-				.withPassword(ConfigurationProvider.getSalesforcePassword())
-				.withSecurityToken(ConfigurationProvider.getSalesforceSecurityToken());
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(configuration.getSalesforceUsername())
+				.withPassword(configuration.getSalesforcePassword())
+				.withSecurityToken(configuration.getSalesforceSecurityToken());
 		
 		//
 		// execute the GetTokenRequest

@@ -15,6 +15,9 @@ public class Configuration {
 	@DynamoDBHashKey(attributeName="Id")  
 	private String id;
 	
+	@DynamoDBAttribute(attributeName="Name")  
+	private String name;
+	
 	@DynamoDBAttribute(attributeName="CreatedDate")  
 	private Date createdDate;
 	
@@ -95,6 +98,15 @@ public class Configuration {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	@DoNotEncrypt
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	@DoNotEncrypt
 	public Date getCreatedDate() {
@@ -130,6 +142,7 @@ public class Configuration {
 		this.salesforceClientSecret = salesforceClientSecret;
 	}
 
+	@DoNotEncrypt
 	public String getRedirectUri() {
 		return redirectUri;
 	}
@@ -170,6 +183,7 @@ public class Configuration {
 		this.stormpathApiKeySecret = stormpathApiKeySecret;
 	}
 
+	@DoNotEncrypt
 	public String getStormpathApiEndpoint() {
 		return stormpathApiEndpoint;
 	}
@@ -178,6 +192,7 @@ public class Configuration {
 		this.stormpathApiEndpoint = stormpathApiEndpoint;
 	}
 
+	@DoNotEncrypt
 	public String getStormpathApplicationId() {
 		return stormpathApplicationId;
 	}
@@ -186,6 +201,7 @@ public class Configuration {
 		this.stormpathApplicationId = stormpathApplicationId;
 	}
 
+	@DoNotEncrypt
 	public String getStormpathDirectoryId() {
 		return stormpathDirectoryId;
 	}
@@ -202,6 +218,7 @@ public class Configuration {
 		this.kmsKeyId = kmsKeyId;
 	}
 
+	@DoNotEncrypt
 	public String getSalesforceTokenUri() {
 		return salesforceTokenUri;
 	}
@@ -210,6 +227,7 @@ public class Configuration {
 		this.salesforceTokenUri = salesforceTokenUri;
 	}
 
+	@DoNotEncrypt
 	public String getSalesforceRefreshUri() {
 		return salesforceRefreshUri;
 	}
@@ -218,6 +236,7 @@ public class Configuration {
 		this.salesforceRefreshUri = salesforceRefreshUri;
 	}
 
+	@DoNotEncrypt
 	public String getSalesforceRevokeUri() {
 		return salesforceRevokeUri;
 	}
@@ -266,6 +285,7 @@ public class Configuration {
 		this.redisPassword = redisPassword;
 	}
 
+	@DoNotEncrypt
 	public String getDefaultOrganizationId() {
 		return defaultOrganizationId;
 	}
@@ -274,6 +294,7 @@ public class Configuration {
 		this.defaultOrganizationId = defaultOrganizationId;
 	}
 
+	@DoNotEncrypt
 	public String getDefaultAccountId() {
 		return defaultAccountId;
 	}

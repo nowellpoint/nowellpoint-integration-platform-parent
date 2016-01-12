@@ -72,15 +72,13 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 		
-		Date now = Date.from(Instant.now());
-
-		ObjectId userId = new ObjectId(request.getUserId());		
+		Date now = Date.from(Instant.now());	
 		
 		Document document = Document.parse(request.getDocument());
 		document.put("createdDate", now);
 		document.put("lastModifiedDate", now);
-		document.put("createdById", userId);
-		document.put("lastModifiedById", userId);		
+		document.put("createdById", request.getUserId());
+		document.put("lastModifiedById", request.getUserId());		
 		
 		if (document.getString("_id") != null) {
 			document.put("_id", new ObjectId(document.getString("_id")));

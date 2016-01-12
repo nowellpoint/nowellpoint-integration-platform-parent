@@ -22,7 +22,6 @@ import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
-import com.nowellpoint.aws.model.data.UserContext;
 import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -33,7 +32,7 @@ public class TestDataClient {
 	
 	private static IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 	private static DataClient dataClient = new DataClient();
-	private static UserContext userContext;
+	//private static UserContext userContext;
 	private static String accessToken;
 	private static Configuration configuration;
 	
@@ -51,14 +50,18 @@ public class TestDataClient {
 		
 		System.out.println("Authenticating...");
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
+		configuration = ConfigurationProvider.getConfiguration();
+		
+		GetTokenRequest tokenRequest = new GetTokenRequest().withApiKeyId(configuration.getStormpathApiKeyId())
+				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+				.withUsername(System.getenv("STORMPATH_USERNAME"))
+				.withApiEndpoint(configuration.getStormpathApiEndpoint())
+				.withApplicationId(configuration.getStormpathApplicationId())
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
 		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
 			
 		accessToken = tokenResponse.getToken().getAccessToken();
-		
-		configuration = ConfigurationProvider.getConfiguration();
 			
 		System.out.println("Authenticating...success: " + tokenResponse.getToken().getStormpathAccessTokenHref());
 		System.out.println("Setting up session...");
@@ -69,9 +72,8 @@ public class TestDataClient {
 				.withApiKeySecret(configuration.getStormpathApiKeySecret());
 			
 		GetCustomDataResponse customDataResponse = identityProviderClient.customData(customDataRequest);
-			
-		userContext = new UserContext().withMongoDBConnectUri(customDataResponse.getCustomData().getMongodbConnectUri())
-				.withUserId(customDataResponse.getCustomData().getApplicationUserId());
+		
+		assertTrue(customDataResponse.getStatusCode() == 200);
 			
 		System.out.println("Setting up session...complete");
 		
@@ -83,14 +85,14 @@ public class TestDataClient {
 		
 		long startTime = System.currentTimeMillis();
 		
-		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
-				.withUserId(userContext.getUserId())
+		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+				.withUserId(configuration.getDefaultAccountId())
 				.withCollectionName("parties")
 				.withDocument(json.toString());
 			
 		CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
 			
-		assertTrue(createDocumentResponse.getStatusCode() == 200);
+		assertTrue(createDocumentResponse.getStatusCode() == 201);
 		assertNotNull(createDocumentResponse.getId());
 			
 		System.out.println("CreateDocumentResponse - execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
@@ -98,8 +100,8 @@ public class TestDataClient {
 						
 		json.put("partyType", "ORGANIZATION");
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
-				.withUserId(userContext.getUserId())
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+				.withUserId(configuration.getDefaultAccountId())
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId())
 				.withDocument(json.toString());
@@ -117,7 +119,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -135,7 +137,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -152,7 +154,7 @@ public class TestDataClient {
 	@Test
 	public void testNotFound() {
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6");
 			
@@ -170,15 +172,19 @@ public class TestDataClient {
 			
 		System.out.println(getDocumentResponse.getErrorCode());
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
-				.withUserId(userContext.getUserId())
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+				.withUserId(configuration.getDefaultAccountId())
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6")
 				.withDocument(json.toString());
 			
 		startTime = System.currentTimeMillis();
+		
+		System.out.println(configuration.getDefaultAccountId());
 			
 		UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
+		
+		System.out.println(updateDocumentResponse.getErrorMessage());
 			
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - startTime));	
 			
@@ -190,7 +196,7 @@ public class TestDataClient {
 			
 		System.out.println(updateDocumentResponse.getErrorCode());
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(userContext.getMongoDBConnectUri())
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6");
 			

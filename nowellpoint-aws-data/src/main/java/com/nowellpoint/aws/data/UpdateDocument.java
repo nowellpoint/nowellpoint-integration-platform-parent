@@ -69,14 +69,13 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		try{
 			
 			Date now = Date.from(Instant.now());
-			ObjectId userId = new ObjectId(request.getUserId());
 			
 			log.info(request.getDocument());
 			
 			Document document = Document.parse(request.getDocument());
 			document.put("_id", new ObjectId(request.getId()));
 			document.put("lastModifiedDate", now);
-			document.put("lastModifiedById", userId);
+			document.put("lastModifiedById", request.getUserId());
 			
 			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getObjectId("_id")), new Document("$set", document));
 			if (result.getModifiedCount() == 1) {

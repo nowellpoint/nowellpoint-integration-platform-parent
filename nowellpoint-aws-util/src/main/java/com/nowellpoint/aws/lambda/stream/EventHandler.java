@@ -51,12 +51,13 @@ public class EventHandler {
 		//
 		
 		Predicate<DynamodbStreamRecord> insert = record -> "INSERT".equals(record.getEventName());
+		Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());
 		
 		//
 		//
 		//
 		
-		dynamodbEvent.getRecords().stream().filter(insert).forEach(record -> {
+		dynamodbEvent.getRecords().stream().filter(insert.or(modify)).forEach(record -> {
 			
 			//
 			// capture the start time
@@ -81,24 +82,26 @@ public class EventHandler {
 			// retrieve the event record
 			//
 			
-			
 			Event event = mapper.load(Event.class, id, organizationId);
 			
 			//
 			// process the event
 			//
 			
-			try {
-				AbstractEventHandler handler = (AbstractEventHandler) (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
-				handler.process(event, context);
-				event.setEventStatus(EventStatus.COMPLETE.toString());
-			} catch (Exception e) {
-				event.setErrorMessage(e.getMessage());
-				event.setEventStatus(EventStatus.ERROR.toString());
-			} finally {
-				event.setExecutionTime(System.currentTimeMillis() - startTime);
-				event.setProcessedDate(Date.from(Instant.now()));
-				mapper.save(event);
+			if (event.getEventStatus().equals(EventStatus.NEW.toString()) || event.getEventStatus().equals(EventStatus.REPROCESS.toString())) {
+				
+				try {
+					AbstractEventHandler handler = (AbstractEventHandler) (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
+					handler.process(event, context);
+					event.setEventStatus(EventStatus.COMPLETE.toString());
+				} catch (Exception e) {
+					event.setErrorMessage(e.getMessage());
+					event.setEventStatus(EventStatus.ERROR.toString());
+				} finally {
+					event.setExecutionTime(System.currentTimeMillis() - startTime);
+					event.setProcessedDate(Date.from(Instant.now()));
+					mapper.save(event);
+				}
 			}
 		});
 		

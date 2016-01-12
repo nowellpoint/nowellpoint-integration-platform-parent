@@ -53,7 +53,7 @@ public class TransactionEventHandler {
 		mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 		kms = new AWSKMSClient();
 		salesforceResource = new SalesforceResource();
-		mongoClientURI = new MongoClientURI("mongodb://".concat(ConfigurationProvider.getMongoClientUri()));
+		mongoClientURI = new MongoClientURI("mongodb://".concat(ConfigurationProvider.getConfiguration().getMongoClientUri()));
 		mongoClient = new MongoClient(mongoClientURI);
 		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
 	}

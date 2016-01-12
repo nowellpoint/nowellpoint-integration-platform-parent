@@ -9,6 +9,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
@@ -29,6 +30,8 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting UserEventHandler");
 		
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
+		
 		final DataClient dataClient = new DataClient();
 		
 		Identity user = objectMapper.readValue(event.getPayload(), Identity.class);
@@ -36,7 +39,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		String query = objectMapper.createObjectNode().put("username", user.getUsername()).toString();
 		
 		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest().withCollectionName(COLLECTION_NAME)
-				.withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
+				.withMongoDBConnectUri(configuration.getMongoClientUri())
 				.withDocument(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
@@ -49,7 +52,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			
 			user.setId(event.getId());
 					
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 					.withUserId(user.getId().toString())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
@@ -75,7 +78,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 				e.printStackTrace();
 			}
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(ConfigurationProvider.getMongoClientUri())
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 					.withId(user.getId().toString())
 					.withUserId(user.getId().toString())
 					.withCollectionName(COLLECTION_NAME)

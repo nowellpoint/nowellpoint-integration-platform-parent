@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -19,12 +20,33 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 
 	@Override
 	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
+		
+		LambdaLogger logger = context.getLogger();
+		logger.log(request.getApiEndpoint());
+		logger.log(request.getApplicationId());
+		logger.log(request.getApiKeyId());
+		logger.log(request.getApiKeySecret());
+		logger.log(request.getPassword());
+		logger.log(request.getUsername());
 			
 		/**
 		 * 
 		 */
 		
 		GetTokenResponse response = new GetTokenResponse();
+		
+		/**
+		 * 
+		 */
+		
+		try {
+			validate(request);
+		} catch (IllegalArgumentException e) {
+			response.setStatusCode(400);
+			response.setErrorCode("invalid_request");
+			response.setErrorMessage(e.getMessage());
+			return response;
+		}
 		
 		/**
 		 * 
@@ -68,5 +90,24 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 		}
 		
 		return response;
+	}
+	
+	private void validate(GetTokenRequest request) {
+
+		StringBuilder valid = new StringBuilder();
+		
+		if (request.getApiEndpoint() == null || request.getApiEndpoint().trim().isEmpty()) {
+			valid.append("Missing ApiEndpoint for GetTokenRequest");
+			valid.append(System.getProperty("\n"));
+		}
+		
+		if (request.getApiKeyId() == null || request.getApiKeyId().trim().isEmpty()) {
+			valid.append("Missing ApiKeyId for GetTokenRequest");
+			valid.append(System.getProperty("\n"));
+		}
+		
+		if (valid.length() > 0) {
+			throw new IllegalArgumentException(valid.toString());
+		}
 	}
 }
