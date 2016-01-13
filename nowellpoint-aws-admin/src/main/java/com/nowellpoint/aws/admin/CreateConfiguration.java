@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Configuration;
 import com.nowellpoint.aws.model.admin.Property;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class CreateConfiguration {
@@ -25,14 +26,14 @@ public class CreateConfiguration {
 		Property logglyApiKey = new Property();
 		
 		logglyApiKey.setKey("loggly.api.key");
-		logglyApiKey.setStore("arn:aws:lambda:us-east-1:600862814314:function:LogEventConsumer");
+		logglyApiKey.setStore(PropertyStore.LOGGLY.name());
 		logglyApiKey.setValue(System.getenv("LOGGLY_API_KEY"));
 		logglyApiKey.setLastModifiedBy(accountId);
 		
 		Property mongoClientUri = new Property();
 		
 		mongoClientUri.setKey("mongo.client.uri");
-		mongoClientUri.setStore("arn:aws:lambda:us-east-1:600862814314:function:TransactionEventHandler");
+		mongoClientUri.setStore(PropertyStore.MONGODB.name());
 		mongoClientUri.setValue(System.getenv("MONGO_CLIENT_URI"));
 		mongoClientUri.setLastModifiedBy(accountId);
 		

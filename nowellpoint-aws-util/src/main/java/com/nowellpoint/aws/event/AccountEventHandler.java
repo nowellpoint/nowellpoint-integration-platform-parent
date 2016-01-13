@@ -28,6 +28,10 @@ public class AccountEventHandler implements AbstractEventHandler {
 	@Override
 	public void process(Event event, Context context) throws IOException {
 		
+		//
+		//
+		//
+		
 		LambdaLogger logger = context.getLogger();
 		
 		//

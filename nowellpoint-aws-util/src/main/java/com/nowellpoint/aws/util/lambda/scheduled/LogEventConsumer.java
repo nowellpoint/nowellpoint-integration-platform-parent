@@ -20,7 +20,8 @@ import com.amazonaws.services.logs.model.GetLogEventsRequest;
 import com.amazonaws.services.logs.model.GetLogEventsResult;
 import com.amazonaws.services.logs.model.OutputLogEvent;
 import com.amazonaws.util.json.JSONObject;
-import com.nowellpoint.aws.provider.Properties;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 
 public class LogEventConsumer implements RequestStreamHandler {
 	
@@ -77,7 +78,7 @@ public class LogEventConsumer implements RequestStreamHandler {
 				
 				try {
 					HttpURLConnection connection = (HttpURLConnection) new URL("http://logs-01.loggly.com/inputs/"
-							.concat(Properties.getProperty(Properties.LOGGLY_API_KEY, context.getInvokedFunctionArn()))
+							.concat(Properties.getProperty(PropertyStore.LOGGLY, Properties.LOGGLY_API_KEY))
 							.concat("/tag/")
 							.concat(describeLogStreamsRequest.getLogGroupName())
 							.concat("/")).openConnection();

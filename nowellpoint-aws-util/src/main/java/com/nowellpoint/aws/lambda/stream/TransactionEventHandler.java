@@ -35,8 +35,9 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.model.Transaction;
 import com.nowellpoint.aws.model.TransactionResult;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.sforce.OutboundMessage;
-import com.nowellpoint.aws.provider.Properties;
 import com.nowellpoint.aws.sforce.SalesforceResource;
 import com.nowellpoint.aws.tools.MongoQuery;
 
@@ -75,7 +76,7 @@ public class TransactionEventHandler {
 		 * 
 		 */
 		
-		mongoClientURI = new MongoClientURI("mongodb://".concat(Properties.getProperty(Properties.MONGO_CLIENT_URI, context.getInvokedFunctionArn())));
+		mongoClientURI = new MongoClientURI("mongodb://".concat(Properties.getProperty(PropertyStore.MONGODB, Properties.MONGO_CLIENT_URI)));
 		
 		/**
 		 * 
