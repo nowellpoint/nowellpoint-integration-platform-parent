@@ -35,8 +35,7 @@ public class OrganizationResource {
 	private Configuration configuration;
 	
 	public OrganizationResource() {
-		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
-		mapper = mapperProvider.getDynamoDBMapper();
+		mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		configuration = ConfigurationProvider.getConfiguration();
 	}
 	
@@ -60,7 +59,6 @@ public class OrganizationResource {
 					.withConfigurationId(configuration.getId())
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
-					.withKmsKeyId(configuration.getKmsKeyId())
 					.withOrganizationId(configuration.getDefaultOrganizationId())
 					.withPayload(resource)
 					.withType(Organization.class)

@@ -40,7 +40,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getConfigurationId());
 		
 		//
 		// parse the event payload
@@ -163,8 +163,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		DynamoDBMapperProvider provider = new DynamoDBMapperProvider();
-		DynamoDBMapper mapper = provider.getDynamoDBMapper();
+		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
 		//
 		//
@@ -185,7 +184,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 				.withOrganizationId(configuration.getDefaultOrganizationId())
 				.withPayload(identity)
 				.withType(Identity.class)
-				.withKmsKeyId(parentEvent.getKmsKeyId())
 				.build();
 		
 		//

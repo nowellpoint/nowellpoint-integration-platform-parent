@@ -26,7 +26,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting OrganizationEventHandler");
 		
-		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getConfigurationId());
 		
 		final DataClient dataClient = new DataClient();
 		

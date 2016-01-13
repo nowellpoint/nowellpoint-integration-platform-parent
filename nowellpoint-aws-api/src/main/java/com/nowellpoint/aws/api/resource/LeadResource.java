@@ -33,8 +33,7 @@ public class LeadResource {
 	private Configuration configuration;
 	
 	public LeadResource() {
-		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
-		mapper = mapperProvider.getDynamoDBMapper();
+		mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		configuration = ConfigurationProvider.getConfiguration();
 	}
 
@@ -52,7 +51,6 @@ public class LeadResource {
 					.withConfigurationId(configuration.getId())
 					.withEventAction(EventAction.ACTIVITY)
 					.withEventSource(uriInfo.getRequestUri())
-					.withKmsKeyId(configuration.getKmsKeyId())
 					.withOrganizationId(configuration.getDefaultOrganizationId())
 					.withPayload(resource)
 					.withType(Lead.class)

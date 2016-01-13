@@ -34,8 +34,7 @@ public class IdentityResource {
 	private Configuration configuration;
 	
 	public IdentityResource() {
-		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
-		mapper = mapperProvider.getDynamoDBMapper();
+		mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		configuration = ConfigurationProvider.getConfiguration();
 	}
 
@@ -54,7 +53,6 @@ public class IdentityResource {
 					.withConfigurationId(configuration.getId())
 					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getRequestUri())
-					.withKmsKeyId(configuration.getKmsKeyId())
 					.withOrganizationId(configuration.getDefaultOrganizationId())
 					.withPayload(resource)
 					.withType(Identity.class)

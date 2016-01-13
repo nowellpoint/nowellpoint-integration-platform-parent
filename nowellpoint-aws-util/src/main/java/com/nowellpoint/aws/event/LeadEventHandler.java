@@ -24,7 +24,7 @@ public class LeadEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting LeadEventHandler");
 		
-		Configuration configuration = ConfigurationProvider.getConfiguration(event.getKmsKeyId(), event.getConfigurationId());
+		Configuration configuration = ConfigurationProvider.getConfiguration(event.getConfigurationId());
 		
 		//
 		// parse the event payload

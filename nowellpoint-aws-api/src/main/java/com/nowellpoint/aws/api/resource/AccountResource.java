@@ -54,8 +54,7 @@ public class AccountResource {
 	private Configuration configuration;
 	
 	public AccountResource() {
-		DynamoDBMapperProvider mapperProvider = new DynamoDBMapperProvider();
-		mapper = mapperProvider.getDynamoDBMapper();
+		mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		configuration = ConfigurationProvider.getConfiguration();
 	}
 
@@ -159,7 +158,6 @@ public class AccountResource {
 					.withConfigurationId(configuration.getId())
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
-					.withKmsKeyId(configuration.getKmsKeyId())
 					.withOrganizationId(configuration.getDefaultOrganizationId())
 					.withPayload(resource)
 					.withType(Account.class)

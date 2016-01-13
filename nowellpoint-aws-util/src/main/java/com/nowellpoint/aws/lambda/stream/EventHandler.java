@@ -37,14 +37,17 @@ public class EventHandler {
 	
 	public String handleEvent(DynamodbEvent dynamodbEvent, Context context) {
 		
+		//
+		//
+		//
+		
 		LambdaLogger logger = context.getLogger();
 		
 		//
 		//
 		//
 		
-		DynamoDBMapperProvider provider = new DynamoDBMapperProvider("arn:aws:kms:us-east-1:600862814314:key/534e1894-56e5-413b-97fc-a3d6bbc0c51b");
-		DynamoDBMapper mapper = provider.getDynamoDBMapper();
+		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
 		//
 		//

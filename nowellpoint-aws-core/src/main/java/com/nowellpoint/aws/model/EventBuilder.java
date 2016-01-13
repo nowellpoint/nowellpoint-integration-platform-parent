@@ -14,7 +14,6 @@ public class EventBuilder {
 	private String eventSource;
 	private EventAction eventAction;
 	private String configurationId;
-	private String kmsKeyId;
 	private Object payload;
 	
 	public EventBuilder withOrganizationId(String organizationId) {
@@ -44,11 +43,6 @@ public class EventBuilder {
 	
 	public EventBuilder withEventAction(EventAction eventAction) {
 		this.eventAction = eventAction;
-		return this;
-	}
-	
-	public EventBuilder withKmsKeyId(String kmsKeyId) {
-		this.kmsKeyId = kmsKeyId;
 		return this;
 	}
 	
@@ -84,10 +78,6 @@ public class EventBuilder {
 			throw new IllegalArgumentException("Missing EventAction value");
 		}
 		
-		if (kmsKeyId == null) {
-			throw new IllegalArgumentException("Missing Aws Key Id value");
-		}
-		
 		if (configurationId == null) {
 			throw new IllegalArgumentException("Missing ConfigurationId value");
 		}
@@ -103,7 +93,6 @@ public class EventBuilder {
 				eventSource,
 				eventAction,
 				configurationId,
-				kmsKeyId,
 				mapper.writeValueAsString(payload)
 		);
 	}

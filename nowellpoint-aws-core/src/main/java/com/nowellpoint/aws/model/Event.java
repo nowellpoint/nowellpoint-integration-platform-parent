@@ -55,14 +55,11 @@ public class Event {
 	@DynamoDBAttribute(attributeName="ConfigurationId")
 	private String configurationId;
 	
-	@DynamoDBAttribute(attributeName="KmsKeyId")
-	private String kmsKeyId;
-	
 	public Event() {
 		
 	}
 	
-	public Event(String organizationId, Class<?> type, String userId, String eventSource, EventAction eventAction, String configurationId, String kmsKeyId, String payload) {
+	public Event(String organizationId, Class<?> type, String userId, String eventSource, EventAction eventAction, String configurationId, String payload) {
 		setOrganizationId(organizationId);
 		setEventStatus(EventStatus.NEW.name());
 		setType(type.getClass().getName());
@@ -70,7 +67,6 @@ public class Event {
 		setEventSource(eventSource);
 		setEventAction(eventAction.name());
 		setConfigurationId(configurationId);
-		setKmsKeyId(kmsKeyId);
 		setPayload(payload);
 		setEventDate(Date.from(Instant.now()));
 	}
@@ -196,14 +192,5 @@ public class Event {
 	@DoNotEncrypt
 	public String getConfigurationId() {
 		return configurationId;
-	}
-	
-	public void setKmsKeyId(String kmsKeyId) {
-		this.kmsKeyId = kmsKeyId;
-	}
-	
-	@DoNotEncrypt
-	public String getKmsKeyId() {
-		return kmsKeyId;
 	}
 }

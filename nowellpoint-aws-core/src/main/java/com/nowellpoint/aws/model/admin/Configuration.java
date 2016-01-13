@@ -59,9 +59,6 @@ public class Configuration {
 	@DynamoDBAttribute(attributeName="StormpathDirectoryId")
 	private String stormpathDirectoryId;
 	
-	@DynamoDBAttribute(attributeName="KmsKeyId")
-	private String kmsKeyId;
-	
 	@DynamoDBAttribute(attributeName="SalesforceTokenUri")
 	private String salesforceTokenUri;
 	
@@ -224,14 +221,6 @@ public class Configuration {
 
 	public void setStormpathDirectoryId(String stormpathDirectoryId) {
 		this.stormpathDirectoryId = stormpathDirectoryId;
-	}
-
-	public String getKmsKeyId() {
-		return kmsKeyId;
-	}
-
-	public void setKmsKeyId(String kmsKeyId) {
-		this.kmsKeyId = kmsKeyId;
 	}
 
 	@DoNotEncrypt
