@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
@@ -38,6 +39,8 @@ public class CreateConfiguration {
 		mongoClientUri.setLastModifiedBy(accountId);
 		
 		mapper.batchSave(Arrays.asList(logglyApiKey, mongoClientUri));
+		
+		System.out.println(Properties.getProperty(PropertyStore.LOGGLY, Properties.LOGGLY_API_KEY));
 		
 //		Configuration configuration = new Configuration();
 //		//configuration.setId("7eb82a42-ad99-4077-a149-5894ec26f80d");

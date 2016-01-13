@@ -15,6 +15,7 @@ import com.amazonaws.services.kms.model.ListAliasesResult;
 
 public class DynamoDBMapperProvider {
 	
+	private static String KEY_ALIAS = "alias/DATA_ENCRYPTION_KEY";
 	private static AWSKMS kms = new AWSKMSClient();
 	private static DynamoDBMapper mapper;
 	
@@ -38,18 +39,15 @@ public class DynamoDBMapperProvider {
 		
 		Optional<AliasListEntry> aliasListEntry = listAliasesResult.getAliases()
 				.stream()
-				.filter(entry -> "alias/DATA_ENCRYPTION_KEY".equals(entry.getAliasName()))
+				.filter(entry -> KEY_ALIAS.equals(entry.getAliasName()))
 				.findFirst();
 		
 		String keyId = null;
 		
 		if (aliasListEntry.isPresent()) {
-			String aliasArn = aliasListEntry.get().getAliasArn();
-			keyId = aliasArn.substring(0, aliasArn.indexOf(":alias/"))
-					.concat(":key/")
-					.concat(aliasListEntry.get().getTargetKeyId());
+			keyId = aliasListEntry.get().getTargetKeyId();
 		} 
-		
+
 		return keyId;
 	}
 }
