@@ -13,7 +13,6 @@ public class EventBuilder {
 	private String accountId;
 	private String eventSource;
 	private EventAction eventAction;
-	private String configurationId;
 	private Object payload;
 	
 	public EventBuilder withOrganizationId(String organizationId) {
@@ -46,11 +45,6 @@ public class EventBuilder {
 		return this;
 	}
 	
-	public EventBuilder withConfigurationId(String configurationId) {
-		this.configurationId = configurationId;
-		return this;
-	}
-	
 	public EventBuilder withPayload(Object payload) {
 		this.payload = payload;
 		return this;
@@ -78,10 +72,6 @@ public class EventBuilder {
 			throw new IllegalArgumentException("Missing EventAction value");
 		}
 		
-		if (configurationId == null) {
-			throw new IllegalArgumentException("Missing ConfigurationId value");
-		}
-		
 		if (payload == null) {
 			throw new IllegalArgumentException("Missing Payload value");
 		}
@@ -92,7 +82,6 @@ public class EventBuilder {
 				accountId,
 				eventSource,
 				eventAction,
-				configurationId,
 				mapper.writeValueAsString(payload)
 		);
 	}

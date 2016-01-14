@@ -31,8 +31,8 @@ public class Event {
 	@DynamoDBAttribute(attributeName="Type")  
 	private String type;
 	
-	@DynamoDBAttribute(attributeName="UserId")  
-	private String userId;
+	@DynamoDBAttribute(attributeName="AccountId")  
+	private String accountId;
 	
 	@DynamoDBAttribute(attributeName="Payload")
 	private String payload;
@@ -52,21 +52,17 @@ public class Event {
 	@DynamoDBAttribute(attributeName="EventAction")
 	private String eventAction;
 	
-	@DynamoDBAttribute(attributeName="ConfigurationId")
-	private String configurationId;
-	
 	public Event() {
 		
 	}
 	
-	public Event(String organizationId, Class<?> type, String userId, String eventSource, EventAction eventAction, String configurationId, String payload) {
+	public Event(String organizationId, Class<?> type, String userId, String eventSource, EventAction eventAction, String payload) {
 		setOrganizationId(organizationId);
 		setEventStatus(EventStatus.NEW.name());
 		setType(type.getClass().getName());
-		setUserId(userId);
+		setAccountId(userId);
 		setEventSource(eventSource);
 		setEventAction(eventAction.name());
-		setConfigurationId(configurationId);
 		setPayload(payload);
 		setEventDate(Date.from(Instant.now()));
 	}
@@ -124,12 +120,12 @@ public class Event {
 	}
 
 	@DoNotEncrypt
-	public String getUserId() {
-		return userId;
+	public String getAccountId() {
+		return accountId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setAccountId(String userId) {
+		this.accountId = userId;
 	}
 
 	public String getPayload() {
@@ -183,14 +179,5 @@ public class Event {
 
 	public void setEventSource(String eventSource) {
 		this.eventSource = eventSource;
-	}
-	
-	public void setConfigurationId(String configurationId) {
-		this.configurationId = configurationId;
-	}
-	
-	@DoNotEncrypt
-	public String getConfigurationId() {
-		return configurationId;
 	}
 }

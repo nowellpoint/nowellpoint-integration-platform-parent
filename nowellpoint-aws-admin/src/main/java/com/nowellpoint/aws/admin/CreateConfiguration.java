@@ -1,15 +1,11 @@
 package com.nowellpoint.aws.admin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.joda.time.Instant;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.admin.Configuration;
-import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
@@ -20,72 +16,45 @@ public class CreateConfiguration {
 
 	public CreateConfiguration() {
 		
-		String accountId = "https://api.stormpath.com/v1/accounts/5hAh1uolQo18Nk4T8aVxci";
+		String accountId = System.getenv("DEFAULT_ACCOUNT_ID");
+		
+		String[] propertyKeys = new String[] {
+				"LOGGLY_API_KEY",
+				"MONGO_CLIENT_URI",
+				"SALESFORCE_CLIENT_ID",
+				"SALESFORCE_CLIENT_SECRET",
+				"SALESFORCE_TOKEN_URI",
+				"SALESFORCE_REFRESH_URI",
+				"SALESFORCE_REVOKE_URI",
+				"REDIRECT_URI",
+				"STORMPATH_API_KEY_ID",
+				"STORMPATH_API_KEY_SECRET",
+				"STORMPATH_API_ENDPOINT",
+				"STORMPATH_APPLICATION_ID",
+				"STORMPATH_DIRECTORY_ID",
+				"NOWELLPOINT_API_ENDPOINT",
+				"SENDGRID_API_KEY",
+				"AWS_X_API_KEY",
+				"REDIS_PASSWORD",
+				"DEFAULT_ACCOUNT_ID"
+		};
 		
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
-		Property logglyApiKey = new Property();
+		List<Property> properties = new ArrayList<Property>();
 		
-		logglyApiKey.setKey("loggly.api.key");
-		logglyApiKey.setStore(PropertyStore.LOGGLY.name());
-		logglyApiKey.setValue(System.getenv("LOGGLY_API_KEY"));
-		logglyApiKey.setLastModifiedBy(accountId);
+		Arrays.asList(propertyKeys).stream().forEach(key -> {
+			
+			Property property = new Property();
+			property.setStore(PropertyStore.PRODUCTION.name());
+			property.setKey(key.replaceAll("_", ".").toLowerCase());
+			property.setValue(System.getenv(key));
+			property.setLastModifiedBy(accountId);
+			
+			properties.add(property);
+		});
 		
-		Property mongoClientUri = new Property();
-		
-		mongoClientUri.setKey("mongo.client.uri");
-		mongoClientUri.setStore(PropertyStore.MONGODB.name());
-		mongoClientUri.setValue(System.getenv("MONGO_CLIENT_URI"));
-		mongoClientUri.setLastModifiedBy(accountId);
-		
-		mapper.batchSave(Arrays.asList(logglyApiKey, mongoClientUri));
-		
-		System.out.println(Properties.getProperty(PropertyStore.LOGGLY, Properties.LOGGLY_API_KEY));
-		
-//		Configuration configuration = new Configuration();
-//		//configuration.setId("7eb82a42-ad99-4077-a149-5894ec26f80d");
-//		configuration.setName("production");
-//		configuration.setCreatedDate(Instant.now().toDate());
-//		configuration.setDefaultAccountId(System.getenv("DEFAULT_ACCOUNT_ID"));
-//		configuration.setDefaultOrganizationId(System.getenv("DEFAULT_ORGANIZATION_ID"));
-//		configuration.setLastModifiedDate(Instant.now().toDate());
-//		configuration.setLogglyApiKey(System.getenv("LOGGLY_API_KEY"));
-//		configuration.setMongoClientUri(System.getenv("MONGO_CLIENT_URI"));
-//		configuration.setRedirectUri(System.getenv("REDIRECT_URI"));
-//		configuration.setRedisPassword(System.getenv("REDIS_PASSWORD"));
-//		configuration.setSalesforceClientId(System.getenv("SALESFORCE_CLIENT_ID"));
-//		configuration.setSalesforceClientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"));
-//		configuration.setSalesforcePassword(System.getenv("SALESFORCE_PASSWORD"));
-//		configuration.setSalesforceRefreshUri(System.getenv("SALESFORCE_REFRESH_URI"));
-//		configuration.setSalesforceRevokeUri(System.getenv("SALESFORCE_REVOKE_URI"));
-//		configuration.setSalesforceSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"));
-//		configuration.setSalesforceTokenUri(System.getenv("SALESFORCE_TOKEN_URI"));
-//		configuration.setSalesforceUsername(System.getenv("SALESFORCE_USERNAME"));
-//		configuration.setSendGridApiKey(System.getenv("SENDGRID_API_KEY"));
-//		configuration.setStormpathApiEndpoint(System.getenv("STORMPATH_API_ENDPOINT"));
-//		configuration.setStormpathApiKeyId(System.getenv("STORMPATH_API_KEY_ID"));
-//		configuration.setStormpathApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"));
-//		configuration.setStormpathApplicationId(System.getenv("STORMPATH_APPLICATION_ID"));
-//		configuration.setStormpathDirectoryId(System.getenv("STORMPATH_DIRECTORY_ID"));
-//		
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		try {
-//			logger.info(objectMapper.writeValueAsString(property));
-//		} catch (JsonProcessingException e) {
-//			e.printStackTrace();
-//		}
-//				
-//		/**
-//		 * 
-//		 */
-//		
-//		mapper.save(configuration);
-		
-//		/**
-//		 * 
-//		 */
-		
-//		logger.info("Configuration Id: " + configuration.getId());
+		mapper.batchSave(properties);
 	}
 
 	public static void main(String[] args) {

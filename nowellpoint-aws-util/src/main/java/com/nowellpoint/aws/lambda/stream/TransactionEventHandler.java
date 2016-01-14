@@ -76,7 +76,7 @@ public class TransactionEventHandler {
 		 * 
 		 */
 		
-		mongoClientURI = new MongoClientURI("mongodb://".concat(Properties.getProperty(PropertyStore.MONGODB, Properties.MONGO_CLIENT_URI)));
+		mongoClientURI = new MongoClientURI("mongodb://".concat(Properties.getProperty(PropertyStore.PRODUCTION, Properties.MONGO_CLIENT_URI)));
 		
 		/**
 		 * 

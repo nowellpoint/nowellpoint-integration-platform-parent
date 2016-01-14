@@ -19,17 +19,21 @@ public class DynamoDBMapperProvider {
 	private static AWSKMS kms = new AWSKMSClient();
 	private static DynamoDBMapper mapper;
 	
-	static {
-		String kmsKeyId = getKeyId();
-		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), kmsKeyId, null);			
-		mapper = new DynamoDBMapper(new AmazonDynamoDBClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
-	}
-	
 	private DynamoDBMapperProvider() {
 		
 	}
 	
 	public static DynamoDBMapper getDynamoDBMapper() {
+		return getDynamoDBMapper(getKeyId());
+	}
+	
+	public static DynamoDBMapper getDynamoDBMapper(String kmsKeyId) {
+		
+		if (mapper == null) {
+			EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), kmsKeyId, null);			
+			mapper = new DynamoDBMapper(new AmazonDynamoDBClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
+		}
+		
 		return mapper;
 	}
 	

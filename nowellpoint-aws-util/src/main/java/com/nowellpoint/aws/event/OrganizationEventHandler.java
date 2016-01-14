@@ -36,7 +36,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
 					.withId(organization.getId().toString())
-					.withUserId(event.getUserId())
+					.withUserId(event.getAccountId())
 					.withCollectionName(COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(organization));
 			
@@ -55,7 +55,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			organization.setId(event.getId());
 			
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
-					.withUserId(event.getUserId())
+					.withUserId(event.getAccountId())
 					.withCollectionName(COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(organization));
 				

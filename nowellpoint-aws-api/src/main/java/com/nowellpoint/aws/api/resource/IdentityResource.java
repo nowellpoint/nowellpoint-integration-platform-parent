@@ -18,9 +18,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 @Path("/identity")
@@ -29,14 +28,7 @@ public class IdentityResource {
 	@Context
 	private UriInfo uriInfo;
 	
-	private DynamoDBMapper mapper;
-	
-	private Configuration configuration;
-	
-	public IdentityResource() {
-		mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-		configuration = ConfigurationProvider.getConfiguration();
-	}
+	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -49,11 +41,10 @@ public class IdentityResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withAccountId(configuration.getDefaultAccountId())
-					.withConfigurationId(configuration.getId())
+			event = new EventBuilder().withAccountId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getRequestUri())
-					.withOrganizationId(configuration.getDefaultOrganizationId())
+					.withOrganizationId("organizationid")
 					.withPayload(resource)
 					.withType(Identity.class)
 					.build();

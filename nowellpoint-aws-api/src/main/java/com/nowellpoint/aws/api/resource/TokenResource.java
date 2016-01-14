@@ -15,14 +15,13 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.IdentityProviderClient;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
 import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 @Path("/oauth")
 public class TokenResource {
@@ -31,12 +30,6 @@ public class TokenResource {
 	private HttpServletRequest servletRequest;
 	
 	private static final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
-	
-	private Configuration configuration;
-	
-	public TokenResource() {
-		configuration = ConfigurationProvider.getConfiguration();
-	}
 	
 	@POST
 	@Path("/token")
@@ -65,10 +58,10 @@ public class TokenResource {
 		// execute the get token request for username and password
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withApiEndpoint(configuration.getStormpathApiEndpoint())
-				.withApiKeyId(configuration.getStormpathApiKeyId())
-				.withApiKeySecret(configuration.getStormpathApiKeySecret())
-				.withApplicationId(configuration.getStormpathApplicationId())
+		GetTokenRequest tokenRequest = new GetTokenRequest().withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
 				.withUsername(params[0])
 				.withPassword(params[1]);
 		
@@ -156,9 +149,9 @@ public class TokenResource {
 		// build the revoke token request
 		//
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(configuration.getStormpathApiEndpoint())
-				.withApiKeyId(configuration.getStormpathApiKeyId())
-				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withAccessToken(bearerToken);
 		
 		//

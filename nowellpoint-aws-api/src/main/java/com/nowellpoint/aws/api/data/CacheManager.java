@@ -10,7 +10,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.nowellpoint.aws.provider.ConfigurationProvider;
+import com.nowellpoint.aws.model.admin.Properties;
 
 import redis.clients.jedis.Jedis;
 
@@ -26,7 +26,7 @@ public class CacheManager implements ServletContextListener {
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {		
-		jedis.auth(ConfigurationProvider.getConfiguration().getRedisPassword());
+		jedis.auth(System.getProperty(Properties.REDIS_PASSWORD));
 		log.info("connecting to cache...is connected: " + jedis.isConnected());
 	}
 	

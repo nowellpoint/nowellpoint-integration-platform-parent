@@ -7,6 +7,9 @@ import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
+
 public class Main {
 	
 	public static void main(String[] args) throws Exception {
@@ -24,6 +27,15 @@ public class Main {
         Container container = new Container();
         container.start();
         
+        //
+        // set system properties from configuration
+        //
+        
+        Properties.getProperties(PropertyStore.PRODUCTION).entrySet().forEach(property -> {
+        	System.setProperty(property.getKey(), property.getValue());
+        });
+       
+        System.out.println("property: "+ System.getProperty(Properties.DEFAULT_ACCOUNT_ID));
         //
         // create the JAX-RS deployment archive
         // 

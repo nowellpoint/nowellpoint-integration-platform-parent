@@ -27,11 +27,10 @@ import com.nowellpoint.aws.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.tools.TokenParser;
 
@@ -49,14 +48,7 @@ public class AccountResource {
 	
 	private static final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 	
-	private DynamoDBMapper mapper;
-	
-	private Configuration configuration;
-	
-	public AccountResource() {
-		mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-		configuration = ConfigurationProvider.getConfiguration();
-	}
+	private static final DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -100,7 +92,7 @@ public class AccountResource {
 		// parse the bearer token
 		//
 		
-		Jws<Claims> jws = TokenParser.parseToken(configuration.getStormpathApiKeySecret(), bearerToken);
+		Jws<Claims> jws = TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
 		
 		//
 		// get the subject from the JWS
@@ -112,8 +104,8 @@ public class AccountResource {
 		// build the GetAccountRequest
 		//
 		
-		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(configuration.getStormpathApiKeyId())
-				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withHref(href);
 		
 		//
@@ -154,11 +146,10 @@ public class AccountResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withAccountId(configuration.getDefaultAccountId())
-					.withConfigurationId(configuration.getId())
+			event = new EventBuilder().withAccountId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
-					.withOrganizationId(configuration.getDefaultOrganizationId())
+					.withOrganizationId("organizationid")
 					.withPayload(resource)
 					.withType(Account.class)
 					.build();

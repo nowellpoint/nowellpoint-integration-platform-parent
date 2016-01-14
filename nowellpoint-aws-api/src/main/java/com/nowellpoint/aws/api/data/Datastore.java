@@ -16,7 +16,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
+import com.nowellpoint.aws.model.admin.Properties;
 
 @WebListener
 public class Datastore implements ServletContextListener {
@@ -29,7 +29,7 @@ public class Datastore implements ServletContextListener {
 		
 		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(new IsoCountryCodec(), new ProjectCodec()));
 		
-		mongoClientURI = new MongoClientURI("mongodb://".concat(ConfigurationProvider.getConfiguration().getMongoClientUri()), builder().codecRegistry(codecRegistry));
+		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
 		mongoClient = new MongoClient(mongoClientURI);		
 	}
 	
