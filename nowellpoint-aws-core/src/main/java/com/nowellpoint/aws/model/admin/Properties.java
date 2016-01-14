@@ -46,4 +46,10 @@ public class Properties {
 		List<Property> properties = mapper.query(Property.class, queryExpression);
 		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p.getValue()));
 	}
+	
+	public static void setSystemProperties(PropertyStore store) {
+		getProperties(PropertyStore.PRODUCTION).entrySet().forEach(property -> {
+        	System.setProperty(property.getKey(), property.getValue());
+        });
+	}
 }

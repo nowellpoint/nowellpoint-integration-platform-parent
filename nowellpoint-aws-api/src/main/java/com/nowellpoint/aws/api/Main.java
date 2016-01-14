@@ -21,21 +21,18 @@ public class Main {
 		System.setProperty("jboss.http.port", getPort());
 		
 		//
+        // set system properties from configuration
+        //
+        
+        Properties.setSystemProperties(PropertyStore.PRODUCTION);
+		
+		//
 		// build and start the container
 		//
 		
         Container container = new Container();
         container.start();
         
-        //
-        // set system properties from configuration
-        //
-        
-        Properties.getProperties(PropertyStore.PRODUCTION).entrySet().forEach(property -> {
-        	System.setProperty(property.getKey(), property.getValue());
-        });
-       
-        System.out.println("property: "+ System.getProperty(Properties.DEFAULT_ACCOUNT_ID));
         //
         // create the JAX-RS deployment archive
         // 
