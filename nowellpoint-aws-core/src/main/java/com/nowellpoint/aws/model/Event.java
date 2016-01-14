@@ -16,8 +16,8 @@ public class Event {
 	@DynamoDBHashKey(attributeName="Id")  
 	private String id;
 	
-	@DynamoDBRangeKey(attributeName="OrganizationId")  
-	private String organizationId;
+	@DynamoDBRangeKey(attributeName="AccountId")  
+	private String accountId;
 	
 	@DynamoDBAttribute(attributeName="EventStatus")  
 	private String eventStatus;
@@ -30,9 +30,6 @@ public class Event {
 	
 	@DynamoDBAttribute(attributeName="Type")  
 	private String type;
-	
-	@DynamoDBAttribute(attributeName="AccountId")  
-	private String accountId;
 	
 	@DynamoDBAttribute(attributeName="Payload")
 	private String payload;
@@ -56,11 +53,10 @@ public class Event {
 		
 	}
 	
-	public Event(String organizationId, Class<?> type, String userId, String eventSource, EventAction eventAction, String payload) {
-		setOrganizationId(organizationId);
+	public Event(Class<?> type, String accountId, String eventSource, EventAction eventAction, String payload) {
 		setEventStatus(EventStatus.NEW.name());
 		setType(type.getClass().getName());
-		setAccountId(userId);
+		setAccountId(accountId);
 		setEventSource(eventSource);
 		setEventAction(eventAction.name());
 		setPayload(payload);
@@ -109,14 +105,6 @@ public class Event {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
 	}
 
 	@DoNotEncrypt

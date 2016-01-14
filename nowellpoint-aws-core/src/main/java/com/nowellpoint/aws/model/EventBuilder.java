@@ -8,17 +8,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class EventBuilder {
 	
 	private static ObjectMapper mapper = new ObjectMapper();
-	private String organizationId;
 	private Class<?> type;
 	private String accountId;
 	private String eventSource;
 	private EventAction eventAction;
 	private Object payload;
-	
-	public EventBuilder withOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-		return this;
-	}
 	
 	public EventBuilder withType(Class<?> type) {
 		this.type = type;
@@ -52,10 +46,6 @@ public class EventBuilder {
 	
 	public Event build() throws JsonProcessingException {
 		
-		if (organizationId == null) {
-			throw new IllegalArgumentException("Missing Organization Id value");
-		}
-		
 		if (type == null) {
 			throw new IllegalArgumentException("Missing Type value");
 		}
@@ -77,7 +67,6 @@ public class EventBuilder {
 		}
 		
 		return new Event(
-				organizationId, 
 				type,
 				accountId,
 				eventSource,

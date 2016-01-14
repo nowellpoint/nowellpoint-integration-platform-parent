@@ -50,7 +50,6 @@ public class OrganizationResource {
 			event = new EventBuilder().withAccountId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
-					.withOrganizationId("organizationid")
 					.withPayload(resource)
 					.withType(Organization.class)
 					.build();

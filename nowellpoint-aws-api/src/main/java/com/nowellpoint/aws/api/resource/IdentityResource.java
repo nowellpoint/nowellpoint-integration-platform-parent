@@ -44,7 +44,6 @@ public class IdentityResource {
 			event = new EventBuilder().withAccountId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getRequestUri())
-					.withOrganizationId("organizationid")
 					.withPayload(resource)
 					.withType(Identity.class)
 					.build();

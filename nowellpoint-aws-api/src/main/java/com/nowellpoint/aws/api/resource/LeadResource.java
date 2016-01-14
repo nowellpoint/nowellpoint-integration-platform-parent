@@ -42,7 +42,6 @@ public class LeadResource {
 			event = new EventBuilder().withAccountId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 					.withEventAction(EventAction.ACTIVITY)
 					.withEventSource(uriInfo.getRequestUri())
-					.withOrganizationId("organizationid")
 					.withPayload(resource)
 					.withType(Lead.class)
 					.build();
