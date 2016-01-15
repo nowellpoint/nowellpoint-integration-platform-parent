@@ -3,10 +3,12 @@ package com.nowellpoint.aws.idp;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
@@ -21,13 +23,16 @@ import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
 import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
 import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
 import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class TestIdentityProviderClient {
 	
 	private static IdentityProviderClient client = new IdentityProviderClient();
-	private static Configuration configuration = ConfigurationProvider.getConfiguration();
+	
+	@Before
+	public static void before() {
+		Properties.setSystemProperties(PropertyStore.PRODUCTION);
+	}
 
 	@Test
 	public void testAuthenticateSuccess() {
@@ -105,9 +110,9 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(configuration.getStormpathApiEndpoint())
-				.withApiKeyId(configuration.getStormpathApiKeyId())
-				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withAccessToken(refreshTokenResponse.getToken().getAccessToken());
 		
 		RevokeTokenResponse revokeTokenResponse = client.revoke(revokeTokenRequest);

@@ -184,7 +184,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 		Event event = new EventBuilder().withAccountId(parentEvent.getAccountId())
 				.withEventAction(EventAction.UPDATE)
 				.withEventSource(parentEvent.getEventSource())
-				.withOrganizationId(parentEvent.getOrganizationId())
 				.withPayload(identity)
 				.withType(Identity.class)
 				.build();

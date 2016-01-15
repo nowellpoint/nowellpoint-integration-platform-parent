@@ -10,11 +10,11 @@ import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public class CreateConfiguration {
+public class CreateProperties {
 	
-	Logger logger = Logger.getLogger(CreateConfiguration.class.getName());
+	Logger logger = Logger.getLogger(CreateProperties.class.getName());
 
-	public CreateConfiguration() {
+	public CreateProperties() {
 		
 		String accountId = System.getenv("DEFAULT_ACCOUNT_ID");
 		
@@ -26,6 +26,9 @@ public class CreateConfiguration {
 				"SALESFORCE_TOKEN_URI",
 				"SALESFORCE_REFRESH_URI",
 				"SALESFORCE_REVOKE_URI",
+				"SALESFORCE_USERNAME",
+				"SALESFORCE_PASSWORD",
+				"SALESFORCE_SECURITY_TOKEN",
 				"REDIRECT_URI",
 				"STORMPATH_API_KEY_ID",
 				"STORMPATH_API_KEY_SECRET",
@@ -58,6 +61,6 @@ public class CreateConfiguration {
 	}
 
 	public static void main(String[] args) {
-		new CreateConfiguration();
+		new CreateProperties();
 	}
 }

@@ -13,7 +13,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.client.IdentityProviderClient;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
@@ -26,15 +27,12 @@ import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class TestDataClient {
 	
 	private static IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 	private static DataClient dataClient = new DataClient();
-	//private static UserContext userContext;
 	private static String accessToken;
-	private static Configuration configuration;
 	
 	private static ObjectNode json = JsonNodeFactory.instance.objectNode()
 			.put("sicCode", "300")
@@ -50,13 +48,13 @@ public class TestDataClient {
 		
 		System.out.println("Authenticating...");
 		
-		configuration = ConfigurationProvider.getConfiguration();
+		Properties.setSystemProperties(PropertyStore.PRODUCTION);
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withApiKeyId(configuration.getStormpathApiKeyId())
-				.withApiKeySecret(configuration.getStormpathApiKeySecret())
+		GetTokenRequest tokenRequest = new GetTokenRequest().withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withUsername(System.getenv("STORMPATH_USERNAME"))
-				.withApiEndpoint(configuration.getStormpathApiEndpoint())
-				.withApplicationId(configuration.getStormpathApplicationId())
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
 		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
@@ -67,9 +65,9 @@ public class TestDataClient {
 		System.out.println("Setting up session...");
 			
 		GetCustomDataRequest customDataRequest = new GetCustomDataRequest().withAccessToken(accessToken)
-				.withApiEndpoint(configuration.getStormpathApiEndpoint())
-				.withApiKeyId(configuration.getStormpathApiKeyId())
-				.withApiKeySecret(configuration.getStormpathApiKeySecret());
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET));
 			
 		GetCustomDataResponse customDataResponse = identityProviderClient.customData(customDataRequest);
 		
@@ -85,8 +83,8 @@ public class TestDataClient {
 		
 		long startTime = System.currentTimeMillis();
 		
-		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
-				.withUserId(configuration.getDefaultAccountId())
+		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+				.withUserId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 				.withCollectionName("parties")
 				.withDocument(json.toString());
 			
@@ -100,8 +98,8 @@ public class TestDataClient {
 						
 		json.put("partyType", "ORGANIZATION");
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
-				.withUserId(configuration.getDefaultAccountId())
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+				.withUserId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId())
 				.withDocument(json.toString());
@@ -119,7 +117,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -137,7 +135,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -154,7 +152,7 @@ public class TestDataClient {
 	@Test
 	public void testNotFound() {
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6");
 			
@@ -172,15 +170,15 @@ public class TestDataClient {
 			
 		System.out.println(getDocumentResponse.getErrorCode());
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
-				.withUserId(configuration.getDefaultAccountId())
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+				.withUserId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6")
 				.withDocument(json.toString());
 			
 		startTime = System.currentTimeMillis();
 		
-		System.out.println(configuration.getDefaultAccountId());
+		System.out.println(System.getProperty(Properties.DEFAULT_ACCOUNT_ID));
 			
 		UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
 		
@@ -196,7 +194,7 @@ public class TestDataClient {
 			
 		System.out.println(updateDocumentResponse.getErrorCode());
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
 				.withId("5656fc2ad53d130001a15bc6");
 			

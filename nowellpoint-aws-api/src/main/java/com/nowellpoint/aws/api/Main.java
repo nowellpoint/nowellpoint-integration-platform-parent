@@ -8,7 +8,6 @@ import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.admin.PropertyStore;
 
 public class Main {
 	
@@ -19,19 +18,19 @@ public class Main {
 		//
 		
 		System.setProperty("jboss.http.port", getPort());
-		
-		//
-        // set system properties from configuration
-        //
-        
-        Properties.setSystemProperties(PropertyStore.PRODUCTION);
-		
+
 		//
 		// build and start the container
 		//
 		
         Container container = new Container();
         container.start();
+        
+		//
+        // set system properties from configuration
+        //
+
+        Properties.setSystemProperties(System.getenv("PROPERTY_STORE"));
         
         //
         // create the JAX-RS deployment archive

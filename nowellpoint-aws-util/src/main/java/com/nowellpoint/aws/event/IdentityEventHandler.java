@@ -9,7 +9,8 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
@@ -17,7 +18,6 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.model.data.QueryDocumentRequest;
 import com.nowellpoint.aws.model.data.QueryDocumentResponse;
 import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class IdentityEventHandler implements AbstractEventHandler {
 	
@@ -30,7 +30,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting UserEventHandler");
 		
-		Configuration configuration = ConfigurationProvider.getConfiguration(event.getConfigurationId());
+		String mongoClientUri = Properties.getProperty(PropertyStore.PRODUCTION, Properties.MONGO_CLIENT_URI);
 		
 		final DataClient dataClient = new DataClient();
 		
@@ -39,7 +39,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		String query = objectMapper.createObjectNode().put("username", user.getUsername()).toString();
 		
 		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest().withCollectionName(COLLECTION_NAME)
-				.withMongoDBConnectUri(configuration.getMongoClientUri())
+				.withMongoDBConnectUri(mongoClientUri)
 				.withDocument(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
@@ -52,7 +52,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			
 			user.setId(event.getId());
 					
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
 					.withUserId(user.getId().toString())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
@@ -78,7 +78,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 				e.printStackTrace();
 			}
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
 					.withId(user.getId().toString())
 					.withUserId(user.getId().toString())
 					.withCollectionName(COLLECTION_NAME)

@@ -7,13 +7,13 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.Organization;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class OrganizationEventHandler implements AbstractEventHandler {
 	
@@ -26,7 +26,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting OrganizationEventHandler");
 		
-		Configuration configuration = ConfigurationProvider.getConfiguration(event.getConfigurationId());
+		String mongoClientUri = Properties.getProperty(PropertyStore.PRODUCTION, Properties.MONGO_CLIENT_URI);
 		
 		final DataClient dataClient = new DataClient();
 		
@@ -34,7 +34,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 	
 		if (organization.getId() != null) {
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
 					.withId(organization.getId().toString())
 					.withUserId(event.getAccountId())
 					.withCollectionName(COLLECTION)
@@ -54,7 +54,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			
 			organization.setId(event.getId());
 			
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(configuration.getMongoClientUri())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
 					.withUserId(event.getAccountId())
 					.withCollectionName(COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(organization));

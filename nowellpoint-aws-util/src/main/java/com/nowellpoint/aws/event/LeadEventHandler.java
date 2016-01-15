@@ -7,13 +7,13 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.admin.Configuration;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
 import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.Lead;
-import com.nowellpoint.aws.provider.ConfigurationProvider;
 
 public class LeadEventHandler implements AbstractEventHandler {
 
@@ -24,7 +24,9 @@ public class LeadEventHandler implements AbstractEventHandler {
 		
 		logger.log(new Date() + " starting LeadEventHandler");
 		
-		Configuration configuration = ConfigurationProvider.getConfiguration(event.getConfigurationId());
+		String username = Properties.getProperty(PropertyStore.PRODUCTION, Properties.SALESFORCE_USERNAME);
+		String password = Properties.getProperty(PropertyStore.PRODUCTION, Properties.SALESFORCE_PASSWORD);
+		String securityToken = Properties.getProperty(PropertyStore.PRODUCTION, Properties.SALESFORCE_SECURITY_TOKEN);
 		
 		//
 		// parse the event payload
@@ -42,9 +44,9 @@ public class LeadEventHandler implements AbstractEventHandler {
 		// build the GetTokenRequest
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(configuration.getSalesforceUsername())
-				.withPassword(configuration.getSalesforcePassword())
-				.withSecurityToken(configuration.getSalesforceSecurityToken());
+		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(username)
+				.withPassword(password)
+				.withSecurityToken(securityToken);
 		
 		//
 		// execute the GetTokenRequest
