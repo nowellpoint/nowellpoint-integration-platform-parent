@@ -15,6 +15,7 @@ public class EventBuilder {
 	private Object payload;
 	
 	public EventBuilder withType(Class<?> type) {
+		System.out.println("type: " + type.getName());
 		this.type = type;
 		return this;
 	}
@@ -67,7 +68,7 @@ public class EventBuilder {
 		}
 		
 		return new Event(
-				type,
+				type.getName(),
 				accountId,
 				eventSource,
 				eventAction,

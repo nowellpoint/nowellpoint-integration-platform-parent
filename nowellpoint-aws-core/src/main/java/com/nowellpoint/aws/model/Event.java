@@ -53,9 +53,9 @@ public class Event {
 		
 	}
 	
-	public Event(Class<?> type, String accountId, String eventSource, EventAction eventAction, String payload) {
+	public Event(String type, String accountId, String eventSource, EventAction eventAction, String payload) {
+		setType(type);
 		setEventStatus(EventStatus.NEW.name());
-		setType(type.getClass().getName());
 		setAccountId(accountId);
 		setEventSource(eventSource);
 		setEventAction(eventAction.name());
