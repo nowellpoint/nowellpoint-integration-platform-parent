@@ -45,12 +45,17 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		Account account = objectMapper.readValue(event.getPayload(), Account.class);
 		
+		logger.log("processing account: " + account.getFullName());
+		
 		//
 		//
 		//
 		
 		String apiKeyId = Properties.getProperty(PropertyStore.PRODUCTION, Properties.STORMPATH_API_KEY_ID);
 		String apiKeySecret = Properties.getProperty(PropertyStore.PRODUCTION, Properties.STORMPATH_API_KEY_SECRET);
+		
+		logger.log("api key"+  apiKeyId);
+		logger.log("api secret: " + apiKeySecret);
 		
 		//
 		// setup IdentityProviderClient
@@ -59,7 +64,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 		
 		//
-		// search for exsiting account with username
+		// search for existing account with username
 		//
 		
 		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(apiKeyId)
@@ -68,7 +73,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		SearchAccountResponse searchAccountResponse = identityProviderClient.search(searchAccountRequest);
 		
-		logger.log("found: " + searchAccountResponse.getSize());
+		logger.log("account found: " + (searchAccountResponse.getSize() > 0));
 		
 		String href;
 		
