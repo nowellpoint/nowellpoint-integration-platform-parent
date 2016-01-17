@@ -60,7 +60,7 @@ public class GetDocument implements RequestHandler<GetDocumentRequest, GetDocume
 			Optional<Document> document = Optional.ofNullable(mongoDatabase.getCollection(request.getCollectionName()).find(Filters.eq ( "_id", request.getId())).first());
 			if (document.isPresent()) {
 				response.setStatusCode(200);
-				response.setId(document.get().getObjectId("_id").toString());
+				response.setId(document.get().getString("_id").toString());
 				response.setDocument(document.get().toJson());
 			} else {
 				response.setStatusCode(404);

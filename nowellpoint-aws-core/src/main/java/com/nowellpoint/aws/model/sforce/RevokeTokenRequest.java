@@ -2,6 +2,8 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public class RevokeTokenRequest extends AbstractLambdaRequest implements Serializable {
@@ -16,6 +18,7 @@ public class RevokeTokenRequest extends AbstractLambdaRequest implements Seriali
 		
 	}
 	
+	@NotEmpty
 	public String getRevokeTokenUri() {
 		return revokeTokenUri;
 	}
@@ -24,6 +27,7 @@ public class RevokeTokenRequest extends AbstractLambdaRequest implements Seriali
 		this.revokeTokenUri = revokeTokenUri;
 	}
 
+	@NotEmpty
 	public String getAccessToken() {
 		return accessToken;
 	}

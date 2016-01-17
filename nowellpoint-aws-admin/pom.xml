@@ -63,7 +63,7 @@
 						<argument>-Djava.library.path=${project.build.directory}/lib</argument>
 						<argument>-classpath</argument>
 						<classpath />
-						<argument>com.nowellpoint.aws.admin.CreateConfiguration</argument>
+						<argument>com.nowellpoint.aws.admin.CreateProperties</argument>
 					</arguments>
 				</configuration>
 			</plugin>

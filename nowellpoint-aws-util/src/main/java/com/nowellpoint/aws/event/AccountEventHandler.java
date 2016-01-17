@@ -79,7 +79,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 				.withApiKeySecret(apiKeySecret)
 				.withUsername(account.getUsername());
 		
-		SearchAccountResponse searchAccountResponse = identityProviderClient.search(searchAccountRequest);
+		SearchAccountResponse searchAccountResponse = identityProviderClient.account(searchAccountRequest);
 		
 		logger.log("account found: " + (searchAccountResponse.getSize() > 0));
 		

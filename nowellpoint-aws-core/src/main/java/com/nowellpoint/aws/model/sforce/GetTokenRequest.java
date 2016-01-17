@@ -2,6 +2,8 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public class GetTokenRequest extends AbstractLambdaRequest implements Serializable {
@@ -28,6 +30,7 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 		
 	}
 
+	@NotEmpty
 	public String getTokenUri() {
 		return tokenUri;
 	}
@@ -36,6 +39,7 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 		this.tokenUri = tokenUri;
 	}
 
+	@NotEmpty
 	public String getClientId() {
 		return clientId;
 	}
@@ -44,6 +48,7 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 		this.clientId = clientId;
 	}
 
+	@NotEmpty
 	public String getClientSecret() {
 		return clientSecret;
 	}
@@ -52,6 +57,7 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 		this.clientSecret = clientSecret;
 	}
 
+	@NotEmpty
 	public String getUsername() {
 		return username;
 	}
@@ -60,6 +66,7 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 		this.username = username;
 	}
 
+	@NotEmpty
 	public String getPassword() {
 		return password;
 	}
@@ -68,6 +75,7 @@ public class GetTokenRequest extends AbstractLambdaRequest implements Serializab
 		this.password = password;
 	}
 	
+	@NotEmpty
 	public String getSecurityToken() {
 		return securityToken;
 	}

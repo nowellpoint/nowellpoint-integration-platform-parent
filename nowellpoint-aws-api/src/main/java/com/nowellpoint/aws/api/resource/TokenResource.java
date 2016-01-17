@@ -67,7 +67,7 @@ public class TokenResource {
 		
 		params = null;
 		
-		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
+		GetTokenResponse tokenResponse = identityProviderClient.token(tokenRequest);
 		
 		//
 		// build and return the response
@@ -110,7 +110,7 @@ public class TokenResource {
 		//
 		// execute the token verification request
 		
-		VerifyTokenResponse verifyTokenResponse = identityProviderClient.verify(verifyTokenRequest);
+		VerifyTokenResponse verifyTokenResponse = identityProviderClient.token(verifyTokenRequest);
 		
 		//
 		// build and return the response
@@ -158,7 +158,7 @@ public class TokenResource {
 		// execute the revoke token request
 		//
 		
-		RevokeTokenResponse revokeTokenResponse = identityProviderClient.revoke(revokeTokenRequest);
+		RevokeTokenResponse revokeTokenResponse = identityProviderClient.token(revokeTokenRequest);
 		
 		//
 		// remove the account from the cache

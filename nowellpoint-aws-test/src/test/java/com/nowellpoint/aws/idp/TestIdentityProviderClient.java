@@ -39,14 +39,42 @@ public class TestIdentityProviderClient {
 	
 	@Test(expected = ClientException.class)
 	public void testValidateCreateAccountRequest() {
-		CreateAccountRequest createAccountRequest = new CreateAccountRequest();
-		client.account(createAccountRequest);
+		client.account(new CreateAccountRequest());
+	}
+	
+	@Test(expected = ClientException.class)
+	public void testValidateGetAccountRequest() {
+		client.account(new GetAccountRequest());
 	}
 	
 	@Test(expected = ClientException.class) 
 	public void testValidateGetCustomDataRequest() {
-		GetCustomDataRequest getCustomDataRequest = new GetCustomDataRequest();
-		client.customData(getCustomDataRequest);
+		client.account(new GetCustomDataRequest());
+	}
+	
+	@Test(expected = ClientException.class) 
+	public void testValidateGetTokenRequest() {
+		client.token(new GetTokenRequest());
+	}
+	
+	@Test(expected = ClientException.class) 
+	public void testValidateRefreshTokenRequest() {
+		client.token(new RefreshTokenRequest());
+	}
+	
+	@Test(expected = ClientException.class) 
+	public void testValidateSearchAccountRequest() {
+		client.account(new SearchAccountRequest());
+	}
+	
+	@Test(expected = ClientException.class) 
+	public void testValidateUpdateAccountRequest() {
+		client.account(new UpdateAccountRequest());
+	}
+	
+	@Test(expected = ClientException.class) 
+	public void testValidateVerifyTokentRequest() {
+		client.token(new VerifyTokenRequest());
 	}
 
 	@Test
@@ -66,7 +94,7 @@ public class TestIdentityProviderClient {
 				.withUsername(System.getenv("STORMPATH_USERNAME"))
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
-		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
+		GetTokenResponse tokenResponse = client.token(tokenRequest);
 			
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -88,7 +116,7 @@ public class TestIdentityProviderClient {
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withAccessToken(tokenResponse.getToken().getAccessToken());
 		
-		VerifyTokenResponse verifyTokenResponse = client.verify(verifyTokenRequest);
+		VerifyTokenResponse verifyTokenResponse = client.token(verifyTokenRequest);
 			
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -130,7 +158,7 @@ public class TestIdentityProviderClient {
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withRefreshToken(tokenResponse.getToken().getRefreshToken());
 		
-		RefreshTokenResponse refreshTokenResponse = client.refresh(refreshTokenRequest);
+		RefreshTokenResponse refreshTokenResponse = client.token(refreshTokenRequest);
 			
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -146,7 +174,7 @@ public class TestIdentityProviderClient {
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withAccessToken(refreshTokenResponse.getToken().getAccessToken());
 		
-		RevokeTokenResponse revokeTokenResponse = client.revoke(revokeTokenRequest);
+		RevokeTokenResponse revokeTokenResponse = client.token(revokeTokenRequest);
 			
 		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));
 			
@@ -169,7 +197,7 @@ public class TestIdentityProviderClient {
 				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withUsername("john.herson@nowellpoint.com");
 		
-		SearchAccountResponse searchAccountResponse = client.search(searchAccountRequest);
+		SearchAccountResponse searchAccountResponse = client.account(searchAccountRequest);
 		
 		assertTrue(searchAccountResponse.getStatusCode() == 200);
 		assertTrue(searchAccountResponse.getSize() == 1);

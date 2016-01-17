@@ -26,11 +26,11 @@ public class IdentityProviderClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest getTokenRequest) throws ClientException {		
+	public GetTokenResponse token(GetTokenRequest getTokenRequest) throws ClientException {		
 		return invoke("IdentityProviderUsernamePasswordAuthentication", getTokenRequest, GetTokenResponse.class);
 	}
 	
-	public SearchAccountResponse search(SearchAccountRequest searchAccountRequest) throws ClientException {		
+	public SearchAccountResponse account(SearchAccountRequest searchAccountRequest) throws ClientException {		
 		return invoke("IdentityProviderSearchAccount", searchAccountRequest, SearchAccountResponse.class);
 	}
 	
@@ -46,19 +46,19 @@ public class IdentityProviderClient extends AbstractClient {
 		return invoke("IdentityProviderUpdateAccount", updateAccountRequest, UpdateAccountResponse.class);
 	}
 	
-	public GetCustomDataResponse customData(GetCustomDataRequest request) throws ClientException {
+	public GetCustomDataResponse account(GetCustomDataRequest request) throws ClientException {
 		return invoke("IdentityProviderGetCustomData", request, GetCustomDataResponse.class);
 	}
 	
-	public VerifyTokenResponse verify(VerifyTokenRequest request) throws ClientException {
+	public VerifyTokenResponse token(VerifyTokenRequest request) throws ClientException {
 		return invoke("VerifyTokenRequest", request, VerifyTokenResponse.class);
 	}
 	
-	public RefreshTokenResponse refresh(RefreshTokenRequest request) throws ClientException {
+	public RefreshTokenResponse token(RefreshTokenRequest request) throws ClientException {
 		return invoke("RefreshTokenRequest", request, RefreshTokenResponse.class);
 	}
 	
-	public RevokeTokenResponse revoke(RevokeTokenRequest request) throws ClientException {
+	public RevokeTokenResponse token(RevokeTokenRequest request) throws ClientException {
 		return invoke("IdentityProviderRevokeToken", request, RevokeTokenResponse.class);
 	}
 }

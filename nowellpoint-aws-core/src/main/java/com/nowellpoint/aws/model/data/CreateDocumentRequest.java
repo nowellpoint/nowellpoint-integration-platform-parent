@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.data;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class CreateDocumentRequest extends AbstractDocumentRequest {
 
 	private static final long serialVersionUID = 6391624974618347458L;
@@ -8,10 +10,12 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getCollectionName() {
 		return super.getCollectionName();
 	}
 	
+	@NotEmpty
 	public String getDocument() {
 		return super.getDocument();
 	}

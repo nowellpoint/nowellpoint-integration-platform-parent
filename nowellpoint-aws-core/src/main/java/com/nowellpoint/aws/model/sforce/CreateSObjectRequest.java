@@ -2,6 +2,8 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public class CreateSObjectRequest extends AbstractLambdaRequest implements Serializable {
@@ -24,6 +26,7 @@ public class CreateSObjectRequest extends AbstractLambdaRequest implements Seria
 		
 	}
 
+	@NotEmpty
 	public String getAccessToken() {
 		return accessToken;
 	}
@@ -32,6 +35,7 @@ public class CreateSObjectRequest extends AbstractLambdaRequest implements Seria
 		this.accessToken = accessToken;
 	}
 
+	@NotEmpty
 	public String getInstanceUrl() {
 		return instanceUrl;
 	}
@@ -40,6 +44,7 @@ public class CreateSObjectRequest extends AbstractLambdaRequest implements Seria
 		this.instanceUrl = instanceUrl;
 	}
 
+	@NotEmpty
 	public String getSobject() {
 		return decode(sobject);
 	}
@@ -48,6 +53,7 @@ public class CreateSObjectRequest extends AbstractLambdaRequest implements Seria
 		this.sobject = encode(sobject);
 	}
 
+	@NotEmpty
 	public String getType() {
 		return type;
 	}

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,6 +37,7 @@ public class TestDataClient {
 	private static String accessToken;
 	
 	private static ObjectNode json = JsonNodeFactory.instance.objectNode()
+			.put("_id", UUID.randomUUID().toString())
 			.put("sicCode", "300")
 			.put("hqBranchInd", "yes")
 			.put("partyName", "Red Hat")
@@ -50,30 +53,31 @@ public class TestDataClient {
 		
 		Properties.setSystemProperties(PropertyStore.PRODUCTION);
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
-				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
-				.withUsername(System.getenv("STORMPATH_USERNAME"))
+		GetTokenRequest tokenRequest = new GetTokenRequest()
 				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withUsername(System.getenv("STORMPATH_USERNAME"))
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
-		GetTokenResponse tokenResponse = identityProviderClient.authenticate(tokenRequest);
+		GetTokenResponse tokenResponse = identityProviderClient.token(tokenRequest);
 			
 		accessToken = tokenResponse.getToken().getAccessToken();
 			
 		System.out.println("Authenticating...success: " + tokenResponse.getToken().getStormpathAccessTokenHref());
-		System.out.println("Setting up session...");
+		/*System.out.println("Setting up session...");
 			
 		GetCustomDataRequest customDataRequest = new GetCustomDataRequest().withAccessToken(accessToken)
 				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET));
 			
-		GetCustomDataResponse customDataResponse = identityProviderClient.customData(customDataRequest);
+		GetCustomDataResponse customDataResponse = identityProviderClient.account(customDataRequest);
 		
 		assertTrue(customDataResponse.getStatusCode() == 200);
 			
-		System.out.println("Setting up session...complete");
+		System.out.println("Setting up session...complete");*/
 		
 		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
 	}
@@ -83,7 +87,8 @@ public class TestDataClient {
 		
 		long startTime = System.currentTimeMillis();
 		
-		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
+				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withUserId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 				.withCollectionName("parties")
 				.withDocument(json.toString());
@@ -98,7 +103,8 @@ public class TestDataClient {
 						
 		json.put("partyType", "ORGANIZATION");
 			
-		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
+				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withUserId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId())
@@ -117,7 +123,8 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		GetDocumentRequest getDocumentRequest = new GetDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+		GetDocumentRequest getDocumentRequest = new GetDocumentRequest()
+				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -135,7 +142,8 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 			
-		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest()
+				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			

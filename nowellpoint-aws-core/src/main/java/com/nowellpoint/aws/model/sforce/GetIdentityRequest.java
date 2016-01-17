@@ -2,6 +2,8 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public class GetIdentityRequest extends AbstractLambdaRequest implements Serializable {
@@ -20,6 +22,7 @@ public class GetIdentityRequest extends AbstractLambdaRequest implements Seriali
 		
 	}
 
+	@NotEmpty
 	public String getId() {
 		return id;
 	}
@@ -28,7 +31,7 @@ public class GetIdentityRequest extends AbstractLambdaRequest implements Seriali
 		this.id = id;
 	}
 	
-	
+	@NotEmpty
 	public String getAccessToken() {
 		return accessToken;
 	}

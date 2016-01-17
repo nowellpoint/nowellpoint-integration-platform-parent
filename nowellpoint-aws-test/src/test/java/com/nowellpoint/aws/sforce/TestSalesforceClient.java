@@ -4,9 +4,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.SalesforceClient;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
 import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
 import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
@@ -18,6 +21,11 @@ import com.nowellpoint.aws.model.sforce.RevokeTokenResponse;
 
 public class TestSalesforceClient {
 	
+	@BeforeClass
+	public static void before() {
+		Properties.setSystemProperties(PropertyStore.PRODUCTION);
+	}
+	
 	@Test
 	public void testAuthenticateSucess() {
 		
@@ -27,7 +35,11 @@ public class TestSalesforceClient {
 		
 		start = System.currentTimeMillis();
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("SALESFORCE_USERNAME"))
+		GetTokenRequest tokenRequest = new GetTokenRequest()
+				.withTokenUri(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
+				.withClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+				.withClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.withUsername(System.getenv("SALESFORCE_USERNAME"))
 				.withPassword(System.getenv("SALESFORCE_PASSWORD"))
 				.withSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"));
 		
@@ -48,7 +60,8 @@ public class TestSalesforceClient {
 		
 		start = System.currentTimeMillis();
 		
-		GetIdentityRequest identityRequest = new GetIdentityRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
+		GetIdentityRequest identityRequest = new GetIdentityRequest()
+				.withAccessToken(tokenResponse.getToken().getAccessToken())
 				.withId(tokenResponse.getToken().getId());
 		
 		GetIdentityResponse identityResponse = client.getIdentity(identityRequest);
@@ -64,7 +77,8 @@ public class TestSalesforceClient {
 		assertNotNull(identityResponse.getIdentity().getAddrStreet());
 		assertNotNull(identityResponse.getIdentity().getAddrZip());
 		
-		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest().withAccessToken(tokenResponse.getToken().getAccessToken())
+		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest()
+				.withAccessToken(tokenResponse.getToken().getAccessToken())
 				.withInstanceUrl(tokenResponse.getToken().getInstanceUrl())
 				.withSObject("{\"firstName\":\"John\",\"lastName\":\"Herson\",\"phone\":\"6787730798\",\"description\":\"lead\",\"company\":\"Nowellpoint\",\"email\":\"john.d.herson@gmail.com\",\"status\":\"New\"}")
 				.withType("Lead");
@@ -79,7 +93,9 @@ public class TestSalesforceClient {
 		
 		start = System.currentTimeMillis();
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withAccessToken(tokenResponse.getToken().getAccessToken());
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest()
+				.withRevokeTokenUri(System.getProperty(Properties.SALESFORCE_REVOKE_URI))
+				.withAccessToken(tokenResponse.getToken().getAccessToken());
 		
 		RevokeTokenResponse revokeTokenResponse = client.revoke(revokeTokenRequest);
 			
