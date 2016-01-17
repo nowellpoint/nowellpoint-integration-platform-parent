@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.idp;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public abstract class AbstractIdpRequest extends AbstractLambdaRequest {
@@ -30,6 +32,7 @@ public abstract class AbstractIdpRequest extends AbstractLambdaRequest {
 		this.apiEndpoint = apiEndpoint;
 	}
 
+	@NotEmpty
 	public String getApiKeyId() {
 		return apiKeyId;
 	}
@@ -38,6 +41,7 @@ public abstract class AbstractIdpRequest extends AbstractLambdaRequest {
 		this.apiKeyId = apiKeyId;
 	}
 
+	@NotEmpty
 	public String getApiKeySecret() {
 		return apiKeySecret;
 	}

@@ -3,14 +3,17 @@ package com.nowellpoint.aws.idp;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
+import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
 import com.nowellpoint.aws.model.idp.GetAccountResponse;
+import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
@@ -29,9 +32,21 @@ public class TestIdentityProviderClient {
 	
 	private static IdentityProviderClient client = new IdentityProviderClient();
 	
-	@Before
+	@BeforeClass
 	public static void before() {
 		Properties.setSystemProperties(PropertyStore.PRODUCTION);
+	}
+	
+	@Test(expected = ClientException.class)
+	public void testValidateCreateAccountRequest() {
+		CreateAccountRequest createAccountRequest = new CreateAccountRequest();
+		client.account(createAccountRequest);
+	}
+	
+	@Test(expected = ClientException.class) 
+	public void testValidateGetCustomDataRequest() {
+		GetCustomDataRequest getCustomDataRequest = new GetCustomDataRequest();
+		client.customData(getCustomDataRequest);
 	}
 
 	@Test
@@ -43,7 +58,12 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withUsername(System.getenv("STORMPATH_USERNAME"))
+		GetTokenRequest tokenRequest = new GetTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withUsername(System.getenv("STORMPATH_USERNAME"))
 				.withPassword(System.getenv("STORMPATH_PASSWORD"));
 		
 		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
@@ -61,7 +81,12 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest().withAccessToken(tokenResponse.getToken().getAccessToken());
+		VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withAccessToken(tokenResponse.getToken().getAccessToken());
 		
 		VerifyTokenResponse verifyTokenResponse = client.verify(verifyTokenRequest);
 			
@@ -76,7 +101,8 @@ public class TestIdentityProviderClient {
 		
 		String href = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), tokenResponse.getToken().getAccessToken()).getBody().getSubject();
 		
-		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
+		GetAccountRequest getAccountRequest = new GetAccountRequest()
+				.withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.withApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
 				.withHref(href);
 		
@@ -97,7 +123,12 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest().withRefreshToken(tokenResponse.getToken().getRefreshToken());
+		RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withRefreshToken(tokenResponse.getToken().getRefreshToken());
 		
 		RefreshTokenResponse refreshTokenResponse = client.refresh(refreshTokenRequest);
 			
@@ -131,9 +162,12 @@ public class TestIdentityProviderClient {
         
         start = System.currentTimeMillis();
 		
-		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
-				.withApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
-				.withUsername("john.d.herson@gmail.com");
+		SearchAccountRequest searchAccountRequest = new SearchAccountRequest()
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withUsername("john.herson@nowellpoint.com");
 		
 		SearchAccountResponse searchAccountResponse = client.search(searchAccountRequest);
 		
@@ -154,7 +188,8 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
+		UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest()
+				.withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.withApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
 				.withGivenName("New")
 				.withHref(searchAccountResponse.getItems().get(0).getHref());

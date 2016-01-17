@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.client;
 
-import com.nowellpoint.aws.model.LambdaResponseException;
+import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
 import com.nowellpoint.aws.model.idp.GetAccountRequest;
@@ -26,39 +26,39 @@ public class IdentityProviderClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest getTokenRequest) throws LambdaResponseException {		
+	public GetTokenResponse authenticate(GetTokenRequest getTokenRequest) throws ClientException {		
 		return invoke("IdentityProviderUsernamePasswordAuthentication", getTokenRequest, GetTokenResponse.class);
 	}
 	
-	public SearchAccountResponse search(SearchAccountRequest searchAccountRequest) throws LambdaResponseException {		
+	public SearchAccountResponse search(SearchAccountRequest searchAccountRequest) throws ClientException {		
 		return invoke("IdentityProviderSearchAccount", searchAccountRequest, SearchAccountResponse.class);
 	}
 	
-	public GetAccountResponse account(GetAccountRequest request) throws LambdaResponseException {		
+	public GetAccountResponse account(GetAccountRequest request) throws ClientException {		
 		return invoke("IdentityProviderGetAccount", request, GetAccountResponse.class);
 	}
 	
-	public CreateAccountResponse account(CreateAccountRequest request) throws LambdaResponseException {
-		return invoke("IdentityProviderCreateAccount", request, CreateAccountResponse.class);
+	public CreateAccountResponse account(CreateAccountRequest createAccountRequest) throws ClientException {
+		return invoke("IdentityProviderCreateAccount", createAccountRequest, CreateAccountResponse.class);
 	}
 	
-	public UpdateAccountResponse account(UpdateAccountRequest updateAccountRequest) throws LambdaResponseException {
+	public UpdateAccountResponse account(UpdateAccountRequest updateAccountRequest) throws ClientException {
 		return invoke("IdentityProviderUpdateAccount", updateAccountRequest, UpdateAccountResponse.class);
 	}
 	
-	public GetCustomDataResponse customData(GetCustomDataRequest request) throws LambdaResponseException {
+	public GetCustomDataResponse customData(GetCustomDataRequest request) throws ClientException {
 		return invoke("IdentityProviderGetCustomData", request, GetCustomDataResponse.class);
 	}
 	
-	public VerifyTokenResponse verify(VerifyTokenRequest request) throws LambdaResponseException {
+	public VerifyTokenResponse verify(VerifyTokenRequest request) throws ClientException {
 		return invoke("VerifyTokenRequest", request, VerifyTokenResponse.class);
 	}
 	
-	public RefreshTokenResponse refresh(RefreshTokenRequest request) throws LambdaResponseException {
+	public RefreshTokenResponse refresh(RefreshTokenRequest request) throws ClientException {
 		return invoke("RefreshTokenRequest", request, RefreshTokenResponse.class);
 	}
 	
-	public RevokeTokenResponse revoke(RevokeTokenRequest request) throws LambdaResponseException {
+	public RevokeTokenResponse revoke(RevokeTokenRequest request) throws ClientException {
 		return invoke("IdentityProviderRevokeToken", request, RevokeTokenResponse.class);
 	}
 }

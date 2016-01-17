@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.idp;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class GetTokenRequest extends AbstractIdpRequest {
 
 	/**
@@ -16,6 +18,7 @@ public class GetTokenRequest extends AbstractIdpRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getApiEndpoint() {
 		return super.getApiEndpoint();
 	}
@@ -24,6 +27,7 @@ public class GetTokenRequest extends AbstractIdpRequest {
 		super.setApiEndpoint(apiEndpoint);
 	}
 	
+	@NotEmpty
 	public String getUsername() {
 		return username;
 	}
@@ -32,6 +36,7 @@ public class GetTokenRequest extends AbstractIdpRequest {
 		this.username = username;
 	}
 
+	@NotEmpty
 	public String getPassword() {
 		return password;
 	}
@@ -40,6 +45,7 @@ public class GetTokenRequest extends AbstractIdpRequest {
 		this.password = password;
 	}
 	
+	@NotEmpty
 	public String getApplicationId() {
 		return super.getApplicationId();
 	}

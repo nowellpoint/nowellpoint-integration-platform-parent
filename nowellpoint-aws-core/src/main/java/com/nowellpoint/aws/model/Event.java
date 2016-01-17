@@ -49,11 +49,15 @@ public class Event {
 	@DynamoDBAttribute(attributeName="EventAction")
 	private String eventAction;
 	
+	@DynamoDBAttribute(attributeName="PropertyStore")
+	private String propertyStore;
+	
+	
 	public Event() {
 		
 	}
 	
-	public Event(String type, String accountId, String eventSource, EventAction eventAction, String payload) {
+	public Event(String type, String accountId, String eventSource, EventAction eventAction, String payload, String propertyStore) {
 		setType(type);
 		setEventStatus(EventStatus.NEW.name());
 		setAccountId(accountId);
@@ -61,6 +65,7 @@ public class Event {
 		setEventAction(eventAction.name());
 		setPayload(payload);
 		setEventDate(Date.from(Instant.now()));
+		setPropertyStore(propertyStore);
 	}
 
 	public String getId() {
@@ -167,5 +172,14 @@ public class Event {
 
 	public void setEventSource(String eventSource) {
 		this.eventSource = eventSource;
+	}
+
+	@DoNotEncrypt
+	public String getPropertyStore() {
+		return propertyStore;
+	}
+
+	public void setPropertyStore(String propertyStore) {
+		this.propertyStore = propertyStore;
 	}
 }

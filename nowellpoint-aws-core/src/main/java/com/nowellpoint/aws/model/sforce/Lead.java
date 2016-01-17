@@ -24,7 +24,7 @@ public class Lead implements Serializable {
 	private String city;
 	private String state;
 	private String postalCode;
-	private String country;
+	private String countryCode;
 	private String description;
 	private String status;
 	private String ownerId;
@@ -130,12 +130,12 @@ public class Lead implements Serializable {
 		this.postalCode = postalCode;
 	}
 
-	public String getCountry() {
-		return country;
+	public String getCountryCode() {
+		return countryCode;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	public String getDescription() {

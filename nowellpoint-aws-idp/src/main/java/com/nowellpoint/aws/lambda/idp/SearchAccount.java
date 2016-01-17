@@ -1,14 +1,13 @@
 package com.nowellpoint.aws.lambda.idp;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,16 +21,16 @@ import com.nowellpoint.aws.model.idp.SearchAccountResponse;
 
 public class SearchAccount implements RequestHandler<SearchAccountRequest, SearchAccountResponse> {
 	
-	private static final Logger log = Logger.getLogger(SearchAccount.class.getName());
+	private static LambdaLogger logger;
 
 	@Override
 	public SearchAccountResponse handleRequest(SearchAccountRequest request, Context context) {
 		
-		/**
-		 * 
-		 */
+		//
+		//
+		//
 		
-		long startTime = System.currentTimeMillis();
+		logger = context.getLogger();
 		
 		/**
 		 * 
@@ -65,7 +64,7 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.execute();
 				
-			log.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 			
 			/**
 			 * 
@@ -90,8 +89,6 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());
 		}
-		
-		log.info(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
 		
 		return response;
 	}

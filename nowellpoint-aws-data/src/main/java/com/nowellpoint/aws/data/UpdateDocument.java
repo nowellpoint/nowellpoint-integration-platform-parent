@@ -2,12 +2,11 @@ package com.nowellpoint.aws.data;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -19,10 +18,16 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
 public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, UpdateDocumentResponse> {
 	
-	private static final Logger log = Logger.getLogger(UpdateDocument.class.getName());
+	private static LambdaLogger logger;
 
 	@Override
 	public UpdateDocumentResponse handleRequest(UpdateDocumentRequest request, Context context) {
+		
+		/**
+		 * 
+		 */
+		
+		logger = context.getLogger();
 		
 		/**
 		 * 
@@ -52,7 +57,7 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		 * 
 		 */
 		
-		log.info("connection time: " + (System.currentTimeMillis() - startTime));
+		logger.log("Connection time: " + (System.currentTimeMillis() - startTime));
 		
 		/**
 		 * 
@@ -64,23 +69,21 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		 * 
 		 */
 		
-		log.info(request.getCollectionName());
+		logger.log(request.getCollectionName());
 		
 		try{
 			
 			Date now = Date.from(Instant.now());
 			
-			log.info(request.getDocument());
-			
 			Document document = Document.parse(request.getDocument());
-			document.put("_id", new ObjectId(request.getId()));
+			document.put("_id", request.getId());
 			document.put("lastModifiedDate", now);
 			document.put("lastModifiedById", request.getUserId());
 			
-			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getObjectId("_id")), new Document("$set", document));
+			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getString("_id")), new Document("$set", document));
 			if (result.getModifiedCount() == 1) {
 				response.setStatusCode(200);
-				response.setId(document.getObjectId("_id").toString());
+				response.setId(document.getString("_id").toString());
 			} else {
 				response.setStatusCode(404);
 				response.setErrorCode("not_found");
@@ -94,8 +97,6 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		} finally {
 			mongoClient.close();
 		}
-		
-		log.info("execution time: " + (System.currentTimeMillis() - startTime));
 
 		return response;
 	}

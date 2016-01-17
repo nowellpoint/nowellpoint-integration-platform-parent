@@ -1,9 +1,9 @@
 package com.nowellpoint.aws.lambda.sforce;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -15,10 +15,16 @@ import com.nowellpoint.aws.model.sforce.ErrorResponse;
 
 public class CreateSObject implements RequestHandler<CreateSObjectRequest, CreateSObjectResponse> {
 	
-	private static final Logger log = Logger.getLogger(CreateSObject.class.getName());
+	private static LambdaLogger logger;
 
 	@Override
 	public CreateSObjectResponse handleRequest(CreateSObjectRequest request, Context context) { 
+		
+		//
+		//
+		//
+		
+		logger = context.getLogger();
 		
 		/**
 		 * 
@@ -40,7 +46,7 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 					.body(request.getSobject())
 					.execute();
 			
-			log.info("Create SObject status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			logger.log("Create SObject status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 			
 			/**
 			 * 
@@ -60,14 +66,14 @@ public class CreateSObject implements RequestHandler<CreateSObjectRequest, Creat
 					response.setErrorMessage(node.get("errors").asText());
 				}
 			} else {
-				//[{"message":"POST requires content-length","errorCode":"UNKNOWN_EXCEPTION"}]
 				ErrorResponse[] errors = httpResponse.getEntity(ErrorResponse[].class);
 				response.setErrorCode(errors[0].getErrorCode());
 				response.setErrorMessage(errors[0].getMessage());
+				logger.log(response.getErrorCode() + ": " + response.getErrorMessage());
 			}
 			
 		} catch (IOException e) {
-			log.severe(e.getMessage());
+			logger.log(e.getMessage());
 			response.setStatusCode(400);
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());

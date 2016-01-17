@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.idp;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class RefreshTokenRequest extends AbstractIdpRequest {
 	
 	private static final long serialVersionUID = -3186641818593860386L;
@@ -10,6 +12,7 @@ public class RefreshTokenRequest extends AbstractIdpRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getRefreshToken() {
 		return refreshToken;
 	}
@@ -18,6 +21,7 @@ public class RefreshTokenRequest extends AbstractIdpRequest {
 		this.refreshToken = refreshToken;
 	}
 	
+	@NotEmpty
 	public String getApiEndpoint() {
 		return super.getApiEndpoint();
 	}
@@ -26,6 +30,7 @@ public class RefreshTokenRequest extends AbstractIdpRequest {
 		super.setApiEndpoint(apiEndpoint);
 	}
 	
+	@NotEmpty
 	public String getApplicationId() {
 		return super.getApplicationId();
 	}

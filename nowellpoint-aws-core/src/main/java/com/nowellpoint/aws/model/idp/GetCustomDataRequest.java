@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.idp;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class GetCustomDataRequest extends AbstractIdpRequest {
 
 	/**
@@ -14,12 +16,22 @@ public class GetCustomDataRequest extends AbstractIdpRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getAccessToken() {
 		return accessToken;
 	}
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
+	}
+	
+	@NotEmpty
+	public String getApiEndpoint() {
+		return super.getApiEndpoint();
+	}
+	
+	public void setApiEndpoint(String apiEndpoint) {
+		super.setApiEndpoint(apiEndpoint);
 	}
 
 	public GetCustomDataRequest withAccessToken(String accessToken) {

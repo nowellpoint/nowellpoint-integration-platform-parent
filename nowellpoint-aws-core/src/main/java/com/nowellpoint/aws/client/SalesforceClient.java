@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.client;
 
-import com.nowellpoint.aws.model.LambdaResponseException;
+import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
 import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
@@ -20,27 +20,27 @@ public class SalesforceClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws LambdaResponseException {
+	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws ClientException {
 		return invoke("SalesforceAuthenticationRequest", tokenRequest, GetTokenResponse.class);
 	}
 
-	public GetAuthorizationResponse authorize(GetAuthorizationRequest authorizationRequest) throws LambdaResponseException {
+	public GetAuthorizationResponse authorize(GetAuthorizationRequest authorizationRequest) throws ClientException {
 		return invoke("SalesforceTokenRequest", authorizationRequest, GetAuthorizationResponse.class);
 	}
 	
-	public GetIdentityResponse getIdentity(GetIdentityRequest identityRequest) throws LambdaResponseException {
+	public GetIdentityResponse getIdentity(GetIdentityRequest identityRequest) throws ClientException {
 		return invoke("SalesforceIdentityRequest", identityRequest, GetIdentityResponse.class);
 	}
 	
-	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws LambdaResponseException {
+	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws ClientException {
 		return invoke("SalesforceRevokeTokenRequest", revokeTokenRequest, RevokeTokenResponse.class);
 	}
 	
-	public CreateSObjectResponse createSObject(CreateSObjectRequest createSObjectRequest) throws LambdaResponseException {
+	public CreateSObjectResponse createSObject(CreateSObjectRequest createSObjectRequest) throws ClientException {
 		return invoke("SalesforceCreateSObject", createSObjectRequest, CreateSObjectResponse.class);
 	}
 	
-	public CreateLeadResponse createLead(CreateLeadRequest request) throws LambdaResponseException {
+	public CreateLeadResponse createLead(CreateLeadRequest request) throws ClientException {
 		return invoke("SalesforceCreateLead", request, CreateLeadResponse.class);
 	}
 }

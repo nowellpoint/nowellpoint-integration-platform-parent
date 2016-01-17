@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.idp;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class CreateAccountRequest extends AbstractIdpRequest {
 
 	/**
@@ -22,6 +24,7 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getApiEndpoint() {
 		return super.getApiEndpoint();
 	}
@@ -30,6 +33,7 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		super.setApiEndpoint(apiEndpoint);
 	}
 
+	@NotEmpty
 	public String getApplicationId() {
 		return super.getApplicationId();
 	}
@@ -38,6 +42,7 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		super.setApplicationId(applicationId);
 	}
 
+	@NotEmpty
 	public String getUsername() {
 		return username;
 	}
@@ -46,6 +51,7 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		this.username = username;
 	}
 
+	@NotEmpty
 	public String getEmail() {
 		return email;
 	}
@@ -70,6 +76,7 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		this.middleName = middleName;
 	}
 
+	@NotEmpty
 	public String getSurname() {
 		return surname;
 	}

@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.sforce;
+package com.nowellpoint.aws.event;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,6 +27,7 @@ import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClient;
 import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
@@ -40,7 +40,7 @@ import com.nowellpoint.aws.model.Transaction;
 
 public class OutboundMessageListener implements RequestStreamHandler {
 	
-	private static final Logger log = Logger.getLogger(OutboundMessageListener.class.getName());
+	private static LambdaLogger logger;
 	private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 	
@@ -55,11 +55,17 @@ public class OutboundMessageListener implements RequestStreamHandler {
 	@Override
 	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
 		
+		//
+		//
+		//
+		
+		logger = context.getLogger();
+		
 		/**
 		 * 
 		 */
 		
-		log.info("received OutboundMessage");
+		logger.log("received OutboundMessage");
 		
 		/**
 		 * 

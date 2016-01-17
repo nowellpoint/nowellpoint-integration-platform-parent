@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -58,7 +57,7 @@ public class GetDocument implements RequestHandler<GetDocumentRequest, GetDocume
 		 */
 		
 		try{
-			Optional<Document> document = Optional.ofNullable(mongoDatabase.getCollection(request.getCollectionName()).find(Filters.eq ( "_id", new ObjectId( request.getId() ))).first());
+			Optional<Document> document = Optional.ofNullable(mongoDatabase.getCollection(request.getCollectionName()).find(Filters.eq ( "_id", request.getId())).first());
 			if (document.isPresent()) {
 				response.setStatusCode(200);
 				response.setId(document.get().getObjectId("_id").toString());

@@ -34,14 +34,24 @@
 			<artifactId>aws-java-sdk-dynamodb</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-dynamodb-encryption-java</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-        </dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-dynamodb-encryption-java</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>2.2.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>

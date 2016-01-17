@@ -8,7 +8,6 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.Organization;
@@ -20,13 +19,21 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 	private static final String COLLECTION = "organizations";
 
 	@Override
-	public void process(Event event, Context context) throws IOException {
+	public void process(Event event, Context context) throws Exception {
 		
-		LambdaLogger logger = context.getLogger(); 
+		//
+		//
+		//
+		
+		LambdaLogger logger = context.getLogger();
+		
+		//
+		//
+		//
 		
 		logger.log(new Date() + " starting OrganizationEventHandler");
 		
-		String mongoClientUri = Properties.getProperty(PropertyStore.PRODUCTION, Properties.MONGO_CLIENT_URI);
+		String mongoClientUri = Properties.getProperty(event.getPropertyStore(), Properties.MONGO_CLIENT_URI);
 		
 		final DataClient dataClient = new DataClient();
 		

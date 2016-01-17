@@ -54,13 +54,13 @@ public class EventHandler {
 		//
 		
 		Predicate<DynamodbStreamRecord> insert = record -> "INSERT".equals(record.getEventName());
-		Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());
+		//Predicate<DynamodbStreamRecord> modify = record -> "MODIFY".equals(record.getEventName());
 		
 		//
 		//
 		//
 		
-		dynamodbEvent.getRecords().stream().filter(insert.or(modify)).forEach(record -> {
+		dynamodbEvent.getRecords().stream().filter(insert).forEach(record -> {
 			
 			//
 			// capture the start time
@@ -72,7 +72,7 @@ public class EventHandler {
 			// log the event
 			//
 			
-			logger.log(new Date() + " Event received...Event Id: ".concat(record.getEventID()).concat(" Event Name: " + record.getEventName()));	
+			logger.log("Event received...Event Id: ".concat(record.getEventID()).concat(" Event Name: " + record.getEventName()));	
 			
 			//
 			// get the keys from the event
@@ -91,8 +91,8 @@ public class EventHandler {
 			// process the event
 			//
 			
-			if (event.getEventStatus().equals(EventStatus.NEW.toString()) || event.getEventStatus().equals(EventStatus.REPROCESS.toString())) {
-				
+			if (event.getEventStatus().equals(EventStatus.NEW.toString())) {
+
 				try {
 					AbstractEventHandler handler = (AbstractEventHandler) (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
 					handler.process(event, context);

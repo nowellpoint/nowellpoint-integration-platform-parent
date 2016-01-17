@@ -150,6 +150,7 @@ public class AccountResource {
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPayload(resource)
+					.withPropertyStore(System.getenv("PROPERTY_STORE"))
 					.withType(Account.class)
 					.build();
 		} catch (JsonProcessingException e) {

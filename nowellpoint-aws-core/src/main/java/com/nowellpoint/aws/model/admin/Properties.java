@@ -49,8 +49,12 @@ public class Properties {
 	public static Map<String,String> getProperties(String store) {
 		Property property = new Property();
 		property.setStore(store);
-		DynamoDBQueryExpression<Property> queryExpression = new DynamoDBQueryExpression<Property>().withHashKeyValues(property);
+		
+		DynamoDBQueryExpression<Property> queryExpression = new DynamoDBQueryExpression<Property>()
+				.withHashKeyValues(property);
+		
 		List<Property> properties = mapper.query(Property.class, queryExpression);
+		
 		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p.getValue()));
 	}
 	

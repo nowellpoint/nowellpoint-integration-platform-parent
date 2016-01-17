@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.client;
 
-import com.nowellpoint.aws.model.LambdaResponseException;
+import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
@@ -18,23 +18,23 @@ public class DataClient extends AbstractClient {
 		
 	}
 
-	public CreateDocumentResponse create(CreateDocumentRequest createDocumentRequest) throws LambdaResponseException {
+	public CreateDocumentResponse create(CreateDocumentRequest createDocumentRequest) throws ClientException {
 		return invoke("CreateDocument", createDocumentRequest, CreateDocumentResponse.class);
 	}
 	
-	public UpdateDocumentResponse update(UpdateDocumentRequest updateDocumentRequest) throws LambdaResponseException {
+	public UpdateDocumentResponse update(UpdateDocumentRequest updateDocumentRequest) throws ClientException {
 		return invoke("UpdateDocument", updateDocumentRequest, UpdateDocumentResponse.class);
 	}
 	
-	public GetDocumentResponse get(GetDocumentRequest getDocumentRequest) throws LambdaResponseException {
+	public GetDocumentResponse get(GetDocumentRequest getDocumentRequest) throws ClientException {
 		return invoke("GetDocument", getDocumentRequest, GetDocumentResponse.class);
 	}
 	
-	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws LambdaResponseException {
+	public DeleteDocumentResponse delete(DeleteDocumentRequest deleteDocumentRequest) throws ClientException {
 		return invoke("DeleteDocument", deleteDocumentRequest, DeleteDocumentResponse.class);
 	}
 	
-	public QueryDocumentResponse query(QueryDocumentRequest queryDocumentRequest) throws LambdaResponseException {
+	public QueryDocumentResponse query(QueryDocumentRequest queryDocumentRequest) throws ClientException {
 		return invoke("QueryDocument", queryDocumentRequest, QueryDocumentResponse.class);
 	}
 }

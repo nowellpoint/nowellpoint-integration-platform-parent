@@ -1,9 +1,9 @@
 package com.nowellpoint.aws.lambda.idp;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -15,10 +15,16 @@ import com.nowellpoint.aws.model.idp.Token;
 
 public class ClientCredentialsAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
-	private static final Logger log = Logger.getLogger(ClientCredentialsAuthentication.class.getName());
+	private static LambdaLogger logger;
 	
 	@Override
 	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
+		
+		//
+		//
+		//
+		
+		logger = context.getLogger();
 		
 		/**
 		 * 
@@ -44,7 +50,7 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 					.parameter("password", request.getPassword())
 					.execute();
 			
-			log.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
+			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
 			
 			/**
 			 * 
@@ -56,13 +62,13 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 				response.setToken(httpResponse.getEntity(Token.class));
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
-				log.severe(errorResponse.toString());
+				logger.log(errorResponse.toString());
 				response.setErrorCode(errorResponse.get("message").asText());
 				response.setErrorMessage(errorResponse.get("developerMessage").asText());
 			}
 			
 		} catch (IOException e) {
-			log.severe(e.getMessage());
+			logger.log(e.getMessage());
 			response.setStatusCode(400);
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());

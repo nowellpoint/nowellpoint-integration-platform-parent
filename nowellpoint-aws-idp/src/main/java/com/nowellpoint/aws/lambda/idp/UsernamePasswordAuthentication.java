@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.lambda.idp;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -16,37 +15,22 @@ import com.nowellpoint.aws.model.idp.Token;
 
 public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
-	private static final Logger log = Logger.getLogger(UsernamePasswordAuthentication.class.getName());
+	private static LambdaLogger logger;
 
 	@Override
 	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
+
+		//
+		//
+		//
 		
-		LambdaLogger logger = context.getLogger();
-		logger.log(request.getApiEndpoint());
-		logger.log(request.getApplicationId());
-		logger.log(request.getApiKeyId());
-		logger.log(request.getApiKeySecret());
-		logger.log(request.getPassword());
-		logger.log(request.getUsername());
-			
+		logger = context.getLogger();
+
 		/**
 		 * 
 		 */
 		
 		GetTokenResponse response = new GetTokenResponse();
-		
-		/**
-		 * 
-		 */
-		
-		try {
-			validate(request);
-		} catch (IllegalArgumentException e) {
-			response.setStatusCode(400);
-			response.setErrorCode("invalid_request");
-			response.setErrorMessage(e.getMessage());
-			return response;
-		}
 		
 		/**
 		 * 
@@ -66,7 +50,7 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 					.parameter("password", request.getPassword())
 					.execute();
 			
-			log.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
+			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
 			
 			/**
 			 * 
@@ -83,31 +67,12 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 			}
 			
 		} catch (IOException e) {
-			log.severe(e.getMessage());
+			logger.log(e.getMessage());
 			response.setStatusCode(400);
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());
 		}
 		
 		return response;
-	}
-	
-	private void validate(GetTokenRequest request) {
-
-		StringBuilder valid = new StringBuilder();
-		
-		if (request.getApiEndpoint() == null || request.getApiEndpoint().trim().isEmpty()) {
-			valid.append("Missing ApiEndpoint for GetTokenRequest");
-			valid.append(System.getProperty("\n"));
-		}
-		
-		if (request.getApiKeyId() == null || request.getApiKeyId().trim().isEmpty()) {
-			valid.append("Missing ApiKeyId for GetTokenRequest");
-			valid.append(System.getProperty("\n"));
-		}
-		
-		if (valid.length() > 0) {
-			throw new IllegalArgumentException(valid.toString());
-		}
 	}
 }

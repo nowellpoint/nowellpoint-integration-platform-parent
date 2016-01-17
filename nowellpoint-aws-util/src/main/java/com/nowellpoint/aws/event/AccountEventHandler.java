@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.event;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -11,7 +12,6 @@ import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.model.idp.Account;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
@@ -23,15 +23,17 @@ import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class AccountEventHandler implements AbstractEventHandler {
+	
+	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Context context) throws IOException {
+	public void process(Event event, Context context) throws Exception {
 		
 		//
 		//
 		//
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
 		//
 		//
@@ -45,17 +47,20 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		Account account = objectMapper.readValue(event.getPayload(), Account.class);
 		
-		logger.log("processing account: " + account.getFullName());
+		//
+		//
+		//
+		
+		Map<String, String> properties = Properties.getProperties(event.getPropertyStore());
 		
 		//
 		//
 		//
 		
-		String apiKeyId = Properties.getProperty(PropertyStore.PRODUCTION, Properties.STORMPATH_API_KEY_ID);
-		String apiKeySecret = Properties.getProperty(PropertyStore.PRODUCTION, Properties.STORMPATH_API_KEY_SECRET);
-		
-		logger.log("api key"+  apiKeyId);
-		logger.log("api secret: " + apiKeySecret);
+		String applicationId = properties.get(Properties.STORMPATH_APPLICATION_ID);
+		String apiEndpoint = properties.get(Properties.STORMPATH_API_ENDPOINT);
+		String apiKeyId = properties.get(Properties.STORMPATH_API_KEY_ID);
+		String apiKeySecret = properties.get(Properties.STORMPATH_API_KEY_SECRET);
 		
 		//
 		// setup IdentityProviderClient
@@ -67,7 +72,10 @@ public class AccountEventHandler implements AbstractEventHandler {
 		// search for existing account with username
 		//
 		
-		SearchAccountRequest searchAccountRequest = new SearchAccountRequest().withApiKeyId(apiKeyId)
+		SearchAccountRequest searchAccountRequest = new SearchAccountRequest()
+				.withApplicationId(applicationId)
+				.withApiEndpoint(apiEndpoint)
+				.withApiKeyId(apiKeyId)
 				.withApiKeySecret(apiKeySecret)
 				.withUsername(account.getUsername());
 		
@@ -83,13 +91,16 @@ public class AccountEventHandler implements AbstractEventHandler {
 			// build the CreateAccountRequest
 			//
 			
-			CreateAccountRequest createAccountRequest = new CreateAccountRequest().withEmail(account.getEmail())
+			CreateAccountRequest createAccountRequest = new CreateAccountRequest()
+					.withApplicationId(applicationId)
+					.withApiEndpoint(apiEndpoint)
+					.withApiKeyId(apiKeyId)
+					.withApiKeySecret(apiKeySecret)
+					.withEmail(account.getEmail())
 					.withGivenName(account.getGivenName())
 					.withMiddleName(account.getMiddleName())
 					.withSurname(account.getSurname())
-					.withUsername(account.getUsername())
-					.withApiKeyId(apiKeyId)
-					.withApiKeySecret(apiKeySecret);
+					.withUsername(account.getUsername());
 			
 			//
 			// execute the CreateAcountRequest
@@ -97,12 +108,15 @@ public class AccountEventHandler implements AbstractEventHandler {
 			
 			CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
 			
+			logger.log("status: " + createAccountResponse.getStatusCode());
+			logger.log(createAccountResponse.getErrorMessage());
+			
 			//
 			// throw exception for any issue with the identity provider
 			//
 			
 			if (createAccountResponse.getStatusCode() != 201) {
-				throw new IOException(createAccountResponse.getErrorMessage());
+				throw new Exception(createAccountResponse.getErrorMessage());
 			}
 			
 			//
@@ -117,7 +131,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 			// build the UpdateAccountRequest
 			//
 			
-			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest().withApiKeyId(apiKeyId)
+			UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest()
+					.withApiKeyId(apiKeyId)
 					.withApiKeySecret(apiKeySecret)
 					.withGivenName(account.getGivenName())
 					.withEmail(account.getEmail())
@@ -186,9 +201,11 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		Event event = new EventBuilder().withAccountId(parentEvent.getAccountId())
+		Event event = new EventBuilder()
+				.withAccountId(parentEvent.getAccountId())
 				.withEventAction(EventAction.UPDATE)
 				.withEventSource(parentEvent.getEventSource())
+				.withPropertyStore(parentEvent.getPropertyStore())
 				.withPayload(identity)
 				.withType(Identity.class)
 				.build();

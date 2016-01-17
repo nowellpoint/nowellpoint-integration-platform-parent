@@ -5,15 +5,11 @@ import java.time.Instant;
 import java.util.Date;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-//import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-//import com.mongodb.MongoException;
-//import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.http.HttpRequest;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -31,12 +27,6 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 */
 		
 		LambdaLogger logger = context.getLogger();
-		
-		/**
-		 * 
-		 */
-		
-		long startTime = System.currentTimeMillis();
 
 		/**
 		 * 
@@ -48,25 +38,13 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		 * 
 		 */
 		
-		//MongoClient mongoClient = new MongoClient(mongoClientURI);
-				
-		/**
-		 * 
-		 */ 
-
-		//MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
-		
-		/**
-		 * 
-		 */
-		
 		CreateDocumentResponse response = new CreateDocumentResponse();
 
 		/**
 		 * 
 		 */
 		
-		logger.log(Instant.now() + " " + context.getAwsRequestId() + " creating document in: " + request.getCollectionName());
+		logger.log("Creating document in: " + request.getCollectionName());
 		
 		/**
 		 * 
@@ -80,10 +58,6 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		document.put("createdById", request.getUserId());
 		document.put("lastModifiedById", request.getUserId());		
 		
-		if (document.getString("_id") != null) {
-			document.put("_id", new ObjectId(document.getString("_id")));
-		}
-		
 		HttpRequest httpRequest = RestResource.post("https://api.mongolab.com/api/1/databases")
 				.path(mongoClientURI.getDatabase())
 				.path("collections")
@@ -92,10 +66,13 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 				.body(document.toJson());
 		
 		try {
-			HttpResponse httpResponse = httpRequest.execute();			
+			HttpResponse httpResponse = httpRequest.execute();
+			
+			logger.log("status code: " + httpResponse.getStatusCode());
+			
 			if (httpResponse.getStatusCode() == 200) {
 				response.setStatusCode(201);
-				response.setId(Document.parse(httpResponse.getEntity()).getObjectId("_id").toString());
+				response.setId(Document.parse(httpResponse.getEntity()).getString("_id"));
 			} else {
 				response.setStatusCode(httpResponse.getStatusCode());
 				response.setErrorMessage(httpResponse.getEntity());				
@@ -106,23 +83,6 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 			response.setErrorMessage(e.getMessage());
 			e.printStackTrace();
 		}
-		
-
-		
-//		try{
-//			mongoDatabase.getCollection(request.getCollectionName()).insertOne(document);
-//			response.setStatusCode(201);
-//			response.setId(document.getObjectId("_id").toString());
-//		} catch (MongoException e) {
-//			response.setStatusCode(500);
-//			response.setErrorCode("unexpected_exception");
-//			response.setErrorMessage(e.getMessage());
-//			e.printStackTrace();
-//		} finally {
-//			mongoClient.close();
-//		}
-		
-		logger.log(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
 		
 		/**
 		 * 

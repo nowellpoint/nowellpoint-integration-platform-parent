@@ -2,8 +2,6 @@ package com.nowellpoint.aws.data;
 
 import java.util.logging.Logger;
 
-import org.bson.types.ObjectId;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.mongodb.MongoClient;
@@ -57,7 +55,7 @@ public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, Del
 		 */
 		
 		try{
-			DeleteResult result = mongoDatabase.getCollection(request.getCollectionName()).deleteOne( Filters.eq ( "_id", new ObjectId( request.getId() ) ) );
+			DeleteResult result = mongoDatabase.getCollection(request.getCollectionName()).deleteOne( Filters.eq ( "_id", request.getId() ) );
 			if (result.getDeletedCount() == 1) {
 				response.setStatusCode(200);
 			} else {

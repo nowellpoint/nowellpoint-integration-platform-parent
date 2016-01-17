@@ -13,6 +13,7 @@ public class EventBuilder {
 	private String eventSource;
 	private EventAction eventAction;
 	private Object payload;
+	private String propertyStore;
 	
 	public EventBuilder withType(Class<?> type) {
 		System.out.println("type: " + type.getName());
@@ -45,6 +46,11 @@ public class EventBuilder {
 		return this;
 	}
 	
+	public EventBuilder withPropertyStore(String propertyStore) {
+		this.propertyStore = propertyStore;
+		return this;
+	}
+	
 	public Event build() throws JsonProcessingException {
 		
 		if (type == null) {
@@ -67,12 +73,17 @@ public class EventBuilder {
 			throw new IllegalArgumentException("Missing Payload value");
 		}
 		
+		if (propertyStore == null) {
+			throw new IllegalArgumentException("Missing Property Store value");
+		}
+		
 		return new Event(
 				type.getName(),
 				accountId,
 				eventSource,
 				eventAction,
-				mapper.writeValueAsString(payload)
+				mapper.writeValueAsString(payload),
+				propertyStore
 		);
 	}
 }

@@ -2,6 +2,12 @@ package com.nowellpoint.aws.model.data;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_EMPTY)
 public class Address implements Serializable {
 
 	/**
@@ -38,7 +44,7 @@ public class Address implements Serializable {
 	 * 
 	 */
 
-	private String country;
+	private String countryCode;
 
 	/**
 	 * 
@@ -88,12 +94,12 @@ public class Address implements Serializable {
 		this.postalCode = postalCode;
 	}
 
-	public String getCountry() {
-		return country;
+	public String getCountryCode() {
+		return countryCode;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	public String getLatitude() {

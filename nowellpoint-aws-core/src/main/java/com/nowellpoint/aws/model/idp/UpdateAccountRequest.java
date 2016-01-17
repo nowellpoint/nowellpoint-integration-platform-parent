@@ -23,7 +23,7 @@ public class UpdateAccountRequest extends AbstractIdpRequest {
 	public UpdateAccountRequest() {
 		
 	}
-
+	
 	public String getUsername() {
 		return username;
 	}
@@ -70,11 +70,6 @@ public class UpdateAccountRequest extends AbstractIdpRequest {
 
 	public void setHref(String href) {
 		this.href = href;
-	}
-	
-	public UpdateAccountRequest withApiEndpoint(String apiEndpoint) {
-		setApiEndpoint(apiEndpoint);
-		return this;
 	}
 
 	public UpdateAccountRequest withApiKeyId(String apiKeyId) {

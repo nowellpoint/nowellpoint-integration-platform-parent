@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
@@ -24,13 +23,13 @@ public class IdentityEventHandler implements AbstractEventHandler {
 	private static final String COLLECTION_NAME = "identities";
 
 	@Override
-	public void process(Event event, Context context) throws IOException {
+	public void process(Event event, Context context) throws Exception {
 		
 		LambdaLogger logger = context.getLogger();
 		
-		logger.log(new Date() + " starting UserEventHandler");
+		logger.log(new Date() + " starting IdentityEventHandler");
 		
-		String mongoClientUri = Properties.getProperty(PropertyStore.PRODUCTION, Properties.MONGO_CLIENT_URI);
+		String mongoClientUri = Properties.getProperty(event.getPropertyStore(), Properties.MONGO_CLIENT_URI);
 		
 		final DataClient dataClient = new DataClient();
 		
@@ -48,7 +47,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		if (queryDocumentResponse.getCount() == 0) {
 			
-			logger.log(new Date() + " creating user...");
+			logger.log("Creating user...");
 			
 			user.setId(event.getId());
 					
@@ -62,7 +61,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			logger.log(new Date() + " Status Code: " + createDocumentResponse.getStatusCode());
 			
 			if (createDocumentResponse.getStatusCode() == 201) {
-				logger.log(new Date() + " Document Id: " + createDocumentResponse.getId());
+				logger.log("Document Id: " + createDocumentResponse.getId());
 			} else {
 				throw new IOException(createDocumentResponse.getErrorMessage());
 			}
@@ -79,8 +78,8 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			}
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withId(user.getId().toString())
-					.withUserId(user.getId().toString())
+					.withId(user.getId())
+					.withUserId(user.getId())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
 			
@@ -89,7 +88,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			logger.log(new Date() + " Status Code: " + updateDocumentResponse.getStatusCode());
 			
 			if (updateDocumentResponse.getStatusCode() == 200) {
-				logger.log(new Date() + " Document Id: " + updateDocumentResponse.getId());
+				logger.log("Document Id: " + updateDocumentResponse.getId());
 			} else {
 				throw new IOException(updateDocumentResponse.getErrorMessage());
 			}

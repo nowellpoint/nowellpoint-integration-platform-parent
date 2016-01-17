@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.idp;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class GetAccountRequest extends AbstractIdpRequest {
 
 	/**
@@ -14,6 +16,7 @@ public class GetAccountRequest extends AbstractIdpRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getHref() {
 		return href;
 	}

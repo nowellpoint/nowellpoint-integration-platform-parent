@@ -30,7 +30,6 @@ public class DynamoDBMapperProvider {
 	public static DynamoDBMapper getDynamoDBMapper(String kmsKeyId) {
 		
 		if (mapper == null) {
-			System.out.println("loading mapper");
 			EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), kmsKeyId, null);			
 			mapper = new DynamoDBMapper(new AmazonDynamoDBClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
 		}
