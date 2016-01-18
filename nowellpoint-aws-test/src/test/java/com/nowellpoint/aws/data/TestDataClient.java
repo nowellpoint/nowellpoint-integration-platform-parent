@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.client.DataClient;
-import com.nowellpoint.aws.client.IdentityProviderClient;
+import com.nowellpoint.aws.idp.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;

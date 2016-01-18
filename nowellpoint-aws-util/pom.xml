@@ -63,6 +63,11 @@
 			<artifactId>nowellpoint-aws-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nowellpoint-aws-idp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	</dependencies>
 
 	<profiles>

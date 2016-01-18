@@ -1,5 +1,6 @@
-package com.nowellpoint.aws.client;
+package com.nowellpoint.aws.idp.client;
 
+import com.nowellpoint.aws.client.AbstractClient;
 import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.idp.CreateAccountRequest;
 import com.nowellpoint.aws.model.idp.CreateAccountResponse;
