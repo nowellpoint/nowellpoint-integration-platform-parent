@@ -11,9 +11,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.Account;
-import com.nowellpoint.aws.model.idp.CreateAccountRequest;
-import com.nowellpoint.aws.model.idp.CreateAccountResponse;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.CreateAccountRequest;
+import com.nowellpoint.aws.idp.model.CreateAccountResponse;
 
 public class CreateAccount implements RequestHandler<CreateAccountRequest, CreateAccountResponse> {
 	

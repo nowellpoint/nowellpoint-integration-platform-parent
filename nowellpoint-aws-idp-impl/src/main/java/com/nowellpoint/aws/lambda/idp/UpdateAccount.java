@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.Account;
-import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
-import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.UpdateAccountRequest;
+import com.nowellpoint.aws.idp.model.UpdateAccountResponse;
 
 public class UpdateAccount implements RequestHandler<UpdateAccountRequest, UpdateAccountResponse> {
 	

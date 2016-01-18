@@ -20,7 +20,7 @@ import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventStatus;
 import com.nowellpoint.aws.model.data.Organization;
 import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.model.idp.Account;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.sforce.Lead;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 

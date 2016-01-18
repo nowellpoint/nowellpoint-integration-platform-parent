@@ -5,7 +5,7 @@
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" sourcepath="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/el/javax.el-api/2.2.4/javax.el-api-2.2.4.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.47/aws-java-sdk-lambda-1.10.47.jar"/>
@@ -14,10 +14,10 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.3.6/httpclient-4.3.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.3.3/httpcore-4.3.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.6/commons-codec-1.6.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.6.2/jackson-databind-2.6.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.6.0/jackson-annotations-2.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.6.2/jackson-core-2.6.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.7.0/jackson-databind-2.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.7.0/jackson-annotations-2.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.7.0/jackson-core-2.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-lambda-java-core/1.1.0/aws-lambda-java-core-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-lambda-java-events/1.1.0/aws-lambda-java-events-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.10.47/aws-java-sdk-s3-1.10.47.jar"/>

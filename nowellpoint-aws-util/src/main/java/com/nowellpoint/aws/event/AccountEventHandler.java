@@ -13,13 +13,13 @@ import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.model.idp.Account;
-import com.nowellpoint.aws.model.idp.CreateAccountRequest;
-import com.nowellpoint.aws.model.idp.CreateAccountResponse;
-import com.nowellpoint.aws.model.idp.SearchAccountRequest;
-import com.nowellpoint.aws.model.idp.SearchAccountResponse;
-import com.nowellpoint.aws.model.idp.UpdateAccountRequest;
-import com.nowellpoint.aws.model.idp.UpdateAccountResponse;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.CreateAccountRequest;
+import com.nowellpoint.aws.idp.model.CreateAccountResponse;
+import com.nowellpoint.aws.idp.model.SearchAccountRequest;
+import com.nowellpoint.aws.idp.model.SearchAccountResponse;
+import com.nowellpoint.aws.idp.model.UpdateAccountRequest;
+import com.nowellpoint.aws.idp.model.UpdateAccountResponse;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class AccountEventHandler implements AbstractEventHandler {

@@ -8,9 +8,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.AuthToken;
-import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
-import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
+import com.nowellpoint.aws.idp.model.AuthToken;
+import com.nowellpoint.aws.idp.model.VerifyTokenRequest;
+import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
 
 public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTokenResponse> {
 	

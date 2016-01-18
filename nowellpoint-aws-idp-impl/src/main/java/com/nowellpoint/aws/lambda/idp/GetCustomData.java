@@ -8,9 +8,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.CustomData;
-import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
-import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
+import com.nowellpoint.aws.idp.model.CustomData;
+import com.nowellpoint.aws.idp.model.GetCustomDataRequest;
+import com.nowellpoint.aws.idp.model.GetCustomDataResponse;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

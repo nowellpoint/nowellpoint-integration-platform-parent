@@ -25,11 +25,11 @@ import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
-import com.nowellpoint.aws.model.idp.GetTokenRequest;
-import com.nowellpoint.aws.model.idp.GetTokenResponse;
-import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
-import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
-import com.nowellpoint.aws.model.idp.Token;
+import com.nowellpoint.aws.idp.model.GetTokenRequest;
+import com.nowellpoint.aws.idp.model.GetTokenResponse;
+import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
+import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
+import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class TestDataClient {

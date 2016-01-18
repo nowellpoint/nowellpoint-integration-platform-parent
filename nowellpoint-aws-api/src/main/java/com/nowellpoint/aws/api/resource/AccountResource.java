@@ -24,13 +24,13 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.GetAccountRequest;
+import com.nowellpoint.aws.idp.model.GetAccountResponse;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.idp.Account;
-import com.nowellpoint.aws.model.idp.GetAccountRequest;
-import com.nowellpoint.aws.model.idp.GetAccountResponse;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.tools.TokenParser;
 

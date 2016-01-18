@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.RefreshTokenRequest;
-import com.nowellpoint.aws.model.idp.RefreshTokenResponse;
-import com.nowellpoint.aws.model.idp.Token;
+import com.nowellpoint.aws.idp.model.RefreshTokenRequest;
+import com.nowellpoint.aws.idp.model.RefreshTokenResponse;
+import com.nowellpoint.aws.idp.model.Token;
 
 public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	

@@ -15,13 +15,13 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
+import com.nowellpoint.aws.idp.model.GetTokenRequest;
+import com.nowellpoint.aws.idp.model.GetTokenResponse;
+import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
+import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
+import com.nowellpoint.aws.idp.model.VerifyTokenRequest;
+import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.idp.GetTokenRequest;
-import com.nowellpoint.aws.model.idp.GetTokenResponse;
-import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
-import com.nowellpoint.aws.model.idp.RevokeTokenResponse;
-import com.nowellpoint.aws.model.idp.VerifyTokenRequest;
-import com.nowellpoint.aws.model.idp.VerifyTokenResponse;
 
 @Path("/oauth")
 public class TokenResource {

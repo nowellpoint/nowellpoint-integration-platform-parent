@@ -8,9 +8,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.Account;
-import com.nowellpoint.aws.model.idp.GetAccountRequest;
-import com.nowellpoint.aws.model.idp.GetAccountResponse;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.GetAccountRequest;
+import com.nowellpoint.aws.idp.model.GetAccountResponse;
 
 public class GetAccount implements RequestHandler<GetAccountRequest, GetAccountResponse> {
 	

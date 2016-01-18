@@ -15,9 +15,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.idp.Account;
-import com.nowellpoint.aws.model.idp.SearchAccountRequest;
-import com.nowellpoint.aws.model.idp.SearchAccountResponse;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.SearchAccountRequest;
+import com.nowellpoint.aws.idp.model.SearchAccountResponse;
 
 public class SearchAccount implements RequestHandler<SearchAccountRequest, SearchAccountResponse> {
 	
