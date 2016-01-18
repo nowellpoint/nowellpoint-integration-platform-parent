@@ -31,11 +31,6 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 		return this;
 	}
 	
-	public GetDocumentRequest withApiKey(String apiKey) {
-		setApiKey(apiKey);
-		return this;
-	}
-	
 	public GetDocumentRequest withId(String id) {
 		setId(id);
 		return this;

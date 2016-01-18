@@ -8,7 +8,6 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 	
 	private static final long serialVersionUID = 7500788112443398317L;
 	private String mongoDBConnectUri;
-	private String apiKey;
 	private String accountId;
 	private String collectionName;
 	private String document;
@@ -24,15 +23,6 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 
 	public void setMongoDBConnectUri(String mongoDBConnectUri) {
 		this.mongoDBConnectUri = mongoDBConnectUri;
-	}
-	
-	@NotEmpty
-	public String getApiKey() {
-		return apiKey;
-	}
-	
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
 	}
 	
 	@NotEmpty

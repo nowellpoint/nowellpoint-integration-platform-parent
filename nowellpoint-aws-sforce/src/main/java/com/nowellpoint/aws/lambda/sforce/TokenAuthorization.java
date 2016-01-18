@@ -15,6 +15,8 @@ import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
 import com.nowellpoint.aws.model.sforce.Token;
 
 public class TokenAuthorization implements RequestHandler<GetAuthorizationRequest, GetAuthorizationResponse> {
+	
+	private static LambdaLogger logger;
 
 	@Override
 	public GetAuthorizationResponse handleRequest(GetAuthorizationRequest request, Context context) {
@@ -23,7 +25,7 @@ public class TokenAuthorization implements RequestHandler<GetAuthorizationReques
 		 * 
 		 */
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
 		/**
 		 * 

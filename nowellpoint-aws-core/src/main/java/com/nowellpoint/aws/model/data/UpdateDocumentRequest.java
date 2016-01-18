@@ -43,9 +43,4 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 		setMongoDBConnectUri(mongoDBConnectUri);
 		return this;
 	}
-	
-	public UpdateDocumentRequest withApiKey(String apiKey) {
-		setApiKey(apiKey);
-		return this;
-	}
 }

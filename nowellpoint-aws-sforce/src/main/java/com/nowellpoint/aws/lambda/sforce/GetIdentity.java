@@ -15,6 +15,8 @@ import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 import com.nowellpoint.aws.model.sforce.Identity;
 
 public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdentityResponse> {
+	
+	private static LambdaLogger logger;
 
 	@Override
 	public GetIdentityResponse handleRequest(GetIdentityRequest request, Context context) {
@@ -23,7 +25,7 @@ public class GetIdentity implements RequestHandler<GetIdentityRequest, GetIdenti
 		 * 
 		 */
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
 		/**
 		 * 

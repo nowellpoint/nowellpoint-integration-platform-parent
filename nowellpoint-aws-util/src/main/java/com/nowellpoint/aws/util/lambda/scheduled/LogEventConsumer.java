@@ -76,9 +76,11 @@ public class LogEventConsumer implements RequestStreamHandler {
 				 * 
 				 */
 				
+				String apiKey = Properties.getProperty(PropertyStore.PRODUCTION, Properties.LOGGLY_API_KEY);
+				
 				try {
 					HttpURLConnection connection = (HttpURLConnection) new URL("http://logs-01.loggly.com/inputs/"
-							.concat(Properties.getProperty(PropertyStore.PRODUCTION, Properties.LOGGLY_API_KEY))
+							.concat(apiKey)
 							.concat("/tag/")
 							.concat(describeLogStreamsRequest.getLogGroupName())
 							.concat("/")).openConnection();

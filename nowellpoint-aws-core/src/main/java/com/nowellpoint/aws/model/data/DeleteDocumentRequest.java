@@ -41,11 +41,6 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 		return this;
 	}
 	
-	public DeleteDocumentRequest withApiKey(String apiKey) {
-		setApiKey(apiKey);
-		return this;
-	}
-	
 	public DeleteDocumentRequest withAccountId(String accountId) {
 		setAccountId(accountId);
 		return this;

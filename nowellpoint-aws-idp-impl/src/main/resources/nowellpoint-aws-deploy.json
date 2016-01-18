@@ -1,0 +1,182 @@
+[
+  {
+    "configuration": {
+      "functionName": "RefreshTokenRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:RefreshTokenRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.RefreshToken::handleRequest",
+      "description": "Refresh Token Request",
+      "timeout": 10,
+      "memorySize": 512,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "IdentityProviderUsernamePasswordAuthentication",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderUsernamePasswordAuthentication",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.UsernamePasswordAuthentication::handleRequest",
+      "description": "IdentityProviderUsernamePasswordAuthentication: Authenticates a username and password combination to return an OAuth Token",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+   {
+    "configuration": {
+      "functionName": "function:IdentityProviderClientCredentialsAuthentication",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderClientCredentialsAuthentication",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.ClientCredentialsAuthentication::handleRequest",
+      "description": "IdentityProviderClientCredentialsAuthentication: Authenticates an ApiKeyId and ApiKeySecret and will return the associated user account",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+   {
+    "configuration": {
+      "functionName": "function:IdentityProviderGetAccount",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderGetAccount",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.GetAccount::handleRequest",
+      "description": "IdentityProviderGetAccount: Returns the account associated to the access token",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+   {
+    "configuration": {
+      "functionName": "function:IdentityProviderCreateAccount",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderCreateAccount",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.CreateAccount::handleRequest",
+      "description": "IdentityProviderCreateAccount: Returns the newly created user account from the Identity Provider",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+   {
+    "configuration": {
+      "functionName": "function:IdentityProviderUpdateAccount",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderUpdateAccount",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.UpdateAccount::handleRequest",
+      "description": "IdentityProviderUpdateAccount: Updates the user account from the Identity Provider",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "function:IdentityProviderGetCustomData",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderGetCustomData",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.GetCustomData::handleRequest",
+      "description": "IdentityProviderGetCustomData: Gets the custom data for an access token that is associated with a user account",
+      "timeout": 10,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "function:IdentityProviderRevokeToken",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderRevokeToken",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.RevokeToken::handleRequest",
+      "description": "IdentityProviderRevokeToken: Revokes access token",
+      "timeout": 10,
+      "memorySize": 1024,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+  {
+    "configuration": {
+      "functionName": "VerifyTokenRequest",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:VerifyTokenRequest",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.VerifyToken::handleRequest",
+      "description": "Verify Token Request",
+      "timeout": 10,
+      "memorySize": 1024,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  },
+   {
+    "configuration": {
+      "functionName": "function:IdentityProviderSearchAccount",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderSearchAccount",
+      "runtime": "java8",
+      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
+      "handler": "com.nowellpoint.aws.lambda.idp.SearchAccount::handleRequest",
+      "description": "IdentityProviderSearchAccount: Searches for an account based on one or more of the following criteria: username, email, surname, givenName, middleName and status",
+      "timeout": 4,
+      "memorySize": 1536,
+      "version": "$LATEST"
+    },
+    "code": {
+      "s3Bucket": "aws-microservices",
+      "s3Key": "nowellpoint-aws-idp-impl-0.0.2-SNAPSHOT.jar",
+      "s3ObjectVersion": null
+    }
+  }
+]

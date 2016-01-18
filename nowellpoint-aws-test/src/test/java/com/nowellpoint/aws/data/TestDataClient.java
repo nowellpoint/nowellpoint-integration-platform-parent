@@ -25,8 +25,6 @@ import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
-//import com.nowellpoint.aws.model.idp.GetCustomDataRequest;
-//import com.nowellpoint.aws.model.idp.GetCustomDataResponse;
 import com.nowellpoint.aws.model.idp.GetTokenRequest;
 import com.nowellpoint.aws.model.idp.GetTokenResponse;
 import com.nowellpoint.aws.model.idp.RevokeTokenRequest;
@@ -78,24 +76,13 @@ public class TestDataClient {
 		
 		System.out.println("Account: " + accountId);
 		
-		/*System.out.println("Setting up session...");
-			
-		GetCustomDataRequest customDataRequest = new GetCustomDataRequest().withAccessToken(accessToken)
-				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
-				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET));
-			
-		GetCustomDataResponse customDataResponse = identityProviderClient.account(customDataRequest);
-		
-		assertTrue(customDataResponse.getStatusCode() == 200);
-			
-		System.out.println("Setting up session...complete");*/
-		
 		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
 	}
 
 	@Test
 	public void testCreateAndUpdateParty() {
+		
+		System.out.println("testCreateAndUpdateParty");
 		
 		String accountId = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), token.getAccessToken()).getBody().getSubject();
 		
@@ -103,7 +90,6 @@ public class TestDataClient {
 		
 		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withDocument(json.toString());
@@ -121,7 +107,6 @@ public class TestDataClient {
 			
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withDocument(json.toString());
@@ -140,7 +125,6 @@ public class TestDataClient {
 			
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
@@ -161,7 +145,6 @@ public class TestDataClient {
 			
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
@@ -183,7 +166,6 @@ public class TestDataClient {
 			
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(UUID.randomUUID().toString());
@@ -206,7 +188,6 @@ public class TestDataClient {
 			
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withDocument(json.toString());
@@ -231,7 +212,6 @@ public class TestDataClient {
 			
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withApiKey(System.getProperty(Properties.MONGO_API_KEY))
 				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(UUID.randomUUID().toString());
