@@ -1,8 +1,7 @@
 package com.nowellpoint.aws.data;
 
-import java.util.logging.Logger;
-
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -15,34 +14,34 @@ import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 
 public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, DeleteDocumentResponse> {
 	
-	private static final Logger log = Logger.getLogger(DeleteDocument.class.getName());
+	private static LambdaLogger logger;
 
 	@Override
 	public DeleteDocumentResponse handleRequest(DeleteDocumentRequest request, Context context) {
 		
-		/**
-		 * 
-		 */
+		//
+		//
+		//
 		
-		long startTime = System.currentTimeMillis();
+		logger = context.getLogger();
 		
 		/**
 		 * 
 		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
+		MongoClientURI mongoClientUri = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
 		
 		/**
 		 * 
 		 */
-		
-		MongoClient mongoClient = new MongoClient(mongoClientURI);
+
+		MongoClient mongoClient = new MongoClient(mongoClientUri);
 				
 		/**
 		 * 
 		 */ 
 
-		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
+		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
 		
 		/**
 		 * 
@@ -57,7 +56,8 @@ public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, Del
 		try{
 			DeleteResult result = mongoDatabase.getCollection(request.getCollectionName()).deleteOne( Filters.eq ( "_id", request.getId() ) );
 			if (result.getDeletedCount() == 1) {
-				response.setStatusCode(200);
+				response.setStatusCode(204);
+				logger.log("Deleted document: " + request.getId());
 			} else {
 				response.setStatusCode(404);
 				response.setErrorCode("not_found");
@@ -72,7 +72,9 @@ public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, Del
 			mongoClient.close();
 		}
 		
-		log.info("execution time: " + (System.currentTimeMillis() - startTime));
+		//
+		//
+		//
 		
 		return response;
 	}

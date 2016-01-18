@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.data;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.model.AbstractLambdaRequest;
 
 public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
@@ -7,8 +9,7 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 	private static final long serialVersionUID = 7500788112443398317L;
 	private String mongoDBConnectUri;
 	private String apiKey;
-	private String userId;
-	private String id;
+	private String accountId;
 	private String collectionName;
 	private String document;
 
@@ -16,6 +17,7 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 		
 	}
 	
+	@NotEmpty
 	public String getMongoDBConnectUri() {
 		return mongoDBConnectUri;
 	}
@@ -24,6 +26,7 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 		this.mongoDBConnectUri = mongoDBConnectUri;
 	}
 	
+	@NotEmpty
 	public String getApiKey() {
 		return apiKey;
 	}
@@ -32,20 +35,13 @@ public abstract class AbstractDocumentRequest extends AbstractLambdaRequest {
 		this.apiKey = apiKey;
 	}
 	
-	public String getUserId() {
-		return userId;
+	@NotEmpty
+	public String getAccountId() {
+		return accountId;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	protected String getId() {
-		return id;
-	}
-
-	protected void setId(String id) {
-		this.id = id;
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 	
 	protected String getCollectionName() {

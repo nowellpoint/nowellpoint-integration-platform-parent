@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.admin;
 
+import java.util.Date;
+
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
@@ -20,6 +22,9 @@ public class Property {
 	
 	@DynamoDBAttribute(attributeName="LastModifiedBy")
 	private String lastModifiedBy;
+	
+	@DynamoDBAttribute(attributeName="LastModifiedDate")
+	private Date lastModifiedDate;
 	
 	public Property() {
 		
@@ -56,5 +61,14 @@ public class Property {
 
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	@DoNotEncrypt
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 }

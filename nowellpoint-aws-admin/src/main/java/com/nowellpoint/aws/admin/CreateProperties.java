@@ -1,63 +1,65 @@
 package com.nowellpoint.aws.admin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Properties;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.nowellpoint.aws.model.admin.Property;
-import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class CreateProperties {
-	
-	Logger logger = Logger.getLogger(CreateProperties.class.getName());
 
 	public CreateProperties() {
 		
 		String accountId = System.getenv("DEFAULT_ACCOUNT_ID");
 		
-		String[] propertyKeys = new String[] {
-				"LOGGLY_API_KEY",
-				"MONGO_CLIENT_URI",
-				"SALESFORCE_CLIENT_ID",
-				"SALESFORCE_CLIENT_SECRET",
-				"SALESFORCE_TOKEN_URI",
-				"SALESFORCE_REFRESH_URI",
-				"SALESFORCE_REVOKE_URI",
-				"SALESFORCE_USERNAME",
-				"SALESFORCE_PASSWORD",
-				"SALESFORCE_SECURITY_TOKEN",
-				"REDIRECT_URI",
-				"STORMPATH_API_KEY_ID",
-				"STORMPATH_API_KEY_SECRET",
-				"STORMPATH_API_ENDPOINT",
-				"STORMPATH_APPLICATION_ID",
-				"STORMPATH_DIRECTORY_ID",
-				"NOWELLPOINT_API_ENDPOINT",
-				"SENDGRID_API_KEY",
-				"AWS_X_API_KEY",
-				"REDIS_PASSWORD",
-				"DEFAULT_ACCOUNT_ID"
-		};
-		
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
-		List<Property> properties = new ArrayList<Property>();
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				if (name.toLowerCase().endsWith("-configuration.properties")) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		};
 		
-		Arrays.asList(propertyKeys).stream().forEach(key -> {
+		File folder = new File(System.getProperty("user.home").concat("/Dropbox/configuration"));
+		
+		Arrays.asList(folder.listFiles(filter)).stream().forEach(file -> {
+			System.out.println(file.getName());
+			Properties properties = new Properties();
+			try {
+				properties.load(new FileInputStream(file));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
 			
-			Property property = new Property();
-			property.setStore(PropertyStore.PRODUCTION.name());
-			property.setKey(key.replaceAll("_", ".").toLowerCase());
-			property.setValue(System.getenv(key));
-			property.setLastModifiedBy(accountId);
+			List<Property> propertyBatch = new ArrayList<Property>();
 			
-			properties.add(property);
+			properties.keySet().stream().forEach(key -> {
+
+				Property property = new Property();
+				property.setStore(file.getName().replace("-configuration.properties", "").toUpperCase());
+				property.setKey(((String) key).replaceAll("_", ".").toLowerCase());
+				property.setValue(properties.getProperty((String) key));
+				property.setLastModifiedBy(accountId);
+				property.setLastModifiedDate(Date.from(Instant.now()));
+				
+				propertyBatch.add(property);
+			});
+			
+			mapper.batchSave(propertyBatch);
 		});
-		
-		mapper.batchSave(properties);
 	}
 
 	public static void main(String[] args) {

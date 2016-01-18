@@ -34,7 +34,7 @@ public class TestIdentityProviderClient {
 	
 	@BeforeClass
 	public static void before() {
-		Properties.setSystemProperties(PropertyStore.PRODUCTION);
+		Properties.setSystemProperties(PropertyStore.SANDBOX);
 	}
 	
 	@Test(expected = ClientException.class)

@@ -4,16 +4,18 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 
 	private static final long serialVersionUID = -8063355241890824157L;
 	
+	private String id;
+	
 	public GetDocumentRequest() {
 		
 	}
 
 	public String getId() {
-		return super.getId();
+		return id;
 	}
 
 	public void setId(String id) {
-		super.setId(id);
+		this.id = id;
 	}
 	
 	public String getCollectionName() {
@@ -41,6 +43,11 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 
 	public GetDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);
+		return this;
+	}
+	
+	public GetDocumentRequest withAccountId(String accountId) {
+		setAccountId(accountId);
 		return this;
 	}
 }

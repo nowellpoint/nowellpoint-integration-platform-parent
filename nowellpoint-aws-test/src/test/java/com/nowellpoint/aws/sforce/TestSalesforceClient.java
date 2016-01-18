@@ -23,7 +23,7 @@ public class TestSalesforceClient {
 	
 	@BeforeClass
 	public static void before() {
-		Properties.setSystemProperties(PropertyStore.PRODUCTION);
+		Properties.setSystemProperties(PropertyStore.SANDBOX);
 	}
 	
 	@Test
@@ -39,9 +39,9 @@ public class TestSalesforceClient {
 				.withTokenUri(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
 				.withClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.withClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-				.withUsername(System.getenv("SALESFORCE_USERNAME"))
-				.withPassword(System.getenv("SALESFORCE_PASSWORD"))
-				.withSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"));
+				.withUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
+				.withPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
+				.withSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN));
 		
 		GetTokenResponse tokenResponse = client.authenticate(tokenRequest);
 			

@@ -14,6 +14,7 @@ public class Properties {
 	
 	public static final String LOGGLY_API_KEY = "loggly.api.key";
 	public static final String MONGO_CLIENT_URI = "mongo.client.uri";
+	public static final String MONGO_API_KEY = "mongo.api.key";
 	public static final String SALESFORCE_CLIENT_ID = "salesforce.client.id";
 	public static final String SALESFORCE_CLIENT_SECRET = "salesforce.client.secret";
 	public static final String SALESFORCE_TOKEN_URI = "salesforce.token.uri";
@@ -28,6 +29,7 @@ public class Properties {
 	public static final String STORMPATH_API_ENDPOINT = "stormpath.api.endpoint";
 	public static final String STORMPATH_APPLICATION_ID = "stormpath.application.id";
 	public static final String STORMPATH_DIRECTORY_ID = "stormpath.directory.id";
+	public static final String STORMPATH_GROUP_ID = "stormpath.group.id";
 	public static final String NOWELLPOINT_API_ENDPOINT = "nowellpoint.api.endpoint";
 	public static final String SENDGRID_API_KEY = "sendgrid.api.key";
 	public static final String AWS_X_API_KEY = "aws.x.api.key";

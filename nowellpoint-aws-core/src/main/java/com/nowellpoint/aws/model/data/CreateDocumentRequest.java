@@ -20,8 +20,8 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 		return super.getDocument();
 	}
 	
-	public CreateDocumentRequest withUserId(String userId) {
-		setUserId(userId);
+	public CreateDocumentRequest withAccountId(String accountId) {
+		setAccountId(accountId);
 		return this;
 	}
 
@@ -37,6 +37,11 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 	
 	public CreateDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
 		setMongoDBConnectUri(mongoDBConnectUri);
+		return this;
+	}
+	
+	public CreateDocumentRequest withApiKey(String apiKey) {
+		setApiKey(apiKey);
 		return this;
 	}
 }

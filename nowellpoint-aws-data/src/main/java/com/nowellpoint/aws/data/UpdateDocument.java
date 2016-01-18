@@ -32,32 +32,20 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		/**
 		 * 
 		 */
-		
-		long startTime = System.currentTimeMillis();
-		
-		/**
-		 * 
-		 */
 
-		MongoClientURI mongoClientURI = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
+		MongoClientURI mongoClientUri = new MongoClientURI(request.getMongoDBConnectUri().startsWith("mongodb://") ? request.getMongoDBConnectUri() : "mongodb://".concat(request.getMongoDBConnectUri()));
 		
 		/**
 		 * 
 		 */
 		
-		MongoClient mongoClient = new MongoClient(mongoClientURI);
+		MongoClient mongoClient = new MongoClient(mongoClientUri);
 				
 		/**
 		 * 
 		 */ 
 
-		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
-		
-		/**
-		 * 
-		 */
-		
-		logger.log("Connection time: " + (System.currentTimeMillis() - startTime));
+		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
 		
 		/**
 		 * 
@@ -69,25 +57,31 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		 * 
 		 */
 		
-		logger.log(request.getCollectionName());
+		logger.log("Updating document in: " + request.getCollectionName());
 		
-		try{
-			
-			Date now = Date.from(Instant.now());
-			
-			Document document = Document.parse(request.getDocument());
-			document.put("_id", request.getId());
-			document.put("lastModifiedDate", now);
-			document.put("lastModifiedById", request.getUserId());
-			
+		//
+		//
+		//
+		
+		Date now = Date.from(Instant.now());
+		
+		Document document = Document.parse(request.getDocument());
+		document.put("lastModifiedDate", now);
+		document.put("lastModifiedById", request.getAccountId());
+		
+		//
+		//
+		//
+		
+		try {
 			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getString("_id")), new Document("$set", document));
 			if (result.getModifiedCount() == 1) {
 				response.setStatusCode(200);
-				response.setId(document.getString("_id").toString());
+				response.setId(document.getString("_id"));
 			} else {
 				response.setStatusCode(404);
 				response.setErrorCode("not_found");
-				response.setErrorMessage(String.format("Document of type %s for Id: %s was not found", new Object[] {request.getCollectionName(), request.getId()}));
+				response.setErrorMessage(String.format("Document of type %s for Id: %s was not found", new Object[] {request.getCollectionName(), document.getString("_id")}));
 			}
 		} catch (MongoException e) {
 			response.setStatusCode(500);

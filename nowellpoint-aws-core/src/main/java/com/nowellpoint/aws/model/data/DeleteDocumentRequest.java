@@ -4,16 +4,18 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 	
 	private static final long serialVersionUID = -6090910215991875135L;
 	
+	private String id;
+	
 	public DeleteDocumentRequest() {
 		
 	}
 
 	public String getId() {
-		return super.getId();
+		return id;
 	}
 
 	public void setId(String id) {
-		super.setId(id);
+		this.id = id;
 	}
 	
 	public String getCollectionName() {
@@ -36,6 +38,16 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 
 	public DeleteDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);
+		return this;
+	}
+	
+	public DeleteDocumentRequest withApiKey(String apiKey) {
+		setApiKey(apiKey);
+		return this;
+	}
+	
+	public DeleteDocumentRequest withAccountId(String accountId) {
+		setAccountId(accountId);
 		return this;
 	}
 }

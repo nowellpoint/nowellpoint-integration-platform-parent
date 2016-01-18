@@ -8,14 +8,6 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 		
 	}
 	
-	public String getId() {
-		return super.getId();
-	}
-
-	public void setId(String id) {
-		super.setId(id);
-	}
-	
 	public String getCollectionName() {
 		return super.getCollectionName();
 	}
@@ -32,13 +24,8 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 		super.setDocument(document);
 	}
 	
-	public UpdateDocumentRequest withUserId(String userId) {
-		setUserId(userId);
-		return this;
-	}
-	
-	public UpdateDocumentRequest withId(String id) {
-		setId(id);
+	public UpdateDocumentRequest withAccountId(String accountId) {
+		setAccountId(accountId);
 		return this;
 	}
 
@@ -54,6 +41,11 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 	
 	public UpdateDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
 		setMongoDBConnectUri(mongoDBConnectUri);
+		return this;
+	}
+	
+	public UpdateDocumentRequest withApiKey(String apiKey) {
+		setApiKey(apiKey);
 		return this;
 	}
 }

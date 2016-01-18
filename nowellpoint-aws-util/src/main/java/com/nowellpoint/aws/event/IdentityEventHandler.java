@@ -52,7 +52,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			user.setId(event.getId());
 					
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withUserId(user.getId().toString())
+					.withAccountId(user.getId().toString())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
 				
@@ -78,8 +78,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			}
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withId(user.getId())
-					.withUserId(user.getId())
+					.withAccountId(user.getId())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(user));
 			
