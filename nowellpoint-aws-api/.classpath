@@ -6,7 +6,7 @@
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" sourcepath="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/el/javax.el-api/2.2.4/javax.el-api-2.2.4.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
@@ -62,49 +62,11 @@
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.7.0/jackson-databind-2.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.7.0/jackson-annotations-2.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.7.0/jackson-core-2.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.10.47/aws-java-sdk-dynamodb-1.10.47.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.10.47/aws-java-sdk-s3-1.10.47.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.10.47/aws-java-sdk-kms-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-dynamodb-encryption-java/0.0.3-SNAPSHOT/aws-dynamodb-encryption-java-0.0.3-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk/1.9.13/aws-java-sdk-1.9.13.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-support/1.10.47/aws-java-sdk-support-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-simpledb/1.10.47/aws-java-sdk-simpledb-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-simpleworkflow/1.10.47/aws-java-sdk-simpleworkflow-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-storagegateway/1.10.47/aws-java-sdk-storagegateway-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-route53/1.10.47/aws-java-sdk-route53-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-importexport/1.10.47/aws-java-sdk-importexport-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sts/1.10.47/aws-java-sdk-sts-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.10.47/aws-java-sdk-sqs-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-rds/1.10.47/aws-java-sdk-rds-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-redshift/1.10.47/aws-java-sdk-redshift-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-elasticbeanstalk/1.10.47/aws-java-sdk-elasticbeanstalk-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-glacier/1.10.47/aws-java-sdk-glacier-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.10.47/aws-java-sdk-sns-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-iam/1.10.47/aws-java-sdk-iam-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-datapipeline/1.10.47/aws-java-sdk-datapipeline-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-elasticloadbalancing/1.10.47/aws-java-sdk-elasticloadbalancing-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-emr/1.10.47/aws-java-sdk-emr-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-elasticache/1.10.47/aws-java-sdk-elasticache-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-elastictranscoder/1.10.47/aws-java-sdk-elastictranscoder-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-ec2/1.10.47/aws-java-sdk-ec2-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cloudtrail/1.10.47/aws-java-sdk-cloudtrail-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cloudwatch/1.10.47/aws-java-sdk-cloudwatch-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-logs/1.10.47/aws-java-sdk-logs-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cognitoidentity/1.10.47/aws-java-sdk-cognitoidentity-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cognitosync/1.10.47/aws-java-sdk-cognitosync-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-directconnect/1.10.47/aws-java-sdk-directconnect-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cloudformation/1.10.47/aws-java-sdk-cloudformation-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cloudfront/1.10.47/aws-java-sdk-cloudfront-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kinesis/1.10.47/aws-java-sdk-kinesis-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-opsworks/1.10.47/aws-java-sdk-opsworks-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-ses/1.10.47/aws-java-sdk-ses-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-autoscaling/1.10.47/aws-java-sdk-autoscaling-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cloudsearch/1.10.47/aws-java-sdk-cloudsearch-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-cloudwatchmetrics/1.10.47/aws-java-sdk-cloudwatchmetrics-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-swf-libraries/1.10.47/aws-java-sdk-swf-libraries-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-codedeploy/1.10.47/aws-java-sdk-codedeploy-1.10.47.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-config/1.10.47/aws-java-sdk-config-1.10.47.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-dynamodb-encryption-java/0.0.5-SNAPSHOT/aws-dynamodb-encryption-java-0.0.5-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.6.0/jjwt-0.6.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/5.2.2.Final/hibernate-validator-5.2.2.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging/3.2.1.Final/jboss-logging-3.2.1.Final.jar"/>
