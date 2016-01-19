@@ -27,7 +27,6 @@
 	</properties>
 
 	<modules>
-		<module>nowellpoint-aws-rest-client</module>
 		<module>nowellpoint-aws-core</module>	
 		<module>nowellpoint-aws-data</module>
 		<module>nowellpoint-aws-idp</module>
