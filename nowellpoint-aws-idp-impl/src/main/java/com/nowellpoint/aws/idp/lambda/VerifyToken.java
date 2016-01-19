@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.idp;
+package com.nowellpoint.aws.idp.lambda;
 
 import java.io.IOException;
 
@@ -7,18 +7,17 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.GetTokenRequest;
-import com.nowellpoint.aws.idp.model.GetTokenResponse;
-import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.aws.idp.model.AuthToken;
+import com.nowellpoint.aws.idp.model.VerifyTokenRequest;
+import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
 
-public class ClientCredentialsAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
+public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTokenResponse> {
 	
 	private static LambdaLogger logger;
-	
+
 	@Override
-	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
+	public VerifyTokenResponse handleRequest(VerifyTokenRequest request, Context context) { 
 		
 		//
 		//
@@ -30,28 +29,24 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 		 * 
 		 */
 		
-		GetTokenResponse response = new GetTokenResponse();
-		
+		VerifyTokenResponse response = new VerifyTokenResponse();
+			
 		/**
 		 * 
 		 */
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(request.getApiEndpoint())
+			httpResponse = RestResource.get(request.getApiEndpoint())
 					.path("applications")
-					.path(request.getApplicationId())
-					.path("oauth/token")
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.accept(MediaType.APPLICATION_JSON)
-					.parameter("grant_type", "client_credentials")
-					.parameter("username", request.getUsername())
-					.parameter("password", request.getPassword())
+					.path(request.getApplicationId())
+					.path("authTokens")
+					.path(request.getAccessToken())
 					.execute();
-			
-			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
-			
+				
+			logger.log("Status Code: " + response.getStatusCode() + " Target: " + httpResponse.getURL());
+							
 			/**
 			 * 
 			 */
@@ -59,10 +54,9 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 			response.setStatusCode(httpResponse.getStatusCode());
 				
 			if (httpResponse.getStatusCode() == 200) {						
-				response.setToken(httpResponse.getEntity(Token.class));
+				response.setAuthToken(httpResponse.getEntity(AuthToken.class));
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
-				logger.log(errorResponse.toString());
 				response.setErrorCode(errorResponse.get("message").asText());
 				response.setErrorMessage(errorResponse.get("developerMessage").asText());
 			}
@@ -75,5 +69,5 @@ public class ClientCredentialsAuthentication implements RequestHandler<GetTokenR
 		}
 		
 		return response;
-	}	
+	}
 }

@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.idp;
+package com.nowellpoint.aws.idp.lambda;
 
 import java.util.Base64;
 

@@ -1,14 +1,14 @@
 [
   {
     "configuration": {
-      "functionName": "RefreshTokenRequest",
-      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:RefreshTokenRequest",
+      "functionName": "IdentityProviderRefreshToken",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderRefreshToken",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.RefreshToken::handleRequest",
-      "description": "Refresh Token Request",
+      "handler": "com.nowellpoint.aws.idp.lambda.RefreshToken::handleRequest",
+      "description": "IdentityProviderRefreshTokenRequest: Refresh Token Request",
       "timeout": 10,
-      "memorySize": 512,
+      "memorySize": 1536,
       "version": "$LATEST"
     },
     "code": {
@@ -23,7 +23,7 @@
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderUsernamePasswordAuthentication",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.UsernamePasswordAuthentication::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.UsernamePasswordAuthentication::handleRequest",
       "description": "IdentityProviderUsernamePasswordAuthentication: Authenticates a username and password combination to return an OAuth Token",
       "timeout": 10,
       "memorySize": 1536,
@@ -37,11 +37,11 @@
   },
    {
     "configuration": {
-      "functionName": "function:IdentityProviderClientCredentialsAuthentication",
+      "functionName": "IdentityProviderClientCredentialsAuthentication",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderClientCredentialsAuthentication",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.ClientCredentialsAuthentication::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.ClientCredentialsAuthentication::handleRequest",
       "description": "IdentityProviderClientCredentialsAuthentication: Authenticates an ApiKeyId and ApiKeySecret and will return the associated user account",
       "timeout": 10,
       "memorySize": 1536,
@@ -55,11 +55,11 @@
   },
    {
     "configuration": {
-      "functionName": "function:IdentityProviderGetAccount",
+      "functionName": "IdentityProviderGetAccount",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderGetAccount",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.GetAccount::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.GetAccount::handleRequest",
       "description": "IdentityProviderGetAccount: Returns the account associated to the access token",
       "timeout": 10,
       "memorySize": 1536,
@@ -73,11 +73,11 @@
   },
    {
     "configuration": {
-      "functionName": "function:IdentityProviderCreateAccount",
+      "functionName": "IdentityProviderCreateAccount",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderCreateAccount",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.CreateAccount::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.CreateAccount::handleRequest",
       "description": "IdentityProviderCreateAccount: Returns the newly created user account from the Identity Provider",
       "timeout": 10,
       "memorySize": 1536,
@@ -91,11 +91,11 @@
   },
    {
     "configuration": {
-      "functionName": "function:IdentityProviderUpdateAccount",
+      "functionName": "IdentityProviderUpdateAccount",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderUpdateAccount",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.UpdateAccount::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.UpdateAccount::handleRequest",
       "description": "IdentityProviderUpdateAccount: Updates the user account from the Identity Provider",
       "timeout": 10,
       "memorySize": 1536,
@@ -109,11 +109,11 @@
   },
   {
     "configuration": {
-      "functionName": "function:IdentityProviderGetCustomData",
+      "functionName": "IdentityProviderGetCustomData",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderGetCustomData",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.GetCustomData::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.GetCustomData::handleRequest",
       "description": "IdentityProviderGetCustomData: Gets the custom data for an access token that is associated with a user account",
       "timeout": 10,
       "memorySize": 1536,
@@ -127,14 +127,14 @@
   },
   {
     "configuration": {
-      "functionName": "function:IdentityProviderRevokeToken",
+      "functionName": "IdentityProviderRevokeToken",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderRevokeToken",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.RevokeToken::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.RevokeToken::handleRequest",
       "description": "IdentityProviderRevokeToken: Revokes access token",
       "timeout": 10,
-      "memorySize": 1024,
+      "memorySize": 1536,
       "version": "$LATEST"
     },
     "code": {
@@ -145,14 +145,14 @@
   },
   {
     "configuration": {
-      "functionName": "VerifyTokenRequest",
-      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:VerifyTokenRequest",
+      "functionName": "IdentityProviderVerifyToken",
+      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderVerifyToken",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.VerifyToken::handleRequest",
-      "description": "Verify Token Request",
+      "handler": "com.nowellpoint.aws.idp.lambda.VerifyToken::handleRequest",
+      "description": "IdentityProviderVerifyToken: Verify Token Request",
       "timeout": 10,
-      "memorySize": 1024,
+      "memorySize": 1536,
       "version": "$LATEST"
     },
     "code": {
@@ -163,13 +163,13 @@
   },
    {
     "configuration": {
-      "functionName": "function:IdentityProviderSearchAccount",
+      "functionName": "IdentityProviderSearchAccount",
       "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:IdentityProviderSearchAccount",
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.lambda.idp.SearchAccount::handleRequest",
+      "handler": "com.nowellpoint.aws.idp.lambda.SearchAccount::handleRequest",
       "description": "IdentityProviderSearchAccount: Searches for an account based on one or more of the following criteria: username, email, surname, givenName, middleName and status",
-      "timeout": 4,
+      "timeout": 10,
       "memorySize": 1536,
       "version": "$LATEST"
     },

@@ -35,8 +35,8 @@ public class IdentityProviderClient extends AbstractClient {
 		return invoke("IdentityProviderSearchAccount", searchAccountRequest, SearchAccountResponse.class);
 	}
 	
-	public GetAccountResponse account(GetAccountRequest request) throws ClientException {		
-		return invoke("IdentityProviderGetAccount", request, GetAccountResponse.class);
+	public GetAccountResponse account(GetAccountRequest getAccountRequest) throws ClientException {		
+		return invoke("IdentityProviderGetAccount", getAccountRequest, GetAccountResponse.class);
 	}
 	
 	public CreateAccountResponse account(CreateAccountRequest createAccountRequest) throws ClientException {
@@ -47,19 +47,19 @@ public class IdentityProviderClient extends AbstractClient {
 		return invoke("IdentityProviderUpdateAccount", updateAccountRequest, UpdateAccountResponse.class);
 	}
 	
-	public GetCustomDataResponse account(GetCustomDataRequest request) throws ClientException {
-		return invoke("IdentityProviderGetCustomData", request, GetCustomDataResponse.class);
+	public GetCustomDataResponse account(GetCustomDataRequest getCustomDataRequest) throws ClientException {
+		return invoke("IdentityProviderGetCustomData", getCustomDataRequest, GetCustomDataResponse.class);
 	}
 	
-	public VerifyTokenResponse token(VerifyTokenRequest request) throws ClientException {
-		return invoke("VerifyTokenRequest", request, VerifyTokenResponse.class);
+	public VerifyTokenResponse token(VerifyTokenRequest verifyTokenRequest) throws ClientException {
+		return invoke("IdentityProviderVerifyToken", verifyTokenRequest, VerifyTokenResponse.class);
 	}
 	
-	public RefreshTokenResponse token(RefreshTokenRequest request) throws ClientException {
-		return invoke("RefreshTokenRequest", request, RefreshTokenResponse.class);
+	public RefreshTokenResponse token(RefreshTokenRequest refreshTokenRequest) throws ClientException {
+		return invoke("IdentityProviderRefreshToken", refreshTokenRequest, RefreshTokenResponse.class);
 	}
 	
-	public RevokeTokenResponse token(RevokeTokenRequest request) throws ClientException {
-		return invoke("IdentityProviderRevokeToken", request, RevokeTokenResponse.class);
+	public RevokeTokenResponse token(RevokeTokenRequest revokeTokenRequest) throws ClientException {
+		return invoke("IdentityProviderRevokeToken", revokeTokenRequest, RevokeTokenResponse.class);
 	}
 }

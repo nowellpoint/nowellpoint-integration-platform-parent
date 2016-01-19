@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.idp;
+package com.nowellpoint.aws.idp.lambda;
 
 import java.io.IOException;
 
@@ -9,16 +9,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.RefreshTokenRequest;
-import com.nowellpoint.aws.idp.model.RefreshTokenResponse;
+import com.nowellpoint.aws.idp.model.GetTokenRequest;
+import com.nowellpoint.aws.idp.model.GetTokenResponse;
 import com.nowellpoint.aws.idp.model.Token;
 
-public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
+public class ClientCredentialsAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
 	
 	private static LambdaLogger logger;
-
+	
 	@Override
-	public RefreshTokenResponse handleRequest(RefreshTokenRequest request, Context context) { 
+	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
 		
 		//
 		//
@@ -30,8 +30,8 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 		 * 
 		 */
 		
-		RefreshTokenResponse response = new RefreshTokenResponse();
-			
+		GetTokenResponse response = new GetTokenResponse();
+		
 		/**
 		 * 
 		 */
@@ -45,22 +45,24 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
-					.parameter("grant_type", "refresh_token")
-					.parameter("refresh_token", request.getRefreshToken())
+					.parameter("grant_type", "client_credentials")
+					.parameter("username", request.getUsername())
+					.parameter("password", request.getPassword())
 					.execute();
 			
-			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
 			
 			/**
 			 * 
 			 */
-							
-			response.setStatusCode(httpResponse.getStatusCode());
 			
+			response.setStatusCode(httpResponse.getStatusCode());
+				
 			if (httpResponse.getStatusCode() == 200) {						
 				response.setToken(httpResponse.getEntity(Token.class));
 			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
+				logger.log(errorResponse.toString());
 				response.setErrorCode(errorResponse.get("message").asText());
 				response.setErrorMessage(errorResponse.get("developerMessage").asText());
 			}
@@ -73,5 +75,5 @@ public class RefreshToken implements RequestHandler<RefreshTokenRequest, Refresh
 		}
 		
 		return response;
-	}
+	}	
 }

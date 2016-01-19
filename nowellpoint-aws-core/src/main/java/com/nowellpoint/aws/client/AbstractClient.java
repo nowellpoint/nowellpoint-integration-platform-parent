@@ -109,6 +109,7 @@ public abstract class AbstractClient {
 					.append( " " )
 					.append( violation.getMessage() )
 					.append( System.getProperty( "line.separator" ) ) );
+			
 			throw new ClientException(exceptionMessage.toString());
         }
 	}

@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.idp;
+package com.nowellpoint.aws.idp.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;

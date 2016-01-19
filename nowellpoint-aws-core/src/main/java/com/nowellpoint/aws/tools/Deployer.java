@@ -75,6 +75,7 @@ public class Deployer {
 					UpdateFunctionCodeRequest updateFunctionCodeRequest = new UpdateFunctionCodeRequest().withFunctionName(configuration.getFunctionName())
 							.withS3Bucket(code.getS3Bucket())
 							.withS3Key(code.getS3Key())
+							.withPublish(Boolean.TRUE)
 							.withS3ObjectVersion(code.getS3ObjectVersion());
 					
 					lambdaClient.updateFunctionCode(updateFunctionCodeRequest);

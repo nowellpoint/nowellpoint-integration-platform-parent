@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.lambda.idp;
+package com.nowellpoint.aws.idp.lambda;
 
 import java.io.IOException;
 
@@ -9,29 +9,29 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.GetTokenRequest;
-import com.nowellpoint.aws.idp.model.GetTokenResponse;
+import com.nowellpoint.aws.idp.model.RefreshTokenRequest;
+import com.nowellpoint.aws.idp.model.RefreshTokenResponse;
 import com.nowellpoint.aws.idp.model.Token;
 
-public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRequest, GetTokenResponse> {
+public class RefreshToken implements RequestHandler<RefreshTokenRequest, RefreshTokenResponse> {
 	
 	private static LambdaLogger logger;
 
 	@Override
-	public GetTokenResponse handleRequest(GetTokenRequest request, Context context) { 
-
+	public RefreshTokenResponse handleRequest(RefreshTokenRequest request, Context context) { 
+		
 		//
 		//
 		//
 		
 		logger = context.getLogger();
-
+		
 		/**
 		 * 
 		 */
 		
-		GetTokenResponse response = new GetTokenResponse();
-		
+		RefreshTokenResponse response = new RefreshTokenResponse();
+			
 		/**
 		 * 
 		 */
@@ -45,19 +45,18 @@ public class UsernamePasswordAuthentication implements RequestHandler<GetTokenRe
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
-					.parameter("grant_type", "password")
-					.parameter("username", request.getUsername())
-					.parameter("password", request.getPassword())
+					.parameter("grant_type", "refresh_token")
+					.parameter("refresh_token", request.getRefreshToken())
 					.execute();
 			
-			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());			
+			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 			
 			/**
 			 * 
 			 */
-			
+							
 			response.setStatusCode(httpResponse.getStatusCode());
-				
+			
 			if (httpResponse.getStatusCode() == 200) {						
 				response.setToken(httpResponse.getEntity(Token.class));
 			} else {

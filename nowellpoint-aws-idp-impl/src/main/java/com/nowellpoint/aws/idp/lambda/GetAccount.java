@@ -1,7 +1,6 @@
-package com.nowellpoint.aws.lambda.idp;
+package com.nowellpoint.aws.idp.lambda;
 
-import java.io.IOException;
-import java.util.Base64;
+import java.time.Instant;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -9,23 +8,26 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
-import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.GetAccountRequest;
+import com.nowellpoint.aws.idp.model.GetAccountResponse;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-
-public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTokenResponse> {
-
+public class GetAccount implements RequestHandler<GetAccountRequest, GetAccountResponse> {
+	
 	private static LambdaLogger logger;
 
 	@Override
-	public RevokeTokenResponse handleRequest(RevokeTokenRequest request, Context context) { 
+	public GetAccountResponse handleRequest(GetAccountRequest request, Context context) {
 		
-		//
-		//
-		//
+		/**
+		 * 
+		 */
+		
+		long startTime = System.currentTimeMillis();
+		
+		/**
+		 * 
+		 */
 		
 		logger = context.getLogger();
 		
@@ -33,48 +35,47 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 		 * 
 		 */
 		
-		RevokeTokenResponse response = new RevokeTokenResponse();
+		GetAccountResponse response = new GetAccountResponse();
 		
 		/**
 		 * 
 		 */
 		
-		Jws<Claims> jws = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(request.getApiKeySecret().getBytes()))
-				.parseClaimsJws(request.getAccessToken());
-			
-		/**
-		 * 
-		 */
-		
-		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.delete(request.getApiEndpoint())
-					.path("accessTokens")
-					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
-					.path(jws.getBody().getId())
-					.execute();
 			
+			/**
+			 * 
+			 */
+			
+			HttpResponse httpResponse = RestResource.get(request.getHref())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
+					.execute();
+				
 			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-							
+			
 			/**
 			 * 
 			 */
 							
 			response.setStatusCode(httpResponse.getStatusCode());
 			
-			if (httpResponse.getStatusCode() >= 400) {						
+			if (httpResponse.getStatusCode() == 200) {
+				Account account = httpResponse.getEntity(Account.class);
+				response.setAccount(account);
+			} else {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
 				response.setErrorCode(errorResponse.get("message").asText());
 				response.setErrorMessage(errorResponse.get("developerMessage").asText());
 			}
 			
-		} catch (IOException e) {
-			logger.log(e.getMessage());
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 			response.setStatusCode(400);
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());
 		}
+		
+		logger.log(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
 		
 		return response;
 	}
