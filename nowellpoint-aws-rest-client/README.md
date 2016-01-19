@@ -1,1 +1,0 @@
-# nowellpoint-rest-client
