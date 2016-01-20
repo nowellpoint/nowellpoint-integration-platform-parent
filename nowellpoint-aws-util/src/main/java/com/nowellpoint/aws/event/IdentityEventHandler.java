@@ -33,70 +33,74 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		final DataClient dataClient = new DataClient();
 		
-		Identity user = objectMapper.readValue(event.getPayload(), Identity.class);
+		Identity identity = objectMapper.readValue(event.getPayload(), Identity.class);
 		
-		String query = objectMapper.createObjectNode().put("username", user.getUsername()).toString();
+		String query = objectMapper.createObjectNode().put("username", identity.getUsername()).toString();
 		
-		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest().withCollectionName(COLLECTION_NAME)
+		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest()
+				.withCollectionName(COLLECTION_NAME)
 				.withMongoDBConnectUri(mongoClientUri)
+				.withAccountId(event.getAccountId())
 				.withDocument(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
 		
-		logger.log(new Date() + " user already exists? " + (queryDocumentResponse.getCount() > 0 ? Boolean.TRUE : Boolean.FALSE));
+		logger.log("Check user already exists? " + (queryDocumentResponse.getCount() > 0 ? Boolean.TRUE : Boolean.FALSE));
 		
 		if (queryDocumentResponse.getCount() == 0) {
 			
-			logger.log("Creating user...");
+			identity.setId(event.getId());
 			
-			user.setId(event.getId());
+			logger.log("Creating identity for account..." + event.getAccountId());
 					
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withAccountId(user.getId().toString())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
+					.withMongoDBConnectUri(mongoClientUri)
+					.withAccountId(event.getAccountId())
 					.withCollectionName(COLLECTION_NAME)
-					.withDocument(objectMapper.writeValueAsString(user));
+					.withDocument(objectMapper.writeValueAsString(identity));
 				
 			CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
 			
-			logger.log(new Date() + " Status Code: " + createDocumentResponse.getStatusCode());
+			logger.log("Status Code: " + createDocumentResponse.getStatusCode());
 			
 			if (createDocumentResponse.getStatusCode() == 201) {
 				logger.log("Document Id: " + createDocumentResponse.getId());
+				identity.setId(createDocumentResponse.getId());
 			} else {
 				throw new IOException(createDocumentResponse.getErrorMessage());
 			}
 			
 		} else {
 			
-			logger.log(new Date() + " updating user...");
+			logger.log("Updating identity for account..." + event.getAccountId());
 			
-			try {
-				List<Identity> users = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<Identity>>(){});
-				user.setId(users.get(0).getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			List<Identity> identities = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<Identity>>(){});
+			identity.setId(identities.get(0).getId());
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withAccountId(user.getId())
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
+					.withMongoDBConnectUri(mongoClientUri)
+					.withAccountId(event.getAccountId())
 					.withCollectionName(COLLECTION_NAME)
-					.withDocument(objectMapper.writeValueAsString(user));
+					.withDocument(objectMapper.writeValueAsString(identity));
 			
 			UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
 			
-			logger.log(new Date() + " Status Code: " + updateDocumentResponse.getStatusCode());
+			logger.log("Status Code: " + updateDocumentResponse.getStatusCode());
 			
 			if (updateDocumentResponse.getStatusCode() == 200) {
 				logger.log("Document Id: " + updateDocumentResponse.getId());
+				identity.setId(updateDocumentResponse.getId());
 			} else {
 				throw new IOException(updateDocumentResponse.getErrorMessage());
 			}
 		}
 		
+		logger.log("identity: " + identity.getId());
+		
 		//
 		//
 		//
 		
-		event.setTargetId(user.getId().toString());		
+		event.setTargetId(identity.getId());		
 	}
 }

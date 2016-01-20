@@ -54,8 +54,8 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			
 			HttpResponse httpResponse = RestResource.post(request.getApiEndpoint())
 					.contentType(MediaType.APPLICATION_JSON)
-					.path("applications")
-					.path(request.getApplicationId())
+					.path("directories")
+					.path(request.getDirectoryId())
 					.path("accounts")
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.body(node)

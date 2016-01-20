@@ -32,14 +32,14 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	public void setApiEndpoint(String apiEndpoint) {
 		super.setApiEndpoint(apiEndpoint);
 	}
-
+	
 	@NotEmpty
-	public String getApplicationId() {
-		return super.getApplicationId();
+	public String getDirectoryId() {
+		return super.getDirectoryId();
 	}
-
-	public void setApplicationId(String applicationId) {
-		super.setApplicationId(applicationId);
+	
+	public void setDirectoryId(String directoryId) {
+		super.setDirectoryId(directoryId);
 	}
 
 	@NotEmpty
@@ -95,8 +95,13 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		return this;
 	}
 	
-	public CreateAccountRequest withApplicationId(String applicationId) {
-		setApplicationId(applicationId);
+	//public CreateAccountRequest withApplicationId(String applicationId) {
+	//	setApplicationId(applicationId);
+	//	return this;
+	//}
+	
+	public CreateAccountRequest withDirectoryId(String directoryId) {
+		setDirectoryId(directoryId);
 		return this;
 	}
 	

@@ -58,6 +58,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		
 		String applicationId = properties.get(Properties.STORMPATH_APPLICATION_ID);
+		String directoryId = properties.get(Properties.STORMPATH_DIRECTORY_ID);
 		String apiEndpoint = properties.get(Properties.STORMPATH_API_ENDPOINT);
 		String apiKeyId = properties.get(Properties.STORMPATH_API_KEY_ID);
 		String apiKeySecret = properties.get(Properties.STORMPATH_API_KEY_SECRET);
@@ -92,7 +93,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 			//
 			
 			CreateAccountRequest createAccountRequest = new CreateAccountRequest()
-					.withApplicationId(applicationId)
+					.withDirectoryId(directoryId)
 					.withApiEndpoint(apiEndpoint)
 					.withApiKeyId(apiKeyId)
 					.withApiKeySecret(apiKeySecret)

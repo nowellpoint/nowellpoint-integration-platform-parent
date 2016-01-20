@@ -219,7 +219,7 @@ public class TestIdentityProviderClient {
 		UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest()
 				.withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.withApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
-				.withGivenName("New")
+				.withMiddleName("New")
 				.withHref(searchAccountResponse.getItems().get(0).getHref());
 		
 		UpdateAccountResponse updateAccountResponse = client.account(updateAccountRequest);
