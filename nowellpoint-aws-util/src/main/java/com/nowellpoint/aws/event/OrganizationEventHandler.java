@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.event;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -37,12 +38,17 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 		
 		final DataClient dataClient = new DataClient();
 		
+		Date now = Date.from(Instant.now());	
+		
 		Organization organization = objectMapper.readValue(event.getPayload(), Organization.class);
 	
 		if (organization.getId() != null) {
 			
-			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withAccountId(event.getAccountId())
+			organization.setLastModifiedById(event.getAccountId());
+			organization.setLastModifiedDate(now);
+			
+			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
+					.withMongoDBConnectUri(mongoClientUri)
 					.withCollectionName(COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(organization));
 			
@@ -59,9 +65,13 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 		} else {
 			
 			organization.setId(event.getId());
+			organization.setCreatedById(event.getAccountId());
+			organization.setLastModifiedById(event.getAccountId());
+			organization.setCreatedDate(now);
+			organization.setLastModifiedDate(now);
 			
-			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest().withMongoDBConnectUri(mongoClientUri)
-					.withAccountId(event.getAccountId())
+			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
+					.withMongoDBConnectUri(mongoClientUri)
 					.withCollectionName(COLLECTION)
 					.withDocument(objectMapper.writeValueAsString(organization));
 				

@@ -15,12 +15,7 @@ public class QueryDocumentRequest extends AbstractDocumentRequest {
 	public String getDocument() {
 		return super.getDocument();
 	}
-	
-	public QueryDocumentRequest withAccountId(String accountId) {
-		setAccountId(accountId);
-		return this;
-	}
-	
+		
 	public QueryDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
 		setMongoDBConnectUri(mongoDBConnectUri);
 		return this;

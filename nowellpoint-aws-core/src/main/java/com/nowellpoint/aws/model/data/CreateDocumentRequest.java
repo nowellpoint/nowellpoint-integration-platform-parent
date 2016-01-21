@@ -19,11 +19,6 @@ public class CreateDocumentRequest extends AbstractDocumentRequest {
 	public String getDocument() {
 		return super.getDocument();
 	}
-	
-	public CreateDocumentRequest withAccountId(String accountId) {
-		setAccountId(accountId);
-		return this;
-	}
 
 	public CreateDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);

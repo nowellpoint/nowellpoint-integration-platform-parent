@@ -23,11 +23,6 @@ public class UpdateDocumentRequest extends AbstractDocumentRequest {
 	public void setDocument(String document) {
 		super.setDocument(document);
 	}
-	
-	public UpdateDocumentRequest withAccountId(String accountId) {
-		setAccountId(accountId);
-		return this;
-	}
 
 	public UpdateDocumentRequest withCollectionName(String collectionName) {
 		setCollectionName(collectionName);

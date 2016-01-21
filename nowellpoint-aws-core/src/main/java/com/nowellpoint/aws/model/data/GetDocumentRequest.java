@@ -40,9 +40,4 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 		setCollectionName(collectionName);
 		return this;
 	}
-	
-	public GetDocumentRequest withAccountId(String accountId) {
-		setAccountId(accountId);
-		return this;
-	}
 }

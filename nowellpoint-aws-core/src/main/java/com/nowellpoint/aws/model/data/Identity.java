@@ -1,29 +1,14 @@
 package com.nowellpoint.aws.model.data;
 
-import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_EMPTY)
-public class Identity implements Serializable {
+public class Identity extends AbstractDocument {
 
 	/**
 	 * 
 	 */
 
 	private static final long serialVersionUID = 3163086585922281575L;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonProperty("_id")
-	private String id;
 
 	/**
 	 * 
@@ -159,14 +144,6 @@ public class Identity implements Serializable {
 
 	public Identity() {
 
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getUsername() {

@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.event;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -35,12 +36,13 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		Identity identity = objectMapper.readValue(event.getPayload(), Identity.class);
 		
+		Date now = Date.from(Instant.now());	
+		
 		String query = objectMapper.createObjectNode().put("username", identity.getUsername()).toString();
 		
 		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest()
 				.withCollectionName(COLLECTION_NAME)
 				.withMongoDBConnectUri(mongoClientUri)
-				.withAccountId(event.getAccountId())
 				.withDocument(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
@@ -50,12 +52,16 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		if (queryDocumentResponse.getCount() == 0) {
 			
 			identity.setId(event.getId());
+			identity.setAccountHref(event.getAccountId());
+			identity.setCreatedById(event.getAccountId());
+			identity.setLastModifiedById(event.getAccountId());
+			identity.setCreatedDate(now);
+			identity.setLastModifiedDate(now);
 			
 			logger.log("Creating identity for account..." + event.getAccountId());
 					
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
 					.withMongoDBConnectUri(mongoClientUri)
-					.withAccountId(event.getAccountId())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(identity));
 				
@@ -75,11 +81,13 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			logger.log("Updating identity for account..." + event.getAccountId());
 			
 			List<Identity> identities = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<Identity>>(){});
+			
 			identity.setId(identities.get(0).getId());
+			identity.setLastModifiedById(event.getAccountId());
+			identity.setLastModifiedDate(now);
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
 					.withMongoDBConnectUri(mongoClientUri)
-					.withAccountId(event.getAccountId())
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(identity));
 			

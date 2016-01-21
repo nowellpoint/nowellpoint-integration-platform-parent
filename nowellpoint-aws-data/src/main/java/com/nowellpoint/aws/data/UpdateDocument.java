@@ -1,8 +1,5 @@
 package com.nowellpoint.aws.data;
 
-import java.time.Instant;
-import java.util.Date;
-
 import org.bson.Document;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -63,11 +60,7 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 		//
 		//
 		
-		Date now = Date.from(Instant.now());
-		
 		Document document = Document.parse(request.getDocument());
-		document.put("lastModifiedDate", now);
-		document.put("lastModifiedById", request.getAccountId());
 		
 		//
 		//

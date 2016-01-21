@@ -40,9 +40,4 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 		setCollectionName(collectionName);
 		return this;
 	}
-	
-	public DeleteDocumentRequest withAccountId(String accountId) {
-		setAccountId(accountId);
-		return this;
-	}
 }

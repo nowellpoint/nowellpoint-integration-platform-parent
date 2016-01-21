@@ -5,12 +5,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.client.DataClient;
@@ -23,6 +28,7 @@ import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
 import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
+import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 import com.nowellpoint.aws.idp.model.GetTokenRequest;
@@ -78,6 +84,30 @@ public class TestDataClient {
 		
 		System.out.println("Authenticate: " + (System.currentTimeMillis() - startTime));
 	}
+	
+	@Test
+	public void testCreateAndUpdateIdentity() {
+		
+		System.out.println("testCreateAndUpdateIdentity");
+		
+		Identity identity = new Identity();
+		identity.setCreatedDate(Date.from(Instant.now()));
+		identity.setLastModifiedDate(Date.from(Instant.now()));
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			String json = objectMapper.writeValueAsString(identity);
+			System.out.println(json);
+			identity = objectMapper.readValue(json, Identity.class);
+			System.out.println(identity.getCreatedDate());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testCreateAndUpdateParty() {
@@ -86,11 +116,12 @@ public class TestDataClient {
 		
 		String accountId = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), token.getAccessToken()).getBody().getSubject();
 		
+		json.put("accountId", accountId);
+		
 		long startTime = System.currentTimeMillis();
 		
 		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withDocument(json.toString());
 			
@@ -107,7 +138,6 @@ public class TestDataClient {
 			
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withDocument(json.toString());
 			
@@ -125,7 +155,6 @@ public class TestDataClient {
 			
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -145,7 +174,6 @@ public class TestDataClient {
 			
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(createDocumentResponse.getId());
 			
@@ -163,10 +191,11 @@ public class TestDataClient {
 	public void testNotFound() {
 		
 		String accountId = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), token.getAccessToken()).getBody().getSubject();
+		
+		json.put("accountId", accountId);
 			
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(UUID.randomUUID().toString());
 			
@@ -188,7 +217,6 @@ public class TestDataClient {
 			
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withDocument(json.toString());
 			
@@ -212,7 +240,6 @@ public class TestDataClient {
 			
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
-				.withAccountId(accountId)
 				.withCollectionName("parties")
 				.withId(UUID.randomUUID().toString());
 			

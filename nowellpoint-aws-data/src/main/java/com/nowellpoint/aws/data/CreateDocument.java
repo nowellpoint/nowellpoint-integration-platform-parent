@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.data;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 import org.bson.Document;
@@ -61,15 +59,9 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		
 		/**
 		 * 
-		 */
-		
-		Date now = Date.from(Instant.now());	
+		 */	
 		
 		Document document = Document.parse(request.getDocument());
-		document.put("createdDate", now);
-		document.put("lastModifiedDate", now);
-		document.put("createdById", request.getAccountId());
-		document.put("lastModifiedById", request.getAccountId());		
 		
 		if (document.getString("_id") == null) {
 			document.put("_id", UUID.randomUUID().toString());

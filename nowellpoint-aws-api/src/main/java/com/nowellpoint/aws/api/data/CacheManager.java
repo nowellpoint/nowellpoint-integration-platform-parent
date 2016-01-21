@@ -41,7 +41,7 @@ public class CacheManager implements ServletContextListener {
 	}
 	
 	public static byte[] serialize(Object object) {
-        ObjectOutputStream os = null;
+		ObjectOutputStream os = null;
         ByteArrayOutputStream baos = null;
         try {
             baos = new ByteArrayOutputStream();

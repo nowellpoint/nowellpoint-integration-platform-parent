@@ -75,7 +75,6 @@ public class Deployer {
 					UpdateFunctionCodeRequest updateFunctionCodeRequest = new UpdateFunctionCodeRequest().withFunctionName(configuration.getFunctionName())
 							.withS3Bucket(code.getS3Bucket())
 							.withS3Key(code.getS3Key())
-							.withPublish(Boolean.TRUE)
 							.withS3ObjectVersion(code.getS3ObjectVersion());
 					
 					lambdaClient.updateFunctionCode(updateFunctionCodeRequest);
@@ -91,7 +90,6 @@ public class Deployer {
 							.withFunctionName(configuration.getFunctionName())
 							.withHandler(configuration.getHandler())
 							.withMemorySize(configuration.getMemorySize())
-							.withPublish(Boolean.TRUE)
 							.withRole(configuration.getRole())
 							.withRuntime(configuration.getRuntime())
 							.withTimeout(configuration.getTimeout());
