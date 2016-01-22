@@ -12,18 +12,13 @@ import com.nowellpoint.aws.model.admin.Properties;
 public class Main {
 	
 	public static void main(String[] args) throws Exception {
-		
-		//
-		// set system properties
-		//
-		
-		System.setProperty("jboss.http.port", getPort());
 
 		//
 		// build and start the container
 		//
 		
         Container container = new Container();
+        container.setArgs(new String[] {"-b=".concat(getPort())});
         container.start();
         
 		//
@@ -31,6 +26,12 @@ public class Main {
         //
 
         Properties.setSystemProperties(System.getenv("PROPERTY_STORE"));
+        
+        //
+		// set system properties
+		//
+		
+		//System.setProperty("jboss.bind.address", getPort());
         
         //
         // create the JAX-RS deployment archive
@@ -42,6 +43,7 @@ public class Main {
         		.addPackage("com.nowellpoint.aws.api.util")
         		.addPackage("com.nowellpoint.aws.api.exception")
         		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
+        		.addAsWebInfResource(new ClassLoaderAsset("META-INF/beans.xml", Main.class.getClassLoader()), "beans.xml")
         		.addAllDependencies();
         
         //

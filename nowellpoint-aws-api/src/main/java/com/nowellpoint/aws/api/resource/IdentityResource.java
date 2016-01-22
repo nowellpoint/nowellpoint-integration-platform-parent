@@ -2,11 +2,11 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
-import static com.nowellpoint.aws.api.data.CacheManager.getCache;
 import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.net.URI;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,6 +35,9 @@ import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 @Path("/identity")
 public class IdentityResource {
+	
+	@Inject
+	private CacheManager cacheManager;
 
 	@Context
 	private UriInfo uriInfo;
@@ -73,7 +76,7 @@ public class IdentityResource {
 		//
 		//
 		
-		getCache().set(event.getId().getBytes(), serialize(resource));
+		cacheManager.getCache().set(event.getId().getBytes(), serialize(resource));
 		
 		//
 		//
@@ -100,7 +103,7 @@ public class IdentityResource {
 		//
 		//
 		
-		byte[] bytes = CacheManager.getCache().get(identityId.getBytes());
+		byte[] bytes = cacheManager.getCache().get(identityId.getBytes());
 
 		//
 		//

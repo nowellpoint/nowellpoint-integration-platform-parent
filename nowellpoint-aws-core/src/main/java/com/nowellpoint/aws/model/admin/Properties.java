@@ -14,7 +14,6 @@ public class Properties {
 	
 	public static final String LOGGLY_API_KEY = "loggly.api.key";
 	public static final String MONGO_CLIENT_URI = "mongo.client.uri";
-	public static final String MONGO_API_KEY = "mongo.api.key";
 	public static final String SALESFORCE_CLIENT_ID = "salesforce.client.id";
 	public static final String SALESFORCE_CLIENT_SECRET = "salesforce.client.secret";
 	public static final String SALESFORCE_TOKEN_URI = "salesforce.token.uri";
@@ -23,17 +22,17 @@ public class Properties {
 	public static final String SALESFORCE_USERNAME = "salesforce.username";
 	public static final String SALESFORCE_PASSWORD = "salesforce.password";
 	public static final String SALESFORCE_SECURITY_TOKEN = "salesforce.security.token";
-	public static final String REDIRECT_URI = "redirect.uri";
+	public static final String SALESFORCE_REDIRECT_URI = "salesforce.redirect.uri";
 	public static final String STORMPATH_API_KEY_ID = "stormpath.api.key.id";
 	public static final String STORMPATH_API_KEY_SECRET = "stormpath.api.key.secret";
 	public static final String STORMPATH_API_ENDPOINT = "stormpath.api.endpoint";
 	public static final String STORMPATH_APPLICATION_ID = "stormpath.application.id";
 	public static final String STORMPATH_DIRECTORY_ID = "stormpath.directory.id";
 	public static final String STORMPATH_GROUP_ID = "stormpath.group.id";
-	public static final String NOWELLPOINT_API_ENDPOINT = "nowellpoint.api.endpoint";
 	public static final String SENDGRID_API_KEY = "sendgrid.api.key";
-	public static final String AWS_X_API_KEY = "aws.x.api.key";
 	public static final String REDIS_PASSWORD = "redis.password";
+	public static final String REDIS_ENDPOINT = "redis.endpoint";
+	public static final String REDIS_PORT = "redis.port";
 	public static final String DEFAULT_ACCOUNT_ID = "default.account.id";
 	
 	public static String getProperty(String store, String key) {

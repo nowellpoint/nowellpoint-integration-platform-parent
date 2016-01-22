@@ -1,12 +1,12 @@
 package com.nowellpoint.aws.api.resource;
 
-import static com.nowellpoint.aws.api.data.CacheManager.getCache;
 import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
 import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
@@ -22,6 +22,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
 import com.nowellpoint.aws.idp.model.Account;
@@ -39,6 +40,9 @@ import io.jsonwebtoken.Jws;
 
 @Path("/account")
 public class AccountResource {
+	
+	@Inject
+	private CacheManager cacheManager;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -72,7 +76,7 @@ public class AccountResource {
 		// check the cache to see if the account exits
 		//
 		
-		byte[] bytes = getCache().get(bearerToken.getBytes());
+		byte[] bytes = cacheManager.getCache().get(bearerToken.getBytes());
 		
 		//
 		// if its not null then return the account
@@ -109,7 +113,7 @@ public class AccountResource {
 				.withHref(href);
 		
 		//
-		// excute the GetAccountRequest
+		// execute the GetAccountRequest
 		//
 		
 		GetAccountResponse getAccountResponse = identityProviderClient.account(getAccountRequest);
@@ -124,7 +128,7 @@ public class AccountResource {
 		// add the account to the cache
 		//
 		
-		getCache().setex(bearerToken.getBytes(), exp.intValue(), serialize(getAccountResponse.getAccount()));
+		cacheManager.getCache().setex(bearerToken.getBytes(), exp.intValue(), serialize(getAccountResponse.getAccount()));
 		
 		//
 		// build and return the response

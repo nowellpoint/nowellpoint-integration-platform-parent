@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<wildfly.swarm.version>1.0.0.Alpha5</wildfly.swarm.version>
+		<wildfly.swarm.version>1.0.0.Alpha6</wildfly.swarm.version>
 	</properties>
 
 	<dependencyManagement>
@@ -39,12 +39,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>wildfly-swarm-undertow</artifactId>
+			<artifactId>undertow</artifactId>
 			<version>${wildfly.swarm.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>wildfly-swarm-jaxrs</artifactId>
+			<artifactId>jaxrs</artifactId>
+			<version>${wildfly.swarm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>jaxrs-weld</artifactId>
 			<version>${wildfly.swarm.version}</version>
 		</dependency>
 		<dependency>
@@ -63,10 +68,10 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>nowellpoint-aws-idp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>nowellpoint-aws-idp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

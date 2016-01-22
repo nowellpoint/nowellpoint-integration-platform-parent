@@ -38,7 +38,7 @@ public class SalesforceResource {
 		GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest().withTokenUri(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
 				.withClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.withClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-				.withRedirectUri(System.getProperty(Properties.REDIRECT_URI))
+				.withRedirectUri(System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
 				.withCode(code);
 		
 		//

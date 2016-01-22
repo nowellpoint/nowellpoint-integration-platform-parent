@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -24,6 +25,9 @@ import com.nowellpoint.aws.model.data.IsoCountry;
 @Path("/iso-country")
 public class IsoCountryResource {
 	
+	@Inject
+	private CacheManager cacheManager;
+	
 	private static final String COLLECTION_NAME = "iso.countries";
 	
 	@GET
@@ -33,7 +37,7 @@ public class IsoCountryResource {
 		
 		List<IsoCountry> countries;
 		
-		byte[] bytes = CacheManager.getCache().get(COLLECTION_NAME.getBytes());
+		byte[] bytes = cacheManager.getCache().get(COLLECTION_NAME.getBytes());
 		
 		if (bytes != null) {
 			countries = (List<IsoCountry>) deserialize(bytes);
@@ -45,7 +49,7 @@ public class IsoCountryResource {
 			countries = StreamSupport.stream(collection.find().spliterator(), false)
 					.collect(Collectors.toList());
 			
-			CacheManager.getCache().set(COLLECTION_NAME.getBytes(), serialize(countries));
+			cacheManager.getCache().set(COLLECTION_NAME.getBytes(), serialize(countries));
 		}
 		
 		return Response.ok(countries).build();

@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
-import static com.nowellpoint.aws.api.data.CacheManager.getCache;
-
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
 import com.nowellpoint.aws.idp.model.GetTokenRequest;
@@ -25,6 +25,9 @@ import com.nowellpoint.aws.model.admin.Properties;
 
 @Path("/oauth")
 public class TokenResource {
+	
+	@Inject
+	private CacheManager cacheManager;
 	
 	@Context
 	private HttpServletRequest servletRequest;
@@ -164,7 +167,7 @@ public class TokenResource {
 		// remove the account from the cache
 		//
 		
-		getCache().del(bearerToken.getBytes());
+		cacheManager.getCache().del(bearerToken.getBytes());
 		
 		//
 		// build and return the response
