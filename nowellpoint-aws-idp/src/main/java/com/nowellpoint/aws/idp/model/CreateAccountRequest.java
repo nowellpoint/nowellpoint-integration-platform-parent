@@ -10,6 +10,8 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	
 	private static final long serialVersionUID = 350380797564170812L;
 	
+	private String directoryId;
+	
 	private String username;
 	
 	private String email;
@@ -35,11 +37,11 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	
 	@NotEmpty
 	public String getDirectoryId() {
-		return super.getDirectoryId();
+		return directoryId;
 	}
 	
 	public void setDirectoryId(String directoryId) {
-		super.setDirectoryId(directoryId);
+		this.directoryId = directoryId;
 	}
 
 	@NotEmpty

@@ -193,9 +193,9 @@ public class TestIdentityProviderClient {
 		SearchAccountRequest searchAccountRequest = new SearchAccountRequest()
 				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
-				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withDirectoryId(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
 				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.withUsername("john.herson@nowellpoint.com");
+				.withUsername("john.d.herson@gmail.com");
 		
 		SearchAccountResponse searchAccountResponse = client.account(searchAccountRequest);
 		

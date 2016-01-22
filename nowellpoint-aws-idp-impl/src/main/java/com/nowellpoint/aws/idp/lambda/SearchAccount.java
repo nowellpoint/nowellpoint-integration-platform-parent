@@ -57,8 +57,8 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 			
 			HttpResponse httpResponse = RestResource.get(request.getApiEndpoint())
 					.accept(MediaType.APPLICATION_JSON)
-					.path("applications")
-					.path(request.getApplicationId())
+					.path("directories")
+					.path(request.getDirectoryId())
 					.path("accounts")
 					.path(query.toString())
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())

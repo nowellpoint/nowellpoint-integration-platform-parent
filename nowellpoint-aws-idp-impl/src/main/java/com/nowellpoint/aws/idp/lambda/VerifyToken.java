@@ -39,10 +39,10 @@ public class VerifyToken implements RequestHandler<VerifyTokenRequest, VerifyTok
 		try {
 			httpResponse = RestResource.get(request.getApiEndpoint())
 					.path("applications")
-					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.path(request.getApplicationId())
 					.path("authTokens")
 					.path(request.getAccessToken())
+					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.execute();
 				
 			logger.log("Status Code: " + response.getStatusCode() + " Target: " + httpResponse.getURL());

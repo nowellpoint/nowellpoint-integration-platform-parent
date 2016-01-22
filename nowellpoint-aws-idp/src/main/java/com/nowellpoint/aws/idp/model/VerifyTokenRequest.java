@@ -6,6 +6,8 @@ public class VerifyTokenRequest extends AbstractIdpRequest {
 
 	private static final long serialVersionUID = 4462868491415777411L;
 	
+	private String applicationId;
+	
 	private String accessToken;
 	
 	public VerifyTokenRequest() {
@@ -32,11 +34,11 @@ public class VerifyTokenRequest extends AbstractIdpRequest {
 	
 	@NotEmpty
 	public String getApplicationId() {
-		return super.getApplicationId();
+		return applicationId;
 	}
 	
 	public void setApplicationId(String applicationId) {
-		super.setApplicationId(applicationId);
+		this.applicationId = applicationId;
 	}
 	
 	public VerifyTokenRequest withAccessToken(String accessToken) {

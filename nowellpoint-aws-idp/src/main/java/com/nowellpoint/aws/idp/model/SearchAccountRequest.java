@@ -10,6 +10,8 @@ public class SearchAccountRequest extends AbstractIdpRequest {
 	
 	private static final long serialVersionUID = 350380797564170812L;
 	
+	private String directoryId;
+	
 	private String username;
 	
 	private String email;
@@ -34,12 +36,12 @@ public class SearchAccountRequest extends AbstractIdpRequest {
 	}
 	
 	@NotEmpty
-	public String getApplicationId() {
-		return super.getApplicationId();
+	public String getDirectoryId() {
+		return directoryId;
 	}
 	
-	public void setApplicationId(String applicationId) {
-		super.setApplicationId(applicationId);
+	public void setDirectoryId(String directoryId) {
+		this.directoryId = directoryId;
 	}
 	
 	public String getUsername() {
@@ -82,8 +84,8 @@ public class SearchAccountRequest extends AbstractIdpRequest {
 		this.surname = surname;
 	}
 	
-	public SearchAccountRequest withApplicationId(String applicationId) {
-		setApplicationId(applicationId);
+	public SearchAccountRequest withDirectoryId(String directoryId) {
+		setDirectoryId(directoryId);
 		return this;
 	}
 	

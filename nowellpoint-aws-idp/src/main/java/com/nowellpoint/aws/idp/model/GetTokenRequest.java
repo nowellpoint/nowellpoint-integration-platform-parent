@@ -10,6 +10,8 @@ public class GetTokenRequest extends AbstractIdpRequest {
 	
 	private static final long serialVersionUID = 5687820017409617494L;
 	
+	private String applicationId;
+	
 	private String username;
 	
 	private String password;
@@ -47,11 +49,11 @@ public class GetTokenRequest extends AbstractIdpRequest {
 	
 	@NotEmpty
 	public String getApplicationId() {
-		return super.getApplicationId();
+		return applicationId;
 	}
 
 	public void setApplicationId(String applicationId) {
-		super.setApplicationId(applicationId);
+		this.applicationId = applicationId;
 	}
 	
 	public GetTokenRequest withUsername(String username) {

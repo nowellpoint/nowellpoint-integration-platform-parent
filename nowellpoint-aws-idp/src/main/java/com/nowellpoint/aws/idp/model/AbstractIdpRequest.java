@@ -17,10 +17,6 @@ public abstract class AbstractIdpRequest extends AbstractLambdaRequest {
 	private String apiKeyId;
 	
 	private String apiKeySecret;
-	
-	private String applicationId;
-	
-	private String directoryId;
 
 	public AbstractIdpRequest() {
 		
@@ -50,21 +46,5 @@ public abstract class AbstractIdpRequest extends AbstractLambdaRequest {
 
 	public void setApiKeySecret(String apiKeySecret) {
 		this.apiKeySecret = apiKeySecret;
-	}
-	
-	protected String getApplicationId() {
-		return applicationId;
-	}
-	
-	protected void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
-	
-	protected String getDirectoryId() {
-		return directoryId;
-	}
-	
-	protected void setDirectoryId(String directoryId) {
-		this.directoryId = directoryId;
 	}
 }

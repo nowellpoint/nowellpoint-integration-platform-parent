@@ -6,6 +6,8 @@ public class RefreshTokenRequest extends AbstractIdpRequest {
 	
 	private static final long serialVersionUID = -3186641818593860386L;
 	
+	private String applicationId;
+	
 	private String refreshToken;
 	
 	public RefreshTokenRequest() {
@@ -32,11 +34,11 @@ public class RefreshTokenRequest extends AbstractIdpRequest {
 	
 	@NotEmpty
 	public String getApplicationId() {
-		return super.getApplicationId();
+		return applicationId;
 	}
 	
 	public void setApplicationId(String applicationId) {
-		super.setApplicationId(applicationId);
+		this.applicationId = applicationId;
 	}
 	
 	public RefreshTokenRequest withApiEndpoint(String apiEndpoint) {
