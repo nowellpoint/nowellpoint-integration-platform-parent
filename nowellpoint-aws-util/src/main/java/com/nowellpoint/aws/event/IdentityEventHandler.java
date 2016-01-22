@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nowellpoint.aws.CacheManager;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -26,11 +28,27 @@ public class IdentityEventHandler implements AbstractEventHandler {
 	@Override
 	public void process(Event event, Context context) throws Exception {
 		
+		//
+		//
+		//
+		
 		LambdaLogger logger = context.getLogger();
+		
+		//
+		//
+		//
 		
 		logger.log(new Date() + " starting IdentityEventHandler");
 		
-		String mongoClientUri = Properties.getProperty(event.getPropertyStore(), Properties.MONGO_CLIENT_URI);
+		//
+		//
+		//
+		
+		Map<String, String> properties = Properties.getProperties(event.getPropertyStore());
+		
+		//
+		//
+		//
 		
 		final DataClient dataClient = new DataClient();
 		
@@ -42,7 +60,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest()
 				.withCollectionName(COLLECTION_NAME)
-				.withMongoDBConnectUri(mongoClientUri)
+				.withMongoDBConnectUri(properties.get(Properties.MONGO_CLIENT_URI))
 				.withDocument(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
@@ -61,7 +79,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			logger.log("Creating identity for account..." + event.getAccountId());
 					
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
-					.withMongoDBConnectUri(mongoClientUri)
+					.withMongoDBConnectUri(properties.get(Properties.MONGO_CLIENT_URI))
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(identity));
 				
@@ -87,7 +105,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			identity.setLastModifiedDate(now);
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
-					.withMongoDBConnectUri(mongoClientUri)
+					.withMongoDBConnectUri(properties.get(Properties.MONGO_CLIENT_URI))
 					.withCollectionName(COLLECTION_NAME)
 					.withDocument(objectMapper.writeValueAsString(identity));
 			
@@ -103,7 +121,20 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			}
 		}
 		
+		//
+		//
+		//
+		
 		logger.log("identity: " + identity.getId());
+		
+		//
+		//
+		//
+		
+		CacheManager cacheProvider = new CacheManager();
+		cacheProvider.auth(properties.get(Properties.REDIS_PASSWORD));
+		cacheProvider.setex(identity.getId(), 259200, identity);
+		cacheProvider.close();
 		
 		//
 		//
