@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.bson.Document;
+import javax.ws.rs.core.Response.Status;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -109,25 +109,25 @@ public class IdentityResource {
 		//
 		//
 		
-		Identity resource = null;
+		Identity identity = null;
 		
 		if (bytes != null) {
-			resource = (Identity) deserialize(bytes);
+			identity = (Identity) deserialize(bytes);
 		} else {
-			Document document = Datastore.getDatabase().getCollection( "identities" ).find( eq ( "_id", identityId ) ).first();
+			identity = Datastore.getDatabase().getCollection( "identities" )
+					.withDocumentClass( Identity.class )
+					.find( eq ( "_id", identityId ) )
+					.first();
+			
+			cacheManager.getCache().setex(identity.getId().getBytes(), 259200, serialize(identity));
 		}
 		
 		//
 		//
 		//
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.build(resource);
-		
-		//
-		//
-		//
-		
-		return Response.created(uri).build();
+		return Response.status(Status.OK)
+				.entity(identity)
+				.build();
 	}
 }

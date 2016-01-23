@@ -5,7 +5,6 @@
   <projects>
     <project>nowellpoint-aws-core</project>
     <project>nowellpoint-aws-idp</project>
-    <project>nowellpoint-aws-rest-client</project>
   </projects>
   <buildSpec>
     <buildCommand>

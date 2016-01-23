@@ -1,30 +1,9 @@
-package com.nowellpoint.aws.model.data;
+package com.nowellpoint.aws.data;
 
-import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractDocument implements Serializable {
+public class AbstractDTO {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 4165321769330346404L;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonProperty("_id")
 	private String id;
 
 	/**
@@ -43,19 +22,15 @@ public abstract class AbstractDocument implements Serializable {
 	 * 
 	 */
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date createdDate;
 	
 	/**
 	 * 
 	 */
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastModifiedDate;
 	
-	public AbstractDocument() {
+	public AbstractDTO() {
 		
 	}
 	

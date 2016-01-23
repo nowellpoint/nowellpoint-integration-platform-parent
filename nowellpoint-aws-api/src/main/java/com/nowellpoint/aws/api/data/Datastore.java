@@ -27,7 +27,10 @@ public class Datastore implements ServletContextListener {
 	
 	static {
 		
-		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(new IsoCountryCodec(), new ProjectCodec()));
+		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(
+				new IsoCountryCodec(), 
+				new ProjectCodec(), 
+				new IdentityCodec()));
 		
 		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
 		mongoClient = new MongoClient(mongoClientURI);		

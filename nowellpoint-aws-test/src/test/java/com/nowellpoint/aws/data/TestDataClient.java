@@ -10,9 +10,12 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
+import org.bson.Document;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.modelmapper.ModelMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,20 +89,46 @@ public class TestDataClient {
 	}
 	
 	@Test
+	@Ignore
 	public void testCreateAndUpdateIdentity() {
 		
 		System.out.println("testCreateAndUpdateIdentity");
 		
 		Identity identity = new Identity();
+		identity.setCompany("The winter whiplash");
+		identity.setEmail("john.herson@mail.com");
 		identity.setCreatedDate(Date.from(Instant.now()));
 		identity.setLastModifiedDate(Date.from(Instant.now()));
 		
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
+		        WRITE_DATES_AS_TIMESTAMPS , false);
 		try {
 			String json = objectMapper.writeValueAsString(identity);
 			System.out.println(json);
-			identity = objectMapper.readValue(json, Identity.class);
-			System.out.println(identity.getCreatedDate());
+			Document document = Document.parse(json);
+			System.out.println(document.toJson());
+			
+			identity = objectMapper.readValue(document.toJson(), Identity.class);
+			System.out.println("created date: " + identity.getCreatedDate());
+			System.out.println("last modified date: " + identity.getLastModifiedDate());
+			
+			//CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
+			//		.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
+			//		.withCollectionName("identities")
+			//		.withDocument(document.toJson());
+				
+			//CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
+			
+			//System.out.println(createDocumentResponse.getId());
+			
+			//identity.setId(createDocumentResponse.getId());
+			
+			ModelMapper modelMapper = new ModelMapper();
+			IdentityDTO identityDTO = modelMapper.map(identity, IdentityDTO.class);
+			
+			System.out.println(objectMapper.writeValueAsString(identityDTO));
+			
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

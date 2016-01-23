@@ -8,14 +8,12 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 
 import redis.clients.jedis.Jedis;
 
 import com.nowellpoint.aws.model.admin.Properties;
 
-@Startup
 @ApplicationScoped
 public class CacheManager {
 	
@@ -24,16 +22,12 @@ public class CacheManager {
 	
 	@PostConstruct
 	public void postConstruct() {
-		log.info("post construct");
-		//jedis = new Jedis(
-		//		System.getProperty(Properties.REDIS_ENDPOINT), 
-		//		Integer.valueOf(System.getProperty(Properties.REDIS_PORT)));
+		String endpoint = System.getProperty(Properties.REDIS_ENDPOINT);
+		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
 		
-		jedis = new Jedis(
-				"pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 
-				10497);
-		
+		jedis = new Jedis(endpoint, port);
 		jedis.auth(System.getProperty(Properties.REDIS_PASSWORD));
+		
 		log.info("connecting to cache...is connected: " + jedis.isConnected());
 	}
 	
