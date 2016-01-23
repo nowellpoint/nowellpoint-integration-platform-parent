@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -41,7 +42,31 @@ public class CacheManager {
 		return jedis;
 	}
 	
-	public static byte[] serialize(Object object) {
+	public void set(String key, Object value) {
+		jedis.set(key.getBytes(), serialize(value));
+	}
+	
+	public void set(String key, int seconds, Object value) {
+		jedis.setex(key.getBytes(), seconds, serialize(value));
+	}
+	
+	public <T> T get(Class<T> type, String key) {
+		byte[] bytes = jedis.get(key.getBytes());
+		if (bytes != null) {
+			return deserialize(type, bytes);
+		} 
+		return null;
+	}
+	
+	public <T> List<T> getList(Class<T> type, String key) {
+		byte[] bytes = jedis.get(key.getBytes());
+		if (bytes != null) {
+			return deserializeList(type, bytes);
+		} 
+		return null;
+	}
+	
+	private static byte[] serialize(Object object) {
 		ObjectOutputStream os = null;
         ByteArrayOutputStream baos = null;
         try {
@@ -56,12 +81,26 @@ public class CacheManager {
         return null;
     }
 	
-	public static Object deserialize(byte[] bytes) {
+	@SuppressWarnings("unchecked")
+	private static <T> List<T> deserializeList(Class<T> type, byte[] bytes) {
         ByteArrayInputStream bais = null;
         try {
             bais = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = new ObjectInputStream(bais);
-            return ois.readObject();
+            return (List<T>) ois.readObject();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T> T deserialize(Class<T> type, byte[] bytes) {
+        ByteArrayInputStream bais = null;
+        try {
+            bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (T) ois.readObject();
         } catch (Exception e) {
         	e.printStackTrace();
         }

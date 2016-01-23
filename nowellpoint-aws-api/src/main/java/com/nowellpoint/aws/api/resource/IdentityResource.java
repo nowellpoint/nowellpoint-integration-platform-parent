@@ -1,8 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
-import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.net.URI;
 
@@ -43,6 +41,8 @@ public class IdentityResource {
 	private UriInfo uriInfo;
 	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
+	
+	private static final String COLLECTION_NAME = "identities";
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -76,7 +76,7 @@ public class IdentityResource {
 		//
 		//
 		
-		cacheManager.getCache().set(event.getId().getBytes(), serialize(resource));
+		cacheManager.set(event.getId(), resource);
 		
 		//
 		//
@@ -103,23 +103,20 @@ public class IdentityResource {
 		//
 		//
 		
-		byte[] bytes = cacheManager.getCache().get(identityId.getBytes());
-
+		Identity identity = cacheManager.get(Identity.class, identityId);
+		
 		//
 		//
 		//
 		
-		Identity identity = null;
-		
-		if (bytes != null) {
-			identity = (Identity) deserialize(bytes);
-		} else {
-			identity = Datastore.getDatabase().getCollection( "identities" )
+		if (identity == null) {
+			
+			identity = Datastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Identity.class )
 					.find( eq ( "_id", identityId ) )
 					.first();
 			
-			cacheManager.getCache().setex(identity.getId().getBytes(), 259200, serialize(identity));
+			cacheManager.set(identity.getId(), 259200, identity);
 		}
 		
 		//

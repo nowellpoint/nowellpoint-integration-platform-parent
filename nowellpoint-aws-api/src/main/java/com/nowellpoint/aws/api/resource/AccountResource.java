@@ -1,8 +1,5 @@
 package com.nowellpoint.aws.api.resource;
 
-import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
-import static com.nowellpoint.aws.api.data.CacheManager.serialize;
-
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -76,15 +73,13 @@ public class AccountResource {
 		// check the cache to see if the account exits
 		//
 		
-		byte[] bytes = cacheManager.getCache().get(bearerToken.getBytes());
+		Account account = cacheManager.get(Account.class, bearerToken);
 		
 		//
 		// if its not null then return the account
 		//
 		
-		if (bytes != null) {
-			
-			Account account = (Account) deserialize(bytes);
+		if (account != null) {
 			
 			return Response.ok(account)
 					.type(MediaType.APPLICATION_JSON)
@@ -128,7 +123,7 @@ public class AccountResource {
 		// add the account to the cache
 		//
 		
-		cacheManager.getCache().setex(bearerToken.getBytes(), exp.intValue(), serialize(getAccountResponse.getAccount()));
+		cacheManager.set(bearerToken, exp.intValue(), getAccountResponse.getAccount());
 		
 		//
 		// build and return the response

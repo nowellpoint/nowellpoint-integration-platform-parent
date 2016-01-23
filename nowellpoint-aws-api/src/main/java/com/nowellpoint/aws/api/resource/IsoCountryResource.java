@@ -2,8 +2,6 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
-import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,16 +30,12 @@ public class IsoCountryResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-	@SuppressWarnings("unchecked")
     public Response findAll() {
 		
-		List<IsoCountry> countries;
+		List<IsoCountry> countries = cacheManager.getList(IsoCountry.class, COLLECTION_NAME);
 		
-		byte[] bytes = cacheManager.getCache().get(COLLECTION_NAME.getBytes());
-		
-		if (bytes != null) {
-			countries = (List<IsoCountry>) deserialize(bytes);
-		} else {
+		if (countries == null) {
+			
 			MongoCollection<IsoCountry> collection = Datastore.getDatabase()
 					.getCollection(COLLECTION_NAME)
 					.withDocumentClass(IsoCountry.class);
@@ -49,7 +43,7 @@ public class IsoCountryResource {
 			countries = StreamSupport.stream(collection.find().spliterator(), false)
 					.collect(Collectors.toList());
 			
-			cacheManager.getCache().set(COLLECTION_NAME.getBytes(), serialize(countries));
+			cacheManager.set(COLLECTION_NAME, countries);
 		}
 		
 		return Response.ok(countries).build();
