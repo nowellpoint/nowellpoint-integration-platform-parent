@@ -24,8 +24,10 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	
 	private String password;
 	
+	private String status;
+	
 	public CreateAccountRequest() {
-		
+		setStatus("UNVERIFIED");
 	}
 	
 	@NotEmpty
@@ -97,6 +99,14 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public CreateAccountRequest withApiKeyId(String apiKeyId) {
 		setApiKeyId(apiKeyId);
@@ -145,6 +155,11 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	
 	public CreateAccountRequest withPassword(String password) {
 		setPassword(password);
+		return this;
+	}
+	
+	public CreateAccountRequest withStatus(String status) {
+		setStatus(status);
 		return this;
 	}
 }

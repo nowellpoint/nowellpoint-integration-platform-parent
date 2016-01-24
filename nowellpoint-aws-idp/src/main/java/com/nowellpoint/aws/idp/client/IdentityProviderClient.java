@@ -3,6 +3,8 @@ package com.nowellpoint.aws.idp.client;
 import com.nowellpoint.aws.client.AbstractClient;
 import com.nowellpoint.aws.idp.model.CreateAccountRequest;
 import com.nowellpoint.aws.idp.model.CreateAccountResponse;
+import com.nowellpoint.aws.idp.model.DeleteAccountRequest;
+import com.nowellpoint.aws.idp.model.DeleteAccountResponse;
 import com.nowellpoint.aws.idp.model.GetAccountRequest;
 import com.nowellpoint.aws.idp.model.GetAccountResponse;
 import com.nowellpoint.aws.idp.model.GetCustomDataRequest;
@@ -45,6 +47,10 @@ public class IdentityProviderClient extends AbstractClient {
 	
 	public UpdateAccountResponse account(UpdateAccountRequest updateAccountRequest) throws ClientException {
 		return invoke("IdentityProviderUpdateAccount", updateAccountRequest, UpdateAccountResponse.class);
+	}
+	
+	public DeleteAccountResponse account(DeleteAccountRequest deleteAccountRequest) throws ClientException {
+		return invoke("IdentityProviderDeleteAccount", deleteAccountRequest, DeleteAccountResponse.class);
 	}
 	
 	public GetCustomDataResponse account(GetCustomDataRequest getCustomDataRequest) throws ClientException {

@@ -14,6 +14,8 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.idp.model.CreateAccountRequest;
 import com.nowellpoint.aws.idp.model.CreateAccountResponse;
+import com.nowellpoint.aws.idp.model.DeleteAccountRequest;
+import com.nowellpoint.aws.idp.model.DeleteAccountResponse;
 import com.nowellpoint.aws.idp.model.GetAccountRequest;
 import com.nowellpoint.aws.idp.model.GetAccountResponse;
 import com.nowellpoint.aws.idp.model.GetCustomDataRequest;
@@ -83,9 +85,9 @@ public class TestIdentityProviderClient {
 	}
 	
 	@Test
-	public void testCreateAccount() {
+	public void testCreateDeleteAccount() {
 		
-		log.info("testCreateAccount");
+		log.info("testCreateDeleteAccount");
 		
 		CreateAccountRequest createAccountRequest = new CreateAccountRequest()
 				.withDirectoryId(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
@@ -96,14 +98,25 @@ public class TestIdentityProviderClient {
 				.withGivenName("Happy")
 				.withMiddleName("D")
 				.withSurname("Birthday")
+				.withStatus("ENABLED")
 				.withUsername("john.herson@nowellpoint.com")
 				.withPassword("lsi38918902Js10");
 		
 		CreateAccountResponse createAccountResponse = client.account(createAccountRequest);
 		
-		log.info("status: " + createAccountResponse.getStatusCode());
-		log.info(createAccountResponse.getErrorMessage());
+		assertTrue(createAccountResponse.getStatusCode() == 201);
+		assertNotNull(createAccountResponse.getAccount().getHref());
 		
+		log.info("href: " + createAccountResponse.getAccount().getHref());
+		
+		DeleteAccountRequest deleteAccountRequest = new DeleteAccountRequest()
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withHref(createAccountResponse.getAccount().getHref());
+		
+		DeleteAccountResponse deleteAccountResponse = client.account(deleteAccountRequest);
+		
+		assertTrue(deleteAccountResponse.getStatusCode() == 204);	
 	}
 
 	@Test

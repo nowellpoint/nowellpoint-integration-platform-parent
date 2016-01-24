@@ -1,26 +1,32 @@
 package com.nowellpoint.aws.idp.lambda;
 
+import java.time.Instant;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.Account;
-import com.nowellpoint.aws.idp.model.CreateAccountRequest;
-import com.nowellpoint.aws.idp.model.CreateAccountResponse;
+import com.nowellpoint.aws.idp.model.DeleteAccountRequest;
+import com.nowellpoint.aws.idp.model.DeleteAccountResponse;
 
-public class CreateAccount implements RequestHandler<CreateAccountRequest, CreateAccountResponse> {
+public class DeleteAccount implements RequestHandler<DeleteAccountRequest, DeleteAccountResponse> {
 	
 	private static LambdaLogger logger;
 
 	@Override
-	public CreateAccountResponse handleRequest(CreateAccountRequest request, Context context) {
+	public DeleteAccountResponse handleRequest(DeleteAccountRequest request, Context context) {
 		
-		//
-		//
-		//
+		/**
+		 * 
+		 */
+		
+		long startTime = System.currentTimeMillis();
+		
+		/**
+		 * 
+		 */
 		
 		logger = context.getLogger();
 		
@@ -28,7 +34,7 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 		 * 
 		 */
 		
-		CreateAccountResponse response = new CreateAccountResponse();
+		DeleteAccountResponse response = new DeleteAccountResponse();
 		
 		/**
 		 * 
@@ -36,22 +42,12 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 		
 		try {
 			
-			Account account = new Account();
-			account.setEmail(request.getEmail());
-			account.setGivenName(request.getGivenName());
-			account.setMiddleName(request.getMiddleName());
-			account.setSurname(request.getSurname());
-			account.setUsername(request.getUsername());
-			account.setPassword(request.getPassword());
-			account.setStatus(request.getStatus());
-						
-			HttpResponse httpResponse = RestResource.post(request.getApiEndpoint())
-					.contentType(MediaType.APPLICATION_JSON)
-					.path("directories")
-					.path(request.getDirectoryId())
-					.path("accounts")
+			/**
+			 * 
+			 */
+			
+			HttpResponse httpResponse = RestResource.delete(request.getHref())
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
-					.body(account)
 					.execute();
 				
 			logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
@@ -62,11 +58,7 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 							
 			response.setStatusCode(httpResponse.getStatusCode());
 			
-			if (httpResponse.getStatusCode() == 201) {
-				account = httpResponse.getEntity(Account.class);
-				response.setAccount(account);
-				
-			} else {
+			if (httpResponse.getStatusCode() != 204) {
 				JsonNode errorResponse = httpResponse.getEntity(JsonNode.class);
 				response.setErrorCode(errorResponse.get("message").asText());
 				response.setErrorMessage(errorResponse.get("developerMessage").asText());
@@ -78,6 +70,8 @@ public class CreateAccount implements RequestHandler<CreateAccountRequest, Creat
 			response.setErrorCode("invalid_request");
 			response.setErrorMessage(e.getMessage());
 		}
+		
+		logger.log(Instant.now() + " " + context.getAwsRequestId() + " execution time: " + (System.currentTimeMillis() - startTime));
 		
 		return response;
 	}
