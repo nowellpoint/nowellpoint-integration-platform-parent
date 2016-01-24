@@ -12,7 +12,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
@@ -70,7 +69,7 @@ public class SalesforceResource {
 		// return the for location redirect
 		//
 		
-		return Response.status(Status.FOUND)
+		return Response.accepted()
 				.header("Location", url)
 				.build();
 	}
