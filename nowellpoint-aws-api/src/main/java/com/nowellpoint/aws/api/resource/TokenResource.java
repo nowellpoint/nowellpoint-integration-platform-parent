@@ -61,7 +61,8 @@ public class TokenResource {
 		// execute the get token request for username and password
 		//
 		
-		GetTokenRequest tokenRequest = new GetTokenRequest().withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+		GetTokenRequest tokenRequest = new GetTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
@@ -108,7 +109,12 @@ public class TokenResource {
 		// build the token verification request
 		//
 		
-		VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest().withAccessToken(bearerToken);
+		VerifyTokenRequest verifyTokenRequest = new VerifyTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+				.withAccessToken(bearerToken);
 		
 		//
 		// execute the token verification request
@@ -139,7 +145,6 @@ public class TokenResource {
 	
 	@DELETE
 	@Path("/token")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Response revoke() {
 		
 		//
@@ -152,7 +157,8 @@ public class TokenResource {
 		// build the revoke token request
 		//
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withAccessToken(bearerToken);
@@ -167,7 +173,7 @@ public class TokenResource {
 		// remove the account from the cache
 		//
 		
-		cacheManager.getCache().del(bearerToken.getBytes());
+		cacheManager.del(bearerToken);
 		
 		//
 		// build and return the response
@@ -181,9 +187,7 @@ public class TokenResource {
 					.type(MediaType.APPLICATION_JSON)
 					.build();
 		} else {
-			response = Response.status(revokeTokenResponse.getStatusCode())
-					.type(MediaType.APPLICATION_JSON)
-					.build();
+			response = Response.noContent().build();
 		}
 		
 		return response;

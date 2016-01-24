@@ -59,6 +59,10 @@ public class CacheManager {
 		return null;
 	}
 	
+	public void del(String key) {
+		jedis.del(key.getBytes());
+	}
+	
 	public <T> List<T> getList(Class<T> type, String key) {
 		byte[] bytes = jedis.get(key.getBytes());
 		if (bytes != null) {

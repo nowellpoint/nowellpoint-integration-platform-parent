@@ -212,7 +212,8 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest().withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+		RevokeTokenRequest revokeTokenRequest = new RevokeTokenRequest()
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.withAccessToken(refreshTokenResponse.getToken().getAccessToken());
