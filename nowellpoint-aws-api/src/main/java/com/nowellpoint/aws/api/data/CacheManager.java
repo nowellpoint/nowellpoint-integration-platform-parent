@@ -2,6 +2,7 @@ package com.nowellpoint.aws.api.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
@@ -83,27 +84,28 @@ public class CacheManager {
 	
 	@SuppressWarnings("unchecked")
 	private static <T> List<T> deserializeList(Class<T> type, byte[] bytes) {
-        ByteArrayInputStream bais = null;
-        try {
-            bais = new ByteArrayInputStream(bytes);
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            return (List<T>) ois.readObject();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        return null;
+		try {
+			return (List<T>) deserialize(bytes).readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
 	private static <T> T deserialize(Class<T> type, byte[] bytes) {
-        ByteArrayInputStream bais = null;
-        try {
-            bais = new ByteArrayInputStream(bytes);
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            return (T) ois.readObject();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        return null;
+		try {
+			return (T) deserialize(bytes).readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private static ObjectInputStream deserialize(byte[] bytes) throws IOException {
+		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+		return new ObjectInputStream(bais);
 	}
 }

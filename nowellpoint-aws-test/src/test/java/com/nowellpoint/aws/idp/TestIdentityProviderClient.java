@@ -3,7 +3,9 @@ package com.nowellpoint.aws.idp;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.jboss.logging.Logger;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
@@ -11,6 +13,7 @@ import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.idp.model.CreateAccountRequest;
+import com.nowellpoint.aws.idp.model.CreateAccountResponse;
 import com.nowellpoint.aws.idp.model.GetAccountRequest;
 import com.nowellpoint.aws.idp.model.GetAccountResponse;
 import com.nowellpoint.aws.idp.model.GetCustomDataRequest;
@@ -29,6 +32,8 @@ import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class TestIdentityProviderClient {
+	
+	private Logger log = Logger.getLogger(TestIdentityProviderClient.class);
 	
 	private static IdentityProviderClient client = new IdentityProviderClient();
 	
@@ -76,8 +81,33 @@ public class TestIdentityProviderClient {
 	public void testValidateVerifyTokentRequest() {
 		client.token(new VerifyTokenRequest());
 	}
+	
+	@Test
+	public void testCreateAccount() {
+		
+		log.info("testCreateAccount");
+		
+		CreateAccountRequest createAccountRequest = new CreateAccountRequest()
+				.withDirectoryId(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
+				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.withEmail("john.herson@nowellpoint.com")
+				.withGivenName("Happy")
+				.withMiddleName("D")
+				.withSurname("Birthday")
+				.withUsername("john.herson@nowellpoint.com")
+				.withPassword("lsi38918902Js10");
+		
+		CreateAccountResponse createAccountResponse = client.account(createAccountRequest);
+		
+		log.info("status: " + createAccountResponse.getStatusCode());
+		log.info(createAccountResponse.getErrorMessage());
+		
+	}
 
 	@Test
+	@Ignore
 	public void testAuthenticateSuccess() {
 		
 		long start;
@@ -182,6 +212,7 @@ public class TestIdentityProviderClient {
 	}
 	
 	@Test
+	@Ignore
 	public void testSearchAccountAndUpdate() {
 		
 		long start;

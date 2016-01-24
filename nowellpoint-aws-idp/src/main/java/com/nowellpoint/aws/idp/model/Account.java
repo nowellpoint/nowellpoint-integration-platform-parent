@@ -41,14 +41,17 @@ public class Account implements Serializable {
 	@JsonProperty(value="status")
 	private String status;
 	
+	@JsonProperty(value="password")
+	private String password;
+	
+	@JsonProperty(value="emailVerificationToken")
+	private EmailVerificationToken emailVerificationToken;
+	
 	@JsonProperty(value="customData")
 	private CustomData customData;
 	
 	@JsonProperty(value="tenant")
 	private Tenant tenant;
-	
-	@JsonProperty(value="emailVerificationToken")
-	private String emailVerificationToken;
 	
 	@JsonProperty(value="groups")
 	private Groups groups;
@@ -127,6 +130,14 @@ public class Account implements Serializable {
 		this.status = status;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 	public CustomData getCustomData() {
 		return customData;
 	}
@@ -143,11 +154,11 @@ public class Account implements Serializable {
 		this.tenant = tenant;
 	}
 
-	public String getEmailVerificationToken() {
+	public EmailVerificationToken getEmailVerificationToken() {
 		return emailVerificationToken;
 	}
 
-	public void setEmailVerificationToken(String emailVerificationToken) {
+	public void setEmailVerificationToken(EmailVerificationToken emailVerificationToken) {
 		this.emailVerificationToken = emailVerificationToken;
 	}
 

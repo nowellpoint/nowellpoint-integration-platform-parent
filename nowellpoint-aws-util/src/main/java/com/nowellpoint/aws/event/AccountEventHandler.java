@@ -100,7 +100,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 					.withGivenName(account.getGivenName())
 					.withMiddleName(account.getMiddleName())
 					.withSurname(account.getSurname())
-					.withUsername(account.getUsername());
+					.withUsername(account.getUsername())
+					.withPassword(account.getPassword());
 			
 			//
 			// execute the CreateAcountRequest

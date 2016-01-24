@@ -22,6 +22,8 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	
 	private String surname;
 	
+	private String password;
+	
 	public CreateAccountRequest() {
 		
 	}
@@ -86,6 +88,15 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
+	
+	@NotEmpty
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	public CreateAccountRequest withApiKeyId(String apiKeyId) {
 		setApiKeyId(apiKeyId);
@@ -96,11 +107,6 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 		setApiKeySecret(apiKeySecret);
 		return this;
 	}
-	
-	//public CreateAccountRequest withApplicationId(String applicationId) {
-	//	setApplicationId(applicationId);
-	//	return this;
-	//}
 	
 	public CreateAccountRequest withDirectoryId(String directoryId) {
 		setDirectoryId(directoryId);
@@ -134,6 +140,11 @@ public class CreateAccountRequest extends AbstractIdpRequest {
 	
 	public CreateAccountRequest withSurname(String surname) {
 		setSurname(surname);
+		return this;
+	}
+	
+	public CreateAccountRequest withPassword(String password) {
+		setPassword(password);
 		return this;
 	}
 }
