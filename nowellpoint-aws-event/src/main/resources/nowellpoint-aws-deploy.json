@@ -13,25 +13,7 @@
     },
     "code": {
       "s3Bucket": "aws-microservices",
-      "s3Key": "nowellpoint-aws-util-0.0.2-SNAPSHOT.jar",
-      "s3ObjectVersion": null
-    }
-  },
-  {
-    "configuration": {
-      "functionName": "LogEventConsumer",
-      "functionArn": "arn:aws:lambda:us-east-1:600862814314:function:LogEventConsumer",
-      "runtime": "java8",
-      "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
-      "handler": "com.nowellpoint.aws.util.lambda.scheduled.LogEventConsumer::handleRequest",
-      "description": "Cloud Watch Log Event Consumer",
-      "timeout": 240,
-      "memorySize": 512,
-      "version": "$LATEST"
-    },
-    "code": {
-      "s3Bucket": "aws-microservices",
-      "s3Key": "nowellpoint-aws-util-0.0.2-SNAPSHOT.jar",
+      "s3Key": "nowellpoint-aws-event-0.0.2-SNAPSHOT.jar",
       "s3ObjectVersion": null
     }
   },
@@ -49,7 +31,7 @@
     },
     "code": {
       "s3Bucket": "aws-microservices",
-      "s3Key": "nowellpoint-aws-util-0.0.2-SNAPSHOT.jar",
+      "s3Key": "nowellpoint-aws-event-0.0.2-SNAPSHOT.jar",
       "s3ObjectVersion": null
     }
   },
@@ -67,7 +49,7 @@
     },
     "code": {
       "s3Bucket": "aws-microservices",
-      "s3Key": "nowellpoint-aws-util-0.0.2-SNAPSHOT.jar",
+      "s3Key": "nowellpoint-aws-event-0.0.2-SNAPSHOT.jar",
       "s3ObjectVersion": null
     }
   }
