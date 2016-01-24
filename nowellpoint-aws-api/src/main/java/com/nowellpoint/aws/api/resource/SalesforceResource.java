@@ -1,5 +1,8 @@
 package com.nowellpoint.aws.api.resource;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -9,6 +12,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
@@ -25,6 +29,51 @@ public class SalesforceResource {
 	private HttpServletRequest servletRequest;
 	
 	private static SalesforceClient salesforceClient = new SalesforceClient();
+	
+	@GET
+	@Path("/oauth")
+	public Response oauth() {
+		
+		//
+		// build the oauth url
+		//
+		
+		String url = null;
+		try {
+			url = new StringBuilder().append(System.getProperty(Properties.SALESFORCE_AUTHORIZE_URI))
+					.append("?")
+					.append("response_type=code")
+					.append("&")
+					.append("client_id=")
+					.append(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+					.append("&")
+					.append("client_secret=")
+					.append(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+					.append("&")
+					.append("display=touch")
+					.append("&")
+					.append("prompt=touch")
+					.append("&")
+					.append("redirect_uri=")
+					.append(URLEncoder.encode(System.getProperty(Properties.SALESFORCE_REDIRECT_URI), "UTF-8"))
+					.append("&")
+					.append("scope=web%20api%20refresh_token")
+					.toString();
+			
+		} catch (UnsupportedEncodingException e) {
+			return Response.serverError()
+					.entity(e.getMessage())
+					.build();
+		}
+		
+		//
+		// return the for location redirect
+		//
+		
+		return Response.status(Status.FOUND)
+				.header("Location", url)
+				.build();
+	}
 
 	@GET
 	@Path("/token")

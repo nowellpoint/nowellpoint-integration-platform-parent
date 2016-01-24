@@ -16,6 +16,7 @@ public class Properties {
 	public static final String MONGO_CLIENT_URI = "mongo.client.uri";
 	public static final String SALESFORCE_CLIENT_ID = "salesforce.client.id";
 	public static final String SALESFORCE_CLIENT_SECRET = "salesforce.client.secret";
+	public static final String SALESFORCE_AUTHORIZE_URI = "salesforce.authorize.uri";
 	public static final String SALESFORCE_TOKEN_URI = "salesforce.token.uri";
 	public static final String SALESFORCE_REFRESH_URI = "salesforce.refresh.uri";
 	public static final String SALESFORCE_REVOKE_URI = "salesforce.revoke.uri";
