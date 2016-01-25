@@ -9,7 +9,6 @@ import java.util.Map;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.nowellpoint.aws.CacheManager;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -21,30 +20,26 @@ import com.nowellpoint.aws.model.data.QueryDocumentRequest;
 import com.nowellpoint.aws.model.data.QueryDocumentResponse;
 import com.nowellpoint.aws.model.data.Identity;
 
-public class IdentityEventHandler implements AbstractEventHandler {
+public class IdentityEventHandler extends AbstractDocumentEventHandler {
 	
 	private static final String COLLECTION_NAME = "identities";
+	
+	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Context context) throws Exception {
+	public void process(Event event, Map<String, String> properties, Context context) throws Exception {
 		
 		//
 		//
 		//
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
 		//
 		//
 		//
 		
-		logger.log(new Date() + " starting IdentityEventHandler");
-		
-		//
-		//
-		//
-		
-		Map<String, String> properties = Properties.getProperties(event.getPropertyStore());
+		logger.log(this.getClass().getName() + " starting IdentityEventHandler");
 		
 		//
 		//
@@ -65,18 +60,18 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
 		
-		logger.log("Check user already exists? " + (queryDocumentResponse.getCount() > 0 ? Boolean.TRUE : Boolean.FALSE));
+		logger.log(this.getClass().getName() + " Check user already exists? " + (queryDocumentResponse.getCount() > 0 ? Boolean.TRUE : Boolean.FALSE));
 		
 		if (queryDocumentResponse.getCount() == 0) {
 			
 			identity.setId(event.getId());
-			identity.setAccountHref(event.getAccountId());
-			identity.setCreatedById(event.getAccountId());
-			identity.setLastModifiedById(event.getAccountId());
+			identity.setAccountHref(event.getSubjectId());
+			identity.setCreatedById(event.getSubjectId());
+			identity.setLastModifiedById(event.getSubjectId());
 			identity.setCreatedDate(now);
 			identity.setLastModifiedDate(now);
 			
-			logger.log("Creating identity for account..." + event.getAccountId());
+			logger.log(this.getClass().getName() + " Creating identity for account..." + event.getSubjectId());
 					
 			CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
 					.withMongoDBConnectUri(properties.get(Properties.MONGO_CLIENT_URI))
@@ -85,10 +80,10 @@ public class IdentityEventHandler implements AbstractEventHandler {
 				
 			CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
 			
-			logger.log("Status Code: " + createDocumentResponse.getStatusCode());
+			logger.log(this.getClass().getName() + " Status Code: " + createDocumentResponse.getStatusCode());
 			
 			if (createDocumentResponse.getStatusCode() == 201) {
-				logger.log("Document Id: " + createDocumentResponse.getId());
+				logger.log(this.getClass().getName() + " Document Id: " + createDocumentResponse.getId());
 				identity.setId(createDocumentResponse.getId());
 			} else {
 				throw new IOException(createDocumentResponse.getErrorMessage());
@@ -96,12 +91,12 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			
 		} else {
 			
-			logger.log("Updating identity for account..." + event.getAccountId());
+			logger.log(this.getClass().getName() + " Updating identity for account..." + event.getSubjectId());
 			
 			List<Identity> identities = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<Identity>>(){});
 			
 			identity.setId(identities.get(0).getId());
-			identity.setLastModifiedById(event.getAccountId());
+			identity.setLastModifiedById(event.getSubjectId());
 			identity.setLastModifiedDate(now);
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
@@ -111,10 +106,10 @@ public class IdentityEventHandler implements AbstractEventHandler {
 			
 			UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
 			
-			logger.log("Status Code: " + updateDocumentResponse.getStatusCode());
+			logger.log(this.getClass().getName() + " Status Code: " + updateDocumentResponse.getStatusCode());
 			
 			if (updateDocumentResponse.getStatusCode() == 200) {
-				logger.log("Document Id: " + updateDocumentResponse.getId());
+				logger.log(this.getClass().getName() + " Document Id: " + updateDocumentResponse.getId());
 				identity.setId(updateDocumentResponse.getId());
 			} else {
 				throw new IOException(updateDocumentResponse.getErrorMessage());
@@ -131,10 +126,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		CacheManager cacheProvider = new CacheManager();
-		cacheProvider.auth(properties.get(Properties.REDIS_PASSWORD));
-		cacheProvider.setex(identity.getId(), 259200, identity);
-		cacheProvider.close();
+		addDocumentToCache(identity, properties);
 		
 		//
 		//

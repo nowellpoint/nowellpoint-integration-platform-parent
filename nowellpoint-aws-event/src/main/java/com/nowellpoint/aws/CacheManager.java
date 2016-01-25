@@ -9,14 +9,10 @@ import redis.clients.jedis.Jedis;
 
 public class CacheManager {
 
-	private static Jedis jedis;
+	private Jedis jedis;
 	
-	static {
-		jedis = new Jedis("pub-redis-10497.us-east-1-2.3.ec2.garantiadata.com", 10497);
-	}
-	
-	public CacheManager() {
-		
+	public CacheManager(String endpoint, Integer port) {
+		jedis = new Jedis(endpoint, port);
 	}
 	
 	public void auth(String password) {		

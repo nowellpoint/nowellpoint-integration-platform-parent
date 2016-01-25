@@ -16,8 +16,8 @@ public class Event {
 	@DynamoDBHashKey(attributeName="Id")  
 	private String id;
 	
-	@DynamoDBRangeKey(attributeName="AccountId")  
-	private String accountId;
+	@DynamoDBRangeKey(attributeName="SubjectId")  
+	private String subjectId;
 	
 	@DynamoDBAttribute(attributeName="EventStatus")  
 	private String eventStatus;
@@ -52,20 +52,24 @@ public class Event {
 	@DynamoDBAttribute(attributeName="PropertyStore")
 	private String propertyStore;
 	
+	@DynamoDBAttribute(attributeName="ParentEventId")
+	private String parentEventId;
+	
 	
 	public Event() {
 		
 	}
 	
-	public Event(String type, String accountId, String eventSource, EventAction eventAction, String payload, String propertyStore) {
+	public Event(String type, String accountId, String eventSource, EventAction eventAction, String payload, String propertyStore, String parentEventId) {
 		setType(type);
 		setEventStatus(EventStatus.NEW.name());
-		setAccountId(accountId);
+		setSubjectId(accountId);
 		setEventSource(eventSource);
 		setEventAction(eventAction.name());
 		setPayload(payload);
 		setEventDate(Date.from(Instant.now()));
 		setPropertyStore(propertyStore);
+		setParentEventId(parentEventId);
 	}
 
 	public String getId() {
@@ -113,12 +117,12 @@ public class Event {
 	}
 
 	@DoNotEncrypt
-	public String getAccountId() {
-		return accountId;
+	public String getSubjectId() {
+		return subjectId;
 	}
 
-	public void setAccountId(String userId) {
-		this.accountId = userId;
+	public void setSubjectId(String subjectId) {
+		this.subjectId = subjectId;
 	}
 
 	public String getPayload() {
@@ -181,5 +185,14 @@ public class Event {
 
 	public void setPropertyStore(String propertyStore) {
 		this.propertyStore = propertyStore;
+	}
+
+	@DoNotEncrypt
+	public String getParentEventId() {
+		return parentEventId;
+	}
+
+	public void setParentEventId(String parentEventId) {
+		this.parentEventId = parentEventId;
 	}
 }

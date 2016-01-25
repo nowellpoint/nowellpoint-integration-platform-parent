@@ -3,6 +3,7 @@ package com.nowellpoint.aws.event;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -18,23 +19,29 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 public class OrganizationEventHandler implements AbstractEventHandler {
 	
 	private static final String COLLECTION = "organizations";
+	
+	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Context context) throws Exception {
+	public void process(Event event, Map<String, String> properties, Context context) throws Exception {
 		
 		//
 		//
 		//
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
 		//
 		//
 		//
 		
-		logger.log(new Date() + " starting OrganizationEventHandler");
+		logger.log(this.getClass().getName() + " starting OrganizationEventHandler");
 		
-		String mongoClientUri = Properties.getProperty(event.getPropertyStore(), Properties.MONGO_CLIENT_URI);
+		//
+		//
+		//
+		
+		String mongoClientUri = properties.get(Properties.MONGO_CLIENT_URI);
 		
 		final DataClient dataClient = new DataClient();
 		
@@ -44,7 +51,7 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 	
 		if (organization.getId() != null) {
 			
-			organization.setLastModifiedById(event.getAccountId());
+			organization.setLastModifiedById(event.getSubjectId());
 			organization.setLastModifiedDate(now);
 			
 			UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
@@ -54,10 +61,10 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 			
 			UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
 			
-			logger.log(new Date() +" Update Document Status Code: " + updateDocumentResponse.getStatusCode());
+			logger.log(this.getClass().getName() + " Update Document Status Code: " + updateDocumentResponse.getStatusCode());
 			
 			if (updateDocumentResponse.getStatusCode() == 200) {
-				logger.log(new Date() + " Document Id: " + updateDocumentResponse.getId());
+				logger.log(this.getClass().getName() + " Document Id: " + updateDocumentResponse.getId());
 			} else {
 				throw new IOException(updateDocumentResponse.getErrorMessage());
 			}
@@ -65,8 +72,8 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 		} else {
 			
 			organization.setId(event.getId());
-			organization.setCreatedById(event.getAccountId());
-			organization.setLastModifiedById(event.getAccountId());
+			organization.setCreatedById(event.getSubjectId());
+			organization.setLastModifiedById(event.getSubjectId());
 			organization.setCreatedDate(now);
 			organization.setLastModifiedDate(now);
 			
@@ -77,10 +84,10 @@ public class OrganizationEventHandler implements AbstractEventHandler {
 				
 			CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);	
 			
-			logger.log(new Date() + " Create Document Status Code: " + createDocumentResponse.getStatusCode());
+			logger.log(this.getClass().getName() + " Create Document Status Code: " + createDocumentResponse.getStatusCode());
 			
 			if (createDocumentResponse.getStatusCode() == 201) {
-				logger.log(new Date() + " Document Id: " + createDocumentResponse.getId());
+				logger.log(this.getClass().getName() + " Document Id: " + createDocumentResponse.getId());
 			} else {
 				throw new IOException(createDocumentResponse.getErrorMessage());
 			}

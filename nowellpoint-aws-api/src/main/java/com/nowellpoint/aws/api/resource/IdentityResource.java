@@ -55,7 +55,7 @@ public class IdentityResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withAccountId(System.getProperty(Properties.DEFAULT_ACCOUNT_ID))
+			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT_ID))
 					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))

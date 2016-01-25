@@ -27,7 +27,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Context context) throws Exception {
+	public void process(Event event, Map<String, String> properties, Context context) throws Exception {
 		
 		//
 		//
@@ -39,19 +39,13 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		logger.log("starting AccountEventHandler");
+		logger.log(this.getClass().getName() + " starting AccountEventHandler");
 		
 		//
 		// 
 		//
 		
 		Account account = objectMapper.readValue(event.getPayload(), Account.class);
-		
-		//
-		//
-		//
-		
-		Map<String, String> properties = Properties.getProperties(event.getPropertyStore());
 		
 		//
 		//
@@ -81,7 +75,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		SearchAccountResponse searchAccountResponse = identityProviderClient.account(searchAccountRequest);
 		
-		logger.log("account found: " + (searchAccountResponse.getSize() > 0));
+		logger.log(this.getClass().getName() + " account found: " + (searchAccountResponse.getSize() > 0));
 		
 		String href;
 		
@@ -109,7 +103,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 			
 			CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
 			
-			logger.log("status: " + createAccountResponse.getStatusCode());
+			logger.log(this.getClass().getName() + " status: " + createAccountResponse.getStatusCode());
 			logger.log(createAccountResponse.getErrorMessage());
 			
 			//
@@ -167,7 +161,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		logger.log(href);
+		logger.log(this.getClass().getName() + " " + href);
 		
 		//
 		//
@@ -203,12 +197,13 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		
 		Event event = new EventBuilder()
-				.withAccountId(parentEvent.getAccountId())
+				.withSubjectId(parentEvent.getSubjectId())
 				.withEventAction(EventAction.UPDATE)
 				.withEventSource(parentEvent.getEventSource())
 				.withPropertyStore(parentEvent.getPropertyStore())
 				.withPayload(identity)
 				.withType(Identity.class)
+				.withParentEventId(parentEvent.getId())
 				.build();
 		
 		//

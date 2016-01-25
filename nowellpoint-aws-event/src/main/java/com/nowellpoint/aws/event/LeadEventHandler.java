@@ -14,27 +14,23 @@ import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.Lead;
 
 public class LeadEventHandler implements AbstractEventHandler {
+	
+	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Context context) throws Exception {
+	public void process(Event event, Map<String,String> properties, Context context) throws Exception {
 		
 		//
 		//
 		//
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
 		//
 		//
 		//
 		
-		logger.log("Starting LeadEventHandler");
-		
-		//
-		//
-		//
-		
-		Map<String, String> properties = Properties.getProperties(event.getPropertyStore());
+		logger.log(this.getClass().getName() + " Starting LeadEventHandler");
 		
 		//
 		//
@@ -88,7 +84,8 @@ public class LeadEventHandler implements AbstractEventHandler {
 		// build the CreateLeadRequest
 		//
 		
-		CreateLeadRequest createLeadRequest = new CreateLeadRequest().withAccessToken(getTokenResponse.getToken().getAccessToken())
+		CreateLeadRequest createLeadRequest = new CreateLeadRequest()
+				.withAccessToken(getTokenResponse.getToken().getAccessToken())
 				.withInstanceUrl(getTokenResponse.getToken().getInstanceUrl())
 				.withLead(lead);
 		
@@ -103,11 +100,11 @@ public class LeadEventHandler implements AbstractEventHandler {
 		//
 		
 		if (createLeadResponse.getStatusCode() != 200 && createLeadResponse.getStatusCode() != 201) {
-			logger.log("Error: " + createLeadResponse.getErrorCode() + " : " + createLeadResponse.getErrorMessage());
+			logger.log(this.getClass().getName() + " Error: " + createLeadResponse.getErrorCode() + " : " + createLeadResponse.getErrorMessage());
 			throw new Exception(createLeadResponse.getErrorMessage());
 		}
 		
-		logger.log("Created Lead: " + createLeadResponse.getId());
+		logger.log(this.getClass().getName() + " Created Lead: " + createLeadResponse.getId());
 		
 		//
 		// return the lead id

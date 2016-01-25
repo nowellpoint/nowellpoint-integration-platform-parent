@@ -251,7 +251,7 @@ public class TestDataClient {
 			
 		startTime = System.currentTimeMillis();
 		
-		System.out.println(System.getProperty(Properties.DEFAULT_ACCOUNT_ID));
+		System.out.println(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
 			
 		UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
 		

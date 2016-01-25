@@ -9,11 +9,12 @@ public class EventBuilder {
 	
 	private static ObjectMapper mapper = new ObjectMapper();
 	private Class<?> type;
-	private String accountId;
+	private String subjectId;
 	private String eventSource;
 	private EventAction eventAction;
 	private Object payload;
 	private String propertyStore;
+	private String parentEventId;
 	
 	public EventBuilder withType(Class<?> type) {
 		System.out.println("type: " + type.getName());
@@ -21,8 +22,8 @@ public class EventBuilder {
 		return this;
 	}
 	
-	public EventBuilder withAccountId(String accountId) {
-		this.accountId = accountId;
+	public EventBuilder withSubjectId(String subjectId) {
+		this.subjectId = subjectId;
 		return this;
 	}
 	
@@ -51,13 +52,18 @@ public class EventBuilder {
 		return this;
 	}
 	
+	public EventBuilder withParentEventId(String parentEventId) {
+		this.parentEventId = parentEventId;
+		return this;
+	}
+	
 	public Event build() throws JsonProcessingException {
 		
 		if (type == null) {
 			throw new IllegalArgumentException("Missing Type value");
 		}
 		
-		if (accountId == null) {
+		if (subjectId == null) {
 			throw new IllegalArgumentException("Missing Account Id value");
 		}
 		
@@ -79,11 +85,12 @@ public class EventBuilder {
 		
 		return new Event(
 				type.getName(),
-				accountId,
+				subjectId,
 				eventSource,
 				eventAction,
 				mapper.writeValueAsString(payload),
-				propertyStore
+				propertyStore,
+				parentEventId
 		);
 	}
 }
