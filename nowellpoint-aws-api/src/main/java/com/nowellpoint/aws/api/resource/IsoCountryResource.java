@@ -32,7 +32,7 @@ public class IsoCountryResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		
-		List<IsoCountry> countries = cacheManager.getList(IsoCountry.class, COLLECTION_NAME);
+		List<IsoCountry> countries = cacheManager.get(COLLECTION_NAME);
 		
 		if (countries == null) {
 			

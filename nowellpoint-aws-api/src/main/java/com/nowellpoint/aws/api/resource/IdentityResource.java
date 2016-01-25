@@ -103,7 +103,7 @@ public class IdentityResource {
 		//
 		//
 		
-		Identity identity = cacheManager.get(Identity.class, identityId);
+		Identity identity = cacheManager.get(identityId);
 		
 		//
 		//

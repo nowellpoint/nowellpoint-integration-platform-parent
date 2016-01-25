@@ -51,10 +51,10 @@ public class CacheManager {
 		jedis.setex(key.getBytes(), seconds, serialize(value));
 	}
 	
-	public <T> T get(Class<T> type, String key) {
+	public <T> T get(String key) {
 		byte[] bytes = jedis.get(key.getBytes());
 		if (bytes != null) {
-			return deserialize(type, bytes);
+			return deserialize(bytes);
 		} 
 		return null;
 	}
@@ -63,10 +63,10 @@ public class CacheManager {
 		jedis.del(key.getBytes());
 	}
 	
-	public <T> List<T> getList(Class<T> type, String key) {
+	public <T> List<T> getList(String key) {
 		byte[] bytes = jedis.get(key.getBytes());
 		if (bytes != null) {
-			return deserializeList(type, bytes);
+			return deserializeList(bytes);
 		} 
 		return null;
 	}
@@ -87,9 +87,9 @@ public class CacheManager {
     }
 	
 	@SuppressWarnings("unchecked")
-	private static <T> List<T> deserializeList(Class<T> type, byte[] bytes) {
+	private static <T> List<T> deserializeList(byte[] bytes) {
 		try {
-			return (List<T>) deserialize(bytes).readObject();
+			return (List<T>) parse(bytes).readObject();
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
@@ -98,9 +98,9 @@ public class CacheManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static <T> T deserialize(Class<T> type, byte[] bytes) {
+	private static <T> T deserialize(byte[] bytes) {
 		try {
-			return (T) deserialize(bytes).readObject();
+			return (T) parse(bytes).readObject();
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
@@ -108,7 +108,7 @@ public class CacheManager {
 		return null;
 	}
 	
-	private static ObjectInputStream deserialize(byte[] bytes) throws IOException {
+	private static ObjectInputStream parse(byte[] bytes) throws IOException {
 		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 		return new ObjectInputStream(bais);
 	}

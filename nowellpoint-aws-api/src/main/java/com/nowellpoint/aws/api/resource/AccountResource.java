@@ -73,7 +73,7 @@ public class AccountResource {
 		// check the cache to see if the account exits
 		//
 		
-		Account account = cacheManager.get(Account.class, bearerToken);
+		Account account = cacheManager.get(bearerToken);
 		
 		//
 		// if its not null then return the account
