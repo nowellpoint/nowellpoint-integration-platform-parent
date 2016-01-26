@@ -88,6 +88,7 @@
 									<goal>shade</goal>
 								</goals>
 								<configuration>
+								<!-- 
 									<minimizeJar>true</minimizeJar>
 									<filters>
 										<filter>
@@ -96,6 +97,7 @@
 											</includes>
 										</filter>
 									</filters>
+									 -->
 								</configuration>
 							</execution>
 						</executions>

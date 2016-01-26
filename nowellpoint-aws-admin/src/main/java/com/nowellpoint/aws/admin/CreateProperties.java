@@ -18,8 +18,6 @@ public class CreateProperties {
 
 	public CreateProperties() {
 		
-		String accountId = System.getenv("DEFAULT_ACCOUNT_ID");
-		
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
 		FilenameFilter filter = new FilenameFilter() {
@@ -52,7 +50,7 @@ public class CreateProperties {
 				property.setStore(file.getName().replace("-configuration.properties", "").toUpperCase());
 				property.setKey(((String) key).replaceAll("_", ".").toLowerCase());
 				property.setValue(properties.getProperty((String) key));
-				property.setLastModifiedBy(accountId);
+				property.setLastModifiedBy("5hAh1uolQo18Nk4T8aVxci");
 				property.setLastModifiedDate(Date.from(Instant.now()));
 				
 				propertyBatch.add(property);

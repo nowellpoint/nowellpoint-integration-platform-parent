@@ -17,12 +17,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
+import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.EventAction;
+import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
@@ -32,8 +36,10 @@ import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 import com.nowellpoint.aws.model.data.GetDocumentRequest;
 import com.nowellpoint.aws.model.data.GetDocumentResponse;
 import com.nowellpoint.aws.model.data.Identity;
+import com.nowellpoint.aws.model.data.Project;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.idp.model.GetTokenRequest;
 import com.nowellpoint.aws.idp.model.GetTokenResponse;
 import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
@@ -137,8 +143,39 @@ public class TestDataClient {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testCreateAndUpdateProject() {
+		
+		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
+		
+		Project project = new Project();
+		project.setDescription("test project");
+		project.setName("My new Project");
+		project.setOwnerId("4Bad3RyceUMplqu6qcP74w");
+		project.setStage("New");
+		
+		Event event = null;
+		try {			
+			event = new EventBuilder()
+					.withSubjectId("4Bad3RyceUMplqu6qcP74w")
+					.withEventAction(EventAction.CREATE)
+					.withEventSource("TestClass")
+					.withPropertyStore(System.getenv("PROPERTY_STORE"))
+					.withPayload(project)
+					.withType(Project.class)
+					.build();
+			
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		mapper.save(event);
+	}
 
 	@Test
+	@Ignore
 	public void testCreateAndUpdateParty() {
 		
 		System.out.println("testCreateAndUpdateParty");

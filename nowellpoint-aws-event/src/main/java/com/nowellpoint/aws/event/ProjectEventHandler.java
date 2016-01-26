@@ -9,6 +9,7 @@ import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
+import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 import com.nowellpoint.aws.model.data.Project;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
@@ -43,7 +44,7 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 		//
 		//
 		
-		if (EventAction.CREATE.name() == event.getEventAction()) {
+		if (EventAction.CREATE.name().equals(event.getEventAction())) {
 			
 			project.setId(event.getId());
 			project.setCreatedById(event.getSubjectId());
@@ -56,22 +57,37 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 			logger.log(this.getClass().getName() + " Status Code: " + createDocumentResponse.getStatusCode());
 			
 			if (createDocumentResponse.getStatusCode() == 201) {
-				logger.log(this.getClass().getName() + " Document Id: " + createDocumentResponse.getId());
+				logger.log(this.getClass().getName() + "Created Project Id: " + project.getId());
 			} else {
 				throw new IOException(createDocumentResponse.getErrorMessage());
 			}
 			
-		} else if (EventAction.UPDATE.name() == event.getEventAction()) {
+		} else if (EventAction.UPDATE.name().equals(event.getEventAction())) {
 			
 			project.setLastModifiedById(event.getSubjectId());
 			
-			UpdateDocumentResponse updateDocument = updateDocument(properties.get(Properties.MONGO_CLIENT_URI), COLLECTION_NAME, project);
+			UpdateDocumentResponse updateDocumentResponse = updateDocument(properties.get(Properties.MONGO_CLIENT_URI), COLLECTION_NAME, project);
 			
-			if (updateDocument.getStatusCode() == 200) {
-				logger.log(this.getClass().getName() + " Document Id: " + updateDocument.getId());
+			if (updateDocumentResponse.getStatusCode() == 200) {
+				logger.log(this.getClass().getName() + " Updated Project Id: " + project.getId());
 			} else {
-				throw new IOException(updateDocument.getErrorMessage());
+				throw new IOException(updateDocumentResponse.getErrorMessage());
 			}
+			
+		} else if (EventAction.DELETE.name().equals(event.getEventAction())) {
+			
+			DeleteDocumentResponse deleteDocumentReponse = deleteDocument(properties.get(Properties.MONGO_CLIENT_URI), COLLECTION_NAME, project);
+			
+			logger.log(this.getClass().getName() + " Status Code: " + deleteDocumentReponse.getStatusCode());
+			
+			if (deleteDocumentReponse.getStatusCode() == 204) {
+				logger.log(this.getClass().getName() + " Deleted Project Id: " + project.getId());
+			} else {
+				throw new IOException(deleteDocumentReponse.getErrorMessage());
+			}
+			
+		} else {
+			throw new Exception("Invalid action for Project object: " + event.getEventAction());
 		}
 		
 		//

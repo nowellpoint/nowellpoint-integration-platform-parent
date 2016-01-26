@@ -2,10 +2,8 @@ package com.nowellpoint.aws.api.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -63,53 +61,33 @@ public class CacheManager {
 		jedis.del(key.getBytes());
 	}
 	
-	public <T> List<T> getList(String key) {
-		byte[] bytes = jedis.get(key.getBytes());
-		if (bytes != null) {
-			return deserializeList(bytes);
-		} 
-		return null;
-	}
-	
 	private static byte[] serialize(Object object) {
-		ObjectOutputStream os = null;
         ByteArrayOutputStream baos = null;
         try {
             baos = new ByteArrayOutputStream();
-            os = new ObjectOutputStream(baos);
+            ObjectOutputStream os = new ObjectOutputStream(baos);
             os.writeObject(object);
             byte[] bytes = baos.toByteArray();
             return bytes;
         } catch (Exception e) {
         	e.printStackTrace();
         }
+        
         return null;
     }
 	
 	@SuppressWarnings("unchecked")
-	private static <T> List<T> deserializeList(byte[] bytes) {
-		try {
-			return (List<T>) parse(bytes).readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
 	private static <T> T deserialize(byte[] bytes) {
-		try {
-			return (T) parse(bytes).readObject();
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	private static ObjectInputStream parse(byte[] bytes) throws IOException {
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-		return new ObjectInputStream(bais);
+		ByteArrayInputStream bais = null;
+        try {
+            bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            Object object = ois.readObject();
+            return (T) object;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        return null;
 	}
 }

@@ -10,10 +10,14 @@ public class Project extends AbstractDocument {
 	
 	private String stage;
 	
-	private String owner;
+	private String ownerId;
 
 	public Project() {
 		
+	}
+	
+	public Project(String id) {
+		setId(id);
 	}
 
 	public String getName() {
@@ -40,30 +44,30 @@ public class Project extends AbstractDocument {
 		this.stage = stage;
 	}
 
-	public String getOwner() {
-		return owner;
+	public String getOwnerId() {
+		return ownerId;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 	}
 	
-	public Project id(String id) {
+	public Project withId(String id) {
 		setId(id);
 		return this;
 	}
 	
-	public Project name(String name) {
+	public Project withName(String name) {
 		setName(name);
 		return this;
 	}
 	
-	public Project description(String description) {
+	public Project withDescription(String description) {
 		setDescription(description);
 		return this;
 	}
 	
-	public Project stage(String stage) {
+	public Project withStage(String stage) {
 		setStage(stage);
 		return this;
 	}

@@ -11,6 +11,8 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.AbstractDocument;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
+import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
+import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
@@ -81,6 +83,26 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		//
 		
 		return updateDocumentResponse;
+	}
+	
+	public DeleteDocumentResponse deleteDocument(String mongoClientUri, String collectionName, AbstractDocument document) {
+		
+		//
+		//
+		//
+		
+		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest()
+				.withMongoDBConnectUri(mongoClientUri)
+				.withCollectionName(collectionName)
+				.withId(document.getId());
+		
+		DeleteDocumentResponse deleteDocumentResponse = dataClient.delete(deleteDocumentRequest);
+		
+		//
+		//
+		//
+		
+		return deleteDocumentResponse;
 	}
 	
 	public void addDocumentToCache(AbstractDocument document, Map<String, String> properties) {

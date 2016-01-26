@@ -82,13 +82,13 @@ public class EventHandler {
 			//
 			
 			String id = record.getDynamodb().getKeys().get("Id").getS();
-			String accountId = record.getDynamodb().getKeys().get("AccountId").getS();
+			String subjectId = record.getDynamodb().getKeys().get("SubjectId").getS();
 			
 			//
 			// retrieve the event record
 			//
 			
-			Event event = mapper.load(Event.class, id, accountId);
+			Event event = mapper.load(Event.class, id, subjectId);
 			
 			//
 			// lookup properties for the event
