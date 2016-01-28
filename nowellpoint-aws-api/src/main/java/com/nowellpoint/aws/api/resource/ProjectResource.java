@@ -3,8 +3,6 @@ package com.nowellpoint.aws.api.resource;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.net.URI;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -29,7 +27,6 @@ import javax.ws.rs.core.Response.Status;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.data.Datastore;
@@ -82,7 +79,7 @@ public class ProjectResource {
 		//
 		//
 		//
-		cacheManager.getCache().del(subjectId.concat("::").concat("projectsList").getBytes());
+
 		Set<Project> projects = cacheManager.smembers(subjectId.concat("::").concat("projectsList"));
 		
 		System.out.println("project size: " + projects.size());
@@ -91,7 +88,7 @@ public class ProjectResource {
 		//
 		//
 		
-		//if (projects.isEmpty()) {
+		if (projects.isEmpty()) {
 			
 			MongoCollection<Project> collection = Datastore.getDatabase()
 					.getCollection(COLLECTION_NAME)
@@ -101,8 +98,7 @@ public class ProjectResource {
 						.collect(Collectors.toSet());
 			
 			cacheManager.sadd(subjectId.concat("::").concat("projectsList"), projects);
-			projects = cacheManager.smembers(subjectId.concat("::").concat("projectsList"));
-		//}
+		}
 		
 		return Response.ok(projects).build();
     }

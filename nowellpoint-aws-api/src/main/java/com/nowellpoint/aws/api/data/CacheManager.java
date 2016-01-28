@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -14,13 +15,16 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @ApplicationScoped
 public class CacheManager {
 	
 	private static final Logger log = Logger.getLogger(CacheManager.class.getName());
+	private static final ObjectMapper mapper = new ObjectMapper();
 	private Jedis jedis;
 	
 	@PostConstruct
@@ -54,11 +58,29 @@ public class CacheManager {
 	}
 	
 	public void sadd(String key, Object... values) {
-		byte[][] members = new byte[2048][values.length];
-		for (int i = 0; i < values.length; i++) {
-			members[i] = serialize(values[i]);
-		}
-		jedis.sadd(key.getBytes(), members);
+		Pipeline p = jedis.pipelined();		
+		Arrays.asList(values).stream().forEach(m -> {
+			try {
+				p.sadd(key, mapper.writeValueAsString(m));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		
+		p.sync();
+	}
+	
+	public <T> Set<T> smembers(String key, Class<T> type) {
+		Set<T> results = new HashSet<T>();
+		jedis.smembers(key).stream().forEach(m -> {
+			try {
+				results.add(mapper.readValue(m, type));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		
+		return results;
 	}
 	
 	public void set(String key, Object value) {
