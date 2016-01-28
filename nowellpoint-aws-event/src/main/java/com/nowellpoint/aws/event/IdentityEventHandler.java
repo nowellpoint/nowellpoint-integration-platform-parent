@@ -56,7 +56,7 @@ public class IdentityEventHandler extends AbstractDocumentEventHandler {
 		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest()
 				.withCollectionName(COLLECTION_NAME)
 				.withMongoDBConnectUri(properties.get(Properties.MONGO_CLIENT_URI))
-				.withDocument(query);
+				.withQuery(query);
 		
 		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
 		
@@ -93,7 +93,7 @@ public class IdentityEventHandler extends AbstractDocumentEventHandler {
 			
 			logger.log(this.getClass().getName() + " Updating identity for account..." + event.getSubjectId());
 			
-			List<Identity> identities = objectMapper.readValue(queryDocumentResponse.getDocument(), new TypeReference<List<Identity>>(){});
+			List<Identity> identities = objectMapper.readValue(queryDocumentResponse.getQueryResults(), new TypeReference<List<Identity>>(){});
 			
 			identity.setId(identities.get(0).getId());
 			identity.setLastModifiedById(event.getSubjectId());

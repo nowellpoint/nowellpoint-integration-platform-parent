@@ -2,8 +2,11 @@ package com.nowellpoint.aws.api.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +44,23 @@ public class CacheManager {
 		return jedis;
 	}
 	
+	public <T> Set<T> smembers(String key) {
+		Set<T> members = new HashSet<T>();
+		jedis.smembers(key.getBytes()).stream().forEach(m -> {
+			System.out.println(m.length);
+			members.add(deserialize(m));
+		});
+		return members;
+	}
+	
+	public void sadd(String key, Object... values) {
+		byte[][] members = new byte[2048][values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = serialize(values[i]);
+		}
+		jedis.sadd(key.getBytes(), members);
+	}
+	
 	public void set(String key, Object value) {
 		jedis.set(key.getBytes(), serialize(value));
 	}
@@ -71,6 +91,12 @@ public class CacheManager {
             return bytes;
         } catch (Exception e) {
         	e.printStackTrace();
+        } finally {
+        	try {
+				baos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
         
         return null;
@@ -86,6 +112,12 @@ public class CacheManager {
             return (T) object;
         } catch (Exception e) {
         	e.printStackTrace();
+        } finally {
+            try {
+				bais.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
         
         return null;

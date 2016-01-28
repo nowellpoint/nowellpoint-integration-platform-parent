@@ -3,7 +3,9 @@ package com.nowellpoint.aws.api.resource;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,6 +29,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.data.Datastore;
@@ -79,13 +82,27 @@ public class ProjectResource {
 		//
 		//
 		//
+		cacheManager.getCache().del(subjectId.concat("::").concat("projectsList").getBytes());
+		Set<Project> projects = cacheManager.smembers(subjectId.concat("::").concat("projectsList"));
 		
-		MongoCollection<Project> collection = Datastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(Project.class);
+		System.out.println("project size: " + projects.size());
+		
+		//
+		//
+		//
+		
+		//if (projects.isEmpty()) {
 			
-		List<Project> projects = StreamSupport.stream(collection.find( eq ( "ownerId", subjectId ) ).spliterator(), false)
-					.collect(Collectors.toList());
+			MongoCollection<Project> collection = Datastore.getDatabase()
+					.getCollection(COLLECTION_NAME)
+					.withDocumentClass(Project.class);
+				
+			projects = StreamSupport.stream(collection.find( eq ( "ownerId", subjectId ) ).spliterator(), false)
+						.collect(Collectors.toSet());
+			
+			cacheManager.sadd(subjectId.concat("::").concat("projectsList"), projects);
+			projects = cacheManager.smembers(subjectId.concat("::").concat("projectsList"));
+		//}
 		
 		return Response.ok(projects).build();
     }

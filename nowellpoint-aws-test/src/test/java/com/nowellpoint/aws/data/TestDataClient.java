@@ -150,8 +150,8 @@ public class TestDataClient {
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
 		Project project = new Project();
-		project.setDescription("test project");
-		project.setName("My new Project");
+		project.setDescription("test project 2");
+		project.setName("My new Project 2");
 		project.setOwnerId("4Bad3RyceUMplqu6qcP74w");
 		project.setStage("New");
 		

@@ -1,29 +1,27 @@
 package com.nowellpoint.aws.data;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.bson.Document;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.http.HttpRequest;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.data.QueryDocumentRequest;
 import com.nowellpoint.aws.model.data.QueryDocumentResponse;
 
 public class QueryDocument implements RequestHandler<QueryDocumentRequest, QueryDocumentResponse> {
+	
+	private static LambdaLogger logger;
 
 	@Override
 	public QueryDocumentResponse handleRequest(QueryDocumentRequest request, Context context) {
@@ -32,14 +30,8 @@ public class QueryDocument implements RequestHandler<QueryDocumentRequest, Query
 		 * 
 		 */
 		
-		LambdaLogger logger = context.getLogger();
+		logger = context.getLogger();
 		
-		/**
-		 * 
-		 */
-		
-		long startTime = System.currentTimeMillis();
-
 		/**
 		 * 
 		 */
@@ -68,24 +60,19 @@ public class QueryDocument implements RequestHandler<QueryDocumentRequest, Query
 		 * 
 		 */
 		
-		logger.log(Instant.now() + " " + context.getAwsRequestId() + " querying document in: " + request.getCollectionName());
+		logger.log("Querying document in: " + request.getCollectionName() + " " + request.getQuery());
 		
 		/**
 		 * 
 		 */
 		
 		try{
-			Optional<FindIterable<Document>> document = Optional.ofNullable(mongoDatabase.getCollection(request.getCollectionName()).find( Document.parse( request.getDocument() ) ) );
-			if (document.isPresent()) {
-				response.setStatusCode(200);
-				response.setDocument(document.get().toString());
-				response.setCount(1);
-			} else {
-				response.setStatusCode(404);
-				response.setErrorCode("not_found");
-				response.setErrorMessage(String.format("Document of type %s for query: %s was not found", new Object[] {request.getCollectionName(), request.getDocument()}));
-			}
-		} catch (MongoException e) {
+			FindIterable<Document> iterable = mongoDatabase.getCollection(request.getCollectionName()).find( Document.parse( request.getQuery() ) );
+			Set<Document> results = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toSet());
+			response.setStatusCode(200);
+			response.setCount(results.size());
+			response.setQueryResults(new ObjectMapper().writeValueAsString(results));
+		} catch (MongoException | JsonProcessingException e) {
 			response.setStatusCode(500);
 			response.setErrorCode("unexpected_exception");
 			response.setErrorMessage(e.getMessage());

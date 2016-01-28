@@ -55,6 +55,7 @@ public class DeleteDocument implements RequestHandler<DeleteDocumentRequest, Del
 		
 		try{
 			DeleteResult result = mongoDatabase.getCollection(request.getCollectionName()).deleteOne( Filters.eq ( "_id", request.getId() ) );
+			logger.log("deleted count: " +result.getDeletedCount());
 			if (result.getDeletedCount() == 1) {
 				response.setStatusCode(204);
 				logger.log("Deleted document: " + request.getId());

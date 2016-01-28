@@ -6,16 +6,18 @@ public class QueryDocumentResponse extends AbstractDocumentResponse {
 	
 	private Integer count;
 	
+	private String queryResults;
+	
 	public QueryDocumentResponse() {
 		
 	}
 
-	public String getDocument() {
-		return super.getDocument();
+	public String getQueryResults() {
+		return queryResults;
 	}
 
-	public void setDocument(String document) {
-		super.setDocument(document);
+	public void setQueryResults(String queryResults) {
+		this.queryResults = queryResults;
 	}
 	
 	public Integer getCount() {

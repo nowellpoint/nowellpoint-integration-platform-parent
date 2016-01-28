@@ -4,6 +4,8 @@ public class QueryDocumentRequest extends AbstractDocumentRequest {
 
 	private static final long serialVersionUID = 6391624974618347458L;
 	
+	private String query;
+	
 	public QueryDocumentRequest() {
 		
 	}
@@ -12,8 +14,12 @@ public class QueryDocumentRequest extends AbstractDocumentRequest {
 		return super.getCollectionName();
 	}
 	
-	public String getDocument() {
-		return super.getDocument();
+	public String getQuery() {
+		return query;
+	}
+	
+	public void setQuery(String query) {
+		this.query = query;
 	}
 		
 	public QueryDocumentRequest withMongoDBConnectUri(String mongoDBConnectUri) {
@@ -26,8 +32,8 @@ public class QueryDocumentRequest extends AbstractDocumentRequest {
 		return this;
 	}
 	
-	public QueryDocumentRequest withDocument(String document) {
-		setDocument(document);
+	public QueryDocumentRequest withQuery(String query) {
+		setQuery(query);
 		return this;
 	}
 }
