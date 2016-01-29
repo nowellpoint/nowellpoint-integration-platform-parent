@@ -80,11 +80,13 @@ public class TokenResource {
 		Response response;
 		
 		if (tokenResponse.getStatusCode() != 200) {
+			
 			response = Response.status(tokenResponse.getStatusCode())
 					.entity(tokenResponse.getErrorMessage())
 					.type(MediaType.APPLICATION_JSON)
 					.build();
 		} else {
+			
 			response = Response.status(tokenResponse.getStatusCode())
 					.entity(tokenResponse.getToken())
 					.type(MediaType.APPLICATION_JSON)
