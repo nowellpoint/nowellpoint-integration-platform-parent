@@ -2,6 +2,7 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,9 +81,7 @@ public class ProjectResource {
 		//
 		//
 
-		Set<Project> projects = cacheManager.smembers(subjectId.concat("::").concat("projectsList"));
-		
-		System.out.println("project size: " + projects.size());
+		Set<Project> projects = cacheManager.hgetAll(subjectId.concat("::").concat("projectsList"));
 		
 		//
 		//
@@ -97,7 +96,7 @@ public class ProjectResource {
 			projects = StreamSupport.stream(collection.find( eq ( "ownerId", subjectId ) ).spliterator(), false)
 						.collect(Collectors.toSet());
 			
-			cacheManager.sadd(subjectId.concat("::").concat("projectsList"), projects);
+			cacheManager.hset(subjectId.concat("::").concat("projectsList"), "id", projects);
 		}
 		
 		return Response.ok(projects).build();
@@ -125,7 +124,11 @@ public class ProjectResource {
 					.find( eq ( "_id", projectId ) )
 					.first();
 			
-			cacheManager.set(project.getId(), 259200, project);
+			try {
+				cacheManager.set(project.getId(), 259200, project);
+			} catch (IOException e) {
+				throw new WebApplicationException(e.getMessage());
+			}
 		}
 		
 		//
@@ -179,13 +182,11 @@ public class ProjectResource {
 		
 		mapper.save(event);
 		
-		Datastore.getDatabase().getCollection( COLLECTION_NAME ).withDocumentClass( Project.class ).deleteOne( eq ( "_id", projectId ) );
-		
 		//
 		//
 		//
 		
-		cacheManager.del(projectId);
+		cacheManager.hdel(subjectId.concat("::").concat("projectsList"), projectId);
 		
 		//
 		//
@@ -246,7 +247,12 @@ public class ProjectResource {
 		//
 		//
 		
-		cacheManager.set(event.getId(), resource);
+		try {
+			cacheManager.set(event.getId(), resource);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		//
 		//
@@ -315,7 +321,12 @@ public class ProjectResource {
 		//
 		//
 		
-		cacheManager.set(event.getId(), resource);
+		try {
+			cacheManager.set(event.getId(), resource);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		//
 		//

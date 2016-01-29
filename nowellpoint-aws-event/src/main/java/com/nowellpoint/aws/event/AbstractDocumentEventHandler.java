@@ -1,10 +1,19 @@
 package com.nowellpoint.aws.event;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
+
+import org.bson.Document;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.CacheManager;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -19,6 +28,34 @@ import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 public abstract class AbstractDocumentEventHandler implements AbstractEventHandler {
 	
 	final DataClient dataClient = new DataClient();
+	final ObjectMapper mapper = new ObjectMapper();
+	
+	public String create(String mongoConnectUri, String collectionName, AbstractDocument resource) throws IOException {
+		
+		//
+		//
+		//
+		
+		MongoClientURI mongoClientUri = new MongoClientURI(mongoConnectUri);
+		MongoClient mongoClient = new MongoClient(mongoClientUri);
+		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
+		
+		Document document = Document.parse(mapper.writeValueAsString(resource));
+		
+		if (document.getString("_id") == null) {
+			document.put("_id", UUID.randomUUID().toString());
+		}
+		
+		try {
+			mongoDatabase.getCollection(collectionName).insertOne(document);
+		} catch (MongoException e) {
+			throw new IOException(e);
+		} finally {
+			mongoClient.close();
+		}
+		
+		return document.getString("_id");
+	}
 	
 	public CreateDocumentResponse createDocument(String mongoClientUri, String collectionName, AbstractDocument document) throws JsonProcessingException {
 		
@@ -123,5 +160,9 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		cacheManager.auth(password);
 		cacheManager.setex(document.getId(), 259200, document);
 		cacheManager.close();
+	}
+	
+	private MongoClientURI getMongoClientUri(String mongoConnectUri) {
+		return new MongoClientURI(mongoConnectUri.startsWith("mongodb://") ? mongoConnectUri : "mongodb://".concat(mongoConnectUri));
 	}
 }

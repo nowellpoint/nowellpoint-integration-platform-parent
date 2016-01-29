@@ -3,6 +3,7 @@ package com.nowellpoint.aws.api.resource;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -12,8 +13,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.api.data.CacheManager;
@@ -43,7 +46,12 @@ public class IsoCountryResource {
 			countries = StreamSupport.stream(collection.find().spliterator(), false)
 					.collect(Collectors.toList());
 			
-			cacheManager.set(COLLECTION_NAME, countries);
+			try {
+				cacheManager.set(COLLECTION_NAME, countries);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+			}
 		}
 		
 		return Response.ok(countries).build();

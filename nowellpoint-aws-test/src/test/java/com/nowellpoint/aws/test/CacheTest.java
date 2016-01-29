@@ -1,6 +1,11 @@
 package com.nowellpoint.aws.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +15,7 @@ import org.bson.Document;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
@@ -59,16 +65,60 @@ public class CacheTest {
 		jedis.auth(System.getProperty(Properties.REDIS_PASSWORD));
 		
 		jedis.del("test");
-		
-		StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toSet());
+//		
+//		StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toSet());
 		
 		long start = System.currentTimeMillis();
 		
 		Pipeline p = jedis.pipelined();
+//		
+//		results.stream().forEach(m -> {
+//			try {
+//				p.sadd("test".getBytes(), serialize(m));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		});
+//		
+//		p.sync();
+//		
+//		System.out.println("sadd: " + (System.currentTimeMillis() - start));
+//		
+//		start = System.currentTimeMillis();
+//		
+//		results.clear();
+//		
+//		jedis.smembers("test".getBytes()).stream().forEach(m -> {
+//			try {
+//				results.add(deserialize(m));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		});
+//		
+//		System.out.println("smembers: " + (System.currentTimeMillis() - start));
+//		
+//		System.out.println(results.size());
+//		
+//		try {
+//			System.out.println("writing results");
+//			System.out.println(mapper.writeValueAsString(results));
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//		}
+		
+		jedis.del("htest".getBytes());
+		
+		System.out.println(jedis.hlen("htest".getBytes()));
+		
+		start = System.currentTimeMillis();
 		
 		results.stream().forEach(m -> {
 			try {
-				p.sadd("test", mapper.writeValueAsString(m));
+				p.hset("htest".getBytes(), m.getId().getBytes(), serialize(m));
+				Method method = m.getClass().getMethod("get" + "id".substring(0,1).toUpperCase() + "id".substring(1));
+				String id = (String) method.invoke(m, new Object[] {});
+				System.out.println(id);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -76,26 +126,85 @@ public class CacheTest {
 		
 		p.sync();
 		
-		System.out.println("sadd: " + (System.currentTimeMillis() - start));
-		
-		start = System.currentTimeMillis();
+		System.out.println("htest: " + (System.currentTimeMillis() - start));
 		
 		results.clear();
 		
-		jedis.smembers("test").stream().forEach(m -> {
+		jedis.hgetAll("htest".getBytes()).values().stream().forEach(m -> {
 			try {
-				results.add(mapper.readValue(m, Project.class));
+				results.add(deserialize(m));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
 		
-		System.out.println("smembers: " + (System.currentTimeMillis() - start));
+		System.out.println(results.size());
+		
+		try {
+			System.out.println("writing results");
+			System.out.println(mapper.writeValueAsString(results));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		
+		jedis.hdel("htest".getBytes(), results.stream().findFirst().get().getId().getBytes());
+		
+		results.clear();
+		
+		jedis.hgetAll("htest".getBytes()).values().stream().forEach(m -> {
+			try {
+				results.add(deserialize(m));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 		
 		System.out.println(results.size());
 		
 		jedis.close();
 		mongoClient.close();
 		
+	}
+	
+	private static byte[] serialize(Object object) {
+        ByteArrayOutputStream baos = null;
+        try {
+            baos = new ByteArrayOutputStream();
+            ObjectOutputStream os = new ObjectOutputStream(baos);
+            os.writeObject(object);
+            byte[] bytes = baos.toByteArray();
+            return bytes;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        } finally {
+        	try {
+				baos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        return null;
+    }
+	
+	@SuppressWarnings("unchecked")
+	private static <T> T deserialize(byte[] bytes) {
+		ByteArrayInputStream bais = null;
+        try {
+            bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            Object object = ois.readObject();
+            return (T) object;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        } finally {
+            try {
+				bais.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        return null;
 	}
 }

@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -123,7 +125,12 @@ public class AccountResource {
 		// add the account to the cache
 		//
 		
-		cacheManager.set(bearerToken, exp.intValue(), getAccountResponse.getAccount());
+		try {
+			cacheManager.set(bearerToken, exp.intValue(), getAccountResponse.getAccount());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		//
 		// build and return the response

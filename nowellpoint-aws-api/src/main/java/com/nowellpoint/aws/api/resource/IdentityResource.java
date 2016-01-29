@@ -2,6 +2,7 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.inject.Inject;
@@ -76,7 +77,12 @@ public class IdentityResource {
 		//
 		//
 		
-		cacheManager.set(event.getId(), resource);
+		try {
+			cacheManager.set(event.getId(), resource);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		//
 		//
@@ -116,7 +122,12 @@ public class IdentityResource {
 					.find( eq ( "_id", identityId ) )
 					.first();
 			
-			cacheManager.set(identity.getId(), 259200, identity);
+			try {
+				cacheManager.set(identity.getId(), 259200, identity);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+			}
 		}
 		
 		//

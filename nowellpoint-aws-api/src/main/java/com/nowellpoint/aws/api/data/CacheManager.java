@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -17,14 +17,12 @@ import javax.enterprise.context.ApplicationScoped;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @ApplicationScoped
 public class CacheManager {
 	
 	private static final Logger log = Logger.getLogger(CacheManager.class.getName());
-	private static final ObjectMapper mapper = new ObjectMapper();
 	private Jedis jedis;
 	
 	@PostConstruct
@@ -44,25 +42,28 @@ public class CacheManager {
 		log.info("disconnecting from cache...is connected: " + jedis.isConnected());
 	}
 	
+	/**
+	 * 
+	 * @return cache
+	 */
+	
 	public Jedis getCache() {
 		return jedis;
 	}
 	
-	public <T> Set<T> smembers(String key) {
-		Set<T> members = new HashSet<T>();
-		jedis.smembers(key.getBytes()).stream().forEach(m -> {
-			System.out.println(m.length);
-			members.add(deserialize(m));
-		});
-		return members;
-	}
+	/**
+	 * 
+	 * @param key
+	 * @param values
+	 */
 	
-	public void sadd(String key, Object... values) {
+	public <T> void sadd(String key, Set<T> values) {
 		Pipeline p = jedis.pipelined();		
-		Arrays.asList(values).stream().forEach(m -> {
+		values.stream().forEach(m -> {
 			try {
-				p.sadd(key, mapper.writeValueAsString(m));
+				p.sadd(key.getBytes(), serialize(m));
 			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -70,12 +71,19 @@ public class CacheManager {
 		p.sync();
 	}
 	
-	public <T> Set<T> smembers(String key, Class<T> type) {
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
+	
+	public <T> Set<T> smembers(String key) {
 		Set<T> results = new HashSet<T>();
-		jedis.smembers(key).stream().forEach(m -> {
+		jedis.smembers(key.getBytes()).stream().forEach(m -> {
 			try {
-				results.add(mapper.readValue(m, type));
+				results.add(deserialize(m));
 			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -83,27 +91,112 @@ public class CacheManager {
 		return results;
 	}
 	
-	public void set(String key, Object value) {
+	public void set(String key, Object value) throws IOException {
 		jedis.set(key.getBytes(), serialize(value));
 	}
 	
-	public void set(String key, int seconds, Object value) {
+	/**
+	 * 
+	 * @param key
+	 * @param seconds
+	 * @param value
+	 * @throws IOException
+	 */
+	
+	public void set(String key, int seconds, Object value) throws IOException {
 		jedis.setex(key.getBytes(), seconds, serialize(value));
 	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
 	
 	public <T> T get(String key) {
 		byte[] bytes = jedis.get(key.getBytes());
 		if (bytes != null) {
-			return deserialize(bytes);
+			try {
+				return deserialize(bytes);
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} 
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @param key
+	 */
 	
 	public void del(String key) {
 		jedis.del(key.getBytes());
 	}
 	
-	private static byte[] serialize(Object object) {
+	/**
+	 * 
+	 * @param key
+	 * @param field
+	 * @param values
+	 */
+	
+	public <T> void hset(String key, String field, Set<T> values) {
+		Pipeline p = jedis.pipelined();		
+		values.stream().forEach(m -> {
+			try {
+				Method method = m.getClass().getMethod("get" + field.substring(0,1).toUpperCase() + field.substring(1));
+				String id = (String) method.invoke(m, new Object[] {});
+				p.hset(key.getBytes(), id.getBytes(), serialize(m));
+				p.expire(key.getBytes(), 10);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
+		p.sync();
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
+	
+	public <T> Set<T> hgetAll(String key) {
+		Set<T> results = new HashSet<T>();
+		jedis.hgetAll(key.getBytes()).values().stream().forEach(m -> {
+			try {
+				results.add(deserialize(m));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param field
+	 */
+	
+	public void hdel(String key, String field) {
+		jedis.hdel(key.getBytes(), field.getBytes());
+	}
+	
+	/**
+	 * 
+	 * @param object
+	 * @return
+	 * @throws IOException
+	 */
+	
+	private static byte[] serialize(Object object) throws IOException {
         ByteArrayOutputStream baos = null;
         try {
             baos = new ByteArrayOutputStream();
@@ -111,37 +204,37 @@ public class CacheManager {
             os.writeObject(object);
             byte[] bytes = baos.toByteArray();
             return bytes;
-        } catch (Exception e) {
-        	e.printStackTrace();
         } finally {
         	try {
 				baos.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException ignore) {
+				
 			}
         }
-        
-        return null;
     }
 	
+	/**
+	 * 
+	 * @param bytes
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	
 	@SuppressWarnings("unchecked")
-	private static <T> T deserialize(byte[] bytes) {
+	private static <T> T deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
 		ByteArrayInputStream bais = null;
         try {
             bais = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = new ObjectInputStream(bais);
             Object object = ois.readObject();
             return (T) object;
-        } catch (Exception e) {
-        	e.printStackTrace();
         } finally {
             try {
 				bais.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException ignore) {
+
 			}
         }
-        
-        return null;
 	}
 }

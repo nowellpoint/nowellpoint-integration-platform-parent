@@ -17,7 +17,6 @@ public class EventBuilder {
 	private String parentEventId;
 	
 	public EventBuilder withType(Class<?> type) {
-		System.out.println("type: " + type.getName());
 		this.type = type;
 		return this;
 	}
