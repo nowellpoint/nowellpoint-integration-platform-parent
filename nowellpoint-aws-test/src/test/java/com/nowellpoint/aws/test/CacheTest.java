@@ -1,12 +1,21 @@
 package com.nowellpoint.aws.test;
 
+import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -28,6 +37,8 @@ import com.nowellpoint.aws.model.data.Project;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 public class CacheTest {
 	
@@ -160,6 +171,41 @@ public class CacheTest {
 		});
 		
 		System.out.println(results.size());
+		
+		System.out.println("this is what i care about");
+		
+		jedis.del(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes());
+		
+		results.stream().forEach(r -> {
+			System.out.println(r.getId());
+			jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), Project.class.getName().concat(r.getId()).getBytes(), serialize(r));
+		});
+		
+		ScanParams params = new ScanParams();
+	    params.match(Project.class.getName().concat("*"));
+		
+		ScanResult<Entry<byte[], byte[]>> scanResult = jedis.hscan(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), SCAN_POINTER_START.getBytes(), params);
+		
+		System.out.println("result size: " + scanResult.getResult().size());
+		
+		List<Project> newProjectList = new ArrayList<Project>();
+		scanResult.getResult().forEach(r -> {
+			Project project = deserialize(r.getValue());
+			System.out.println(project.getId());
+			newProjectList.add(project);
+		});
+		
+		System.out.println("date sort");
+		
+		newProjectList.stream().sorted((e1, e2) -> e1.getCreatedDate().compareTo(e2.getCreatedDate())).forEach( e -> {
+			System.out.println(e.getId() + " " + e.getCreatedDate());
+		});
+		
+		System.out.println("name sort");
+		
+		newProjectList.stream().sorted((e1, e2) -> e1.getName().compareTo(e2.getName())).forEach( e -> {
+			System.out.println(e.getId() + " " + e.getName());
+		});
 		
 		jedis.close();
 		mongoClient.close();

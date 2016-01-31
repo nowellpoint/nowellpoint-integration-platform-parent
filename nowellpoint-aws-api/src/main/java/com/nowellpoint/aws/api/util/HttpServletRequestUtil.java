@@ -6,6 +6,9 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.tools.TokenParser;
+
 public class HttpServletRequestUtil {
 
 	public static String getBearerToken(HttpServletRequest servletRequest) throws BadRequestException {
@@ -64,6 +67,27 @@ public class HttpServletRequestUtil {
 		//
 		
 		return basicToken;
+	}
+	
+	public static String getSubjectId(HttpServletRequest servletRequest) {
+		
+		//
+		// get the bearer token from the header
+		//
+		
+		String bearerToken = getBearerToken(servletRequest);
+		
+		//
+		// get the subjectId from the bearer token
+		//
+		
+		String subjectId = TokenParser.getSubjectId(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
+		
+		//
+		// return the subjectId
+		//
+		
+		return subjectId;
 	}
 	
 	private static String getAuthorizationHeader(HttpServletRequest servletRequest) throws BadRequestException {

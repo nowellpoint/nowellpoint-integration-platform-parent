@@ -5,5 +5,7 @@ public enum EventAction {
 	CREATE,
 	UPDATE,
 	DELETE,
-	ACTIVITY
+	ACTIVITY,
+	SHARE,
+	RESTRICT
 }

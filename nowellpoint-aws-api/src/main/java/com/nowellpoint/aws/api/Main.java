@@ -38,6 +38,7 @@ public class Main {
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
         		.addPackage("com.nowellpoint.aws.api.data")
         		.addPackage("com.nowellpoint.aws.api.resource")
+        		.addPackage("com.nowellpoint.aws.api.service")
         		.addPackage("com.nowellpoint.aws.api.util")
         		.addPackage("com.nowellpoint.aws.api.exception")
         		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")

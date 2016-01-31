@@ -40,11 +40,19 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		MongoClient mongoClient = new MongoClient(mongoClientUri);
 		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
 		
+		//
+		//
+		//
+		
 		Document document = Document.parse(mapper.writeValueAsString(resource));
 		
 		if (document.getString("_id") == null) {
 			document.put("_id", UUID.randomUUID().toString());
 		}
+		
+		//
+		//
+		//
 		
 		try {
 			mongoDatabase.getCollection(collectionName).insertOne(document);
@@ -53,6 +61,10 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		} finally {
 			mongoClient.close();
 		}
+		
+		//
+		//
+		//
 		
 		return document.getString("_id");
 	}

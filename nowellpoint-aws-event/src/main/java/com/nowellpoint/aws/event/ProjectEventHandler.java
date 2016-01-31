@@ -46,10 +46,6 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 		
 		if (EventAction.CREATE.name().equals(event.getEventAction())) {
 			
-			project.setId(event.getId());
-			project.setCreatedById(event.getSubjectId());
-			project.setLastModifiedById(event.getSubjectId());
-			
 			logger.log(this.getClass().getName() + " Creating project for account..." + event.getSubjectId());
 				
 			CreateDocumentResponse createDocumentResponse = createDocument(properties.get(Properties.MONGO_CLIENT_URI), COLLECTION_NAME, project);
@@ -63,8 +59,6 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 			}
 			
 		} else if (EventAction.UPDATE.name().equals(event.getEventAction())) {
-			
-			project.setLastModifiedById(event.getSubjectId());
 			
 			UpdateDocumentResponse updateDocumentResponse = updateDocument(properties.get(Properties.MONGO_CLIENT_URI), COLLECTION_NAME, project);
 			

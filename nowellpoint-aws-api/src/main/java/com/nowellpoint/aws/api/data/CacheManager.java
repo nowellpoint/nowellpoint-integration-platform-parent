@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.data;
 
+import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -14,15 +17,17 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 
+import com.nowellpoint.aws.model.admin.Properties;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
-
-import com.nowellpoint.aws.model.admin.Properties;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 @ApplicationScoped
 public class CacheManager {
 	
-	private static final Logger log = Logger.getLogger(CacheManager.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
 	private Jedis jedis;
 	
 	@PostConstruct
@@ -33,13 +38,13 @@ public class CacheManager {
 		jedis = new Jedis(endpoint, port);
 		jedis.auth(System.getProperty(Properties.REDIS_PASSWORD));
 		
-		log.info("connecting to cache...is connected: " + jedis.isConnected());
+		LOGGER.info("connecting to cache...is connected: " + jedis.isConnected());
 	}
 	
 	@PreDestroy
 	public void preDestroy() {
 		jedis.close();
-		log.info("disconnecting from cache...is connected: " + jedis.isConnected());
+		LOGGER.info("disconnecting from cache...is connected: " + jedis.isConnected());
 	}
 	
 	/**
@@ -63,7 +68,6 @@ public class CacheManager {
 			try {
 				p.sadd(key.getBytes(), serialize(m));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -80,18 +84,20 @@ public class CacheManager {
 	public <T> Set<T> smembers(String key) {
 		Set<T> results = new HashSet<T>();
 		jedis.smembers(key.getBytes()).stream().forEach(m -> {
-			try {
-				results.add(deserialize(m));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			results.add(deserialize(m));
 		});
 		
 		return results;
 	}
 	
-	public void set(String key, Object value) throws IOException {
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @throws IOException
+	 */
+	
+	public void set(String key, Object value) {
 		jedis.set(key.getBytes(), serialize(value));
 	}
 	
@@ -103,7 +109,7 @@ public class CacheManager {
 	 * @throws IOException
 	 */
 	
-	public void set(String key, int seconds, Object value) throws IOException {
+	public void set(String key, int seconds, Object value) {
 		jedis.setex(key.getBytes(), seconds, serialize(value));
 	}
 	
@@ -114,16 +120,7 @@ public class CacheManager {
 	 */
 	
 	public <T> T get(String key) {
-		byte[] bytes = jedis.get(key.getBytes());
-		if (bytes != null) {
-			try {
-				return deserialize(bytes);
-			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} 
-		return null;
+		return deserialize(jedis.get(key.getBytes()));
 	}
 	
 	/**
@@ -139,6 +136,56 @@ public class CacheManager {
 	 * 
 	 * @param key
 	 * @param field
+	 * @param value
+	 * @throws IOException
+	 */
+	
+	public <T> void hset(String key, String field, Object value) {
+		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param type
+	 * @return matching entries for Class<T>
+	 */
+	
+	public <T> Set<T> hscan(String key, Class<T> type) {
+		ScanParams params = new ScanParams();
+	    params.match(type.getName().concat("*"));
+		
+		ScanResult<Entry<byte[], byte[]>> scanResult = jedis.hscan(key.getBytes(), SCAN_POINTER_START.getBytes(), params);
+		
+		Set<T> results = new HashSet<T>();
+		
+		scanResult.getResult().forEach(r -> {
+			T t = null;
+			try {
+				t = deserialize(r.getValue());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			results.add(t);
+		});
+		
+		return results;
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param values
+	 */
+	
+	public <T> void hset(String key, Set<T> values) {
+		hset(key, "id", values);
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param field
 	 * @param values
 	 */
 	
@@ -148,10 +195,9 @@ public class CacheManager {
 			try {
 				Method method = m.getClass().getMethod("get" + field.substring(0,1).toUpperCase() + field.substring(1));
 				String id = (String) method.invoke(m, new Object[] {});
-				p.hset(key.getBytes(), id.getBytes(), serialize(m));
+				p.hset(key.getBytes(), m.getClass().getName().concat(id).getBytes(), serialize(m));
 				p.expire(key.getBytes(), 10);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -171,7 +217,6 @@ public class CacheManager {
 			try {
 				results.add(deserialize(m));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
@@ -191,12 +236,24 @@ public class CacheManager {
 	
 	/**
 	 * 
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	
+	@SuppressWarnings("unchecked")
+	public <T> T hget(String key, String field) {
+		return (T) deserialize(jedis.hget(key.getBytes(), field.getBytes()));
+	}
+	
+	/**
+	 * 
 	 * @param object
 	 * @return
 	 * @throws IOException
 	 */
 	
-	private static byte[] serialize(Object object) throws IOException {
+	private static byte[] serialize(Object object) {
         ByteArrayOutputStream baos = null;
         try {
             baos = new ByteArrayOutputStream();
@@ -204,13 +261,18 @@ public class CacheManager {
             os.writeObject(object);
             byte[] bytes = baos.toByteArray();
             return bytes;
-        } finally {
+        } catch (IOException e) {
+        	LOGGER.severe("Cache serialize issue >>>");
+			e.printStackTrace();
+		} finally {
         	try {
 				baos.close();
 			} catch (IOException ignore) {
 				
 			}
         }
+        
+        return null;
     }
 	
 	/**
@@ -222,19 +284,24 @@ public class CacheManager {
 	 */
 	
 	@SuppressWarnings("unchecked")
-	private static <T> T deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+	private static <T> T deserialize(byte[] bytes) {
 		ByteArrayInputStream bais = null;
         try {
             bais = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = new ObjectInputStream(bais);
             Object object = ois.readObject();
             return (T) object;
-        } finally {
+        } catch (IOException | ClassNotFoundException e) {
+        	LOGGER.severe("Cache deserialize issue >>>");
+			e.printStackTrace();
+		} finally {
             try {
 				bais.close();
 			} catch (IOException ignore) {
 
 			}
         }
+        
+        return null;
 	}
 }
