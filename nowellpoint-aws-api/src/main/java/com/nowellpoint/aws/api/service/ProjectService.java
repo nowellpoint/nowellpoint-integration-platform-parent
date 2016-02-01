@@ -1,7 +1,8 @@
 package com.nowellpoint.aws.api.service;
 
-import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,7 +50,7 @@ public class ProjectService {
 	/**
 	 * 
 	 * @param subjectId
-	 * @return
+	 * @return the list of Projects that is associated to the subject
 	 */
 	
 	public Set<Project> getAll(String subjectId) {
@@ -57,8 +58,8 @@ public class ProjectService {
 		//
 		//
 		//
-
-		Set<Project> projects = cacheManager.hscan(subjectId, Project.class);
+		
+		Set<Project> projects = cacheManager.hscanByClassType( subjectId, Project.class );
 		
 		//
 		//
@@ -67,14 +68,20 @@ public class ProjectService {
 		if (projects.isEmpty()) {
 			
 			MongoCollection<Project> collection = Datastore.getDatabase()
-					.getCollection(COLLECTION_NAME)
-					.withDocumentClass(Project.class);
+					.getCollection( COLLECTION_NAME )
+					.withDocumentClass( Project.class );
 				
-			projects = StreamSupport.stream(collection.find( eq ( "ownerId", subjectId ) ).spliterator(), false)
-						.collect(Collectors.toSet());
+			projects = StreamSupport.stream( collection.find( eq ( "ownerId", subjectId ) ).spliterator(), false )
+						.collect( Collectors.toSet() );
 			
-			cacheManager.hset(subjectId, projects);
+			cacheManager.hsetByClassType( subjectId, projects );
 		}
+		
+		//
+		//
+		//
+		
+		projects.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate()));
 		
 		//
 		//
@@ -126,12 +133,15 @@ public class ProjectService {
 		}
 		
 		//
-		//
+		// set the user specific cache entry
 		//
 		
-		Set<Project> projects = cacheManager.hscan( subjectId, Project.class );
-		projects.add( project );
-		cacheManager.hset( subjectId, projects );
+		cacheManager.getCache().hset( subjectId.getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize( project ) );
+		
+		//
+		// 
+		//
+		
 		cacheManager.hset( project.getId(), subjectId, project );
 		
 		//
@@ -332,27 +342,15 @@ public class ProjectService {
 		
 		if ( project == null ) {
 			
-			//
-			//
-			//
-			
 			project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class )
 					.find( and ( eq ( "_id", projectId ), eq ( "ownerId", subjectId ) ) )
 					.first();
 			
-			//
-			//
-			//
-			
 			if ( project == null ) {
 				throw new WebApplicationException( String.format( "Project Id: %s does not exist or you do not have access to view", projectId ), Status.NOT_FOUND );
 			}
-			
-			//
-			//
-			//
-			
+
 			cacheManager.hset( projectId, subjectId, project );
 		}
 		

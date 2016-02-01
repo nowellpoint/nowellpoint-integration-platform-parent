@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -206,6 +208,26 @@ public class CacheTest {
 		newProjectList.stream().sorted((e1, e2) -> e1.getName().compareTo(e2.getName())).forEach( e -> {
 			System.out.println(e.getId() + " " + e.getName());
 		});
+		
+		Project project = new Project();
+		project.setName("test of hset");
+		project.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
+		project.setCreatedDate(Date.from(Instant.now()));
+		project.setDescription("hset test");
+		project.setId(UUID.randomUUID().toString());
+		project.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
+		project.setLastModifiedDate(Date.from(Instant.now()));
+		project.setOwnerId(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
+		project.setStage("new");
+		
+		jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize(project));
+		
+		params = new ScanParams();
+	    params.match(Project.class.getName().concat("*"));
+		
+		scanResult = jedis.hscan(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), SCAN_POINTER_START.getBytes(), params);
+		
+		System.out.println("result size: " + scanResult.getResult().size());
 		
 		jedis.close();
 		mongoClient.close();

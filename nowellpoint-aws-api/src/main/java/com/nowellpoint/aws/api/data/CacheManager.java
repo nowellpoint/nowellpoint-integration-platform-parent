@@ -120,7 +120,12 @@ public class CacheManager {
 	 */
 	
 	public <T> T get(String key) {
-		return deserialize(jedis.get(key.getBytes()));
+		byte[] bytes = jedis.get(key.getBytes());
+		T value = null;
+		if (bytes != null) {
+			value = deserialize(bytes);
+		}
+		return value;
 	}
 	
 	/**
@@ -140,7 +145,7 @@ public class CacheManager {
 	 * @throws IOException
 	 */
 	
-	public <T> void hset(String key, String field, Object value) {
+	public <T> void hset(String key, String field, T value) {
 		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
 	}
 	
@@ -151,7 +156,7 @@ public class CacheManager {
 	 * @return matching entries for Class<T>
 	 */
 	
-	public <T> Set<T> hscan(String key, Class<T> type) {
+	public <T> Set<T> hscanByClassType(String key, Class<T> type) {
 		ScanParams params = new ScanParams();
 	    params.match(type.getName().concat("*"));
 		
@@ -160,12 +165,7 @@ public class CacheManager {
 		Set<T> results = new HashSet<T>();
 		
 		scanResult.getResult().forEach(r -> {
-			T t = null;
-			try {
-				t = deserialize(r.getValue());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			T t = deserialize(r.getValue());
 			results.add(t);
 		});
 		
@@ -175,28 +175,17 @@ public class CacheManager {
 	/**
 	 * 
 	 * @param key
-	 * @param values
-	 */
-	
-	public <T> void hset(String key, Set<T> values) {
-		hset(key, "id", values);
-	}
-	
-	/**
-	 * 
-	 * @param key
 	 * @param field
 	 * @param values
 	 */
 	
-	public <T> void hset(String key, String field, Set<T> values) {
+	public <T> void hsetByClassType(String key, Set<T> values) {
 		Pipeline p = jedis.pipelined();		
 		values.stream().forEach(m -> {
 			try {
-				Method method = m.getClass().getMethod("get" + field.substring(0,1).toUpperCase() + field.substring(1));
+				Method method = m.getClass().getMethod("get" + "id".substring(0,1).toUpperCase() + "id".substring(1));
 				String id = (String) method.invoke(m, new Object[] {});
 				p.hset(key.getBytes(), m.getClass().getName().concat(id).getBytes(), serialize(m));
-				p.expire(key.getBytes(), 10);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -241,9 +230,13 @@ public class CacheManager {
 	 * @return
 	 */
 	
-	@SuppressWarnings("unchecked")
 	public <T> T hget(String key, String field) {
-		return (T) deserialize(jedis.hget(key.getBytes(), field.getBytes()));
+		byte[] bytes = jedis.hget(key.getBytes(), field.getBytes());
+		T value = null;
+		if (bytes != null) {
+			value = deserialize(bytes);
+		}
+		return value;
 	}
 	
 	/**
@@ -253,7 +246,7 @@ public class CacheManager {
 	 * @throws IOException
 	 */
 	
-	private static byte[] serialize(Object object) {
+	public static byte[] serialize(Object object) {
         ByteArrayOutputStream baos = null;
         try {
             baos = new ByteArrayOutputStream();
@@ -284,7 +277,7 @@ public class CacheManager {
 	 */
 	
 	@SuppressWarnings("unchecked")
-	private static <T> T deserialize(byte[] bytes) {
+	public static <T> T deserialize(byte[] bytes) {
 		ByteArrayInputStream bais = null;
         try {
             bais = new ByteArrayInputStream(bytes);
