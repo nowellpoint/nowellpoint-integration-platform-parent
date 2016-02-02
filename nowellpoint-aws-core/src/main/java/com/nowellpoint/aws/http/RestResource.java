@@ -24,6 +24,14 @@ public class RestResource {
 		return new PostRequest(target);
 	}
 	
+	public static PutRequest put(URL target) {
+		return new PutRequest(target);
+	}
+	
+	public static PutRequest put(String target) {
+		return new PutRequest(target);
+	}
+	
 	public static DeleteRequest delete(URL target) {
 		return new DeleteRequest(target);
 	}

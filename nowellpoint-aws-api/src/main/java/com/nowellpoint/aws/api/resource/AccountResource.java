@@ -123,7 +123,7 @@ public class AccountResource {
 		// add the account to the cache
 		//
 		
-		cacheManager.set(bearerToken, exp.intValue(), getAccountResponse.getAccount());
+		cacheManager.setex(bearerToken, exp.intValue(), getAccountResponse.getAccount());
 		
 		//
 		// build and return the response
@@ -145,7 +145,7 @@ public class AccountResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT_ID))
+			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT))
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPayload(resource)

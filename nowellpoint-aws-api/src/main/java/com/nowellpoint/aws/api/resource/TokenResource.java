@@ -183,13 +183,9 @@ public class TokenResource {
 		
 		Response response;
 		
-		System.out.println("response status: " + revokeTokenResponse.getStatusCode());
-		
-		if (revokeTokenResponse.getStatusCode() == 200) {		
-			
+		if (revokeTokenResponse.getStatusCode() == 200) {					
 			response = Response.noContent().build();
 		} else {
-			
 			response = Response.status(revokeTokenResponse.getStatusCode())
 					.entity(revokeTokenResponse.getErrorMessage())
 					.type(MediaType.APPLICATION_JSON)

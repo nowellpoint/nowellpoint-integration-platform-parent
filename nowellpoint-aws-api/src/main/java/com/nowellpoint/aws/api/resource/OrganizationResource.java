@@ -48,7 +48,7 @@ public class OrganizationResource {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT_ID))
+					.withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT))
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))

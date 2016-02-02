@@ -109,7 +109,7 @@ public class CacheManager {
 	 * @throws IOException
 	 */
 	
-	public void set(String key, int seconds, Object value) {
+	public <T> void setex(String key, int seconds, T value) {
 		jedis.setex(key.getBytes(), seconds, serialize(value));
 	}
 	
@@ -181,11 +181,11 @@ public class CacheManager {
 	
 	public <T> void hsetByClassType(String key, Set<T> values) {
 		Pipeline p = jedis.pipelined();		
-		values.stream().forEach(m -> {
+		values.stream().forEach(value -> {
 			try {
-				Method method = m.getClass().getMethod("get" + "id".substring(0,1).toUpperCase() + "id".substring(1));
-				String id = (String) method.invoke(m, new Object[] {});
-				p.hset(key.getBytes(), m.getClass().getName().concat(id).getBytes(), serialize(m));
+				Method method = value.getClass().getMethod("getId");
+				String id = (String) method.invoke(value, new Object[] {});
+				p.hset(key.getBytes(), value.getClass().getName().concat(id).getBytes(), serialize(value));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

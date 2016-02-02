@@ -176,17 +176,17 @@ public class CacheTest {
 		
 		System.out.println("this is what i care about");
 		
-		jedis.del(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes());
+		jedis.del(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes());
 		
 		results.stream().forEach(r -> {
 			System.out.println(r.getId());
-			jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), Project.class.getName().concat(r.getId()).getBytes(), serialize(r));
+			jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(r.getId()).getBytes(), serialize(r));
 		});
 		
 		ScanParams params = new ScanParams();
 	    params.match(Project.class.getName().concat("*"));
 		
-		ScanResult<Entry<byte[], byte[]>> scanResult = jedis.hscan(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), SCAN_POINTER_START.getBytes(), params);
+		ScanResult<Entry<byte[], byte[]>> scanResult = jedis.hscan(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), SCAN_POINTER_START.getBytes(), params);
 		
 		System.out.println("result size: " + scanResult.getResult().size());
 		
@@ -211,21 +211,21 @@ public class CacheTest {
 		
 		Project project = new Project();
 		project.setName("test of hset");
-		project.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
+		project.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setCreatedDate(Date.from(Instant.now()));
 		project.setDescription("hset test");
 		project.setId(UUID.randomUUID().toString());
-		project.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
+		project.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setLastModifiedDate(Date.from(Instant.now()));
-		project.setOwnerId(System.getProperty(Properties.DEFAULT_SUBJECT_ID));
+		project.setOwnerId(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setStage("new");
 		
-		jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize(project));
+		jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize(project));
 		
 		params = new ScanParams();
 	    params.match(Project.class.getName().concat("*"));
 		
-		scanResult = jedis.hscan(System.getProperty(Properties.DEFAULT_SUBJECT_ID).getBytes(), SCAN_POINTER_START.getBytes(), params);
+		scanResult = jedis.hscan(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), SCAN_POINTER_START.getBytes(), params);
 		
 		System.out.println("result size: " + scanResult.getResult().size());
 		

@@ -53,13 +53,13 @@ public class ProjectService {
 	 * @return the list of Projects that is associated to the subject
 	 */
 	
-	public Set<Project> getAll(String subjectId) {
+	public Set<Project> getAll(String subject) {
 		
 		//
 		//
 		//
 		
-		Set<Project> projects = cacheManager.hscanByClassType( subjectId, Project.class );
+		Set<Project> projects = cacheManager.hscanByClassType( subject, Project.class );
 		
 		//
 		//
@@ -71,17 +71,11 @@ public class ProjectService {
 					.getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class );
 				
-			projects = StreamSupport.stream( collection.find( eq ( "ownerId", subjectId ) ).spliterator(), false )
+			projects = StreamSupport.stream( collection.find( eq ( "ownerId", subject ) ).spliterator(), false )
 						.collect( Collectors.toSet() );
 			
-			cacheManager.hsetByClassType( subjectId, projects );
+			cacheManager.hsetByClassType( subject, projects );
 		}
-		
-		//
-		//
-		//
-		
-		projects.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate()));
 		
 		//
 		//
@@ -98,7 +92,7 @@ public class ProjectService {
 	 * @return the created project
 	 */
 	
-	public Project create(String subjectId, Project project, URI eventSource) {
+	public Project create(String subject, Project project, URI eventSource) {
 		
 		//
 		//
@@ -107,8 +101,8 @@ public class ProjectService {
 		project.setId(UUID.randomUUID().toString());
 		project.setCreatedDate(Date.from(Instant.now()));
 		project.setLastModifiedDate(Date.from(Instant.now()));
-		project.setCreatedById(subjectId);
-		project.setLastModifiedById(subjectId);
+		project.setCreatedById(subject);
+		project.setLastModifiedById(subject);
 		
 		//
 		//
@@ -117,7 +111,7 @@ public class ProjectService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subjectId)
+					.withSubjectId(subject)
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
@@ -136,13 +130,13 @@ public class ProjectService {
 		// set the user specific cache entry
 		//
 		
-		cacheManager.getCache().hset( subjectId.getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize( project ) );
+		cacheManager.getCache().hset( subject.getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize( project ) );
 		
 		//
 		// 
 		//
 		
-		cacheManager.hset( project.getId(), subjectId, project );
+		cacheManager.hset( project.getId(), subject, project );
 		
 		//
 		//
@@ -159,14 +153,14 @@ public class ProjectService {
 	 * @return
 	 */
 
-	public Project update(String subjectId, Project project, URI eventSource) {
+	public Project update(String subject, Project project, URI eventSource) {
 		
 		//
 		//
 		//
 		
 		project.setLastModifiedDate(Date.from(Instant.now()));
-		project.setLastModifiedById(subjectId);
+		project.setLastModifiedById(subject);
 		
 		//
 		//
@@ -175,7 +169,7 @@ public class ProjectService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subjectId)
+					.withSubjectId(subject)
 					.withEventAction(EventAction.UPDATE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
@@ -189,11 +183,13 @@ public class ProjectService {
 			throw new WebApplicationException(e);
 		}
 		
+		cacheManager.getCache().hset( subject.getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize( project ) );
+		
 		//
 		//
 		//
 		
-		cacheManager.hset(project.getId(), subjectId, project);
+		cacheManager.hset( project.getId(), subject, project );
 		
 		//
 		//
@@ -209,7 +205,7 @@ public class ProjectService {
 	 * @param eventSource
 	 */
 	
-	public void delete(String projectId, String subjectId, URI eventSource) {
+	public void delete(String projectId, String subject, URI eventSource) {
 		
 		//
 		//
@@ -218,7 +214,7 @@ public class ProjectService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subjectId)
+					.withSubjectId(subject)
 					.withEventAction(EventAction.DELETE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
@@ -237,7 +233,8 @@ public class ProjectService {
 		//
 		//
 		
-		cacheManager.hdel( projectId, subjectId );
+		cacheManager.hdel( subject, Project.class.getName().concat(projectId) );
+		cacheManager.hdel( projectId, subject );
 	}
 	
 	/**
@@ -248,14 +245,14 @@ public class ProjectService {
 	 * @throws IOException
 	 */
 	
-	public void share(String subjectId, Project project, URI eventSource) throws IOException {
+	public void share(String subject, Project project, URI eventSource) throws IOException {
 		
 		//
 		//
 		//
 		
 		project.setLastModifiedDate(Date.from(Instant.now()));
-		project.setLastModifiedById(subjectId);
+		project.setLastModifiedById(subject);
 		
 		//
 		//
@@ -264,7 +261,7 @@ public class ProjectService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subjectId)
+					.withSubjectId(subject)
 					.withEventAction(EventAction.SHARE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
@@ -279,7 +276,7 @@ public class ProjectService {
 			throw new WebApplicationException(e);
 		}
 		
-		cacheManager.hset(project.getId(), subjectId, project);
+		cacheManager.hset(project.getId(), subject, project);
 	}
 	
 	

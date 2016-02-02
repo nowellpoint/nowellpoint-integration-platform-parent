@@ -44,19 +44,20 @@ public class ProjectResource {
 		//
 		//
 		
-		String subjectId = HttpServletRequestUtil.getSubjectId(servletRequest);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		//
 		//
 		//
 		
-		Set<Project> projects = projectService.getAll(subjectId);
+		Set<Project> resources = projectService.getAll(subject);
 		
 		//
 		//
 		//
 		
-		return Response.ok(projects).build();
+		return Response.ok(resources)
+				.build();
     }
 	
 	@GET
@@ -68,20 +69,19 @@ public class ProjectResource {
 		//
 		//
 		
-		String subjectId = HttpServletRequestUtil.getSubjectId(servletRequest);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		//
 		//
 		//
 		
-		Project project = projectService.get(projectId, subjectId);
+		Project resource = projectService.get(projectId, subject);
 		
 		//
 		//
 		//
 		
-		return Response.status(Status.OK)
-				.entity(project)
+		return Response.ok(resource)
 				.build();
 	}
 	
@@ -95,13 +95,13 @@ public class ProjectResource {
 		//
 		//
 		
-		String subjectId = HttpServletRequestUtil.getSubjectId(servletRequest);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		//
 		//
 		//
 		
-		projectService.delete(projectId, subjectId, uriInfo.getRequestUri());
+		projectService.delete(projectId, subject, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -120,13 +120,13 @@ public class ProjectResource {
 		//
 		//
 		
-		String subjectId = HttpServletRequestUtil.getSubjectId(servletRequest);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		//
 		//
 		//
 		
-		projectService.create(subjectId, resource, uriInfo.getRequestUri());
+		projectService.create(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -141,25 +141,34 @@ public class ProjectResource {
 		//
 		//
 		
-		return Response.created(uri).build();
+		return Response.created(uri)
+				.entity(resource)
+				.build();
 	}
 	
 	@PUT
+	@Path("/{projectId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(Project resource) {
+	public Response updateProject(@PathParam("projectId") String projectId, Project resource) {
 		
 		//
 		//
 		//
 		
-		String subjectId = HttpServletRequestUtil.getSubjectId(servletRequest);
+		resource.setId(projectId);
 		
 		//
 		//
 		//
 		
-		projectService.update(subjectId, resource, uriInfo.getRequestUri());
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
+		//
+		//
+		
+		projectService.update(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -174,7 +183,8 @@ public class ProjectResource {
 		//
 		//
 		
-		return Response.created(uri).build();
+		return Response.ok(resource)
+				.build();
 	}
 	
 	@PUT

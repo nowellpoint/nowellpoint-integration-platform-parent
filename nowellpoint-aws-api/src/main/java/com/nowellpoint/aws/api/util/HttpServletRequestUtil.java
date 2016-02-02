@@ -69,7 +69,7 @@ public class HttpServletRequestUtil {
 		return basicToken;
 	}
 	
-	public static String getSubjectId(HttpServletRequest servletRequest) {
+	public static String getSubject(HttpServletRequest servletRequest) {
 		
 		//
 		// get the bearer token from the header
@@ -81,7 +81,7 @@ public class HttpServletRequestUtil {
 		// get the subjectId from the bearer token
 		//
 		
-		String subjectId = TokenParser.getSubjectId(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
+		String subjectId = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
 		
 		//
 		// return the subjectId

@@ -55,7 +55,7 @@ public class IdentityResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT_ID))
+			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT))
 					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
@@ -116,7 +116,7 @@ public class IdentityResource {
 					.find( eq ( "_id", identityId ) )
 					.first();
 			
-			cacheManager.set(identity.getId(), 259200, identity);
+			cacheManager.setex(identity.getId(), 259200, identity);
 		}
 		
 		//
