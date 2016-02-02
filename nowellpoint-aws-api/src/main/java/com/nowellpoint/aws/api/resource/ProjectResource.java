@@ -16,10 +16,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.modelmapper.ModelMapper;
+
+import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.api.service.ProjectService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.model.data.Project;
@@ -35,6 +37,8 @@ public class ProjectResource {
 	
 	@Context
 	private HttpServletRequest servletRequest;
+	
+	private ModelMapper modelMapper;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -114,7 +118,7 @@ public class ProjectResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createProject(Project resource) {
+	public Response createProject(ProjectDTO resource) {
 		
 		//
 		//
@@ -126,7 +130,19 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.create(subject, resource, uriInfo.getBaseUri());
+		Project project = modelMapper.map(resource, Project.class);
+		
+		//
+		//
+		//
+		
+		projectService.create(subject, project, uriInfo.getBaseUri());
+		
+		//
+		//
+		//
+		
+		modelMapper.map(project, resource);
 		
 		//
 		//
