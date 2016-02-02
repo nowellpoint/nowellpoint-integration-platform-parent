@@ -19,12 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.modelmapper.ModelMapper;
-
 import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.api.service.ProjectService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
-import com.nowellpoint.aws.model.data.Project;
 
 @Path("/project")
 public class ProjectResource {
@@ -37,8 +34,6 @@ public class ProjectResource {
 	
 	@Context
 	private HttpServletRequest servletRequest;
-	
-	private ModelMapper modelMapper;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -54,7 +49,7 @@ public class ProjectResource {
 		//
 		//
 		
-		Set<Project> resources = projectService.getAll(subject);
+		Set<ProjectDTO> resources = projectService.getAll(subject);
 		
 		//
 		//
@@ -65,9 +60,9 @@ public class ProjectResource {
     }
 	
 	@GET
-	@Path("/{projectId}")
+	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response getProject(@PathParam("projectId") String projectId) {
+	public Response getProject(@PathParam("id") String id) {
 		
 		//
 		//
@@ -79,7 +74,7 @@ public class ProjectResource {
 		//
 		//
 		
-		Project resource = projectService.get(projectId, subject);
+		ProjectDTO resource = projectService.get( id, subject );
 		
 		//
 		//
@@ -91,9 +86,9 @@ public class ProjectResource {
 	
 	
 	@DELETE
-	@Path("/{projectId}")
+	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response deleteProject(@PathParam("projectId") String projectId) {
+	public Response deleteProject(@PathParam("id") String id) {
 		
 		//
 		//
@@ -105,7 +100,7 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.delete(projectId, subject, uriInfo.getBaseUri());
+		projectService.delete(id, subject, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -130,19 +125,7 @@ public class ProjectResource {
 		//
 		//
 		
-		Project project = modelMapper.map(resource, Project.class);
-		
-		//
-		//
-		//
-		
-		projectService.create(subject, project, uriInfo.getBaseUri());
-		
-		//
-		//
-		//
-		
-		modelMapper.map(project, resource);
+		projectService.create(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -163,16 +146,16 @@ public class ProjectResource {
 	}
 	
 	@PUT
-	@Path("/{projectId}")
+	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(@PathParam("projectId") String projectId, Project resource) {
+	public Response updateProject(@PathParam("id") String id, ProjectDTO resource) {
 		
 		//
 		//
 		//
 		
-		resource.setId(projectId);
+		resource.setId(id);
 		
 		//
 		//
@@ -185,15 +168,6 @@ public class ProjectResource {
 		//
 		
 		projectService.update(subject, resource, uriInfo.getBaseUri());
-		
-		//
-		//
-		//
-		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(ProjectResource.class)
-				.path("/{id}")
-				.build(resource.getId());
 		
 		//
 		//

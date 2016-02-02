@@ -1,15 +1,11 @@
 package com.nowellpoint.aws.api.data;
 
-import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -17,12 +13,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 
-import com.nowellpoint.aws.model.admin.Properties;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
+
+import com.nowellpoint.aws.model.admin.Properties;
 
 @ApplicationScoped
 public class CacheManager {
@@ -140,63 +134,6 @@ public class CacheManager {
 	/**
 	 * 
 	 * @param key
-	 * @param field
-	 * @param value
-	 * @throws IOException
-	 */
-	
-	public <T> void hset(String key, String field, T value) {
-		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
-	}
-	
-	/**
-	 * 
-	 * @param key
-	 * @param type
-	 * @return matching entries for Class<T>
-	 */
-	
-	public <T> Set<T> hscanByClassType(String key, Class<T> type) {
-		ScanParams params = new ScanParams();
-	    params.match(type.getName().concat("*"));
-		
-		ScanResult<Entry<byte[], byte[]>> scanResult = jedis.hscan(key.getBytes(), SCAN_POINTER_START.getBytes(), params);
-		
-		Set<T> results = new HashSet<T>();
-		
-		scanResult.getResult().forEach(r -> {
-			T t = deserialize(r.getValue());
-			results.add(t);
-		});
-		
-		return results;
-	}
-	
-	/**
-	 * 
-	 * @param key
-	 * @param field
-	 * @param values
-	 */
-	
-	public <T> void hsetByClassType(String key, Set<T> values) {
-		Pipeline p = jedis.pipelined();		
-		values.stream().forEach(value -> {
-			try {
-				Method method = value.getClass().getMethod("getId");
-				String id = (String) method.invoke(value, new Object[] {});
-				p.hset(key.getBytes(), value.getClass().getName().concat(id).getBytes(), serialize(value));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		
-		p.sync();
-	}
-	
-	/**
-	 * 
-	 * @param key
 	 * @return
 	 */
 	
@@ -219,9 +156,7 @@ public class CacheManager {
 	 * @param field
 	 */
 	
-	public void hdel(String key, String field) {
-		jedis.hdel(key.getBytes(), field.getBytes());
-	}
+
 	
 	/**
 	 * 

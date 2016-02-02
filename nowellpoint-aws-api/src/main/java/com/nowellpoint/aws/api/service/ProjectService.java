@@ -2,9 +2,9 @@ package com.nowellpoint.aws.api.service;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
@@ -14,33 +14,30 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
+import org.modelmapper.TypeToken;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoCollection;
-import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.data.Datastore;
+import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.data.Project;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public class ProjectService {
+public class ProjectService extends AbstractDataService {
 	
 	private static final Logger LOGGER = Logger.getLogger(ProjectService.class);
 	
 	private static final String COLLECTION_NAME = "projects";
 	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-	
-	@Inject
-	private CacheManager cacheManager;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -53,35 +50,39 @@ public class ProjectService {
 	 * @return the list of Projects that is associated to the subject
 	 */
 	
-	public Set<Project> getAll(String subject) {
+	public Set<ProjectDTO> getAll(String subject) {
 		
 		//
 		//
 		//
 		
-		Set<Project> projects = cacheManager.hscanByClassType( subject, Project.class );
+		Set<ProjectDTO> resources = hscan( subject, ProjectDTO.class );
 		
 		//
 		//
 		//
 		
-		if (projects.isEmpty()) {
+		if (resources.isEmpty()) {
 			
 			MongoCollection<Project> collection = Datastore.getDatabase()
 					.getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class );
 				
-			projects = StreamSupport.stream( collection.find( eq ( "ownerId", subject ) ).spliterator(), false )
+			Set<Project> projects = StreamSupport.stream( collection.find( eq ( "ownerId", subject ) ).spliterator(), false )
 						.collect( Collectors.toSet() );
 			
-			cacheManager.hsetByClassType( subject, projects );
+			Type type = new TypeToken<Set<ProjectDTO>>() {}.getType();
+			
+			resources = modelMapper.map( projects, type );
+			
+			hset( subject, resources );
 		}
 		
 		//
 		//
 		//
 		
-		return projects;
+		return resources;
 	}
 
 	/**
@@ -92,7 +93,13 @@ public class ProjectService {
 	 * @return the created project
 	 */
 	
-	public Project create(String subject, Project project, URI eventSource) {
+	public ProjectDTO create(String subject, ProjectDTO resource, URI eventSource) {
+		
+		//
+		//
+		//
+		
+		Project project = modelMapper.map( resource, Project.class );
 		
 		//
 		//
@@ -127,22 +134,23 @@ public class ProjectService {
 		}
 		
 		//
-		// set the user specific cache entry
+		//
 		//
 		
-		cacheManager.getCache().hset( subject.getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize( project ) );
-		
-		//
-		// 
-		//
-		
-		cacheManager.hset( project.getId(), subject, project );
+		modelMapper.map( project, resource );
 		
 		//
 		//
 		//
 		
-		return project;
+		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
+		
+		//
+		//
+		//
+		
+		return resource;
 	}
 	
 	/**
@@ -153,7 +161,13 @@ public class ProjectService {
 	 * @return
 	 */
 
-	public Project update(String subject, Project project, URI eventSource) {
+	public ProjectDTO update(String subject, ProjectDTO resource, URI eventSource) {
+		
+		//
+		//
+		//
+		
+		Project project = modelMapper.map( resource, Project.class );
 		
 		//
 		//
@@ -183,19 +197,20 @@ public class ProjectService {
 			throw new WebApplicationException(e);
 		}
 		
-		cacheManager.getCache().hset( subject.getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize( project ) );
+		resource = hget()
 		
 		//
 		//
 		//
 		
-		cacheManager.hset( project.getId(), subject, project );
+		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 		
 		//
 		//
 		//
 		
-		return project;
+		return resource;
 	}
 	
 	/**
@@ -205,7 +220,7 @@ public class ProjectService {
 	 * @param eventSource
 	 */
 	
-	public void delete(String projectId, String subject, URI eventSource) {
+	public void delete(String resourceId, String subject, URI eventSource) {
 		
 		//
 		//
@@ -218,7 +233,7 @@ public class ProjectService {
 					.withEventAction(EventAction.DELETE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
-					.withPayload(new Project(projectId))
+					.withPayload(new Project(resourceId))
 					.withType(Project.class)
 					.build();
 			
@@ -233,8 +248,8 @@ public class ProjectService {
 		//
 		//
 		
-		cacheManager.hdel( subject, Project.class.getName().concat(projectId) );
-		cacheManager.hdel( projectId, subject );
+		hdel( subject, ProjectDTO.class.getName().concat(resourceId) );
+		hdel( resourceId, subject );
 	}
 	
 	/**
@@ -245,7 +260,13 @@ public class ProjectService {
 	 * @throws IOException
 	 */
 	
-	public void share(String subject, Project project, URI eventSource) throws IOException {
+	public void share(String subject, ProjectDTO resource, URI eventSource) throws IOException {
+		
+		//
+		//
+		//
+		
+		Project project = modelMapper.map( resource, Project.class );
 		
 		//
 		//
@@ -276,11 +297,18 @@ public class ProjectService {
 			throw new WebApplicationException(e);
 		}
 		
-		cacheManager.hset(project.getId(), subject, project);
+		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 	}
 	
 	
-	public void restrict(String subjectId, Project project, URI eventSource) {
+	public void restrict(String subjectId, ProjectDTO resource, URI eventSource) {
+		
+		//
+		//
+		//
+		
+		Project project = modelMapper.map( resource, Project.class );
 		
 		//
 		//
@@ -315,7 +343,7 @@ public class ProjectService {
 		//
 		//
 		
-		cacheManager.hdel(project.getId(), subjectId);
+		hdel( resource.getId(), subjectId );
 	}
 	
 	/**
@@ -325,36 +353,36 @@ public class ProjectService {
 	 * @return
 	 */
 	
-	public Project get(String projectId, String subjectId) {
+	public ProjectDTO get(String id, String subject) {
 		
 		//
 		//
 		//
 		
-		Project project = cacheManager.hget( projectId, subjectId );
+		ProjectDTO resource = hget( id, subject );
 		
 		//
 		//
 		//
 		
-		if ( project == null ) {
+		if ( resource == null ) {
 			
-			project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
+			Project project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class )
-					.find( and ( eq ( "_id", projectId ), eq ( "ownerId", subjectId ) ) )
+					.find( and ( eq ( "_id", id ), eq ( "ownerId", subject ) ) )
 					.first();
 			
 			if ( project == null ) {
-				throw new WebApplicationException( String.format( "Project Id: %s does not exist or you do not have access to view", projectId ), Status.NOT_FOUND );
+				throw new WebApplicationException( String.format( "Project Id: %s does not exist or you do not have access to view", id ), Status.NOT_FOUND );
 			}
 
-			cacheManager.hset( projectId, subjectId, project );
+			hset( id, subject, resource );
 		}
 		
 		//
 		//
 		//
 		
-		return project;
+		return resource;
 	}
 }
