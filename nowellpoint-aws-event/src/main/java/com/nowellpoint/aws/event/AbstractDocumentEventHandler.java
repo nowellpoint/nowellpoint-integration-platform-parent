@@ -173,8 +173,4 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		cacheManager.setex(document.getId(), 259200, document);
 		cacheManager.close();
 	}
-	
-	private MongoClientURI getMongoClientUri(String mongoConnectUri) {
-		return new MongoClientURI(mongoConnectUri.startsWith("mongodb://") ? mongoConnectUri : "mongodb://".concat(mongoConnectUri));
-	}
 }

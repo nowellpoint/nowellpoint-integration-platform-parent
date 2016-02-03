@@ -2,6 +2,12 @@ package com.nowellpoint.aws.api.dto;
 
 public class ProjectDTO extends AbstractDTO {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -4568819604209454827L;
+
 	private String name;
 	
 	private String description;

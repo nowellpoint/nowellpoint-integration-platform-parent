@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
+import org.modelmapper.convention.MatchingStrategies;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
@@ -29,11 +31,16 @@ public abstract class AbstractDataService {
 	
 	public AbstractDataService() {
 		
+		modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
 	}
 	
 	protected <T extends AbstractDTO> void hset(String key, String field, T value) {
 		Jedis jedis = cacheManager.getCache();
-		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
+		System.out.println(field.getBytes().length);
+		Long result = jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
+		System.out.println("result: " + result);
 	}
 	
 	protected void hdel(String key, String field) {
@@ -41,8 +48,9 @@ public abstract class AbstractDataService {
 		jedis.hdel(key.getBytes(), field.getBytes());
 	}
 	
-	public <T> T hget(String key, String field) {
+	public <T extends AbstractDTO> T hget(String key, String field) {
 		Jedis jedis = cacheManager.getCache();
+		jedis.hkeys(key).forEach(k -> System.out.println(k));
 		byte[] bytes = jedis.hget(key.getBytes(), field.getBytes());
 		T value = null;
 		if (bytes != null) {

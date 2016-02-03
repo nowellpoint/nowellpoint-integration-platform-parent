@@ -142,7 +142,7 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 		//
-		
+System.out.println("creating: " + resource.getId() + subject);
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
 		
@@ -163,16 +163,15 @@ public class ProjectService extends AbstractDataService {
 
 	public ProjectDTO update(String subject, ProjectDTO resource, URI eventSource) {
 		
+		ProjectDTO current = hget( resource.getId(), subject );
+		
 		//
 		//
 		//
 		
 		Project project = modelMapper.map( resource, Project.class );
-		
-		//
-		//
-		//
-		
+		project.setCreatedDate(current.getCreatedDate());
+		project.setCreatedById(current.getCreatedById());
 		project.setLastModifiedDate(Date.from(Instant.now()));
 		project.setLastModifiedById(subject);
 		
@@ -197,15 +196,27 @@ public class ProjectService extends AbstractDataService {
 			throw new WebApplicationException(e);
 		}
 		
-		resource = hget()
+		//
+		// merge create only fields
+		//
+		
+		
+		
+		modelMapper.map( project, resource );
+		
+		resource.setCreatedById(current.getCreatedById());
+		resource.setCreatedDate(current.getCreatedDate());
+		
+		System.out.println("created date: " + resource.getCreatedDate());
+		System.out.println("last modified date: " +resource.getLastModifiedDate());
 		
 		//
 		//
 		//
-		
+		System.out.println(this.getClass().getName() + " " + resource.getId() + " " + subject);
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
-		
+
 		//
 		//
 		//
@@ -220,7 +231,7 @@ public class ProjectService extends AbstractDataService {
 	 * @param eventSource
 	 */
 	
-	public void delete(String resourceId, String subject, URI eventSource) {
+	public void delete(String id, String subject, URI eventSource) {
 		
 		//
 		//
@@ -233,7 +244,7 @@ public class ProjectService extends AbstractDataService {
 					.withEventAction(EventAction.DELETE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))
-					.withPayload(new Project(resourceId))
+					.withPayload(new Project(id))
 					.withType(Project.class)
 					.build();
 			
@@ -248,8 +259,8 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 		
-		hdel( subject, ProjectDTO.class.getName().concat(resourceId) );
-		hdel( resourceId, subject );
+		hdel( subject, ProjectDTO.class.getName().concat(id) );
+		hdel( id, subject );
 	}
 	
 	/**
@@ -358,14 +369,21 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 		//
-		
-		ProjectDTO resource = hget( id, subject );
+		System.out.println(id);
+		System.out.println(subject);
+		ProjectDTO resource = null;
+		try {
+		resource = hget( id, subject );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		//
 		//
 		//
 		
 		if ( resource == null ) {
+			System.out.println("resource not found");
 			
 			Project project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class )
@@ -375,7 +393,9 @@ public class ProjectService extends AbstractDataService {
 			if ( project == null ) {
 				throw new WebApplicationException( String.format( "Project Id: %s does not exist or you do not have access to view", id ), Status.NOT_FOUND );
 			}
-
+			
+			resource = modelMapper.map( project, ProjectDTO.class );
+			System.out.println("adding resource for " + id + " " + subject);
 			hset( id, subject, resource );
 		}
 		

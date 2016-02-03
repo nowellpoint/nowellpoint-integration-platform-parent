@@ -2,14 +2,22 @@ package com.nowellpoint.aws.api.dto;
 
 import java.util.Date;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractDTO {
+public abstract class AbstractDTO implements Serializable {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 3468369885294317641L;
+
 	/**
 	 * 
 	 */

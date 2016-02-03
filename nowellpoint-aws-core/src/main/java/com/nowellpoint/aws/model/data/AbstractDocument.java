@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractDocument implements Serializable {
 	
 	/**
@@ -31,12 +30,14 @@ public abstract class AbstractDocument implements Serializable {
 	 * 
 	 */
 	
+	@JsonInclude(Include.NON_NULL)
 	private String createdById;
 	
 	/**
 	 * 
 	 */
 	
+	@JsonInclude(Include.NON_NULL)
 	private String lastModifiedById;
 	
 	/**
@@ -45,6 +46,7 @@ public abstract class AbstractDocument implements Serializable {
 	
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonInclude(Include.NON_NULL)
 	private Date createdDate;
 	
 	/**
@@ -53,6 +55,7 @@ public abstract class AbstractDocument implements Serializable {
 	
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonInclude(Include.NON_NULL)
 	private Date lastModifiedDate;
 	
 	public AbstractDocument() {
