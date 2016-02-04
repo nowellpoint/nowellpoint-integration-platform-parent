@@ -29,7 +29,7 @@ public class Main {
         // set system properties from configuration
         //
 
-        Properties.setSystemProperties(System.getenv("PROPERTY_STORE"));
+        Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
         
         //
         // create the JAX-RS deployment archive

@@ -36,6 +36,10 @@ public abstract class AbstractDataService {
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
 	}
 	
+	protected String getSubjectId(String subject) {
+		return subject.substring(0, subject.lastIndexOf("/") + 1);
+	}
+	
 	protected <T extends AbstractDTO> void hset(String key, String field, T value) {
 		Jedis jedis = cacheManager.getCache();
 		System.out.println(field.getBytes().length);

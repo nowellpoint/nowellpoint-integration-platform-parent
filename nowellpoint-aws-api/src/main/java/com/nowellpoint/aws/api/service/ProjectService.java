@@ -68,14 +68,14 @@ public class ProjectService extends AbstractDataService {
 					.getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class );
 				
-			Set<Project> projects = StreamSupport.stream( collection.find( eq ( "ownerId", subject ) ).spliterator(), false )
+			Set<Project> projects = StreamSupport.stream( collection.find( eq ( "owner", subject ) ).spliterator(), false )
 						.collect( Collectors.toSet() );
 			
 			Type type = new TypeToken<Set<ProjectDTO>>() {}.getType();
 			
 			resources = modelMapper.map( projects, type );
 			
-			hset( subject, resources );
+			hset( getSubjectId(subject), resources );
 		}
 		
 		//
@@ -121,7 +121,7 @@ public class ProjectService extends AbstractDataService {
 					.withSubjectId(subject)
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("PROPERTY_STORE"))
+					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(project)
 					.withType(Project.class)
 					.build();
@@ -143,8 +143,8 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 System.out.println("creating: " + resource.getId() + subject);
-		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( getSubjectId(subject), ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), getSubjectId(subject), resource );
 		
 		//
 		//
@@ -163,7 +163,7 @@ System.out.println("creating: " + resource.getId() + subject);
 
 	public ProjectDTO update(String subject, ProjectDTO resource, URI eventSource) {
 		
-		ProjectDTO current = hget( resource.getId(), subject );
+		ProjectDTO current = hget( resource.getId(), getSubjectId(subject) );
 		
 		//
 		//
@@ -185,7 +185,7 @@ System.out.println("creating: " + resource.getId() + subject);
 					.withSubjectId(subject)
 					.withEventAction(EventAction.UPDATE)
 					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("PROPERTY_STORE"))
+					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(project)
 					.withType(Project.class)
 					.build();
@@ -214,8 +214,8 @@ System.out.println("creating: " + resource.getId() + subject);
 		//
 		//
 		System.out.println(this.getClass().getName() + " " + resource.getId() + " " + subject);
-		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( getSubjectId(subject), ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), getSubjectId(subject), resource );
 
 		//
 		//
@@ -243,7 +243,7 @@ System.out.println("creating: " + resource.getId() + subject);
 					.withSubjectId(subject)
 					.withEventAction(EventAction.DELETE)
 					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("PROPERTY_STORE"))
+					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(new Project(id))
 					.withType(Project.class)
 					.build();
@@ -259,8 +259,8 @@ System.out.println("creating: " + resource.getId() + subject);
 		//
 		//
 		
-		hdel( subject, ProjectDTO.class.getName().concat(id) );
-		hdel( id, subject );
+		hdel( getSubjectId(subject), ProjectDTO.class.getName().concat(id) );
+		hdel( id, getSubjectId(subject) );
 	}
 	
 	/**
@@ -296,7 +296,7 @@ System.out.println("creating: " + resource.getId() + subject);
 					.withSubjectId(subject)
 					.withEventAction(EventAction.SHARE)
 					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("PROPERTY_STORE"))
+					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(project)
 					.withType(Project.class)
 					.build();
@@ -308,8 +308,8 @@ System.out.println("creating: " + resource.getId() + subject);
 			throw new WebApplicationException(e);
 		}
 		
-		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( getSubjectId(subject), ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), getSubjectId(subject), resource );
 	}
 	
 	
@@ -338,7 +338,7 @@ System.out.println("creating: " + resource.getId() + subject);
 					.withSubjectId(subjectId)
 					.withEventAction(EventAction.RESTRICT)
 					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("PROPERTY_STORE"))
+					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(project)
 					.withType(Project.class)
 					.build();
@@ -373,7 +373,7 @@ System.out.println("creating: " + resource.getId() + subject);
 		System.out.println(subject);
 		ProjectDTO resource = null;
 		try {
-		resource = hget( id, subject );
+		resource = hget( id, getSubjectId(subject) );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -387,7 +387,7 @@ System.out.println("creating: " + resource.getId() + subject);
 			
 			Project project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class )
-					.find( and ( eq ( "_id", id ), eq ( "ownerId", subject ) ) )
+					.find( and ( eq ( "_id", id ), eq ( "owner", subject ) ) )
 					.first();
 			
 			if ( project == null ) {
@@ -396,7 +396,7 @@ System.out.println("creating: " + resource.getId() + subject);
 			
 			resource = modelMapper.map( project, ProjectDTO.class );
 			System.out.println("adding resource for " + id + " " + subject);
-			hset( id, subject, resource );
+			hset( id, getSubjectId(subject), resource );
 		}
 		
 		//

@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
@@ -13,12 +14,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.api.service.ProjectService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
@@ -149,19 +154,33 @@ public class ProjectResource {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(@PathParam("id") String id, ProjectDTO resource) {
-		
-		//
-		//
-		//
-		
-		resource.setId(id);
+	public Response updateProject(@PathParam("id") String id, String representation) {
 		
 		//
 		//
 		//
 		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
+		//
+		//
+		
+		ObjectNode node = null;
+		try {
+			node = new ObjectMapper().readValue(representation, ObjectNode.class);
+		} catch (IOException e) {
+			throw new WebApplicationException(e.getMessage(), Status.BAD_REQUEST);
+		}
+		
+		ProjectDTO resource = projectService.get(id, subject);
+		resource.setId(id);
+		if (node.get("description") != null) {
+			resource.setDescription(node.get("description").asText());
+		}
+		
+		
+		
 		
 		//
 		//

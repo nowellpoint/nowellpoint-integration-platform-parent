@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -52,9 +53,7 @@ public class TokenResource {
 		String[] params = basicToken.split(":");
 		
 		if (params.length != 2) {
-			return Response.status(Status.BAD_REQUEST)
-					.entity("Invalid Request - Missing username and/or password")
-					.build();
+			throw new WebApplicationException("Invalid Request - Missing username and/or password", Status.BAD_REQUEST);
 		}
 		
 		//
