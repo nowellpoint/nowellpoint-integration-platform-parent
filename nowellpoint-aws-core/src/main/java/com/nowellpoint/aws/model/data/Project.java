@@ -10,7 +10,7 @@ public class Project extends AbstractDocument {
 	
 	private String stage;
 	
-	private String ownerId;
+	private String owner;
 
 	public Project() {
 		
@@ -44,12 +44,12 @@ public class Project extends AbstractDocument {
 		this.stage = stage;
 	}
 
-	public String getOwnerId() {
-		return ownerId;
+	public String getOwner() {
+		return owner;
 	}
 
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 	
 	public Project withId(String id) {

@@ -47,7 +47,19 @@ public abstract class AbstractDTO implements Serializable {
 	 */
 	
 	private Date lastModifiedDate;
+	
+	/**
+	 * 
+	 */
+	
+	private Date systemCreationDate;
+	
+	/**
+	 * 
+	 */
 
+	private Date systemModifiedDate;
+	
 	public AbstractDTO() {
 		
 	}
@@ -90,5 +102,21 @@ public abstract class AbstractDTO implements Serializable {
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+	
+	public Date getSystemCreationDate() {
+		return systemCreationDate;
+	}
+
+	public void setSystemCreationDate(Date systemCreationDate) {
+		this.systemCreationDate = systemCreationDate;
+	}
+
+	public Date getSystemModifiedDate() {
+		return systemModifiedDate;
+	}
+
+	public void setSystemModifiedDate(Date systemModifiedDate) {
+		this.systemModifiedDate = systemModifiedDate;
 	}
 }

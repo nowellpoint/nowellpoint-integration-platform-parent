@@ -36,15 +36,9 @@ public abstract class AbstractDataService {
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
 	}
 	
-	protected String getSubjectId(String subject) {
-		return subject.substring(0, subject.lastIndexOf("/") + 1);
-	}
-	
 	protected <T extends AbstractDTO> void hset(String key, String field, T value) {
 		Jedis jedis = cacheManager.getCache();
-		System.out.println(field.getBytes().length);
-		Long result = jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
-		System.out.println("result: " + result);
+		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
 	}
 	
 	protected void hdel(String key, String field) {
@@ -54,7 +48,6 @@ public abstract class AbstractDataService {
 	
 	public <T extends AbstractDTO> T hget(String key, String field) {
 		Jedis jedis = cacheManager.getCache();
-		jedis.hkeys(key).forEach(k -> System.out.println(k));
 		byte[] bytes = jedis.hget(key.getBytes(), field.getBytes());
 		T value = null;
 		if (bytes != null) {

@@ -6,6 +6,7 @@ import static com.mongodb.client.model.Filters.eq;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class ProjectService extends AbstractDataService {
 			
 			resources = modelMapper.map( projects, type );
 			
-			hset( getSubjectId(subject), resources );
+			hset( subject, resources );
 		}
 		
 		//
@@ -106,8 +107,8 @@ public class ProjectService extends AbstractDataService {
 		//
 		
 		project.setId(UUID.randomUUID().toString());
-		project.setCreatedDate(Date.from(Instant.now()));
-		project.setLastModifiedDate(Date.from(Instant.now()));
+		project.setCreatedDate(Date.from(Clock.systemUTC().instant()));
+		project.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
 		project.setCreatedById(subject);
 		project.setLastModifiedById(subject);
 		
@@ -142,9 +143,9 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 		//
-System.out.println("creating: " + resource.getId() + subject);
-		hset( getSubjectId(subject), ProjectDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), getSubjectId(subject), resource );
+
+		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 		
 		//
 		//
@@ -163,16 +164,12 @@ System.out.println("creating: " + resource.getId() + subject);
 
 	public ProjectDTO update(String subject, ProjectDTO resource, URI eventSource) {
 		
-		ProjectDTO current = hget( resource.getId(), getSubjectId(subject) );
-		
 		//
 		//
 		//
 		
 		Project project = modelMapper.map( resource, Project.class );
-		project.setCreatedDate(current.getCreatedDate());
-		project.setCreatedById(current.getCreatedById());
-		project.setLastModifiedDate(Date.from(Instant.now()));
+		project.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
 		project.setLastModifiedById(subject);
 		
 		//
@@ -195,27 +192,27 @@ System.out.println("creating: " + resource.getId() + subject);
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
 		}
-		
+				
 		//
-		// merge create only fields
 		//
-		
-		
+		//
 		
 		modelMapper.map( project, resource );
 		
-		resource.setCreatedById(current.getCreatedById());
-		resource.setCreatedDate(current.getCreatedDate());
+		//
+		//
+		//
 		
-		System.out.println("created date: " + resource.getCreatedDate());
-		System.out.println("last modified date: " +resource.getLastModifiedDate());
+		ProjectDTO original = get( resource.getId(), subject );
+		resource.setCreatedById(original.getCreatedById());
+		resource.setCreatedDate(original.getCreatedDate());
 		
 		//
 		//
 		//
-		System.out.println(this.getClass().getName() + " " + resource.getId() + " " + subject);
-		hset( getSubjectId(subject), ProjectDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), getSubjectId(subject), resource );
+
+		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 
 		//
 		//
@@ -259,8 +256,8 @@ System.out.println("creating: " + resource.getId() + subject);
 		//
 		//
 		
-		hdel( getSubjectId(subject), ProjectDTO.class.getName().concat(id) );
-		hdel( id, getSubjectId(subject) );
+		hdel( subject, ProjectDTO.class.getName().concat(id) );
+		hdel( id, subject );
 	}
 	
 	/**
@@ -308,8 +305,8 @@ System.out.println("creating: " + resource.getId() + subject);
 			throw new WebApplicationException(e);
 		}
 		
-		hset( getSubjectId(subject), ProjectDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), getSubjectId(subject), resource );
+		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 	}
 	
 	
@@ -359,8 +356,8 @@ System.out.println("creating: " + resource.getId() + subject);
 	
 	/**
 	 * 
-	 * @param projectId
-	 * @param subjectId
+	 * @param id
+	 * @param subject
 	 * @return
 	 */
 	
@@ -369,21 +366,14 @@ System.out.println("creating: " + resource.getId() + subject);
 		//
 		//
 		//
-		System.out.println(id);
-		System.out.println(subject);
-		ProjectDTO resource = null;
-		try {
-		resource = hget( id, getSubjectId(subject) );
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		ProjectDTO resource = hget( id, subject );
 		
 		//
 		//
 		//
 		
 		if ( resource == null ) {
-			System.out.println("resource not found");
 			
 			Project project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class )
@@ -395,8 +385,8 @@ System.out.println("creating: " + resource.getId() + subject);
 			}
 			
 			resource = modelMapper.map( project, ProjectDTO.class );
-			System.out.println("adding resource for " + id + " " + subject);
-			hset( id, getSubjectId(subject), resource );
+
+			hset( id, subject, resource );
 		}
 		
 		//

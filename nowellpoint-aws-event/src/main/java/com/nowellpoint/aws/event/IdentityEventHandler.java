@@ -126,12 +126,6 @@ public class IdentityEventHandler extends AbstractDocumentEventHandler {
 		//
 		//
 		
-		addDocumentToCache(identity, properties);
-		
-		//
-		//
-		//
-		
 		event.setTargetId(identity.getId());		
 	}
 }

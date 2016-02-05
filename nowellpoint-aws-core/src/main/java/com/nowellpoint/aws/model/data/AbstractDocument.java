@@ -58,6 +58,24 @@ public abstract class AbstractDocument implements Serializable {
 	@JsonInclude(Include.NON_NULL)
 	private Date lastModifiedDate;
 	
+	/**
+	 * 
+	 */
+	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonInclude(Include.NON_NULL)
+	private Date systemCreationDate;
+	
+	/**
+	 * 
+	 */
+
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonInclude(Include.NON_NULL)
+	private Date systemModifiedDate;
+	
 	public AbstractDocument() {
 		
 	}
@@ -100,5 +118,21 @@ public abstract class AbstractDocument implements Serializable {
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Date getSystemCreationDate() {
+		return systemCreationDate;
+	}
+
+	public void setSystemCreationDate(Date systemCreationDate) {
+		this.systemCreationDate = systemCreationDate;
+	}
+
+	public Date getSystemModifiedDate() {
+		return systemModifiedDate;
+	}
+
+	public void setSystemModifiedDate(Date systemModifiedDate) {
+		this.systemModifiedDate = systemModifiedDate;
 	}
 }

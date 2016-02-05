@@ -88,12 +88,6 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 		//
 		//
 		
-		addDocumentToCache(project, properties);
-		
-		//
-		//
-		//
-		
 		event.setTargetId(project.getId());		
 	}
 }

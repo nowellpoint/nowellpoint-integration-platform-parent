@@ -152,7 +152,7 @@ public class TestDataClient {
 		Project project = new Project();
 		project.setDescription("test project 2");
 		project.setName("My new Project 2");
-		project.setOwnerId("4Bad3RyceUMplqu6qcP74w");
+		project.setOwner("4Bad3RyceUMplqu6qcP74w");
 		project.setStage("New");
 		
 		Event event = null;

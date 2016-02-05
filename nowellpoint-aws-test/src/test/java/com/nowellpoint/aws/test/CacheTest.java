@@ -217,7 +217,7 @@ public class CacheTest {
 		project.setId(UUID.randomUUID().toString());
 		project.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setLastModifiedDate(Date.from(Instant.now()));
-		project.setOwnerId(System.getProperty(Properties.DEFAULT_SUBJECT));
+		project.setOwner(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setStage("new");
 		
 		jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize(project));
