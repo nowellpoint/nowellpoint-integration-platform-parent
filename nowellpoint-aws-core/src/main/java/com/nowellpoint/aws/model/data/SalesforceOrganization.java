@@ -4,13 +4,16 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Organization extends AbstractDocument implements Serializable {
+public class SalesforceOrganization implements Serializable {
 	
 	/**
 	 * 
 	 */
 	
 	private static final long serialVersionUID = -1315510190045597737L;
+	
+	@JsonProperty(value="Id")
+	private String id;
 	
 	@JsonProperty(value="attributes")
 	private Attributes attributes;
@@ -50,14 +53,17 @@ public class Organization extends AbstractDocument implements Serializable {
 	
 	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
-
-	@JsonProperty(value="Id")
-	private String salesforceId;
-
-	private String groupHref;
 	
-	public Organization() {
+	public SalesforceOrganization() {
 		
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public Attributes getAttributes() {
@@ -162,21 +168,5 @@ public class Organization extends AbstractDocument implements Serializable {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
-	}
-
-	public String getSalesforceId() {
-		return salesforceId;
-	}
-
-	public void setSalesforceId(String salesforceId) {
-		this.salesforceId = salesforceId;
-	}
-
-	public String getGroupHref() {
-		return groupHref;
-	}
-
-	public void setGroupHref(String groupHref) {
-		this.groupHref = groupHref;
 	}
 }

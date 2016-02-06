@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.model.data;
 
+import java.util.List;
+
 public class Project extends AbstractDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
@@ -11,6 +13,8 @@ public class Project extends AbstractDocument {
 	private String stage;
 	
 	private String owner;
+	
+	private List<SalesforceOrganization> salesforceOrganizations;
 
 	public Project() {
 		
@@ -52,23 +56,11 @@ public class Project extends AbstractDocument {
 		this.owner = owner;
 	}
 	
-	public Project withId(String id) {
-		setId(id);
-		return this;
+	public List<SalesforceOrganization> getSalesforceOrganizations() {
+		return salesforceOrganizations;
 	}
 	
-	public Project withName(String name) {
-		setName(name);
-		return this;
-	}
-	
-	public Project withDescription(String description) {
-		setDescription(description);
-		return this;
-	}
-	
-	public Project withStage(String stage) {
-		setStage(stage);
-		return this;
+	public void setSalesforceOrganizations(List<SalesforceOrganization>salesforceOrganizations) {
+		this.salesforceOrganizations = salesforceOrganizations;
 	}
 }

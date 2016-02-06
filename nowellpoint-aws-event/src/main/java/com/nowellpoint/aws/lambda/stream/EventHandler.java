@@ -14,13 +14,11 @@ import com.amazonaws.services.lambda.runtime.events.DynamodbEvent.DynamodbStream
 import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
-import com.nowellpoint.aws.event.OrganizationEventHandler;
 import com.nowellpoint.aws.event.ProjectEventHandler;
 import com.nowellpoint.aws.event.IdentityEventHandler;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventStatus;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.data.Organization;
 import com.nowellpoint.aws.model.data.Project;
 import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.idp.model.Account;
@@ -35,7 +33,6 @@ public class EventHandler {
 		eventMapping.put(Identity.class.getName(), IdentityEventHandler.class.getName());
 		eventMapping.put(Account.class.getName(), AccountEventHandler.class.getName());
 		eventMapping.put(Lead.class.getName(), LeadEventHandler.class.getName());
-		eventMapping.put(Organization.class.getName(), OrganizationEventHandler.class.getName());
 		eventMapping.put(Project.class.getName(), ProjectEventHandler.class.getName());
 	}
 	
