@@ -39,7 +39,7 @@ public class LeadResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT))
+			event = new EventBuilder().withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
 					.withEventAction(EventAction.ACTIVITY)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))

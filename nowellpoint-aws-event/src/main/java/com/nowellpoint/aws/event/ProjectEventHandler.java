@@ -46,7 +46,7 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 		
 		if (EventAction.CREATE.name().equals(event.getEventAction())) {
 			
-			logger.log(this.getClass().getName() + " Creating project for account..." + event.getSubjectId());
+			logger.log(this.getClass().getName() + " Creating project for account..." + event.getSubject());
 				
 			CreateDocumentResponse createDocumentResponse = createDocument(properties.get(Properties.MONGO_CLIENT_URI), COLLECTION_NAME, project);
 			

@@ -145,7 +145,7 @@ public class AccountResource {
 				
 		Event event = null;
 		try {			
-			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT))
+			event = new EventBuilder().withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(uriInfo.getRequestUri())
 					.withPayload(resource)

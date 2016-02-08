@@ -190,14 +190,14 @@ public class AccountEventHandler implements AbstractEventHandler {
 		
 		Identity identity = new Identity();
 		identity.setUsername(username);
-		identity.setAccountHref(href);
+		identity.setHref(href);
 		
 		//
 		//
 		//
 		
 		Event event = new EventBuilder()
-				.withSubjectId(parentEvent.getSubjectId())
+				.withSubject(parentEvent.getSubject())
 				.withEventAction(EventAction.UPDATE)
 				.withEventSource(parentEvent.getEventSource())
 				.withPropertyStore(parentEvent.getPropertyStore())

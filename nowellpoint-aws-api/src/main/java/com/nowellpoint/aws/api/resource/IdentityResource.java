@@ -1,82 +1,55 @@
 package com.nowellpoint.aws.api.resource;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.net.URI;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import javax.ws.rs.core.Response.Status;
-
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nowellpoint.aws.api.data.CacheManager;
-import com.nowellpoint.aws.api.data.Datastore;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.EventAction;
-import com.nowellpoint.aws.model.EventBuilder;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
+import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
+import com.nowellpoint.aws.model.data.SalesforceOrganization;
 
 @Path("/identity")
 public class IdentityResource {
 	
 	@Inject
-	private CacheManager cacheManager;
+	private IdentityService identityService;
 
 	@Context
 	private UriInfo uriInfo;
 	
-	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-	
-	private static final String COLLECTION_NAME = "identities";
+	@Context
+	private HttpServletRequest servletRequest;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response signUp(Identity resource) {
-		
-		//
-		//
-		//
-				
-		Event event = null;
-		try {			
-			event = new EventBuilder().withSubjectId(System.getProperty(Properties.DEFAULT_SUBJECT))
-					.withEventAction(EventAction.SIGN_UP)
-					.withEventSource(uriInfo.getRequestUri())
-					.withPropertyStore(System.getenv("PROPERTY_STORE"))
-					.withPayload(resource)
-					.withType(Identity.class)
-					.build();
-		} catch (JsonProcessingException e) {
-			throw new WebApplicationException(e);
-		}
+    public Response signUp(IdentityDTO resource) {
 		
 		//
 		//
 		//
 		
-		mapper.save(event);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		//
 		//
 		//
 		
-		cacheManager.set(event.getId(), resource);
+		identityService.create( subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//
@@ -85,7 +58,7 @@ public class IdentityResource {
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)
 				.path("/{id}")
-				.build(event.getId());
+				.build(resource.getId());
 		
 		//
 		//
@@ -95,36 +68,115 @@ public class IdentityResource {
 	}
 	
 	@GET
-	@Path("/{identityId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getIdentity() {
+		
+		//
+		//
+		//
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
+		//
+		//
+		
+		IdentityDTO resource = identityService.getIdentityBySubject( subject );
+		
+		//
+		//
+		//
+		
+		return Response.ok(resource)
+				.build();
+		
+	}
+	
+	@GET
+	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIdentity(@PathParam("identityId") String identityId) {
+    public Response getIdentity(@PathParam("id") String id) {
 		
 		//
 		//
 		//
 		
-		Identity identity = cacheManager.get(identityId);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		//
 		//
 		//
 		
-		if (identity == null) {
-			
-			identity = Datastore.getDatabase().getCollection( COLLECTION_NAME )
-					.withDocumentClass( Identity.class )
-					.find( eq ( "_id", identityId ) )
-					.first();
-			
-			cacheManager.setex(identity.getId(), 259200, identity);
-		}
+		IdentityDTO resource = identityService.getIdentity( id, subject );
 		
 		//
 		//
 		//
 		
-		return Response.status(Status.OK)
-				.entity(identity)
+		return Response.ok(resource)
 				.build();
 	}
+	
+	@GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIdentityBySubject(@QueryParam("subject") String subject) {
+		
+		//
+		//
+		//
+		
+		HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
+		//
+		//
+		
+		IdentityDTO resource = identityService.getIdentityBySubject( subject );
+		
+		//
+		//
+		//
+		
+		return Response.ok(resource)
+				.build();
+	}
+	
+	@POST
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addSalesforceOrganization(@PathParam("id") String id, SalesforceOrganization organization) {
+		
+		//
+		//
+		//
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
+		//
+		//
+		
+		IdentityDTO resource = identityService.getIdentity( id, subject );
+		
+		//
+		//
+		//
+		
+		resource.addSalesforceOrganization( organization );
+		
+		//
+		//
+		//
+		
+		identityService.update(subject, resource, uriInfo.getBaseUri() );
+		
+		//
+		//
+		//
+		
+		return Response.ok(resource)
+				.build();
+	}
+	
 }

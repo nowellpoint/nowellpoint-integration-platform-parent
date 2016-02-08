@@ -74,7 +74,7 @@ public class ProjectResource {
 		//
 		//
 		
-		ProjectDTO resource = projectService.get( id, subject );
+		ProjectDTO resource = projectService.getProject( id, subject );
 		
 		//
 		//

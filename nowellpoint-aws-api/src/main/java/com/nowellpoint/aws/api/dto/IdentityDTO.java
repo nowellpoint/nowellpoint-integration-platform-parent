@@ -1,14 +1,19 @@
-package com.nowellpoint.aws.model.data;
+package com.nowellpoint.aws.api.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class Identity extends AbstractDocument {
+import com.nowellpoint.aws.model.data.Address;
+import com.nowellpoint.aws.model.data.SalesforceOrganization;
 
+public class IdentityDTO extends AbstractDTO {
+	
 	/**
 	 * 
 	 */
-
-	private static final long serialVersionUID = 3163086585922281575L;
+	
+	private static final long serialVersionUID = -856231703315633645L;
 
 	/**
 	 * 
@@ -135,9 +140,11 @@ public class Identity extends AbstractDocument {
 	 */
 
 	private String href;
-
-	public Identity() {
-
+	
+	private List<SalesforceOrganization> salesforceOrganizations;
+	
+	public IdentityDTO() {
+		
 	}
 
 	public String getUsername() {
@@ -306,5 +313,20 @@ public class Identity extends AbstractDocument {
 
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	public List<SalesforceOrganization> getSalesforceOrganizations() {
+		return salesforceOrganizations;
+	}
+
+	public void setSalesforceOrganizations(List<SalesforceOrganization> salesforceOrganizations) {
+		this.salesforceOrganizations = salesforceOrganizations;
+	}
+	
+	public void addSalesforceOrganization(SalesforceOrganization salesforceOrganization) {
+		if (salesforceOrganizations == null) {
+			salesforceOrganizations = new ArrayList<SalesforceOrganization>();
+		}
+		salesforceOrganizations.add(salesforceOrganization);
 	}
 }

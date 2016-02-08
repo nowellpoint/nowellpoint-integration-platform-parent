@@ -9,7 +9,7 @@ public class EventBuilder {
 	
 	private static ObjectMapper mapper = new ObjectMapper();
 	private Class<?> type;
-	private String subjectId;
+	private String subject;
 	private String eventSource;
 	private EventAction eventAction;
 	private Object payload;
@@ -21,8 +21,8 @@ public class EventBuilder {
 		return this;
 	}
 	
-	public EventBuilder withSubjectId(String subjectId) {
-		this.subjectId = subjectId;
+	public EventBuilder withSubject(String subject) {
+		this.subject = subject;
 		return this;
 	}
 	
@@ -62,7 +62,7 @@ public class EventBuilder {
 			throw new IllegalArgumentException("Missing Type value");
 		}
 		
-		if (subjectId == null) {
+		if (subject == null) {
 			throw new IllegalArgumentException("Missing Account Id value");
 		}
 		
@@ -84,7 +84,7 @@ public class EventBuilder {
 		
 		return new Event(
 				type.getName(),
-				subjectId,
+				subject,
 				eventSource,
 				eventAction,
 				mapper.writeValueAsString(payload),

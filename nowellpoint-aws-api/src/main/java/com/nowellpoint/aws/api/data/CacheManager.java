@@ -87,17 +87,6 @@ public class CacheManager {
 	/**
 	 * 
 	 * @param key
-	 * @param value
-	 * @throws IOException
-	 */
-	
-	public void set(String key, Object value) {
-		jedis.set(key.getBytes(), serialize(value));
-	}
-	
-	/**
-	 * 
-	 * @param key
 	 * @param seconds
 	 * @param value
 	 * @throws IOException

@@ -17,7 +17,7 @@ public class Event {
 	private String id;
 	
 	@DynamoDBRangeKey(attributeName="SubjectId")  
-	private String subjectId;
+	private String subject;
 	
 	@DynamoDBAttribute(attributeName="EventStatus")  
 	private String eventStatus;
@@ -60,10 +60,10 @@ public class Event {
 		
 	}
 	
-	public Event(String type, String accountId, String eventSource, EventAction eventAction, String payload, String propertyStore, String parentEventId) {
+	public Event(String type, String subject, String eventSource, EventAction eventAction, String payload, String propertyStore, String parentEventId) {
 		setType(type);
 		setEventStatus(EventStatus.NEW.name());
-		setSubjectId(accountId);
+		setSubject(subject);
 		setEventSource(eventSource);
 		setEventAction(eventAction.name());
 		setPayload(payload);
@@ -117,12 +117,12 @@ public class Event {
 	}
 
 	@DoNotEncrypt
-	public String getSubjectId() {
-		return subjectId;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setSubjectId(String subjectId) {
-		this.subjectId = subjectId;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public String getPayload() {

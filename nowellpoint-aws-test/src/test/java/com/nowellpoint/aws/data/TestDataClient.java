@@ -158,7 +158,7 @@ public class TestDataClient {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId("4Bad3RyceUMplqu6qcP74w")
+					.withSubject("4Bad3RyceUMplqu6qcP74w")
 					.withEventAction(EventAction.CREATE)
 					.withEventSource("TestClass")
 					.withPropertyStore(System.getenv("PROPERTY_STORE"))

@@ -36,6 +36,21 @@ public abstract class AbstractDataService {
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
 	}
 	
+	protected void set(String key, Object value) {
+		Jedis jedis = cacheManager.getCache();
+		jedis.set(key.getBytes(), serialize(value));
+	}
+	
+	protected <T> T get(String key) {
+		Jedis jedis = cacheManager.getCache();
+		byte[] bytes = jedis.get(key.getBytes());
+		T value = null;
+		if (bytes != null) {
+			value = deserialize(bytes);
+		}
+		return value;
+	}
+	
 	protected <T extends AbstractDTO> void hset(String key, String field, T value) {
 		Jedis jedis = cacheManager.getCache();
 		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));

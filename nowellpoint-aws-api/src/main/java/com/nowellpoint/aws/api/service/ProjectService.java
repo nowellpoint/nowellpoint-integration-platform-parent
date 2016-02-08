@@ -119,7 +119,7 @@ public class ProjectService extends AbstractDataService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subject)
+					.withSubject(subject)
 					.withEventAction(EventAction.CREATE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
@@ -179,7 +179,7 @@ public class ProjectService extends AbstractDataService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subject)
+					.withSubject(subject)
 					.withEventAction(EventAction.UPDATE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
@@ -203,7 +203,7 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 		
-		ProjectDTO original = get( resource.getId(), subject );
+		ProjectDTO original = getProject( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
@@ -237,7 +237,7 @@ public class ProjectService extends AbstractDataService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subject)
+					.withSubject(subject)
 					.withEventAction(EventAction.DELETE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
@@ -290,7 +290,7 @@ public class ProjectService extends AbstractDataService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subject)
+					.withSubject(subject)
 					.withEventAction(EventAction.SHARE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
@@ -332,7 +332,7 @@ public class ProjectService extends AbstractDataService {
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubjectId(subjectId)
+					.withSubject(subjectId)
 					.withEventAction(EventAction.RESTRICT)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
@@ -361,7 +361,7 @@ public class ProjectService extends AbstractDataService {
 	 * @return
 	 */
 	
-	public ProjectDTO get(String id, String subject) {
+	public ProjectDTO getProject(String id, String subject) {
 		
 		//
 		//
