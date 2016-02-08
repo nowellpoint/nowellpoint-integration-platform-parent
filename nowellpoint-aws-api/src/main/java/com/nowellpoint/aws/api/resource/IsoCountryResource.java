@@ -2,6 +2,8 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +21,13 @@ import com.nowellpoint.aws.api.data.Datastore;
 import com.nowellpoint.aws.model.data.IsoCountry;
 
 @Path("/iso-country")
+@Api(value = "/iso-country", tags = "iso country")
 public class IsoCountryResource {
 	
 	private static final String COLLECTION_NAME = "iso.countries";
 	
 	@GET
+	@ApiOperation(httpMethod = "GET", produces = "application/json", value = "Retrieve information on a registered TOSCA CSAR git repository using the csar url as id.")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 			

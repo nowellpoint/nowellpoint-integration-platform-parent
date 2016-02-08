@@ -6,6 +6,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
+//import org.wildfly.swarm.swagger.SwaggerArchive;
 
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -46,12 +47,18 @@ public class Main {
         		.addAsWebInfResource(new ClassLoaderAsset("META-INF/beans.xml", Main.class.getClassLoader()), "beans.xml")
         		.addAllDependencies();
         
+//        SwaggerArchive archive = deployment.as(SwaggerArchive.class)
+//        		.setVersion("1.0")
+//        		.setTitle("Nowellpoint Cloud Services API")
+//        		.setContextRoot("/");
+//        
+//        archive.setResourcePackages("com.nowellpoint.aws.api.resource");
+        
         //
-        // deploy archives
+        // start the container and deploy the archives
         //
  
-        container.start();
-        container.deploy(deployment);
+        container.start().deploy(deployment);
     }
 	
 	private static String getPort() {

@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<wildfly.swarm.version>1.0.0.Alpha8</wildfly.swarm.version>
+		<version.wildfly-swarm>1.0.0.Alpha8</version.wildfly-swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -40,17 +40,32 @@
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>undertow</artifactId>
-			<version>${wildfly.swarm.version}</version>
+			<version>${version.wildfly-swarm}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>jaxrs</artifactId>
-			<version>${wildfly.swarm.version}</version>
+			<version>${version.wildfly-swarm}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>jaxrs-weld</artifactId>
-			<version>${wildfly.swarm.version}</version>
+			<version>${version.wildfly-swarm}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>swagger</artifactId>
+			<version>${version.wildfly-swarm}</version>
+		</dependency>
+		<dependency>
+	<groupId>javax.validation</groupId>
+	<artifactId>validation-api</artifactId>
+	<version>1.1.0.Final</version>
+</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.2.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
@@ -82,33 +97,15 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.wildfly.swarm</groupId>
 				<artifactId>wildfly-swarm-plugin</artifactId>
-				<version>${wildfly.swarm.version}</version>
+				<version>${version.wildfly-swarm}</version>
 				<configuration>
-					<properties>
-					</properties>
 					<mainClass>com.nowellpoint.aws.api.Main</mainClass>
 				</configuration>
 				<executions>
 					<execution>
+						<phase>package</phase>
 						<goals>
 							<goal>package</goal>
 						</goals>
