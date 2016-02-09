@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -45,15 +47,15 @@ public class SignUpService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response signUp(
-    		@FormParam("leadSource") String leadSource,
-    		@FormParam("firstName") String firstName,
-    		@FormParam("lastName") String lastName,
-    		@FormParam("email") String email,
-    		@FormParam("phone") String phone,
+    		@FormParam("leadSource") @NotEmpty String leadSource,
+    		@FormParam("firstName") @NotEmpty String firstName,
+    		@FormParam("lastName") @NotEmpty String lastName,
+    		@FormParam("email") @Email String email,
+    		@FormParam("phone") @NotEmpty String phone,
     		@FormParam("company") String company,
     		@FormParam("title") String title,
-    		@FormParam("countryCode") String countryCode,
-    		@FormParam("password") String password) {
+    		@FormParam("countryCode") @NotEmpty String countryCode,
+    		@FormParam("password") @NotEmpty String password) {
 		
 		//
 		//
@@ -113,7 +115,7 @@ public class SignUpService {
 					.withType(Account.class)
 					.build();
 			
-			mapper.save(event);
+			mapper.save( event );
 			
 		} catch (JsonProcessingException e) {
 			throw new WebApplicationException(e);
