@@ -37,7 +37,7 @@ public class IdentityResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response signUp(IdentityDTO resource) {
+    public Response createIdentity(IdentityDTO resource) {
 		
 		//
 		//

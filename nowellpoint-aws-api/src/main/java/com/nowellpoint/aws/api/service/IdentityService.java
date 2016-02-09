@@ -72,7 +72,7 @@ public class IdentityService extends AbstractDataService {
 		try {			
 			event = new EventBuilder()
 					.withSubject(subject)
-					.withEventAction(EventAction.SIGN_UP)
+					.withEventAction(EventAction.CREATE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(identity)

@@ -17,6 +17,8 @@ import com.nowellpoint.aws.model.data.CreateDocumentRequest;
 import com.nowellpoint.aws.model.data.CreateDocumentResponse;
 import com.nowellpoint.aws.model.data.DeleteDocumentRequest;
 import com.nowellpoint.aws.model.data.DeleteDocumentResponse;
+import com.nowellpoint.aws.model.data.QueryDocumentRequest;
+import com.nowellpoint.aws.model.data.QueryDocumentResponse;
 import com.nowellpoint.aws.model.data.UpdateDocumentRequest;
 import com.nowellpoint.aws.model.data.UpdateDocumentResponse;
 
@@ -64,11 +66,19 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		return document.getString("_id");
 	}
 	
-	public CreateDocumentResponse createDocument(String mongoClientUri, String collectionName, AbstractDocument document) throws JsonProcessingException {
+	public QueryDocumentResponse queryDocument(String mongoClientUri, String collectionName, String query) {
 		
-		//
-		//
-		//
+		QueryDocumentRequest queryDocumentRequest = new QueryDocumentRequest()
+				.withMongoDBConnectUri(mongoClientUri)
+				.withCollectionName(collectionName)				
+				.withQuery(query);
+		
+		QueryDocumentResponse queryDocumentResponse = dataClient.query(queryDocumentRequest);
+		
+		return queryDocumentResponse;
+	}
+	
+	public CreateDocumentResponse createDocument(String mongoClientUri, String collectionName, AbstractDocument document) throws JsonProcessingException {
 		
 		CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest()
 				.withMongoDBConnectUri(mongoClientUri)
@@ -77,19 +87,11 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		
 		CreateDocumentResponse createDocumentResponse = dataClient.create(createDocumentRequest);
 		
-		//
-		//
-		//
-		
 		return createDocumentResponse;
 	}
 	
 	public UpdateDocumentResponse updateDocument(String mongoClientUri, String collectionName, AbstractDocument document) throws JsonProcessingException {
-		
-		//
-		//
-		//
-		
+				
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
 				.withMongoDBConnectUri(mongoClientUri)
 				.withCollectionName(collectionName)
@@ -97,18 +99,10 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 		
 		UpdateDocumentResponse updateDocumentResponse = dataClient.update(updateDocumentRequest);
 		
-		//
-		//
-		//
-		
 		return updateDocumentResponse;
 	}
 	
 	public DeleteDocumentResponse deleteDocument(String mongoClientUri, String collectionName, AbstractDocument document) {
-		
-		//
-		//
-		//
 		
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest()
 				.withMongoDBConnectUri(mongoClientUri)
@@ -116,10 +110,6 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 				.withId(document.getId());
 		
 		DeleteDocumentResponse deleteDocumentResponse = dataClient.delete(deleteDocumentRequest);
-		
-		//
-		//
-		//
 		
 		return deleteDocumentResponse;
 	}
