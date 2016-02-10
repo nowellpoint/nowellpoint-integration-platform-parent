@@ -13,5 +13,10 @@
 		<param-name>resteasy.providers</param-name>
 		<param-value>com.nowellpoint.aws.api.exception.WebApplicationExceptionMapper</param-value>
 	</context-param>
+	
+	<context-param>
+        <param-name>resteasy.providers</param-name>
+        <param-value>com.nowellpoint.aws.api.exception.ConstraintViolationExceptionMapper</param-value>
+    </context-param>
 
 </web-app>

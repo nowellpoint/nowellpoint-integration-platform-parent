@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -48,14 +49,19 @@ public class SignUpService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response signUp(
     		@FormParam("leadSource") @NotEmpty String leadSource,
-    		@FormParam("firstName") @NotEmpty String firstName,
+    		@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty String lastName,
     		@FormParam("email") @Email String email,
-    		@FormParam("phone") @NotEmpty String phone,
+    		@FormParam("phone") String phone,
     		@FormParam("company") String company,
     		@FormParam("title") String title,
     		@FormParam("countryCode") @NotEmpty String countryCode,
-    		@FormParam("password") @NotEmpty String password) {
+    		@FormParam("password") @Pattern.List({
+    	        @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit."),
+    	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one lowercase letter."),
+    	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one upper letter."),
+    	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
+    	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password) {
 		
 		//
 		//
@@ -94,7 +100,7 @@ public class SignUpService {
 		}
 		
 		//
-		//
+		// create account
 		//
 		
 		Account account = new Account();
@@ -122,7 +128,7 @@ public class SignUpService {
 		}
 			
 		//
-		//
+		// create identity
 		//
 		
 		Identity identity = new Identity();
@@ -160,13 +166,6 @@ public class SignUpService {
 			LOGGER.error( "Create Project exception", e.getCause() );
 			throw new WebApplicationException( e, Status.BAD_REQUEST );
 		}
-			
-		//
-		//
-		//
-			
-			
-		//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
 		
 		//
 		//
