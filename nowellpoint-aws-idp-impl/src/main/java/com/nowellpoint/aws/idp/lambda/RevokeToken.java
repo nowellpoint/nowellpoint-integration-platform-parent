@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.idp.lambda;
 
-import java.io.IOException;
 import java.util.Base64;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -34,14 +33,6 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 		 */
 		
 		RevokeTokenResponse response = new RevokeTokenResponse();
-		
-		/**
-		 * 
-		 */
-		
-		Jws<Claims> jws = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(request.getApiKeySecret().getBytes()))
-				.parseClaimsJws(request.getAccessToken());
 			
 		/**
 		 * 
@@ -49,6 +40,11 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 		
 		HttpResponse httpResponse = null;
 		try {
+			
+			Jws<Claims> jws = Jwts.parser()
+					.setSigningKey(Base64.getUrlEncoder().encodeToString(request.getApiKeySecret().getBytes()))
+					.parseClaimsJws(request.getAccessToken());
+			
 			httpResponse = RestResource.delete(request.getApiEndpoint())
 					.path("accessTokens")
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
@@ -69,10 +65,10 @@ public class RevokeToken implements RequestHandler<RevokeTokenRequest, RevokeTok
 				response.setErrorMessage(errorResponse.get("developerMessage").asText());
 			}
 			
-		} catch (IOException e) {
-			logger.log(e.getMessage());
+		} catch (Exception e) {
+			logger.log(this.getClass().getName().concat(" - ").concat(e.getMessage()));
 			response.setStatusCode(400);
-			response.setErrorCode("invalid_request");
+			response.setErrorCode("bad_request");
 			response.setErrorMessage(e.getMessage());
 		}
 		

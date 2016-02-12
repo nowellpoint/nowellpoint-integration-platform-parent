@@ -53,6 +53,11 @@
 			<version>${version.wildfly-swarm}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>weld</artifactId>
+			<version>${version.wildfly-swarm}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.2.Final</version>

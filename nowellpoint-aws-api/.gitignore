@@ -1,6 +1,6 @@
 /bin/
 /target/
-/deploy/
+/distributions/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

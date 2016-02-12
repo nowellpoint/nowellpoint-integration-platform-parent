@@ -7,21 +7,47 @@ import org.junit.Test;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Token;
 
 public class TestRestApi {
+	
+	//private static final String NCS_API_ENDPOINT = "https://api.nowellpoint.com/rest/v1";
+	private static final String NCS_API_ENDPOINT = "http://localhost:9090/rest";
 
 	@Test
 	public void testAuthentication() {
 		
+		HttpResponse httpResponse = null;
 		try {
-			HttpResponse httpResponse = RestResource.post("https://api.nowellpoint.com/rest/v1")
+			httpResponse = RestResource.post(NCS_API_ENDPOINT)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("oauth/token")
 					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
 					.execute();
 			
 			System.out.println(httpResponse.getStatusCode());
-			System.out.println(httpResponse.getEntity());
+			
+			if (httpResponse.getStatusCode() == 400) {
+				System.out.println(httpResponse.getEntity());
+			} else {
+			
+			Token token = httpResponse.getEntity(Token.class);
+			
+			System.out.println(token.getAccessToken());
+			}
+			
+			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
+					.accept(MediaType.APPLICATION_JSON)
+					//.header("x-api-key", API_KEY)
+					.bearerAuthorization("mytoken")
+	    			.path("oauth")
+	    			.path("token")
+	    			.execute();
+	    	
+	    	int statusCode = httpResponse.getStatusCode();
+	    	
+	    	System.out.println(statusCode);
+	    	System.out.println(httpResponse.getEntity());
 			
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -96,7 +96,8 @@ public class SignUpService {
 			mapper.save(event);
 				
 		} catch (JsonProcessingException e) {
-			throw new WebApplicationException(e);
+			LOGGER.error( "Parse Lead Exception", e.getCause() );
+			throw new WebApplicationException( e, Status.BAD_REQUEST );
 		}
 		
 		//
@@ -124,7 +125,8 @@ public class SignUpService {
 			mapper.save( event );
 			
 		} catch (JsonProcessingException e) {
-			throw new WebApplicationException(e);
+			LOGGER.error( "Parse Account Exception", e.getCause() );
+			throw new WebApplicationException( e, Status.BAD_REQUEST );
 		}
 			
 		//
@@ -163,7 +165,7 @@ public class SignUpService {
 			mapper.save( event );
 				
 		} catch (JsonProcessingException e) {
-			LOGGER.error( "Create Project exception", e.getCause() );
+			LOGGER.error( "Parse Identity Exception", e.getCause() );
 			throw new WebApplicationException( e, Status.BAD_REQUEST );
 		}
 		
