@@ -13,15 +13,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.data.CacheManager;
+import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
 import com.nowellpoint.aws.idp.model.GetTokenRequest;
 import com.nowellpoint.aws.idp.model.GetTokenResponse;
 import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
 import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
-import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.idp.model.VerifyTokenRequest;
 import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -33,7 +34,10 @@ public class TokenResource {
 	private CacheManager cacheManager;
 	
 	@Inject
-    private Event<Token> loggedInEvent;
+	private Event<LoggedInEvent> loggedInEvent;
+	
+	@Context
+	private UriInfo uriInfo;
 	
 	@Context
 	private HttpServletRequest servletRequest;
@@ -78,28 +82,28 @@ public class TokenResource {
 		GetTokenResponse tokenResponse = identityProviderClient.token(tokenRequest);
 		
 		//
+		// handle errors 
+		//
+		
+		if (tokenResponse.getStatusCode() != 200) {
+			throw new WebApplicationException( tokenResponse.getErrorMessage(), Status.BAD_REQUEST );
+		}	
+			
+		//
+		// fire the logged in event
+		//
+		
+		loggedInEvent.fire(new LoggedInEvent(tokenResponse.getToken(), uriInfo.getBaseUri()));
+		
+		//
 		// build and return the response
 		//
 		
-		Response response;
-		
-		if (tokenResponse.getStatusCode() != 200) {
-			
-			response = Response.status(tokenResponse.getStatusCode())
-					.entity(tokenResponse.getErrorMessage())
-					.type(MediaType.APPLICATION_JSON)
-					.build();
-		} else {
-			
-			loggedInEvent.fire(tokenResponse.getToken());
-			
-			response = Response.status(tokenResponse.getStatusCode())
-					.entity(tokenResponse.getToken())
-					.type(MediaType.APPLICATION_JSON)
-					.build();
-		}
-		
-		return response;
+		return Response.status(tokenResponse.getStatusCode())
+				.entity(tokenResponse.getToken())
+				.type(MediaType.APPLICATION_JSON)
+				.build();
+	
 	}
 	
 	@GET
@@ -179,8 +183,8 @@ public class TokenResource {
 		//
 		// build and return the response
 		//
-		
-		if (revokeTokenResponse.getStatusCode() != 200) {
+
+		if (revokeTokenResponse.getStatusCode() != 204) {
 			throw new WebApplicationException( revokeTokenResponse.getErrorMessage(), Status.BAD_REQUEST );
 		}
 		

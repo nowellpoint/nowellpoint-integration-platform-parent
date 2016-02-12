@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -50,6 +51,39 @@ public class IdentityResource {
 		//
 		
 		identityService.create( subject, resource, uriInfo.getBaseUri() );
+		
+		//
+		//
+		//
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(IdentityResource.class)
+				.path("/{id}")
+				.build(resource.getId());
+		
+		//
+		//
+		//
+		
+		return Response.created(uri).build();
+	}
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateIdentity(IdentityDTO resource) {
+		
+		//
+		//
+		//
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
+		//
+		//
+		
+		identityService.update( subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//
@@ -178,5 +212,4 @@ public class IdentityResource {
 		return Response.ok(resource)
 				.build();
 	}
-	
 }

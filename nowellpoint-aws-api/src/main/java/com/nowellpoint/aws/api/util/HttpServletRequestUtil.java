@@ -78,16 +78,16 @@ public class HttpServletRequestUtil {
 		String bearerToken = getBearerToken(servletRequest);
 		
 		//
-		// get the subjectId from the bearer token
+		// get the subject from the bearer token
 		//
 		
-		String subjectId = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
+		String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
 		
 		//
 		// return the subjectId
 		//
 		
-		return subjectId;
+		return subject;
 	}
 	
 	private static String getAuthorizationHeader(HttpServletRequest servletRequest) throws BadRequestException {
@@ -105,6 +105,10 @@ public class HttpServletRequestUtil {
 		if (! authorization.isPresent()) {
 			throw new BadRequestException("Missing Authorization Header");
 		}
+		
+		//
+		// return the authorization header
+		//
 		
 		return authorization.get();
 	}

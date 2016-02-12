@@ -4,10 +4,12 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.net.URI;
 import java.time.Clock;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
@@ -17,12 +19,14 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.data.Datastore;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.model.data.Project;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
+import com.nowellpoint.aws.tools.TokenParser;
 
 public class IdentityService extends AbstractDataService {
 	
@@ -35,6 +39,39 @@ public class IdentityService extends AbstractDataService {
 	@PostConstruct
 	public void postConstruct() {
 		
+	}
+	
+	/**
+	 * 
+	 * @param token
+	 */
+	
+	public void loggedInEvent(@Observes LoggedInEvent event) {
+		
+		//
+		//
+		//
+		
+		String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), event.getToken().getAccessToken());
+		
+		//
+		//
+		//
+		
+		IdentityDTO resource = getIdentityBySubject(subject);
+		resource.setLastLoginDate(Date.from(Instant.now()));
+		
+		//
+		//
+		//
+		
+		update( subject, resource, event.getEventSource() );
+		
+		//
+		//
+		//
+		
+		LOGGER.info("Logged In: " + resource.getHref());
 	}
 	
 	/**
@@ -96,7 +133,7 @@ public class IdentityService extends AbstractDataService {
 		//
 		//
 
-		//set( resource.getId(), resource );
+		//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
 		
 		//
 		//
@@ -143,7 +180,7 @@ public class IdentityService extends AbstractDataService {
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(identity)
-					.withType(Project.class)
+					.withType(Identity.class)
 					.build();
 			
 			mapper.save(event);
@@ -158,13 +195,11 @@ public class IdentityService extends AbstractDataService {
 		
 		modelMapper.map( identity, resource );
 		
-		
 		//
 		//
 		//
 
 		//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
-		//set( resource.getId(), resource );
 
 		//
 		//
@@ -185,7 +220,7 @@ public class IdentityService extends AbstractDataService {
 		//
 		//
 
-		//IdentityDTO resource = get( id );
+		//IdentityDTO resource = hget( id, subject );
 		
 		//
 		//

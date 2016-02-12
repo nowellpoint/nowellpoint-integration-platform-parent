@@ -2,6 +2,9 @@ package com.nowellpoint.aws.model.data;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 public class Identity extends AbstractDocument {
 
 	/**
@@ -122,6 +125,8 @@ public class Identity extends AbstractDocument {
 	 * 
 	 */
 
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastLoginDate;
 	
 	/**

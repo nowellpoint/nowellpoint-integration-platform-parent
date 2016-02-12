@@ -22,7 +22,8 @@ public class TestRestApi {
 			httpResponse = RestResource.post(NCS_API_ENDPOINT)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("oauth/token")
-					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
+					//.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
+					.basicAuthorization("john.d.herson@gmail.com", "password")
 					.execute();
 			
 			System.out.println(httpResponse.getStatusCode());
@@ -34,12 +35,11 @@ public class TestRestApi {
 			Token token = httpResponse.getEntity(Token.class);
 			
 			System.out.println(token.getAccessToken());
-			}
 			
 			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
 					.accept(MediaType.APPLICATION_JSON)
 					//.header("x-api-key", API_KEY)
-					.bearerAuthorization("mytoken")
+					.bearerAuthorization(token.getAccessToken())
 	    			.path("oauth")
 	    			.path("token")
 	    			.execute();
@@ -48,6 +48,9 @@ public class TestRestApi {
 	    	
 	    	System.out.println(statusCode);
 	    	System.out.println(httpResponse.getEntity());
+			}
+			
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
