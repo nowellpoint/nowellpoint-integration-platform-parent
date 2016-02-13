@@ -63,64 +63,112 @@ public class AccountEventHandler implements AbstractEventHandler {
 		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
 		
 		//
-		// search for existing account with username
+		//
 		//
 		
-		SearchAccountRequest searchAccountRequest = new SearchAccountRequest()
-				.withDirectoryId(directoryId)
-				.withApiEndpoint(apiEndpoint)
-				.withApiKeyId(apiKeyId)
-				.withApiKeySecret(apiKeySecret)
-				.withUsername(account.getUsername());
+		String href = null;
 		
-		SearchAccountResponse searchAccountResponse = identityProviderClient.account(searchAccountRequest);
-		
-		logger.log(this.getClass().getName() + " account found: " + (searchAccountResponse.getSize() > 0));
-		
-		String href;
-		
-		if (searchAccountResponse.getSize() == 0) {
+		if (EventAction.CREATE.name().equals(event.getEventAction())) {
 			
 			//
-			// build the CreateAccountRequest
+			// search for existing account with username
 			//
 			
-			CreateAccountRequest createAccountRequest = new CreateAccountRequest()
+			SearchAccountRequest searchAccountRequest = new SearchAccountRequest()
 					.withDirectoryId(directoryId)
 					.withApiEndpoint(apiEndpoint)
 					.withApiKeyId(apiKeyId)
 					.withApiKeySecret(apiKeySecret)
-					.withEmail(account.getEmail())
-					.withGivenName(account.getGivenName())
-					.withMiddleName(account.getMiddleName())
-					.withSurname(account.getSurname())
-					.withUsername(account.getUsername())
-					.withPassword(account.getPassword());
+					.withUsername(account.getUsername());
 			
-			//
-			// execute the CreateAcountRequest
-			//
+			SearchAccountResponse searchAccountResponse = identityProviderClient.account(searchAccountRequest);
 			
-			CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
+			logger.log(this.getClass().getName() + " account found: " + (searchAccountResponse.getSize() > 0));
 			
-			logger.log(this.getClass().getName() + " status: " + createAccountResponse.getStatusCode());
-			logger.log(createAccountResponse.getErrorMessage());
-			
-			//
-			// throw exception for any issue with the identity provider
-			//
-			
-			if (createAccountResponse.getStatusCode() != 201) {
-				throw new Exception(createAccountResponse.getErrorMessage());
+			if (searchAccountResponse.getSize() == 0) {
+				
+				//
+				// build the CreateAccountRequest
+				//
+				
+				CreateAccountRequest createAccountRequest = new CreateAccountRequest()
+						.withDirectoryId(directoryId)
+						.withApiEndpoint(apiEndpoint)
+						.withApiKeyId(apiKeyId)
+						.withApiKeySecret(apiKeySecret)
+						.withEmail(account.getEmail())
+						.withGivenName(account.getGivenName())
+						.withMiddleName(account.getMiddleName())
+						.withSurname(account.getSurname())
+						.withUsername(account.getUsername())
+						.withPassword(account.getPassword());
+				
+				//
+				// execute the CreateAcountRequest
+				//
+				
+				CreateAccountResponse createAccountResponse = identityProviderClient.account(createAccountRequest);
+				
+				logger.log(this.getClass().getName() + " status: " + createAccountResponse.getStatusCode());
+				logger.log(createAccountResponse.getErrorMessage());
+				
+				//
+				// throw exception for any issue with the identity provider
+				//
+				
+				if (createAccountResponse.getStatusCode() != 201) {
+					throw new Exception(createAccountResponse.getErrorMessage());
+				}
+				
+				//
+				//
+				//
+				
+				href = createAccountResponse.getAccount().getHref();
+				
+				//
+				//
+				//
+				
+				createUserEvent(event, account.getUsername(), href);
+				
+			} else {
+				
+				//
+				// build the UpdateAccountRequest
+				//
+				
+				UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest()
+						.withApiKeyId(apiKeyId)
+						.withApiKeySecret(apiKeySecret)
+						.withGivenName(account.getGivenName())
+						.withEmail(account.getEmail())
+						.withMiddleName(account.getMiddleName())
+						.withSurname(account.getSurname())
+						.withHref(searchAccountResponse.getItems().get(0).getHref());
+				
+				//
+				// execute the UpdateAccountRequest
+				//
+				
+				UpdateAccountResponse updateAccountResponse = identityProviderClient.account(updateAccountRequest);	
+				
+				//
+				// throw exception for any issue with the identity provider
+				//
+				
+				if (updateAccountResponse.getStatusCode() != 200) {
+					throw new IOException(updateAccountResponse.getErrorMessage());
+				}
+				
+				//
+				//
+				//
+				
+				href = updateAccountResponse.getAccount().getHref();
+				
 			}
-			
-			//
-			//
-			//
-			
-			href = createAccountResponse.getAccount().getHref();
-			
-		} else {
+		} else if (EventAction.UPDATE.name().equals(event.getEventAction())) {
 			
 			//
 			// build the UpdateAccountRequest
@@ -133,7 +181,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 					.withEmail(account.getEmail())
 					.withMiddleName(account.getMiddleName())
 					.withSurname(account.getSurname())
-					.withHref(searchAccountResponse.getItems().get(0).getHref());
+					.withHref(account.getHref());
 			
 			//
 			// execute the UpdateAccountRequest
@@ -155,19 +203,15 @@ public class AccountEventHandler implements AbstractEventHandler {
 			
 			href = updateAccountResponse.getAccount().getHref();
 			
+		} else {
+			throw new Exception( String.format("Invalid action for %s object: %s", event.getType(), event.getEventAction() ) );
 		}
-		
+
 		//
 		//
 		//
 		
 		logger.log(this.getClass().getName() + " " + href);
-		
-		//
-		//
-		//
-		
-		createUserEvent(event, account.getUsername(), href);
 		
 		//
 		//

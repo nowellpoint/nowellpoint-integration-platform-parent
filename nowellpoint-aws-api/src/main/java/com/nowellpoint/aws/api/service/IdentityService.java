@@ -168,7 +168,6 @@ public class IdentityService extends AbstractDataService {
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
-		
 		//
 		//
 		//

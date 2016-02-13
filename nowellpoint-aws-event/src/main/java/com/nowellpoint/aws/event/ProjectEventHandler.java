@@ -81,7 +81,7 @@ public class ProjectEventHandler extends AbstractDocumentEventHandler {
 			}
 			
 		} else {
-			throw new Exception("Invalid action for Project object: " + event.getEventAction());
+			throw new Exception( String.format("Invalid action for %s object: %s", event.getType(), event.getEventAction() ) );
 		}
 		
 		//
