@@ -100,6 +100,8 @@ public class IdentityService extends AbstractDataService {
 		identity.setCreatedById(subject);
 		identity.setLastModifiedById(subject);
 		identity.setHref(subject);
+		identity.setUsername(identity.getEmail());
+		identity.setName(identity.getFirstName() != null ? identity.getFirstName().concat(" ").concat(identity.getLastName()) : identity.getLastName());
 		
 		//
 		//
@@ -159,6 +161,13 @@ public class IdentityService extends AbstractDataService {
 		IdentityDTO original = getIdentity( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
+		resource.setHref(original.getHref());
+		resource.setLastLoginDate(original.getLastLoginDate());
+		resource.setEmailEncodingKey(original.getEmailEncodingKey());
+		resource.setIsActive(original.getIsActive());
+		resource.setLocaleSidKey(original.getLocaleSidKey());
+		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
+		
 		
 		//
 		//
@@ -167,6 +176,8 @@ public class IdentityService extends AbstractDataService {
 		Identity identity = modelMapper.map( resource, Identity.class );
 		identity.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
 		identity.setLastModifiedById(subject);
+		identity.setUsername(identity.getEmail());
+		identity.setName(identity.getFirstName() != null ? identity.getFirstName().concat(" ").concat(identity.getLastName()) : identity.getLastName());
 		
 		//
 		//

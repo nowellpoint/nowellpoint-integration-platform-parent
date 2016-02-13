@@ -89,16 +89,7 @@ public class IdentityResource {
 		//
 		//
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(IdentityResource.class)
-				.path("/{id}")
-				.build(resource.getId());
-		
-		//
-		//
-		//
-		
-		return Response.created(uri).build();
+		return Response.ok(resource).build();
 	}
 	
 	@GET

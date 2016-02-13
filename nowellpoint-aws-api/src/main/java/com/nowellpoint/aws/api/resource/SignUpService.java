@@ -141,11 +141,10 @@ public class SignUpService {
 		identity.setFirstName(firstName);
 		identity.setLastName(lastName);
 		identity.setEmail(email);
-		identity.setUsername(email);
-		identity.setName(firstName != null ? firstName.concat(" ").concat(lastName) : lastName);
 		identity.setCompany(company);
 		identity.setTitle(title);
 		identity.setPhone(phone);
+		identity.setIsActive(Boolean.TRUE);
 		
 		Address address = new Address();
 		address.setCountryCode(countryCode);
