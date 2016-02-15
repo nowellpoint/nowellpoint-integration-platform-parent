@@ -106,6 +106,7 @@ public class SignUpService {
 		
 		Account account = new Account();
 		account.setGivenName(firstName);
+		account.setMiddleName(null);
 		account.setSurname(lastName);
 		account.setEmail(email);
 		account.setUsername(email);

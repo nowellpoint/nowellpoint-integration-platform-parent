@@ -14,7 +14,7 @@ public class Project extends AbstractDocument {
 	
 	private String owner;
 	
-	private List<SalesforceOrganization> salesforceOrganizations;
+	private List<Application> salesforceOrganizations;
 
 	public Project() {
 		
@@ -56,11 +56,11 @@ public class Project extends AbstractDocument {
 		this.owner = owner;
 	}
 	
-	public List<SalesforceOrganization> getSalesforceOrganizations() {
+	public List<Application> getSalesforceOrganizations() {
 		return salesforceOrganizations;
 	}
 	
-	public void setSalesforceOrganizations(List<SalesforceOrganization>salesforceOrganizations) {
+	public void setSalesforceOrganizations(List<Application>salesforceOrganizations) {
 		this.salesforceOrganizations = salesforceOrganizations;
 	}
 }

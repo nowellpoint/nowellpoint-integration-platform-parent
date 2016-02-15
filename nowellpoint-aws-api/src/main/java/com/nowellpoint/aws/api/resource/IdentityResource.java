@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
-import com.nowellpoint.aws.model.data.SalesforceOrganization;
+import com.nowellpoint.aws.model.data.Application;
 
 @Path("/identity")
 public class IdentityResource {
@@ -167,10 +167,10 @@ public class IdentityResource {
 	}
 	
 	@POST
-	@Path("/{id}")
+	@Path("/{id}/application")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addSalesforceOrganization(@PathParam("id") String id, SalesforceOrganization organization) {
+    public Response addApplication(@PathParam("id") String id, Application application) {
 		
 		//
 		//
@@ -188,7 +188,7 @@ public class IdentityResource {
 		//
 		//
 		
-		resource.addSalesforceOrganization( organization );
+		resource.addApplication( application );
 		
 		//
 		//

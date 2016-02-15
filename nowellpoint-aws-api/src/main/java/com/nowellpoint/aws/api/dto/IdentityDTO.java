@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.nowellpoint.aws.model.data.Address;
-import com.nowellpoint.aws.model.data.SalesforceOrganization;
+import com.nowellpoint.aws.model.data.Application;
 
 public class IdentityDTO extends AbstractDTO {
 	
@@ -141,7 +141,11 @@ public class IdentityDTO extends AbstractDTO {
 
 	private String href;
 	
-	private List<SalesforceOrganization> salesforceOrganizations;
+	/**
+	 * 
+	 */
+	
+	private List<Application> applications;
 	
 	public IdentityDTO() {
 		
@@ -315,18 +319,18 @@ public class IdentityDTO extends AbstractDTO {
 		this.href = href;
 	}
 
-	public List<SalesforceOrganization> getSalesforceOrganizations() {
-		return salesforceOrganizations;
+	public List<Application> getApplications() {
+		return applications;
 	}
 
-	public void setSalesforceOrganizations(List<SalesforceOrganization> salesforceOrganizations) {
-		this.salesforceOrganizations = salesforceOrganizations;
+	public void setApplications(List<Application> applications) {
+		this.applications = applications;
 	}
 	
-	public void addSalesforceOrganization(SalesforceOrganization salesforceOrganization) {
-		if (salesforceOrganizations == null) {
-			salesforceOrganizations = new ArrayList<SalesforceOrganization>();
+	public void addApplication(Application application) {
+		if (applications == null) {
+			applications = new ArrayList<Application>();
 		}
-		salesforceOrganizations.add(salesforceOrganization);
+		applications.add(application);
 	}
 }
