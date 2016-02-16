@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="icon" type="image/png" href="assets/img/favicon.ico">
+
+    <title>${applicationTitle}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+</head>
+
+<body>
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">${toggleNavigation}</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="/">${applicationTitle}</a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/login"><i class="fa fa-sign-in"></i>&nbsp; ${logIn}</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <br>
+    <br>
+
+    <section>
+
+        <div class="container">
+            <div class="row">
+                <br>
+                <br>
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <#if successMessage??>
+                        <div id="success" class="alert alert-success">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${successMessage}</div>
+                        </div>
+                    </#if>
+                    <#if errorMessage??>
+                        <div id="error" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <header>
+                <div class="header-content">
+                    <div class="header-content-inner">
+                        <h3>${signUp}</h3>
+                        <hr>
+                    </div>
+                </div>
+            </header>
+
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
+                        <input type="hidden" id="leadSource" name="leadSource" value="Sign Up">
+                        <div class="form-group">
+                            <label class="control-label" for="firstName">${firstName}</label>
+                            <input class="form-control" name="firstName" id="firstName" autofocus="">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="lastName">${lastName}*</label>
+                            <input class="form-control" name="lastName" id="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="email">${email}*</label>
+                            <input type="email" class="form-control" name="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="phone">${phone}</label>
+                            <input class="form-control" name="phone" id="phone">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="company">${company}</label>
+                            <input class="form-control" name="company" id="company">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="title">${title}</label>
+                            <input class="form-control" name="title" id="title">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="password">${password}*</label>
+                            <input type="password" class="form-control" name="password" id="password" required="" autocomplete="off" />
+                        </div>
+                        <div>
+                            <p>${passwordPolicy}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="confirmPassword">${retypePassword}*</label>
+                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" required="" autocomplete="off" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="countryCode">${country}*</label>
+                            <select id="countryCode" name="countryCode" class="form-control" required>
+                                <option value="" selected="selected">--- ${selectOne} ---</option>
+                                <#list countryList as country>
+                                    <option value="${country.getCode()}">${country.getName()}</option>
+                                </#list>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="pull-right">
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${submit}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-lg-4"></div>
+
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 text-center">
+                    <hr class="primary">
+                    <p>${signUpHeading}</p>
+                </div>
+                <div class="col-md-8 col-md-offset-2 text-center">
+                    <i class="fa fa-sitemap fa-3x wow bounceIn"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+<!-- jQuery -->
+<script src="js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+</html>

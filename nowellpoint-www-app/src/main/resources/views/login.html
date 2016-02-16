@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="icon" type="image/png" href="assets/img/favicon.ico">
+
+    <title>${applicationTitle}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+</head>
+
+<body>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                 <br>
+                            <br>
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+
+                    <h3><div class="text-center">${welcomeBack}</div></h3>
+                    <br>
+
+                    <form class="form-vertical" role="form" method="post" action="/login">
+
+                        <div class="form-group">
+                            <label class="control-label" for="username">${username}</label>
+                            <input type="text" class="form-control" name="username" id="username" required="" autofocus="" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="password">${password}</label>
+                            <input type="password" class="form-control" name="password" id="password" required="" autocomplete="off" />
+                        </div>
+
+                        <div class="form-group">
+                            <div class="pull-right">
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${logIn}</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+            <div class="row">
+                            <br>
+                            <br>
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body text-center">${newToNowellpoint} <a href="/signup">${signUp}</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+            <div class="row">
+                <br>
+                            <br>
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                        <div class="text-center"><a href="/contact">${contact}</a></div>
+                </div>
+                <div class="col-md-4"></div>
+                
+            </div>    
+        </div>
+    </section>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

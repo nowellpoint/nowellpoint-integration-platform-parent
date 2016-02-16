@@ -13,13 +13,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
-import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
-import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -109,47 +106,6 @@ public class SalesforceResource {
 		
 		return Response.status(authorizationResponse.getStatusCode())
 				.entity(authorizationResponse.getToken())
-				.type(MediaType.APPLICATION_JSON)
-				.build();
-	}	
-	
-	@GET
-	@Path("/identity")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getIdentity(@QueryParam("id") String id) {
-		
-		//
-		// get the bearer token from the header
-		//
-		
-		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
-		
-		//
-		// build the get identity request
-		//
-		
-		GetIdentityRequest identityRequest = new GetIdentityRequest().withAccessToken(bearerToken).withId(id);
-		
-		//
-		// execute the identity request
-		//
-		
-		GetIdentityResponse identityResponse = salesforceClient.getIdentity(identityRequest);
-		
-		//
-		// throw WebApplicationException if the response is not ok
-		//
-		
-		if (identityResponse.getStatusCode() >= 400) {
-			throw new WebApplicationException(identityResponse.getErrorMessage(), identityResponse.getStatusCode());
-		}
-		
-		//
-		// return the result
-		//
-		
-		return Response.status(identityResponse.getStatusCode())
-				.entity(identityResponse.getIdentity())
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 	}

@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>${applicationTitle}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+    <!-- Custom Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/creative.css" type="text/css">
+
+</head>
+
+<body>
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">${toggleNavigation}</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">${applicationTitle}</a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a class="page-scroll" href="#about">${about}</a></li>
+                    <li><a class="page-scroll" href="#services">${services}</a></li>
+                    <li><a href="/contact">${contact}</a></li>
+                    <li><a href="/signup">${signUp}</a></li>
+                    <li><a href="/login"><i class="fa fa-sign-in"></i>&nbsp; ${logIn}</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <div class="header-content">
+            <div class="header-content-inner">
+                <h1>${headline}</h1>
+                <hr>
+                <p>${tagline}</p>
+                <a href="#about" class="btn btn-primary btn-xl page-scroll">${findOutMore}</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-primary" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h2 class="section-heading">${aboutHeading}</h2>
+                    <hr class="light">
+                    <p class="text-faded">${aboutText}</p>
+                    <a href="/signup" class="btn btn-default btn-xl">${getStarted}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">${services}</h2>
+                    <hr class="primary">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-code wow bounceIn text-primary"></i>
+                        <h3>Adaptable</h3>
+                        <p class="text-muted">Highly customizable templates and adapters.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-desktop wow bounceIn text-primary" data-wow-delay=".1s"></i>
+                        <h3>Ready to Ship</h3>
+                        <p class="text-muted">With some simple setup you can be up and running in minutes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-cubes wow bounceIn text-primary" data-wow-delay=".2s"></i>
+                        <h3>Up to Date</h3>
+                        <p class="text-muted">We update dependencies to keep things fresh.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-cloud wow bounceIn text-primary" data-wow-delay=".3s"></i>
+                        <h3>Built for the Cloud</h3>
+                        <p class="text-muted">Build for speed and scalability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <aside class="bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-heading">${charter}</h2>
+                    <hr class="primary">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-database wow bounceIn text-primary"></i>
+                        <h3>Data is an asset</h3>
+                        <p class="text-muted">Data is your organization's most valuable asset.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-table wow bounceIn text-primary" data-wow-delay=".1s"></i>
+                        <h3>Applications are temporary</h3>
+                        <p class="text-muted">The applications that you use today may not be the applications you use in the future.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-lock wow bounceIn text-primary" data-wow-delay=".3s"></i>
+                        <h3>Secure</h3>
+                        <p class="text-muted">Today more than ever data and applications must exceed the highest security standards.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-github wow bounceIn text-primary" data-wow-delay=".2s"></i>
+                        <h3>Open source first</h3>
+                        <p class="text-muted">Every aspect of the project is open and available to the community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="navbar-header">
+                <div class="navbar-brand">Nowellpoint LLC, 2015</div>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a id="github" href="https://github.com/nowellpoint/nowellpoint-aws" class="navbar-link"><i class="fa fa-lg fa-github wow text-primary"></i> ${github}</a></li>
+                    <li><a id="twitter" href="https://twitter.com/nowellpoint" class="navbar-link"><i class="fa fa-lg fa-twitter wow text-primary"></i> ${twitter}</a></li>
+                    <li><a id="googlePlus" href="https://plus.google.com/+Nowellpoint/posts" class="navbar-link"><i class="fa fa-lg fa-google-plus wow text-primary"></i> ${googlePlus}</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="js/jquery.easing.min.js"></script>
+    <script src="js/jquery.fittext.js"></script>
+    <script src="js/wow.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/creative.js"></script>
+
+</body>
+
+</html>

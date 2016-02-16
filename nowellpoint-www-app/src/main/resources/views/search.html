@@ -1,0 +1,103 @@
+<#include "header.html"/>
+
+<body>
+	<div class="col-lg-4"></div>
+	<div class="col-lg-5">
+		<h3>${signUp}</h3>
+		<form class="form-horizontal" role="form">
+			<fieldset>
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="firstName">${firstName}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="firstName"
+							placeholder="${firstName}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="lastName">${lastName}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="lastName"
+							placeholder="${lastName}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="email">${email}</label>
+					<div class="col-sm-5">
+						<input type="email" class="form-control" id="email"
+							placeholder="${email}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="phone">${phone}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="phone"
+							placeholder="${phone}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="companyName">${companyName}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="companyName"
+							placeholder="${companyName}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="title">${title}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="title" placeholder="${title}">
+                        </div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="street">${street}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="street" placeholder="${street}">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="city">${city}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="city" placeholder="${city}">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="state">${state}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="state" placeholder="${state}">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="postalCode">${postalCode}</label>
+					<div class="col-sm-5">
+						<input class="form-control" id="postalCode"
+							placeholder="${postalCode}">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="country">${country}</label>
+					<div class="col-sm-5">
+						<select id="country" name="country" class="form-control">
+							<option value="" selected="selected">${country}</option>
+                            <#list countryList as country>
+                                <option value="${country.getCode()}">${country.getName()}</option>
+                            </#list>	
+						</select>
+					</div>
+				</div>
+			</fieldset>
+
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-5">
+					<button type="submit" class="btn btn-primary">${submit}</button>
+				</div>
+			</div>
+	</form>
+	</div>
+
+	<div class="col-lg-3"></div>
+</body>
+</html>

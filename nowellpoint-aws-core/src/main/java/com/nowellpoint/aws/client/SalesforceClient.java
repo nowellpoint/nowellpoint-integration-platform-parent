@@ -3,8 +3,6 @@ package com.nowellpoint.aws.client;
 import com.nowellpoint.aws.model.ClientException;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
-import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
-import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
@@ -20,16 +18,12 @@ public class SalesforceClient extends AbstractClient {
 		
 	}
 	
-	public GetTokenResponse authenticate(GetTokenRequest tokenRequest) throws ClientException {
-		return invoke("SalesforceAuthenticationRequest", tokenRequest, GetTokenResponse.class);
+	public GetTokenResponse authenticate(GetTokenRequest getTokenRequest) throws ClientException {
+		return invoke("SalesforceAuthenticationRequest", getTokenRequest, GetTokenResponse.class);
 	}
 
 	public GetAuthorizationResponse authorize(GetAuthorizationRequest authorizationRequest) throws ClientException {
 		return invoke("SalesforceTokenRequest", authorizationRequest, GetAuthorizationResponse.class);
-	}
-	
-	public GetIdentityResponse getIdentity(GetIdentityRequest identityRequest) throws ClientException {
-		return invoke("SalesforceIdentityRequest", identityRequest, GetIdentityResponse.class);
 	}
 	
 	public RevokeTokenResponse revoke(RevokeTokenRequest revokeTokenRequest) throws ClientException {
@@ -40,7 +34,7 @@ public class SalesforceClient extends AbstractClient {
 		return invoke("SalesforceCreateSObject", createSObjectRequest, CreateSObjectResponse.class);
 	}
 	
-	public CreateLeadResponse createLead(CreateLeadRequest request) throws ClientException {
-		return invoke("SalesforceCreateLead", request, CreateLeadResponse.class);
+	public CreateLeadResponse createLead(CreateLeadRequest createLeadRequest) throws ClientException {
+		return invoke("SalesforceCreateLead", createLeadRequest, CreateLeadResponse.class);
 	}
 }

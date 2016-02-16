@@ -37,6 +37,7 @@
 		<module>nowellpoint-aws-util</module>
 		<module>nowellpoint-aws-admin</module>
 		<module>nowellpoint-aws-api</module>
+                <module>nowellpoint-www-app</module>
 		<module>nowellpoint-aws-test</module>
 	</modules>
 

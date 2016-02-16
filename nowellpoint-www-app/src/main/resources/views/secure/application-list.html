@@ -1,0 +1,94 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="wrapper">
+
+            <#include "sidebar.html" />
+
+            <div class="main-panel">
+
+                <#include "navbar.html" />
+
+                <div class="content">
+
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="card card-plain">
+                                    <div class="header">
+                                        <h4 class="title">${applications}</h4>
+                                    </div>
+
+                                    <div class="content table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <th>${name}</th>
+                                                <th>${type}</th>
+                                                <th>${phone}</th>
+                                                <th>${sandbox}</th>
+                                                <th>${action}</th>
+                                            </thead>
+                                            <tbody>
+
+                                                <#if applicationList??>
+
+                                                    <#list applicationList as application>
+                                                        <tr>
+                                                            <td>${application.name}</td>
+                                                            <td>${application.type}</td>
+                                                            <td>${application.phone}</td>
+                                                            <td>${application.isSandbox}</td>
+                                                            <td></td>
+
+                                                        </tr>
+                                                    </#list>
+
+                                                </#if>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="col-md-3"></div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title panel-primary">${available} ${applications}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                
+                                                <img class="media-object" src="/images/salesforce-logo.png">
+                                                
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading">${salesforce}</h4>
+                                                <i class="fa fa-lg fa-money"></i>&nbsp;<span class="badge">0.00</span>
+                                            </div>
+                                            <div class="media-right">
+                                                
+                                                <#if !token??>
+                                                    <a href="/app/salesforce/oauth">${authenticate}</a>    
+                                                </#if>
+                                                
+                                                <#if token??>
+                                                    <a href="/app/salesforce/information"></a>
+                                                </#if>
+                                                
+                                            </div>    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <#include "footer.html" />
+            </div>
+        </div>
+    </@t.page>

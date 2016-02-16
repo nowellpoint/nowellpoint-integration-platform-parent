@@ -1,0 +1,123 @@
+<!-- Modal Dialog -->
+<div class="modal fade" id="profileDialog" role="dialog" tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form class="form-vertical" role="form" method="post" action="/app/user-profile">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                     <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+
+                        <input type="hidden" name="id" id="id" value="${identity.id!}" />
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="firstName">${firstName}</label>
+                            <input type="text" class="form-control" name="firstName" id="firstName" autofocus="" value="${identity.firstName!}" />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="lastName">${lastName}</label>
+                            <input type="text" class="form-control" name="lastName" id="lastName" value="${identity.lastName!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="company">${company}</label>
+                            <input type="text" class="form-control" name="company" id="company" value="${identity.company!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="division">${division}</label>
+                            <input type="text" class="form-control" name="division" id="division" value="${identity.division!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="department">${department}</label>
+                            <input type="text" class="form-control" name="department" id="department" value="${identity.department!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="title">${title}</label>
+                            <input type="text" class="form-control" name="title" id="title" value="${identity.title!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="email">${email}</label>
+                            <input type="text" class="form-control" name="email" id="email" value="${identity.email!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="fax">${fax}</label>
+                            <input type="text" class="form-control" name="fax" id="fax" value="${identity.fax!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="mobilePhone">${mobilePhone}</label>
+                            <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" value="${identity.mobilePhone!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="phone">${phone}</label>
+                            <input type="text" class="form-control" name="phone" id="phone" value="${identity.phone!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="extension">${extension}</label>
+                            <input type="text" class="form-control" name="extension" id="extension" value="${identity.extension!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="street">${address}</label>
+                            <input type="text" class="form-control" name="street" id="street" value="${identity.address.street!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="city">${city}</label>
+                            <input type="text" class="form-control" name="city" id="city" value="${identity.address.city!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="state">${state}</label>
+                            <input type="text" class="form-control" name="state" id="state" value="${identity.address.state!}" />
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="postalCode">${postalCode}</label>
+                            <input type="text" class="form-control" name="postalCode" id="postalCode" value="${identity.address.postalCode!}" />
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="countryCode">${country}*</label>
+                            <select id="countryCode" name="countryCode" class="form-control" value="${identity.address.countryCode!}" required>
+                                <#list countryList as country>
+                                    <#if country.getCode() == identity.getAddress().getCountryCode() >
+                                        <option value="${country.getCode()}" selected="selected">${country.getName()}</option>
+                                    </#if>    
+                                    <#if country.getCode() != identity.getAddress().getCountryCode() >
+                                        <option value="${country.getCode()}">${country.getName()}</option>
+                                    </#if>    
+                                </#list>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <#if errorMessage??>
+                            <div id="alert" class="alert alert-danger">
+                                <a class="close" data-dismiss="alert">×</a>
+                                <div class="text-center">${errorMessage}</div>
+                            </div>
+                        </#if>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" name="cancel" id="cancel" class="btn btn-default" data-dismiss="modal">${cancel}</button>
+                    <button type="submit" name="save" id="save" class="btn btn-primary pull-right">${save}</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
