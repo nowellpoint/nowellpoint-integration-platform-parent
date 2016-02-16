@@ -49,7 +49,7 @@ public class SalesforceResource {
 					.append("client_secret=")
 					.append(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 					.append("&")
-					.append("display=touch")
+					.append("display=popup")
 					.append("&")
 					.append("prompt=touch")
 					.append("&")
