@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -79,30 +80,18 @@ public class ApplicationController {
 		
 		get("/app/applications/setup/salesforce", (request, response) -> {
 			
-			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-    				.header("Content-Type", "application/x-www-form-urlencoded")
-    				.header("x-api-key", System.getenv("NCS_API_KEY"))
-        			.path("salesforce")
-        			.path("token")
-        			.queryParameter("code", request.queryParams("code"))
-        			.execute();
+			Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.salesforce.token"));
+			
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("account", request.attribute("account"));
+			
+			if (cookie.isPresent()) {
+				com.nowellpoint.aws.model.sforce.Token token = new ObjectMapper().readValue(cookie.get(), com.nowellpoint.aws.model.sforce.Token.class);
+				
         	
-        	int statusCode = httpResponse.getStatusCode();
-        	
-        	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-        	
-        	if (statusCode != 200) {
-        		throw new BadRequestException(httpResponse.getEntity());
-        	}
-        	
-        	//com.nowellpoint.aws.model.sforce.Token token = httpResponse.getEntity(com.nowellpoint.aws.model.sforce.Token.class);
-        	ObjectNode token = httpResponse.getEntity(ObjectNode.class);
-        	
-        	response.cookie("com.nowellpoint.auth.salesforce.token", Base64.getEncoder().encodeToString(token.toString().getBytes()), 300, true); 
-        	
-    		httpResponse = RestResource.get(token.get("id").asText())
+    		HttpResponse httpResponse = RestResource.get(token.getId())
     				.acceptCharset(StandardCharsets.UTF_8)
-    				.bearerAuthorization(token.get("access_token").asText())
+    				.bearerAuthorization(token.getAccessToken())
     				.accept(MediaType.APPLICATION_JSON)
     				.queryParameter("version", "latest")
     				.execute();
@@ -116,7 +105,7 @@ public class ApplicationController {
          			+ "UsesStartDateAsFiscalYearName";
          	
     		httpResponse = RestResource.get(identity.getUrls().getSobjects())
-         			.bearerAuthorization(token.get("access_token").asText())
+         			.bearerAuthorization(token.getAccessToken())
          			.path("Organization")
          			.path(identity.getOrganizationId())
          			.queryParameter("fields", ORGANIZATION_FIELDS)
@@ -127,10 +116,11 @@ public class ApplicationController {
          	
          	Organization organization = httpResponse.getEntity(Organization.class);
         	
-        	Map<String, Object> model = new HashMap<String, Object>();
-			model.put("account", request.attribute("account"));
+        	
 			model.put("identity", identity);
 			model.put("organization", organization);
+			
+			}
         	
 			return new ModelAndView(model, "secure/salesforce.html");			
 			

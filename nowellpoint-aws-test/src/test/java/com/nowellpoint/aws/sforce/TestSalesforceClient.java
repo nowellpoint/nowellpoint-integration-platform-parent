@@ -12,8 +12,6 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.sforce.CreateSObjectRequest;
 import com.nowellpoint.aws.model.sforce.CreateSObjectResponse;
-import com.nowellpoint.aws.model.sforce.GetIdentityRequest;
-import com.nowellpoint.aws.model.sforce.GetIdentityResponse;
 import com.nowellpoint.aws.model.sforce.GetTokenRequest;
 import com.nowellpoint.aws.model.sforce.GetTokenResponse;
 import com.nowellpoint.aws.model.sforce.RevokeTokenRequest;
@@ -59,23 +57,6 @@ public class TestSalesforceClient {
 		assertNull(tokenResponse.getToken().getScope());
 		
 		start = System.currentTimeMillis();
-		
-		GetIdentityRequest identityRequest = new GetIdentityRequest()
-				.withAccessToken(tokenResponse.getToken().getAccessToken())
-				.withId(tokenResponse.getToken().getId());
-		
-		GetIdentityResponse identityResponse = client.getIdentity(identityRequest);
-			
-		System.out.println("execution time: " + String.valueOf(System.currentTimeMillis() - start));		
-			
-		assertTrue(identityResponse.getStatusCode() == 200);
-		assertNotNull(identityResponse.getIdentity());
-		assertNotNull(identityResponse.getIdentity().getActive());
-		assertNotNull(identityResponse.getIdentity().getAddrCity());
-		assertNotNull(identityResponse.getIdentity().getAddrCountry());
-		assertNotNull(identityResponse.getIdentity().getAddrState());
-		assertNotNull(identityResponse.getIdentity().getAddrStreet());
-		assertNotNull(identityResponse.getIdentity().getAddrZip());
 		
 		CreateSObjectRequest createSObjectRequest = new CreateSObjectRequest()
 				.withAccessToken(tokenResponse.getToken().getAccessToken())
