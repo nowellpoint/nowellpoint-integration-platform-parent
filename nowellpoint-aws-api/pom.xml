@@ -30,7 +30,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
