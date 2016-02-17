@@ -3,20 +3,17 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -86,38 +83,25 @@ public class ApplicationController {
 			model.put("account", request.attribute("account"));
 			
 			if (cookie.isPresent()) {
-				com.nowellpoint.aws.model.sforce.Token token = new ObjectMapper().readValue(cookie.get(), com.nowellpoint.aws.model.sforce.Token.class);
+				
+				com.nowellpoint.aws.model.sforce.Token token = new ObjectMapper().readValue(Base64.getDecoder().decode(cookie.get()), com.nowellpoint.aws.model.sforce.Token.class);
 				
         	
-    		HttpResponse httpResponse = RestResource.get(token.getId())
-    				.acceptCharset(StandardCharsets.UTF_8)
-    				.bearerAuthorization(token.getAccessToken())
-    				.accept(MediaType.APPLICATION_JSON)
-    				.queryParameter("version", "latest")
-    				.execute();
+				HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+	    				.header("Content-Type", "application/x-www-form-urlencoded")
+	    				.header("x-api-key", System.getenv("NCS_API_KEY"))
+	    				.bearerAuthorization(token.getAccessToken())
+	        			.path("salesforce")
+	        			.path("instance")
+	        			.queryParameter("id", token.getId())
+	        			.execute();
         	
         	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-        	
-        	com.nowellpoint.aws.model.sforce.Identity identity = httpResponse.getEntity(com.nowellpoint.aws.model.sforce.Identity.class);
-        	
-        	final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
-         			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
-         			+ "UsesStartDateAsFiscalYearName";
-         	
-    		httpResponse = RestResource.get(identity.getUrls().getSobjects())
-         			.bearerAuthorization(token.getAccessToken())
-         			.path("Organization")
-         			.path(identity.getOrganizationId())
-         			.queryParameter("fields", ORGANIZATION_FIELDS)
-         			.queryParameter("version", "latest")
-         			.execute();
-         	
-    		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
          	
          	Organization organization = httpResponse.getEntity(Organization.class);
         	
         	
-			model.put("identity", identity);
+			//model.put("identity", identity);
 			model.put("organization", organization);
 			
 			}

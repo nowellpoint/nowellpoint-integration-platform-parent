@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 
@@ -63,11 +62,9 @@ public class SalesforceController {
         		throw new BadRequestException(httpResponse.getEntity());
         	}
         	
-        	ObjectNode token = httpResponse.getEntity(ObjectNode.class);
+        	response.cookie("com.nowellpoint.auth.salesforce.token", Base64.getEncoder().encodeToString(httpResponse.getEntity().getBytes()), 300, true); 
         	
-        	response.cookie("com.nowellpoint.auth.salesforce.token", Base64.getEncoder().encodeToString(token.toString().getBytes()), 300, true); 
-        	
-        	response.redirect("/app/applications/setup/salesforce?code=".concat(code.get()));
+        	response.redirect("/app/applications/setup/salesforce");
         	
         	return "";
         	

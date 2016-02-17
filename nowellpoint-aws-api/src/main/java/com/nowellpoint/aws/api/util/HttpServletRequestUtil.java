@@ -81,12 +81,7 @@ public class HttpServletRequestUtil {
 		// get the subject from the bearer token
 		//
 		
-		String subject = null;
-		try {
-			subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
 		
 		//
 		// return the subject

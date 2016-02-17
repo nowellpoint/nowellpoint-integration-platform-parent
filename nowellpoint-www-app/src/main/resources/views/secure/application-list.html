@@ -62,25 +62,15 @@
                                     <div class="panel-body">
                                         <div class="media">
                                             <div class="media-left">
-                                                
                                                 <img class="media-object" src="/images/salesforce-logo.png">
-                                                
                                             </div>
                                             <div class="media-body">
                                                 <h4 class="media-heading">${salesforce}</h4>
                                                 <i class="fa fa-lg fa-money"></i>&nbsp;<span class="badge">0.00</span>
                                             </div>
                                             <div class="media-right">
-                                                
-                                                <#if !token??>
-                                                    <a href="/app/salesforce/oauth">${authenticate}</a>    
-                                                </#if>
-                                                
-                                                <#if token??>
-                                                    <a href="/app/salesforce/information"></a>
-                                                </#if>
-                                                
-                                            </div>    
+                                                <a href="/app/salesforce/oauth">${authenticate}</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

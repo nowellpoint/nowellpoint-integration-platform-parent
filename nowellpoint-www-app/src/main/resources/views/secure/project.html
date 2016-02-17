@@ -1,12 +1,12 @@
 <#import "template.html" as t>
 
     <@t.page>
-        
+
         <div class="wrapper">
 
-        <#include "confirm-dialog.html"/>
+            <#include "confirm-dialog.html"/>
 
-        <#include "project-edit.html"/>
+            <#include "project-edit.html"/>
 
             <#include "sidebar.html" />
 
@@ -17,37 +17,59 @@
                 <div class="content">
                     <div class="container-fluid">
 
-                                <div class="card">
-                                    <div class="header">
-                                        <h4 class="title">${project.name!}</h4>
+                        <div class="card">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="col-md-9">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <i class="pe-7s-folder"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <p class="category">${projectLabel}</p>
+                                                <h4 class="title">${project.name!}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <p class="pull-right">
                                             <a href="#projectDialog" class="project-dialog btn" role="button" data-toggle="modal" data-title="${editProject}">${edit}</a>
                                             <a href="" class="confirm-delete btn" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}">${delete}</a>
                                         </p>
                                     </div>
-                                    
-                                    <div class="content">
-                                            <label class="form-control-label">${stage}</label>
-                                            <p class="form-control-static">${project.stage}</p>
-                                            <hr>
-                                            <label class="form-control-label">${owner}</label>
-                                            <p class="form-control-static">${project.owner}</p>
-                                            <hr>
-                                            <label class="form-control-label">${description}</label>
-                                            <p class="form-control-static">${project.description}</p>
-                                            <hr>
-                                            <label class="form-control-label">${createdBy}</label>
-                                            <p class="form-control-static">${project.createdById} , ${project.createdDate?datetime}</p>
-                                            <hr>
-                                            <label class="form-control-label">${lastModifiedBy}</label>
-                                            <p class="form-control-static">${project.lastModifiedById} , ${project.lastModifiedDate?datetime}</p>
-                                    </div>    
+                                </div>
                             </div>
-                </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="col-md-9">
+                                        <label class="form-control-label">${name}</label>
+                                        <p class="form-control-static">${project.name}</p>
+                                        <hr>
+                                        <label class="form-control-label">${stage}</label>
+                                        <p class="form-control-static">${project.stage}</p>
+                                        <hr>
+                                        <label class="form-control-label">${owner}</label>
+                                        <p class="form-control-static">${project.owner}</p>
+                                        <hr>
+                                        <label class="form-control-label">${description}</label>
+                                        <p class="form-control-static">${project.description}</p>
+                                        <hr>
+                                        <label class="form-control-label">${createdBy}</label>
+                                        <p class="form-control-static">${project.createdById} , ${project.createdDate?datetime}</p>
+                                        <hr>
+                                        <label class="form-control-label">${lastModifiedBy}</label>
+                                        <p class="form-control-static">${project.lastModifiedById} , ${project.lastModifiedDate?datetime}</p>
+                                    </div>
+                                    <div class="col-md-3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <#include "footer.html" />
-                
             </div>
-        
-            </div>
+        </div>
     </@t.page>

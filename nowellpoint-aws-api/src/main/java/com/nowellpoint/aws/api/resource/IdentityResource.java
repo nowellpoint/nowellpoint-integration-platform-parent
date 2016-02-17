@@ -102,8 +102,6 @@ public class IdentityResource {
 		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		System.out.println("subject: " + subject);
-		
 		//
 		//
 		//
