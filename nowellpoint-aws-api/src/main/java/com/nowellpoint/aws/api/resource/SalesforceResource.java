@@ -123,9 +123,9 @@ public class SalesforceResource {
 	}
 	
 	@GET
-	@Path("/instance")
+	@Path("/organization")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getInstance(@QueryParam(value="id") String id) {
+	public Response getOrganizationByTokenId(@QueryParam(value="id") String id) {
 		
 		//
 		// get the bearer token from the header

@@ -92,7 +92,7 @@ public class ApplicationController {
 	    				.header("x-api-key", System.getenv("NCS_API_KEY"))
 	    				.bearerAuthorization(token.getAccessToken())
 	        			.path("salesforce")
-	        			.path("instance")
+	        			.path("organization")
 	        			.queryParameter("id", token.getId())
 	        			.execute();
         	
