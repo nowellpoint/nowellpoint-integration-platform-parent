@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.model;
+package com.nowellpoint.aws.api.dto.sforce;
 
 import java.io.Serializable;
 
@@ -9,6 +9,8 @@ public class Attributes implements Serializable {
 	 */
 	
 	private static final long serialVersionUID = -4180438562996624005L;
+	
+	private String id;
 
 	private String type;
 	
@@ -16,6 +18,14 @@ public class Attributes implements Serializable {
 	
 	public Attributes() {
 		
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id; 
 	}
 
 	public String getType() {

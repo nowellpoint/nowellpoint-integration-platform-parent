@@ -1,0 +1,96 @@
+package com.nowellpoint.aws.api.service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
+
+import org.jboss.logging.Logger;
+
+import com.nowellpoint.aws.api.dto.sforce.OrganizationContact;
+import com.nowellpoint.aws.api.dto.sforce.OrganizationDTO;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.model.sforce.Identity;
+import com.nowellpoint.aws.model.sforce.Organization;
+
+public class SetupService extends AbstractDataService {
+	
+	private static final Logger LOGGER = Logger.getLogger(SetupService.class);
+	
+	public SetupService() {
+		
+	}
+
+	public OrganizationDTO getOrganizationByTokenId(String bearerToken, String id) {
+		
+		//
+		//
+		//
+		
+		Identity identity = null;
+		Organization organization = null;
+		
+		try {
+			
+			HttpResponse httpResponse = RestResource.get(id)
+					.acceptCharset(StandardCharsets.UTF_8)
+					.bearerAuthorization(bearerToken)
+					.accept(MediaType.APPLICATION_JSON)
+					.queryParameter("version", "latest")
+					.execute();
+			
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+	    	
+	    	if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getEntity(), httpResponse.getStatusCode());
+			}
+	    	
+	    	identity = httpResponse.getEntity(Identity.class);
+	    	
+	    	final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
+	     			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
+	     			+ "UsesStartDateAsFiscalYearName";
+	     	
+			httpResponse = RestResource.get(identity.getUrls().getSobjects())
+	     			.bearerAuthorization(bearerToken)
+	     			.path("Organization")
+	     			.path(identity.getOrganizationId())
+	     			.queryParameter("fields", ORGANIZATION_FIELDS)
+	     			.queryParameter("version", "latest")
+	     			.execute();
+	     	
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+			
+			if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getEntity(), httpResponse.getStatusCode());
+			}
+	     	
+	     	organization = httpResponse.getEntity(Organization.class);
+	     	
+		} catch (IOException e) {
+			LOGGER.error( "getOrganizationByTokenId", e.getCause() );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}
+		
+		//
+		//
+		//
+		
+		OrganizationDTO resource = modelMapper.map( organization, OrganizationDTO.class );
+		resource.setId(UUID.randomUUID().toString());
+		resource.getAttributes().setId(organization.getId());
+		
+		OrganizationContact contact = modelMapper.map( identity, OrganizationContact.class );
+		resource.addOrganizationContact(contact);
+		
+		//
+		//
+		//
+		
+		return resource;
+	}	
+}

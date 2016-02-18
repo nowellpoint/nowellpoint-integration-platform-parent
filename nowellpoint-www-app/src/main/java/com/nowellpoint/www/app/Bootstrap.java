@@ -32,6 +32,7 @@ import com.nowellpoint.www.app.view.ContactController;
 import com.nowellpoint.www.app.view.UserProfileController;
 import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceController;
+import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
 import freemarker.template.Configuration;
@@ -192,6 +193,7 @@ public class Bootstrap implements SparkApplication {
         new AuthenticationController(cfg);
         new ProjectController(cfg);
         new SalesforceController(cfg);
+        new SetupController(cfg);
         
         //
         // exception handler

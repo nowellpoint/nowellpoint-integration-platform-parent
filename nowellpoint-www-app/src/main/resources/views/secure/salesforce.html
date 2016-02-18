@@ -11,81 +11,66 @@
                 <#include "navbar.html" />
 
                 <div class="content">
-
                     <div class="container-fluid">
-
-                        <div class="row">
-
-                            <div class="col-md-12">
-                                <div class="card card-plain">
-
-                                    <div class="header">
-
-                                    </div>
-
-                                    <div class="col-md-4"></div>
-
-                                    <div class="col-md-4">
-                                        
-                                        <div class="row">
-                                            <h4 class="title">${salesforce} ${details}</h4>
-                                            <hr>
-                                        </div>
-                                        
-                                        <input type="hidden" value="${organization.id!}" /> 
-                                        <input type="hidden" value="SALESFORCE" />
-                                        
+                        <div class="card">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="col-md-9">
                                         <form class="form-vertical" role="form" method="post" action="/app/applications">
-                                                        
-                                                   
+                                            
+                                            <input type="hidden" name="id" id="id" value="${organization.id!}" />
+                                            <input type="hidden" name="type" id="type" value="SALESFORCE" />
+                                            <input type="hidden" name="organizationId" id="organizationId" value="${organization.attributes.id}" />
 
-                                                    <div class="form-group">
-                                                        <label class="form-control-label">${firstName}</label>
-                                                        <hr>
-                                                    </div>
+                                            <div class="form-group">
+                                                <label class="form-control-label">${name}</label>
+                                                <p class="form-control-static">${organization.name!}</p>
+                                                <hr>
+                                            </div>
 
-                                                    <div class="form-group">
-                                                        <label class="form-control-label">${lastName}</label>
-                                                        <hr>
-                                                    </div>
+                                            <div class="form-group">
+                                                <label class="form-control-label">${type}</label>
+                                                <p class="form-control-static">${organization.organizationType!}</p>
+                                                <hr>
+                                            </div>
                                             
                                             <div class="form-group">
-                                                        <label class="form-control-label">${lastName}</label>
-                                                        <hr>
-                                                    </div>
+                                                <label class="form-control-label">${phone}</label>
+                                                <p class="form-control-static">${organization.phone!}</p>
+                                                <hr>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label class="form-control-label">${instanceName}</label>
+                                                <p class="form-control-static">${organization.instanceName!}</p>
+                                                <hr>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label class="form-control-label">${sandbox}</label>
+                                                <p class="form-control-static">${organization.isSandbox?string('Yes', 'No')}</p>
+                                                <hr>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label class="form-control-label">${primaryContact}</label>
+                                                <p class="form-control-static">${organization.primaryContact!}</p>
+                                                <hr>
+                                            </div>
 
-                                                    <div class="form-group">
-                                                        <label class="form-control-label">${name}</label>
-                                                        
-                                                        <p class="form-control-static">${(organization.name)!}</p>
-                                                        
-                                                        <hr>
-                                                    </div>
+                                            <div class="form-group pull-right">
+                                                <a href="/app/applications">${cancel}</a>
+                                                <button type="submit" name="save" id="save" class="btn btn-primary">${save}</button>
+                                            </div>
 
-                                                    <div class="form-group">
-                                                        <label class="form-control-label">${type}</label>
-                                                        <p class="form-control-static">${(organization.organizationType)!}</p>
-                                                        <hr>
-                                                    </div>
-
-                                                    <div class="form-group pull-right">
-                                                        <a href="/app/applications">${cancel}</a>
-                                                        <button type="submit" name="save" id="save" class="btn btn-primary">${save}</button>
-                                                    </div>
-
-                                                </form>
-
+                                        </form>
 
                                     </div>
-                                    <div class="col-md-4"></div>
+                                    <div class="col-md-3"></div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <hr>
                         </div>
-
                     </div>
                 </div>
                 <#include "footer.html" />

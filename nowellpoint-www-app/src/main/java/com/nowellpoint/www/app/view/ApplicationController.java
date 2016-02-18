@@ -18,9 +18,9 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.aws.model.sforce.Organization;
 import com.nowellpoint.www.app.model.Application;
 import com.nowellpoint.www.app.model.Identity;
+import com.nowellpoint.www.app.model.sforce.Organization;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
@@ -64,16 +64,24 @@ public class ApplicationController {
 			
 		}, new FreeMarkerEngine(cfg));
 		
-		get("/app/applications/:type", (request, response) -> {
+		//
+		//
+		//
+		
+		get("/app/applications/types", (request, response) -> {
 			
 			String type = request.params(":type");
 			
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("account", request.attribute("account"));
 			
-			return new ModelAndView(model, String.format("secure/%s.html", type));
+			return new ModelAndView(model, String.format("secure/application-types.html", type));
 			
 		}, new FreeMarkerEngine(cfg));
+		
+		//
+		//
+		//
 		
 		get("/app/applications/setup/salesforce", (request, response) -> {
 			
@@ -86,7 +94,6 @@ public class ApplicationController {
 				
 				com.nowellpoint.aws.model.sforce.Token token = new ObjectMapper().readValue(Base64.getDecoder().decode(cookie.get()), com.nowellpoint.aws.model.sforce.Token.class);
 				
-        	
 				HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 	    				.header("Content-Type", "application/x-www-form-urlencoded")
 	    				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -95,14 +102,12 @@ public class ApplicationController {
 	        			.path("organization")
 	        			.queryParameter("id", token.getId())
 	        			.execute();
-        	
-        	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-         	
-         	Organization organization = httpResponse.getEntity(Organization.class);
-        	
-        	
-			//model.put("identity", identity);
-			model.put("organization", organization);
+				
+				LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+				
+				Organization organization = httpResponse.getEntity(Organization.class);
+				
+				model.put("organization", organization);
 			
 			}
         	
