@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 
 import com.nowellpoint.aws.model.annotation.Handler;
 
-@Handler(queueName="MONGODB_PROJECT_COLLECTION_QUEUE")
+@Handler(queueName="MONGODB_PROJECT_COLLECTION_QUEUE", collectionName="projects")
 public class Project extends AbstractDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;

@@ -79,19 +79,14 @@ public class IdentityMessageListener implements MessageListener {
 	}
 	
 	private void create(Identity identity) throws JsonProcessingException {
-		String json = objectMapper.writeValueAsString(identity);
-		Document document = Document.parse(json);
-		MongoDBDatastore.insertOne( COLLECTION_NAME, document );
+		MongoDBDatastore.insertOne( identity );
 	}
 	
-	private void update(Identity identity) throws JsonProcessingException {
-		String json = objectMapper.writeValueAsString(identity);
-		Document document = Document.parse(json);
-		document.remove("_id");		
-		MongoDBDatastore.updateOne( COLLECTION_NAME, identity.getId(), document );
+	private void update(Identity identity) throws JsonProcessingException {		
+		MongoDBDatastore.replaceOne( identity );
 	}
 	
 	private void delete(Identity identity) {
-		MongoDBDatastore.deleteOne( COLLECTION_NAME, identity.getId() );
+		MongoDBDatastore.deleteOne( identity );
 	}
 }

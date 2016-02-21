@@ -9,8 +9,6 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.bson.Document;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +22,6 @@ import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class ProjectMessageListener implements MessageListener {
 	
-	private static final String COLLECTION_NAME = "projects";
-	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 
 	@Override
@@ -36,7 +32,7 @@ public class ProjectMessageListener implements MessageListener {
 				Object object = ((ObjectMessage) message).getObject();
 				Event event = ((Event) object);
 				
-				Project project = objectMapper.readValue(event.getPayload(), Project.class); 
+				Project project = new ObjectMapper().readValue(event.getPayload(), Project.class); 
 				
 				try {
 					if (EventAction.CREATE.name().equals(event.getEventAction())) {
@@ -66,19 +62,14 @@ public class ProjectMessageListener implements MessageListener {
 	}
 	
 	private void create(Project project) throws JsonProcessingException {
-		String json = objectMapper.writeValueAsString(project);
-		Document document = Document.parse(json);
-		MongoDBDatastore.insertOne( COLLECTION_NAME, document );
+		MongoDBDatastore.insertOne( project );
 	}
 	
 	private void update(Project project) throws JsonProcessingException {
-		String json = objectMapper.writeValueAsString(project);
-		Document document = Document.parse(json);
-		document.remove("_id");		
-		MongoDBDatastore.updateOne( COLLECTION_NAME, project.getId(), document );
+		MongoDBDatastore.replaceOne( project );
 	}
 	
 	private void delete(Project project) {
-		MongoDBDatastore.deleteOne( COLLECTION_NAME, project.getId() );
+		MongoDBDatastore.deleteOne( project );
 	}
 }

@@ -13,12 +13,16 @@ import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.annotation.Handler;
+import com.nowellpoint.aws.model.data.AbstractDocument;
 
 @WebListener
 public class MongoDBDatastore implements ServletContextListener {
@@ -39,7 +43,7 @@ public class MongoDBDatastore implements ServletContextListener {
 		mongoClient = new MongoClient(mongoClientURI);		
 	}
 	
-	public MongoDBDatastore() {
+	private MongoDBDatastore() {
 		
 	}
 	
@@ -57,16 +61,20 @@ public class MongoDBDatastore implements ServletContextListener {
 		return mongoDatabase;
 	}
 	
-	public static void updateOne(String collectionName, ObjectId id, Document document) {
-		getDatabase().getCollection( collectionName ).updateOne( Filters.eq ( "_id", id ), new Document( "$set", document ) );
+	public static void replaceOne(AbstractDocument document) throws JsonProcessingException {	
+		getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
 	}
 	
-	public static void insertOne(String collectionName, Document document) {
-		getDatabase().getCollection( collectionName ).insertOne( document );
+	public static void insertOne(AbstractDocument document) throws JsonProcessingException {
+		getCollection( document ).insertOne( document );
 	}
 	
-	public static void deleteOne(String collectionName, ObjectId id) {
-		getDatabase().getCollection( collectionName ).deleteOne(  Filters.eq ( "_id", id ) );
+	public static void deleteOne(AbstractDocument document) {
+		getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
+	}
+	
+	public static void updateOne(String collectionName, ObjectId id, String json) {
+		getDatabase().getCollection( collectionName ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
 	}
 	
 	public static void checkStatus() {
@@ -75,5 +83,10 @@ public class MongoDBDatastore implements ServletContextListener {
 		} catch (MongoCommandException ignore) {
 			
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T> MongoCollection<T> getCollection(AbstractDocument entity) {
+		return (MongoCollection<T>) mongoDatabase.getCollection(entity.getClass().getAnnotation(Handler.class).collectionName(), entity.getClass());
 	}
 }

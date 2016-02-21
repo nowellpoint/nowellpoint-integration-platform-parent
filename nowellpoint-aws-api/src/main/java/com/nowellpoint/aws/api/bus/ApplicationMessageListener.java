@@ -9,8 +9,6 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
-import org.bson.Document;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +22,6 @@ import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class ApplicationMessageListener implements MessageListener {
 	
-	private static final String COLLECTION_NAME = "applications";
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 
@@ -66,19 +63,14 @@ public class ApplicationMessageListener implements MessageListener {
 	}
 	
 	private void create(Application application) throws JsonProcessingException {
-		String json = objectMapper.writeValueAsString(application);
-		Document document = Document.parse(json);
-		MongoDBDatastore.insertOne( COLLECTION_NAME, document );
+		MongoDBDatastore.insertOne( application );
 	}
 	
 	private void update(Application application) throws JsonProcessingException {
-		String json = objectMapper.writeValueAsString(application);
-		Document document = Document.parse(json);
-		document.remove("_id");		
-		MongoDBDatastore.updateOne( COLLECTION_NAME, application.getId(), document );
+		MongoDBDatastore.replaceOne( application );
 	}
 	
 	private void delete(Application application) {
-		MongoDBDatastore.deleteOne( COLLECTION_NAME, application.getId() );
+		MongoDBDatastore.deleteOne( application );
 	}
 }

@@ -5,7 +5,7 @@ import com.nowellpoint.aws.model.annotation.Handler;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@Handler(queueName="MONGODB_IDENTITY_COLLECTION_QUEUE")
+@Handler(queueName="MONGODB_IDENTITY_COLLECTION_QUEUE", collectionName="identities")
 public class Identity extends AbstractDocument {
 
 	/**

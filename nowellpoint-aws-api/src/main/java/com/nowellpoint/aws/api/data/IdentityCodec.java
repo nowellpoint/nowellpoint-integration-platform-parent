@@ -34,6 +34,7 @@ public class IdentityCodec implements CollectibleCodec<Identity> {
 		Document document = null;
 		try {
 			document = Document.parse(objectMapper.writeValueAsString(value));
+			document.put("_id", value.getId());
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return;
@@ -55,6 +56,7 @@ public class IdentityCodec implements CollectibleCodec<Identity> {
 		Identity identity = null;
 		try {
 			identity = objectMapper.readValue(document.toJson(), Identity.class);
+			identity.setId(document.getObjectId("_id"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

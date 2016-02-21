@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 
 import com.nowellpoint.aws.model.annotation.Handler;
 
-@Handler(queueName="MONGODB_APPLICATION_COLLECTION_QUEUE")
+@Handler(queueName="MONGODB_APPLICATION_COLLECTION_QUEUE", collectionName="applications")
 public class Application extends AbstractDocument implements Serializable {
 	
 	/**
