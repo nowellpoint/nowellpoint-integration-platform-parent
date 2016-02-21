@@ -70,7 +70,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 * @return the created Identity resource
 	 */
 	
-	public IdentityDTO createIdentity(String subject, IdentityDTO resource, URI eventSource) {
+	public IdentityDTO create(String subject, IdentityDTO resource, URI eventSource) {
 		
 		//
 		//
@@ -84,7 +84,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		//
 		//
 		
-		super.createIdentity(subject, resource, eventSource);
+		super.create(subject, resource, eventSource);
 		
 		//
 		//

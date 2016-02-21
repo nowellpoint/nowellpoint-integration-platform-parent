@@ -1,28 +1,17 @@
 package com.nowellpoint.aws.api.service;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
 
-import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
-import org.modelmapper.TypeToken;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mongodb.client.MongoCollection;
-import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
@@ -59,20 +48,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 		//
 		
 		if (resources.isEmpty()) {
-			
-			resources = this.findAllByOwner(subject);
-			
-//			MongoCollection<Project> collection = MongoDBDatastore.getDatabase()
-//					.getCollection( COLLECTION_NAME )
-//					.withDocumentClass( Project.class );
-//				
-//			Set<Project> projects = StreamSupport.stream( collection.find( eq ( "owner", subject ) ).spliterator(), false )
-//						.collect( Collectors.toSet() );
-//			
-//			Type type = new TypeToken<Set<ProjectDTO>>() {}.getType();
-//			
-//			resources = modelMapper.map( projects, type );
-			
+			resources = findAllByOwner(subject);
 			hset( subject, resources );
 		}
 		
@@ -97,7 +73,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 		//
 		//
 		
-		createIdentity(subject, resource, eventSource);
+		create(subject, resource, eventSource);
 		
 		//
 		//
@@ -293,10 +269,8 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 		//
 		//
 		
-		if ( resource == null ) {
-			
+		if ( resource == null ) {		
 			resource = find(subject, id);
-			
 			hset( id, subject, resource );
 		}
 		

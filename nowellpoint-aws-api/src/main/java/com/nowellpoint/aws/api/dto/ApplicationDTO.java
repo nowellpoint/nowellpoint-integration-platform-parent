@@ -17,6 +17,10 @@ public class ApplicationDTO extends AbstractDTO {
 	public ApplicationDTO() {
 		
 	}
+	
+	public ApplicationDTO(String id) {
+		setId(id);
+	}
 
 	public Boolean getIsSandbox() {
 		return isSandbox;

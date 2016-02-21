@@ -290,7 +290,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	 * @return
 	 */
 	
-	protected R createIdentity(String subject, R resource, URI eventSource) {
+	protected R create(String subject, R resource, URI eventSource) {
 		
 		//
 		//

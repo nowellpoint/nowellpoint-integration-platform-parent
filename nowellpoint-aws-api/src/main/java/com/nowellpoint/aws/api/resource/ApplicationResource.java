@@ -101,7 +101,7 @@ public class ApplicationResource {
 		//
 		//
 		
-		applicationService.delete(id, subject, uriInfo.getBaseUri());
+		applicationService.deleteApplication(id, subject, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -126,7 +126,7 @@ public class ApplicationResource {
 		//
 		//
 		
-		applicationService.createIdentity(subject, resource, uriInfo.getBaseUri());
+		applicationService.createApplication(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//

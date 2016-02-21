@@ -50,7 +50,7 @@ public class IdentityResource {
 		//
 		//
 		
-		identityService.createIdentity( subject, resource, uriInfo.getBaseUri() );
+		identityService.create( subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//
