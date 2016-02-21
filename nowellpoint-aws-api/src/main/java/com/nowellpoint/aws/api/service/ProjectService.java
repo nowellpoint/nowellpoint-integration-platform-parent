@@ -6,7 +6,6 @@ import static com.mongodb.client.model.Filters.eq;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
@@ -31,13 +30,15 @@ import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.data.Project;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public class ProjectService extends AbstractDataService {
+public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	
 	private static final Logger LOGGER = Logger.getLogger(ProjectService.class);
 	
-	private static final String COLLECTION_NAME = "projects";
-	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
+	
+	public ProjectService() {
+		super(ProjectDTO.class, Project.class);
+	}
 	
 	/**
 	 * 
@@ -59,16 +60,18 @@ public class ProjectService extends AbstractDataService {
 		
 		if (resources.isEmpty()) {
 			
-			MongoCollection<Project> collection = MongoDBDatastore.getDatabase()
-					.getCollection( COLLECTION_NAME )
-					.withDocumentClass( Project.class );
-				
-			Set<Project> projects = StreamSupport.stream( collection.find( eq ( "owner", subject ) ).spliterator(), false )
-						.collect( Collectors.toSet() );
+			resources = this.findAllByOwner(subject);
 			
-			Type type = new TypeToken<Set<ProjectDTO>>() {}.getType();
-			
-			resources = modelMapper.map( projects, type );
+//			MongoCollection<Project> collection = MongoDBDatastore.getDatabase()
+//					.getCollection( COLLECTION_NAME )
+//					.withDocumentClass( Project.class );
+//				
+//			Set<Project> projects = StreamSupport.stream( collection.find( eq ( "owner", subject ) ).spliterator(), false )
+//						.collect( Collectors.toSet() );
+//			
+//			Type type = new TypeToken<Set<ProjectDTO>>() {}.getType();
+//			
+//			resources = modelMapper.map( projects, type );
 			
 			hset( subject, resources );
 		}
@@ -88,51 +91,13 @@ public class ProjectService extends AbstractDataService {
 	 * @return the created project
 	 */
 	
-	public ProjectDTO create(String subject, ProjectDTO resource, URI eventSource) {
+	public ProjectDTO createProject(String subject, ProjectDTO resource, URI eventSource) {
 		
 		//
 		//
 		//
 		
-		Project project = modelMapper.map( resource, Project.class );
-		
-		//
-		//
-		//
-		
-		project.setId(new ObjectId());
-		project.setCreatedDate(Date.from(Clock.systemUTC().instant()));
-		project.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
-		project.setCreatedById(subject);
-		project.setLastModifiedById(subject);
-		
-		//
-		//
-		//
-				
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.CREATE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(project)
-					.withType(Project.class)
-					.build();
-			
-			mapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Create Project exception", e.getCause() );
-			throw new WebApplicationException(e);
-		}
-		
-		//
-		//
-		//
-		
-		modelMapper.map( project, resource );
+		createIdentity(subject, resource, eventSource);
 		
 		//
 		//
@@ -156,42 +121,7 @@ public class ProjectService extends AbstractDataService {
 	 * @return
 	 */
 
-	public ProjectDTO update(String subject, ProjectDTO resource, URI eventSource) {
-		
-		//
-		//
-		//
-		
-		Project project = modelMapper.map( resource, Project.class );
-		project.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
-		project.setLastModifiedById(subject);
-		
-		//
-		//
-		//
-				
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.UPDATE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(project)
-					.withType(Project.class)
-					.build();
-			
-			mapper.save(event);
-			
-		} catch (JsonProcessingException e) {
-			throw new WebApplicationException(e);
-		}
-				
-		//
-		//
-		//
-		
-		modelMapper.map( project, resource );
+	public ProjectDTO updateProject(String subject, ProjectDTO resource, URI eventSource) {
 		
 		//
 		//
@@ -200,6 +130,12 @@ public class ProjectService extends AbstractDataService {
 		ProjectDTO original = getProject( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
+		
+		//
+		//
+		//
+		
+		update(subject, resource, eventSource);
 		
 		//
 		//
@@ -222,29 +158,19 @@ public class ProjectService extends AbstractDataService {
 	 * @param eventSource
 	 */
 	
-	public void delete(String id, String subject, URI eventSource) {
+	public void deleteProject(String id, String subject, URI eventSource) {
 		
 		//
 		//
 		//
-			
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.DELETE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(new Project(new ObjectId(id)))
-					.withType(Project.class)
-					.build();
-			
-			mapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Delete Project exception", e.getCause() );
-			throw new WebApplicationException( e, Status.INTERNAL_SERVER_ERROR );
-		}
+		
+		ProjectDTO resource = new ProjectDTO(id);
+		
+		//
+		//
+		//
+		
+		delete(subject, resource, eventSource);
 		
 		//
 		//
@@ -262,7 +188,7 @@ public class ProjectService extends AbstractDataService {
 	 * @throws IOException
 	 */
 	
-	public void share(String subject, ProjectDTO resource, URI eventSource) throws IOException {
+	public void shareProject(String subject, ProjectDTO resource, URI eventSource) throws IOException {
 		
 		//
 		//
@@ -304,7 +230,7 @@ public class ProjectService extends AbstractDataService {
 	}
 	
 	
-	public void restrict(String subjectId, ProjectDTO resource, URI eventSource) {
+	public void restrictProject(String subjectId, ProjectDTO resource, URI eventSource) {
 		
 		//
 		//
@@ -355,7 +281,7 @@ public class ProjectService extends AbstractDataService {
 	 * @return
 	 */
 	
-	public ProjectDTO getProject(String id, String subject) {
+	public ProjectDTO getProject(String subject, String id) {
 		
 		//
 		//
@@ -369,17 +295,8 @@ public class ProjectService extends AbstractDataService {
 		
 		if ( resource == null ) {
 			
-			Project project = MongoDBDatastore.getDatabase().getCollection( COLLECTION_NAME )
-					.withDocumentClass( Project.class )
-					.find( and ( eq ( "_id", new ObjectId( id ) ), eq ( "owner", subject ) ) )
-					.first();
+			resource = find(subject, id);
 			
-			if ( project == null ) {
-				throw new WebApplicationException( String.format( "Project Id: %s does not exist or you do not have access to view", id ), Status.NOT_FOUND );
-			}
-			
-			resource = modelMapper.map( project, ProjectDTO.class );
-
 			hset( id, subject, resource );
 		}
 		

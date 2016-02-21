@@ -3,42 +3,30 @@ package com.nowellpoint.aws.api.service;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.net.URI;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.EventAction;
-import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.Identity;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.tools.TokenParser;
 
-public class IdentityService extends AbstractDataService {
+public class IdentityService extends AbstractDataService<IdentityDTO, Identity> {
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityService.class);
 	
 	private static final String COLLECTION_NAME = "identities";
 	
-	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-	
-	@PostConstruct
-	public void postConstruct() {
-		
+	public IdentityService() {
+		super(IdentityDTO.class, Identity.class);
 	}
 	
 	/**
@@ -58,7 +46,7 @@ public class IdentityService extends AbstractDataService {
 		//
 		//
 		
-		IdentityDTO resource = getIdentityBySubject(subject);
+		IdentityDTO resource = findIdentityBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
 		//
@@ -82,54 +70,21 @@ public class IdentityService extends AbstractDataService {
 	 * @return the created Identity resource
 	 */
 	
-	public IdentityDTO create(String subject, IdentityDTO resource, URI eventSource) {
+	public IdentityDTO createIdentity(String subject, IdentityDTO resource, URI eventSource) {
 		
 		//
 		//
 		//
 		
-		Identity identity = modelMapper.map( resource, Identity.class );
+		resource.setHref(subject);
+		resource.setUsername(resource.getEmail());
+		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		
 		//
 		//
 		//
 		
-		identity.setId(new ObjectId());
-		identity.setCreatedDate(Date.from(Clock.systemUTC().instant()));
-		identity.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
-		identity.setCreatedById(subject);
-		identity.setLastModifiedById(subject);
-		identity.setHref(subject);
-		identity.setUsername(identity.getEmail());
-		identity.setName(identity.getFirstName() != null ? identity.getFirstName().concat(" ").concat(identity.getLastName()) : identity.getLastName());
-		
-		//
-		//
-		//
-				
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.CREATE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(identity)
-					.withType(Identity.class)
-					.build();
-			
-			mapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Create Project exception", e.getCause() );
-			throw new WebApplicationException(e);
-		}
-		
-		//
-		//
-		//
-		
-		modelMapper.map( identity, resource );
+		super.createIdentity(subject, resource, eventSource);
 		
 		//
 		//
@@ -152,13 +107,13 @@ public class IdentityService extends AbstractDataService {
 	 * @return the updated Identity resource
 	 */
 	
-	public IdentityDTO update(String subject, IdentityDTO resource, URI eventSource) {
+	public IdentityDTO updateIdentity(String subject, IdentityDTO resource, URI eventSource) {
 		
 		//
 		//
 		//
 		
-		IdentityDTO original = getIdentity( resource.getId(), subject );
+		IdentityDTO original = findIdentity( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		resource.setHref(original.getHref());
@@ -167,42 +122,7 @@ public class IdentityService extends AbstractDataService {
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
-		//
-		//
-		//
-
-		Identity identity = modelMapper.map( resource, Identity.class );
-		identity.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
-		identity.setLastModifiedById(subject);
-		identity.setUsername(identity.getEmail());
-		identity.setName(identity.getFirstName() != null ? identity.getFirstName().concat(" ").concat(identity.getLastName()) : identity.getLastName());
-		
-		//
-		//
-		//
-				
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.UPDATE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(identity)
-					.withType(Identity.class)
-					.build();
-			
-			mapper.save(event);
-			
-		} catch (JsonProcessingException e) {
-			throw new WebApplicationException(e);
-		}
-				
-		//
-		//
-		//
-		
-		modelMapper.map( identity, resource );
+		super.update(subject, resource, eventSource);
 		
 		//
 		//
@@ -223,7 +143,7 @@ public class IdentityService extends AbstractDataService {
 	 * @return Identity resource for id
 	 */
 	
-	public IdentityDTO getIdentity(String id, String subject) {
+	public IdentityDTO findIdentity(String id, String subject) {
 		
 		//
 		//
@@ -236,17 +156,8 @@ public class IdentityService extends AbstractDataService {
 		//
 		
 		//if ( resource == null ) {
-			
-			Identity identity = MongoDBDatastore.getDatabase().getCollection( COLLECTION_NAME )
-					.withDocumentClass( Identity.class )
-					.find( eq ( "_id", new ObjectId( id ) ) )
-					.first();
-			
-			if ( identity == null ) {
-				throw new WebApplicationException( String.format( "Identity Id: %s does not exist or you do not have access to view", id ), Status.NOT_FOUND );
-			}
-			
-			IdentityDTO resource = modelMapper.map( identity, IdentityDTO.class );
+		
+		IdentityDTO resource = find(subject, id);
 
 			//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
 		//}
@@ -264,7 +175,7 @@ public class IdentityService extends AbstractDataService {
 	 * @return Identity resource for subject
 	 */
 	
-	public IdentityDTO getIdentityBySubject(String subject) {
+	public IdentityDTO findIdentityBySubject(String subject) {
 		
 		//
 		//

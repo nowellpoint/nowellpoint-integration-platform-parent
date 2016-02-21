@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
+import org.modelmapper.ModelMapper;
 
 import com.nowellpoint.aws.api.dto.sforce.OrganizationContact;
 import com.nowellpoint.aws.api.dto.sforce.OrganizationDTO;
@@ -16,12 +17,14 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.Identity;
 import com.nowellpoint.aws.model.sforce.Organization;
 
-public class SalesforceService extends AbstractDataService {
+public class SalesforceService {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
 	
+	protected final ModelMapper modelMapper;
+	
 	public SalesforceService() {
-		
+		this.modelMapper = new ModelMapper();
 	}
 
 	public OrganizationDTO getOrganizationByTokenId(String bearerToken, String id) {

@@ -126,7 +126,7 @@ public class ApplicationResource {
 		//
 		//
 		
-		applicationService.create(subject, resource, uriInfo.getBaseUri());
+		applicationService.createIdentity(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//

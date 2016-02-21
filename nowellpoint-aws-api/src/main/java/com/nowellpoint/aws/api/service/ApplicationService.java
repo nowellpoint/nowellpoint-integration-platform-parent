@@ -29,13 +29,17 @@ import com.nowellpoint.aws.model.EventBuilder;
 import com.nowellpoint.aws.model.data.Application;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public class ApplicationService extends AbstractDataService {
+public class ApplicationService extends AbstractDataService<ApplicationDTO, Application> {
 	
 	private static final Logger LOGGER = Logger.getLogger(ApplicationService.class);
 	
 	private static final String COLLECTION_NAME = "applications";
 	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
+	
+	public ApplicationService() {
+		super(ApplicationDTO.class, Application.class);
+	}
 	
 	public Set<ApplicationDTO> getAll(String subject) {
 		
@@ -73,51 +77,13 @@ public class ApplicationService extends AbstractDataService {
 		
 	}
 	
-	public ApplicationDTO create(String subject, ApplicationDTO resource, URI eventSource) {
+	public ApplicationDTO createIdentity(String subject, ApplicationDTO resource, URI eventSource) {
 		
 		//
 		//
 		//
 		
-		Application application = modelMapper.map( resource, Application.class );
-		
-		//
-		//
-		//
-		
-		application.setId(new ObjectId());
-		application.setCreatedDate(Date.from(Clock.systemUTC().instant()));
-		application.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
-		application.setCreatedById(subject);
-		application.setLastModifiedById(subject);
-		
-		//
-		//
-		//
-				
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.CREATE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(application)
-					.withType(Application.class)
-					.build();
-			
-			mapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Create Application exception", e.getCause() );
-			throw new WebApplicationException(e);
-		}
-		
-		//
-		//
-		//
-		
-		modelMapper.map( application, resource );
+		super.createIdentity(subject, resource, eventSource);
 		
 		//
 		//

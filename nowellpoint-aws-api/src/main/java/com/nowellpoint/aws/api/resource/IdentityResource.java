@@ -50,7 +50,7 @@ public class IdentityResource {
 		//
 		//
 		
-		identityService.create( subject, resource, uriInfo.getBaseUri() );
+		identityService.createIdentity( subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//
@@ -83,7 +83,7 @@ public class IdentityResource {
 		//
 		//
 		
-		identityService.update( subject, resource, uriInfo.getBaseUri() );
+		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//
@@ -106,7 +106,7 @@ public class IdentityResource {
 		//
 		//
 		
-		IdentityDTO resource = identityService.getIdentityBySubject( subject );
+		IdentityDTO resource = identityService.findIdentityBySubject( subject );
 		
 		//
 		//
@@ -132,7 +132,7 @@ public class IdentityResource {
 		//
 		//
 		
-		IdentityDTO resource = identityService.getIdentity( id, subject );
+		IdentityDTO resource = identityService.findIdentity( id, subject );
 		
 		//
 		//
@@ -156,7 +156,7 @@ public class IdentityResource {
 		//
 		//
 		
-		IdentityDTO resource = identityService.getIdentityBySubject( subject );
+		IdentityDTO resource = identityService.findIdentityBySubject( subject );
 		
 		//
 		//
@@ -182,7 +182,7 @@ public class IdentityResource {
 		//
 		//
 		
-		IdentityDTO resource = identityService.getIdentity( id, subject );
+		IdentityDTO resource = identityService.findIdentity( id, subject );
 		
 		//
 		//
@@ -194,7 +194,7 @@ public class IdentityResource {
 		//
 		//
 		
-		identityService.update(subject, resource, uriInfo.getBaseUri() );
+		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//

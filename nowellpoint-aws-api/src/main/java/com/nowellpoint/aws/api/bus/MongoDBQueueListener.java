@@ -53,10 +53,8 @@ public class MongoDBQueueListener implements ServletContextListener {
 				consumer.setMessageListener(listner);
 			}
 			 
-			// Start receiving incoming messages.
 			connection.start();
 			 
-			// Wait for 1 second. The listener onMessage() method will be invoked when a message is received.
 			Thread.sleep(1000);
 			
 		} catch (JMSException | InterruptedException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {

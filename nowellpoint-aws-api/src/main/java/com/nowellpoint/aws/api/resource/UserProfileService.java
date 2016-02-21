@@ -137,7 +137,7 @@ public class UserProfileService {
 		
 		resource.setAddress(address);
 		
-		identityService.update( subject, resource, uriInfo.getBaseUri() );
+		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
 		
 		//
 		//

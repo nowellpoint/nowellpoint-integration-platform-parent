@@ -17,7 +17,10 @@ public class ProjectDTO extends AbstractDTO {
 	private String owner;
 	
 	public ProjectDTO() {
-		
+	}
+	
+	public ProjectDTO(String id) {
+		setId(id);
 	}
 
 	public String getName() {

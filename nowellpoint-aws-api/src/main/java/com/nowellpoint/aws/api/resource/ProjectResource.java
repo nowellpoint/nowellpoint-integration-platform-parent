@@ -74,7 +74,7 @@ public class ProjectResource {
 		//
 		//
 		
-		ProjectDTO resource = projectService.getProject( id, subject );
+		ProjectDTO resource = projectService.getProject( subject, id );
 		
 		//
 		//
@@ -100,7 +100,7 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.delete(id, subject, uriInfo.getBaseUri());
+		projectService.deleteProject(id, subject, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -125,7 +125,7 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.create(subject, resource, uriInfo.getBaseUri());
+		projectService.createProject(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -160,7 +160,7 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.update(subject, resource, uriInfo.getBaseUri());
+		projectService.updateProject(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
