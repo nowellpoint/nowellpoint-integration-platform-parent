@@ -30,7 +30,7 @@ public class NCSAuthClient {
 			
 			int statusCode = httpResponse.getStatusCode();
 			
-			LOGGER.info("Status Code: " + statusCode + " Method: POST : " + httpResponse.getURL());
+			LOGGER.info("Authenticate Status Code: " + statusCode + " Method: POST : " + httpResponse.getURL());
 			
 			if (statusCode != 200) {
 				throw new AuthenticationException(httpResponse.getEntity());
@@ -63,12 +63,8 @@ public class NCSAuthClient {
 	    	if (statusCode != 200) {
 	    		throw new IdentityProviderException(httpResponse.getEntity());
 	    	}
-	    	
-	    	String entity = httpResponse.getEntity();
-	    	
-	    	LOGGER.info(entity);
- 	    	
-	    	account = new ObjectMapper().readValue(entity, Account.class);
+	    	 	    	
+	    	account = new ObjectMapper().readValue(httpResponse.getEntity(), Account.class);
 			
 		} catch (IOException e) {
 			throw new IdentityProviderException(e);

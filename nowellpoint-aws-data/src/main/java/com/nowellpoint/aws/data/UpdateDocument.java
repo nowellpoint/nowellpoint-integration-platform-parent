@@ -70,7 +70,7 @@ public class UpdateDocument implements RequestHandler<UpdateDocumentRequest, Upd
 			UpdateResult result = mongoDatabase.getCollection(request.getCollectionName()).updateOne(new Document("_id", document.getString("_id")), new Document("$set", document));
 			if (result.getModifiedCount() == 1) {
 				response.setStatusCode(200);
-				response.setId(document.getString("_id"));
+				response.setId(document.getObjectId("_id"));
 			} else {
 				response.setStatusCode(404);
 				response.setErrorCode("not_found");

@@ -19,16 +19,16 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.aws.api.dto.ProjectDTO;
-import com.nowellpoint.aws.api.service.ProjectService;
+import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.service.ApplicationService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
-@Path("/project")
-public class ProjectResource {
+@Path("/application")
+public class ApplicationResource {
 	
 	@Inject
-	private ProjectService projectService;
-	
+	private ApplicationService applicationService;
+
 	@Context
 	private UriInfo uriInfo;
 	
@@ -49,7 +49,7 @@ public class ProjectResource {
 		//
 		//
 		
-		Set<ProjectDTO> resources = projectService.getAll(subject);
+		Set<ApplicationDTO> resources = applicationService.getAll(subject);
 		
 		//
 		//
@@ -62,7 +62,7 @@ public class ProjectResource {
 	@GET
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response getProject(@PathParam("id") String id) {
+	public Response getApplication(@PathParam("id") String id) {
 		
 		//
 		//
@@ -74,7 +74,7 @@ public class ProjectResource {
 		//
 		//
 		
-		ProjectDTO resource = projectService.getProject( id, subject );
+		ApplicationDTO resource = applicationService.getApplication( id, subject );
 		
 		//
 		//
@@ -82,13 +82,14 @@ public class ProjectResource {
 		
 		return Response.ok(resource)
 				.build();
+		
 	}
 	
 	
 	@DELETE
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response deleteProject(@PathParam("id") String id) {
+	public Response deleteApplication(@PathParam("id") String id) {
 		
 		//
 		//
@@ -100,7 +101,7 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.delete(id, subject, uriInfo.getBaseUri());
+		applicationService.delete(id, subject, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -113,7 +114,7 @@ public class ProjectResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createProject(ProjectDTO resource) {
+	public Response createApplication(ApplicationDTO resource) {
 		
 		//
 		//
@@ -125,14 +126,14 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.create(subject, resource, uriInfo.getBaseUri());
+		applicationService.create(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
 		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(ProjectResource.class)
+				.path(ApplicationResource.class)
 				.path("/{id}")
 				.build(resource.getId());
 		
@@ -148,7 +149,7 @@ public class ProjectResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(ProjectDTO resource) {
+	public Response updateApplication(ApplicationDTO resource) {
 		
 		//
 		//
@@ -160,7 +161,7 @@ public class ProjectResource {
 		//
 		//
 		
-		projectService.update(subject, resource, uriInfo.getBaseUri());
+		applicationService.update(subject, resource, uriInfo.getBaseUri());
 		
 		//
 		//
@@ -170,17 +171,4 @@ public class ProjectResource {
 				.build();
 	}
 	
-	@PUT
-	@Path("/{id}/{subjectId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response shareProject(@PathParam("id") String id, @PathParam("subjectId") String subjectId) {
-		return null;
-	}
-	
-	@PUT
-	@Path("/{id}/{subjectId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response restrictProject(@PathParam("id") String id, @PathParam("subjectId") String subjectId) {
-		return null;
-	}
 }

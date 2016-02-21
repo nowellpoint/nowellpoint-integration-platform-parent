@@ -1,20 +1,22 @@
 package com.nowellpoint.aws.model.data;
 
+import org.bson.types.ObjectId;
+
 public class GetDocumentRequest extends AbstractDocumentRequest {
 
 	private static final long serialVersionUID = -8063355241890824157L;
 	
-	private String id;
+	private ObjectId id;
 	
 	public GetDocumentRequest() {
 		
 	}
 
-	public String getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 	
@@ -31,7 +33,7 @@ public class GetDocumentRequest extends AbstractDocumentRequest {
 		return this;
 	}
 	
-	public GetDocumentRequest withId(String id) {
+	public GetDocumentRequest withId(ObjectId id) {
 		setId(id);
 		return this;
 	}

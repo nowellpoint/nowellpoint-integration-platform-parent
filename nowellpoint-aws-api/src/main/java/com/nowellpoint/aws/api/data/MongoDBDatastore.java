@@ -11,15 +11,17 @@ import javax.servlet.annotation.WebListener;
 
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.types.ObjectId;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @WebListener
-public class Datastore implements ServletContextListener {
+public class MongoDBDatastore implements ServletContextListener {
 	
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
@@ -30,13 +32,14 @@ public class Datastore implements ServletContextListener {
 		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(
 				new IsoCountryCodec(), 
 				new ProjectCodec(), 
+				new ApplicationCodec(),
 				new IdentityCodec()));
 		
 		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
 		mongoClient = new MongoClient(mongoClientURI);		
 	}
 	
-	public Datastore() {
+	public MongoDBDatastore() {
 		
 	}
 	
@@ -52,6 +55,18 @@ public class Datastore implements ServletContextListener {
 	
 	public static MongoDatabase getDatabase() {			
 		return mongoDatabase;
+	}
+	
+	public static void updateOne(String collectionName, ObjectId id, Document document) {
+		getDatabase().getCollection( collectionName ).updateOne( Filters.eq ( "_id", id ), new Document( "$set", document ) );
+	}
+	
+	public static void insertOne(String collectionName, Document document) {
+		getDatabase().getCollection( collectionName ).insertOne( document );
+	}
+	
+	public static void deleteOne(String collectionName, ObjectId id) {
+		getDatabase().getCollection( collectionName ).deleteOne(  Filters.eq ( "_id", id ) );
 	}
 	
 	public static void checkStatus() {

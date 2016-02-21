@@ -25,7 +25,7 @@
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.aws.lambda.stream.EventHandler::handleEvent",
       "description": "Event Handler: DynamoDB stream event handler on the Event table to process business logic for application events",
-      "timeout": 240,
+      "timeout": 300,
       "memorySize": 1536,
       "version": "$LATEST"
     },

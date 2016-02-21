@@ -1,20 +1,22 @@
 package com.nowellpoint.aws.model.data;
 
+import org.bson.types.ObjectId;
+
 public class DeleteDocumentRequest extends AbstractDocumentRequest {
 	
 	private static final long serialVersionUID = -6090910215991875135L;
 	
-	private String id;
+	private ObjectId id;
 	
 	public DeleteDocumentRequest() {
 		
 	}
 
-	public String getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 	
@@ -31,7 +33,7 @@ public class DeleteDocumentRequest extends AbstractDocumentRequest {
 		return this;
 	}
 	
-	public DeleteDocumentRequest withId(String id) {
+	public DeleteDocumentRequest withId(ObjectId id) {
 		setId(id);
 		return this;
 	}

@@ -26,6 +26,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.model.data.IsoCountry;
 import com.nowellpoint.www.app.client.NCSAuthClient;
+import com.nowellpoint.www.app.view.ApplicationConfigurationController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
@@ -194,6 +195,7 @@ public class Bootstrap implements SparkApplication {
         new ProjectController(cfg);
         new SalesforceController(cfg);
         new SetupController(cfg);
+        new ApplicationConfigurationController(cfg);
         
         //
         // exception handler

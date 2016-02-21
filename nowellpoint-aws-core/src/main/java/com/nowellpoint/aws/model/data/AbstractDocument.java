@@ -3,6 +3,8 @@ package com.nowellpoint.aws.model.data;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,7 +26,9 @@ public abstract class AbstractDocument implements Serializable {
 	 */
 	
 	@JsonProperty("_id")
-	private String id;
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	@JsonDeserialize(using = ObjectIdDeserializer.class)
+	private ObjectId id;
 
 	/**
 	 * 
@@ -80,11 +84,11 @@ public abstract class AbstractDocument implements Serializable {
 		
 	}
 	
-	public String getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 

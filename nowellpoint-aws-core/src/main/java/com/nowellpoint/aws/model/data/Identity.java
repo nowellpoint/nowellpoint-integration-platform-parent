@@ -1,10 +1,11 @@
 package com.nowellpoint.aws.model.data;
 
 import java.util.Date;
-
+import com.nowellpoint.aws.model.annotation.Handler;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+@Handler(queueName="MONGODB_IDENTITY_COLLECTION_QUEUE")
 public class Identity extends AbstractDocument {
 
 	/**

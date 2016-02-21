@@ -10,21 +10,20 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.PostConstruct;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.modelmapper.TypeToken;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoCollection;
-import com.nowellpoint.aws.api.data.Datastore;
+import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
@@ -39,11 +38,6 @@ public class ProjectService extends AbstractDataService {
 	private static final String COLLECTION_NAME = "projects";
 	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-	
-	@PostConstruct
-	public void postConstruct() {
-		
-	}
 	
 	/**
 	 * 
@@ -65,7 +59,7 @@ public class ProjectService extends AbstractDataService {
 		
 		if (resources.isEmpty()) {
 			
-			MongoCollection<Project> collection = Datastore.getDatabase()
+			MongoCollection<Project> collection = MongoDBDatastore.getDatabase()
 					.getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class );
 				
@@ -106,7 +100,7 @@ public class ProjectService extends AbstractDataService {
 		//
 		//
 		
-		project.setId(UUID.randomUUID().toString());
+		project.setId(new ObjectId());
 		project.setCreatedDate(Date.from(Clock.systemUTC().instant()));
 		project.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
 		project.setCreatedById(subject);
@@ -241,7 +235,7 @@ public class ProjectService extends AbstractDataService {
 					.withEventAction(EventAction.DELETE)
 					.withEventSource(eventSource)
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(new Project(id))
+					.withPayload(new Project(new ObjectId(id)))
 					.withType(Project.class)
 					.build();
 			
@@ -375,9 +369,9 @@ public class ProjectService extends AbstractDataService {
 		
 		if ( resource == null ) {
 			
-			Project project = Datastore.getDatabase().getCollection( COLLECTION_NAME )
+			Project project = MongoDBDatastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Project.class )
-					.find( and ( eq ( "_id", id ), eq ( "owner", subject ) ) )
+					.find( and ( eq ( "_id", new ObjectId( id ) ), eq ( "owner", subject ) ) )
 					.first();
 			
 			if ( project == null ) {

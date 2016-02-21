@@ -11,6 +11,7 @@ import com.nowellpoint.aws.idp.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventAction;
 import com.nowellpoint.aws.model.EventBuilder;
+import com.nowellpoint.aws.model.EventStatus;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.idp.model.Account;
@@ -217,6 +218,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
+		event.setEventStatus(EventStatus.COMPLETE.toString());
 		event.setTargetId(href);
 	}
 	

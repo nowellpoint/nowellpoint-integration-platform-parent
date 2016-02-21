@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.lambda.stream;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -14,12 +12,12 @@ import com.amazonaws.services.lambda.runtime.events.DynamodbEvent.DynamodbStream
 import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
-import com.nowellpoint.aws.event.ProjectEventHandler;
-import com.nowellpoint.aws.event.IdentityEventHandler;
+import com.nowellpoint.aws.event.DocumentEventHandler;
 import com.nowellpoint.aws.model.Event;
 import com.nowellpoint.aws.model.EventStatus;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.data.Project;
+import com.nowellpoint.aws.model.data.Application;
 import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.sforce.Lead;
@@ -30,10 +28,11 @@ public class EventHandler {
 	private static Map<String,String> eventMapping = new HashMap<String,String>();
 	
 	static {
-		eventMapping.put(Identity.class.getName(), IdentityEventHandler.class.getName());
+		eventMapping.put(Identity.class.getName(), DocumentEventHandler.class.getName());
 		eventMapping.put(Account.class.getName(), AccountEventHandler.class.getName());
 		eventMapping.put(Lead.class.getName(), LeadEventHandler.class.getName());
-		eventMapping.put(Project.class.getName(), ProjectEventHandler.class.getName());
+		eventMapping.put(Project.class.getName(), DocumentEventHandler.class.getName());
+		eventMapping.put(Application.class.getName(), DocumentEventHandler.class.getName());
 	}
 	
 	public String handleEvent(DynamodbEvent dynamodbEvent, Context context) {
@@ -88,6 +87,12 @@ public class EventHandler {
 			Event event = mapper.load(Event.class, id, subjectId);
 			
 			//
+			//
+			//
+			
+			event.setStartTime(startTime);
+			
+			//
 			// lookup properties for the event
 			//
 			
@@ -100,15 +105,12 @@ public class EventHandler {
 			if (event.getEventStatus().equals(EventStatus.NEW.toString())) {
 
 				try {
-					AbstractEventHandler handler = (AbstractEventHandler) (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
+					AbstractEventHandler handler = (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
 					handler.process(event, properties, context);
-					event.setEventStatus(EventStatus.COMPLETE.toString());
 				} catch (Exception e) {
 					event.setErrorMessage(e.getMessage());
 					event.setEventStatus(EventStatus.ERROR.toString());
 				} finally {
-					event.setExecutionTime(System.currentTimeMillis() - startTime);
-					event.setProcessedDate(Date.from(Instant.now()));
 					mapper.save(event);
 				}
 			}

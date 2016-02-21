@@ -1,16 +1,9 @@
 package com.nowellpoint.aws.event;
 
-import java.io.IOException;
-import java.util.UUID;
-
 import org.bson.Document;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
-import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.client.DataClient;
 import com.nowellpoint.aws.model.data.AbstractDocument;
 import com.nowellpoint.aws.model.data.CreateDocumentRequest;
@@ -27,43 +20,8 @@ public abstract class AbstractDocumentEventHandler implements AbstractEventHandl
 	final DataClient dataClient = new DataClient();
 	final ObjectMapper mapper = new ObjectMapper();
 	
-	public String create(String mongoConnectUri, String collectionName, AbstractDocument resource) throws IOException {
-		
-		//
-		//
-		//
-		
-		MongoClientURI mongoClientUri = new MongoClientURI(mongoConnectUri);
-		MongoClient mongoClient = new MongoClient(mongoClientUri);
-		MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
-		
-		//
-		//
-		//
-		
-		Document document = Document.parse(mapper.writeValueAsString(resource));
-		
-		if (document.getString("_id") == null) {
-			document.put("_id", UUID.randomUUID().toString());
-		}
-		
-		//
-		//
-		//
-		
-		try {
-			mongoDatabase.getCollection(collectionName).insertOne(document);
-		} catch (MongoException e) {
-			throw new IOException(e);
-		} finally {
-			mongoClient.close();
-		}
-		
-		//
-		//
-		//
-		
-		return document.getString("_id");
+	public Document parse(AbstractDocument resource) throws JsonProcessingException {
+		return Document.parse(mapper.writeValueAsString(resource));
 	}
 	
 	public QueryDocumentResponse queryDocument(String mongoClientUri, String collectionName, String query) {

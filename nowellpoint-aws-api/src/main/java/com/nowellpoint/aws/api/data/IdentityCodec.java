@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.data;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import org.bson.BsonReader;
 import org.bson.BsonString;
@@ -13,6 +12,7 @@ import org.bson.codecs.CollectibleCodec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.DocumentCodec;
 import org.bson.codecs.EncoderContext;
+import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,7 +71,7 @@ public class IdentityCodec implements CollectibleCodec<Identity> {
 	@Override
 	public Identity generateIdIfAbsentFromDocument(Identity document) {
 		if (! documentHasId(document)) {
-			document.setId(UUID.randomUUID().toString());
+			document.setId(new ObjectId());
 	    }
 		return document;
 	}
@@ -81,6 +81,6 @@ public class IdentityCodec implements CollectibleCodec<Identity> {
 		if (! documentHasId(document)) {
 	        throw new IllegalStateException("The document does not contain an _id");
 	    }	 
-	    return new BsonString(document.getId());
+	    return new BsonString(document.getId().toString());
 	}
 }

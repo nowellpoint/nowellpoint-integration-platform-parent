@@ -2,13 +2,15 @@ package com.nowellpoint.aws.model.data;
 
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
+
 import com.nowellpoint.aws.model.AbstractLambdaResponse;
 
 public abstract class AbstractDocumentResponse extends AbstractLambdaResponse {
 
 	private static final long serialVersionUID = 906350726714634877L;
 	
-	private String id;
+	private ObjectId id;
 	
 	private String document;
 
@@ -16,11 +18,11 @@ public abstract class AbstractDocumentResponse extends AbstractLambdaResponse {
 		
 	}
 	
-	protected String getId() {
+	protected ObjectId getId() {
 		return id;
 	}
 	
-	protected void setId(String id) {
+	protected void setId(ObjectId id) {
 		this.id = id;
 	}
 	

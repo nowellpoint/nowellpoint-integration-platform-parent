@@ -6,6 +6,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.model.EventStatus;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.CreateLeadRequest;
 import com.nowellpoint.aws.model.sforce.CreateLeadResponse;
@@ -110,6 +111,7 @@ public class LeadEventHandler implements AbstractEventHandler {
 		// return the lead id
 		//
 		
+		event.setEventStatus(EventStatus.COMPLETE.toString());
 		event.setTargetId(createLeadResponse.getId());		
 	}
 }

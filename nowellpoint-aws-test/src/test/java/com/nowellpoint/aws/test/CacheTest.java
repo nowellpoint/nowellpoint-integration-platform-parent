@@ -10,19 +10,14 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -128,7 +123,7 @@ public class CacheTest {
 		
 		results.stream().forEach(m -> {
 			try {
-				p.hset("htest".getBytes(), m.getId().getBytes(), serialize(m));
+				p.hset("htest".getBytes(), m.getId().toString().getBytes(), serialize(m));
 				Method method = m.getClass().getMethod("get" + "id".substring(0,1).toUpperCase() + "id".substring(1));
 				String id = (String) method.invoke(m, new Object[] {});
 				System.out.println(id);
@@ -160,7 +155,7 @@ public class CacheTest {
 			e.printStackTrace();
 		}
 		
-		jedis.hdel("htest".getBytes(), results.stream().findFirst().get().getId().getBytes());
+		jedis.hdel("htest".getBytes(), results.stream().findFirst().get().getId().toString().getBytes());
 		
 		results.clear();
 		
@@ -180,7 +175,7 @@ public class CacheTest {
 		
 		results.stream().forEach(r -> {
 			System.out.println(r.getId());
-			jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(r.getId()).getBytes(), serialize(r));
+			jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(r.getId().toString()).getBytes(), serialize(r));
 		});
 		
 		ScanParams params = new ScanParams();
@@ -214,13 +209,13 @@ public class CacheTest {
 		project.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setCreatedDate(Date.from(Instant.now()));
 		project.setDescription("hset test");
-		project.setId(UUID.randomUUID().toString());
+		project.setId(new ObjectId());
 		project.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setLastModifiedDate(Date.from(Instant.now()));
 		project.setOwner(System.getProperty(Properties.DEFAULT_SUBJECT));
 		project.setStage("new");
 		
-		jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(project.getId()).getBytes(), serialize(project));
+		jedis.hset(System.getProperty(Properties.DEFAULT_SUBJECT).getBytes(), Project.class.getName().concat(project.getId().toString()).getBytes(), serialize(project));
 		
 		params = new ScanParams();
 	    params.match(Project.class.getName().concat("*"));

@@ -5,22 +5,24 @@ import static com.nowellpoint.aws.api.data.CacheManager.serialize;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.bson.types.ObjectId;
+import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
+
+import com.nowellpoint.aws.api.data.CacheManager;
+import com.nowellpoint.aws.api.dto.AbstractDTO;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
-
-import com.nowellpoint.aws.api.data.CacheManager;
-import com.nowellpoint.aws.api.dto.AbstractDTO;
 
 public abstract class AbstractDataService {
 	
@@ -34,6 +36,16 @@ public abstract class AbstractDataService {
 		modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
+		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
+			protected ObjectId convert(String source) {
+				return source == null ? null : new ObjectId(source);
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {
+			protected String convert(ObjectId source) {
+				return source == null ? null : source.toString();
+			}
+		});
 	}
 	
 	protected void set(String key, Object value) {

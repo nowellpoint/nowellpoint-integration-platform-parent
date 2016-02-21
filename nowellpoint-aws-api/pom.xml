@@ -30,7 +30,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
@@ -56,6 +56,12 @@
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>weld</artifactId>
 			<version>${version.wildfly-swarm}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>amazon-sqs-java-messaging-lib</artifactId>
+			<version>1.0.0</version>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

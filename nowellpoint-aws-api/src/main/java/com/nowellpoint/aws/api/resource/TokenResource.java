@@ -68,7 +68,7 @@ public class TokenResource {
 		//
 		// execute the get token request for username and password
 		//
-		
+
 		GetTokenRequest tokenRequest = new GetTokenRequest()
 				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
@@ -78,7 +78,7 @@ public class TokenResource {
 				.withPassword(params[1]);
 		
 		params = null;
-		
+
 		GetTokenResponse tokenResponse = identityProviderClient.token(tokenRequest);
 		
 		//
@@ -92,7 +92,7 @@ public class TokenResource {
 		//
 		// fire the logged in event
 		//
-		
+
 		loggedInEvent.fire(new LoggedInEvent(tokenResponse.getToken(), uriInfo.getBaseUri()));
 		
 		//

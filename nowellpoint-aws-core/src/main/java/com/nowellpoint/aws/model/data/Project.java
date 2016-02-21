@@ -2,6 +2,11 @@ package com.nowellpoint.aws.model.data;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
+import com.nowellpoint.aws.model.annotation.Handler;
+
+@Handler(queueName="MONGODB_PROJECT_COLLECTION_QUEUE")
 public class Project extends AbstractDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
@@ -20,7 +25,7 @@ public class Project extends AbstractDocument {
 		
 	}
 	
-	public Project(String id) {
+	public Project(ObjectId id) {
 		setId(id);
 	}
 

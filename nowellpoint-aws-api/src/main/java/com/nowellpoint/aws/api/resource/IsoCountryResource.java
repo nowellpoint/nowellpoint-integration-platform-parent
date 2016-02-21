@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.mongodb.client.MongoCollection;
-import com.nowellpoint.aws.api.data.Datastore;
+import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.model.data.IsoCountry;
 
 @Path("/iso-country")
@@ -27,7 +27,7 @@ public class IsoCountryResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 			
-		MongoCollection<IsoCountry> collection = Datastore.getDatabase()
+		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 			
@@ -42,7 +42,7 @@ public class IsoCountryResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByLanguage(@PathParam("language") String language) {
 		
-		MongoCollection<IsoCountry> collection = Datastore.getDatabase()
+		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 		
@@ -57,7 +57,7 @@ public class IsoCountryResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
-		MongoCollection<IsoCountry> collection = Datastore.getDatabase()
+		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 				

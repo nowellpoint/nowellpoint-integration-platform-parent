@@ -64,7 +64,7 @@ public class SalesforceController {
         	
         	response.cookie("com.nowellpoint.auth.salesforce.token", Base64.getEncoder().encodeToString(httpResponse.getEntity().getBytes()), 300, true); 
         	
-        	response.redirect("/app/applications/setup/salesforce");
+        	response.redirect("/app/applications/configure/salesforce");
         	
         	return "";
         	

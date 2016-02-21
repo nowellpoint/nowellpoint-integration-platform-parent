@@ -16,20 +16,20 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.data.Project;
+import com.nowellpoint.aws.model.data.Application;
 
-public class ProjectCodec implements CollectibleCodec<Project> {
+public class ApplicationCodec implements CollectibleCodec<Application> {
 	
 	private ObjectMapper objectMapper;
 	private Codec<Document> documentCodec;
 
-	public ProjectCodec() {
+	public ApplicationCodec() {
 		this.objectMapper = new ObjectMapper();
 		this.documentCodec = new DocumentCodec();
 	}
 
 	@Override
-	public void encode(BsonWriter writer, Project value, EncoderContext encoderContext) {
+	public void encode(BsonWriter writer, Application value, EncoderContext encoderContext) {
 		
 		Document document = null;
 		try {
@@ -43,33 +43,33 @@ public class ProjectCodec implements CollectibleCodec<Project> {
 	}
 
 	@Override
-	public Class<Project> getEncoderClass() {
-		return Project.class;
+	public Class<Application> getEncoderClass() {
+		return Application.class;
 	}
 
 	@Override
-	public Project decode(BsonReader reader, DecoderContext decoderContext) {
+	public Application decode(BsonReader reader, DecoderContext decoderContext) {
 		
 		Document document = new DocumentCodec().decode(reader, decoderContext);
 		
-		Project project = null;
+		Application entity = null;
 		try {
-			project = objectMapper.readValue(document.toJson(), Project.class);
+			entity = objectMapper.readValue(document.toJson(), Application.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 
-		return project;
+		return entity;
 	}
 
 	@Override
-	public boolean documentHasId(Project document) {
+	public boolean documentHasId(Application document) {
 		return document.getId() != null;
 	}
 
 	@Override
-	public Project generateIdIfAbsentFromDocument(Project document) {
+	public Application generateIdIfAbsentFromDocument(Application document) {
 		if (! documentHasId(document)) {
 			document.setId(new ObjectId());
 	    }
@@ -77,7 +77,7 @@ public class ProjectCodec implements CollectibleCodec<Project> {
 	}
 
 	@Override
-	public BsonValue getDocumentId(Project document) {
+	public BsonValue getDocumentId(Application document) {
 		if (! documentHasId(document)) {
 	        throw new IllegalStateException("The document does not contain an _id");
 	    }	 

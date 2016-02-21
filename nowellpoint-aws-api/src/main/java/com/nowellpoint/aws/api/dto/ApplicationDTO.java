@@ -1,19 +1,12 @@
-package com.nowellpoint.aws.model.data;
+package com.nowellpoint.aws.api.dto;
 
-import java.io.Serializable;
+public class ApplicationDTO extends AbstractDTO {
 
-import org.bson.types.ObjectId;
-
-import com.nowellpoint.aws.model.annotation.Handler;
-
-@Handler(queueName="MONGODB_APPLICATION_COLLECTION_QUEUE")
-public class Application extends AbstractDocument implements Serializable {
-	
 	/**
 	 * 
 	 */
 	
-	private static final long serialVersionUID = -1315510190045597737L;
+	private static final long serialVersionUID = -365479731136738071L;
 	
 	private Boolean isSandbox;
 	
@@ -21,12 +14,8 @@ public class Application extends AbstractDocument implements Serializable {
 	
 	private String type;
 	
-	public Application() {
+	public ApplicationDTO() {
 		
-	}
-	
-	public Application(ObjectId id) {
-		setId(id);
 	}
 
 	public Boolean getIsSandbox() {

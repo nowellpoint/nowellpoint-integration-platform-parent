@@ -74,7 +74,7 @@ public class CreateDocument implements RequestHandler<CreateDocumentRequest, Cre
 		try{
 			mongoDatabase.getCollection(request.getCollectionName()).insertOne(document);
 			response.setStatusCode(201);
-			response.setId(document.getString("_id"));
+			response.setId(document.getObjectId("_id"));
 		} catch (MongoException e) {
 			response.setStatusCode(500);
 			response.setErrorCode("unexpected_exception");

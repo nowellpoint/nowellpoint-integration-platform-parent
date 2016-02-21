@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -199,7 +200,7 @@ public class TestDataClient {
 		System.out.println("CreateDocumentResponse - execution time: " + String.valueOf(System.currentTimeMillis() - startTime));
 		System.out.println("id: " + createDocumentResponse.getId());
 						
-		json.put("_id", createDocumentResponse.getId());
+		json.put("_id", createDocumentResponse.getId().toString());
 		json.put("partyType", "ORGANIZATION");
 			
 		UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest()
@@ -263,7 +264,7 @@ public class TestDataClient {
 		GetDocumentRequest getDocumentRequest = new GetDocumentRequest()
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
-				.withId(UUID.randomUUID().toString());
+				.withId(new ObjectId());
 			
 		long startTime = System.currentTimeMillis();
 			
@@ -307,7 +308,7 @@ public class TestDataClient {
 		DeleteDocumentRequest deleteDocumentRequest = new DeleteDocumentRequest().withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withMongoDBConnectUri(System.getProperty(Properties.MONGO_CLIENT_URI))
 				.withCollectionName("parties")
-				.withId(UUID.randomUUID().toString());
+				.withId(new ObjectId());
 			
 		startTime = System.currentTimeMillis();
 			

@@ -6,18 +6,18 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nowellpoint.aws.api.data.Datastore;
+import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.model.Event;
@@ -94,7 +94,7 @@ public class IdentityService extends AbstractDataService {
 		//
 		//
 		
-		identity.setId(UUID.randomUUID().toString());
+		identity.setId(new ObjectId());
 		identity.setCreatedDate(Date.from(Clock.systemUTC().instant()));
 		identity.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
 		identity.setCreatedById(subject);
@@ -162,7 +162,6 @@ public class IdentityService extends AbstractDataService {
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		resource.setHref(original.getHref());
-		resource.setLastLoginDate(original.getLastLoginDate());
 		resource.setEmailEncodingKey(original.getEmailEncodingKey());
 		resource.setIsActive(original.getIsActive());
 		resource.setLocaleSidKey(original.getLocaleSidKey());
@@ -171,7 +170,7 @@ public class IdentityService extends AbstractDataService {
 		//
 		//
 		//
-		
+
 		Identity identity = modelMapper.map( resource, Identity.class );
 		identity.setLastModifiedDate(Date.from(Clock.systemUTC().instant()));
 		identity.setLastModifiedById(subject);
@@ -238,9 +237,9 @@ public class IdentityService extends AbstractDataService {
 		
 		//if ( resource == null ) {
 			
-			Identity identity = Datastore.getDatabase().getCollection( COLLECTION_NAME )
+			Identity identity = MongoDBDatastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Identity.class )
-					.find( eq ( "_id", id ) )
+					.find( eq ( "_id", new ObjectId( id ) ) )
 					.first();
 			
 			if ( identity == null ) {
@@ -279,7 +278,7 @@ public class IdentityService extends AbstractDataService {
 		
 		//if ( resource == null ) {
 			
-			Identity identity = Datastore.getDatabase().getCollection( COLLECTION_NAME )
+			Identity identity = MongoDBDatastore.getDatabase().getCollection( COLLECTION_NAME )
 					.withDocumentClass( Identity.class )
 					.find( eq ( "href", subject ) )
 					.first();

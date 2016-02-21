@@ -2,7 +2,6 @@ package com.nowellpoint.aws.api.service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -17,11 +16,11 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.sforce.Identity;
 import com.nowellpoint.aws.model.sforce.Organization;
 
-public class SetupService extends AbstractDataService {
+public class SalesforceService extends AbstractDataService {
 	
-	private static final Logger LOGGER = Logger.getLogger(SetupService.class);
+	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
 	
-	public SetupService() {
+	public SalesforceService() {
 		
 	}
 
@@ -81,7 +80,6 @@ public class SetupService extends AbstractDataService {
 		//
 		
 		OrganizationDTO resource = modelMapper.map( organization, OrganizationDTO.class );
-		resource.setId(UUID.randomUUID().toString());
 		resource.getAttributes().setId(organization.getId());
 		
 		OrganizationContact contact = modelMapper.map( identity, OrganizationContact.class );

@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.aws.api.dto.sforce.OrganizationDTO;
-import com.nowellpoint.aws.api.service.SetupService;
+import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -26,7 +26,7 @@ import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
 public class SalesforceResource {
 	
 	@Inject
-	private SetupService setupService;
+	private SalesforceService salesforceService;
 	
 	@Context
 	private HttpServletRequest servletRequest;
@@ -132,7 +132,7 @@ public class SalesforceResource {
 		//
 		//
 		
-		OrganizationDTO resource = setupService.getOrganizationByTokenId(bearerToken, id);
+		OrganizationDTO resource = salesforceService.getOrganizationByTokenId(bearerToken, id);
 		
 		
 		//
