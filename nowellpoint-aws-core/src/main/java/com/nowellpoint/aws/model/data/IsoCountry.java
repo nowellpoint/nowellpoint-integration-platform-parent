@@ -1,12 +1,8 @@
 package com.nowellpoint.aws.model.data;
 
-import java.io.Serializable;
-
-public class IsoCountry implements Serializable {
+public class IsoCountry extends AbstractDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
-	
-	private String id;
 	
 	private String language;
 	
@@ -18,14 +14,6 @@ public class IsoCountry implements Serializable {
 
 	public IsoCountry() {
 		
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getLanguage() {
@@ -59,29 +47,4 @@ public class IsoCountry implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}	
-	
-	public IsoCountry id(String id) {
-		setId(id);
-		return this;
-	}
-	
-	public IsoCountry language(String language) {
-		setLanguage(language);
-		return this;
-	}
-	
-	public IsoCountry code(String code) {
-		setCode(code);
-		return this;
-	}
-	
-	public IsoCountry name(String name) {
-		setName(name);
-		return this;
-	}
-	
-	public IsoCountry description(String description) {
-		setDescription(description);
-		return this;
-	}
 }
