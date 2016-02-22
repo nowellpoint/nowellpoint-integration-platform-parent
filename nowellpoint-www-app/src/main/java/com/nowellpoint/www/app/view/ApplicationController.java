@@ -51,9 +51,8 @@ public class ApplicationController {
 	 */
 	
 	private static ModelAndView getApplications(Request request, Response response) throws IOException {
-		Token token = request.attribute("token");
 		
-		LOGGER.info(token.getAccessToken());
+		Token token = request.attribute("token");
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -103,7 +102,7 @@ public class ApplicationController {
 	 * @throws IOException
 	 */
 	
-	private static String saveApplication(Request request, Response response) throws IOException {
+	private static ModelAndView saveApplication(Request request, Response response) throws IOException {
 		
 		Token token = request.attribute("token");
 		
@@ -123,6 +122,6 @@ public class ApplicationController {
 		
 		response.redirect("/app/applications");
 		
-		return "";
+		return null;
 	}
 }
