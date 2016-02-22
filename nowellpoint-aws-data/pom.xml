@@ -78,27 +78,6 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<id>deploy</id>
-								<phase>install</phase>
-								<goals>
-									<goal>java</goal>
-								</goals>
-								<configuration>
-									<arguments>
-										<argument>${project.basedir}/target/${project.build.finalName}.jar</argument>
-										<argument>${project.basedir}/src/main/resources/nowellpoint-aws-deploy.json</argument>
-									</arguments>
-									<mainClass>com.nowellpoint.aws.tools.Deployer</mainClass>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>

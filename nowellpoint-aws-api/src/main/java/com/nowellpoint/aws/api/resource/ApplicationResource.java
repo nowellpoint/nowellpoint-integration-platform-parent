@@ -35,140 +35,93 @@ public class ApplicationResource {
 	@Context
 	private HttpServletRequest servletRequest;
 	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		//
-		//
-		//
 		
 		Set<ApplicationDTO> resources = applicationService.getAll(subject);
 		
-		//
-		//
-		//
-		
-		return Response.ok(resources)
-				.build();
+		return Response.ok(resources).build();
     }
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	
 	@GET
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		//
-		//
-		//
 		
 		ApplicationDTO resource = applicationService.getApplication( id, subject );
 		
-		//
-		//
-		//
-		
-		return Response.ok(resource)
-				.build();
-		
+		return Response.ok(resource).build();
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	
 	@DELETE
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteApplication(@PathParam("id") String id) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		//
-		//
-		//
 		
 		applicationService.deleteApplication(id, subject, uriInfo.getBaseUri());
 		
-		//
-		//
-		//
-		
-		return Response.noContent()
-				.build();
+		return Response.noContent().build();
 	}
+	
+	/**
+	 * 
+	 * @param resource
+	 * @return
+	 */
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createApplication(ApplicationDTO resource) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		//
-		//
-		
 		applicationService.createApplication(subject, resource, uriInfo.getBaseUri());
-		
-		//
-		//
-		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ApplicationResource.class)
 				.path("/{id}")
 				.build(resource.getId());
 		
-		//
-		//
-		//
-		
 		return Response.created(uri)
 				.entity(resource)
 				.build();
 	}
 	
+	/**
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(ApplicationDTO resource) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		//
-		//
-		//
 		
 		applicationService.update(subject, resource, uriInfo.getBaseUri());
 		
-		//
-		//
-		//
-		
-		return Response.ok(resource)
-				.build();
+		return Response.ok(resource).build();
 	}
-	
 }
