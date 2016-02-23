@@ -11,6 +11,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/nowellpoint-www-app/target/classes"/>
-        <property name="context-root" value="wwwapp"/>
+        <property name="context-root" value="nowellpoint-www-app"/>
     </wb-module>
 </project-modules>
