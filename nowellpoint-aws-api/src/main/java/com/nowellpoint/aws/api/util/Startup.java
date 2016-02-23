@@ -5,7 +5,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.nowellpoint.aws.api.data.CacheManager;
+import com.nowellpoint.aws.data.CacheManager;
 
 @WebListener
 public class Startup implements ServletContextListener {

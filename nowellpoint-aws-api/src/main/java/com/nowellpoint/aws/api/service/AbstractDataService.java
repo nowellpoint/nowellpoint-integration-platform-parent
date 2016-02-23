@@ -22,13 +22,13 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
-import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.EventAction;
-import com.nowellpoint.aws.model.EventBuilder;
-import com.nowellpoint.aws.model.annotation.Handler;
-import com.nowellpoint.aws.model.data.AbstractDocument;
+import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.annotation.Handler;
+import com.nowellpoint.aws.data.dynamodb.Event;
+import com.nowellpoint.aws.data.dynamodb.EventAction;
+import com.nowellpoint.aws.data.dynamodb.EventBuilder;
+import com.nowellpoint.aws.data.model.AbstractDocument;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public abstract class AbstractDataService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {

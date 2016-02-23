@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.nowellpoint.aws.model.data.Address;
-
 public class Identity extends BaseEntity {
 	
 	/**

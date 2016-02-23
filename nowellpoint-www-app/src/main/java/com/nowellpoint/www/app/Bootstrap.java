@@ -30,7 +30,7 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.aws.model.data.IsoCountry;
+import com.nowellpoint.www.app.model.IsoCountry;
 import com.nowellpoint.www.app.view.ApplicationConfigurationController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;

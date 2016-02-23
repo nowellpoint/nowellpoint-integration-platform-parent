@@ -28,9 +28,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
+import com.nowellpoint.aws.data.model.Project;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
-import com.nowellpoint.aws.model.data.Project;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;

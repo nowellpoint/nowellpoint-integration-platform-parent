@@ -13,10 +13,10 @@ import org.jboss.logging.Logger;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.EventAction;
-import com.nowellpoint.aws.model.EventBuilder;
-import com.nowellpoint.aws.model.data.Project;
+import com.nowellpoint.aws.data.dynamodb.Event;
+import com.nowellpoint.aws.data.dynamodb.EventAction;
+import com.nowellpoint.aws.data.dynamodb.EventBuilder;
+import com.nowellpoint.aws.data.model.Project;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class ProjectService extends AbstractDataService<ProjectDTO, Project> {

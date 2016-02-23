@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.Event;
+import com.nowellpoint.aws.data.dynamodb.Event;
 
 public interface AbstractEventHandler {
 	

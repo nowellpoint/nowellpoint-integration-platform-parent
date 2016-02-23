@@ -46,7 +46,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>nowellpoint-aws-core</artifactId>
+			<artifactId>nowellpoint-aws-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

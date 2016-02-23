@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.nowellpoint.aws.model.data.Address;
-import com.nowellpoint.aws.model.data.Application;
+import com.nowellpoint.aws.data.model.Address;
+import com.nowellpoint.aws.data.model.Application;
 
 public class IdentityDTO extends AbstractDTO {
 	

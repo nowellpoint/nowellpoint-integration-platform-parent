@@ -12,11 +12,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.api.data.MongoDBDatastore;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
+import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.model.Identity;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.data.Identity;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class IdentityService extends AbstractDataService<IdentityDTO, Identity> {

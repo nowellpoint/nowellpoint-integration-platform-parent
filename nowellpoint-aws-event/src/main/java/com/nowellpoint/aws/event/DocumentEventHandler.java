@@ -11,9 +11,9 @@ import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import com.nowellpoint.aws.model.Event;
-import com.nowellpoint.aws.model.EventStatus;
-import com.nowellpoint.aws.model.annotation.Handler;
+import com.nowellpoint.aws.data.annotation.Handler;
+import com.nowellpoint.aws.data.dynamodb.Event;
+import com.nowellpoint.aws.data.dynamodb.EventStatus;
 
 public class DocumentEventHandler implements AbstractEventHandler {
 	

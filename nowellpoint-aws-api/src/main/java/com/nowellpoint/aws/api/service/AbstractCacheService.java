@@ -1,7 +1,7 @@
 package com.nowellpoint.aws.api.service;
 
-import static com.nowellpoint.aws.api.data.CacheManager.deserialize;
-import static com.nowellpoint.aws.api.data.CacheManager.serialize;
+import static com.nowellpoint.aws.data.CacheManager.deserialize;
+import static com.nowellpoint.aws.data.CacheManager.serialize;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 
 import java.util.HashSet;
@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import com.nowellpoint.aws.api.data.CacheManager;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
+import com.nowellpoint.aws.data.CacheManager;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
