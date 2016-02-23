@@ -84,7 +84,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		//
 		//
 		
-		super.create(subject, resource, eventSource);
+		create(subject, resource, eventSource);
 		
 		//
 		//
@@ -122,7 +122,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
-		super.update(subject, resource, eventSource);
+		update(subject, resource, eventSource);
 		
 		//
 		//

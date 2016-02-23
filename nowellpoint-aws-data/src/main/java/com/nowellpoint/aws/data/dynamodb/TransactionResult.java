@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.model;
+package com.nowellpoint.aws.data.dynamodb;
 
 public class TransactionResult {
 
