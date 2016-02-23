@@ -32,7 +32,6 @@ import com.nowellpoint.aws.model.FieldMappingEntry;
 import com.nowellpoint.aws.model.Mapping;
 import com.nowellpoint.aws.model.sforce.Notification;
 import com.nowellpoint.aws.sforce.SalesforceUrlFactory;
-import com.nowellpoint.aws.tools.MongoQuery;
 
 public class TransactionEvent implements Callable<TransactionEventResponse> {
 	
@@ -203,10 +202,7 @@ public class TransactionEvent implements Callable<TransactionEventResponse> {
 		Mapping mapping = mappingCache.get(sourceType);
 		
 		if (mapping == null) {
-			Optional<Document> query = Optional.ofNullable(new MongoQuery().withMongoDatabase(mongoDatabase)
-					.withCollectionName("mappings")
-					.withFilter( Filters.eq ( "sourceType", sourceType ) )
-					.find());
+			Optional<Document> query = Optional.ofNullable( mongoDatabase.getCollection("mappings").find( Filters.eq ( "sourceType", sourceType ) ).first() );
 
 			Document document = query.orElseThrow(() -> new IllegalArgumentException("Unable to find mapping for ".concat(sourceType)));
 			
@@ -251,10 +247,7 @@ public class TransactionEvent implements Callable<TransactionEventResponse> {
 		
 		Date timestamp = new Date();
 		
-		Optional<Document> query = Optional.ofNullable(new MongoQuery().withMongoDatabase(mongoDatabase)
-				.withCollectionName(collectionName)
-				.withSalesforceId(salesforceId)
-				.find());
+		Optional<Document> query = Optional.ofNullable(mongoDatabase.getCollection("mappings").find( Filters.eq ( "salesforceId", salesforceId ) ).first() );
 
 		Document destination = query.orElse(new Document().append("createdDate", timestamp)
 				.append("createdById", userId)

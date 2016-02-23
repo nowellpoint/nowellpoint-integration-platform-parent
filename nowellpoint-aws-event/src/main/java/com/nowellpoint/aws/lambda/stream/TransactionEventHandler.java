@@ -33,13 +33,13 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.dynamodb.Transaction;
 import com.nowellpoint.aws.data.dynamodb.TransactionResult;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
 import com.nowellpoint.aws.model.sforce.OutboundMessage;
 import com.nowellpoint.aws.sforce.SalesforceResource;
-import com.nowellpoint.aws.tools.MongoQuery;
 
 public class TransactionEventHandler {
 	
@@ -268,10 +268,7 @@ public class TransactionEventHandler {
 	}
 	
 	private ObjectId getDocumentBySalesforceId(String collection, String salesforceId) {
-		Optional<Document> query = Optional.ofNullable(new MongoQuery().withMongoDatabase(mongoDatabase)
-				.withCollectionName(collection)
-				.withSalesforceId(salesforceId)
-				.find());
+		Optional<Document> query = Optional.ofNullable(mongoDatabase.getCollection("mappings").find( Filters.eq ( "salesforceId", salesforceId ) ).first() );
 		
 		ObjectId id = null;
 		
