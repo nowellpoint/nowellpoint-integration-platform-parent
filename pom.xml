@@ -6,7 +6,7 @@
 	<artifactId>aws</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.2-SNAPSHOT</version>
-	<name>Nowellpoint Parent Project</name>
+	<name>Nowellpoint Integration Platform Parent</name>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
