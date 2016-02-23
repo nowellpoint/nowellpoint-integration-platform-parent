@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
-import com.nowellpoint.aws.data.model.Application;
+import com.nowellpoint.aws.data.mongodb.Application;
 
 @Path("/identity")
 public class IdentityResource {

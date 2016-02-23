@@ -26,7 +26,7 @@ import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
-import com.nowellpoint.aws.data.model.Address;
+import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;

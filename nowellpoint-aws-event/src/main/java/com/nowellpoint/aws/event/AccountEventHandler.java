@@ -11,7 +11,7 @@ import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.model.Identity;
+import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.idp.model.Account;

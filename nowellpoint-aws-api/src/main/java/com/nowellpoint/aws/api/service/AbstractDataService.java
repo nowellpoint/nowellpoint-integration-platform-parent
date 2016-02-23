@@ -28,7 +28,7 @@ import com.nowellpoint.aws.data.annotation.Handler;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
-import com.nowellpoint.aws.data.model.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public abstract class AbstractDataService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {

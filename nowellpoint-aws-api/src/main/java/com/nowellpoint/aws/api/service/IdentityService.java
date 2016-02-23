@@ -15,7 +15,7 @@ import org.jboss.logging.Logger;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.data.MongoDBDatastore;
-import com.nowellpoint.aws.data.model.Identity;
+import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 

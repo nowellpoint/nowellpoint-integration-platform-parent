@@ -21,7 +21,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.annotation.Handler;
-import com.nowellpoint.aws.data.model.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @WebListener

@@ -17,7 +17,7 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.model.Project;
+import com.nowellpoint.aws.data.mongodb.Project;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class ProjectMessageListener implements MessageListener {

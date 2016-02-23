@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.model;
+package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.data;
 
-import com.nowellpoint.aws.data.model.Identity;
+import com.nowellpoint.aws.data.mongodb.Identity;
 
 public class IdentityCodec extends AbstractCodec<Identity> {
 
