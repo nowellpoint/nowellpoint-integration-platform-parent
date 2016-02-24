@@ -36,25 +36,12 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 	
 	public Set<ProjectDTO> getAll(String subject) {
-		
-		//
-		//
-		//
-		
 		Set<ProjectDTO> resources = hscan( subject, ProjectDTO.class );
-		
-		//
-		//
-		//
 		
 		if (resources.isEmpty()) {
 			resources = findAllByOwner(subject);
 			hset( subject, resources );
 		}
-		
-		//
-		//
-		//
 		
 		return resources;
 	}
@@ -68,23 +55,10 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 	
 	public ProjectDTO createProject(String subject, ProjectDTO resource, URI eventSource) {
-		
-		//
-		//
-		//
-		
 		create(subject, resource, eventSource);
 		
-		//
-		//
-		//
-
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
-		
-		//
-		//
-		//
 		
 		return resource;
 	}
@@ -98,32 +72,15 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 
 	public ProjectDTO updateProject(String subject, ProjectDTO resource, URI eventSource) {
-		
-		//
-		//
-		//
-		
 		ProjectDTO original = getProject( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		//
-		//
-		//
-		
 		update(subject, resource, eventSource);
 		
-		//
-		//
-		//
-
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
 
-		//
-		//
-		//
-		
 		return resource;
 	}
 	
@@ -135,22 +92,9 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 	
 	public void deleteProject(String id, String subject, URI eventSource) {
-		
-		//
-		//
-		//
-		
 		ProjectDTO resource = new ProjectDTO(id);
 		
-		//
-		//
-		//
-		
 		delete(subject, resource, eventSource);
-		
-		//
-		//
-		//
 		
 		hdel( subject, ProjectDTO.class.getName().concat(id) );
 		hdel( id, subject );
@@ -165,24 +109,11 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 	
 	public void shareProject(String subject, ProjectDTO resource, URI eventSource) throws IOException {
-		
-		//
-		//
-		//
-		
 		Project project = modelMapper.map( resource, Project.class );
-		
-		//
-		//
-		//
 		
 		project.setLastModifiedDate(Date.from(Instant.now()));
 		project.setLastModifiedById(subject);
 		
-		//
-		//
-		//
-				
 		Event event = null;
 		try {			
 			event = new EventBuilder()
@@ -206,25 +137,12 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	}
 	
 	
-	public void restrictProject(String subjectId, ProjectDTO resource, URI eventSource) {
-		
-		//
-		//
-		//
-		
+	public void restrictProject(String subjectId, ProjectDTO resource, URI eventSource) {		
 		Project project = modelMapper.map( resource, Project.class );
-		
-		//
-		//
-		//
 		
 		project.setLastModifiedDate(Date.from(Instant.now()));
 		project.setLastModifiedById(subjectId);
 		
-		//
-		//
-		//
-				
 		Event event = null;
 		try {			
 			event = new EventBuilder()
@@ -243,10 +161,6 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 			throw new WebApplicationException(e);
 		}
 		
-		//
-		//
-		//
-		
 		hdel( resource.getId(), subjectId );
 	}
 	
@@ -258,25 +172,12 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 	
 	public ProjectDTO getProject(String subject, String id) {
-		
-		//
-		//
-		//
-
 		ProjectDTO resource = hget( id, subject );
-		
-		//
-		//
-		//
 		
 		if ( resource == null ) {		
 			resource = find(subject, id);
 			hset( id, subject, resource );
 		}
-		
-		//
-		//
-		//
 		
 		return resource;
 	}

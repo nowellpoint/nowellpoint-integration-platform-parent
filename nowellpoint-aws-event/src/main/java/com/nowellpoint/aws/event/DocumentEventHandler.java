@@ -40,7 +40,7 @@ public class DocumentEventHandler implements AbstractEventHandler {
 		
 		Class<?> type = Class.forName(event.getType());
 		if (! type.isAnnotationPresent(Handler.class)) {
-			throw new Exception( String.format("Class %s is missing Handler annotation", type.getName()));
+			throw new Exception( String.format( "Class %s is missing Handler annotation", type.getName() ) );
 		}
 		
 		//

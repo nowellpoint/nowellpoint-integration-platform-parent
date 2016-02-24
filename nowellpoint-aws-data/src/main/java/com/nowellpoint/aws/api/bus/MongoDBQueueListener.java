@@ -28,7 +28,7 @@ public class MongoDBQueueListener implements ServletContextListener {
 	
 	static {
 		queueMap.put("MONGODB_APPLICATION_COLLECTION_QUEUE", ApplicationMessageListener.class.getName());
-		queueMap.put("MONGODB_PROJECT_COLLECTION_QUEUE", ApplicationMessageListener.class.getName());
+		queueMap.put("MONGODB_PROJECT_COLLECTION_QUEUE", ProjectMessageListener.class.getName());
 		queueMap.put("MONGODB_IDENTITY_COLLECTION_QUEUE", IdentityMessageListener.class.getName());
 	}
 	

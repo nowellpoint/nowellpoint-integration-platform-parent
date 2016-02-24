@@ -4,9 +4,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.aws.api.bus.IdentityMessageListener;
 import com.nowellpoint.aws.data.annotation.Handler;
 
-@Handler(queueName="MONGODB_IDENTITY_COLLECTION_QUEUE", collectionName="identities")
+@Handler(queueName="MONGODB_IDENTITY_COLLECTION_QUEUE", collectionName="identities", messageListener=IdentityMessageListener.class)
 public class Identity extends AbstractDocument {
 
 	/**

@@ -40,7 +40,7 @@ public class MongoDBDatastore implements ServletContextListener {
 				new IdentityCodec()));
 		
 		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
-		mongoClient = new MongoClient(mongoClientURI);		
+		mongoClient = new MongoClient(mongoClientURI);	
 	}
 	
 	private MongoDBDatastore() {
