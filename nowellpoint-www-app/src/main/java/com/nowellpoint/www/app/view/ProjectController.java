@@ -127,6 +127,8 @@ public class ProjectController {
 			
 			if (request.queryParams("id").trim().isEmpty()) {
 				
+				node.putNull("id");
+				
 				httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 						.header("x-api-key", System.getenv("NCS_API_KEY"))
 						.bearerAuthorization(token.getAccessToken())

@@ -32,7 +32,7 @@ public class Properties {
 	public static final String STORMPATH_GROUP_ID = "stormpath.group.id";
 	public static final String SENDGRID_API_KEY = "sendgrid.api.key";
 	public static final String REDIS_PASSWORD = "redis.password";
-	public static final String REDIS_ENDPOINT = "redis.endpoint";
+	public static final String REDIS_HOST = "redis.host";
 	public static final String REDIS_PORT = "redis.port";
 	public static final String DEFAULT_SUBJECT = "default.subject";
 	

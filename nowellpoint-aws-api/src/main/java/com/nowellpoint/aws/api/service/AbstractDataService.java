@@ -56,7 +56,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 		this.modelMapper = new ModelMapper();
 		this.dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
-		configureModelMapper(this.modelMapper);		
+		configureModelMapper(this.modelMapper);
 		
 	}
 	

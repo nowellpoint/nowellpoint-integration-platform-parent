@@ -69,7 +69,7 @@ public class CacheTest {
 		    }
 		});
 		
-		Jedis jedis = new Jedis(System.getProperty(Properties.REDIS_ENDPOINT), Integer.valueOf(System.getProperty(Properties.REDIS_PORT)));
+		Jedis jedis = new Jedis(System.getProperty(Properties.REDIS_HOST), Integer.valueOf(System.getProperty(Properties.REDIS_PORT)));
 		jedis.auth(System.getProperty(Properties.REDIS_PASSWORD));
 		
 		jedis.del("test");

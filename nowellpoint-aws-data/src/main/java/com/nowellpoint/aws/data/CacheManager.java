@@ -16,21 +16,26 @@ import javax.enterprise.context.ApplicationScoped;
 import com.nowellpoint.aws.model.admin.Properties;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Protocol;
 
 @ApplicationScoped
 public class CacheManager {
 	
 	private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
+	private JedisPool jedisPool;
 	private Jedis jedis;
 	
 	@PostConstruct
 	public void postConstruct() {
-		String endpoint = System.getProperty(Properties.REDIS_ENDPOINT);
+		String endpoint = System.getProperty(Properties.REDIS_HOST);
 		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
 		
-		jedis = new Jedis(endpoint, port);
-		jedis.auth(System.getProperty(Properties.REDIS_PASSWORD));
+		jedisPool = new JedisPool(new JedisPoolConfig(), endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
+		
+		jedis = jedisPool.getResource();
 		
 		LOGGER.info("connecting to cache...is connected: " + jedis.isConnected());
 	}
@@ -38,6 +43,8 @@ public class CacheManager {
 	@PreDestroy
 	public void preDestroy() {
 		jedis.close();
+		
+		jedisPool.close();
 		
 		LOGGER.info("disconnecting from cache...is connected: " + jedis.isConnected());
 	}

@@ -2,72 +2,58 @@
 
     <@t.page>
 
-        <div class="wrapper">
+        <#include "navbar.html" />
 
-            <#include "confirm-dialog.html"/>
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${projectLabel}</h6>
+                        <h2 class="dashhead-title">${project.name!}</h2>
+                    </div>
 
-            <#include "project-edit.html"/>
+                    <div class="dashhead-toolbar">
 
-            <#include "sidebar.html" />
-
-            <div class="main-panel">
-
-                <#include "navbar.html" />
-
-                <div class="content">
-                    <div class="container-fluid">
-                        <div class="card">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="col-md-9">
-                                        <div class="media">
-                                            <div class="media-left">
-                                                <i class="pe-7s-folder"></i>
-                                            </div>
-                                            <div class="media-body">
-                                                <p class="category">${projectLabel}</p>
-                                                <h4 class="title">${project.name!}</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p class="pull-right">
-                                            <a href="#projectDialog" class="project-dialog btn" role="button" data-toggle="modal" data-title="${editProject}">${edit}</a>
-                                            <a href="" class="confirm-delete btn" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}">${delete}</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="col-md-9">
-                                        <label class="form-control-label">${name}</label>
-                                        <p class="form-control-static">${project.name}</p>
-                                        <hr>
-                                        <label class="form-control-label">${stage}</label>
-                                        <p class="form-control-static">${project.stage}</p>
-                                        <hr>
-                                        <label class="form-control-label">${owner}</label>
-                                        <p class="form-control-static">${project.owner}</p>
-                                        <hr>
-                                        <label class="form-control-label">${description}</label>
-                                        <p class="form-control-static">${project.description}</p>
-                                        <hr>
-                                        <label class="form-control-label">${createdBy}</label>
-                                        <p class="form-control-static">${project.createdById} , ${project.createdDate?datetime}</p>
-                                        <hr>
-                                        <label class="form-control-label">${lastModifiedBy}</label>
-                                        <p class="form-control-static">${project.lastModifiedById} , ${project.lastModifiedDate?datetime}</p>
-                                    </div>
-                                    <div class="col-md-3"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="pull-right">
+                            <a href="#projectDialog" class="project-dialog btn" role="button" data-toggle="modal" data-title="${editProject}">${edit}</a>
+                            <a href="" class="confirm-delete btn" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}">${delete}</a>
+                        </p>
                     </div>
                 </div>
-                <#include "footer.html" />
+            </div>
+
+            <div class="hr-divider m-t m-b-md">
+                <h3 class="hr-divider-content hr-divider-heading" />
+            </div>
+
+            <div class="dashhead m-t-md">
+                <div class="row">
+                    <div class="col-md-9">
+                        <label class="form-control-label">${name}</label>
+                        <p class="form-control-static">${project.name}</p>
+                        <hr>
+                        <label class="form-control-label">${stage}</label>
+                        <p class="form-control-static">${project.stage}</p>
+                        <hr>
+                        <label class="form-control-label">${owner}</label>
+                        <p class="form-control-static">${project.owner}</p>
+                        <hr>
+                        <label class="form-control-label">${description}</label>
+                        <p class="form-control-static">${project.description}</p>
+                        <hr>
+                        <label class="form-control-label">${createdBy}</label>
+                        <p class="form-control-static">${project.createdById} , ${project.createdDate?datetime}</p>
+                        <hr>
+                        <label class="form-control-label">${lastModifiedBy}</label>
+                        <p class="form-control-static">${project.lastModifiedById} , ${project.lastModifiedDate?datetime}</p>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
             </div>
         </div>
+
+        <#include "footer.html" />
+        <#include "confirm-dialog.html"/>
+        <#include "project-edit.html"/>
+
     </@t.page>
