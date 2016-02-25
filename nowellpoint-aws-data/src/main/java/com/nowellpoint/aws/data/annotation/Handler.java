@@ -17,4 +17,5 @@ public @interface Handler {
 	String queueName();
 	String collectionName();
 	Class<?> messageListener();
+	Class<?> codec();
 }

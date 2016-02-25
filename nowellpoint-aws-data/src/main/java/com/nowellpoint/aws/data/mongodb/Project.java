@@ -5,9 +5,15 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.aws.api.bus.ProjectMessageListener;
+import com.nowellpoint.aws.data.ProjectCodec;
 import com.nowellpoint.aws.data.annotation.Handler;
 
-@Handler(queueName="MONGODB_PROJECT_COLLECTION_QUEUE", collectionName="projects", messageListener=ProjectMessageListener.class)
+@Handler(
+		queueName="MONGODB_PROJECT_COLLECTION_QUEUE", 
+		collectionName="projects", 
+		messageListener=ProjectMessageListener.class, 
+		codec=ProjectCodec.class)
+
 public class Project extends AbstractDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
