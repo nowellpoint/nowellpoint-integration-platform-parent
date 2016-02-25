@@ -9,21 +9,21 @@
                 </div>
                 <div class="modal-body">
                   
-                    <input type="hidden" name="id" id="id" value="${(project.id)!}" />
+                    <input type="hidden" name="id" id="id" value="${project.id!}" />
                     
                     <div class="form-group">
                         <label class="control-label" for="name">${name}</label>
-                        <input type="text" class="form-control" name="name" id="name" required="" autocomplete="off" autofocus="" value="${(project.name)!}"/>
+                        <input type="text" class="form-control" name="name" id="name" required="" autocomplete="off" autofocus="" value="${project.name!}"/>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label" for="stage">${stage}</label>
-                        <input type="text" class="form-control" name="stage" id="stage" required="" autocomplete="off" value="${(project.stage)!}"/>
+                        <input type="text" class="form-control" name="stage" id="stage" required="" autocomplete="off" value="${project.stage!}"/>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label" for="owner">${owner}</label>
-                        <input type="text" class="form-control" name="owner" id="owner" required="" autocomplete="off" readonly="true" value="${(project.owner)!}"/>   
+                        <input type="text" class="form-control" name="owner" id="owner" required="" autocomplete="off" readonly="true" value="${project.owner!}"/>   
                     </div>
                     
                     <div class="form-group">

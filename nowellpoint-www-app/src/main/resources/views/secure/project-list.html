@@ -2,59 +2,54 @@
 
     <@t.page>
 
-        <#include "confirm-dialog.html"/>
+        <#include "navbar.html" />
 
-        <#include "project-edit.html"/>
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="title">${projects}</h4>
+                    </div>
 
-        <div class="wrapper">
-
-            <#include "sidebar.html" />
-
-            <div class="main-panel">
-
-                <#include "navbar.html" />
-
-                <div class="content">
-                    <div class="container-fluid">
-                                <div class="card card-plain">
-                                    <div class="header">
-                                        <h4 class="title">${projects}</h4>
-                                        <p class="pull-right">
-                                            <a href="#projectDialog" class="project-dialog btn btn-default" role="button" data-toggle="modal" data-title="${createProject}">${new}</a>
-                                        </p>
-                                    </div>
-
-                                    <div class="content table-responsive table-full-width">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <th>${name}</th>
-                                                <th>${description}</th>
-                                                <th>${stage}</th>
-                                                <th>${createdBy}</th>
-                                                <th>${action}</th>
-                                            </thead>
-                                            <tbody>
-                                                <#list projectList as project>
-                                                    <tr>
-                                                        <td><a href="/app/projects/${project.id}">${project.name}</a></td>
-                                                        <td>${project.description}</td>
-                                                        <td>${project.stage}</td>
-                                                        <td>${project.createdById} , ${project.createdDate?datetime}</td>
-                                                        <td><a href="#projectDialog" class="project-dialog" title="${edit}" data-toggle="modal" data-title="${editProject}"><i class="fa fa-sm fa-edit"></i></a>
-                                                            <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}"><i class="fa fa-sm fa-trash-o"></i></a></td>
-                                                    </tr>
-                                                </#list>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="#projectDialog" class="project-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${createProject}">${new}</a>
+                        </p>
                     </div>
                 </div>
-
-                <#include "footer.html" />
-
             </div>
 
+            <div class="hr-divider m-t m-b-md">
+                
+            </div>
+
+            <div class="content table-responsive table-full-width">
+                <table class="table table-hover">
+                    <thead>
+                        <th>${name}</th>
+                        <th>${description}</th>
+                        <th>${stage}</th>
+                        <th>${createdBy}</th>
+                        <th>${action}</th>
+                    </thead>
+                    <tbody>
+                        <#list projectList as project>
+                            <tr>
+                                <td><a href="/app/projects/${project.id}">${project.name}</a></td>
+                                <td>${project.description}</td>
+                                <td>${project.stage}</td>
+                                <td>${project.createdById} , ${project.createdDate?datetime}</td>
+                                <td><a href="#projectDialog" class="project-dialog" title="${edit}" data-toggle="modal" data-title="${editProject}"><span class="icon icon-edit"></span></a>&nbsp;
+                                    <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <#include "confirm-dialog.html"/>
+        <#include "project-edit.html"/>
+        <#include "footer.html" />
 
     </@t.page>

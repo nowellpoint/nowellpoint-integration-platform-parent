@@ -2,69 +2,66 @@
 
     <@t.page>
 
-        <div class="wrapper">
 
-            <#include "sidebar.html" />
 
-            <div class="main-panel">
+        <#include "navbar.html" />
 
-                <#include "navbar.html" />
+        <div class="container-fluid container-fluid-spacious">
 
-                <div class="content">
-                    <div class="container-fluid">
-                        <div class="card">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="col-md-9">
-                                        <form class="form-vertical" role="form" method="post" action="/app/applications">
 
-                                            <input type="hidden" name="id" id="id" value="${(organization.id)!}" />
-                                            <input type="hidden" name="type" id="type" value="SALESFORCE" />
-                                            <input type="hidden" name="organizationId" id="organizationId" value="${(organization.attributes.id)!}" />
-                                            <input type="hidden" name="organizationName" id="organizationName" value="${organization.name!}" />
-                                            <input type="hidden" name="organizationType" id="organizationType" value="${organization.organizationType!}" />
-                                            <input type="hidden" name="phone" id="phone" value="${organization.phone!}" />
-                                            <input type="hidden" name="instanceName" id="instanceName" value="${organization.instanceName!}" />
-                                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(organization.isSandbox?string)!}" />
-                                            <input type="hidden" name="primaryContact" id="instanceName" value="${organization.primaryContact!}" />
-                                            
-                                            <div class="form-group">
-                                                    <a href="/app/salesforce/oauth" class="btn" role="button" >${link}</a>
-                                            </div>
-                                            
-                                        
-                                            
-                                            <label class="form-control-label">${name}</label>
-                                        <p class="form-control-static">${organization.name!}</p>
-                                            
-                                            <label class="form-control-label">${type}</label>
-                                        <p class="form-control-static">${organization.organizationType!}</p>
-                                            
-                                            <label class="form-control-label">${instanceName}</label>
-                                        <p class="form-control-static">${organization.instanceName!}</p>
-                                            
-                                            <label class="form-control-label">${isSandbox}</label>
-                                        <p class="form-control-static">${(organization.isSandbox?string('Yes', 'No'))!}</p>
+        </div>
 
-                                    
+        <div class="hr-divider m-t m-b-md">
 
-                                            <div class="form-group">
-                                                <div class="pull-right">
-                                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${createApplication}</button>
-                                                </div>
-                                            </div>
 
-                                        </form>
 
-                                    </div>
-                                    <div class="col-md-3"></div>
-                                </div>
+        </div>
+
+        <div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <form class="form-vertical" role="form" method="post" action="/app/applications">
+
+                            <input type="hidden" name="id" id="id" value="${(organization.id)!}" />
+                            <input type="hidden" name="type" id="type" value="SALESFORCE" />
+                            <input type="hidden" name="organizationId" id="organizationId" value="${(organization.attributes.id)!}" />
+                            <input type="hidden" name="organizationName" id="organizationName" value="${organization.name!}" />
+                            <input type="hidden" name="organizationType" id="organizationType" value="${organization.organizationType!}" />
+                            <input type="hidden" name="phone" id="phone" value="${organization.phone!}" />
+                            <input type="hidden" name="instanceName" id="instanceName" value="${organization.instanceName!}" />
+                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(organization.isSandbox?string)!}" />
+                            <input type="hidden" name="primaryContact" id="instanceName" value="${organization.primaryContact!}" />
+
+                            <div class="form-group">
+                                <a href="/app/salesforce/oauth" class="btn" role="button">${link}</a>
                             </div>
 
-                        </div>
+                            <label class="form-control-label">${name}</label>
+                            <p class="form-control-static">${organization.name!}</p>
+
+                            <label class="form-control-label">${type}</label>
+                            <p class="form-control-static">${organization.organizationType!}</p>
+
+                            <label class="form-control-label">${instanceName}</label>
+                            <p class="form-control-static">${organization.instanceName!}</p>
+
+                            <label class="form-control-label">${isSandbox}</label>
+                            <p class="form-control-static">${(organization.isSandbox?string('Yes', 'No'))!}</p>
+
+                            <div class="form-group">
+                                <div class="pull-right">
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${createApplication}</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
+                    <div class="col-md-3"></div>
                 </div>
-                <#include "footer.html" />
             </div>
         </div>
+
+        <#include "footer.html" />
+
     </@t.page>

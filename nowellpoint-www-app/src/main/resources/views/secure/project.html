@@ -13,10 +13,9 @@
                     </div>
 
                     <div class="dashhead-toolbar">
-
                         <p class="pull-right">
-                            <a href="#projectDialog" class="project-dialog btn" role="button" data-toggle="modal" data-title="${editProject}">${edit}</a>
-                            <a href="" class="confirm-delete btn" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}">${delete}</a>
+                            <a href="#projectDialog" class="project-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editProject}">${edit}</a>
+                            <a href="" class="confirm-delete btn btn-lg btn-default-outline" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}">${delete}</a>
                         </p>
                     </div>
                 </div>
@@ -26,34 +25,42 @@
                 <h3 class="hr-divider-content hr-divider-heading" />
             </div>
 
-            <div class="dashhead m-t-md">
+            <div class="container">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
                         <label class="form-control-label">${name}</label>
                         <p class="form-control-static">${project.name}</p>
                         <hr>
+                        
                         <label class="form-control-label">${stage}</label>
                         <p class="form-control-static">${project.stage}</p>
                         <hr>
+                        
                         <label class="form-control-label">${owner}</label>
                         <p class="form-control-static">${project.owner}</p>
                         <hr>
+                        
                         <label class="form-control-label">${description}</label>
                         <p class="form-control-static">${project.description}</p>
                         <hr>
+                        <!--
                         <label class="form-control-label">${createdBy}</label>
                         <p class="form-control-static">${project.createdById} , ${project.createdDate?datetime}</p>
                         <hr>
+                        
                         <label class="form-control-label">${lastModifiedBy}</label>
                         <p class="form-control-static">${project.lastModifiedById} , ${project.lastModifiedDate?datetime}</p>
+-->
+
                     </div>
                     <div class="col-md-3"></div>
                 </div>
             </div>
         </div>
 
-        <#include "footer.html" />
         <#include "confirm-dialog.html"/>
         <#include "project-edit.html"/>
+        <#include "footer.html" />
 
     </@t.page>

@@ -2,65 +2,52 @@
 
     <@t.page>
 
-        <div class="wrapper">
+        <#include "navbar.html" />
 
-            <#include "sidebar.html" />
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="title">${applications}</h4>
+                    </div>
 
-            <div class="main-panel">
-
-                <#include "navbar.html" />
-
-                <div class="content">
-
-                    <div class="container-fluid">
-
-                        <div class="row">
-                            <div class="col-md-9">
-                                <div class="card card-plain">
-                                    <div class="header">
-                                        <h4 class="title">${applications}</h4>
-                                         <p class="pull-right">
-                                            <a href="/app/applications/types" class="btn btn-default" role="button">${addApplication}</a>
-                                        </p>
-                                    </div>
-
-                                    <div class="content table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <th>${name}</th>
-                                                <th>${type}</th>
-                                                <th>${phone}</th>
-                                                <th>${isSandbox}</th>
-                                                <th>${action}</th>
-                                            </thead>
-                                            <tbody>
-
-                                                <#if applicationList??>
-
-                                                    <#list applicationList as application>
-                                                        <tr>
-                                                            <td>${application.name}</td>
-                                                            <td>${application.type}</td>
-                                                            <td>${application.phone}</td>
-                                                            <td>${application.isSandbox}</td>
-                                                            <td></td>
-
-                                                        </tr>
-                                                    </#list>
-
-                                                </#if>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <div class="col-md-3"></div>
-
-                                </div>
-                            </div>
-                        </div>
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="/app/applications/types" class="btn btn-lg btn-primary-outline" role="button">${addApplication}</a>
+                        </p>
                     </div>
                 </div>
-                <#include "footer.html" />
+            </div>
+
+            <div class="hr-divider m-t m-b-md">
+
+            </div>
+
+            <div class="content table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <th>${name}</th>
+                        <th>${type}</th>
+                        <th>${phone}</th>
+                        <th>${isSandbox}</th>
+                        <th>${action}</th>
+                    </thead>
+                    <tbody>
+                        <#list applicationList as application>
+                            <tr>
+                                <td>${application.name}</td>
+                                <td>${application.type}</td>
+                                <td>${application.phone}</td>
+                                <td>${application.isSandbox}</td>
+                                <td></td>
+
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
             </div>
         </div>
+
+        <#include "footer.html" />
+
     </@t.page>

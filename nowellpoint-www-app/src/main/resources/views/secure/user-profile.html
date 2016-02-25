@@ -1,146 +1,105 @@
 <#import "template.html" as t>
 
     <@t.page>
-        
-        <#include "user-profile-edit.html"/>
 
-        <div class="wrapper">
+        <#include "navbar.html" />
 
-            <#include "sidebar.html" />
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${userProfile}</h6>
+                        <h2 class="dashhead-title">${identity.name!}</h2>
+                    </div>
 
-            <div class="main-panel">
-
-                <#include "navbar.html" />
-
-                <div class="content">
-
-                    <div class="container-fluid">
-
-                        <div class="row">
-
-                            <div class="col-md-12">
-                                <div class="card card-plain">
-                                    <div class="header">
-                                        
-                                        <p class="pull-left">
-                                            ${identity.name!}
-                                        </p>
-                                        
-                                        <p class="pull-right">
-                                            <a href="#profileDialog" class="profile-dialog btn" role="button" data-toggle="modal" data-title="${editUserProfile}">${edit}</a>
-                                        </p>
-                                        
-                                        <hr>
-                                    </div>
-
-                                    <div class="col-md-4"></div>
-
-                                    <div class="col-md-4">
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${firstName}</label>
-                                            <p class="form-control-static">${identity.firstName!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${lastName}</label>
-                                            <p class="form-control-static">${identity.lastName!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${company}</label>
-                                            <p class="form-control-static">${identity.company!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${division}</label>
-                                            <p class="form-control-static">${identity.division!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${department}</label>
-                                            <p class="form-control-static">${identity.department!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${title}</label>
-                                            <p class="form-control-static">${identity.title!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${email}</label>
-                                            <p class="form-control-static">${identity.email!}</p>
-                                            <hr>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label class="form-control-label">${fax}</label>
-                                            <p class="form-control-static">${identity.fax!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${mobilePhone}</label>
-                                            <p class="form-control-static">${identity.mobilePhone!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${phone}</label>
-                                            <p class="form-control-static">${identity.phone!}</p>
-                                            <hr>    
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label class="form-control-label">${extension}</label>
-                                            <p class="form-control-static">${identity.extension!}</p>
-                                            <hr>    
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${address}</label>
-                                            <p class="form-control-static">${identity.address.street!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${city}</label>
-                                            <p class="form-control-static">${identity.address.city!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${state}</label>
-                                            <p class="form-control-static">${identity.address.state!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${postalCode}</label>
-                                            <p class="form-control-static">${identity.address.postalCode!}</p>
-                                            <hr>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="form-control-label">${country}</label>
-                                            <p class="form-control-static">${identity.address.countryCode!}</p>
-                                            <hr>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-md-4"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <p class="pull-right">
+                                <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editUserProfile}">${edit}</a>
+                            </p>
                     </div>
                 </div>
-                <#include "footer.html" />
+            </div>
+
+            <div class="hr-divider m-t m-b-md">
+                <h3 class="hr-divider-content hr-divider-heading" />
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+
+                        <label class="form-control-label">${firstName}</label>
+                        <p class="form-control-static">${identity.firstName!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${lastName}</label>
+                        <p class="form-control-static">${identity.lastName!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${company}</label>
+                        <p class="form-control-static">${identity.company!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${division}</label>
+                        <p class="form-control-static">${identity.division!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${department}</label>
+                        <p class="form-control-static">${identity.department!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${title}</label>
+                        <p class="form-control-static">${identity.title!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${email}</label>
+                        <p class="form-control-static">${identity.email!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${fax}</label>
+                        <p class="form-control-static">${identity.fax!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${mobilePhone}</label>
+                        <p class="form-control-static">${identity.mobilePhone!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${phone}</label>
+                        <p class="form-control-static">${identity.phone!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${extension}</label>
+                        <p class="form-control-static">${identity.extension!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${address}</label>
+                        <p class="form-control-static">${identity.address.street!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${city}</label>
+                        <p class="form-control-static">${identity.address.city!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${state}</label>
+                        <p class="form-control-static">${identity.address.state!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${postalCode}</label>
+                        <p class="form-control-static">${identity.address.postalCode!}</p>
+                        <hr>
+
+                        <label class="form-control-label">${country}</label>
+                        <p class="form-control-static">${identity.address.countryCode!}</p>
+                        <hr>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
             </div>
         </div>
+
+        <#include "user-profile-edit.html"/>
+        <#include "footer.html" />
+
     </@t.page>
