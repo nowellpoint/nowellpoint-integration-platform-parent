@@ -39,22 +39,31 @@ public class AuthenticationController {
         // GET /login
         //
         
-		get("/login", (request, response) -> {
-			Map<String, Object> model = new HashMap<String, Object>();
-			return new ModelAndView(model, "login.html");
-		}, new FreeMarkerEngine(cfg));
+		get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(cfg));
         
         //
         // POST /login
         //
         
-        post("/login", (request, response) -> login(request, response));
+        post("/login", (request, response) -> postLogin(request, response));
         
         //
         // GET /logout
         // 
         
-        get("/logout", (request, response) -> logout(request, response));
+        get("/logout", (request, response) -> getLogout(request, response));
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView getLogin(Request request, Response response) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		return new ModelAndView(model, "login.html");
 	}
 	
 	/**
@@ -65,11 +74,9 @@ public class AuthenticationController {
 	 * @throws IOException
 	 */
 	
-	private static String login(Request request, Response response) throws IOException {
+	private static String postLogin(Request request, Response response) throws IOException {
 		
 		ObjectMapper objectMapper = new ObjectMapper();
-    	
-    	Token token = null;
     	
     	HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
     			.accept(MediaType.APPLICATION_JSON)
@@ -87,7 +94,7 @@ public class AuthenticationController {
     		throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "loginError"), Status.UNAUTHORIZED);
     	}
     			
-    	token = httpResponse.getEntity(Token.class);
+    	Token token = httpResponse.getEntity(Token.class);
     		
     	Long expiresIn = token.getExpiresIn();
     		
@@ -106,7 +113,7 @@ public class AuthenticationController {
 	 * @throws IOException
 	 */
 	
-	private static String logout(Request request, Response response) throws IOException {
+	private static String getLogout(Request request, Response response) throws IOException {
 		
 		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	

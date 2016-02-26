@@ -5,11 +5,14 @@ import static com.mongodb.MongoClientOptions.builder;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import java.util.List;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.bson.Document;
+import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 
@@ -20,7 +23,7 @@ import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.data.annotation.Handler;
+import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -31,24 +34,22 @@ public class MongoDBDatastore implements ServletContextListener {
 	private static MongoClient mongoClient;
 	private static MongoDatabase mongoDatabase;
 	
-	static {
-		
-		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(
-				new IsoCountryCodec(), 
-				new ProjectCodec(), 
-				new ApplicationCodec(),
-				new IdentityCodec()));
-		
-		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
-		mongoClient = new MongoClient(mongoClientURI);	
-	}
-	
 	private MongoDBDatastore() {
 		
 	}
 	
+	public static void registerCodecs(List<Codec<?>> codecs) {
+		
+		codecs.add(new IsoCountryCodec());
+		
+		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(codecs));
+		
+		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
+	}
+	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
+		mongoClient = new MongoClient(mongoClientURI);	
 		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
 	}
 	
@@ -87,6 +88,6 @@ public class MongoDBDatastore implements ServletContextListener {
 	
 	@SuppressWarnings("unchecked")
 	private static <T> MongoCollection<T> getCollection(AbstractDocument document) {
-		return (MongoCollection<T>) mongoDatabase.getCollection(document.getClass().getAnnotation(Handler.class).collectionName(), document.getClass());
+		return (MongoCollection<T>) mongoDatabase.getCollection(document.getClass().getAnnotation(MessageHandler.class).collectionName(), document.getClass());
 	}
 }

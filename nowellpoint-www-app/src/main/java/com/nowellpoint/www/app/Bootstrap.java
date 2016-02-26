@@ -35,6 +35,7 @@ import com.nowellpoint.www.app.view.ApplicationConfigurationController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
+import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.UserProfileController;
 import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceController;
@@ -130,29 +131,13 @@ public class Bootstrap implements SparkApplication {
         // configure routes
         //
         
-        get("/", (request, response) -> {
-        	Map<String,Object> model = new HashMap<String,Object>();
- 			return new ModelAndView(model, "index.html");
-		}, new FreeMarkerEngine(cfg));
+        get("/", (request, response) -> root(request, response), new FreeMarkerEngine(cfg));
         
         //
         // search
         //
         
-        get("/services", (request, response) -> {
-        	Map<String,Object> model = new HashMap<String,Object>();
-			return new ModelAndView(model, "services.html");
-		}, new FreeMarkerEngine(cfg));
-        
-        //
-        //
-        //
-        
-        get("/app/dashboard", (request, response) -> {
-        	Map<String,Object> model = new HashMap<String,Object>();
-        	model.put("account", request.attribute("account"));
-			return new ModelAndView(model, "secure/dashboard.html");
-		}, new FreeMarkerEngine(cfg));
+        get("/services", (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
                 
         //
         //
@@ -160,13 +145,14 @@ public class Bootstrap implements SparkApplication {
         
         get("/healthcheck", (request, response) -> {
         	response.status(200);
-        	return null;
+        	return "";
         });
         
         //
         // routes
         //
         
+        new DashboardController(cfg);
         new ApplicationController(cfg);
         new UserProfileController(cfg);
         new SignUpController(cfg);
@@ -178,7 +164,7 @@ public class Bootstrap implements SparkApplication {
         new ApplicationConfigurationController(cfg);
         
         //
-        // exception handler
+        // exception handlers
         //
         
         exception(NotAuthorizedException.class, (exception, request, response) -> {
@@ -215,6 +201,11 @@ public class Bootstrap implements SparkApplication {
         });
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	private static String loadCountries() {
 		try {
 			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
@@ -232,6 +223,30 @@ public class Bootstrap implements SparkApplication {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView root(Request request, Response response) {
+    	Map<String,Object> model = new HashMap<String,Object>();
+    	return new ModelAndView(model, "index.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView getServices(Request request, Response response) {
+    	Map<String,Object> model = new HashMap<String,Object>();
+		return new ModelAndView(model, "services.html");
 	}
 	
 	/**

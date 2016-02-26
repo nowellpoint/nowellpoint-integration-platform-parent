@@ -35,29 +35,12 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public void loggedInEvent(@Observes LoggedInEvent event) {
-		
-		//
-		//
-		//
-		
 		String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), event.getToken().getAccessToken());
-		
-		//
-		//
-		//
 		
 		IdentityDTO resource = findIdentityBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		//
-		//
-		//
-		
 		update( subject, resource, event.getEventSource() );
-		
-		//
-		//
-		//
 		
 		LOGGER.info("Logged In: " + resource.getHref());
 	}
@@ -71,30 +54,13 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO create(String subject, IdentityDTO resource, URI eventSource) {
-		
-		//
-		//
-		//
-		
 		resource.setHref(subject);
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		
-		//
-		//
-		//
-		
 		create(subject, resource, eventSource);
 		
-		//
-		//
-		//
-
-		//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
-		
-		//
-		//
-		//
+		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
 		
 		return resource;
 	}
@@ -108,12 +74,8 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO updateIdentity(String subject, IdentityDTO resource, URI eventSource) {
-		
-		//
-		//
-		//
-		
 		IdentityDTO original = findIdentity( resource.getId(), subject );
+		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		resource.setHref(original.getHref());
@@ -123,16 +85,8 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
 		update(subject, resource, eventSource);
-		
-		//
-		//
-		//
 
-		//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
-
-		//
-		//
-		//
+		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
 		
 		return resource;
 	}
@@ -144,27 +98,12 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO findIdentity(String id, String subject) {
+		IdentityDTO resource = hget( id, subject );
 		
-		//
-		//
-		//
-
-		//IdentityDTO resource = hget( id, subject );
-		
-		//
-		//
-		//
-		
-		//if ( resource == null ) {
-		
-		IdentityDTO resource = find(subject, id);
-
-			//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
-		//}
-		
-		//
-		//
-		//
+		if ( resource == null ) {
+			resource = find(subject, id);
+			hset( id, subject, resource );
+		}
 		
 		return resource;
 	}
@@ -176,11 +115,6 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO findIdentityBySubject(String subject) {
-		
-		//
-		//
-		//
-
 		//IdentityDTO resource = hget( id, subject );
 		
 		//

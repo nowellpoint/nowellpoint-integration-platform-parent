@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target({ TYPE, METHOD, PARAMETER, FIELD })
 @Retention(RUNTIME)
-public @interface Handler {
+public @interface MessageHandler {
 	String queueName();
 	String collectionName();
 	Class<?> messageListener();

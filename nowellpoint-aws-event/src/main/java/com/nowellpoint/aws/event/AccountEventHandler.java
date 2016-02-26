@@ -1,6 +1,8 @@
 package com.nowellpoint.aws.event;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -218,6 +220,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 		//
 		//
 		
+		event.setProcessedDate(Date.from(Instant.now()));
+		event.setExecutionTime(System.currentTimeMillis() - event.getStartTime());
 		event.setEventStatus(EventStatus.COMPLETE.toString());
 		event.setTargetId(href);
 	}

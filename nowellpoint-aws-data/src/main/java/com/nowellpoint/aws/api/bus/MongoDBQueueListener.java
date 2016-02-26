@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.api.bus;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jms.JMSException;
@@ -22,21 +21,12 @@ public class MongoDBQueueListener implements ServletContextListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(MongoDBQueueListener.class);
 	
-	private static final Map<String,String> queueMap = new HashMap<String,String>();
+	private static SQSConnection connection;
 	
-	private SQSConnection connection;
-	
-	static {
-		queueMap.put("MONGODB_APPLICATION_COLLECTION_QUEUE", ApplicationMessageListener.class.getName());
-		queueMap.put("MONGODB_PROJECT_COLLECTION_QUEUE", ProjectMessageListener.class.getName());
-		queueMap.put("MONGODB_IDENTITY_COLLECTION_QUEUE", IdentityMessageListener.class.getName());
-	}
-	
-	@Override
-	public void contextInitialized(ServletContextEvent event) {
+	public static void registerQueues(Map<String,Class<?>> queueMap) {
 		
 		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();	
-			 
+		 
 		try {
 			connection = connectionFactory.createConnection();
 			
@@ -48,16 +38,22 @@ public class MongoDBQueueListener implements ServletContextListener {
 				
 				MessageConsumer consumer = session.createConsumer(queue);
 				
-				MessageListener listner = (MessageListener) Class.forName(queueMap.get(name)).newInstance();
+				MessageListener listner = (MessageListener) queueMap.get(name).newInstance();
 				 
 				consumer.setMessageListener(listner);
 			}
-			 
-			connection.start();
-			 
-			Thread.sleep(1000);
 			
-		} catch (JMSException | InterruptedException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+		} catch (JMSException | InstantiationException | IllegalAccessException e) {
+			LOGGER.error(e);
+		}
+	}
+	
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		try {
+			connection.start();
+			Thread.sleep(1000);
+		} catch (JMSException | InterruptedException e) {
 			LOGGER.error(e);
 		}
 	}

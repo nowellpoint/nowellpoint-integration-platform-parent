@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.event;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -111,6 +113,8 @@ public class LeadEventHandler implements AbstractEventHandler {
 		// return the lead id
 		//
 		
+		event.setProcessedDate(Date.from(Instant.now()));
+		event.setExecutionTime(System.currentTimeMillis() - event.getStartTime());
 		event.setEventStatus(EventStatus.COMPLETE.toString());
 		event.setTargetId(createLeadResponse.getId());		
 	}

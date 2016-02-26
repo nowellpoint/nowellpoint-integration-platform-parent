@@ -14,7 +14,7 @@ public class ProjectDTO extends AbstractDTO {
 	
 	private String stage;
 	
-	private String owner;
+	private IdentityDTO owner;
 	
 	public ProjectDTO() {
 	}
@@ -47,11 +47,11 @@ public class ProjectDTO extends AbstractDTO {
 		this.stage = stage;
 	}
 
-	public String getOwner() {
+	public IdentityDTO getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(IdentityDTO owner) {
 		this.owner = owner;
 	}
 }

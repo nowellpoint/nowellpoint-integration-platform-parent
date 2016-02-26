@@ -11,7 +11,7 @@ import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import com.nowellpoint.aws.data.annotation.Handler;
+import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
 
@@ -39,7 +39,7 @@ public class DocumentEventHandler implements AbstractEventHandler {
 		//
 		
 		Class<?> type = Class.forName(event.getType());
-		if (! type.isAnnotationPresent(Handler.class)) {
+		if (! type.isAnnotationPresent(MessageHandler.class)) {
 			throw new Exception( String.format( "Class %s is missing Handler annotation", type.getName() ) );
 		}
 		
@@ -47,7 +47,7 @@ public class DocumentEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		Handler handler = type.getAnnotation(Handler.class);
+		MessageHandler handler = type.getAnnotation(MessageHandler.class);
 		
 		//
 		//

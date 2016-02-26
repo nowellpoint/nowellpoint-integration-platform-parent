@@ -63,7 +63,7 @@ public class ProjectResource {
 	public Response getProject(@PathParam("id") String id) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		ProjectDTO resource = projectService.getProject( subject, id );
+		ProjectDTO resource = projectService.findProject( subject, id );
 		
 		return Response.ok(resource)
 				.build();

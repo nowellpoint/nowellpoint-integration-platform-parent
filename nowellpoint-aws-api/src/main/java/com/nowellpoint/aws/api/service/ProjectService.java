@@ -72,7 +72,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 
 	public ProjectDTO updateProject(String subject, ProjectDTO resource, URI eventSource) {
-		ProjectDTO original = getProject( resource.getId(), subject );
+		ProjectDTO original = findProject( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
@@ -171,7 +171,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 * @return
 	 */
 	
-	public ProjectDTO getProject(String subject, String id) {
+	public ProjectDTO findProject(String subject, String id) {
 		ProjectDTO resource = hget( id, subject );
 		
 		if ( resource == null ) {		
