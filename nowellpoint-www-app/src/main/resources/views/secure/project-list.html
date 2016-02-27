@@ -29,7 +29,7 @@
                         <th>${name}</th>
                         <th>${description}</th>
                         <th>${stage}</th>
-                        <th>${createdBy}</th>
+                        <th>${owner}</th>
                         <th>${action}</th>
                     </thead>
                     <tbody>
@@ -38,7 +38,8 @@
                                 <td><a href="/app/projects/${project.id}">${project.name}</a></td>
                                 <td>${project.description}</td>
                                 <td>${project.stage}</td>
-                                <td>${project.createdById} , ${project.createdDate?datetime}</td>
+                                <td>${project.owner.name}</td>
+                                <!--<td>${project.createdById} , ${project.createdDate?datetime}</td> -->
                                 <td><a href="#projectDialog" class="project-dialog" title="${edit}" data-toggle="modal" data-title="${editProject}"><span class="icon icon-edit"></span></a>&nbsp;
                                     <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${project.id}" data-message="${project.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
                             </tr>

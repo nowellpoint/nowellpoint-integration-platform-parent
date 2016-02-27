@@ -31,7 +31,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	
 	/**
 	 * 
-	 * @param subjectId
+	 * @param subject
 	 * @return the list of Projects that is associated to the subject
 	 */
 	
@@ -57,7 +57,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	public ProjectDTO createProject(String subject, ProjectDTO resource, URI eventSource) {
 		create(subject, resource, eventSource);
 		
-		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
+		hset( subject, ProjectDTO.class.getName().concat( resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
 		
 		return resource;
@@ -72,7 +72,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 
 	public ProjectDTO updateProject(String subject, ProjectDTO resource, URI eventSource) {
-		ProjectDTO original = findProject( resource.getId(), subject );
+		ProjectDTO original = findProject( subject, resource.getId() );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		

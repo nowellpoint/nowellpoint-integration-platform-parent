@@ -16,7 +16,7 @@ public class Project extends BaseEntity {
 	
 	private String stage;
 	
-	private String owner;
+	private Identity owner;
 	
 	private List<Application> salesforceOrganizations;
 	
@@ -48,11 +48,11 @@ public class Project extends BaseEntity {
 		this.stage = stage;
 	}
 
-	public String getOwner() {
+	public Identity getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(Identity owner) {
 		this.owner = owner;
 	}
 

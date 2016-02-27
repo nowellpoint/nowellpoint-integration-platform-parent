@@ -15,12 +15,12 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.Identity;
 import com.nowellpoint.www.app.model.Project;
 
 import freemarker.log.Logger;
@@ -37,29 +37,12 @@ public class ProjectController {
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	
 	public ProjectController(Configuration cfg) {
-		
-		//
-		// GET /app/projects
-		//
-		
+				
 		get("/app/projects", (request, response) -> getProjects(request, response), new FreeMarkerEngine(cfg));
 
-		//
-		// GET /app/projects/:id
-		//
-		
 		get("/app/projects/:id", (request, response) -> getProject(request, response), new FreeMarkerEngine(cfg));
 		
-
-		//
-		// POST "/app/projects"
-		//
-		
-		post("/app/projects", (request, response) -> postProjects(request, response), new FreeMarkerEngine(cfg));
-		
-		//
-		// DELETE /app/projects/:id
-		//
+		post("/app/projects", (request, response) -> saveProject(request, response), new FreeMarkerEngine(cfg));
 		
 		delete("/app/projects/:id", (request, response) -> deleteProject(request, response));
 	}
@@ -92,8 +75,12 @@ public class ProjectController {
 		
 		Account account = request.attribute("account");
 		
+		Identity owner = new Identity();
+		owner.setName(account.getFullName());
+		owner.setHref(account.getHref());
+		
 		Project project = new Project();
-		project.setOwner(account.getHref());
+		project.setOwner(owner);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
@@ -148,27 +135,32 @@ public class ProjectController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView postProjects(Request request, Response response) throws IOException {
+	private static ModelAndView saveProject(Request request, Response response) throws IOException {
 		
 		Token token = request.attribute("token");
+		Account account = request.attribute("account");
 		
-		ObjectNode node = objectMapper.createObjectNode();
-    	request.queryParams().stream().forEach(param -> {
-    		node.put(param, request.queryParams(param));
-    	});
-
+		Identity owner = new Identity();
+		owner.setId(request.queryParams("ownerId").trim().isEmpty() ? null : request.queryParams("ownerId"));
+		owner.setHref(account.getHref());
+		
+		Project project = new Project();
+		project.setDescription(request.queryParams("description"));
+		project.setId(request.queryParams("id").trim().isEmpty() ? null : request.queryParams("id"));
+		project.setName(request.queryParams("name"));
+		project.setStage(request.queryParams("stage"));
+		project.setOwner(owner);
+		
 		HttpResponse httpResponse = null;
 		
 		if (request.queryParams("id").trim().isEmpty()) {
-			
-			node.putNull("id");
 			
 			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
 					.path("project")
-					.body(node)
+					.body(project)
 					.execute();
 			
 		} else {
@@ -178,7 +170,7 @@ public class ProjectController {
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
 					.path("project")
-					.body(node)
+					.body(project)
 					.execute();
 		}
 		
@@ -186,12 +178,12 @@ public class ProjectController {
 			throw new BadRequestException(httpResponse.getEntity());
 		}
 		
-		Project project = httpResponse.getEntity(Project.class);
+		project = httpResponse.getEntity(Project.class);
 		
 		logger.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo() + " : " + httpResponse.getHeaders().get("Location"));
 		
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		model.put("account", account);
 		model.put("project", project);
 		
 		return new ModelAndView(model, "secure/project.html");

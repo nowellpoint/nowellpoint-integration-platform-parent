@@ -24,7 +24,7 @@ public class Project extends AbstractDocument {
 	
 	private String stage;
 	
-	private String owner;
+	private User owner;
 	
 	private List<Application> salesforceOrganizations;
 
@@ -60,11 +60,11 @@ public class Project extends AbstractDocument {
 		this.stage = stage;
 	}
 
-	public String getOwner() {
+	public User getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(User owner) {
 		this.owner = owner;
 	}
 	

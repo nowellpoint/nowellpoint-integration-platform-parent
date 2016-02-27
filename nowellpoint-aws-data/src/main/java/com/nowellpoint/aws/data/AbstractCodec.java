@@ -52,8 +52,8 @@ public class AbstractCodec<T extends AbstractDocument> implements CollectibleCod
 
 	@Override
 	public T decode(BsonReader reader, DecoderContext context) {
-		Document document = new DocumentCodec().decode(reader, context);
-		
+		Document document = documentCodec.decode(reader, context);
+
 		T object = null;
 		try {
 			object = objectMapper.readValue(document.toJson(), type);

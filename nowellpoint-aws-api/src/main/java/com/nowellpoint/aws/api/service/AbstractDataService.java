@@ -21,14 +21,18 @@ import org.modelmapper.convention.MatchingStrategies;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.Block;
+import com.mongodb.DBRef;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
+import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.mongodb.User;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public abstract class AbstractDataService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {
@@ -49,10 +53,10 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	 * @param documentType
 	 */
 	
-	public AbstractDataService(Class<R> resourceType, Class<D> documentType) {
-		
+	public AbstractDataService(Class<R> resourceType, Class<D> documentType) {		
 		this.resourceType = resourceType;
 		this.documentType = documentType;
+		
 		this.modelMapper = new ModelMapper();
 		this.dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
@@ -69,14 +73,53 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
 		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
+			
+			@Override
 			protected ObjectId convert(String source) {
 				return source == null ? null : new ObjectId(source);
 			}
 		});
-		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {
+		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {		
+			
+			@Override
 			protected String convert(ObjectId source) {
 				return source == null ? null : source.toString();
 			}
+		});
+		modelMapper.addConverter(new AbstractConverter<User,IdentityDTO>() {
+
+			@Override
+			protected IdentityDTO convert(User source) {
+				IdentityDTO resource = new IdentityDTO();
+				if (source != null && source.getIdentity() != null) {
+					
+					Identity identity = MongoDBDatastore.getDatabase()
+							.getCollection( source.getIdentity().getCollectionName() )
+							.withDocumentClass( Identity.class )
+							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
+							.first();
+					
+					resource = modelMapper.map(identity, IdentityDTO.class );
+				}
+				
+				return resource; 
+			}			
+		});
+		modelMapper.addConverter(new AbstractConverter<IdentityDTO,User>() {
+
+			@Override
+			protected User convert(IdentityDTO source) {
+				User user = new User();
+				if (source != null) {					
+					user.setHref(source.getHref());
+					if (source.getId() != null) {
+						DBRef identity = new DBRef( "identities", new ObjectId(source.getId()));
+						user.setIdentity(identity);
+					}
+				}
+				
+				return user; 
+			}			
 		});
 	}
 	
@@ -116,7 +159,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 		FindIterable<D> documents = MongoDBDatastore.getDatabase()
 				.getCollection( collectionName )
 				.withDocumentClass( documentType )
-				.find( eq ( "owner", subject ) );
+				.find( eq ( "owner.href", subject ) );
 			
 		Set<R> resources = new HashSet<R>();
 		

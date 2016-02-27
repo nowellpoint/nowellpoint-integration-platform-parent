@@ -86,8 +86,12 @@ public class MongoDBDatastore implements ServletContextListener {
 		}
 	}
 	
+	public static <T extends AbstractDocument> String getCollectionName(Class<T> type) {
+		return type.getAnnotation(MessageHandler.class).collectionName();
+	}
+	
 	@SuppressWarnings("unchecked")
-	private static <T> MongoCollection<T> getCollection(AbstractDocument document) {
-		return (MongoCollection<T>) mongoDatabase.getCollection(document.getClass().getAnnotation(MessageHandler.class).collectionName(), document.getClass());
+	public static <T> MongoCollection<T> getCollection(AbstractDocument document) {
+		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(document.getClass()), document.getClass());
 	}
 }
