@@ -117,7 +117,7 @@ public class TransactionEvent implements Callable<TransactionEventResponse> {
 			logger.log("Query response status: " + response.getStatusCode() + " Target: " + response.getURL());
 			
 			if (response.getStatusCode() != 200) {
-				throw new IOException("Query failed: " + response.getEntity());
+				throw new IOException("Query failed: " + response.getAsString());
 			} 
 			
 			/**

@@ -29,7 +29,7 @@ public class TestRestApi {
 			System.out.println(httpResponse.getStatusCode());
 			
 			if (httpResponse.getStatusCode() == 400) {
-				System.out.println(httpResponse.getEntity());
+				System.out.println(httpResponse.getAsString());
 			} else {
 			
 			Token token = httpResponse.getEntity(Token.class);
@@ -47,7 +47,7 @@ public class TestRestApi {
 	    	int statusCode = httpResponse.getStatusCode();
 	    	
 	    	System.out.println(statusCode);
-	    	System.out.println(httpResponse.getEntity());
+	    	System.out.println(httpResponse.getAsString());
 			}
 			
 			

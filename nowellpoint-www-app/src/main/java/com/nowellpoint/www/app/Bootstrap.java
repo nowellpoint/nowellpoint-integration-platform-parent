@@ -82,19 +82,13 @@ public class Bootstrap implements SparkApplication {
         cfg.setClassForTemplateLoading(this.getClass(), "/views");
 		cfg.setDefaultEncoding("UTF-8");
 		cfg.setLocale(Locale.US);
-		
-		//
-		//
-		//
-		
-		ObjectMapper objectMapper = new ObjectMapper();
         
         //
         // load countries list
         //
 		
-		try {
-			List<IsoCountry> isoCountries = objectMapper.readValue(loadCountries(), objectMapper.getTypeFactory().constructCollectionType(List.class, IsoCountry.class));
+		try {			
+			List<IsoCountry> isoCountries = loadCountries();
 			
 			List<IsoCountry> filteredList = isoCountries.stream()
 					.filter(country -> "US".equals(country.getLanguage()))
@@ -103,7 +97,7 @@ public class Bootstrap implements SparkApplication {
 			
 			cfg.setSharedVariable("countryList", filteredList);
 			
-		} catch (IOException | TemplateModelException e) {
+		} catch (TemplateModelException e) {
 			e.printStackTrace();
 			halt();
 		}
@@ -206,16 +200,16 @@ public class Bootstrap implements SparkApplication {
 	 * @return
 	 */
 	
-	private static String loadCountries() {
+	private static List<IsoCountry> loadCountries() {
 		try {
 			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.path("iso-country")
 					.execute();
 			
-			String json = httpResponse.getEntity();
+			//String json = httpResponse.getAsString();
 			
-			return json;
+			return httpResponse.getEntityList(IsoCountry.class);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -297,10 +291,10 @@ public class Bootstrap implements SparkApplication {
 	    	LOGGER.info("Status Code: " + statusCode + " Method: GET : " + httpResponse.getURL());
 	    	
 	    	if (statusCode != 200) {
-	    		throw new BadRequestException(httpResponse.getEntity());
+	    		throw new BadRequestException(httpResponse.getAsString());
 	    	}
 	    	
-	    	return httpResponse.getEntity();
+	    	return httpResponse.getAsString();
 	    	 	    	
 		} catch (IOException e) {
 			throw new InternalServerErrorException(e);

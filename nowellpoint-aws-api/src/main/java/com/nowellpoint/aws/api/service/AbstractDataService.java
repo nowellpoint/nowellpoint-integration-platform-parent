@@ -79,6 +79,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 				return source == null ? null : new ObjectId(source);
 			}
 		});
+		
 		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {		
 			
 			@Override
@@ -86,6 +87,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 				return source == null ? null : source.toString();
 			}
 		});
+		
 		modelMapper.addConverter(new AbstractConverter<User,IdentityDTO>() {
 
 			@Override
@@ -105,6 +107,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 				return resource; 
 			}			
 		});
+		
 		modelMapper.addConverter(new AbstractConverter<IdentityDTO,User>() {
 
 			@Override
@@ -113,7 +116,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 				if (source != null) {					
 					user.setHref(source.getHref());
 					if (source.getId() != null) {
-						DBRef identity = new DBRef( "identities", new ObjectId(source.getId()));
+						DBRef identity = new DBRef( "identities", new ObjectId( source.getId() ) );
 						user.setIdentity(identity);
 					}
 				}

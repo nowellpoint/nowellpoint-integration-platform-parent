@@ -57,7 +57,7 @@ public class UserProfileController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 			
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			throw new NotFoundException(httpResponse.getEntity());
+			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
 		Identity identity = httpResponse.getEntity(Identity.class);
@@ -101,7 +101,7 @@ public class UserProfileController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo() + " : " + httpResponse.getHeaders().get("Location"));
 		
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
-			throw new BadRequestException(httpResponse.getEntity());
+			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
 		Identity identity = httpResponse.getEntity(Identity.class);

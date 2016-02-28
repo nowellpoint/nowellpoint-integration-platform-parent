@@ -59,10 +59,10 @@ public class SalesforceController {
         	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
         	
         	if (statusCode != 200) {
-        		throw new BadRequestException(httpResponse.getEntity());
+        		throw new BadRequestException(httpResponse.getAsString());
         	}
         	
-        	response.cookie("com.nowellpoint.auth.salesforce.token", Base64.getEncoder().encodeToString(httpResponse.getEntity().getBytes()), 300, true); 
+        	response.cookie("com.nowellpoint.auth.salesforce.token", Base64.getEncoder().encodeToString(httpResponse.getAsString().getBytes()), 300, true); 
         	
         	response.redirect("/app/applications/configure/salesforce");
         	

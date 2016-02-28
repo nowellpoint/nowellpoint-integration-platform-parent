@@ -63,7 +63,7 @@ public class ApplicationController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			throw new NotFoundException(httpResponse.getEntity());
+			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
 		Identity identity = httpResponse.getEntity(Identity.class);

@@ -71,7 +71,7 @@ public class CreateLead implements RequestHandler<CreateLeadRequest, CreateLeadR
 		try {
 			
 			if (response.getStatusCode() == 200 || response.getStatusCode() == 201) {
-				response.setId(httpResponse.getEntity());
+				response.setId(httpResponse.getAsString());
 				logger.log("lead id: " + response.getId());
 			} else {
 				ErrorResponse[] errors = httpResponse.getEntity(ErrorResponse[].class);

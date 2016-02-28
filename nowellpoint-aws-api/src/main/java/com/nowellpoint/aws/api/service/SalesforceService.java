@@ -48,7 +48,7 @@ public class SalesforceService {
 			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
 	    	
 	    	if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getEntity(), httpResponse.getStatusCode());
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
 			}
 	    	
 	    	identity = httpResponse.getEntity(Identity.class);
@@ -68,7 +68,7 @@ public class SalesforceService {
 			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
 			
 			if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getEntity(), httpResponse.getStatusCode());
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
 			}
 	     	
 	     	organization = httpResponse.getEntity(Organization.class);

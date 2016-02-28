@@ -114,7 +114,7 @@ public abstract class HttpRequest {
 
 	public JsonNode asJson() throws IOException {
 		HttpResponse response = new HttpResponseImpl();
-		return objectMapper.readValue(response.getEntity(), JsonNode.class);
+		return objectMapper.readValue(response.getAsString(), JsonNode.class);
 	}
 	
 	public HttpResponse execute() throws IOException {
@@ -231,12 +231,16 @@ public abstract class HttpRequest {
 			return connection.getURL();
 		}
 	
-		public String getEntity() throws IOException {
+		public String getAsString() throws IOException {
 			return parseResponse(entity);
 		}
 		
 		public <T> T getEntity(Class<T> type) throws IOException {
 			return objectMapper.readValue(entity, type);
+		}
+		
+		public <T> List<T> getEntityList(Class<T> type) throws IOException {
+			return objectMapper.readValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
 		}
 		
 		public Map<String, List<String>> getHeaders() {

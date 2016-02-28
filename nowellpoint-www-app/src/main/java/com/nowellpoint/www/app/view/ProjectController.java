@@ -14,7 +14,6 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -33,8 +32,6 @@ import spark.template.freemarker.FreeMarkerEngine;
 public class ProjectController {
 	
 	private static final Logger logger = Logger.getLogger(ProjectController.class.getName());
-	
-	private static ObjectMapper objectMapper = new ObjectMapper();
 	
 	public ProjectController(Configuration cfg) {
 				
@@ -67,9 +64,7 @@ public class ProjectController {
 		
 		logger.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		String json = httpResponse.getEntity();
-		
-		List<Project> projects = objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, Project.class));
+		List<Project> projects = httpResponse.getEntityList(Project.class);
 		
 		projects = projects.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate())).collect(Collectors.toList());
 		
@@ -115,7 +110,7 @@ public class ProjectController {
 		logger.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			throw new NotFoundException(httpResponse.getEntity());
+			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
 		Project project = httpResponse.getEntity(Project.class);
@@ -175,7 +170,7 @@ public class ProjectController {
 		}
 		
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
-			throw new BadRequestException(httpResponse.getEntity());
+			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
 		project = httpResponse.getEntity(Project.class);

@@ -133,7 +133,7 @@ public class AuthenticationController {
 	    	LOGGER.info("Status Code: " + statusCode + " Method: DELETE : " + httpResponse.getURL());
 	    	
 	    	if (statusCode != 204) {
-	    		throw new BadRequestException(httpResponse.getEntity());
+	    		throw new BadRequestException(httpResponse.getAsString());
 	    	}
         	
         	response.removeCookie("com.nowellpoint.oauth.token"); 
