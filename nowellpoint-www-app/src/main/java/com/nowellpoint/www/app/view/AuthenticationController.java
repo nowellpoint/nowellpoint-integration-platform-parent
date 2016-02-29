@@ -35,21 +35,9 @@ public class AuthenticationController {
 	
 	public AuthenticationController(Configuration cfg) {
 		
-        //
-        // GET /login
-        //
-        
 		get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(cfg));
         
-        //
-        // POST /login
-        //
-        
         post("/login", (request, response) -> postLogin(request, response));
-        
-        //
-        // GET /logout
-        // 
         
         get("/logout", (request, response) -> getLogout(request, response));
 	}

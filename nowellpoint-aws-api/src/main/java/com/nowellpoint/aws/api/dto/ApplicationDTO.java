@@ -14,6 +14,12 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private String type;
 	
+	private String key;
+	
+	private String instanceName;
+	
+	private String url;
+	
 	public ApplicationDTO() {
 		
 	}
@@ -44,5 +50,29 @@ public class ApplicationDTO extends AbstractDTO {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getInstanceName() {
+		return instanceName;
+	}
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }

@@ -1,8 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-import java.io.Serializable;
-
-public class Application implements Serializable {
+public class Application extends BaseEntity {
 	
 	/**
 	 * 
@@ -10,25 +8,20 @@ public class Application implements Serializable {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
-	private String id;
-	
 	private Boolean isSandbox;
 	
 	private String name;
 	
 	private String type;
 	
+	private String key;
+	
+	private String instanceName;
+	
+	private String url;
 	
 	public Application() {
 		
-	}
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public Boolean getIsSandbox() {
@@ -53,5 +46,29 @@ public class Application implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getInstanceName() {
+		return instanceName;
+	}
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }

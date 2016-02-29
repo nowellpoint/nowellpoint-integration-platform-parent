@@ -55,6 +55,8 @@ import spark.template.freemarker.FreeMarkerEngine;
 public class Bootstrap implements SparkApplication {
 	
 	private static final Logger LOGGER = Logger.getLogger(Bootstrap.class.getName());
+	
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
     	new Bootstrap().init();
@@ -207,8 +209,6 @@ public class Bootstrap implements SparkApplication {
 					.path("iso-country")
 					.execute();
 			
-			//String json = httpResponse.getAsString();
-			
 			return httpResponse.getEntityList(IsoCountry.class);
 			
 		} catch (IOException e) {
@@ -254,9 +254,7 @@ public class Bootstrap implements SparkApplication {
 	
 	private static void verify(Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
 		
-		LOGGER.info("authenticated request received: " + request.requestMethod() + " - "+ request.uri());
-		
-		ObjectMapper objectMapper = new ObjectMapper();
+		LOGGER.info("authenticated request received: " + request.requestMethod() + " - "+ request.uri());	
 		
     	Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	if (cookie.isPresent()) {

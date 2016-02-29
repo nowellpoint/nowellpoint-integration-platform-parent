@@ -30,44 +30,19 @@ public class AccountEventHandler implements AbstractEventHandler {
 	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Map<String, String> properties, Context context) throws Exception {
-		
-		//
-		//
-		//
-		
+	public void process(Event event, Map<String, String> properties, Context context) throws Exception {		
 		logger = context.getLogger();
-		
-		//
-		//
-		//
 		
 		logger.log(this.getClass().getName() + " starting AccountEventHandler");
 		
-		//
-		// 
-		//
-		
 		Account account = objectMapper.readValue(event.getPayload(), Account.class);
-		
-		//
-		//
-		//
 		
 		String directoryId = properties.get(Properties.STORMPATH_DIRECTORY_ID);
 		String apiEndpoint = properties.get(Properties.STORMPATH_API_ENDPOINT);
 		String apiKeyId = properties.get(Properties.STORMPATH_API_KEY_ID);
 		String apiKeySecret = properties.get(Properties.STORMPATH_API_KEY_SECRET);
 		
-		//
-		// setup IdentityProviderClient
-		//
-		
 		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
-		
-		//
-		//
-		//
 		
 		String href = null;
 		
@@ -123,15 +98,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 					throw new Exception(createAccountResponse.getErrorMessage());
 				}
 				
-				//
-				//
-				//
-				
 				href = createAccountResponse.getAccount().getHref();
-				
-				//
-				//
-				//
 				
 				createUserEvent(event, account.getUsername(), href);
 				
@@ -163,10 +130,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 				if (updateAccountResponse.getStatusCode() != 200) {
 					throw new IOException(updateAccountResponse.getErrorMessage());
 				}
-				
-				//
-				//
-				//
 				
 				href = updateAccountResponse.getAccount().getHref();
 				
@@ -200,25 +163,13 @@ public class AccountEventHandler implements AbstractEventHandler {
 				throw new IOException(updateAccountResponse.getErrorMessage());
 			}
 			
-			//
-			//
-			//
-			
 			href = updateAccountResponse.getAccount().getHref();
 			
 		} else {
 			throw new Exception( String.format("Invalid action for %s object: %s", event.getType(), event.getEventAction() ) );
 		}
 
-		//
-		//
-		//
-		
 		logger.log(this.getClass().getName() + " " + href);
-		
-		//
-		//
-		//
 		
 		event.setProcessedDate(Date.from(Instant.now()));
 		event.setExecutionTime(System.currentTimeMillis() - event.getStartTime());
@@ -226,25 +177,12 @@ public class AccountEventHandler implements AbstractEventHandler {
 		event.setTargetId(href);
 	}
 	
-	private void createUserEvent(Event parentEvent, String username, String href) throws JsonProcessingException {
-		
-		//
-		//
-		//
-		
+	private void createUserEvent(Event parentEvent, String username, String href) throws JsonProcessingException {	
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
-		
-		//
-		//
-		//
 		
 		Identity identity = new Identity();
 		identity.setUsername(username);
 		identity.setHref(href);
-		
-		//
-		//
-		//
 		
 		Event event = new EventBuilder()
 				.withSubject(parentEvent.getSubject())
@@ -255,10 +193,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 				.withType(Identity.class)
 				.withParentEventId(parentEvent.getId())
 				.build();
-		
-		//
-		//
-		//
 		
 		mapper.save(event);
 	}

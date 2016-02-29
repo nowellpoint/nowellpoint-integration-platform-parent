@@ -27,12 +27,7 @@ public class SalesforceService {
 		this.modelMapper = new ModelMapper();
 	}
 
-	public OrganizationDTO getOrganizationByTokenId(String bearerToken, String id) {
-		
-		//
-		//
-		//
-		
+	public OrganizationDTO getOrganizationByTokenId(String bearerToken, String id) {		
 		Identity identity = null;
 		Organization organization = null;
 		
@@ -78,19 +73,11 @@ public class SalesforceService {
 			throw new WebApplicationException(e, Status.BAD_REQUEST);
 		}
 		
-		//
-		//
-		//
+		OrganizationContact contact = modelMapper.map( identity, OrganizationContact.class );
 		
 		OrganizationDTO resource = modelMapper.map( organization, OrganizationDTO.class );
 		resource.getAttributes().setId(organization.getId());
-		
-		OrganizationContact contact = modelMapper.map( identity, OrganizationContact.class );
-		resource.addOrganizationContact(contact);
-		
-		//
-		//
-		//
+		resource.setOrganizationContact(contact);
 		
 		return resource;
 	}	

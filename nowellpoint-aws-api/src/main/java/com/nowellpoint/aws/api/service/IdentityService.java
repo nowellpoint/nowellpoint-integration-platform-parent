@@ -61,6 +61,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		create(subject, resource, eventSource);
 		
 		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
+		hset( subject, IdentityDTO.class.getName(), resource );
 		
 		return resource;
 	}
@@ -87,6 +88,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		update(subject, resource, eventSource);
 
 		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
+		hset( subject, IdentityDTO.class.getName(), resource );
 		
 		return resource;
 	}
@@ -115,15 +117,11 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO findIdentityBySubject(String subject) {
-		//IdentityDTO resource = hget( id, subject );
-		
-		//
-		//
-		//
-		
-		//if ( resource == null ) {
-			
-			Identity identity = MongoDBDatastore.getDatabase().getCollection( COLLECTION_NAME )
+		IdentityDTO resource = hget( subject, IdentityDTO.class.getName() );
+
+		if ( resource == null ) {			
+			Identity identity = MongoDBDatastore.getDatabase()
+					.getCollection( COLLECTION_NAME )
 					.withDocumentClass( Identity.class )
 					.find( eq ( "href", subject ) )
 					.first();
@@ -132,16 +130,11 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 				throw new WebApplicationException( String.format( "Identity for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
 			}
 			
-			IdentityDTO resource = modelMapper.map( identity, IdentityDTO.class );
+			resource = modelMapper.map( identity, IdentityDTO.class );
 
-			//hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
-		//}
+			hset( subject, IdentityDTO.class.getName(), resource );
+		}
 		
-		//
-		//
-		//
-		
-		return resource;
-		
+		return resource;		
 	}
 }

@@ -39,31 +39,14 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createIdentity(IdentityDTO resource) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		//
-		//
-		
 		identityService.create( subject, resource, uriInfo.getBaseUri() );
-		
-		//
-		//
-		//
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)
 				.path("/{id}")
 				.build(resource.getId());
-		
-		//
-		//
-		//
 		
 		return Response.created(uri).build();
 	}
@@ -72,22 +55,9 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateIdentity(IdentityDTO resource) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		//
-		//
-		
 		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
-		
-		//
-		//
-		//
 		
 		return Response.ok(resource).build();
 	}
@@ -95,22 +65,9 @@ public class IdentityResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getIdentity() {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		//
-		//
-		
 		IdentityDTO resource = identityService.findIdentityBySubject( subject );
-		
-		//
-		//
-		//
 		
 		return Response.ok(resource)
 				.build();
@@ -121,22 +78,9 @@ public class IdentityResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIdentity(@PathParam("id") String id) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		//
-		//
-		
 		IdentityDTO resource = identityService.findIdentity( id, subject );
-		
-		//
-		//
-		//
 		
 		return Response.ok(resource)
 				.build();
@@ -145,22 +89,9 @@ public class IdentityResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIdentityBySubject(@QueryParam("subject") String subject) {
-		
-		//
-		//
-		//
-		
 		HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		//
-		//
-		
 		IdentityDTO resource = identityService.findIdentityBySubject( subject );
-		
-		//
-		//
-		//
 		
 		return Response.ok(resource)
 				.build();
@@ -171,34 +102,13 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addApplication(@PathParam("id") String id, Application application) {
-		
-		//
-		//
-		//
-		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		//
-		//
-		//
 		
 		IdentityDTO resource = identityService.findIdentity( id, subject );
 		
-		//
-		//
-		//
-		
 		resource.addApplication( application );
 		
-		//
-		//
-		//
-		
 		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri() );
-		
-		//
-		//
-		//
 		
 		return Response.ok(resource)
 				.build();

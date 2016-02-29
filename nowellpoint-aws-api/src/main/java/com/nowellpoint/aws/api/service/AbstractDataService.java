@@ -116,7 +116,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 				if (source != null) {					
 					user.setHref(source.getHref());
 					if (source.getId() != null) {
-						DBRef identity = new DBRef( "identities", new ObjectId( source.getId() ) );
+						DBRef identity = new DBRef( MongoDBDatastore.getCollectionName( Identity.class ), new ObjectId( source.getId() ) );
 						user.setIdentity(identity);
 					}
 				}

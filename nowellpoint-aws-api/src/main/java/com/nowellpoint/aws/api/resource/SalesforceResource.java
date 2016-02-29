@@ -37,10 +37,6 @@ public class SalesforceResource {
 	@Path("/oauth")
 	public Response oauth() {
 		
-		//
-		// build the oauth url
-		//
-		
 		String url = null;
 		try {
 			url = new StringBuilder().append(System.getProperty(Properties.SALESFORCE_AUTHORIZE_URI))
@@ -68,10 +64,6 @@ public class SalesforceResource {
 					.entity(e.getMessage())
 					.build();
 		}
-		
-		//
-		// return the for location redirect
-		//
 		
 		return Response.accepted()
 				.header("Location", url)

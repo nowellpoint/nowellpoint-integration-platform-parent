@@ -1,8 +1,5 @@
 package com.nowellpoint.aws.api.dto.sforce;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.nowellpoint.aws.api.dto.AbstractDTO;
 
 public class OrganizationDTO extends AbstractDTO {
@@ -39,10 +36,10 @@ public class OrganizationDTO extends AbstractDTO {
 	
 	private Boolean usesStartDateAsFiscalYearName;
 	
-	private List<OrganizationContact> organizationContacts;
+	private OrganizationContact organizationContact;
 	
 	public OrganizationDTO() {
-		organizationContacts = new ArrayList<OrganizationContact>();
+		
 	}
 
 	public Attributes getAttributes() {
@@ -149,15 +146,11 @@ public class OrganizationDTO extends AbstractDTO {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
 	}
 	
-	public List<OrganizationContact> getOrganizationContacts() {
-		return organizationContacts;
+	public OrganizationContact getOrganizationContact() {
+		return organizationContact;
 	}
 	
-	public void setOrganizationContacts(List<OrganizationContact> organizationContacts) {
-		this.organizationContacts = organizationContacts;
-	}
-	
-	public void addOrganizationContact(OrganizationContact organizationContact) {
-		organizationContacts.add(organizationContact);
+	public void setOrganizationContact(OrganizationContact organizationContact) {
+		this.organizationContact = organizationContact;
 	}
 }

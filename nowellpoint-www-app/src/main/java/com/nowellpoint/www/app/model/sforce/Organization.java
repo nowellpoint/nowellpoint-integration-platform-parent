@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.model.sforce;
 
-import java.util.List;
-
 import com.nowellpoint.www.app.model.BaseEntity;
 
 public class Organization extends BaseEntity {
@@ -38,7 +36,7 @@ public class Organization extends BaseEntity {
 	
 	private Boolean usesStartDateAsFiscalYearName;
 	
-	private List<OrganizationContact> organizationContacts;
+	private OrganizationContact organizationContact;
 	
 	public Organization() {
 		
@@ -148,11 +146,11 @@ public class Organization extends BaseEntity {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
 	}
 	
-	public List<OrganizationContact> getOrganizationContacts() {
-		return organizationContacts;
+	public OrganizationContact getOrganizationContact() {
+		return organizationContact;
 	}
 	
-	public void setOrganizationContacts(List<OrganizationContact> organizationContacts) {
-		this.organizationContacts = organizationContacts;
+	public void setOrganizationContact(OrganizationContact organizationContact) {
+		this.organizationContact = organizationContact;
 	}
 }

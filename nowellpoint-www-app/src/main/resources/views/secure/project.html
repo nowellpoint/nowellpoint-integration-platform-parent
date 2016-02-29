@@ -11,7 +11,6 @@
                         <h6 class="dashhead-subtitle">${projectLabel}</h6>
                         <h2 class="dashhead-title">${project.name!}</h2>
                     </div>
-
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
                             <a href="#projectDialog" class="project-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editProject}">${edit}</a>
@@ -29,21 +28,17 @@
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
-                        <label class="form-control-label">${name}</label>
-                        <p class="form-control-static">${project.name}</p>
-                        <hr>
+                        <dl class="dl-horizontal">
+                            <dt>${name}</dt>
+                            <dd>${project.name}</dd>
+                            <dt>${stage}</dt>
+                            <dd>${project.stage}</dd>
+                            <dt>${owner}</dt>
+                            <dd>${project.owner.name}</dd>
+                            <dt>${description}</dt>
+                            <dd>${project.description}</dd>
+                        </dl>    
                         
-                        <label class="form-control-label">${stage}</label>
-                        <p class="form-control-static">${project.stage}</p>
-                        <hr>
-                        
-                        <label class="form-control-label">${owner}</label>
-                        <p class="form-control-static">${(project.owner.name)!}</p>
-                        <hr>
-                        
-                        <label class="form-control-label">${description}</label>
-                        <p class="form-control-static">${project.description}</p>
-                        <hr>
                         <!--
                         <label class="form-control-label">${createdBy}</label>
                         <p class="form-control-static">${project.createdById} , ${project.createdDate?datetime}</p>
@@ -59,6 +54,5 @@
 
         <#include "confirm-dialog.html"/>
         <#include "project-edit.html"/>
-        <#include "footer.html" />
 
     </@t.page>

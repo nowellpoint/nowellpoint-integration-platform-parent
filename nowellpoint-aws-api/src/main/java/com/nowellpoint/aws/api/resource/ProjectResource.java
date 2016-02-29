@@ -19,7 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
+import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.service.ProjectService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
@@ -28,6 +30,9 @@ public class ProjectResource {
 	
 	@Inject
 	private ProjectService projectService;
+	
+	@Inject
+	private IdentityService identityService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -98,6 +103,10 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(ProjectDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
+		
+		resource.setOwner(owner);
 		
 		projectService.createProject(subject, resource, uriInfo.getBaseUri());
 		

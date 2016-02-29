@@ -16,28 +16,21 @@
             <div class="hr-divider m-t m-b-md">
                 <h3 class="hr-divider-content hr-divider-heading" />
             </div>
-
+            
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="bs">
-                            <div class="media">
-                                <div class="media-left">
-                                    <img class="media-object" src="/images/salesforce-logo.png">
-                                </div>
-                                <div class="media-body">
-                                    <h4 class="media-heading"><a href="/app/applications/configure/salesforce">${salesforce}</a></h4> <span class="icon icon-credit" />&nbsp;
-                                    <h3 class="statcard-number">0.00</h3>
-                                </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="thumbnail">
+                            <img src="/images/salesforce-logo.png">
+                            <div class="caption">
+                                <h3>${salesforce}</h3>
+                                <p><a href="/app/applications/configure/salesforce" class="btn btn-primary" role="button">${add}</a>
                             </div>
                         </div>
-
                     </div>
                     <div class="col-md-6"></div>
                 </div>
             </div>
         </div>
-
-        <#include "footer.html" />
 
     </@t.page>
