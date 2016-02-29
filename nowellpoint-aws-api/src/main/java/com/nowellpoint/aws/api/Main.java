@@ -8,6 +8,8 @@ import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 //import org.wildfly.swarm.swagger.SwaggerArchive;
 
+import org.wildfly.swarm.swagger.SwaggerArchive;
+
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class Main {
