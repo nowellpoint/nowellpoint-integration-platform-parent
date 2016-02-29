@@ -26,6 +26,7 @@
             <div class="content table-responsive">
                 <table class="table table-hover">
                     <thead>
+                        <th>${name}</th>
                         <th>${type}</th>
                         <th>${key}</th>
                         <th>${url}</th>
@@ -35,13 +36,12 @@
                     <tbody>
                         <#list applicationList as application>
                             <tr>
+                                <td>${application.name}</td>
                                 <td>${application.type}</td>
                                 <td>${application.key}</td>
                                 <td>${application.url}</td>
                                 <td>${application.instanceName}</td>
                                 <td>${application.isSandbox?string}</td>
-                                <td></td>
-
                             </tr>
                         </#list>
                     </tbody>

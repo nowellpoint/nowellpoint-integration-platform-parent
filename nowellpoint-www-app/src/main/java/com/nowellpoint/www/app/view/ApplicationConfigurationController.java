@@ -94,7 +94,7 @@ public class ApplicationConfigurationController {
 		Application application = new Application();
 		application.setType(request.queryParams("type"));
 		application.setIsSandbox(Boolean.valueOf(request.queryParams("isSandbox")));
-		application.setName(request.queryParams("name"));
+		application.setName(request.queryParams("organizationName"));
 		application.setKey(request.queryParams("organizationId"));
 		application.setUrl(request.queryParams("url"));
 		application.setInstanceName(request.queryParams("instanceName"));
