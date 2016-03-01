@@ -147,7 +147,6 @@ public class TokenResource {
 					.build();
 	}
 	
-	
 	@DELETE
 	@Path("/token")
 	public Response revoke() {

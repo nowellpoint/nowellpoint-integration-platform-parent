@@ -24,31 +24,21 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6">
-
+                    <div class="col-md-3">
                         <div class="hr-divider">
                             <h3 class="hr-divider-content hr-divider-heading">
-                                ${organizationInformation}
+                                ${picture}
                             </h3>
                         </div>
 
                         <br>
 
-                        <dl class="dl-horizontal">
-                            <dt>${name}</dt>
-                            <dd>${organization.name!}</dd>
-                            <dt>${type}</dt>
-                            <dd>${organization.organizationType!}</dd>
-                            <dt>${instanceName}</dt>
-                            <dd>${organization.name!}</dd>
-                            <dt>${url}</dt>
-                            <dd>${(organization.organizationContact.urls.rest)!}</dd>
-                            <dt>${isSandbox}</dt>
-                            <dd>${(organization.isSandbox?string('Yes', 'No'))!}</dd>
-                        </dl>
+                        <img src="${(organization.organizationContact.photos.picture)!}" class="img-circle img-responsive center-block">
 
-                        <br>
+                        <a href="/app/applications/profile?photoUrl=${(organization.organizationContact.photos.picture)!}" class="btn btn-primary center-block" role="button">Use As Profile</a>
+
+                    </div>
+                    <div class="col-md-6">
 
                         <div class="hr-divider">
                             <h3 class="hr-divider-content hr-divider-heading">
@@ -73,6 +63,29 @@
                             <dd>${(organization.organizationContact.addrZip)!}</dd>
                             <dt>${country}</dt>
                             <dd>${(organization.organizationContact.addrCountry)!}</dd>
+                        </dl>
+
+                        <br>
+
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">
+                                ${organizationInformation}
+                            </h3>
+                        </div>
+
+                        <br>
+
+                        <dl class="dl-horizontal">
+                            <dt>${name}</dt>
+                            <dd>${organization.name!}</dd>
+                            <dt>${type}</dt>
+                            <dd>${organization.organizationType!}</dd>
+                            <dt>${instanceName}</dt>
+                            <dd>${organization.name!}</dd>
+                            <dt>${url}</dt>
+                            <dd>${(organization.organizationContact.urls.rest)!}</dd>
+                            <dt>${isSandbox}</dt>
+                            <dd>${(organization.isSandbox?string('Yes', 'No'))!}</dd>
                         </dl>
 
                         <form class="form-vertical" role="form" method="post" action="/app/applications/configure/salesforce">

@@ -20,7 +20,7 @@
             </div>
 
             <div class="hr-divider m-t m-b-md">
-                
+
             </div>
 
             <div class="content table-responsive table-full-width">
@@ -51,5 +51,23 @@
 
         <#include "confirm-dialog.html"/>
         <#include "project-edit.html"/>
+
+        <script type="text/javascript">
+            $('#confirm').click(function() {
+                
+                var id = $('#confirmDialog').data('id');
+
+                $.ajax({
+                    url: '/app/projects/' + id,
+                    type: 'DELETE',
+                    success: function() {
+                        window.location.href = '/app/projects';
+                    }
+                });
+
+                $('#confirmDialog').modal('hide');
+
+            });
+        </script>
 
     </@t.page>

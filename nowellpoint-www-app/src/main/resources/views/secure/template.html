@@ -19,17 +19,15 @@
 
         <!-- Include the CSS -->
         <link rel="stylesheet" href="/dist/toolkit-inverse.min.css" type="text/css">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="/dist/toolkit.min.js"></script>
 
     </head>
 
     <body class="with-top-navbar">
 
-        <#nested/>        
-
-    </body>
-        
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="/dist/toolkit.min.js"></script>    
+        <#nested/>            
 
     <script type="text/javascript">
         
@@ -73,24 +71,11 @@
 
         });
 
-        $('#confirm').click(function() {
-
-            var id = $('#confirmDialog').data('id');
-            $.ajax({
-                url: '/app/projects/' + id,
-                type: 'DELETE',
-                success: function() {
-                    window.location.href = '/app/projects';
-                }
-            });
-
-            $('#confirmDialog').modal('hide');
-
-        });
-
-
         $("#countryCode option[text=" + myText + "]").attr("selected", "selected");
+        
     </script>
+        
+    </body>    
 
     </html>
 

@@ -31,42 +31,22 @@
                         <th>${key}</th>
                         <th>${url}</th>
                         <th>${instanceName}</th>
-                        <th>${action}</th>
+                        <th>${isSandbox}</th>
                     </thead>
                     <tbody>
                         <#list applicationList as application>
                             <tr>
-                                <td><a href="/app/applications/${application.id}">${application.name}</a></td>
+                                <td>${application.name}</td>
                                 <td>${application.type}</td>
                                 <td>${application.key}</td>
                                 <td>${application.url}</td>
                                 <td>${application.instanceName}</td>
-                                <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editProject}"><span class="icon icon-edit"></span></a>&nbsp;
-                                    <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                                <td>${application.isSandbox?string}</td>
                             </tr>
                         </#list>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <#include "confirm-dialog.html"/>
-
-        <script>
-            $('#confirm').click(function() {
-
-                var id = $('#confirmDialog').data('id');
-                $.ajax({
-                    url: '/app/applications/' + id,
-                    type: 'DELETE',
-                    success: function() {
-                        window.location.href = '/app/applications';
-                    }
-                });
-
-                $('#confirmDialog').modal('hide');
-
-            });
-        </script>
 
     </@t.page>

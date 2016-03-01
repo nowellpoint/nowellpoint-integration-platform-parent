@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -33,15 +34,13 @@ public class ApplicationController {
 	
 	public ApplicationController(Configuration cfg) {
 		
-		/**
-		 * setup routes
-		 */
-    
 		get("/app/applications", (request, response) -> getApplications(request, response), new FreeMarkerEngine(cfg));
+		
+		delete("/app/applications/:id", (request, response) -> deleteApplication(request, response));
 		
 		get("/app/applications/types", (request, response) -> routeToType(request, response), new FreeMarkerEngine(cfg));
 		
-		post("/app/applications", (request, response) -> saveApplication(request, response));
+		post("/app/applications/configure/salesforce", (request, response) -> saveSalesforceApplication(request, response));
 	}
 	
 	/**
@@ -81,6 +80,32 @@ public class ApplicationController {
 	 * @param request
 	 * @param response
 	 * @return
+	 * @throws IOException
+	 */
+	
+	private static String deleteApplication(Request request, Response response) throws IOException {
+		
+		String applicationId = request.params(":id");
+		
+		Token token = request.attribute("token");
+		
+		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("application")
+				.path(applicationId)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		return "";	
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private static ModelAndView routeToType(Request request, Response response) {
@@ -102,15 +127,17 @@ public class ApplicationController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView saveApplication(Request request, Response response) throws IOException {
-		
+	private static String saveSalesforceApplication(Request request, Response response) throws IOException {
 		Token token = request.attribute("token");
 		Account account = request.attribute("account");
 		
 		Application application = new Application();
 		application.setType(request.queryParams("type"));
 		application.setIsSandbox(Boolean.valueOf(request.queryParams("isSandbox")));
-		application.setName(request.queryParams("name"));
+		application.setName(request.queryParams("organizationName"));
+		application.setKey(request.queryParams("organizationId"));
+		application.setUrl(request.queryParams("url"));
+		application.setInstanceName(request.queryParams("instanceName"));
 		
 		HttpResponse httpResponse;
 		
@@ -147,6 +174,8 @@ public class ApplicationController {
 		model.put("account", account);
 		model.put("application", application);
 		
-		return new ModelAndView(model, "secure/project.html");
+		response.redirect("/app/applications");
+		
+		return "";
 	}
 }
