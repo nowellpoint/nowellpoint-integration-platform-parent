@@ -138,8 +138,6 @@ public class UserProfileController {
 					.append(request.queryParams("photoUrl"))
 					.toString();
 			
-			LOGGER.info(body);
-			
 			HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
     				.header("x-api-key", System.getenv("NCS_API_KEY"))
     				.bearerAuthorization(token.getAccessToken())

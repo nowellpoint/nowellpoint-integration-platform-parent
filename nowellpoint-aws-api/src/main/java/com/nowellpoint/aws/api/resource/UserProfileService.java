@@ -167,8 +167,9 @@ public class UserProfileService {
 	}
 	
 	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/picture/salesforce")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addProfilePicture(
 			@FormParam(value = "oauthToken") String oauthToken,
 			@FormParam(value = "photoUrl") String photoUrl) {
