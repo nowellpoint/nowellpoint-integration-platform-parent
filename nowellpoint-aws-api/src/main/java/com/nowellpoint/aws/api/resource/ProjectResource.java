@@ -127,10 +127,13 @@ public class ProjectResource {
 	 */
 	
 	@PUT
+	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(ProjectDTO resource) {
+	public Response updateProject(@PathParam("id") String id, ProjectDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		resource.setId(id);
 		
 		projectService.updateProject(subject, resource, uriInfo.getBaseUri());
 		

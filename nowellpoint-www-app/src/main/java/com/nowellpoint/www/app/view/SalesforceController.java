@@ -34,8 +34,6 @@ public class SalesforceController {
         get("/app/callback", (request, response) -> callback(request, response));
         
         get("/app/applications/configure/salesforce", (request, response) -> configureSalesforce(request, response), new FreeMarkerEngine(cfg));
-        
-        get("/app/applications/profile",  (request, response) -> useProfilePicture(request, response));
 	}
 	
 	/**
@@ -138,35 +136,5 @@ public class SalesforceController {
 		}
 
 		return new ModelAndView(model, "secure/salesforce.html");			
-	}
-	
-	private static String useProfilePicture(Request request, Response response) throws IOException {
-		
-		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.salesforce.token"));
-		
-		LOGGER.info("photo url: " + request.queryParams("photoUrl"));
-		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
-		
-		if (cookie.isPresent()) {
-			
-			Token token = new ObjectMapper().readValue(Base64.getDecoder().decode(cookie.get()), Token.class);
-			
-			HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-    				.header("x-api-key", System.getenv("NCS_API_KEY"))
-    				.bearerAuthorization(token.getAccessToken())
-        			.path("salesforce")
-        			.path("identity")
-        			.body(request.queryParams("photoUrl"))
-        			.execute();
-			
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-			
-		}
-		
-		response.redirect("/app/applications/configure/salesforce");
-		
-		return "";
 	}
 }

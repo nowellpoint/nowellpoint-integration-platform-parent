@@ -1,16 +1,11 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -18,12 +13,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.sforce.OrganizationDTO;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
@@ -130,31 +120,5 @@ public class SalesforceResource {
 		return Response.ok(resource)
 				.type(MediaType.APPLICATION_JSON)
 				.build();
-	}
-	
-	@POST
-	@Path("/identity")
-	public Response addProfilePicture(String photoUrl) {
-		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
-		
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		try {
-			URL url = new URL(photoUrl + "?oauth_token=" + bearerToken);
-			
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-			
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-	    	objectMetadata.setContentLength(connection.getContentLength());
-			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("salesforce-outbound-messages", UUID.randomUUID().toString(), connection.getInputStream(), objectMetadata);
-	    	
-	    	s3Client.putObject(putObjectRequest);
-			
-		} catch (IOException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
-		
-		return Response.ok().build();		
 	}
 }

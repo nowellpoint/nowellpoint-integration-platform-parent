@@ -2,6 +2,8 @@ package com.nowellpoint.aws.api.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.Null;
+
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,6 +24,7 @@ public abstract class AbstractDTO implements Serializable {
 	 * 
 	 */
 	
+	@Null
 	private String id;
 	
 	/**

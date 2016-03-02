@@ -165,6 +165,7 @@ public class ProjectController {
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
 					.path("project")
+					.path(request.queryParams("id"))
 					.body(project)
 					.execute();
 		}

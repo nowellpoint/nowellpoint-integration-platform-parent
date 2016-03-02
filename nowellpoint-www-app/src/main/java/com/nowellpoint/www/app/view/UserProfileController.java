@@ -4,13 +4,16 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -32,7 +35,9 @@ public class UserProfileController {
 	    
 		get("/app/user-profile", (request, response) -> getUserProfile(request, response), new FreeMarkerEngine(cfg));
 		
-		post("/app/user-profile", (request, response) -> postUserProfile(request, response), new FreeMarkerEngine(cfg));
+		post("/app/user-profile", (request, response) -> updateUserProfile(request, response), new FreeMarkerEngine(cfg));
+		
+		get("/app/user-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
 		
 	}
 	
@@ -51,7 +56,7 @@ public class UserProfileController {
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("identity")
+				.path("user-profile")
 				.execute();
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
@@ -77,7 +82,7 @@ public class UserProfileController {
 	 * @throws IOException
 	 */
 	
-	public static ModelAndView postUserProfile(Request request, Response response) throws IOException {
+	public static ModelAndView updateUserProfile(Request request, Response response) throws IOException {
 		
 		Token token = request.attribute("token");
 		
@@ -111,5 +116,47 @@ public class UserProfileController {
 		model.put("identity", identity);
 		
 		return new ModelAndView(model, "secure/user-profile.html");		
+	}
+	
+	private static String setSalesforceProfilePicture(Request request, Response response) throws IOException {
+		
+		Token token = request.attribute("token");
+		
+		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.salesforce.token"));
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", request.attribute("account"));
+		
+		if (cookie.isPresent()) {
+			
+			String body = new StringBuilder().append("oauthToken")
+					.append("=")
+					.append(new ObjectMapper().readValue(Base64.getDecoder().decode(cookie.get()), com.nowellpoint.aws.model.sforce.Token.class).getAccessToken())
+					.append("&")
+					.append("photoUrl")
+					.append("=")
+					.append(request.queryParams("photoUrl"))
+					.toString();
+			
+			LOGGER.info(body);
+			
+			HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+    				.header("x-api-key", System.getenv("NCS_API_KEY"))
+    				.bearerAuthorization(token.getAccessToken())
+    				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        			.acceptCharset("UTF-8")
+        			.path("user-profile")
+        			.path("picture")
+        			.path("salesforce")
+        			.body(body)
+        			.execute();
+			
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " " + httpResponse.getAsString());
+			
+		}
+		
+		response.redirect("/app/applications/configure/salesforce");
+		
+		return "";
 	}
 }

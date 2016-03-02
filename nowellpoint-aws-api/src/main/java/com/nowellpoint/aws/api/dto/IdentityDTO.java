@@ -1,11 +1,8 @@
 package com.nowellpoint.aws.api.dto;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Application;
 
 public class IdentityDTO extends AbstractDTO {
 	
@@ -145,7 +142,8 @@ public class IdentityDTO extends AbstractDTO {
 	 * 
 	 */
 	
-	private List<Application> applications;
+	private String picture;
+
 	
 	public IdentityDTO() {
 		
@@ -319,18 +317,11 @@ public class IdentityDTO extends AbstractDTO {
 		this.href = href;
 	}
 
-	public List<Application> getApplications() {
-		return applications;
+	public String getPicture() {
+		return picture;
 	}
 
-	public void setApplications(List<Application> applications) {
-		this.applications = applications;
-	}
-	
-	public void addApplication(Application application) {
-		if (applications == null) {
-			applications = new ArrayList<Application>();
-		}
-		applications.add(application);
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 }

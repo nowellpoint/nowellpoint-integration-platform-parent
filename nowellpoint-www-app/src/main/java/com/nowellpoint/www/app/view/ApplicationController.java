@@ -38,7 +38,7 @@ public class ApplicationController {
 		
 		delete("/app/applications/:id", (request, response) -> deleteApplication(request, response));
 		
-		get("/app/applications/types", (request, response) -> routeToType(request, response), new FreeMarkerEngine(cfg));
+		get("/app/applications/types", (request, response) -> getTypes(request, response), new FreeMarkerEngine(cfg));
 		
 		post("/app/applications/configure/salesforce", (request, response) -> saveSalesforceApplication(request, response));
 	}
@@ -108,7 +108,7 @@ public class ApplicationController {
 	 * @return
 	 */
 	
-	private static ModelAndView routeToType(Request request, Response response) {
+	private static ModelAndView getTypes(Request request, Response response) {
 		
 		String type = request.params(":type");
 		

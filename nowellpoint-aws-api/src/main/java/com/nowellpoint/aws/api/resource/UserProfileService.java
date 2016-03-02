@@ -1,9 +1,16 @@
 package com.nowellpoint.aws.api.resource;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -11,6 +18,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
@@ -19,6 +27,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
@@ -139,10 +151,55 @@ public class UserProfileService {
 		
 		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
 		
-		//
-		//
-		//
+		return Response.ok(resource)
+				.build();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUserProfile() {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		return Response.ok(resource).build();
+		IdentityDTO resource = identityService.findIdentityBySubject( subject );
+		
+		return Response.ok(resource)
+				.build();
+	}
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/picture/salesforce")
+	public Response addProfilePicture(
+			@FormParam(value = "oauthToken") String oauthToken,
+			@FormParam(value = "photoUrl") String photoUrl) {
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentityBySubject( subject );
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		try {
+			URL url = new URL(photoUrl + "?oauth_token=" + oauthToken);
+			
+			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			
+			ObjectMetadata objectMetadata = new ObjectMetadata();
+	    	objectMetadata.setContentLength(connection.getContentLength());
+			
+	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", resource.getId(), connection.getInputStream(), objectMetadata);
+	    	
+	    	s3Client.putObject(putObjectRequest);
+			
+		} catch (IOException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+		}
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(IdentityResource.class)
+				.path("/{id}")
+				.build(resource.getId().concat("/picture"));
+		
+		return Response.ok(uri).build();		
 	}
 }

@@ -51,7 +51,7 @@ public class Main {
 //        		.setVersion("1.0")
 //        		.setTitle("Nowellpoint Cloud Services API")
 //        		.setContextRoot("/");
-//        
+        
 //        archive.setResourcePackages("com.nowellpoint.aws.api.resource");
         
         //

@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly-swarm>1.0.0.Alpha8</version.wildfly-swarm>
+		<version.wildfly-swarm>1.0.0.Beta2</version.wildfly-swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -49,6 +49,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>jaxrs-multipart</artifactId>
+			<version>${version.wildfly-swarm}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>weld</artifactId>
 			<version>${version.wildfly-swarm}</version>
 		</dependency>
@@ -68,10 +73,10 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>nowellpoint-aws-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>nowellpoint-aws-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

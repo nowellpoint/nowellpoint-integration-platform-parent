@@ -85,6 +85,10 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
+		if (resource.getLastLoginDate() == null) {
+			resource.setLastLoginDate(original.getLastLoginDate());
+		}
+		
 		update(subject, resource, eventSource);
 
 		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );

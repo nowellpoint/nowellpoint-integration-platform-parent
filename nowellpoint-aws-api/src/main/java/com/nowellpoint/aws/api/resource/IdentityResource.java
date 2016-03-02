@@ -21,7 +21,6 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
-import com.nowellpoint.aws.data.mongodb.Application;
 
 @Path("/identity")
 public class IdentityResource {
@@ -34,6 +33,29 @@ public class IdentityResource {
 	
 	@Context
 	private HttpServletRequest servletRequest;
+	
+	@GET
+	@Path("/{id}/picture")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get() {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentityBySubject( subject );
+		
+		return Response.ok(UriBuilder.fromResource(IdentityResource.class)).build();
+	}
+	
+	@GET
+	@Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIdentity(@PathParam("id") String id) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentity( id, subject );
+		
+		return Response.ok(resource)
+				.build();
+	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -52,38 +74,17 @@ public class IdentityResource {
 	}
 	
 	@PUT
+	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateIdentity(IdentityDTO resource) {
+    public Response updateIdentity(@PathParam("id") String id, IdentityDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		resource.setId(id);
 		
 		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
 		
 		return Response.ok(resource).build();
-	}
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getIdentity() {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		IdentityDTO resource = identityService.findIdentityBySubject( subject );
-		
-		return Response.ok(resource)
-				.build();
-		
-	}
-	
-	@GET
-	@Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getIdentity(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		IdentityDTO resource = identityService.findIdentity( id, subject );
-		
-		return Response.ok(resource)
-				.build();
 	}
 	
 	@GET
@@ -97,20 +98,34 @@ public class IdentityResource {
 				.build();
 	}
 	
-	@POST
-	@Path("/{id}/application")
-	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addApplication(@PathParam("id") String id, Application application) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		IdentityDTO resource = identityService.findIdentity( id, subject );
-		
-		resource.addApplication( application );
-		
-		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri() );
-		
-		return Response.ok(resource)
-				.build();
-	}
+//	@POST
+//	@Path("/{id}/picture")
+//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+//	public Response uploadProfileImage(MultipartFormDataInput input) {
+//		
+//		Map<String, List<InputPart>> formParts = input.getFormDataMap();
+//
+//		List<InputPart> inPart = formParts.get("file");
+//
+//		for (InputPart inputPart : inPart) {
+//			try {
+//				InputStream inputStream = inputPart.getBody(InputStream.class,null);
+//				
+//				AmazonS3 s3Client = new AmazonS3Client();
+//					
+//				ObjectMetadata objectMetadata = new ObjectMetadata();
+//			    objectMetadata.setContentLength(inputStream.available());
+//					
+//			    PutObjectRequest putObjectRequest = new PutObjectRequest("salesforce-outbound-messages", UUID.randomUUID().toString(), inputStream, objectMetadata);
+//			    	
+//			    s3Client.putObject(putObjectRequest);	
+//				
+//			} catch (IOException e) {
+//				throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+//			}
+//		}
+//		
+//		return Response.ok()
+//				.build();
+//	}
 }

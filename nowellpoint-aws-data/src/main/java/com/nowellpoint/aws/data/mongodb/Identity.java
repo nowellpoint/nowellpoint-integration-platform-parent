@@ -144,6 +144,12 @@ public class Identity extends AbstractDocument {
 	 */
 
 	private String href;
+	
+	/**
+	 * 
+	 */
+	
+	private String picture;
 
 	public Identity() {
 
@@ -315,5 +321,13 @@ public class Identity extends AbstractDocument {
 
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 }

@@ -110,15 +110,19 @@ public class ApplicationResource {
 	
 	/**
 	 * 
+	 * @param id
 	 * @param resource
 	 * @return
 	 */
 	
 	@PUT
+	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateApplication(ApplicationDTO resource) {
+	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		resource.setId(id);
 		
 		applicationService.update(subject, resource, uriInfo.getBaseUri());
 		
