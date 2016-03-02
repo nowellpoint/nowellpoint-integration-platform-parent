@@ -149,7 +149,7 @@ public class UserProfileController {
         			.body(body)
         			.execute();
 			
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " " + httpResponse.getAsString());
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
 			
 		}
 		

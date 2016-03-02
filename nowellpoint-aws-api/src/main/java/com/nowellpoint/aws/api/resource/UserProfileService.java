@@ -199,8 +199,9 @@ public class UserProfileService {
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)
 				.path("/{id}")
-				.build(resource.getId().concat("/picture"));
+				.path("picture")
+				.build(resource.getId());
 		
-		return Response.ok(uri).build();		
+		return Response.created(uri).build();		
 	}
 }
