@@ -21,10 +21,71 @@ public class SalesforceService {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
 	
+	private static final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
+ 			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
+ 			+ "UsesStartDateAsFiscalYearName";
+	
 	protected final ModelMapper modelMapper;
 	
 	public SalesforceService() {
 		this.modelMapper = new ModelMapper();
+	}
+	
+	public Identity getIdentity(String bearerToken, String identityId) {
+		Identity identity = null;
+		
+		try {
+			
+			HttpResponse httpResponse = RestResource.get(identityId)
+					.acceptCharset(StandardCharsets.UTF_8)
+					.bearerAuthorization(bearerToken)
+					.accept(MediaType.APPLICATION_JSON)
+					.queryParameter("version", "latest")
+					.execute();
+			
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+	    	
+	    	if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+			}
+	    	
+	    	identity = httpResponse.getEntity(Identity.class);
+	    	
+		} catch (IOException e) {
+			LOGGER.error( "getIdentity", e.getCause() );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}
+		
+		return identity;
+	}
+	
+	public Organization getOrganization(String bearerToken, String organizationId, String sobjectUrl) {
+		Organization organization = null;
+		
+		try {
+	     	
+			HttpResponse httpResponse = RestResource.get(sobjectUrl)
+	     			.bearerAuthorization(bearerToken)
+	     			.path("Organization")
+	     			.path(organizationId)
+	     			.queryParameter("fields", ORGANIZATION_FIELDS)
+	     			.queryParameter("version", "latest")
+	     			.execute();
+	     	
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+			
+			if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+			}
+	     	
+	     	organization = httpResponse.getEntity(Organization.class);
+	     	
+		} catch (IOException e) {
+			LOGGER.error( "getOrganizationByTokenId", e.getCause() );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}
+		
+		return organization;
 	}
 
 	public OrganizationDTO getOrganizationByTokenId(String bearerToken, String id) {		
