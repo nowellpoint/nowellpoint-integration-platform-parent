@@ -130,7 +130,7 @@
                             <select id="countryCode" name="countryCode" class="form-control" required>
                                 <option value="" selected="selected">--- ${selectOne} ---</option>
                                 <#list countryList as country>
-                                    <option value="${country.getCode()}">${country.getName()}</option>
+                                    <option value="${country.getCode()}"><i class="flag-icon flag-icon-us"></i>&nbsp;${country.getName()}</option>
                                 </#list>
                             </select>
                         </div>
