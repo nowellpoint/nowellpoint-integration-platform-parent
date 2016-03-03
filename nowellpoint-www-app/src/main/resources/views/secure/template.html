@@ -13,69 +13,70 @@
         <meta name="author" content="">
 
         <title>${applicationTitle}</title>
-        
+
         <!-- Bootstrap core CSS -->
-        <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css"/>
+        <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
 
         <!-- Include the CSS -->
         <link rel="stylesheet" href="/dist/toolkit-inverse.min.css" type="text/css">
-        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+        <!-- Font Awesome Icons -->
+        <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+
+        <script src="/js/jquery.js"></script>
         <script src="/dist/toolkit.min.js"></script>
 
     </head>
 
     <body class="with-top-navbar">
 
-        <#nested/>            
+        <#nested/>
 
-    <script type="text/javascript">
-        
-        $(document).ready(function() {
-            var path = window.location.pathname;
-            path = path.replace(/\/$/, "");
-            path = decodeURIComponent(path);
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var path = window.location.pathname;
+                path = path.replace(/\/$/, "");
+                path = decodeURIComponent(path);
 
-            $(".nav a").each(function() {
-                var href = $(this).attr('href');
-                if (path.substring(0, href.length) === href) {
-                    $(this).closest('li').addClass('active');
-                }
+                $(".nav a").each(function() {
+                    var href = $(this).attr('href');
+                    if (path.substring(0, href.length) === href) {
+                        $(this).closest('li').addClass('active');
+                    }
+                });
             });
-        });
 
-        $(document).on('shown.bs.modal', '.modal', function() {
-            $(this).find('[autofocus]').focus();
-        });
+            $(document).on('shown.bs.modal', '.modal', function() {
+                $(this).find('[autofocus]').focus();
+            });
 
-        $('#projectDialog').on('show.bs.modal', function(e) {
-            $title = $('.project-dialog').data('title');
-            $(this).find('.modal-title').text($title);
-        });
+            $('#projectDialog').on('show.bs.modal', function(e) {
+                $title = $('.project-dialog').data('title');
+                $(this).find('.modal-title').text($title);
+            });
 
-        $('#profileDialog').on('show.bs.modal', function(e) {
-            $title = $('.profile-dialog').data('title');
-            $(this).find('.modal-title').text($title);
-        });
+            $('#profileDialog').on('show.bs.modal', function(e) {
+                $title = $('.profile-dialog').data('title');
+                $(this).find('.modal-title').text($title);
+            });
 
-        $('.confirm-delete').on('click', function(e) {
-            e.preventDefault();
+            $('.confirm-delete').on('click', function(e) {
+                e.preventDefault();
 
-            var id = $(this).data('id');
-            var message = $(this).data('message');
-            var title = $(this).data('title');
+                var id = $(this).data('id');
+                var message = $(this).data('message');
+                var title = $(this).data('title');
 
-            $('#confirmDialog').find('.modal-body p').text(message);
-            $('#confirmDialog').find('.modal-title').text(title);
-            $('#confirmDialog').data('id', id).modal('show');
+                $('#confirmDialog').find('.modal-body p').text(message);
+                $('#confirmDialog').find('.modal-title').text(title);
+                $('#confirmDialog').data('id', id).modal('show');
 
-        });
+            });
 
-        $("#countryCode option[text=" + myText + "]").attr("selected", "selected");
-        
-    </script>
-        
-    </body>    
+            $("#countryCode option[text=" + myText + "]").attr("selected", "selected");
+        </script>
+
+    </body>
 
     </html>
 

@@ -1,0 +1,55 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <nav class="navbar">
+            <div class="statcard statcard-primary p-a-md m-b">
+                <div class="container">
+                    <div class="row">
+                        <h1>${welcome}</h1>
+                        <h4>${welcomeText}</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <br>
+            <br>
+            <br>
+            
+            <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        <i class="fa fa-4x fa-cloud"></i>
+                        <h3>${linkToServiceProvider}</h3>
+                        <p class="text-muted">${linkToServiceProviderDescription}</p>
+                        <br>                      
+                        <a href="/app/providers" class="btn btn-primary center-block" role="button">${addServiceProvider}</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                       
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 text-center">
+                    <div class="service-box">
+                        
+                    </div>
+                </div>
+                
+                </div>
+            
+            </div>
+            
+        </nav>
+
+    </@t.page>

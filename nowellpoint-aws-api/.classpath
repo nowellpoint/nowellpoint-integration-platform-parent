@@ -9,7 +9,6 @@
   <classpathentry kind="var" path="M2_REPO/javax/enterprise/cdi-api/1.2/cdi-api-1.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/ws/rs/jsr311-api/1.1.1/jsr311-api-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/el/javax.el-api/2.2.4/javax.el-api-2.2.4.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/undertow/1.0.0.Beta2/undertow-1.0.0.Beta2.jar"/>
@@ -70,37 +69,14 @@
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/bean-validation/1.0.0.Beta2/bean-validation-1.0.0.Beta2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jaxrs-multipart/1.0.0.Beta2/jaxrs-multipart-1.0.0.Beta2.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.5/javax.mail-1.5.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/swagger/1.0.0.Beta1/swagger-1.0.0.Beta1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/swagger-modules/1.0.0.Beta1/swagger-modules-1.0.0.Beta1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/io/swagger/swagger-jaxrs/1.5.5/swagger-jaxrs-1.5.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.4.5/jackson-dataformat-yaml-2.4.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.7.0/jackson-core-2.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.12/snakeyaml-1.12.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-xml/2.4.5/jackson-dataformat-xml-2.4.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.7.0/jackson-databind-2.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/module/jackson-module-jaxb-annotations/2.4.5/jackson-module-jaxb-annotations-2.4.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/io/swagger/swagger-core/1.5.5/swagger-core-1.5.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.2.1/commons-lang3-3.2.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.3/slf4j-api-1.6.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.7.0/jackson-annotations-2.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.4.5/jackson-datatype-joda-2.4.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/io/swagger/swagger-models/1.5.5/swagger-models-1.5.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/io/swagger/swagger-annotations/1.5.5/swagger-annotations-1.5.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/google/guava/guava/18.0/guava-18.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/reflections/reflections/0.9.10/reflections-0.9.10.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/javassist/javassist/3.18.2-GA/javassist-3.18.2-GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/google/code/findbugs/annotations/2.0.1/annotations-2.0.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.4.5/jackson-jaxrs-json-provider-2.4.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.4.5/jackson-jaxrs-base-2.4.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/msc/1.0.0.Beta2/msc-1.0.0.Beta2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/msc/jboss-msc/1.2.6.Final/jboss-msc-1.2.6.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/5.2.2.Final/hibernate-validator-5.2.2.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging/3.2.1.Final/jboss-logging-3.2.1.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/classmate/1.1.0/classmate-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-idp"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.7.0/jackson-databind-2.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.7.0/jackson-annotations-2.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.7.0/jackson-core-2.7.0.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-core"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.10.56/aws-java-sdk-s3-1.10.56.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.10.56/aws-java-sdk-kms-1.10.56.jar"/>
@@ -109,6 +85,7 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.3.6/httpclient-4.3.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.3.3/httpcore-4.3.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.6/commons-codec-1.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.56/aws-java-sdk-lambda-1.10.56.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.6.0/jjwt-0.6.0.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-data"/>

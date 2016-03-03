@@ -1,0 +1,50 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+
+                </div>
+            </div>
+
+            <br>
+            <br>
+            <br>
+
+            <div class="container">
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>${providerLabel}</th>
+                            <th>${accountLabel}</th>
+                            <th>${statusLabel}</th>
+                            <th></th>
+                            <th>${priceLabel}</th>
+                        </thead>
+                        <tbody>
+                            <#list identity.serviceProviders as serviceProvider>
+                                <td>${serviceProvider.name}</td>
+                                <td>${(serviceProvider.account)!}</td>
+                                <td>
+                                    <#if serviceProvider.isActive>
+                                        <i class="fa fa-check"></i>
+                                    </#if>
+                                    <#if ! serviceProvider.isActive>
+                                        <i class="fa fa-close"></i>
+                                    </#if>
+                                </td>
+                                <td><a href="/app/salesforce/oauth" class="btn btn-sm btn-primary" role="button">${authenticateLabel}</a></td>
+                                <td>0.00</td>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </@t.page>

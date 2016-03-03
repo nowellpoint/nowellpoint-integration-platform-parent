@@ -88,7 +88,7 @@ public class AuthenticationController {
     		
     	response.cookie("com.nowellpoint.auth.token", objectMapper.writeValueAsString(token), expiresIn.intValue(), true); 
     		
-    	response.redirect("/app/dashboard");
+    	response.redirect("/app/start");
     		
     	return "";
 	}
