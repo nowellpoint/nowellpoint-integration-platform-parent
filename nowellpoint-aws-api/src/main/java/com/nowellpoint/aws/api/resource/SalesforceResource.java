@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,6 +21,7 @@ import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
+import com.nowellpoint.aws.model.sforce.Identity;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -118,7 +118,7 @@ public class SalesforceResource {
 	public Response userInfo(@QueryParam(value="code") String code) {
 		
 		//
-		// use the returned auth code to get UserInfo
+		// use the returned oauth code to get UserInfo
 		//
 		
 		UserInfo userInfo = salesforceService.getUserInfo(code);
