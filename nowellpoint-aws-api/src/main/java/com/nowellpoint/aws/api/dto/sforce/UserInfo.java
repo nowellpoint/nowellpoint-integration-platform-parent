@@ -171,32 +171,197 @@ END OF TERMS AND CONDITIONS
 package com.nowellpoint.aws.api.dto.sforce;
 
 import java.io.Serializable;
+import java.util.Locale;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nowellpoint.aws.model.sforce.Organization;
+import com.nowellpoint.aws.model.sforce.Photos;
+import com.nowellpoint.aws.model.sforce.Urls;
 
-public class Photos implements Serializable {
+public class UserInfo implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4996085598592993920L;
 
-	@JsonProperty("picture")
-	private String picture;
+	private String id;
 
-	@JsonProperty("thumbnail")
-	private String thumbnail;
+	private String username;
 
-	public String getPicture() {
-		return picture;
+	private String displayName;
+
+	private String email;
+	
+	private String firstName;
+	
+	private String lastName;
+	
+	private String street;
+	
+	private String city;
+	
+	private String country;
+	
+	private String state;
+	
+	private String zipPostalCode;
+	
+	private String mobilePhone;
+
+	private String language;
+
+	private Locale locale;
+
+	private String utcOffset;
+
+	private Photos photos;
+
+	private Urls urls;
+	
+	private Organization organization;
+
+	public UserInfo() {
+
 	}
 
-	public void setPicture(String picture) {
-		this.picture = picture;
+	public String getId() {
+		return id;
 	}
 
-	public String getThumbnail() {
-		return thumbnail;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public void setThumbnail(String thumbnail) {
-		this.thumbnail = thumbnail;
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getZipPostalCode() {
+		return zipPostalCode;
+	}
+
+	public void setZipPostalCode(String zipPostalCode) {
+		this.zipPostalCode = zipPostalCode;
+	}
+
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
+
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public String getUtcOffset() {
+		return utcOffset;
+	}
+
+	public void setUtcOffset(String utcOffset) {
+		this.utcOffset = utcOffset;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
+	}
+
+	public Urls getUrls() {
+		return urls;
+	}
+
+	public void setUrls(Urls urls) {
+		this.urls = urls;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }

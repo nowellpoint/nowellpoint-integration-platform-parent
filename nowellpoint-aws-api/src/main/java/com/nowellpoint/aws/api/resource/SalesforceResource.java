@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -14,9 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.aws.api.dto.sforce.OrganizationDTO;
+import com.nowellpoint.aws.api.dto.sforce.UserInfo;
 import com.nowellpoint.aws.api.service.SalesforceService;
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
@@ -79,7 +80,8 @@ public class SalesforceResource {
 		// build the get authorization request
 		//
 		
-		GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest().withTokenUri(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
+		GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest()
+				.withTokenUri(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
 				.withClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.withClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 				.withRedirectUri(System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
@@ -110,14 +112,23 @@ public class SalesforceResource {
 	}
 	
 	@GET
-	@Path("/organization")
+	@Path("/user-info")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOrganizationByTokenId(@QueryParam(value="id") String id) {		
-		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
+	public Response userInfo(@QueryParam(value="code") String code) {
 		
-		OrganizationDTO resource = salesforceService.getOrganizationByTokenId(bearerToken, id);
+		//
+		// use the returned auth code to get UserInfo
+		//
 		
-		return Response.ok(resource)
+		UserInfo userInfo = salesforceService.getUserInfo(code);
+		
+		//
+		// return the result
+		//
+		
+		return Response.ok()
+				.entity(userInfo)
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 	}

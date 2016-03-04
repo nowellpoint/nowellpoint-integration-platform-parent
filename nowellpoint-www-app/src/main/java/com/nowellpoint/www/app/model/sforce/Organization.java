@@ -36,8 +36,6 @@ public class Organization extends BaseEntity {
 	
 	private Boolean usesStartDateAsFiscalYearName;
 	
-	private OrganizationContact organizationContact;
-	
 	public Organization() {
 		
 	}
@@ -144,13 +142,5 @@ public class Organization extends BaseEntity {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
-	}
-	
-	public OrganizationContact getOrganizationContact() {
-		return organizationContact;
-	}
-	
-	public void setOrganizationContact(OrganizationContact organizationContact) {
-		this.organizationContact = organizationContact;
 	}
 }

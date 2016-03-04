@@ -33,9 +33,11 @@
 
                         <br>
 
-                        <img src="${(organization.organizationContact.photos.picture)!}" class="img-circle img-responsive center-block">
+                        <img src="${(userInfo.photos.picture)!}" class="img-circle img-responsive center-block">
+                        
+                        <br>
 
-                        <a href="/app/user-profile/picture/salesforce?photoUrl=${(organization.organizationContact.photos.picture)!}" class="btn btn-primary center-block" role="button">Use As Profile</a>
+                        <a href="/app/user-profile/picture/salesforce?photoUrl=${(userInfo.photos.picture)!}" class="btn btn-primary center-block" role="button">Use As Profile</a>
 
                     </div>
                     <div class="col-md-6">
@@ -50,19 +52,19 @@
 
                         <dl class="dl-horizontal">
                             <dt>${name}</dt>
-                            <dd>${(organization.organizationContact.displayName)!}</dd>
+                            <dd>${(userInfo.displayName)!}</dd>
                             <dt>${username}</dt>
-                            <dd>${(organization.organizationContact.username)!}</dd>
+                            <dd>${(userInfo.username)!}</dd>
                             <dt>${address}</dt>
-                            <dd>${(organization.organizationContact.addrStreet)!}</dd>
+                            <dd>${(userInfo.street)!}</dd>
                             <dt>${city}</dt>
-                            <dd>${(organization.organizationContact.addrCity)!}</dd>
+                            <dd>${(userInfo.city)!}</dd>
                             <dt>${state}</dt>
-                            <dd>${(organization.organizationContact.addrState)!}</dd>
+                            <dd>${(userInfo.state)!}</dd>
                             <dt>${postalCode}</dt>
-                            <dd>${(organization.organizationContact.addrZip)!}</dd>
+                            <dd>${(userInfo.zipPostalCode)!}</dd>
                             <dt>${country}</dt>
-                            <dd>${(organization.organizationContact.addrCountry)!}</dd>
+                            <dd>${(userInfo.country)!}</dd>
                         </dl>
 
                         <br>
@@ -77,26 +79,26 @@
 
                         <dl class="dl-horizontal">
                             <dt>${name}</dt>
-                            <dd>${organization.name!}</dd>
+                            <dd>${userInfo.organization.name!}</dd>
                             <dt>${type}</dt>
-                            <dd>${organization.organizationType!}</dd>
+                            <dd>${userInfo.organization.organizationType!}</dd>
                             <dt>${instanceName}</dt>
-                            <dd>${organization.name!}</dd>
+                            <dd>${userInfo.organization.name!}</dd>
                             <dt>${url}</dt>
-                            <dd>${(organization.organizationContact.urls.rest)!}</dd>
+                            <dd>${(userInfo.urls.rest)!}</dd>
                             <dt>${isSandbox}</dt>
-                            <dd>${(organization.isSandbox?string('Yes', 'No'))!}</dd>
+                            <dd>${(userInfo.organization.isSandbox?string('Yes', 'No'))!}</dd>
                         </dl>
 
                         <form class="form-vertical" role="form" method="post" action="/app/applications/configure/salesforce">
                             <input type="hidden" name="id" id="id" value="" />
                             <input type="hidden" name="type" id="type" value="SALESFORCE" />
-                            <input type="hidden" name="organizationId" id="organizationId" value="${(organization.attributes.id)!}" />
-                            <input type="hidden" name="organizationName" id="organizationName" value="${organization.name!}" />
-                            <input type="hidden" name="organizationType" id="organizationType" value="${organization.organizationType!}" />
-                            <input type="hidden" name="instanceName" id="instanceName" value="${organization.instanceName!}" />
-                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(organization.isSandbox?string)!}" />
-                            <input type="hidden" name="url" id="url" value="${(organization.organizationContact.urls.rest)!}" />
+                            <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.id)!}" />
+                            <input type="hidden" name="organizationName" id="organizationName" value="${userInfo.organization.name!}" />
+                            <input type="hidden" name="organizationType" id="organizationType" value="${userInfo.organization.organizationType!}" />
+                            <input type="hidden" name="instanceName" id="instanceName" value="${userInfo.organization.instanceName!}" />
+                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(userInfo.organization.isSandbox?string)!}" />
+                            <input type="hidden" name="url" id="url" value="${(userInfo.urls.rest)!}" />
                             <div class="pull-right">
                                 <a href="/app/applications/types">${cancel}</a> &nbsp;
 

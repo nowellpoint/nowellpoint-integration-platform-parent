@@ -168,52 +168,42 @@ accepting any such warranty or additional liability.
 END OF TERMS AND CONDITIONS
  */
 
-package com.nowellpoint.aws.api.dto.sforce;
+package com.nowellpoint.www.app.model.sforce;
 
 import java.io.Serializable;
 import java.util.Locale;
 
-public class OrganizationContact implements Serializable {
+import com.nowellpoint.aws.model.sforce.Organization;
+import com.nowellpoint.aws.model.sforce.Photos;
+import com.nowellpoint.aws.model.sforce.Urls;
+
+public class UserInfo implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;
 
 	private String id;
 
-	private Boolean asserted_user;
-
-	private String user_id;
-
-	private String organization_id;
-
 	private String username;
 
-	private String nick_name;
-
-	private String display_name;
+	private String displayName;
 
 	private String email;
 	
-	private Boolean email_verified;
+	private String firstName;
 	
-	private String first_name;
+	private String lastName;
 	
-	private String last_name;
+	private String street;
 	
-	private String addr_street;
+	private String city;
 	
-	private String addr_city;
+	private String country;
 	
-	private String addr_country;
+	private String state;
 	
-	private String addr_state;
+	private String zipPostalCode;
 	
-	private String addr_zip;
-	
-	private String mobile_phone;
-
-	private Boolean active;
-
-	private String user_type;
+	private String mobilePhone;
 
 	private String language;
 
@@ -224,8 +214,10 @@ public class OrganizationContact implements Serializable {
 	private Photos photos;
 
 	private Urls urls;
+	
+	private Organization organization;
 
-	public OrganizationContact() {
+	public UserInfo() {
 
 	}
 
@@ -237,30 +229,6 @@ public class OrganizationContact implements Serializable {
 		this.id = id;
 	}
 
-	public Boolean getAssertedUser() {
-		return asserted_user;
-	}
-
-	public void setAssertedUser(Boolean asserted_user) {
-		this.asserted_user = asserted_user;
-	}
-
-	public String getUserId() {
-		return user_id;
-	}
-
-	public void setUserId(String userId) {
-		this.user_id = userId;
-	}
-
-	public String getOrganizationId() {
-		return organization_id;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organization_id = organizationId;
-	}
-
 	public String getUsername() {
 		return username;
 	}
@@ -269,20 +237,12 @@ public class OrganizationContact implements Serializable {
 		this.username = username;
 	}
 
-	public String getNickName() {
-		return nick_name;
-	}
-
-	public void setNickName(String nickName) {
-		this.nick_name = nickName;
-	}
-
 	public String getDisplayName() {
-		return display_name;
+		return displayName;
 	}
 
 	public void setDisplayName(String displayName) {
-		this.display_name = displayName;
+		this.displayName = displayName;
 	}
 
 	public String getEmail() {
@@ -293,100 +253,68 @@ public class OrganizationContact implements Serializable {
 		this.email = email;
 	}
 
-	public Boolean getEmailVerified() {
-		return email_verified;
-	}
-
-	public void setEmailVerified(Boolean emailVerified) {
-		this.email_verified = emailVerified;
-	}
-
 	public String getFirstName() {
-		return first_name;
+		return firstName;
 	}
 
 	public void setFirstName(String firstName) {
-		this.first_name = firstName;
+		this.firstName = firstName;
 	}
 
 	public String getLastName() {
-		return last_name;
+		return lastName;
 	}
 
 	public void setLastName(String lastName) {
-		this.last_name = lastName;
+		this.lastName = lastName;
 	}
 
-	public String getAddrStreet() {
-		return addr_street;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setAddrStreet(String addrStreet) {
-		this.addr_street = addrStreet;
+	public void setStreet(String street) {
+		this.street = street;
 	}
 
-	public String getAddrCity() {
-		return addr_city;
+	public String getCity() {
+		return city;
 	}
 
-	public void setAddrCity(String addrCity) {
-		this.addr_city = addrCity;
+	public void setCity(String city) {
+		this.city = city;
 	}
 
-	public String getAddrCountry() {
-		return addr_country;
+	public String getCountry() {
+		return country;
 	}
 
-	public void setAddrCountry(String addrCountry) {
-		this.addr_country = addrCountry;
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
-	public String getAddrState() {
-		return addr_state;
+	public String getState() {
+		return state;
 	}
 
-	public void setAddrState(String addrState) {
-		this.addr_state = addrState;
+	public void setState(String state) {
+		this.state = state;
 	}
 
-	public String getAddrZip() {
-		return addr_zip;
+	public String getZipPostalCode() {
+		return zipPostalCode;
 	}
 
-	public void setAddrZip(String addrZip) {
-		this.addr_zip = addrZip;
+	public void setZipPostalCode(String zipPostalCode) {
+		this.zipPostalCode = zipPostalCode;
 	}
 
 	public String getMobilePhone() {
-		return mobile_phone;
+		return mobilePhone;
 	}
 
 	public void setMobilePhone(String mobilePhone) {
-		this.mobile_phone = mobilePhone;
-	}
-
-	public Urls getUrls() {
-		return urls;
-	}
-
-	public void setUrls(Urls urls) {
-		this.urls = urls;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
-	public String getUserType() {
-		return user_type;
-	}
-
-	public void setUserType(String userType) {
-		this.user_type = userType;
+		this.mobilePhone = mobilePhone;
 	}
 
 	public String getLanguage() {
@@ -419,5 +347,21 @@ public class OrganizationContact implements Serializable {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public Urls getUrls() {
+		return urls;
+	}
+
+	public void setUrls(Urls urls) {
+		this.urls = urls;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }

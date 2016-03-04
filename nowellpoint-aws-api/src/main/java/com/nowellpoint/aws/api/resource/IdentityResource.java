@@ -1,5 +1,10 @@
 package com.nowellpoint.aws.api.resource;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 
 import javax.inject.Inject;
@@ -12,12 +17,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
@@ -36,13 +48,31 @@ public class IdentityResource {
 	
 	@GET
 	@Path("/{id}/picture")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response get() {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response get(@PathParam(value="id") String id) {
+		//String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		IdentityDTO resource = identityService.findIdentityBySubject( subject );
+		//IdentityDTO resource = identityService.findIdentityBySubject( subject );
 		
-		return Response.ok(UriBuilder.fromResource(IdentityResource.class)).build();
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest("aws-microservices", id);
+    	
+    	S3Object image = s3Client.getObject(getObjectRequest);
+    	
+    	byte[] s = null;
+    	try {
+    		s = IOUtils.toByteArray(image.getObjectContent());
+    		image.close();
+		} catch (IOException e) {
+			throw new WebApplicationException( e.getMessage(), Status.INTERNAL_SERVER_ERROR );
+		} 
+    	
+    	return Response.ok()
+    			.entity(s)
+    			.header("Content-Disposition", "inline; filename=\"" + id + "\"")
+    			.header("Content-Length", s.length)
+    			.build();
 	}
 	
 	@GET
