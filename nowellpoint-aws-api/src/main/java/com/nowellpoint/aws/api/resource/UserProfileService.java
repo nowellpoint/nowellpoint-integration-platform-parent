@@ -34,6 +34,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
@@ -50,6 +51,9 @@ public class UserProfileService {
 	
 	@Inject
 	private IdentityService identityService;
+	
+	@Inject
+	private SalesforceService salesforceService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -167,12 +171,9 @@ public class UserProfileService {
 	}
 	
 	@POST
-	@Path("/picture/salesforce")
+	@Path("/photo/salesforce")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addProfilePicture(
-			@FormParam(value = "oauthToken") String oauthToken,
-			@FormParam(value = "photoUrl") String photoUrl) {
+	public Response addProfilePicture(@FormParam(value = "photoUrl") String photoUrl) {
 		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
@@ -181,12 +182,14 @@ public class UserProfileService {
 		AmazonS3 s3Client = new AmazonS3Client();
 		
 		try {
-			URL url = new URL(photoUrl + "?oauth_token=" + oauthToken);
+			URL url = new URL(photoUrl + "?oauth_token=" + salesforceService.findTokenBySubject( subject ).getAccessToken() );
 			
 			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			String contentType = connection.getHeaderField("Content-Type");
 			
 			ObjectMetadata objectMetadata = new ObjectMetadata();
 	    	objectMetadata.setContentLength(connection.getContentLength());
+	    	objectMetadata.setContentType(contentType);
 			
 	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", resource.getId(), connection.getInputStream(), objectMetadata);
 	    	

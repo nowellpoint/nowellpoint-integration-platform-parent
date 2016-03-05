@@ -17,11 +17,11 @@ import javax.ws.rs.core.Response;
 
 import com.nowellpoint.aws.api.dto.sforce.UserInfo;
 import com.nowellpoint.aws.api.service.SalesforceService;
+import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
 import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
-import com.nowellpoint.aws.model.sforce.Identity;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -50,9 +50,9 @@ public class SalesforceResource {
 					.append("client_secret=")
 					.append(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 					.append("&")
-					.append("display=popup")
+					.append("display=touch")
 					.append("&")
-					.append("prompt=touch")
+					.append("prompt=login")
 					.append("&")
 					.append("redirect_uri=")
 					.append(URLEncoder.encode(System.getProperty(Properties.SALESFORCE_REDIRECT_URI), "UTF-8"))
@@ -118,10 +118,16 @@ public class SalesforceResource {
 	public Response userInfo(@QueryParam(value="code") String code) {
 		
 		//
+		// get the subject from the reqeust
+		//
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		//
 		// use the returned oauth code to get UserInfo
 		//
 		
-		UserInfo userInfo = salesforceService.getUserInfo(code);
+		UserInfo userInfo = salesforceService.getUserInfo(subject, code);
 		
 		//
 		// return the result

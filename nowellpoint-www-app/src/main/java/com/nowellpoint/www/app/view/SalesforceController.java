@@ -11,6 +11,7 @@ import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.sforce.UserInfo;
 
 import freemarker.log.Logger;
@@ -70,9 +71,12 @@ public class SalesforceController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
+    	Token token = request.attribute("token");
+    	
     	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
     			.path("user-info")
     			.queryParameter("code", request.queryParams("code"))
@@ -80,7 +84,7 @@ public class SalesforceController {
     	
     	int statusCode = httpResponse.getStatusCode();
     	
-    	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+    	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod());
     	
     	if (statusCode != 200) {
     		throw new BadRequestException(httpResponse.getAsString());

@@ -54,7 +54,7 @@
 
         <script>
             $('#confirm').click(function() {
-
+                e.preventDefault();
                 var id = $('#confirmDialog').data('id');
                 $.ajax({
                     url: '/app/applications/' + id,
@@ -63,9 +63,7 @@
                         window.location.href = '/app/applications';
                     }
                 });
-
                 $('#confirmDialog').modal('hide');
-
             });
         </script>
 

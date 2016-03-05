@@ -36,6 +36,8 @@ public class Organization extends BaseEntity {
 	
 	private Boolean usesStartDateAsFiscalYearName;
 	
+	private String instanceUrl;
+	
 	public Organization() {
 		
 	}
@@ -142,5 +144,13 @@ public class Organization extends BaseEntity {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
+	}
+	
+	public String getInstanceUrl() {
+		return instanceUrl;
+	}
+
+	public void setInstanceUrl(String instanceUrl) {
+		this.instanceUrl = instanceUrl;
 	}
 }

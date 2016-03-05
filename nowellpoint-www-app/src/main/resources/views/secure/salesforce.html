@@ -8,12 +8,7 @@
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h4 class="title">${salesforce}</h4>
-                    </div>
-                    <div class="dashhead-toolbar">
-                        <p class="pull-right">
-                            <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${signInToSalesforce}</a>
-                        </p>
+                        <h2 class="title">${salesforce}</h2>
                     </div>
                 </div>
             </div>
@@ -34,10 +29,14 @@
                         <br>
 
                         <img src="${(userInfo.photos.picture)!}" class="img-circle img-responsive center-block">
-                        
+
                         <br>
 
-                        <a href="/app/user-profile/picture/salesforce?photoUrl=${(userInfo.photos.picture)!}" class="btn btn-primary center-block" role="button">Use As Profile</a>
+                        <div >
+                            
+                        </div>
+
+                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button"><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i>${useAsProfile}</a>
 
                     </div>
                     <div class="col-md-6">
@@ -79,13 +78,13 @@
 
                         <dl class="dl-horizontal">
                             <dt>${name}</dt>
-                            <dd>${userInfo.organization.name!}</dd>
+                            <dd>${(userInfo.organization.name)!}</dd>
                             <dt>${type}</dt>
-                            <dd>${userInfo.organization.organizationType!}</dd>
+                            <dd>${(userInfo.organization.organizationType)!}</dd>
                             <dt>${instanceName}</dt>
-                            <dd>${userInfo.organization.name!}</dd>
-                            <dt>${url}</dt>
-                            <dd>${(userInfo.urls.rest)!}</dd>
+                            <dd>${(userInfo.organization.instanceName)!}</dd>
+                            <dt>${instanceUrl}</dt>
+                            <dd>${(userInfo.organization.instanceUrl)!}</dd>
                             <dt>${isSandbox}</dt>
                             <dd>${(userInfo.organization.isSandbox?string('Yes', 'No'))!}</dd>
                         </dl>
@@ -94,16 +93,14 @@
                             <input type="hidden" name="id" id="id" value="" />
                             <input type="hidden" name="type" id="type" value="SALESFORCE" />
                             <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.id)!}" />
-                            <input type="hidden" name="organizationName" id="organizationName" value="${userInfo.organization.name!}" />
-                            <input type="hidden" name="organizationType" id="organizationType" value="${userInfo.organization.organizationType!}" />
-                            <input type="hidden" name="instanceName" id="instanceName" value="${userInfo.organization.instanceName!}" />
+                            <input type="hidden" name="organizationName" id="organizationName" value="${(userInfo.organization.name)!}" />
+                            <input type="hidden" name="organizationType" id="organizationType" value="${(userInfo.organization.organizationType)!}" />
+                            <input type="hidden" name="instanceName" id="instanceName" value="${(userInfo.organization.instanceName)!}" />
                             <input type="hidden" name="isSandbox" id="isSandbox" value="${(userInfo.organization.isSandbox?string)!}" />
-                            <input type="hidden" name="url" id="url" value="${(userInfo.urls.rest)!}" />
+                            <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(userInfo.organization.instanceUrl)!}" />
                             <div class="pull-right">
                                 <a href="/app/applications/types">${cancel}</a> &nbsp;
-
                                 <button type="submit" name="submit" id="submit" class="btn btn-primary">${createApplication}</button>
-
                             </div>
                         </form>
                     </div>
@@ -114,4 +111,31 @@
         </div>
         <br>
         <br>
+
+        <script>
+            $(document).ready(function() {
+                var $spinner = $('#spinner').hide();
+                $(document)
+                    .ajaxStart(function() {
+                        $spinner.show();
+                    })
+                    .ajaxStop(function() {
+                        $spinner.hide();
+                    });
+            });
+
+            $(document).ready(function(e) {
+                $('#clickable').click(function(e) {
+                    e.preventDefault();
+                    var body = 'photoUrl=' + $(this).data('id');
+                    $.ajax({
+                        type: "POST",
+                        url: "/app/user-profile/picture/salesforce",
+                        data : body
+                    });
+                });
+            });
+        </script>
+
+
     </@t.page>

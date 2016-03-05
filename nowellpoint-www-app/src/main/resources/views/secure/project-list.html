@@ -53,10 +53,9 @@
         <#include "project-edit.html"/>
 
         <script type="text/javascript">
-            $('#confirm').click(function() {
-                
+            $('#confirm').click(function(e) {
+                e.preventDefault();
                 var id = $('#confirmDialog').data('id');
-
                 $.ajax({
                     url: '/app/projects/' + id,
                     type: 'DELETE',
@@ -64,9 +63,7 @@
                         window.location.href = '/app/projects';
                     }
                 });
-
                 $('#confirmDialog').modal('hide');
-
             });
         </script>
 

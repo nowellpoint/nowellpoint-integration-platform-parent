@@ -17,7 +17,7 @@ import com.nowellpoint.aws.model.sforce.Identity;
 import com.nowellpoint.aws.model.sforce.Organization;
 import com.nowellpoint.aws.model.sforce.Token;
 
-public class SalesforceService {
+public class SalesforceService extends AbstractCacheService {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
 	
@@ -36,8 +36,6 @@ public class SalesforceService {
 	 */
 	
 	public Token getToken(String authCode) {
-		
-		System.out.println(authCode);
 		Token token = null;
 		
 		HttpResponse httpResponse = null;
@@ -71,17 +69,28 @@ public class SalesforceService {
 	
 	/**
 	 * 
+	 * @param subject
+	 * @return
+	 */
+	
+	public Token findTokenBySubject(String subject) {
+		Token token = hget(subject, Token.class.getName());
+		return token;
+	}
+	
+	/**
+	 * 
 	 * @param authCode
 	 * @return userInfo
 	 */
 	
-	public UserInfo getUserInfo(String authCode) {
-		
+	public UserInfo getUserInfo(String subject, String authCode) {
 		Token token = getToken(authCode);
 		
 		Identity identity = getIdentity(token.getAccessToken(), token.getId());
 		
 		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
+		organization.setInstanceUrl(token.getInstanceUrl());
 		
 		UserInfo userInfo = new UserInfo();
 		userInfo.setCity(identity.getAddrCity());
@@ -103,8 +112,10 @@ public class SalesforceService {
 		userInfo.setZipPostalCode(identity.getAddrZip());
 		userInfo.setOrganization(organization);
 		
-		return userInfo;
+		hset( subject, Token.class.getName(), token );
+		expire( subject, 3600 );
 		
+		return userInfo;	
 	}
 	
 	/**

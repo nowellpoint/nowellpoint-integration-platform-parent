@@ -26,27 +26,30 @@ public class CacheManager {
 	
 	private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
 	private JedisPool jedisPool;
-	private Jedis jedis;
 	
 	@PostConstruct
 	public void postConstruct() {
 		String endpoint = System.getProperty(Properties.REDIS_HOST);
 		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
 		
-		jedisPool = new JedisPool(new JedisPoolConfig(), endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(30);
 		
-		jedis = jedisPool.getResource();
+		jedisPool = new JedisPool(poolConfig, endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
 		
-		LOGGER.info("connecting to cache...is connected: " + jedis.isConnected());
+		LOGGER.info("connecting to cache...is connected: " + ! jedisPool.isClosed());
 	}
 	
 	@PreDestroy
 	public void preDestroy() {
-		jedis.close();
+		try {
+			jedisPool.destroy();
+        } catch (Exception e) {
+        	LOGGER.warning(String.format("Cannot properly close Jedis pool %s", e.getMessage()));
+        }
+		jedisPool = null;
 		
-		jedisPool.close();
-		
-		LOGGER.info("disconnecting from cache...is connected: " + jedis.isConnected());
+		LOGGER.info("disconnecting from cache...is connected: " + ! jedisPool.isClosed());
 	}
 	
 	/**
@@ -55,7 +58,7 @@ public class CacheManager {
 	 */
 	
 	public Jedis getCache() {
-		return jedis;
+		return jedisPool.getResource();
 	}
 	
 	/**
@@ -65,14 +68,19 @@ public class CacheManager {
 	 */
 	
 	public <T> void sadd(String key, Set<T> values) {
-		Pipeline p = jedis.pipelined();		
-		values.stream().forEach(m -> {
-			try {
-				p.sadd(key.getBytes(), serialize(m));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		Jedis jedis = getCache();
+		Pipeline p = jedis.pipelined();
+		try {
+			values.stream().forEach(m -> {
+				try {
+					p.sadd(key.getBytes(), serialize(m));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		} finally {
+			jedis.close();
+		}
 		
 		p.sync();
 	}
@@ -84,10 +92,16 @@ public class CacheManager {
 	 */
 	
 	public <T> Set<T> smembers(String key) {
+		Jedis jedis = getCache();
 		Set<T> results = new HashSet<T>();
-		jedis.smembers(key.getBytes()).stream().forEach(m -> {
-			results.add(deserialize(m));
-		});
+		
+		try {
+			jedis.smembers(key.getBytes()).stream().forEach(m -> {
+				results.add(deserialize(m));
+			});
+		} finally {
+			jedis.close();
+		}
 		
 		return results;
 	}
@@ -101,7 +115,12 @@ public class CacheManager {
 	 */
 	
 	public <T> void setex(String key, int seconds, T value) {
-		jedis.setex(key.getBytes(), seconds, serialize(value));
+		Jedis jedis = getCache();
+		try {
+			jedis.setex(key.getBytes(), seconds, serialize(value));
+		} finally {
+			jedis.close();
+		}
 	}
 	
 	/**
@@ -111,11 +130,20 @@ public class CacheManager {
 	 */
 	
 	public <T> T get(String key) {
-		byte[] bytes = jedis.get(key.getBytes());
+		Jedis jedis = getCache();
+		byte[] bytes = null;
+		
+		try {
+			bytes = jedis.get(key.getBytes());
+		} finally {
+			jedis.close();
+		}
+		
 		T value = null;
 		if (bytes != null) {
 			value = deserialize(bytes);
 		}
+		
 		return value;
 	}
 	
@@ -125,7 +153,12 @@ public class CacheManager {
 	 */
 	
 	public void del(String key) {
-		jedis.del(key.getBytes());
+		Jedis jedis = getCache();
+		try {
+			jedis.del(key.getBytes());
+		} finally {
+			jedis.close();
+		}
 	}
 	
 	/**
@@ -135,25 +168,22 @@ public class CacheManager {
 	 */
 	
 	public <T> Set<T> hgetAll(String key) {
+		Jedis jedis = getCache();
 		Set<T> results = new HashSet<T>();
-		jedis.hgetAll(key.getBytes()).values().stream().forEach(m -> {
-			try {
-				results.add(deserialize(m));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		try {
+			jedis.hgetAll(key.getBytes()).values().stream().forEach(m -> {
+				try {
+					results.add(deserialize(m));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		} finally {
+			jedis.close();
+		}
 		
 		return results;
 	}
-	
-	/**
-	 * 
-	 * @param key
-	 * @param field
-	 */
-	
-
 	
 	/**
 	 * 
@@ -163,11 +193,20 @@ public class CacheManager {
 	 */
 	
 	public <T> T hget(String key, String field) {
-		byte[] bytes = jedis.hget(key.getBytes(), field.getBytes());
+		Jedis jedis = getCache();
+		byte[] bytes = null;
+		
+		try {
+			bytes = jedis.hget(key.getBytes(), field.getBytes());
+		} finally {
+			jedis.close();
+		}
+		
 		T value = null;
 		if (bytes != null) {
 			value = deserialize(bytes);
 		}
+		
 		return value;
 	}
 	

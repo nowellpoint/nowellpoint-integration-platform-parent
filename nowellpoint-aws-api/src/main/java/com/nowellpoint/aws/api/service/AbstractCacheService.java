@@ -31,7 +31,12 @@ public abstract class AbstractCacheService {
 	
 	protected void set(String key, Object value) {
 		Jedis jedis = cacheManager.getCache();
-		jedis.set(key.getBytes(), serialize(value));
+		try {
+			jedis.set(key.getBytes(), serialize(value));
+		} finally {
+			jedis.close();
+		}
+		
 	}
 	
 	/**
@@ -43,7 +48,13 @@ public abstract class AbstractCacheService {
 	
 	protected <T extends AbstractDTO> T get(String key) {
 		Jedis jedis = cacheManager.getCache();
-		byte[] bytes = jedis.get(key.getBytes());
+		byte[] bytes = null;
+		try {
+			bytes = jedis.get(key.getBytes());
+		} finally {
+			jedis.close();
+		}
+		
 		T value = null;
 		if (bytes != null) {
 			value = deserialize(bytes);
@@ -58,9 +69,13 @@ public abstract class AbstractCacheService {
 	 * @param value
 	 */
 	
-	protected <T extends AbstractDTO> void hset(String key, String field, T value) {
+	protected <T> void hset(String key, String field, T value) {
 		Jedis jedis = cacheManager.getCache();
-		jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
+		try {
+			jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
+		} finally {
+			jedis.close();
+		}
 	}
 	
 	/**
@@ -71,7 +86,11 @@ public abstract class AbstractCacheService {
 	
 	protected void hdel(String key, String field) {
 		Jedis jedis = cacheManager.getCache();
-		jedis.hdel(key.getBytes(), field.getBytes());
+		try {
+			jedis.hdel(key.getBytes(), field.getBytes());
+		} finally {
+			jedis.close();
+		}
 	}
 	
 	/**
@@ -81,13 +100,20 @@ public abstract class AbstractCacheService {
 	 * @return
 	 */
 	
-	public <T extends AbstractDTO> T hget(String key, String field) {
+	public <T> T hget(String key, String field) {
 		Jedis jedis = cacheManager.getCache();
-		byte[] bytes = jedis.hget(key.getBytes(), field.getBytes());
+		byte[] bytes = null;
+		try {
+			bytes = jedis.hget(key.getBytes(), field.getBytes());
+		} finally {
+			jedis.close();
+		}
+		
 		T value = null;
 		if (bytes != null) {
 			value = deserialize(bytes);
 		}
+		
 		return value;
 	}
 	
@@ -99,14 +125,18 @@ public abstract class AbstractCacheService {
 	
 	protected <T extends AbstractDTO> void hset(String key, Set<T> values) {
 		Jedis jedis = cacheManager.getCache();
-		Pipeline p = jedis.pipelined();		
-		values.stream().forEach(value -> {
-			try {
-				p.hset(key.getBytes(), value.getClass().getName().concat(value.getId()).getBytes(), serialize(value));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		Pipeline p = jedis.pipelined();	
+		try {
+			values.stream().forEach(value -> {
+				try {
+					p.hset(key.getBytes(), value.getClass().getName().concat(value.getId()).getBytes(), serialize(value));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}); 
+		} finally {
+			jedis.close();
+		}
 		
 		p.sync();
 	}
@@ -123,7 +153,13 @@ public abstract class AbstractCacheService {
 		ScanParams params = new ScanParams();
 	    params.match(type.getName().concat("*"));
 		
-		ScanResult<Entry<byte[], byte[]>> scanResult = jedis.hscan(key.getBytes(), SCAN_POINTER_START.getBytes(), params);
+		ScanResult<Entry<byte[], byte[]>> scanResult = null;
+		
+		try {
+			scanResult = jedis.hscan(key.getBytes(), SCAN_POINTER_START.getBytes(), params);
+		} finally {
+			jedis.close();
+		}
 		
 		Set<T> results = new HashSet<T>();
 		
@@ -134,5 +170,19 @@ public abstract class AbstractCacheService {
 		
 		return results;
 	}
-
+	
+	/**
+	 * 
+	 * @param key
+	 * @param seconds
+	 */
+	
+	protected void expire(String key, int seconds) {
+		Jedis jedis = cacheManager.getCache();
+		try {
+			jedis.expire(key.getBytes(), seconds);
+		} finally {
+			jedis.close();
+		}
+	}
 }

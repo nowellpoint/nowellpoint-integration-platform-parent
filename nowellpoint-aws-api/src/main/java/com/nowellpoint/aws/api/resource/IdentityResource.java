@@ -60,6 +60,10 @@ public class IdentityResource {
     	
     	S3Object image = s3Client.getObject(getObjectRequest);
     	
+    	String contentType = image.getObjectMetadata().getContentType();
+    	
+    	System.out.println(contentType);
+    	
     	byte[] s = null;
     	try {
     		s = IOUtils.toByteArray(image.getObjectContent());
@@ -68,10 +72,10 @@ public class IdentityResource {
 			throw new WebApplicationException( e.getMessage(), Status.INTERNAL_SERVER_ERROR );
 		} 
     	
-    	return Response.ok()
-    			.entity(s)
+    	return Response.ok().entity(s)
     			.header("Content-Disposition", "inline; filename=\"" + id + "\"")
     			.header("Content-Length", s.length)
+    			.header("Content-Type", contentType)
     			.build();
 	}
 	
