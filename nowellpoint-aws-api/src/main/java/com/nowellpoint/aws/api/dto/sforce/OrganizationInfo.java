@@ -1,6 +1,13 @@
-package com.nowellpoint.www.app.model.sforce;
+package com.nowellpoint.aws.api.dto.sforce;
 
-public class Organization {
+import java.io.Serializable;
+
+public class OrganizationInfo implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1297944724385795255L;
 	
 	private String id;
 	
@@ -30,14 +37,14 @@ public class Organization {
 	
 	private String instanceUrl;
 	
-	public Organization() {
-		System.out.println("creating organization");
+	public OrganizationInfo() {
+		
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}

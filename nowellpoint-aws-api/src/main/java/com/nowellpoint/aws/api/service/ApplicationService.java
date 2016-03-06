@@ -39,7 +39,7 @@ public class ApplicationService extends AbstractDataService<ApplicationDTO, Appl
 	 */
 	
 	public ApplicationDTO createApplication(String subject, ApplicationDTO resource, URI eventSource) {
-		create(subject, resource, eventSource);
+		createIdentity(subject, resource, eventSource);
 
 		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

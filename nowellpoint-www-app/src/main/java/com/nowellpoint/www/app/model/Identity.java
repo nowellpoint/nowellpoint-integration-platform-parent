@@ -142,16 +142,17 @@ public class Identity extends BaseEntity {
 	 * 
 	 */
 	
-	private String picture;
+	private List<ServiceProvider> serviceProviders;
 	
 	/**
 	 * 
 	 */
 	
-	private List<ServiceProvider> serviceProviders; 
+	private Photos photos;
 	
 	public Identity() {
 		address = new Address();
+		photos = new Photos();
 		serviceProviders = new ArrayList<ServiceProvider>();
 	}
 
@@ -323,19 +324,19 @@ public class Identity extends BaseEntity {
 		this.href = href;
 	}
 
-	public String getPicture() {
-		return picture;
-	}
-
-	public void setPicture(String picture) {
-		this.picture = picture;
-	}
-
 	public List<ServiceProvider> getServiceProviders() {
 		return serviceProviders;
 	}
 
 	public void setServiceProviders(List<ServiceProvider> serviceProviders) {
 		this.serviceProviders = serviceProviders;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
 	}
 }

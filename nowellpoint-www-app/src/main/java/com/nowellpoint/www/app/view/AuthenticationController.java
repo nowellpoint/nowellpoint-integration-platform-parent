@@ -109,7 +109,6 @@ public class AuthenticationController {
     		Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
     		
     		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-					.accept(MediaType.APPLICATION_JSON)
 					.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 	    			.path("oauth")

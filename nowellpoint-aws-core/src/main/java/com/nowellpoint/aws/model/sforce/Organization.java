@@ -2,6 +2,10 @@ package com.nowellpoint.aws.model.sforce;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization implements Serializable {
 	
 	/**
@@ -10,35 +14,47 @@ public class Organization implements Serializable {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
+	@JsonProperty(value="Id")
 	private String id;
 	
+	@JsonProperty(value="attributes")
 	private Attributes attributes;
 	
+	@JsonProperty(value="Division")
 	private String division;
 	
+	@JsonProperty(value="Fax")
 	private String fax;
 	
+	@JsonProperty(value="DefaultLocaleSidKey")
 	private String defaultLocaleSidKey;
 	
+	@JsonProperty(value="FiscalYearStartMonth")
 	private String fiscalYearStartMonth;
 	
+	@JsonProperty(value="InstanceName")
 	private String instanceName;
 	
+	@JsonProperty(value="IsSandbox")
 	private Boolean isSandbox;
 	
+	@JsonProperty(value="LanguageLocaleKey")
 	private String languageLocaleKey;
 	
+	@JsonProperty(value="Name")
 	private String name;
 	
+	@JsonProperty(value="OrganizationType")
 	private String organizationType;
 	
+	@JsonProperty(value="Phone")
 	private String phone;
 	
+	@JsonProperty(value="PrimaryContact")
 	private String primaryContact;
 	
+	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
-	
-	private String instanceUrl;
 	
 	public Organization() {
 		
@@ -154,13 +170,5 @@ public class Organization implements Serializable {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
-	}
-	
-	public String getInstanceUrl() {
-		return instanceUrl;
-	}
-
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
 	}
 }

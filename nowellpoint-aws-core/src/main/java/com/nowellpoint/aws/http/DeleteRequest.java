@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.http;
 
 import java.net.URL;
-import java.nio.charset.Charset;
 
 public class DeleteRequest extends HttpRequest {
 
@@ -28,23 +27,13 @@ public class DeleteRequest extends HttpRequest {
 		return this;
 	}
 	
-	public DeleteRequest acceptCharset(Charset charset) {
-		super.acceptCharset(charset);
-		return this;
-	}
-	
-	public DeleteRequest acceptCharset(String charset) {
-		super.acceptCharset(charset);
+	public DeleteRequest contentType(String contentType) {
+		super.contentType(contentType);
 		return this;
 	}
 	
 	public DeleteRequest bearerAuthorization(String bearerToken) {
 		super.bearerAuthorization(bearerToken);
-		return this;
-	}
-	
-	public DeleteRequest accept(String accept) {
-		super.accept(accept);
 		return this;
 	}
 	

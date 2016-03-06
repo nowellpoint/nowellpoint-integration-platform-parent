@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.nowellpoint.aws.data.mongodb.Address;
+import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
 public class IdentityDTO extends AbstractDTO {
@@ -151,6 +152,12 @@ public class IdentityDTO extends AbstractDTO {
 	 */
 	
 	private List<ServiceProvider> serviceProviders;
+	
+	/**
+	 * 
+	 */
+	
+	private Photos photos;
 
 	
 	public IdentityDTO() {
@@ -339,5 +346,13 @@ public class IdentityDTO extends AbstractDTO {
 
 	public void setServiceProviders(List<ServiceProvider> serviceProviders) {
 		this.serviceProviders = serviceProviders;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
 	}
 }

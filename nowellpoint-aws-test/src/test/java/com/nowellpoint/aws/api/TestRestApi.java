@@ -37,7 +37,6 @@ public class TestRestApi {
 			System.out.println(token.getAccessToken());
 			
 			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
-					.accept(MediaType.APPLICATION_JSON)
 					//.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 	    			.path("oauth")

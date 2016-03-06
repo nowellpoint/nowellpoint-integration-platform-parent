@@ -9,7 +9,11 @@ import com.nowellpoint.aws.api.bus.IdentityMessageListener;
 import com.nowellpoint.aws.data.IdentityCodec;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 
-@MessageHandler(queueName="MONGODB_IDENTITY_COLLECTION_QUEUE", collectionName="identities", messageListener=IdentityMessageListener.class, codec=IdentityCodec.class)
+@MessageHandler(
+		queueName="MONGODB_IDENTITY_COLLECTION_QUEUE", 
+		collectionName="identities", 
+		messageListener=IdentityMessageListener.class, 
+		codec=IdentityCodec.class)
 public class Identity extends AbstractDocument {
 
 	/**
@@ -145,12 +149,12 @@ public class Identity extends AbstractDocument {
 	 */
 
 	private String href;
-	
+
 	/**
 	 * 
 	 */
 	
-	private String picture;
+	private Photos photos;
 	
 	/**
 	 * 
@@ -330,12 +334,12 @@ public class Identity extends AbstractDocument {
 		this.href = href;
 	}
 
-	public String getPicture() {
-		return picture;
+	public Photos getPhotos() {
+		return photos;
 	}
 
-	public void setPicture(String picture) {
-		this.picture = picture;
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
 	}
 
 	public List<ServiceProvider> getServiceProviders() {

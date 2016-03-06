@@ -173,10 +173,11 @@ package com.nowellpoint.www.app.model.sforce;
 import java.io.Serializable;
 import java.util.Locale;
 
-import com.nowellpoint.aws.model.sforce.Organization;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.model.sforce.Photos;
 import com.nowellpoint.aws.model.sforce.Urls;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;

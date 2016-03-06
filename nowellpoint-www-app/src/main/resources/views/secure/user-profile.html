@@ -27,9 +27,32 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">
+                                ${picture}
+                            </h3>
+                        </div>
+                        <br>
+                        <div>
+                            <img src="${(identity.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
+                        </div>    
+                        <br>
+                        <#if identity.photos.profilePicture !='/images/person-generic.jpg'>
+                            <a href="#" id="clickable" class="btn btn-primary center-block" role="button">
+                                <div text-align="center"><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i></div>${delete}</a>
+                        </#if>
+                    </div>
                     <div class="col-md-6">
-                        
+
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">
+                                ${contactInformation}
+                            </h3>
+                        </div>
+
+                        <br>
+
                         <dl class="dl-horizontal">
                             <dt>${firstName}</dt>
                             <dd>${identity.firstName!}</dd>
@@ -50,8 +73,8 @@
                             <dt>${phone}</dt>
                             <dd>${identity.phone!}</dd>
                             <dt>${extension}</dt>
-                            <dd>${identity.extension!}</dd>                            
-                        </dl>    
+                            <dd>${identity.extension!}</dd>
+                        </dl>
 
                         <br>
 
@@ -62,7 +85,7 @@
                         </div>
 
                         <br>
-                        
+
                         <dl class="dl-horizontal">
                             <dt>${address}</dt>
                             <dd>${identity.address.street!}</dd>
@@ -74,17 +97,43 @@
                             <dd>${identity.address.postalCode!}</dd>
                             <dt>${country}</dt>
                             <dd>${identity.address.countryCode!}</dd>
-                        </dl>    
-                        
+                        </dl>
+
                     </div>
                     <div class="col-md-3"></div>
                 </div>
             </div>
         </div>
-        
+
         <br>
         <br>
 
         <#include "user-profile-edit.html"/>
+
+        <script>
+            $(document).ready(function() {
+                var $spinner = $('#spinner').hide();
+                $(document)
+                    .ajaxStart(function() {
+                        $spinner.show();
+                    })
+                    .ajaxStop(function() {
+                        $spinner.hide();
+                    });
+            });
+
+            $(document).ready(function(e) {
+                $('#clickable').click(function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/app/user-profile/picture",
+                        success: function() {
+                            location.reload();
+                        }
+                    });
+                });
+            });
+        </script>
 
     </@t.page>

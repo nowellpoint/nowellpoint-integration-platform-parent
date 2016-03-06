@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.aws.api.dto.sforce.OrganizationInfo;
 import com.nowellpoint.aws.api.dto.sforce.UserInfo;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
@@ -90,7 +91,6 @@ public class SalesforceService extends AbstractCacheService {
 		Identity identity = getIdentity(token.getAccessToken(), token.getId());
 		
 		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
-		organization.setInstanceUrl(token.getInstanceUrl());
 		
 		UserInfo userInfo = new UserInfo();
 		userInfo.setCity(identity.getAddrCity());
@@ -110,7 +110,24 @@ public class SalesforceService extends AbstractCacheService {
 		userInfo.setUsername(identity.getUsername());
 		userInfo.setUtcOffset(identity.getUtcOffset());
 		userInfo.setZipPostalCode(identity.getAddrZip());
-		userInfo.setOrganization(organization);
+		
+		OrganizationInfo organizationInfo = new OrganizationInfo();
+		organizationInfo.setDefaultLocaleSidKey(organization.getDefaultLocaleSidKey());
+		organizationInfo.setDivision(organization.getDivision());
+		organizationInfo.setFax(organization.getFax());
+		organizationInfo.setFiscalYearStartMonth(organization.getFiscalYearStartMonth());
+		organizationInfo.setId(organization.getId());
+		organizationInfo.setInstanceName(organization.getInstanceName());
+		organizationInfo.setInstanceUrl(token.getInstanceUrl());
+		organizationInfo.setIsSandbox(organization.getIsSandbox());
+		organizationInfo.setLanguageLocaleKey(organization.getLanguageLocaleKey());
+		organizationInfo.setName(organization.getName());
+		organizationInfo.setOrganizationType(organization.getOrganizationType());
+		organizationInfo.setPhone(organization.getPhone());
+		organizationInfo.setPrimaryContact(organization.getPrimaryContact());
+		organizationInfo.setUsesStartDateAsFiscalYearName(organization.getUsesStartDateAsFiscalYearName());
+		
+		userInfo.setOrganization(organizationInfo);
 		
 		hset( subject, Token.class.getName(), token );
 		expire( subject, 3600 );
@@ -183,7 +200,7 @@ public class SalesforceService extends AbstractCacheService {
 	     	organization = httpResponse.getEntity(Organization.class);
 	     	
 		} catch (IOException e) {
-			LOGGER.error( "getOrganizationByTokenId", e.getCause() );
+			LOGGER.error( "getOrganization", e );
 			throw new WebApplicationException(e, Status.BAD_REQUEST);
 		}
 		

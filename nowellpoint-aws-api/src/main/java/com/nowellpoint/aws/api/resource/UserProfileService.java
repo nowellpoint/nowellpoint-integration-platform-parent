@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,6 +30,7 @@ import org.jboss.logging.Logger;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,6 +42,7 @@ import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.mongodb.Address;
+import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
@@ -205,6 +208,40 @@ public class UserProfileService {
 				.path("picture")
 				.build(resource.getId());
 		
+		Photos photos = new Photos();
+		photos.setProfilePicture(uri.toString());
+		
+		resource.setPhotos(photos);
+		
+		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri());
+		
 		return Response.created(uri).build();		
+	}
+	
+	@DELETE
+	@Path("/photo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response removeProfilePicture() {
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentityBySubject( subject );
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("aws-microservices", resource.getId());
+		
+		s3Client.deleteObject(deleteObjectRequest);
+		
+		Photos photos = new Photos();
+		photos.setProfilePicture("/images/person-generic.jpg");
+		
+		resource.setPhotos(photos);
+		
+		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri());
+		
+		return Response.ok(resource)
+				.build();
 	}
 }

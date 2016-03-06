@@ -173,7 +173,6 @@ package com.nowellpoint.aws.api.dto.sforce;
 import java.io.Serializable;
 import java.util.Locale;
 
-import com.nowellpoint.aws.model.sforce.Organization;
 import com.nowellpoint.aws.model.sforce.Photos;
 import com.nowellpoint.aws.model.sforce.Urls;
 
@@ -215,7 +214,7 @@ public class UserInfo implements Serializable {
 
 	private Urls urls;
 	
-	private Organization organization;
+	private OrganizationInfo organization;
 
 	public UserInfo() {
 
@@ -357,11 +356,11 @@ public class UserInfo implements Serializable {
 		this.urls = urls;
 	}
 
-	public Organization getOrganization() {
+	public OrganizationInfo getOrganization() {
 		return organization;
 	}
 
-	public void setOrganization(Organization organization) {
+	public void setOrganization(OrganizationInfo organization) {
 		this.organization = organization;
 	}
 }

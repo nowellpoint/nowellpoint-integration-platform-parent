@@ -2,6 +2,7 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.delete;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,6 +36,8 @@ public class UserProfileController {
 		post("/app/user-profile", (request, response) -> updateUserProfile(request, response), new FreeMarkerEngine(cfg));
 		
 		post("/app/user-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
+		
+		delete("/app/user-profile/picture", (request, response) -> removeProfilePicture(request, response));
 		
 	}
 	
@@ -144,5 +147,36 @@ public class UserProfileController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
 		
 		return "";	
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	
+	private static ModelAndView removeProfilePicture(Request request, Response response) throws IOException {
+		
+		Token token = request.attribute("token");
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", request.attribute("account"));
+		
+		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+    			.bearerAuthorization(token.getAccessToken())
+        		.path("user-profile")
+        		.path("photo")
+        		.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
+		
+		Identity identity = httpResponse.getEntity(Identity.class);
+		
+		model.put("identity", identity);
+		
+		return new ModelAndView(model, "secure/user-profile.html");		
 	}
 }

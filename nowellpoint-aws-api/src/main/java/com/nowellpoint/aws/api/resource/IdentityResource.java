@@ -1,10 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 
 import javax.inject.Inject;
@@ -62,19 +58,22 @@ public class IdentityResource {
     	
     	String contentType = image.getObjectMetadata().getContentType();
     	
-    	System.out.println(contentType);
-    	
-    	byte[] s = null;
+    	byte[] bytes = null;
     	try {
-    		s = IOUtils.toByteArray(image.getObjectContent());
-    		image.close();
+    		bytes = IOUtils.toByteArray(image.getObjectContent());    		
 		} catch (IOException e) {
 			throw new WebApplicationException( e.getMessage(), Status.INTERNAL_SERVER_ERROR );
-		} 
+		} finally {
+			try {
+				image.close();
+			} catch (IOException ignore) {
+
+			}
+		}
     	
-    	return Response.ok().entity(s)
+    	return Response.ok().entity(bytes)
     			.header("Content-Disposition", "inline; filename=\"" + id + "\"")
-    			.header("Content-Length", s.length)
+    			.header("Content-Length", bytes.length)
     			.header("Content-Type", contentType)
     			.build();
 	}
@@ -97,7 +96,7 @@ public class IdentityResource {
     public Response createIdentity(IdentityDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		identityService.create( subject, resource, uriInfo.getBaseUri() );
+		identityService.createIdentity( subject, resource, uriInfo.getBaseUri() );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)

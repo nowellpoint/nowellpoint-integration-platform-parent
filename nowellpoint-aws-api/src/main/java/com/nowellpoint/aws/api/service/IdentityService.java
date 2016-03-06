@@ -16,6 +16,7 @@ import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
@@ -53,12 +54,17 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 * @return the created Identity resource
 	 */
 	
-	public IdentityDTO create(String subject, IdentityDTO resource, URI eventSource) {
+	public IdentityDTO createIdentity(String subject, IdentityDTO resource, URI eventSource) {
 		resource.setHref(subject);
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		
-		create(subject, resource, eventSource);
+		Photos photos = new Photos();
+		photos.setProfilePicture("/images/person-generic.jpg");
+		
+		resource.setPhotos(photos);
+		
+		createIdentity(subject, resource, eventSource);
 		
 		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
 		hset( subject, IdentityDTO.class.getName(), resource );
