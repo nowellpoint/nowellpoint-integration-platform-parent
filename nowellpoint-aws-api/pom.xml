@@ -52,13 +52,8 @@
 			<artifactId>jaxrs-multipart</artifactId>
 			<version>${version.wildfly-swarm}</version>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>swagger</artifactId>
-			<version>1.0.0.Beta1</version>
-		</dependency>
-		 -->
+		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>swagger</artifactId> 
+			<version>1.0.0.Beta1</version> </dependency> -->
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>weld</artifactId>
@@ -73,6 +68,11 @@
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>0.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.stormpath.sdk</groupId>
+			<artifactId>stormpath-sdk-api</artifactId>
+			<version>1.0.RC8.5</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
