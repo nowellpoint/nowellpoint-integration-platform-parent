@@ -13,13 +13,21 @@ public class ServiceProvider implements Serializable {
 	
 	private static final long serialVersionUID = 8096961003246656184L;
 	
-	private String name;
+	private String id;
+	
+	private String type;
+	
+	private String key;
+	
+	private String owner;
+	
+	private String instanceName;
+	
+	private String instanceUrl;
 	
 	private String account;
 	
 	private Boolean isActive;
-	
-	private String authenticate;
 	
 	private Double price;
 	
@@ -27,12 +35,52 @@ public class ServiceProvider implements Serializable {
 		
 	}
 
-	public String getName() {
-		return name;
+	public String getId() {
+		return id;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public String getInstanceName() {
+		return instanceName;
+	}
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+
+	public String getInstanceUrl() {
+		return instanceUrl;
+	}
+
+	public void setInstanceUrl(String instanceUrl) {
+		this.instanceUrl = instanceUrl;
 	}
 
 	public String getAccount() {
@@ -49,14 +97,6 @@ public class ServiceProvider implements Serializable {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
-	}
-
-	public String getAuthenticate() {
-		return authenticate;
-	}
-
-	public void setAuthenticate(String authenticate) {
-		this.authenticate = authenticate;
 	}
 
 	public Double getPrice() {

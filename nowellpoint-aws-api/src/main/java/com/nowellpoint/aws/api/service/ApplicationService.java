@@ -95,7 +95,7 @@ public class ApplicationService extends AbstractDataService<ApplicationDTO, Appl
 		ApplicationDTO resource = hget( id, subject );
 		
 		if ( resource == null ) {
-			resource = find(subject, id);
+			resource = find(id);
 			hset( id, subject, resource );
 		}
 		

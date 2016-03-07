@@ -66,7 +66,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		
 		createIdentity(subject, resource, eventSource);
 		
-		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 		hset( subject, IdentityDTO.class.getName(), resource );
 		
 		return resource;
@@ -97,7 +97,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		
 		update(subject, resource, eventSource);
 
-		hset( subject, IdentityDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), subject, resource );
 		hset( subject, IdentityDTO.class.getName(), resource );
 		
 		return resource;
@@ -113,8 +113,9 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		IdentityDTO resource = hget( id, subject );
 		
 		if ( resource == null ) {
-			resource = find(subject, id);
-			hset( id, subject, resource );
+			resource = find(id);
+			hset( resource.getId(), subject, resource );
+			hset( subject, IdentityDTO.class.getName(), resource );
 		}
 		
 		return resource;
@@ -142,6 +143,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 			
 			resource = modelMapper.map( identity, IdentityDTO.class );
 
+			hset( resource.getId(), subject, resource );
 			hset( subject, IdentityDTO.class.getName(), resource );
 		}
 		

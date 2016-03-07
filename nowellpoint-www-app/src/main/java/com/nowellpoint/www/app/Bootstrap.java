@@ -39,6 +39,7 @@ import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.UserProfileController;
 import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceController;
+import com.nowellpoint.www.app.view.ServiceProviderController;
 import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
@@ -149,6 +150,7 @@ public class Bootstrap implements SparkApplication {
         //
         
         new DashboardController(cfg);
+        new ServiceProviderController(cfg);
         new ApplicationController(cfg);
         new UserProfileController(cfg);
         new SignUpController(cfg);

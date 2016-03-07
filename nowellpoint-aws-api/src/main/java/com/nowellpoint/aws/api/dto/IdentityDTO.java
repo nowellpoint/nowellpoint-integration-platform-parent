@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -346,6 +347,19 @@ public class IdentityDTO extends AbstractDTO {
 
 	public void setServiceProviders(List<ServiceProvider> serviceProviders) {
 		this.serviceProviders = serviceProviders;
+	}
+	
+	public void addServiceProvider(ServiceProvider serviceProvider) {
+		if (serviceProviders == null) {
+			serviceProviders = new ArrayList<ServiceProvider>();
+		}
+		serviceProviders.add(serviceProvider);
+	}
+	
+	public void removeServiceProvider(String serviceProviderId) {	
+		serviceProviders.stream().filter(p -> p.getId().equals(serviceProviderId)).findFirst().ifPresent(p -> {
+			serviceProviders.remove(p);
+		});
 	}
 
 	public Photos getPhotos() {

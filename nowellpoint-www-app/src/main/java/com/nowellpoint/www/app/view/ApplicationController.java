@@ -38,8 +38,6 @@ public class ApplicationController {
 		
 		delete("/app/applications/:id", (request, response) -> deleteApplication(request, response));
 		
-		get("/app/applications/types", (request, response) -> getTypes(request, response), new FreeMarkerEngine(cfg));
-		
 		post("/app/applications/configure/salesforce", (request, response) -> saveSalesforceApplication(request, response));
 	}
 	
@@ -99,24 +97,6 @@ public class ApplicationController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		return "";	
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView getTypes(Request request, Response response) {
-		
-		String type = request.params(":type");
-		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
-		
-		return new ModelAndView(model, String.format("secure/application-types.html", type));
-		
 	}
 	
 	/**

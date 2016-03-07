@@ -128,12 +128,11 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	
 	/**
 	 * 
-	 * @param subject
 	 * @param id
 	 * @return
 	 */
 	
-	protected R find(String subject, String id) {		
+	protected R find(String id) {		
 		String collectionName = documentType.getAnnotation(MessageHandler.class).collectionName();
 		
 		D document = MongoDBDatastore.getDatabase().getCollection( collectionName )

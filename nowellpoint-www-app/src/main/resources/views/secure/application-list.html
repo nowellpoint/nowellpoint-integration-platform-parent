@@ -53,8 +53,7 @@
         <#include "confirm-dialog.html"/>
 
         <script>
-            $('#confirm').click(function() {
-                e.preventDefault();
+            $('#confirm').click(function(e) {
                 var id = $('#confirmDialog').data('id');
                 $.ajax({
                     url: '/app/applications/' + id,

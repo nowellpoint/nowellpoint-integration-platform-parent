@@ -22,6 +22,5 @@ public class Startup implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		cacheManager.getCache();
-		
 	}
 }

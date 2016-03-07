@@ -28,7 +28,7 @@
                         <br>
                         <img src="${(userInfo.photos.picture)!}" class="img-circle img-responsive center-block">
                         <br>
-                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button"><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i>${useAsProfile}</a>
+                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button"><span><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i></span>${useAsProfile}</a>
                     </div>
                     <div class="col-md-6">
 
@@ -80,9 +80,9 @@
                             <dd>${(userInfo.organization.isSandbox?string('Yes', 'No'))!}</dd>
                         </dl>
 
-                        <form class="form-vertical" role="form" method="post" action="/app/applications/configure/salesforce">
-                            <input type="hidden" name="id" id="id" value="" />
+                        <form class="form-vertical" role="form" method="post" action="/app/providers">
                             <input type="hidden" name="type" id="type" value="SALESFORCE" />
+                            <input type="hidden" name="username" id="username" value="${userInfo.username}" />
                             <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.id)!}" />
                             <input type="hidden" name="organizationName" id="organizationName" value="${(userInfo.organization.name)!}" />
                             <input type="hidden" name="organizationType" id="organizationType" value="${(userInfo.organization.organizationType)!}" />
@@ -90,8 +90,8 @@
                             <input type="hidden" name="isSandbox" id="isSandbox" value="${(userInfo.organization.isSandbox?string)!}" />
                             <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(userInfo.organization.instanceUrl)!}" />
                             <div class="pull-right">
-                                <a href="/app/applications/types">${cancel}</a> &nbsp;
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${createApplication}</button>
+                                <a href="/app/applications/types">${cancel}</a>&nbsp;
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${addServiceProvider}</button>
                             </div>
                         </form>
                     </div>

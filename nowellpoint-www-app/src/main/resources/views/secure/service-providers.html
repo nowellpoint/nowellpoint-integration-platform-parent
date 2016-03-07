@@ -12,39 +12,95 @@
             </div>
 
             <br>
-            <br>
-            <br>
 
-            <div class="container">
-                <div class="content table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <th>${providerLabel}</th>
-                            <th>${accountLabel}</th>
-                            <th>${statusLabel}</th>
-                            <th></th>
-                            <th>${priceLabel}</th>
-                        </thead>
-                        <tbody>
-                            <#list identity.serviceProviders as serviceProvider>
-                                <td>${serviceProvider.name}</td>
-                                <td>${(serviceProvider.account)!}</td>
-                                <td>
-                                    <#if serviceProvider.isActive>
-                                        <i class="fa fa-check"></i>
-                                    </#if>
-                                    <#if ! serviceProvider.isActive>
-                                        <i class="fa fa-close"></i>
-                                    </#if>
-                                </td>
-                                <td><a href="/app/salesforce/oauth" class="btn btn-sm btn-primary" role="button">${authenticateLabel}</a></td>
-                                <td>0.00</td>
-                            </#list>
-                        </tbody>
-                    </table>
+            <div class="container-fluid container-fluid-spacious">
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <div class="col-lg-3 col-md-3 text-center">
+                            <div>
+                                <img src="/images/salesforce-logo.png">
+                                <h3>${salesforce}</h3>
+                                <p>${salesforceServiceProviderDescription}</p>
+                                <br>
+                                <h1 class="statcard-number">0.00</h1>
+                                <br>
+                                <span><a href="/app/salesforce/oauth" class="btn btn-primary" role="button">${authenticateLabel}</a></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 text-center">
+
+                        </div>
+                        <div class="col-lg-3 col-md-3 text-center">
+
+                        </div>
+                        <div class="col-lg-3 col-md-3 text-center">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <div class="hr-divider m-t m-b-md">
+                            <h3 class="hr-divider-content hr-divider-heading" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+
+                        <div class="content table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <th>${type}</th>
+                                    <th>${accountLabel}</th>
+                                    <th>${key}</th>
+                                    <th>${owner}</th>
+                                    <th>${active}</th>
+                                    <th>${action}</th>
+                                </thead>
+                                <tbody>
+                                    <#list identity.serviceProviders as serviceProvider>
+                                        <tr>
+                                            <td>${serviceProvider.type}</td>
+                                            <td>${serviceProvider.account}</td>
+                                            <td>${serviceProvider.key}</td>
+                                            <td>${serviceProvider.owner}</td>
+                                            <td>
+                                                <#if serviceProvider.isActive>
+                                                    <i class="fa fa-check"></i>
+                                                </#if>
+                                                <#if ! serviceProvider.isActive>
+                                                    <i class="fa fa-close"></i>
+                                                </#if>
+                                            </td>
+                                            <td>
+                                                <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${identity.id}:${serviceProvider.id}" data-message="${serviceProvider.type}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
         </div>
+
+        <#include "confirm-dialog.html"/>
+
+        <script>
+            $('#confirm').click(function(e) {
+                var id = $('#confirmDialog').data('id').split(':');
+                $.ajax({
+                    url: '/app/providers/' + id[0] + '?id=' + id[1],
+                    type: 'DELETE',
+                    success: function() {
+                        window.location.href = '/app/providers';
+                    }
+                });
+                $('#confirmDialog').modal('hide');
+            });
+        </script>
 
     </@t.page>

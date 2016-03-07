@@ -175,7 +175,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 		ProjectDTO resource = hget( id, subject );
 		
 		if ( resource == null ) {		
-			resource = find(subject, id);
+			resource = find(id);
 			hset( id, subject, resource );
 		}
 		
