@@ -110,7 +110,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO findIdentity(String id, String subject) {
-		IdentityDTO resource = hget( id, subject );
+		IdentityDTO resource = hget( IdentityDTO.class, id, subject );
 		
 		if ( resource == null ) {
 			resource = find(id);
@@ -128,7 +128,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public IdentityDTO findIdentityBySubject(String subject) {
-		IdentityDTO resource = hget( subject, IdentityDTO.class.getName() );
+		IdentityDTO resource = hget( IdentityDTO.class, subject, IdentityDTO.class.getName() );
 
 		if ( resource == null ) {			
 			Identity identity = MongoDBDatastore.getDatabase()

@@ -75,7 +75,7 @@ public class SalesforceService extends AbstractCacheService {
 	 */
 	
 	public Token findTokenBySubject(String subject) {
-		Token token = hget(subject, Token.class.getName());
+		Token token = hget( Token.class, subject, Token.class.getName());
 		return token;
 	}
 	

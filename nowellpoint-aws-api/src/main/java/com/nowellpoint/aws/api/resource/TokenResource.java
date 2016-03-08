@@ -77,7 +77,7 @@ public class TokenResource {
 				.withUsername(params[0])
 				.withPassword(params[1]);
 		
-		//params = null;
+		params = null;
 
 		GetTokenResponse tokenResponse = identityProviderClient.token(tokenRequest);
 		

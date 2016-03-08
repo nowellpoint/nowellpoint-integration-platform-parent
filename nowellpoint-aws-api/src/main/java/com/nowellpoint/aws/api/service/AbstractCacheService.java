@@ -46,7 +46,7 @@ public abstract class AbstractCacheService {
 	 * @return
 	 */
 	
-	protected <T extends AbstractDTO> T get(String key) {
+	protected <T extends AbstractDTO> T get(Class<T> type, String key) {
 		Jedis jedis = cacheManager.getCache();
 		byte[] bytes = null;
 		try {
@@ -57,7 +57,7 @@ public abstract class AbstractCacheService {
 		
 		T value = null;
 		if (bytes != null) {
-			value = deserialize(bytes);
+			value = deserialize(bytes, type);
 		}
 		return value;
 	}
@@ -100,7 +100,7 @@ public abstract class AbstractCacheService {
 	 * @return
 	 */
 	
-	public <T> T hget(String key, String field) {
+	public <T> T hget(Class<T> type, String key, String field) {
 		Jedis jedis = cacheManager.getCache();
 		byte[] bytes = null;
 		try {
@@ -111,7 +111,7 @@ public abstract class AbstractCacheService {
 		
 		T value = null;
 		if (bytes != null) {
-			value = deserialize(bytes);
+			value = deserialize(bytes, type);
 		}
 		
 		return value;
@@ -164,7 +164,7 @@ public abstract class AbstractCacheService {
 		Set<T> results = new HashSet<T>();
 		
 		scanResult.getResult().forEach(r -> {
-			T t = deserialize(r.getValue());
+			T t = deserialize(r.getValue(), type);
 			results.add(t);
 		});
 		

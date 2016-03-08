@@ -172,7 +172,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 */
 	
 	public ProjectDTO findProject(String subject, String id) {
-		ProjectDTO resource = hget( id, subject );
+		ProjectDTO resource = hget( ProjectDTO.class, id, subject );
 		
 		if ( resource == null ) {		
 			resource = find(id);

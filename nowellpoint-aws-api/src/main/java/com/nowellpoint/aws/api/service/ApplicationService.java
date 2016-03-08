@@ -92,7 +92,7 @@ public class ApplicationService extends AbstractDataService<ApplicationDTO, Appl
 	 */
 	
 	public ApplicationDTO getApplication(String id, String subject) {
-		ApplicationDTO resource = hget( id, subject );
+		ApplicationDTO resource = hget( ApplicationDTO.class, id, subject );
 		
 		if ( resource == null ) {
 			resource = find(id);

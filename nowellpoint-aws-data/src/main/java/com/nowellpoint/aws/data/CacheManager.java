@@ -1,18 +1,29 @@
 package com.nowellpoint.aws.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.ApplicationScoped;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 
 import redis.clients.jedis.Jedis;
@@ -25,7 +36,12 @@ import redis.clients.jedis.Protocol;
 public class CacheManager {
 	
 	private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
-	private JedisPool jedisPool;
+	private static final ObjectMapper mapper = new ObjectMapper();
+	
+	private static JedisPool jedisPool;
+	private static Cipher cipher;
+	private static SecretKey secretKey;
+	private static IvParameterSpec iv;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -36,6 +52,26 @@ public class CacheManager {
         poolConfig.setMaxTotal(30);
 		
 		jedisPool = new JedisPool(poolConfig, endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
+		
+		String keyString = "C0BAE23DF8B51807B3E17D21925FADF273A70181E1D81B8EDE6C76A5C1F1716E";
+		
+		try {
+			byte[] key = keyString.getBytes("UTF-8");
+			
+			MessageDigest sha = MessageDigest.getInstance("SHA-1");
+			key = sha.digest(key);
+			key = Arrays.copyOf(key, 32);
+		    
+		    secretKey = new SecretKeySpec(key, "AES");
+		    
+		    cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+		    
+		    byte[] ivBytes = new byte[cipher.getBlockSize()];
+		    iv = new IvParameterSpec(ivBytes);
+		    
+		} catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+			e.printStackTrace();
+		}
 		
 		LOGGER.info("connecting to cache...is connected: " + ! jedisPool.isClosed());
 	}
@@ -91,13 +127,13 @@ public class CacheManager {
 	 * @return
 	 */
 	
-	public <T> Set<T> smembers(String key) {
+	public <T> Set<T> smembers(Class<T> type, String key) {
 		Jedis jedis = getCache();
 		Set<T> results = new HashSet<T>();
 		
 		try {
 			jedis.smembers(key.getBytes()).stream().forEach(m -> {
-				results.add(deserialize(m));
+				results.add(deserialize(m,type));
 			});
 		} finally {
 			jedis.close();
@@ -108,28 +144,12 @@ public class CacheManager {
 	
 	/**
 	 * 
-	 * @param key
-	 * @param seconds
-	 * @param value
-	 * @throws IOException
-	 */
-	
-	public <T> void setex(String key, int seconds, T value) {
-		Jedis jedis = getCache();
-		try {
-			jedis.setex(key.getBytes(), seconds, serialize(value));
-		} finally {
-			jedis.close();
-		}
-	}
-	
-	/**
-	 * 
+	 * @param type
 	 * @param key
 	 * @return
 	 */
 	
-	public <T> T get(String key) {
+	public <T> T get(Class<T> type, String key) {
 		Jedis jedis = getCache();
 		byte[] bytes = null;
 		
@@ -141,10 +161,26 @@ public class CacheManager {
 		
 		T value = null;
 		if (bytes != null) {
-			value = deserialize(bytes);
+			value = deserialize(bytes, type);
 		}
 		
 		return value;
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param seconds
+	 * @param value
+	 */
+	
+	public <T> void setex(String key, int seconds, T value) {
+		Jedis jedis = getCache();
+		try {
+			jedis.setex(key.getBytes(), seconds, serialize(value));
+		} finally {
+			jedis.close();
+		}
 	}
 	
 	/**
@@ -167,13 +203,13 @@ public class CacheManager {
 	 * @return
 	 */
 	
-	public <T> Set<T> hgetAll(String key) {
+	public <T> Set<T> hgetAll(Class<T> type, String key) {
 		Jedis jedis = getCache();
 		Set<T> results = new HashSet<T>();
 		try {
 			jedis.hgetAll(key.getBytes()).values().stream().forEach(m -> {
 				try {
-					results.add(deserialize(m));
+					results.add(deserialize(m, type));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -192,7 +228,7 @@ public class CacheManager {
 	 * @return
 	 */
 	
-	public <T> T hget(String key, String field) {
+	public <T> T hget(Class<T> type, String key, String field) {
 		Jedis jedis = getCache();
 		byte[] bytes = null;
 		
@@ -204,7 +240,7 @@ public class CacheManager {
 		
 		T value = null;
 		if (bytes != null) {
-			value = deserialize(bytes);
+			value = deserialize(bytes, type);
 		}
 		
 		return value;
@@ -214,58 +250,40 @@ public class CacheManager {
 	 * 
 	 * @param object
 	 * @return
-	 * @throws IOException
 	 */
 	
 	public static byte[] serialize(Object object) {
-        ByteArrayOutputStream baos = null;
-        try {
-            baos = new ByteArrayOutputStream();
-            ObjectOutputStream os = new ObjectOutputStream(baos);
-            os.writeObject(object);
-            byte[] bytes = baos.toByteArray();
-            return bytes;
-        } catch (IOException e) {
-        	LOGGER.severe("Cache serialize issue >>>");
+		byte[] bytes = null;
+		try {
+			String json = mapper.writeValueAsString(object);
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+			bytes = cipher.doFinal(json.getBytes("UTF8"));
+		} catch (JsonProcessingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+			LOGGER.severe("Cache serialize issue >>>");
 			e.printStackTrace();
-		} finally {
-        	try {
-				baos.close();
-			} catch (IOException ignore) {
-				
-			}
-        }
+		}
         
-        return null;
+		return bytes;
     }
 	
 	/**
 	 * 
 	 * @param bytes
+	 * @param type
 	 * @return
-	 * @throws IOException
-	 * @throws ClassNotFoundException
 	 */
 	
-	@SuppressWarnings("unchecked")
-	public static <T> T deserialize(byte[] bytes) {
-		ByteArrayInputStream bais = null;
-        try {
-            bais = new ByteArrayInputStream(bytes);
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            Object object = ois.readObject();
-            return (T) object;
-        } catch (IOException | ClassNotFoundException e) {
-        	LOGGER.severe("Cache deserialize issue >>>");
+	public static <T> T deserialize(byte[] bytes, Class<T> type) {
+		T object = null;
+		try {
+			cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+			bytes = cipher.doFinal(bytes);
+			object = mapper.readValue(bytes, type);
+		} catch (IOException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			LOGGER.severe("Cache deserialize issue >>>");
 			e.printStackTrace();
-		} finally {
-            try {
-				bais.close();
-			} catch (IOException ignore) {
-
-			}
-        }
-        
-        return null;
+		}
+		
+		return object;
 	}
 }

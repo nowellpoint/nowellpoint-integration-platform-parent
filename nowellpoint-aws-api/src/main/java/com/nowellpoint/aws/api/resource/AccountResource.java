@@ -64,7 +64,7 @@ public class AccountResource {
 			throw new BadRequestException("Missing bearer token");
 		}
 		
-		Account account = cacheManager.get(bearerToken);
+		Account account = cacheManager.get(Account.class, bearerToken);
 		
 		if (account != null) {			
 			return Response.ok(account)
