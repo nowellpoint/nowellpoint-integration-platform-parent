@@ -34,6 +34,8 @@ public class ServiceProviderController {
         
         post("/app/providers", (request, response) -> saveServiceProvider(request, response));
         
+        get("/app/providers/configure/:providerId", (request, response) -> saveServiceProvider(request, response));
+        
         delete("/app/providers/:identityId", (request, response) -> removeServiceProvider(request, response));
 	}
 	
@@ -60,6 +62,15 @@ public class ServiceProviderController {
 		model.put("identity", identity);
     	
 		return new ModelAndView(model, "secure/service-providers.html");
+	}
+	
+	private static ModelAndView routeToServiceProviderConfigure(Request request, Response response) {
+		String providerId = request.params("identityId");
+		
+		Token token = request.attribute("token");
+		
+		return null;
+		
 	}
 	
 	private static String saveServiceProvider(Request request, Response response) throws IOException {

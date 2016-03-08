@@ -1,21 +1,14 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.dto;
 
-import java.io.Serializable;
+import com.nowellpoint.aws.data.mongodb.User;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.api.bus.ServiceProviderMessageListener;
-import com.nowellpoint.aws.data.ServiceProviderCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@MessageHandler(queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", collectionName="service.providers", messageListener=ServiceProviderMessageListener.class, codec=ServiceProviderCodec.class)
-public class ServiceProvider extends AbstractDocument implements Serializable {
+public class ServiceProviderDTO extends AbstractDTO {
 
 	/**
 	 * 
 	 */
 	
-	private static final long serialVersionUID = 8096961003246656184L;
+	private static final long serialVersionUID = 5553142927678572603L;
 	
 	private String type;
 	
@@ -33,8 +26,12 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	
 	private User owner;
 	
-	public ServiceProvider() {
+	public ServiceProviderDTO() {
 		
+	}
+	
+	public ServiceProviderDTO(String id) {
+		setId(id);
 	}
 
 	public String getType() {
@@ -99,5 +96,5 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	public void setPrice(Double price) {
 		this.price = price;
-	}
+	}	
 }

@@ -19,84 +19,39 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.aws.api.dto.ApplicationDTO;
-import com.nowellpoint.aws.api.service.ApplicationService;
+import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
-@Path("/application")
-public class ApplicationResource {
+@Path("/provider")
+public class ServiceProviderResource {
 	
-	@Inject
-	private ApplicationService applicationService;
-
 	@Context
 	private UriInfo uriInfo;
 	
 	@Context
 	private HttpServletRequest servletRequest;
 	
-	/**
-	 * 
-	 * @return
-	 */
+	@Inject
+	private ServiceProviderService serviceProviderService;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		Set<ApplicationDTO> resources = applicationService.getAll(subject);
+		Set<ServiceProviderDTO> resources = serviceProviderService.getAll(subject);
 		
 		return Response.ok(resources).build();
     }
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
-	@GET
-	@Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-	public Response getApplication(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		ApplicationDTO resource = applicationService.getApplication( id, subject );
-		
-		return Response.ok(resource).build();
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
-	@DELETE
-	@Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-	public Response deleteApplication(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		applicationService.deleteApplication(id, subject, uriInfo.getBaseUri());
-		
-		return Response.noContent().build();
-	}
-	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createApplication(ApplicationDTO resource) {
+	public Response createServiceProvider(ServiceProviderDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		applicationService.createApplication(subject, resource, uriInfo.getBaseUri());
+		serviceProviderService.createServiceProvider(subject, resource, uriInfo.getBaseUri());
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ApplicationResource.class)
@@ -108,23 +63,39 @@ public class ApplicationResource {
 				.build();
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @param resource
-	 * @return
-	 */
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteServiceProvider(@PathParam("id") String id) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		serviceProviderService.deleteServiceProvider(id, subject, uriInfo.getBaseUri());
+		
+		return Response.noContent().build();
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getServiceProvider(@PathParam("id") String id) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
+		
+		return Response.ok(resource)
+				.build();
+	}
 	
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
+	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		resource.setId(id);
 		
-		applicationService.updateApplication(subject, resource, uriInfo.getBaseUri());
+		serviceProviderService.updateServiceProvider(subject, resource, uriInfo.getBaseUri());
 		
 		return Response.ok(resource).build();
 	}

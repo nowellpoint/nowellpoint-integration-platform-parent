@@ -2,12 +2,10 @@ package com.nowellpoint.aws.api.resource;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -31,7 +29,6 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
-import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
 @Path("/identity")
 public class IdentityResource {
@@ -127,41 +124,6 @@ public class IdentityResource {
 		HttpServletRequestUtil.getSubject(servletRequest);
 		
 		IdentityDTO resource = identityService.findIdentityBySubject( subject );
-		
-		return Response.ok(resource)
-				.build();
-	}
-	
-	@POST
-	@Path("/{id}/service-provider")
-	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-	public Response addServiceProivder(@PathParam("id") String id, ServiceProvider serviceProvider) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		serviceProvider.setId(UUID.randomUUID().toString());
-		
-		IdentityDTO resource = identityService.findIdentity(id, subject);
-		
-		resource.addServiceProvider(serviceProvider);
-		
-		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri());
-		
-		return Response.ok(resource)
-				.build();
-	}
-	
-	@DELETE
-	@Path("{id}/service-provider/{serviceProviderId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeServiceProvider(@PathParam("id") String id, @PathParam("serviceProviderId") String serviceProviderId) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		IdentityDTO resource = identityService.findIdentity(id, subject);
-		
-		resource.removeServiceProvider(serviceProviderId);
-		
-		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri());
 		
 		return Response.ok(resource)
 				.build();

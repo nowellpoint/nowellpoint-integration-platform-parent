@@ -55,12 +55,12 @@ public class ApplicationService extends AbstractDataService<ApplicationDTO, Appl
 	 * @return
 	 */
 	
-	public ApplicationDTO update(String subject, ApplicationDTO resource, URI eventSource) {
+	public ApplicationDTO updateApplication(String subject, ApplicationDTO resource, URI eventSource) {
 		ApplicationDTO original = getApplication( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		update(subject, resource, eventSource);
+		updateApplication(subject, resource, eventSource);
 		
 		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

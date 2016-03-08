@@ -1,12 +1,9 @@
 package com.nowellpoint.aws.api.dto;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.Photos;
-import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
 public class IdentityDTO extends AbstractDTO {
 	
@@ -147,12 +144,6 @@ public class IdentityDTO extends AbstractDTO {
 	 */
 	
 	private String picture;
-	
-	/**
-	 * 
-	 */
-	
-	private List<ServiceProvider> serviceProviders;
 	
 	/**
 	 * 
@@ -339,27 +330,6 @@ public class IdentityDTO extends AbstractDTO {
 
 	public void setPicture(String picture) {
 		this.picture = picture;
-	}
-
-	public List<ServiceProvider> getServiceProviders() {
-		return serviceProviders;
-	}
-
-	public void setServiceProviders(List<ServiceProvider> serviceProviders) {
-		this.serviceProviders = serviceProviders;
-	}
-	
-	public void addServiceProvider(ServiceProvider serviceProvider) {
-		if (serviceProviders == null) {
-			serviceProviders = new ArrayList<ServiceProvider>();
-		}
-		serviceProviders.add(serviceProvider);
-	}
-	
-	public void removeServiceProvider(String serviceProviderId) {	
-		serviceProviders.stream().filter(p -> p.getId().equals(serviceProviderId)).findFirst().ifPresent(p -> {
-			serviceProviders.remove(p);
-		});
 	}
 
 	public Photos getPhotos() {

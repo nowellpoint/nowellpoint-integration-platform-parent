@@ -1,7 +1,13 @@
 package com.nowellpoint.www.app.model;
 
-public class ServiceProvider {
+public class ServiceProvider extends BaseEntity {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 9100844172085644173L;
+
 	private String id;
 	
 	private String type;

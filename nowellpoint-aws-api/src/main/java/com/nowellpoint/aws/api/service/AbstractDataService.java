@@ -223,7 +223,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	 * @return
 	 */
 	
-	protected R update(String subject, R resource, URI eventSource) {
+	protected R updateApplication(String subject, R resource, URI eventSource) {
 		AbstractDocument document = modelMapper.map( resource, documentType );
 		
 		document.setLastModifiedDate(Date.from(Instant.now()));

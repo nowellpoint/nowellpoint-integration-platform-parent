@@ -1,8 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Identity extends BaseEntity {
 	
@@ -142,18 +140,11 @@ public class Identity extends BaseEntity {
 	 * 
 	 */
 	
-	private List<ServiceProvider> serviceProviders;
-	
-	/**
-	 * 
-	 */
-	
 	private Photos photos;
 	
 	public Identity() {
 		address = new Address();
 		photos = new Photos();
-		serviceProviders = new ArrayList<ServiceProvider>();
 	}
 
 	public String getUsername() {
@@ -322,14 +313,6 @@ public class Identity extends BaseEntity {
 
 	public void setHref(String href) {
 		this.href = href;
-	}
-
-	public List<ServiceProvider> getServiceProviders() {
-		return serviceProviders;
-	}
-
-	public void setServiceProviders(List<ServiceProvider> serviceProviders) {
-		this.serviceProviders = serviceProviders;
 	}
 
 	public Photos getPhotos() {

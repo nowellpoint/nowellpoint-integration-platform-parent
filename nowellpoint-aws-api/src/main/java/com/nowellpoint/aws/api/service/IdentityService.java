@@ -41,7 +41,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		IdentityDTO resource = findIdentityBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		update( subject, resource, event.getEventSource() );
+		updateApplication( subject, resource, event.getEventSource() );
 		
 		LOGGER.info("Logged In: " + resource.getHref());
 	}
@@ -95,7 +95,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 			resource.setLastLoginDate(original.getLastLoginDate());
 		}
 		
-		update(subject, resource, eventSource);
+		updateApplication(subject, resource, eventSource);
 
 		hset( resource.getId(), subject, resource );
 		hset( subject, IdentityDTO.class.getName(), resource );
