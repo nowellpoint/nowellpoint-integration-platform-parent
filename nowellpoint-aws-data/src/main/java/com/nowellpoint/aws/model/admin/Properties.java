@@ -35,6 +35,7 @@ public class Properties {
 	public static final String REDIS_HOST = "redis.host";
 	public static final String REDIS_PORT = "redis.port";
 	public static final String DEFAULT_SUBJECT = "default.subject";
+	public static final String CACHE_DATA_ENCRYPTION_KEY = "cache.data.encryption.key";
 	
 	public static String getProperty(String store, String key) {
 		return mapper.load(Property.class, store, key).getValue();

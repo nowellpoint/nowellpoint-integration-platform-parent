@@ -53,7 +53,7 @@ public class CacheManager {
 		
 		jedisPool = new JedisPool(poolConfig, endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
 		
-		String keyString = "C0BAE23DF8B51807B3E17D21925FADF273A70181E1D81B8EDE6C76A5C1F1716E";
+		String keyString = System.getProperty(Properties.CACHE_DATA_ENCRYPTION_KEY);
 		
 		try {
 			byte[] key = keyString.getBytes("UTF-8");
