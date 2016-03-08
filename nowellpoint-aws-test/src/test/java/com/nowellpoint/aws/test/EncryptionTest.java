@@ -23,7 +23,7 @@ public class EncryptionTest {
 			String keyString = "C0BAE23DF8B51807B3E17D21925FADF273A70181E1D81B8EDE6C76A5C1F1716E";
 			
 			byte[] key = keyString.getBytes("UTF-8");
-			MessageDigest sha = MessageDigest.getInstance("SHA-1");
+			MessageDigest sha = MessageDigest.getInstance("SHA-512");
 			key = sha.digest(key);
 			key = Arrays.copyOf(key, 32);
 		    

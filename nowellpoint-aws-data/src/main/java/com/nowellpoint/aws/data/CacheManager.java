@@ -58,7 +58,7 @@ public class CacheManager {
 		try {
 			byte[] key = keyString.getBytes("UTF-8");
 			
-			MessageDigest sha = MessageDigest.getInstance("SHA-1");
+			MessageDigest sha = MessageDigest.getInstance("SHA-512");
 			key = sha.digest(key);
 			key = Arrays.copyOf(key, 32);
 		    
