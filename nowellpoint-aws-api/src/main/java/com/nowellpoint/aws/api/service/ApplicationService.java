@@ -39,7 +39,7 @@ public class ApplicationService extends AbstractDataService<ApplicationDTO, Appl
 	 */
 	
 	public ApplicationDTO createApplication(String subject, ApplicationDTO resource, URI eventSource) {
-		createIdentity(subject, resource, eventSource);
+		create(subject, resource, eventSource);
 
 		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
@@ -60,7 +60,7 @@ public class ApplicationService extends AbstractDataService<ApplicationDTO, Appl
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		updateApplication(subject, resource, eventSource);
+		update(subject, resource, eventSource);
 		
 		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

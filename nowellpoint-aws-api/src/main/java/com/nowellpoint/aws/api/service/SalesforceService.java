@@ -39,9 +39,8 @@ public class SalesforceService extends AbstractCacheService {
 	public Token getToken(String authCode) {
 		Token token = null;
 		
-		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
+			HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType("application/x-www-form-urlencoded")
@@ -105,7 +104,7 @@ public class SalesforceService extends AbstractCacheService {
 		userInfo.setMobilePhone(identity.getMobilePhone());
 		userInfo.setPhotos(identity.getPhotos());
 		userInfo.setState(identity.getAddrState());
-		userInfo.setStreet(identity.getAddrState());
+		userInfo.setStreet(identity.getAddrStreet());
 		userInfo.setUrls(identity.getUrls());
 		userInfo.setUsername(identity.getUsername());
 		userInfo.setUtcOffset(identity.getUtcOffset());

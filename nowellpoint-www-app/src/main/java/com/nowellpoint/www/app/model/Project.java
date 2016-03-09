@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.List;
-
 public class Project extends BaseEntity {
 	
 	/**
@@ -17,8 +15,6 @@ public class Project extends BaseEntity {
 	private String stage;
 	
 	private Identity owner;
-	
-	private List<Application> salesforceOrganizations;
 	
 	public Project() {
 		
@@ -54,13 +50,5 @@ public class Project extends BaseEntity {
 
 	public void setOwner(Identity owner) {
 		this.owner = owner;
-	}
-
-	public List<Application> getSalesforceOrganizations() {
-		return salesforceOrganizations;
-	}
-
-	public void setSalesforceOrganizations(List<Application> salesforceOrganizations) {
-		this.salesforceOrganizations = salesforceOrganizations;
 	}
 }

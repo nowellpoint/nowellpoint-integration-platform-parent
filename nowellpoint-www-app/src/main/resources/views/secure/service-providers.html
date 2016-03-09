@@ -55,17 +55,17 @@
                                     <th>${type}</th>
                                     <th>${accountLabel}</th>
                                     <th>${key}</th>
-                                    <th>${owner}</th>
+                                    <th>${organization}</th>
                                     <th>${active}</th>
                                     <th>${action}</th>
                                 </thead>
                                 <tbody>
-                                    <#list identity.serviceProviders as serviceProvider>
+                                    <#list serviceProviders as serviceProvider>
                                         <tr>
                                             <td>${serviceProvider.type}</td>
                                             <td>${serviceProvider.account}</td>
                                             <td>${serviceProvider.key}</td>
-                                            <td>${serviceProvider.owner}</td>
+                                            <td>${serviceProvider.organization}</td>
                                             <td>
                                                 <#if serviceProvider.isActive>
                                                     <i class="fa fa-check"></i>
@@ -75,7 +75,7 @@
                                                 </#if>
                                             </td>
                                             <td><a href=""><span class="icon icon-cog"></span></a>&nbsp;
-                                                <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${identity.id}:${serviceProvider.id}" data-message="${serviceProvider.type}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                                                <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${serviceProvider.id}" data-message="${serviceProvider.type}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
                                         </tr>
                                     </#list>
                                 </tbody>
@@ -91,9 +91,9 @@
 
         <script>
             $('#confirm').click(function(e) {
-                var id = $('#confirmDialog').data('id').split(':');
+                var id = $('#confirmDialog').data('id');
                 $.ajax({
-                    url: '/app/providers/' + id[0] + '?id=' + id[1],
+                    url: '/app/providers/' + id,
                     type: 'DELETE',
                     success: function() {
                         window.location.href = '/app/providers';

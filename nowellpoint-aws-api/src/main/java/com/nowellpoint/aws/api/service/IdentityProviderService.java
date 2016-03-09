@@ -1,43 +1,52 @@
 package com.nowellpoint.aws.api.service;
 
-//import com.nowellpoint.aws.model.admin.Properties;
-//import com.stormpath.sdk.account.Account;
-//import com.stormpath.sdk.api.ApiKey;
-//import com.stormpath.sdk.api.ApiKeys;
-//import com.stormpath.sdk.application.Application;
-//import com.stormpath.sdk.authc.AuthenticationRequest;
-//import com.stormpath.sdk.authc.AuthenticationResult;
-//import com.stormpath.sdk.authc.UsernamePasswordRequest;
-//import com.stormpath.sdk.client.Client;
-//import com.stormpath.sdk.client.Clients;
+import java.io.IOException;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+
+import org.jboss.logging.Logger;
+
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.aws.model.admin.Properties;
 
 public class IdentityProviderService {
 	
-//	private static Application application;
+	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class.getName());
 	
-//	public IdentityProviderService() {
-//		ApiKey apiKey = ApiKeys.builder()
-//				.setId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
-//				.setSecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
-//				.build();
-//		
-//		Client client = Clients.builder()
-//				.setApiKey(apiKey)
-//				.build();
-//		
-//		application = client.getResource(System.getProperty(Properties.STORMPATH_APPLICATION_ID), Application.class);
-//	}
-//
-//	public void authenticate(String username, String password) {
-//		AuthenticationRequest<?, ?> authenticationRequest = UsernamePasswordRequest.builder()
-//	            .setUsernameOrEmail(username)
-//	            .setPassword(password)
-//	            .build();
-//		
-//		AuthenticationResult result = application.authenticateAccount(authenticationRequest);
-//		
-//		Account account = result.getAccount();
-//		
-//		System.out.println(account.getFullName());
-//	}
+	public Token authenticate(String username, String password) {
+		Token token = null;
+
+		try {
+			HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+					.path("applications")
+					.path(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
+					.path("oauth/token")
+					.basicAuthorization(System.getProperty(Properties.STORMPATH_API_KEY_ID), System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.parameter("grant_type", "password")
+					.parameter("username", username)
+					.parameter("password", password)
+					.execute();
+			
+			LOGGER.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			
+			if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+			}
+			
+			token = httpResponse.getEntity(Token.class);
+			
+		} catch (IOException e) {
+			LOGGER.error( "getIdentity", e.getCause() );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}	
+		
+		return token;
+		
+	}
 }

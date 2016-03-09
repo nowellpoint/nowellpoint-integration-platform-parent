@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.api.dto;
 
-import com.nowellpoint.aws.data.mongodb.User;
-
 public class ServiceProviderDTO extends AbstractDTO {
 
 	/**
@@ -24,7 +22,9 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private Double price;
 	
-	private User owner;
+	private String organization;
+	
+	private IdentityDTO owner;
 	
 	public ServiceProviderDTO() {
 		
@@ -50,11 +50,11 @@ public class ServiceProviderDTO extends AbstractDTO {
 		this.key = key;
 	}
 
-	public User getOwner() {
+	public IdentityDTO getOwner() {
 		return owner;
 	}
 
-	public void setOwner(User owner) {
+	public void setOwner(IdentityDTO owner) {
 		this.owner = owner;
 	}
 
@@ -96,5 +96,13 @@ public class ServiceProviderDTO extends AbstractDTO {
 
 	public void setPrice(Double price) {
 		this.price = price;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}	
 }

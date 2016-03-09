@@ -16,13 +16,13 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.event.LoggedInEvent;
+import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.data.CacheManager;
 import com.nowellpoint.aws.idp.client.IdentityProviderClient;
-import com.nowellpoint.aws.idp.model.GetTokenRequest;
-import com.nowellpoint.aws.idp.model.GetTokenResponse;
 import com.nowellpoint.aws.idp.model.RevokeTokenRequest;
 import com.nowellpoint.aws.idp.model.RevokeTokenResponse;
+import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.idp.model.VerifyTokenRequest;
 import com.nowellpoint.aws.idp.model.VerifyTokenResponse;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -32,6 +32,9 @@ public class TokenResource {
 	
 	@Inject
 	private CacheManager cacheManager;
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 	
 	@Inject
 	private Event<LoggedInEvent> loggedInEvent;
@@ -68,39 +71,27 @@ public class TokenResource {
 		//
 		// execute the get token request for username and password
 		//
-
-		GetTokenRequest tokenRequest = new GetTokenRequest()
-				.withApiEndpoint(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
-				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
-				.withApplicationId(System.getProperty(Properties.STORMPATH_APPLICATION_ID))
-				.withUsername(params[0])
-				.withPassword(params[1]);
+		
+		Token token = identityProviderService.authenticate(params[0], params[1]);
+		
+		//
+		//
+		//
 		
 		params = null;
-
-		GetTokenResponse tokenResponse = identityProviderClient.token(tokenRequest);
-		
-		//
-		// handle errors 
-		//
-		
-		if (tokenResponse.getStatusCode() != 200) {
-			throw new WebApplicationException( tokenResponse.getErrorMessage(), Status.BAD_REQUEST );
-		}	
 			
 		//
 		// fire the logged in event
 		//
 
-		loggedInEvent.fire(new LoggedInEvent(tokenResponse.getToken(), uriInfo.getBaseUri()));
+		loggedInEvent.fire(new LoggedInEvent(token, uriInfo.getBaseUri()));
 		
 		//
 		// build and return the response
 		//
 		
-		return Response.status(tokenResponse.getStatusCode())
-				.entity(tokenResponse.getToken())
+		return Response.ok()
+				.entity(token)
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 	

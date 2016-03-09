@@ -28,7 +28,7 @@
                         <br>
                         <img src="${(userInfo.photos.picture)!}" class="img-circle img-responsive center-block">
                         <br>
-                        <a href="#" id="clickable" class="btn btn-primary center-block" data-loading-text="<i class='icon-spinner icon-spin icon-large'></i>" data-id="${(userInfo.photos.picture)!}" role="button"><span><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i></span>${useAsProfile}</a>
+                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button"><span><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i></span>${useAsProfile}</a>
                     </div>
                     <div class="col-md-6">
 
@@ -90,7 +90,7 @@
                             <input type="hidden" name="isSandbox" id="isSandbox" value="${(userInfo.organization.isSandbox?string)!}" />
                             <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(userInfo.organization.instanceUrl)!}" />
                             <div class="pull-right">
-                                <a href="/app/applications/types">${cancel}</a>&nbsp;
+                                <a href="/app/providers">${cancel}</a>&nbsp;
                                 <button type="submit" name="submit" id="submit" class="btn btn-primary">${addServiceProvider}</button>
                             </div>
                         </form>
@@ -122,7 +122,7 @@
                     $.ajax({
                         type: "POST",
                         url: "/app/user-profile/picture/salesforce",
-                        data : body
+                        data: body
                     });
                 });
             });

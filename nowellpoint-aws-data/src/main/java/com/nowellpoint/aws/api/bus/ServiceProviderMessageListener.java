@@ -17,7 +17,7 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.Application;
+import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class ServiceProviderMessageListener implements MessageListener {
@@ -33,17 +33,17 @@ public class ServiceProviderMessageListener implements MessageListener {
 				Object object = ((ObjectMessage) message).getObject();
 				Event event = ((Event) object);
 				
-				Application application = objectMapper.readValue(event.getPayload(), Application.class); 
+				ServiceProvider provider = objectMapper.readValue(event.getPayload(), ServiceProvider.class); 
 				
 				try {
 					if (EventAction.CREATE.name().equals(event.getEventAction())) {
-						create(application);
+						create(provider);
 					} else if (EventAction.UPDATE.name().equals(event.getEventAction())) {
-						update(application);
+						update(provider);
 					} else if (EventAction.DELETE.name().equals(event.getEventAction())) {
-						delete(application);
+						delete(provider);
 					}
-					event.setTargetId(application.getId().toString());
+					event.setTargetId(provider.getId().toString());
 					event.setEventStatus(EventStatus.COMPLETE.toString());
 				} catch (MongoException e) {
 					event.setErrorMessage(e.getMessage());
@@ -62,15 +62,15 @@ public class ServiceProviderMessageListener implements MessageListener {
 		}
 	}
 	
-	private void create(Application application) throws JsonProcessingException {
-		MongoDBDatastore.insertOne( application );
+	private void create(ServiceProvider provider) throws JsonProcessingException {
+		MongoDBDatastore.insertOne( provider );
 	}
 	
-	private void update(Application application) throws JsonProcessingException {
-		MongoDBDatastore.replaceOne( application );
+	private void update(ServiceProvider provider) throws JsonProcessingException {
+		MongoDBDatastore.replaceOne( provider );
 	}
 	
-	private void delete(Application application) {
-		MongoDBDatastore.deleteOne( application );
+	private void delete(ServiceProvider provider) {
+		MongoDBDatastore.deleteOne( provider );
 	}
 }

@@ -32,7 +32,7 @@ public class DocumentEventHandler implements AbstractEventHandler {
 		//
 		//
 		
-		logger.log(this.getClass().getName() + " starting DataEventHandler");
+		logger.log(this.getClass().getName() + " starting DocumentEventHandler");
 		
 		//
 		//
@@ -75,7 +75,7 @@ public class DocumentEventHandler implements AbstractEventHandler {
 		
 		Message message = session.createObjectMessage(event);
 		
-		logger.log(this.getClass().getName() + " sending Identity message for Event: " + event.getId());
+		logger.log(this.getClass().getName() + " sending message for Event: " + event.getId());
 		
 		producer.send(message);
 		

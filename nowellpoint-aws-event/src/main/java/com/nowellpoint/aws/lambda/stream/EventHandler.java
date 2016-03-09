@@ -14,6 +14,7 @@ import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.data.mongodb.Application;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.Project;
+import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
@@ -33,6 +34,7 @@ public class EventHandler {
 		eventMapping.put(Lead.class.getName(), LeadEventHandler.class.getName());
 		eventMapping.put(Project.class.getName(), DocumentEventHandler.class.getName());
 		eventMapping.put(Application.class.getName(), DocumentEventHandler.class.getName());
+		eventMapping.put(ServiceProvider.class.getName(), DocumentEventHandler.class.getName());
 	}
 	
 	public String handleEvent(DynamodbEvent dynamodbEvent, Context context) {
@@ -105,8 +107,12 @@ public class EventHandler {
 			if (event.getEventStatus().equals(EventStatus.NEW.toString())) {
 
 				try {
-					AbstractEventHandler handler = (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
-					handler.process(event, properties, context);
+					if (eventMapping.containsKey(event.getType())) {
+						AbstractEventHandler handler = (AbstractEventHandler) Class.forName(eventMapping.get(event.getType())).newInstance();
+						handler.process(event, properties, context);
+					} else {
+						throw new IllegalArgumentException("Missing event mapping handler");
+					}
 				} catch (Exception e) {
 					event.setErrorMessage(e.getMessage());
 					event.setEventStatus(EventStatus.ERROR.toString());

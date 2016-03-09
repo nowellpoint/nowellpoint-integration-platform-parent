@@ -8,7 +8,12 @@ import com.nowellpoint.aws.data.ServiceProviderCodec;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@MessageHandler(queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", collectionName="service.providers", messageListener=ServiceProviderMessageListener.class, codec=ServiceProviderCodec.class)
+@MessageHandler(
+		queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", 
+		collectionName="service.providers", 
+		messageListener=ServiceProviderMessageListener.class, 
+		codec=ServiceProviderCodec.class)
+
 public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	/**
@@ -32,6 +37,8 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	private Double price;
 	
 	private User owner;
+	
+	private String organization;
 	
 	public ServiceProvider() {
 		
@@ -99,5 +106,13 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	public void setPrice(Double price) {
 		this.price = price;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 }

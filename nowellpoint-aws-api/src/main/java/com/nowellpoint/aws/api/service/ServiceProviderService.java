@@ -4,12 +4,12 @@ import java.net.URI;
 import java.util.Set;
 
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.data.mongodb.Application;
+import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
-public class ServiceProviderService extends AbstractDataService<ServiceProviderDTO, Application> {
+public class ServiceProviderService extends AbstractDataService<ServiceProviderDTO, ServiceProvider> {
 	
 	public ServiceProviderService() {
-		super(ServiceProviderDTO.class, Application.class);
+		super(ServiceProviderDTO.class, ServiceProvider.class);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 */
 	
 	public ServiceProviderDTO createServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
-		createIdentity(subject, resource, eventSource);
+		create(subject, resource, eventSource);
 
 		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
@@ -60,7 +60,7 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		updateApplication(subject, resource, eventSource);
+		update(subject, resource, eventSource);
 		
 		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

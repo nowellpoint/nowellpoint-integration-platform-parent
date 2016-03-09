@@ -19,7 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
@@ -34,6 +36,9 @@ public class ServiceProviderResource {
 	
 	@Inject
 	private ServiceProviderService serviceProviderService;
+	
+	@Inject
+	private IdentityService identityService;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,6 +55,10 @@ public class ServiceProviderResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createServiceProvider(ServiceProviderDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
+		
+		resource.setOwner(owner);
 		
 		serviceProviderService.createServiceProvider(subject, resource, uriInfo.getBaseUri());
 		

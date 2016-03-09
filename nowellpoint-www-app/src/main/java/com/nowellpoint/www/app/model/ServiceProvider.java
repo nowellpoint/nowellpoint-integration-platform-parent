@@ -14,7 +14,9 @@ public class ServiceProvider extends BaseEntity {
 	
 	private String key;
 	
-	private String owner;
+	private Identity owner;
+	
+	private String organization;
 	
 	private String instanceName;
 	
@@ -54,12 +56,20 @@ public class ServiceProvider extends BaseEntity {
 		this.key = key;
 	}
 
-	public String getOwner() {
+	public Identity getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(Identity owner) {
 		this.owner = owner;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 	public String getInstanceName() {
