@@ -146,7 +146,7 @@ public class ServiceProviderController {
 	}
 	
 	private static String deleteServiceProvider(Request request, Response response) throws IOException {
-		String id = request.queryParams("id"); 
+		String id = request.params("id"); 
 		
 		Token token = request.attribute("token");
 		
