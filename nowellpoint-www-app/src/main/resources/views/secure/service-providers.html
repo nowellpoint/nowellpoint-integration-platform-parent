@@ -62,7 +62,7 @@
                                 </thead>
                                 <tbody>
                                     <#list serviceProviders as serviceProvider>
-                                        <tr>
+                                        <tr id="${serviceProvider.id}">
                                             <td>${serviceProvider.type}</td>
                                             <td>${serviceProvider.account}</td>
                                             <td>${serviceProvider.key}</td>
@@ -93,12 +93,13 @@
         <script>
             $('#confirm').click(function(e) {
                 var id = $('#confirmDialog').data('id');
-                var $row = $('tr[data-id="' + id + '"]');
+                alert("#'".concat(id).concat("'"));
+                var row = $("#'".concat(id).concat("'"));
                 $.ajax({
                     url: '/app/providers/' + id,
                     type: 'DELETE',
                     success: function() {
-                        $row.remove();
+                        row.remove();
                         //window.location.href = '/app/providers';
                     }
                 });
