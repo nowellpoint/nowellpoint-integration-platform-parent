@@ -208,6 +208,10 @@ public class ProjectController {
 		
 		logger.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
+		if (httpResponse.getStatusCode() != Status.NO_CONTENT.getStatusCode()) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
 		return "";	
 	}
 }

@@ -1,0 +1,26 @@
+<#import "template.html" as t>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div align="center-block"><i class="fa fa-4x fa-refresh fa-spin"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <@t.page>
+
+
+        <script>
+            $(document).ready(function(e) {
+                var params = location.search.substr(1).split("&");
+                window.location.replace('/app/salesforce?' + params[1])
+            });
+        </script>
+
+    </@t.page>

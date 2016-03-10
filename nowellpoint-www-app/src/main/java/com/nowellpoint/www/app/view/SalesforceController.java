@@ -11,6 +11,7 @@ import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.sforce.UserInfo;
 
@@ -30,6 +31,8 @@ public class SalesforceController {
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
         get("/app/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/salesforce", (request, response) -> getInfo(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -71,6 +74,19 @@ public class SalesforceController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
+		return new ModelAndView(new HashMap<String, Object>(), "secure/salesforce-callback.html");	
+    }
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	
+	private static ModelAndView getInfo(Request request, Response response) throws IOException {
+		
     	Token token = request.attribute("token");
     	
     	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
@@ -84,7 +100,7 @@ public class SalesforceController {
     	
     	int statusCode = httpResponse.getStatusCode();
     	
-    	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod());
+    	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
     	
     	if (statusCode != 200) {
     		throw new BadRequestException(httpResponse.getAsString());
@@ -92,10 +108,12 @@ public class SalesforceController {
     	
     	UserInfo userInfo = httpResponse.getEntity(UserInfo.class);
     	
-    	Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
-		model.put("userInfo", userInfo);
+    	Account account = request.attribute("account");
     	
-		return new ModelAndView(model, "secure/salesforce.html");	
-    }
+    	Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", account);
+		model.put("userInfo", userInfo);
+		
+		return new ModelAndView(model, "secure/salesforce-view.html");	
+	}
 }

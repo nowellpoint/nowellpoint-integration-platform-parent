@@ -28,7 +28,7 @@
                         <br>
                         <img src="${(userInfo.photos.picture)!}" class="img-circle img-responsive center-block">
                         <br>
-                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button"><span><i id="spinner" class="fa fa-spinner fa-spin pull-left"></i></span>${useAsProfile}</a>
+                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button">${useAsProfile}</a>
                     </div>
                     <div class="col-md-6">
 
@@ -39,6 +39,8 @@
                         </div>
 
                         <br>
+                        
+                        <span id="spinner"><i class="fa fa-4x fa-refresh fa-spin"></i></span>
 
                         <dl class="dl-horizontal">
                             <dt>${name}</dt>
@@ -82,7 +84,7 @@
 
                         <form class="form-vertical" role="form" method="post" action="/app/providers">
                             <input type="hidden" name="type" id="type" value="SALESFORCE" />
-                            <input type="hidden" name="username" id="username" value="${userInfo.username}" />
+                            <input type="hidden" name="username" id="username" value="${(userInfo.username)!}" />
                             <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.id)!}" />
                             <input type="hidden" name="organizationName" id="organizationName" value="${(userInfo.organization.name)!}" />
                             <input type="hidden" name="organizationType" id="organizationType" value="${(userInfo.organization.organizationType)!}" />
@@ -104,16 +106,6 @@
         <br>
 
         <script>
-            $(document).ready(function() {
-                var $spinner = $('#spinner').hide();
-                $(document)
-                    .ajaxStart(function() {
-                        $spinner.show();
-                    })
-                    .ajaxStop(function() {
-                        $spinner.hide();
-                    });
-            });
 
             $(document).ready(function(e) {
                 $('#clickable').click(function(e) {

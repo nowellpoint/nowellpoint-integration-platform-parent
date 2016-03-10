@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
@@ -32,6 +33,7 @@ public class ServiceProviderController {
 	private static final Logger LOGGER = Logger.getLogger(ServiceProviderController.class.getName());
 	
 	public ServiceProviderController(Configuration cfg) {     
+		
         get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/providers", (request, response) -> saveServiceProvider(request, response));
@@ -57,11 +59,11 @@ public class ServiceProviderController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
-		List<ServiceProvider> provider = httpResponse.getEntityList(ServiceProvider.class);
+		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
 			
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
-		model.put("serviceProviders", provider);
+		model.put("serviceProviders", providers);
     	
 		return new ModelAndView(model, "secure/service-providers.html");
 	}
@@ -85,7 +87,7 @@ public class ServiceProviderController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
-		return null;
+		return new ModelAndView(new HashMap<String, Object>(), "secure/service-providers.html");
 		
 	}
 	
@@ -136,16 +138,17 @@ public class ServiceProviderController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			throw new NotFoundException(httpResponse.getAsString());
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
 		response.redirect("/app/providers");
-		
+    	
 		return "";
 	}
 	
 	private static String deleteServiceProvider(Request request, Response response) throws IOException {
+		
 		String id = request.params("id"); 
 		
 		Token token = request.attribute("token");
@@ -159,8 +162,8 @@ public class ServiceProviderController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			throw new NotFoundException(httpResponse.getAsString());
+		if (httpResponse.getStatusCode() != Status.NO_CONTENT.getStatusCode()) {
+			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
 		return "";
