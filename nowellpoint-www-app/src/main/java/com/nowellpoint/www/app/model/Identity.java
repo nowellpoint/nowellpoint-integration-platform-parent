@@ -1,6 +1,8 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Identity extends BaseEntity {
 	
@@ -142,9 +144,16 @@ public class Identity extends BaseEntity {
 	
 	private Photos photos;
 	
+	/**
+	 * 
+	 */
+	
+	private List<SalesforceProfile> salesforceProfiles;
+	
 	public Identity() {
 		address = new Address();
 		photos = new Photos();
+		salesforceProfiles = new ArrayList<SalesforceProfile>();
 	}
 
 	public String getUsername() {
@@ -321,5 +330,13 @@ public class Identity extends BaseEntity {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public List<SalesforceProfile> getSalesforceProfiles() {
+		return salesforceProfiles;
+	}
+
+	public void setSalesforceProfiles(List<SalesforceProfile> salesforceProfiles) {
+		this.salesforceProfiles = salesforceProfiles;
 	}
 }

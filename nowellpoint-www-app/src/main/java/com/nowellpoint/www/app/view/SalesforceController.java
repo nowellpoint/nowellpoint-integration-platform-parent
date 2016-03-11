@@ -30,7 +30,7 @@ public class SalesforceController {
 		
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
-        get("/app/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/salesforce", (request, response) -> getInfo(request, response), new FreeMarkerEngine(cfg));
 	}

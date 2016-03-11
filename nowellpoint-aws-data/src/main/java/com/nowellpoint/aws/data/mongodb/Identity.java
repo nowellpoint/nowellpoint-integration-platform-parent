@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -154,7 +155,13 @@ public class Identity extends AbstractDocument {
 	 */
 	
 	private Photos photos;
-
+	
+	/**
+	 * 
+	 */
+	
+	private List<SalesforceProfile> salesforceProfiles;
+	
 	public Identity() {
 
 	}
@@ -333,5 +340,13 @@ public class Identity extends AbstractDocument {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public List<SalesforceProfile> getSalesforceProfiles() {
+		return salesforceProfiles;
+	}
+
+	public void setSalesforceProfiles(List<SalesforceProfile> salesforceProfiles) {
+		this.salesforceProfiles = salesforceProfiles;
 	}
 }
