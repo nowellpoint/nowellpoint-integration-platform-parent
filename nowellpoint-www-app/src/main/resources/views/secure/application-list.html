@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         <#list applicationList as application>
-                            <tr>
+                            <tr id="${application.id}">
                                 <td><a href="/app/applications/${application.id}">${application.name}</a></td>
                                 <td>${application.type}</td>
                                 <td>${application.key}</td>
@@ -55,11 +55,12 @@
         <script>
             $('#confirm').click(function(e) {
                 var id = $('#confirmDialog').data('id');
+                var row = $('#'.concat(id));
                 $.ajax({
                     url: '/app/applications/' + id,
                     type: 'DELETE',
                     success: function() {
-                        window.location.href = '/app/applications';
+                        row.remove();
                     }
                 });
                 $('#confirmDialog').modal('hide');

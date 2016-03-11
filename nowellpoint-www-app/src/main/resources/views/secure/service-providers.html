@@ -17,7 +17,6 @@
                 <div class="row">
                     <div class="col-md-2"></div>
                     <div class="col-md-10">
-                        <div align="center-block" id="spinner"><i class="fa fa-4x fa-refresh fa-spin"></i></div>
                         <div class="col-lg-3 col-md-3 text-center">
                             <div>
                                 <img src="/images/salesforce-logo.png">
@@ -85,16 +84,15 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <#include "confirm-dialog.html"/>
+        <#include "confirm-dialog.html" />
+        <#include "progress-bar-dialog.html" />
 
         <script>
             $('#confirm').click(function(e) {
                 var id = $('#confirmDialog').data('id');
-                alert("#'".concat(id).concat("'"));
-                var row = $("#'".concat(id).concat("'"));
+                var row = $('#'.concat(id));
                 $.ajax({
                     url: '/app/providers/' + id,
                     type: 'DELETE',

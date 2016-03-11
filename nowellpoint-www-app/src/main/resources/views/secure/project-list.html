@@ -34,7 +34,7 @@
                     </thead>
                     <tbody>
                         <#list projectList as project>
-                            <tr>
+                            <tr id="${project.id}">
                                 <td><a href="/app/projects/${project.id}">${project.name}</a></td>
                                 <td>${project.description}</td>
                                 <td>${project.stage}</td>
@@ -55,11 +55,12 @@
         <script type="text/javascript">
             $('#confirm').click(function(e) {
                 var id = $('#confirmDialog').data('id');
+                var row = $('#'.concat(id));
                 $.ajax({
                     url: '/app/projects/' + id,
                     type: 'DELETE',
                     success: function() {
-                        window.location.href = '/app/projects';
+                        row.remove();
                     }
                 });
                 $('#confirmDialog').modal('hide');

@@ -33,19 +33,17 @@
         <#nested/>
 
         <script type="text/javascript">
-            
             $(document).ready(function() {
-                var $spinner = $('#spinner').hide();
                 $(document)
                     .ajaxStart(function() {
-                        $spinner.show();
+                        $('#progressDialog').modal('show');
                     })
                     .ajaxStop(function() {
-                        $spinner.hide();
+                        $('#progressDialog').modal('hide');
                     });
             });
-            
-            
+
+
             $(document).ready(function() {
                 var path = window.location.pathname;
                 path = path.replace(/\/$/, "");
