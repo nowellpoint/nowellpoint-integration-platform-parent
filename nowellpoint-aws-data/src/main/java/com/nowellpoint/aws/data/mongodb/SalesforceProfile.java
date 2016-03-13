@@ -11,7 +11,7 @@ public class SalesforceProfile implements Serializable {
 	
 	private static final long serialVersionUID = -1142599086303026624L;
 
-	private String id;
+	private String userId;
 
 	private String username;
 
@@ -39,16 +39,18 @@ public class SalesforceProfile implements Serializable {
 
 	private Locale locale;
 	
+	private Photos photos;
+	
 	public SalesforceProfile() {
 		
 	}
-
-	public String getId() {
-		return id;
+	
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -153,5 +155,13 @@ public class SalesforceProfile implements Serializable {
 
 	public void setLocale(Locale locale) {
 		this.locale = locale;
+	}
+	
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
 	}
 }

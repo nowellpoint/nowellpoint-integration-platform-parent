@@ -182,7 +182,7 @@ public class UserInfo implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;
 
-	private String id;
+	private String userId;
 
 	private String username;
 
@@ -222,12 +222,12 @@ public class UserInfo implements Serializable {
 
 	}
 
-	public String getId() {
-		return id;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getUsername() {

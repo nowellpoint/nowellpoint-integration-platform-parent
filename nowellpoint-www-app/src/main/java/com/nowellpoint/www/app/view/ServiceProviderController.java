@@ -7,6 +7,7 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
@@ -19,6 +20,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Identity;
+import com.nowellpoint.www.app.model.SalesforceProfile;
 import com.nowellpoint.www.app.model.ServiceProvider;
 
 import freemarker.log.Logger;
@@ -97,9 +99,21 @@ public class ServiceProviderController {
 		
 		Account account = request.attribute("account");
 		
-		Identity owner = new Identity();
-		owner.setName(account.getFullName());
-		owner.setHref(account.getHref());
+		HttpResponse httpResponse = null;
+		
+		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path("identity")
+				.queryParameter("subject", account.getHref())
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		Identity owner = httpResponse.getEntity(Identity.class);
 		
 		ServiceProvider serviceProvider = new ServiceProvider();
 		serviceProvider.setType(request.queryParams("type"));
@@ -111,8 +125,6 @@ public class ServiceProviderController {
 		serviceProvider.setInstanceUrl(request.queryParams("instanceUrl"));
 		serviceProvider.setPrice(0.00);
 		serviceProvider.setOwner(owner);
-		
-		HttpResponse httpResponse = null;
 		
 		if (request.queryParams("id") == null || request.queryParams("id").trim().isEmpty()) {
 			
@@ -141,6 +153,42 @@ public class ServiceProviderController {
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
+		
+		SalesforceProfile salesforceProfile = new SalesforceProfile();
+		salesforceProfile.setCity(request.queryParams("city"));
+		salesforceProfile.setCountry(request.queryParams("country"));
+		salesforceProfile.setDisplayName(request.queryParams("displayName"));
+		salesforceProfile.setEmail(request.queryParams("email"));
+		salesforceProfile.setFirstName(request.queryParams("firstName"));
+		salesforceProfile.setUserId(request.queryParams("userId"));
+		salesforceProfile.setLanguage(request.queryParams("language"));
+		salesforceProfile.setLastName(request.queryParams("lastName"));
+		salesforceProfile.setLocale(new Locale(request.queryParams("locale")));
+		salesforceProfile.setMobilePhone(request.queryParams("mobilePhone"));
+		salesforceProfile.setState(request.queryParams("state"));
+		salesforceProfile.setStreet(request.queryParams("street"));
+		salesforceProfile.setUsername(request.queryParams("username"));
+		salesforceProfile.setZipPostalCode(request.queryParams("zipPostalCode"));
+		salesforceProfile.getPhotos().setProfilePicture(request.queryParams("profilePicture"));
+		
+		httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.path("identity")
+				.path(owner.getId())
+				.path("salesforce-profile")
+				.body(salesforceProfile)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		System.out.println(ServiceProviderController.class.getName() + " " + httpResponse.getAsString());
 		
 		response.redirect("/app/providers");
     	

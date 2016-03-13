@@ -1,17 +1,11 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-
 import javax.inject.Inject;
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -19,9 +13,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -31,12 +24,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
-import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
@@ -54,9 +44,6 @@ public class UserProfileService {
 	
 	@Inject
 	private IdentityService identityService;
-	
-	@Inject
-	private SalesforceService salesforceService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -171,51 +158,6 @@ public class UserProfileService {
 		
 		return Response.ok(resource)
 				.build();
-	}
-	
-	@POST
-	@Path("/photo/salesforce")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response addProfilePicture(@FormParam(value = "photoUrl") String photoUrl) {
-		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		IdentityDTO resource = identityService.findIdentityBySubject( subject );
-		
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		try {
-			URL url = new URL(photoUrl + "?oauth_token=" + salesforceService.findTokenBySubject( subject ).getAccessToken() );
-			
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-			String contentType = connection.getHeaderField("Content-Type");
-			
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-	    	objectMetadata.setContentLength(connection.getContentLength());
-	    	objectMetadata.setContentType(contentType);
-			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", resource.getId(), connection.getInputStream(), objectMetadata);
-	    	
-	    	s3Client.putObject(putObjectRequest);
-			
-		} catch (IOException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
-		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(IdentityResource.class)
-				.path("/{id}")
-				.path("picture")
-				.build(resource.getId());
-		
-		Photos photos = new Photos();
-		photos.setProfilePicture(uri.toString());
-		
-		resource.setPhotos(photos);
-		
-		identityService.updateIdentity(subject, resource, uriInfo.getBaseUri());
-		
-		return Response.created(uri).build();		
 	}
 	
 	@DELETE

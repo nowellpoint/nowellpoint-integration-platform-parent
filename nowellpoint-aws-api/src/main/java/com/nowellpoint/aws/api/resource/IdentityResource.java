@@ -6,6 +6,7 @@ import java.net.URI;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -28,13 +29,18 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
+import com.nowellpoint.aws.data.mongodb.SalesforceProfile;
 
 @Path("/identity")
 public class IdentityResource {
 	
 	@Inject
 	private IdentityService identityService;
+	
+	@Inject
+	private SalesforceService salesforceService;
 
 	@Context
 	private UriInfo uriInfo;
@@ -127,6 +133,61 @@ public class IdentityResource {
 		
 		return Response.ok(resource)
 				.build();
+	}
+	
+	@POST
+	@Path("/{id}/salesforce-profile")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentity(id, subject);
+		
+		String profileHref = salesforceProfile.getPhotos().getProfilePicture() + "?oauth_token=" + salesforceService.findTokenBySubject( subject ).getAccessToken();
+		
+		System.out.println(IdentityResource.class.getName() + " " + profileHref);
+		
+		URI uri = identityService.addSalesforceProfilePicture(id, profileHref, uriInfo.getBaseUri() );
+		
+		System.out.println(IdentityResource.class.getName() + " " + uri.toString());
+		
+		salesforceProfile.getPhotos().setProfilePicture(uri.toString());
+		
+		resource.addSalesforceProfile(salesforceProfile);
+		
+		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		
+		return Response.ok(resource).build();
+	}
+	
+	@PUT
+	@Path("/{id}/salesforce-profile")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentity(id, subject);
+		
+		resource.addSalesforceProfile(salesforceProfile);
+		
+		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		
+		return Response.ok(resource).build();
+	}
+	
+	@DELETE
+	@Path("/{id}/salesforce-profile/{userId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeSalesforceProfile(@PathParam("id") String id, String userId) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		IdentityDTO resource = identityService.findIdentity(id, subject);
+		
+		resource.removeSalesforceProfile(userId);
+		
+		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		
+		return Response.ok(resource).build();
 	}
 	
 //	@POST

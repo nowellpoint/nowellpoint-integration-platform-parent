@@ -19,19 +19,8 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">
-                                ${picture}
-                            </h3>
-                        </div>
-                        <br>
-                        <img src="${(userInfo.photos.picture)!}" class="img-circle img-responsive center-block">
-                        <br>
-                        <a href="#" id="clickable" class="btn btn-primary center-block" data-id="${(userInfo.photos.picture)!}" role="button">${useAsProfile}</a>
-                    </div>
+                    <div class="col-md-3"></div>
                     <div class="col-md-6">
-
                         <div class="hr-divider">
                             <h3 class="hr-divider-content hr-divider-heading">
                                 ${contactInformation}
@@ -82,6 +71,22 @@
 
                         <form class="form-vertical" role="form" method="post" action="/app/providers">
                             <input type="hidden" name="type" id="type" value="SALESFORCE" />
+                            <input type="hidden" name="city" id="city" value="${userInfo.city}" />
+                            <input type="hidden" name="displayName" id="displayName" value="${userInfo.displayName}" />
+                            <input type="hidden" name="email" id="email" value="${userInfo.email}" />
+                            <input type="hidden" name="firstName" id="firstName" value="${userInfo.firstName}" />
+                            <input type="hidden" name="userId" id="userId" value="${userInfo.userId}" />
+                            <input type="hidden" name="language" id="language" value="${userInfo.language}" />
+                            <input type="hidden" name="profilePicture" id="profilePicture" value="${userInfo.photos.picture}" />
+
+                            <input type="hidden" name="lastName" id="lastName" value="${userInfo.lastName}" />
+                            <input type="hidden" name="locale" id="locale" value="${userInfo.locale}" />
+                            <input type="hidden" name="mobilePhone" id="mobilePhone" value="${userInfo.mobilePhone}" />
+                            <input type="hidden" name="state" id="state" value="${userInfo.state}" />
+                            <input type="hidden" name="street" id="street" value="${userInfo.street}" />
+                            <input type="hidden" name="zipPostalCode" id="zipPostalCode" value="${userInfo.zipPostalCode}" />
+                            <input type="hidden" name="country" id="country" value="${userInfo.country}" />
+
                             <input type="hidden" name="username" id="username" value="${(userInfo.username)!}" />
                             <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.id)!}" />
                             <input type="hidden" name="organizationName" id="organizationName" value="${(userInfo.organization.name)!}" />
@@ -102,11 +107,10 @@
         </div>
         <br>
         <br>
-        
+
         <#include "progress-bar-dialog.html" />
 
         <script>
-
             $(document).ready(function(e) {
                 $('#clickable').click(function(e) {
                     e.preventDefault();

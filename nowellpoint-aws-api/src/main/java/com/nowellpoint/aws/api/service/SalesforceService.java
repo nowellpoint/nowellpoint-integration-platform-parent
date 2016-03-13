@@ -97,7 +97,7 @@ public class SalesforceService extends AbstractCacheService {
 		userInfo.setDisplayName(identity.getDisplayName());
 		userInfo.setEmail(identity.getEmail());
 		userInfo.setFirstName(identity.getFirstName());
-		userInfo.setId(identity.getUserId());
+		userInfo.setUserId(identity.getUserId());
 		userInfo.setLanguage(identity.getLanguage());
 		userInfo.setLastName(identity.getLastName());
 		userInfo.setLocale(identity.getLocale());

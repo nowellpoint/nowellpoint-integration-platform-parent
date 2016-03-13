@@ -2,18 +2,27 @@ package com.nowellpoint.aws.api.service;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
 
 import javax.enterprise.event.Observes;
+import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
+import com.nowellpoint.aws.api.resource.IdentityResource;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.Photos;
@@ -148,5 +157,36 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		}
 		
 		return resource;		
+	}
+	
+	public URI addSalesforceProfilePicture(String id, String profileHref, URI baseUri) {
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		try {
+			URL url = new URL( profileHref );
+			
+			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			String contentType = connection.getHeaderField("Content-Type");
+			
+			ObjectMetadata objectMetadata = new ObjectMetadata();
+	    	objectMetadata.setContentLength(connection.getContentLength());
+	    	objectMetadata.setContentType(contentType);
+			
+	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", id, connection.getInputStream(), objectMetadata);
+	    	
+	    	s3Client.putObject(putObjectRequest);
+	    	
+	    	URI uri = UriBuilder.fromUri(baseUri)
+					.path(IdentityResource.class)
+					.path("/{id}")
+					.path("picture")
+					.build(id);
+	    	
+	    	return uri;
+			
+		} catch (IOException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
