@@ -25,20 +25,17 @@
                 <h3 class="hr-divider-content hr-divider-heading" />
             </div>
 
-            <div class="container-fluid container-fluid-spacious">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-2">
 
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-md-8">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-2">
-
                                     <div class="hr-divider">
-                                        <h3 class="hr-divider-content hr-divider-heading">
-                                ${picture}
-                            </h3>
+                                        <h3 class="hr-divider-content hr-divider-heading">${picture}</h3>
                                     </div>
                                     <br>
                                     <div>
@@ -47,14 +44,14 @@
                                     <br>
                                     <#if identity.photos.profilePicture !='/images/person-generic.jpg'>
                                         <div class="text-center">
-                                        <a href="#" id="clickable" class="btn btn-primary center" role="button">
-                                            <i id="spinner" class="fa fa-spinner fa-spin"></i>${delete}</a>  
+                                            <a href="#" id="clickable" class="btn btn-primary center" role="button">
+                                                <i id="spinner" class="fa fa-spinner fa-spin"></i>${delete}</a>
                                         </div>
                                     </#if>
 
                                 </div>
 
-                                <div class="col-md-8">
+                                <div class="col-md-10">
 
                                     <div class="hr-divider">
                                         <h3 class="hr-divider-content hr-divider-heading">${contactInformation}</h3>
@@ -107,64 +104,45 @@
                                     </dl>
 
                                 </div>
+
+                                <div class="col-md-12">
+                                    <div class="hr-divider">
+                                        <h3 class="hr-divider-content hr-divider-heading">${salesforceProfilesLabel}</h3>
+                                    </div>
+                                    <br>
+                                    <div class="content table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <th>${username}</th>
+                                                <th>${name}</th>
+                                                <th>${email}</th>
+                                                <th>${address}</th>
+                                                <th>${action}</th>
+                                            </thead>
+                                            <tbody>
+                                                <#list identity.salesforceProfiles as salesforceProfile>
+                                                    <tr id="${salesforceProfile.userId}">
+                                                        <td>${salesforceProfile.username}</td>
+                                                        <td>${salesforceProfile.displayName}</td>
+                                                        <td>${salesforceProfile.email}</td>
+                                                        <td>${salesforceProfile.street}
+                                                            <br> ${salesforceProfile.city}, ${(salesforceProfile.state)!} ${(salesforceProfile.zipPostalCode)!}
+                                                            <br> ${salesforceProfile.country}
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </#list>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-
-                <br>
-
-
-                <div class="container-fluid container-fluid-spacious">
-                    <div class="row">
-                        <div class="col-md-2">
-
-                        </div>
-                        <div class="col-md-10">
-                            <div class="hr-divider">
-                                <h3 class="hr-divider-content hr-divider-heading">
-                                ${salesforceProfilesLabel}
-                            </h3>
-                            </div>
-                            
-                            <br>
-                            
-                            <div class="content table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <th>${userId}</th>
-                                        <th>${username}</th>
-                                        <th>${name}</th>
-                                        <th>${email}</th>
-                                        <th>${address}</th>
-                                        <th>${action}</th>
-                                    </thead>
-                                    <tbody>
-                                        <#list identity.salesforceProfiles as salesforceProfile>
-                                            <tr id="${salesforceProfile.userId}">
-                                                <td>${salesforceProfile.userId}</td>
-                                                <td>${salesforceProfile.username}</td>
-                                                <td>${salesforceProfile.displayName}</td>
-                                                <td>${salesforceProfile.email}</td>
-                                                <td>${salesforceProfile.street}
-                                                    <br> ${salesforceProfile.city}, ${(salesforceProfile.state)!} ${(salesforceProfile.zipPostalCode)!}
-                                                    <br> ${salesforceProfile.country}
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                        </#list>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-md-2"></div>
                 </div>
             </div>
         </div>
-
-        <br>
-        <br>
 
         <#include "user-profile-edit.html"/>
 

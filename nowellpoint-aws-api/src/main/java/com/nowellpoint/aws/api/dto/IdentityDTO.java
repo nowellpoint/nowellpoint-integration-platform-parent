@@ -354,7 +354,7 @@ public class IdentityDTO extends AbstractDTO {
 		return salesforceProfiles;
 	}
 
-	public void setSalesforceProfile(List<SalesforceProfile> salesforceProfiles) {
+	public void setSalesforceProfiles(List<SalesforceProfile> salesforceProfiles) {
 		this.salesforceProfiles = salesforceProfiles;
 	}
 	

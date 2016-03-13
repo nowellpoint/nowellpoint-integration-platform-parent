@@ -137,6 +137,7 @@ public class IdentityResource {
 	
 	@POST
 	@Path("/{id}/salesforce-profile")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
@@ -145,11 +146,14 @@ public class IdentityResource {
 		
 		String profileHref = salesforceProfile.getPhotos().getProfilePicture() + "?oauth_token=" + salesforceService.findTokenBySubject( subject ).getAccessToken();
 		
-		System.out.println(IdentityResource.class.getName() + " " + profileHref);
+		identityService.addSalesforceProfilePicture( salesforceProfile.getUserId(), profileHref );
 		
-		URI uri = identityService.addSalesforceProfilePicture(id, profileHref, uriInfo.getBaseUri() );
-		
-		System.out.println(IdentityResource.class.getName() + " " + uri.toString());
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(IdentityResource.class)
+				.path("{id}")
+				.path("salesforce")
+				.path("{userId}")
+				.build(id, salesforceProfile.getUserId());
 		
 		salesforceProfile.getPhotos().setProfilePicture(uri.toString());
 		
@@ -162,6 +166,7 @@ public class IdentityResource {
 	
 	@PUT
 	@Path("/{id}/salesforce-profile")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);

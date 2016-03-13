@@ -11,7 +11,6 @@ import java.util.Date;
 import javax.enterprise.event.Observes;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
@@ -22,7 +21,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
-import com.nowellpoint.aws.api.resource.IdentityResource;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.Photos;
@@ -159,7 +157,7 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		return resource;		
 	}
 	
-	public URI addSalesforceProfilePicture(String id, String profileHref, URI baseUri) {
+	public void addSalesforceProfilePicture(String userId, String profileHref) {
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
@@ -173,17 +171,9 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	    	objectMetadata.setContentLength(connection.getContentLength());
 	    	objectMetadata.setContentType(contentType);
 			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", id, connection.getInputStream(), objectMetadata);
+	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", userId, connection.getInputStream(), objectMetadata);
 	    	
 	    	s3Client.putObject(putObjectRequest);
-	    	
-	    	URI uri = UriBuilder.fromUri(baseUri)
-					.path(IdentityResource.class)
-					.path("/{id}")
-					.path("picture")
-					.build(id);
-	    	
-	    	return uri;
 			
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
