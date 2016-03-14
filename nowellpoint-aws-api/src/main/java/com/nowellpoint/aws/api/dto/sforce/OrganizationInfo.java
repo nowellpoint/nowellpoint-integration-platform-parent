@@ -37,6 +37,7 @@ public class OrganizationInfo implements Serializable {
 	
 	private String instanceUrl;
 	
+	
 	public OrganizationInfo() {
 		
 	}

@@ -5,21 +5,37 @@
         <#include "navbar.html" />
 
         <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
+            <div class="row">
+                <div class="col-md-2">
 
                 </div>
-            </div>
+                <div class="col-md-10">
+                    <div class="dashhead m-t-md">
+                        <div class="dashhead">
+                            <div class="dashhead-titles">
+                                <h6 class="dashhead-subtitle">${configureServiceProvider}</h6>
+                                <h2 class="dashhead-title">${serviceProvider.type!} (${serviceProvider.organization!})</h2>
+                            </div>
+                        </div>
+                    </div>
 
-            <br>
+                    <br>
 
-            <div class="container-fluid container-fluid-spacious">
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-10">
+                    <div class="col-md-12">
+
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">${outboundMessageListeners}</h3>
+                        </div>
+                        
+                        <p class="pull-right">
+                                    <a href="#profileDialog" class="btn btn-lg btn-primary-outline" role="button">${edit}</a>
+                                </p>
+
+
                     </div>
                 </div>
+                <div class="col-md-2"></div>
             </div>
         </div>
-        
+
     </@t.page>

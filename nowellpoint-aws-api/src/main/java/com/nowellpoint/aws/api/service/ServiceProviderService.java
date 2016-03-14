@@ -1,7 +1,9 @@
 package com.nowellpoint.aws.api.service;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.mongodb.ServiceProvider;
@@ -39,6 +41,16 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 */
 	
 	public ServiceProviderDTO createServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
+		
+		Set<ServiceProviderDTO> resources = getAll(subject);
+		
+		Optional<ServiceProviderDTO> query = resources.stream().filter(exists(resource.getType(), resource.getAccount(), resource.getKey())).findFirst();
+		
+		if (query.isPresent()) {
+			resource.setId(query.get().getId());
+			return updateServiceProvider(subject, resource, eventSource);
+		}
+		
 		create(subject, resource, eventSource);
 
 		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
@@ -101,4 +113,10 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 		
 		return resource;
 	}	
+	
+	private static Predicate<ServiceProviderDTO> exists(String type, String account, String key) {
+		return p -> p.getType().equals(type) && 
+				p.getAccount().equals(account) && 
+				p.getKey().equals(key);
+	}
 }

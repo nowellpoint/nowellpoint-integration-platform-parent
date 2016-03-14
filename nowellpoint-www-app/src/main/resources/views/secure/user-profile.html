@@ -5,137 +5,130 @@
         <#include "navbar.html" />
 
         <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${userProfile}</h6>
-                        <h2 class="dashhead-title">${identity.name!}</h2>
-                    </div>
+            <div class="row">
+                <div class="col-md-2">
 
-                    <div class="dashhead-toolbar">
-                        <p class="pull-right">
-                            <p class="pull-right">
-                                <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editUserProfile}">${edit}</a>
-                            </p>
-                    </div>
                 </div>
-            </div>
+                <div class="col-md-10">
+                    <div class="dashhead m-t-md">
+                        <div class="dashhead">
+                            <div class="dashhead-titles">
+                                <h6 class="dashhead-subtitle">${userProfile}</h6>
+                                <h2 class="dashhead-title">${identity.name!}</h2>
+                            </div>
 
-            <div class="hr-divider m-t m-b-md">
-                <h3 class="hr-divider-content hr-divider-heading" />
-            </div>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-2">
-
+                            <div class="dashhead-toolbar">
+                                <p class="pull-right">
+                                    <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editUserProfile}">${edit}</a>
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="hr-divider">
-                                        <h3 class="hr-divider-content hr-divider-heading">${picture}</h3>
-                                    </div>
-                                    <br>
-                                    <div>
-                                        <img src="${(identity.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
-                                    </div>
-                                    <br>
-                                    <#if identity.photos.profilePicture !='/images/person-generic.jpg'>
-                                        <div class="text-center">
-                                            <a href="#" id="clickable" class="btn btn-primary center" role="button">
-                                                <i id="spinner" class="fa fa-spinner fa-spin"></i>${delete}</a>
-                                        </div>
-                                    </#if>
 
+                    <br>
+
+                    <div class="col-md-10">
+                        <div class="col-md-2">
+                            <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading">${picture}</h3>
+                            </div>
+                            <br>
+                            <div>
+                                <img src="${(identity.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
+                            </div>
+                            <br>
+                            <#if identity.photos.profilePicture !='/images/person-generic.jpg'>
+                                <div class="text-center">
+                                    <a href="#" id="clickable" class="btn btn-primary center" role="button">
+                                        <i id="spinner" class="fa fa-spinner fa-spin"></i>${delete}</a>
                                 </div>
+                            </#if>
 
-                                <div class="col-md-10">
+                        </div>
 
-                                    <div class="hr-divider">
-                                        <h3 class="hr-divider-content hr-divider-heading">${contactInformation}</h3>
-                                    </div>
+                        <div class="col-md-10">
 
-                                    <br>
+                            <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading">${contactInformation}</h3>
+                            </div>
 
-                                    <dl class="dl-horizontal">
-                                        <dt>${firstName}</dt>
-                                        <dd>${identity.firstName!}</dd>
-                                        <dt>${lastName}</dt>
-                                        <dd>${identity.lastName!}</dd>
-                                        <dt>${company}</dt>
-                                        <dd>${identity.company!}</dd>
-                                        <dt>${division}</dt>
-                                        <dd>${identity.division!}</dd>
-                                        <dt>${department}</dt>
-                                        <dd>${identity.department!}</dd>
-                                        <dt>${title}</dt>
-                                        <dd>${identity.title!}</dd>
-                                        <dt>${fax}</dt>
-                                        <dd>${identity.fax!}</dd>
-                                        <dt>${mobilePhone}</dt>
-                                        <dd>${identity.mobilePhone!}</dd>
-                                        <dt>${phone}</dt>
-                                        <dd>${identity.phone!}</dd>
-                                        <dt>${extension}</dt>
-                                        <dd>${identity.extension!}</dd>
-                                    </dl>
+                            <br>
 
-                                    <br>
+                            <dl class="dl-horizontal">
+                                <dt>${firstName}</dt>
+                                <dd>${identity.firstName!}</dd>
+                                <dt>${lastName}</dt>
+                                <dd>${identity.lastName!}</dd>
+                                <dt>${company}</dt>
+                                <dd>${identity.company!}</dd>
+                                <dt>${division}</dt>
+                                <dd>${identity.division!}</dd>
+                                <dt>${department}</dt>
+                                <dd>${identity.department!}</dd>
+                                <dt>${title}</dt>
+                                <dd>${identity.title!}</dd>
+                                <dt>${fax}</dt>
+                                <dd>${identity.fax!}</dd>
+                                <dt>${mobilePhone}</dt>
+                                <dd>${identity.mobilePhone!}</dd>
+                                <dt>${phone}</dt>
+                                <dd>${identity.phone!}</dd>
+                                <dt>${extension}</dt>
+                                <dd>${identity.extension!}</dd>
+                            </dl>
 
-                                    <div class="hr-divider">
-                                        <h3 class="hr-divider-content hr-divider-heading">${address}</h3>
-                                    </div>
+                            <br>
 
-                                    <br>
+                            <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading">${address}</h3>
+                            </div>
 
-                                    <dl class="dl-horizontal">
-                                        <dt>${address}</dt>
-                                        <dd>${identity.address.street!}</dd>
-                                        <dt>${city}</dt>
-                                        <dd>${identity.address.city!}</dd>
-                                        <dt>${state}</dt>
-                                        <dd>${identity.address.state!}</dd>
-                                        <dt>${postalCode}</dt>
-                                        <dd>${identity.address.postalCode!}</dd>
-                                        <dt>${country}</dt>
-                                        <dd>${identity.address.countryCode!}</dd>
-                                    </dl>
+                            <br>
 
-                                </div>
+                            <dl class="dl-horizontal">
+                                <dt>${address}</dt>
+                                <dd>${identity.address.street!}</dd>
+                                <dt>${city}</dt>
+                                <dd>${identity.address.city!}</dd>
+                                <dt>${state}</dt>
+                                <dd>${identity.address.state!}</dd>
+                                <dt>${postalCode}</dt>
+                                <dd>${identity.address.postalCode!}</dd>
+                                <dt>${country}</dt>
+                                <dd>${identity.address.countryCode!}</dd>
+                            </dl>
 
-                                <div class="col-md-12">
-                                    <div class="hr-divider">
-                                        <h3 class="hr-divider-content hr-divider-heading">${salesforceProfilesLabel}</h3>
-                                    </div>
-                                    <br>
-                                    <div class="content table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <th>${username}</th>
-                                                <th>${name}</th>
-                                                <th>${email}</th>
-                                                <th>${address}</th>
-                                                <th>${action}</th>
-                                            </thead>
-                                            <tbody>
-                                                <#list identity.salesforceProfiles as salesforceProfile>
-                                                    <tr id="${salesforceProfile.userId}">
-                                                        <td>${salesforceProfile.username}</td>
-                                                        <td>${salesforceProfile.displayName}</td>
-                                                        <td>${salesforceProfile.email}</td>
-                                                        <td>${salesforceProfile.street}
-                                                            <br> ${salesforceProfile.city}, ${(salesforceProfile.state)!} ${(salesforceProfile.zipPostalCode)!}
-                                                            <br> ${salesforceProfile.country}
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                </#list>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading">${salesforceProfilesLabel}</h3>
+                            </div>
+                            <br>
+                            <div class="content table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <th>${username}</th>
+                                        <th>${name}</th>
+                                        <th>${email}</th>
+                                        <th>${address}</th>
+                                        <th>${action}</th>
+                                    </thead>
+                                    <tbody>
+                                        <#list identity.salesforceProfiles as salesforceProfile>
+                                            <tr id="${salesforceProfile.userId}">
+                                                <td>${salesforceProfile.username}</td>
+                                                <td>${salesforceProfile.displayName}</td>
+                                                <td>${salesforceProfile.email}</td>
+                                                <td>${salesforceProfile.street}
+                                                    <br> ${salesforceProfile.city}, ${(salesforceProfile.state)!} ${(salesforceProfile.zipPostalCode)!}
+                                                    <br> ${salesforceProfile.country}
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </#list>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

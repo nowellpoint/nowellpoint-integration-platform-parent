@@ -2,6 +2,7 @@ package com.nowellpoint.aws.api.service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -9,6 +10,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.api.dto.sforce.OrganizationInfo;
 import com.nowellpoint.aws.api.dto.sforce.UserInfo;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -128,8 +130,8 @@ public class SalesforceService extends AbstractCacheService {
 		
 		userInfo.setOrganization(organizationInfo);
 		
-		hset( subject, Token.class.getName(), token );
-		expire( subject, 3600 );
+		hset( subject, Token.class.getName().concat(organizationInfo.getId()), token );
+		//expire( subject, 3600 );
 		
 		return userInfo;	
 	}
@@ -204,5 +206,34 @@ public class SalesforceService extends AbstractCacheService {
 		}
 		
 		return organization;
+	}
+	
+	public List<String> describe(String subject, String organizationId) {
+		
+		Token token = hget( Token.class, subject, Token.class.getName().concat(organizationId) );
+		
+		String describeGlobal = token.getInstanceUrl().concat("/services/data/v35.0/sobjects");
+		
+		try {
+			HttpResponse httpResponse = RestResource.get(describeGlobal)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.execute();
+			
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+			
+			if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+			}
+			
+			System.out.println(httpResponse.getEntity(JsonNode.class));
+			
+		} catch (IOException e) {
+			LOGGER.error( "getSObjects", e );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}
+		
+		return null;
+		
 	}
 }

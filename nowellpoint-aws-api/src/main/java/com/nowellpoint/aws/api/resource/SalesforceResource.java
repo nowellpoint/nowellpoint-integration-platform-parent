@@ -8,9 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,10 +18,8 @@ import javax.ws.rs.core.Response;
 import com.nowellpoint.aws.api.dto.sforce.UserInfo;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
-import com.nowellpoint.aws.client.SalesforceClient;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.sforce.GetAuthorizationRequest;
-import com.nowellpoint.aws.model.sforce.GetAuthorizationResponse;
+import com.nowellpoint.aws.model.sforce.Token;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -31,8 +29,6 @@ public class SalesforceResource {
 	
 	@Context
 	private HttpServletRequest servletRequest;
-	
-	private static SalesforceClient salesforceClient = new SalesforceClient();
 	
 	@GET
 	@Path("/oauth")
@@ -76,38 +72,10 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getToken(@QueryParam(value="code") String code) {
 		
-		//
-		// build the get authorization request
-		//
+		Token token = salesforceService.getToken(code);
 		
-		GetAuthorizationRequest authorizationRequest = new GetAuthorizationRequest()
-				.withTokenUri(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
-				.withClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-				.withClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-				.withRedirectUri(System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
-				.withCode(code);
-		
-		//
-		// execute the get authorization request
-		//
-		
-		GetAuthorizationResponse authorizationResponse = salesforceClient.authorize(authorizationRequest);
-		
-		//
-		// throw WebApplicationException if the response is not ok
-		//
-		
-		if (authorizationResponse.getStatusCode() >= 400) {
-			throw new WebApplicationException(authorizationResponse.getErrorMessage(), authorizationResponse.getStatusCode());
-		}
-		
-		//
-		// return the result
-		//
-		
-		return Response.status(authorizationResponse.getStatusCode())
-				.entity(authorizationResponse.getToken())
-				.type(MediaType.APPLICATION_JSON)
+		return Response.ok()
+				.entity(token)
 				.build();
 	}
 	
@@ -115,26 +83,27 @@ public class SalesforceResource {
 	@Path("/user-info")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response userInfo(@QueryParam(value="code") String code) {
-		
-		//
-		// get the subject from the reqeust
-		//
+	public Response userInfo(@QueryParam(value="code") String code) {		
 		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		//
-		// use the returned oauth code to get UserInfo
-		//
-		
 		UserInfo userInfo = salesforceService.getUserInfo(subject, code);
-		
-		//
-		// return the result
-		//
 		
 		return Response.ok()
 				.entity(userInfo)
+				.build();
+	}
+	
+	@GET
+	@Path("/{organizationId}/describe")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response describe(@PathParam(value="organizationId") String organizationId) {
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		salesforceService.describe(subject, organizationId);
+		
+		return Response.ok()
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 	}

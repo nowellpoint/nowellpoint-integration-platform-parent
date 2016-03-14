@@ -40,9 +40,11 @@ public class ServiceProviderController {
         
         post("/app/providers", (request, response) -> saveServiceProvider(request, response));
         
-        get("/app/providers/:id", (request, response) -> getServiceProvider(request, response));
+        get("/app/providers/:id", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
         
         delete("/app/providers/:id", (request, response) -> deleteServiceProvider(request, response));
+        
+        //get("/app/providers/configure", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	private static ModelAndView getServiceProviders(Request request, Response response) throws IOException {
@@ -89,7 +91,23 @@ public class ServiceProviderController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
-		return new ModelAndView(new HashMap<String, Object>(), "secure/service-providers.html");
+		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
+		
+		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("salesforce")
+				.path(provider.getKey())
+				.path("describe")
+				.execute();
+		
+		
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", request.attribute("account"));
+		model.put("serviceProvider", provider);
+		
+		return new ModelAndView(model, "secure/service-provider-configure.html");
 		
 	}
 	

@@ -74,7 +74,7 @@
                                                     <i class="fa fa-close"></i>
                                                 </#if>
                                             </td>
-                                            <td><a href=""><span class="icon icon-cog"></span></a>&nbsp;
+                                            <td><a href="/app/providers/${serviceProvider.id}"><span class="icon icon-cog"></span></a>&nbsp;
                                                 <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${serviceProvider.id}" data-message="${serviceProvider.type}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
                                         </tr>
                                     </#list>
@@ -98,7 +98,6 @@
                     type: 'DELETE',
                     success: function() {
                         row.remove();
-                        //window.location.href = '/app/providers';
                     }
                 });
                 $('#confirmDialog').modal('hide');
