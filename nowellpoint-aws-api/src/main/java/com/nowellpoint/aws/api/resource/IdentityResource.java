@@ -48,10 +48,19 @@ public class IdentityResource {
 	@Context
 	private HttpServletRequest servletRequest;
 	
+	/**
+	 * @api {get} /identity/:id/picture Get Profile Picture
+	 * @apiName getPicture
+	 * @apiVersion 1.0.0
+	 * @apiGroup Identity
+	 * 
+	 * @apiParam {String} id The Identity's unique id
+	 */
+	
 	@GET
 	@Path("/{id}/picture")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response get(@PathParam(value="id") String id) {
+	public Response getPicture(@PathParam(value="id") String id) {
 		//HttpServletRequestUtil.getSubject(servletRequest);
 		
 		AmazonS3 s3Client = new AmazonS3Client();
@@ -81,6 +90,16 @@ public class IdentityResource {
     			.header("Content-Type", contentType)
     			.build();
 	}
+	
+	/**
+	 * @api {get} /identity/:id Get Identity
+	 * @apiName getIdentity
+	 * @apiVersion 1.0.0
+	 * @apiGroup Identity
+	 * @apiHeader {String} authorization Authorization with the value of Bearer access_token from authenticate
+	 * 
+	 * @apiParam {String} id The Identity's unique id
+	 */
 	
 	@GET
 	@Path("/{id}")
@@ -183,7 +202,7 @@ public class IdentityResource {
 	@DELETE
 	@Path("/{id}/salesforce-profile/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeSalesforceProfile(@PathParam("id") String id, String userId) {
+	public Response removeSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		IdentityDTO resource = identityService.findIdentity(id, subject);

@@ -1,0 +1,7 @@
+{
+  "name": "nowellpoint",
+  "version": "1.0.0",
+  "description": "all of the APIs required for the internal web application",
+  "title": "Nowellpoint Web Application APIs",
+  "url" : "https://api.nowellpoint.com/v1"
+}
