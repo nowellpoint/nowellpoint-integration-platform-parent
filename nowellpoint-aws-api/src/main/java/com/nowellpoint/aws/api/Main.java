@@ -45,6 +45,7 @@ public class Main {
         		.addPackage("com.nowellpoint.aws.api.exception")
         		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebInfResource(new ClassLoaderAsset("META-INF/beans.xml", Main.class.getClassLoader()), "beans.xml")
+        		.addAsResource(new ClassLoaderAsset("META-INF/logback.xml", Main.class.getClassLoader()), "logback.xml")
         		.addAllDependencies();
         
 //        SwaggerArchive archive = deployment.as(SwaggerArchive.class)
