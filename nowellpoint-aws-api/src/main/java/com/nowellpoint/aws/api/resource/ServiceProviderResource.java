@@ -13,9 +13,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -93,6 +96,22 @@ public class ServiceProviderResource {
 		
 		return Response.ok(resource)
 				.build();
+	}
+	
+	@GET
+	@Path("q")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response queryServiceProvider(@QueryParam("type") String type, @QueryParam("account") String account) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		ServiceProviderDTO resource = serviceProviderService.queryServiceProvider(subject, type, account);
+		
+		if (resource == null) {
+			throw new WebApplicationException(String.format( "The request resource ServiceProvider was not found for the following values...Subject: %s, Type: %s, Account: %s", subject, type, account ), Status.NOT_FOUND);
+		}
+		
+		return Response.ok(resource).build();
 	}
 	
 	@PUT

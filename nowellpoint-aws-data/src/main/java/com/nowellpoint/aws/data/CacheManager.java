@@ -7,6 +7,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -255,7 +256,7 @@ public class CacheManager {
 	public static byte[] serialize(Object object) {
 		byte[] bytes = null;
 		try {
-			String json = mapper.writeValueAsString(object);
+			String json = Base64.getEncoder().encodeToString(mapper.writeValueAsString(object).getBytes());
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 			bytes = cipher.doFinal(json.getBytes("UTF8"));
 		} catch (JsonProcessingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
@@ -278,7 +279,7 @@ public class CacheManager {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
 			bytes = cipher.doFinal(bytes);
-			object = mapper.readValue(bytes, type);
+			object = mapper.readValue(Base64.getDecoder().decode(bytes), type);
 		} catch (IOException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 			LOGGER.severe("Cache deserialize issue >>>");
 			e.printStackTrace();

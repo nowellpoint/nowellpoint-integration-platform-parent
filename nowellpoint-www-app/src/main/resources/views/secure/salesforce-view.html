@@ -21,6 +21,13 @@
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
+                        <#if serviceProvider??>
+                            <div id="alert" class="alert alert-success">
+                                <a class="close" data-dismiss="alert">×</a>
+                                <div class="text-center">${serviceProvider.account}</div>
+                            </div>
+                        </#if>
+
                         <div class="hr-divider">
                             <h3 class="hr-divider-content hr-divider-heading">
                                 ${contactInformation}
@@ -88,7 +95,7 @@
                             <input type="hidden" name="country" id="country" value="${userInfo.country}" />
 
                             <input type="hidden" name="username" id="username" value="${(userInfo.username)!}" />
-                            <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.id)!}" />
+                            <input type="hidden" name="organizationId" id="organizationId" value="${(userInfo.organization.organizationId)!}" />
                             <input type="hidden" name="organizationName" id="organizationName" value="${(userInfo.organization.name)!}" />
                             <input type="hidden" name="organizationType" id="organizationType" value="${(userInfo.organization.organizationType)!}" />
                             <input type="hidden" name="instanceName" id="instanceName" value="${(userInfo.organization.instanceName)!}" />

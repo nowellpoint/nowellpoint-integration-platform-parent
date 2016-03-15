@@ -72,7 +72,9 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getToken(@QueryParam(value="code") String code) {
 		
-		Token token = salesforceService.getToken(code);
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		Token token = salesforceService.getToken(subject, code);
 		
 		return Response.ok()
 				.entity(token)
@@ -80,14 +82,16 @@ public class SalesforceResource {
 	}
 	
 	@GET
-	@Path("/user-info")
+	@Path("/user")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response userInfo(@QueryParam(value="code") String code) {		
+	public Response queryUserInfo(@QueryParam(value="id") String id) {		
 		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		UserInfo userInfo = salesforceService.getUserInfo(subject, code);
+		Token token = salesforceService.findToken(subject, id.substring(id.lastIndexOf("/") + 1));
+		
+		UserInfo userInfo = salesforceService.getUserInfo(token);
 		
 		return Response.ok()
 				.entity(userInfo)
@@ -95,13 +99,29 @@ public class SalesforceResource {
 	}
 	
 	@GET
-	@Path("/{organizationId}/describe")
+	@Path("/user/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response describe(@PathParam(value="organizationId") String organizationId) {
+	public Response getUserInfo(@PathParam(value="userId") String userId) {		
 		
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		salesforceService.describe(subject, organizationId);
+		Token token = salesforceService.findToken(subject, userId);
+		
+		UserInfo userInfo = salesforceService.getUserInfo(token);
+		
+		return Response.ok()
+				.entity(userInfo)
+				.build();
+	}
+	
+	@GET
+	@Path("/user/{userId}/describe")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response describe(@PathParam(value="userId") String userId) {
+		
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		salesforceService.describe(subject, userId);
 		
 		return Response.ok()
 				.type(MediaType.APPLICATION_JSON)

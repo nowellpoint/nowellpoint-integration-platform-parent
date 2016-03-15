@@ -38,7 +38,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public Token getToken(String authCode) {
+	public Token getToken(String subject, String authCode) {
 		Token token = null;
 		
 		try {
@@ -61,6 +61,13 @@ public class SalesforceService extends AbstractCacheService {
 			
 			token = httpResponse.getEntity(Token.class);
 			
+			String userId = token.getId().substring(token.getId().lastIndexOf("/") + 1);
+			
+			LOGGER.info("Salesforce UserId authenticate: " + userId);
+			
+			hset( subject, Token.class.getName().concat( userId ), token);
+			//expire( subject, 3600 );
+			
 		} catch (IOException e) {
 			LOGGER.error( "getIdentity", e.getCause() );
 			throw new WebApplicationException(e, Status.BAD_REQUEST);
@@ -75,8 +82,8 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public Token findTokenBySubject(String subject) {
-		Token token = hget( Token.class, subject, Token.class.getName());
+	public Token findToken(String subject, String userId) {
+		Token token = hget( Token.class, subject, Token.class.getName().concat( userId ) );
 		return token;
 	}
 	
@@ -86,9 +93,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return userInfo
 	 */
 	
-	public UserInfo getUserInfo(String subject, String authCode) {
-		Token token = getToken(authCode);
-		
+	public UserInfo getUserInfo(Token token) {
 		Identity identity = getIdentity(token.getAccessToken(), token.getId());
 		
 		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
@@ -117,7 +122,7 @@ public class SalesforceService extends AbstractCacheService {
 		organizationInfo.setDivision(organization.getDivision());
 		organizationInfo.setFax(organization.getFax());
 		organizationInfo.setFiscalYearStartMonth(organization.getFiscalYearStartMonth());
-		organizationInfo.setId(organization.getId());
+		organizationInfo.setOrganizationId(organization.getId());
 		organizationInfo.setInstanceName(organization.getInstanceName());
 		organizationInfo.setInstanceUrl(token.getInstanceUrl());
 		organizationInfo.setIsSandbox(organization.getIsSandbox());
@@ -129,9 +134,6 @@ public class SalesforceService extends AbstractCacheService {
 		organizationInfo.setUsesStartDateAsFiscalYearName(organization.getUsesStartDateAsFiscalYearName());
 		
 		userInfo.setOrganization(organizationInfo);
-		
-		hset( subject, Token.class.getName().concat(organizationInfo.getId()), token );
-		//expire( subject, 3600 );
 		
 		return userInfo;	
 	}
@@ -208,9 +210,9 @@ public class SalesforceService extends AbstractCacheService {
 		return organization;
 	}
 	
-	public List<String> describe(String subject, String organizationId) {
+	public List<String> describe(String subject, String userId) {
 		
-		Token token = hget( Token.class, subject, Token.class.getName().concat(organizationId) );
+		Token token = hget( Token.class, subject, Token.class.getName().concat(userId) );
 		
 		String describeGlobal = token.getInstanceUrl().concat("/services/data/v35.0/sobjects");
 		

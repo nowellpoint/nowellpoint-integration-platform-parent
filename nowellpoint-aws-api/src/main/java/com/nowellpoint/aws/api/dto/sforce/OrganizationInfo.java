@@ -9,7 +9,7 @@ public class OrganizationInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1297944724385795255L;
 	
-	private String id;
+	private String organizationId;
 	
 	private String division;
 	
@@ -42,12 +42,12 @@ public class OrganizationInfo implements Serializable {
 		
 	}
 
-	public String getId() {
-		return id;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public String getDivision() {

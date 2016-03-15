@@ -163,7 +163,7 @@ public class IdentityResource {
 		
 		IdentityDTO resource = identityService.findIdentity(id, subject);
 		
-		String profileHref = salesforceProfile.getPhotos().getProfilePicture() + "?oauth_token=" + salesforceService.findTokenBySubject( subject ).getAccessToken();
+		String profileHref = salesforceProfile.getPhotos().getProfilePicture() + "?oauth_token=" + salesforceService.findToken( subject, salesforceProfile.getUserId() ).getAccessToken();
 		
 		identityService.addSalesforceProfilePicture( salesforceProfile.getUserId(), profileHref );
 		
@@ -184,11 +184,13 @@ public class IdentityResource {
 	}
 	
 	@PUT
-	@Path("/{id}/salesforce-profile")
+	@Path("/{id}/salesforce-profile/{userId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
+	public Response updateSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId, SalesforceProfile salesforceProfile) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		salesforceProfile.setUserId(userId);
 		
 		IdentityDTO resource = identityService.findIdentity(id, subject);
 		
@@ -213,35 +215,4 @@ public class IdentityResource {
 		
 		return Response.ok(resource).build();
 	}
-	
-//	@POST
-//	@Path("/{id}/picture")
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-//	public Response uploadProfileImage(MultipartFormDataInput input) {
-//		
-//		Map<String, List<InputPart>> formParts = input.getFormDataMap();
-//
-//		List<InputPart> inPart = formParts.get("file");
-//
-//		for (InputPart inputPart : inPart) {
-//			try {
-//				InputStream inputStream = inputPart.getBody(InputStream.class,null);
-//				
-//				AmazonS3 s3Client = new AmazonS3Client();
-//					
-//				ObjectMetadata objectMetadata = new ObjectMetadata();
-//			    objectMetadata.setContentLength(inputStream.available());
-//					
-//			    PutObjectRequest putObjectRequest = new PutObjectRequest("salesforce-outbound-messages", UUID.randomUUID().toString(), inputStream, objectMetadata);
-//			    	
-//			    s3Client.putObject(putObjectRequest);	
-//				
-//			} catch (IOException e) {
-//				throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-//			}
-//		}
-//		
-//		return Response.ok()
-//				.build();
-//	}
 }

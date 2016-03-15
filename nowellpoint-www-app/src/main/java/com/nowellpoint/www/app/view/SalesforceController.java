@@ -13,6 +13,8 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.model.sforce.OAuthToken;
 import com.nowellpoint.www.app.model.sforce.UserInfo;
 
 import freemarker.log.Logger;
@@ -89,30 +91,63 @@ public class SalesforceController {
 		
     	Token token = request.attribute("token");
     	
-    	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+    	HttpResponse httpResponse; 
+    			
+    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
-    			.path("user-info")
+    			.path("token")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
-    	int statusCode = httpResponse.getStatusCode();
+    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
     	
-    	LOGGER.info("Status Code: " + statusCode + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+    	if (httpResponse.getStatusCode() != 200) {
+    		throw new BadRequestException(httpResponse.getAsString());
+    	}
     	
-    	if (statusCode != 200) {
+    	OAuthToken oauthToken = httpResponse.getEntity(OAuthToken.class);
+    	
+    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+    			.path("salesforce")
+    			.path("user")
+    			.queryParameter("id", oauthToken.getId())
+    			.execute();
+    	
+    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+    	
+    	if (httpResponse.getStatusCode() != 200) {
     		throw new BadRequestException(httpResponse.getAsString());
     	}
     	
     	UserInfo userInfo = httpResponse.getEntity(UserInfo.class);
+    	
+    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+    			.path("provider")
+    			.path("q")
+    			.queryParameter("type", "SALESFORCE")
+    			.queryParameter("account", userInfo.getUserId())
+    			.execute();
+    	
+    	ServiceProvider provider = null;
+    	if (httpResponse.getStatusCode() == 200) {
+    		provider = httpResponse.getEntity(ServiceProvider.class);
+    	}
     	
     	Account account = request.attribute("account");
     	
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
 		model.put("userInfo", userInfo);
+		model.put("serviceProvider", provider);
 		
 		return new ModelAndView(model, "secure/salesforce-view.html");	
 	}

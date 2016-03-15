@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
@@ -29,7 +32,28 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 		}
 		
 		return resources;
+	}
+	
+	/**
+	 * 
+	 * @param subject
+	 * @param type
+	 * @param account
+	 * @return
+	 */
+	
+	public ServiceProviderDTO queryServiceProvider(String subject, String type, String account) {
+		Set<ServiceProviderDTO> resources = getAll(subject);
 		
+		Predicate<ServiceProviderDTO> predicate = p -> p.getType().equals(type) && p.getAccount().equals(account);
+		
+		Optional<ServiceProviderDTO> query = resources.stream().filter(predicate).findFirst();
+		
+		if (query.isPresent()) {
+			return query.get();
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -41,14 +65,10 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 */
 	
 	public ServiceProviderDTO createServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
-		
-		Set<ServiceProviderDTO> resources = getAll(subject);
-		
-		Optional<ServiceProviderDTO> query = resources.stream().filter(exists(resource.getType(), resource.getAccount(), resource.getKey())).findFirst();
-		
-		if (query.isPresent()) {
-			resource.setId(query.get().getId());
-			return updateServiceProvider(subject, resource, eventSource);
+		if (queryServiceProvider(subject, resource.getType(), resource.getAccount()) != null) {
+			throw new WebApplicationException(
+					String.format("Resource of type ServiceProvider already exists for the following values...Subject: %s, Type: %s, Account: %s", 
+							subject, resource.getType(), resource.getAccount()), Status.FORBIDDEN);
 		}
 		
 		create(subject, resource, eventSource);
@@ -113,10 +133,4 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 		
 		return resource;
 	}	
-	
-	private static Predicate<ServiceProviderDTO> exists(String type, String account, String key) {
-		return p -> p.getType().equals(type) && 
-				p.getAccount().equals(account) && 
-				p.getKey().equals(key);
-	}
 }

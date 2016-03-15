@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
@@ -129,7 +130,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 			
 		} catch (JsonProcessingException e) {
 			LOGGER.error( "Share Project exception", e.getCause() );
-			throw new WebApplicationException(e);
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
 		
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
@@ -158,7 +159,7 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 			
 		} catch (JsonProcessingException e) {
 			LOGGER.error( "Share Project exception", e.getCause() );
-			throw new WebApplicationException(e);
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
 		
 		hdel( resource.getId(), subjectId );

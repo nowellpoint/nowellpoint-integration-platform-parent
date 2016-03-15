@@ -2,7 +2,7 @@ package com.nowellpoint.www.app.model.sforce;
 
 public class Organization {
 	
-	private String id;
+	private String organizationId;
 	
 	private String division;
 	
@@ -31,15 +31,15 @@ public class Organization {
 	private String instanceUrl;
 	
 	public Organization() {
-		System.out.println("creating organization");
+
 	}
 	
-	public String getId() {
-		return id;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 	
-	public void setId(String id) {
-		this.id = id;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public String getDivision() {

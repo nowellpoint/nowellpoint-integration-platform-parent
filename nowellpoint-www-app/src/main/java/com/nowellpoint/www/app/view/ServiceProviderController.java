@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -43,8 +44,6 @@ public class ServiceProviderController {
         get("/app/providers/:id", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
         
         delete("/app/providers/:id", (request, response) -> deleteServiceProvider(request, response));
-        
-        //get("/app/providers/configure", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	private static ModelAndView getServiceProviders(Request request, Response response) throws IOException {
@@ -64,6 +63,8 @@ public class ServiceProviderController {
 		}
 			
 		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
+		
+		providers = providers.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate())).collect(Collectors.toList());
 			
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
@@ -97,11 +98,9 @@ public class ServiceProviderController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.path("salesforce")
-				.path(provider.getKey())
+				.path(provider.getAccount())
 				.path("describe")
 				.execute();
-		
-		
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
@@ -137,7 +136,7 @@ public class ServiceProviderController {
 		serviceProvider.setType(request.queryParams("type"));
 		serviceProvider.setKey(request.queryParams("organizationId"));
 		serviceProvider.setOrganization(request.queryParams("organizationName"));
-		serviceProvider.setAccount(request.queryParams("username"));
+		serviceProvider.setAccount(request.queryParams("userId"));
 		serviceProvider.setIsActive(Boolean.TRUE);
 		serviceProvider.setInstanceName(request.queryParams("instanceName"));
 		serviceProvider.setInstanceUrl(request.queryParams("instanceUrl"));
