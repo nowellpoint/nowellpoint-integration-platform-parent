@@ -22,7 +22,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Identity;
 import com.nowellpoint.www.app.model.SalesforceProfile;
-import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.model.ServiceProviderInstance;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -31,11 +31,11 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class ServiceProviderController {
+public class ServiceProviderInstanceController {
 	
-	private static final Logger LOGGER = Logger.getLogger(ServiceProviderController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ServiceProviderInstanceController.class.getName());
 	
-	public ServiceProviderController(Configuration cfg) {     
+	public ServiceProviderInstanceController(Configuration cfg) {     
 		
         get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
@@ -62,7 +62,7 @@ public class ServiceProviderController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
-		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
+		List<ServiceProviderInstance> providers = httpResponse.getEntityList(ServiceProviderInstance.class);
 		
 		providers = providers.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate())).collect(Collectors.toList());
 			
@@ -92,7 +92,7 @@ public class ServiceProviderController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
-		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
+		ServiceProviderInstance provider = httpResponse.getEntity(ServiceProviderInstance.class);
 		
 		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -132,7 +132,7 @@ public class ServiceProviderController {
 		
 		Identity owner = httpResponse.getEntity(Identity.class);
 		
-		ServiceProvider serviceProvider = new ServiceProvider();
+		ServiceProviderInstance serviceProvider = new ServiceProviderInstance();
 		serviceProvider.setType(request.queryParams("type"));
 		serviceProvider.setKey(request.queryParams("organizationId"));
 		serviceProvider.setOrganization(request.queryParams("organizationName"));
@@ -205,7 +205,7 @@ public class ServiceProviderController {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		System.out.println(ServiceProviderController.class.getName() + " " + httpResponse.getAsString());
+		System.out.println(ServiceProviderInstanceController.class.getName() + " " + httpResponse.getAsString());
 		
 		response.redirect("/app/providers");
     	

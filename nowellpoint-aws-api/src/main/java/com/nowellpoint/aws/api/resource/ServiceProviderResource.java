@@ -14,17 +14,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.dto.ServiceProviderInstanceDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
@@ -43,12 +43,15 @@ public class ServiceProviderResource {
 	@Inject
 	private IdentityService identityService;
 	
+	@Inject
+	private SalesforceService salesforceService;
+	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		Set<ServiceProviderDTO> resources = serviceProviderService.getAll(subject);
+		Set<ServiceProviderInstanceDTO> resources = serviceProviderService.getAll(subject);
 		
 		return Response.ok(resources).build();
     }
@@ -56,7 +59,7 @@ public class ServiceProviderResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createServiceProvider(ServiceProviderDTO resource) {
+	public Response createServiceProvider(ServiceProviderInstanceDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
@@ -92,38 +95,49 @@ public class ServiceProviderResource {
 	public Response getServiceProvider(@PathParam("id") String id) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
+		ServiceProviderInstanceDTO resource = serviceProviderService.getServiceProvider(id, subject);
 		
 		return Response.ok(resource)
 				.build();
-	}
-	
-	@GET
-	@Path("q")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response queryServiceProvider(@QueryParam("type") String type, @QueryParam("account") String account) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		ServiceProviderDTO resource = serviceProviderService.queryServiceProvider(subject, type, account);
-		
-		if (resource == null) {
-			throw new WebApplicationException(String.format( "The request resource ServiceProvider was not found for the following values...Subject: %s, Type: %s, Account: %s", subject, type, account ), Status.NOT_FOUND);
-		}
-		
-		return Response.ok(resource).build();
 	}
 	
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
+	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderInstanceDTO resource) {
 		String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
 		resource.setId(id);
 		
 		serviceProviderService.updateServiceProvider(subject, resource, uriInfo.getBaseUri());
+		
+		return Response.ok(resource).build();
+	}
+	
+	@GET
+	@Path("/salesforce")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSalesforceProvider(@QueryParam(value="code") String code) {
+		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		
+		ServiceProviderDTO provider = salesforceService.getAsServiceProvider(subject, code);
+		
+		IdentityDTO owner = new IdentityDTO();
+		owner.setHref(subject);
+		
+		ServiceProviderInstanceDTO resource = new ServiceProviderInstanceDTO();
+		resource.setAccount(provider.getAccount());
+		resource.setInstanceId(provider.getInstanceId());
+		resource.setInstanceName(provider.getInstanceName());
+		resource.setInstanceUrl(provider.getInstanceUrl());
+		resource.setIsActive(Boolean.FALSE);
+		resource.setName(provider.getName());
+		resource.setType(provider.getType());
+		resource.setPrice(0.00);
+		resource.setOwner(owner);
+		
+		serviceProviderService.createServiceProvider(subject, resource, uriInfo.getBaseUri());
 		
 		return Response.ok(resource).build();
 	}

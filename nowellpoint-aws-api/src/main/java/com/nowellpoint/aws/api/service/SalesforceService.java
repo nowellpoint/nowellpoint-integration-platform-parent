@@ -11,18 +11,24 @@ import javax.ws.rs.core.Response.Status;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nowellpoint.aws.api.dto.sforce.OrganizationInfo;
-import com.nowellpoint.aws.api.dto.sforce.UserInfo;
+import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.Identity;
 import com.nowellpoint.aws.model.sforce.Organization;
 import com.nowellpoint.aws.model.sforce.Token;
+import com.nowellpoint.aws.model.sforce.User;
 
 public class SalesforceService extends AbstractCacheService {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
+	
+	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
+			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
+			+ "Email,SenderEmail,SenderName,Signature,Phone,Fax,MobilePhone,Alias,"
+			+ "CommunityNickname,IsActive,TimeZoneSidKey,LocaleSidKey,EmailEncodingKey,"
+			+ "UserType,LanguageLocaleKey,EmployeeNumber,DelegatedApproverId,ManagerId,AboutMe";
 	
 	private static final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
  			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
@@ -38,7 +44,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public Token getToken(String subject, String authCode) {
+	public Token getToken(String subject, String code) {
 		Token token = null;
 		
 		try {
@@ -47,7 +53,7 @@ public class SalesforceService extends AbstractCacheService {
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType("application/x-www-form-urlencoded")
 					.parameter("grant_type", "authorization_code")
-					.parameter("code", authCode)
+					.parameter("code", code)
 					.parameter("client_id", System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 					.parameter("client_secret", System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 					.parameter("redirect_uri", System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
@@ -87,55 +93,23 @@ public class SalesforceService extends AbstractCacheService {
 		return token;
 	}
 	
-	/**
-	 * 
-	 * @param authCode
-	 * @return userInfo
-	 */
-	
-	public UserInfo getUserInfo(Token token) {
+	public ServiceProviderDTO getAsServiceProvider(String subject, String code) {
+		Token token = getToken(subject, code);
+		
 		Identity identity = getIdentity(token.getAccessToken(), token.getId());
 		
 		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
 		
-		UserInfo userInfo = new UserInfo();
-		userInfo.setCity(identity.getAddrCity());
-		userInfo.setCountry(identity.getAddrCountry());
-		userInfo.setDisplayName(identity.getDisplayName());
-		userInfo.setEmail(identity.getEmail());
-		userInfo.setFirstName(identity.getFirstName());
-		userInfo.setUserId(identity.getUserId());
-		userInfo.setLanguage(identity.getLanguage());
-		userInfo.setLastName(identity.getLastName());
-		userInfo.setLocale(identity.getLocale());
-		userInfo.setMobilePhone(identity.getMobilePhone());
-		userInfo.setPhotos(identity.getPhotos());
-		userInfo.setState(identity.getAddrState());
-		userInfo.setStreet(identity.getAddrStreet());
-		userInfo.setUrls(identity.getUrls());
-		userInfo.setUsername(identity.getUsername());
-		userInfo.setUtcOffset(identity.getUtcOffset());
-		userInfo.setZipPostalCode(identity.getAddrZip());
+		ServiceProviderDTO serviceProvider = new ServiceProviderDTO();
+		serviceProvider.setAccount(identity.getUserId());
+		serviceProvider.setType("SALESFORCE");
+		serviceProvider.setInstanceId(organization.getId());
+		serviceProvider.setInstanceName(organization.getInstanceName());
+		serviceProvider.setInstanceUrl(token.getInstanceUrl());
+		serviceProvider.setIsSandbox(organization.getIsSandbox());
+		serviceProvider.setName(organization.getName());
 		
-		OrganizationInfo organizationInfo = new OrganizationInfo();
-		organizationInfo.setDefaultLocaleSidKey(organization.getDefaultLocaleSidKey());
-		organizationInfo.setDivision(organization.getDivision());
-		organizationInfo.setFax(organization.getFax());
-		organizationInfo.setFiscalYearStartMonth(organization.getFiscalYearStartMonth());
-		organizationInfo.setOrganizationId(organization.getId());
-		organizationInfo.setInstanceName(organization.getInstanceName());
-		organizationInfo.setInstanceUrl(token.getInstanceUrl());
-		organizationInfo.setIsSandbox(organization.getIsSandbox());
-		organizationInfo.setLanguageLocaleKey(organization.getLanguageLocaleKey());
-		organizationInfo.setName(organization.getName());
-		organizationInfo.setOrganizationType(organization.getOrganizationType());
-		organizationInfo.setPhone(organization.getPhone());
-		organizationInfo.setPrimaryContact(organization.getPrimaryContact());
-		organizationInfo.setUsesStartDateAsFiscalYearName(organization.getUsesStartDateAsFiscalYearName());
-		
-		userInfo.setOrganization(organizationInfo);
-		
-		return userInfo;	
+		return serviceProvider;
 	}
 	
 	/**
@@ -171,6 +145,35 @@ public class SalesforceService extends AbstractCacheService {
 		}
 		
 		return identity;
+	}
+	
+	public User getUser(String bearerToken, String userId, String sobjectUrl) {
+		User user = null;
+		
+		try {
+	     	
+			HttpResponse httpResponse = RestResource.get(sobjectUrl)
+	     			.bearerAuthorization(bearerToken)
+	     			.path("User")
+	     			.path(userId)
+	     			.queryParameter("fields", USER_FIELDS)
+	     			.queryParameter("version", "latest")
+	     			.execute();
+	     	
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+			
+			if (httpResponse.getStatusCode() >= 400) {
+				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+			}
+	     	
+	     	user = httpResponse.getEntity(User.class);
+	     	
+		} catch (IOException e) {
+			LOGGER.error( "getOrganization", e );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}
+		
+		return user;
 	}
 	
 	/**

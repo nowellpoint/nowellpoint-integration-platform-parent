@@ -8,13 +8,13 @@ import java.util.function.Predicate;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.data.mongodb.ServiceProvider;
+import com.nowellpoint.aws.api.dto.ServiceProviderInstanceDTO;
+import com.nowellpoint.aws.data.mongodb.ServiceProviderInstance;
 
-public class ServiceProviderService extends AbstractDataService<ServiceProviderDTO, ServiceProvider> {
+public class ServiceProviderService extends AbstractDataService<ServiceProviderInstanceDTO, ServiceProviderInstance> {
 	
 	public ServiceProviderService() {
-		super(ServiceProviderDTO.class, ServiceProvider.class);
+		super(ServiceProviderInstanceDTO.class, ServiceProviderInstance.class);
 	}
 	
 	/**
@@ -23,8 +23,8 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 * @return
 	 */
 	
-	public Set<ServiceProviderDTO> getAll(String subject) {
-		Set<ServiceProviderDTO> resources = hscan( subject, ServiceProviderDTO.class );
+	public Set<ServiceProviderInstanceDTO> getAll(String subject) {
+		Set<ServiceProviderInstanceDTO> resources = hscan( subject, ServiceProviderInstanceDTO.class );
 		
 		if (resources.isEmpty()) {
 			resources = findAllByOwner(subject);
@@ -42,12 +42,12 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 * @return
 	 */
 	
-	public ServiceProviderDTO queryServiceProvider(String subject, String type, String account) {
-		Set<ServiceProviderDTO> resources = getAll(subject);
+	public ServiceProviderInstanceDTO queryServiceProvider(String subject, String type, String account) {
+		Set<ServiceProviderInstanceDTO> resources = getAll(subject);
 		
-		Predicate<ServiceProviderDTO> predicate = p -> p.getType().equals(type) && p.getAccount().equals(account);
+		Predicate<ServiceProviderInstanceDTO> predicate = p -> p.getType().equals(type) && p.getAccount().equals(account);
 		
-		Optional<ServiceProviderDTO> query = resources.stream().filter(predicate).findFirst();
+		Optional<ServiceProviderInstanceDTO> query = resources.stream().filter(predicate).findFirst();
 		
 		if (query.isPresent()) {
 			return query.get();
@@ -64,7 +64,7 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 * @return
 	 */
 	
-	public ServiceProviderDTO createServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
+	public ServiceProviderInstanceDTO createServiceProvider(String subject, ServiceProviderInstanceDTO resource, URI eventSource) {
 		if (queryServiceProvider(subject, resource.getType(), resource.getAccount()) != null) {
 			throw new WebApplicationException(
 					String.format("Resource of type ServiceProvider already exists for the following values...Subject: %s, Type: %s, Account: %s", 
@@ -73,7 +73,7 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 		
 		create(subject, resource, eventSource);
 
-		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
+		hset( subject, ServiceProviderInstanceDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
 		
 		return resource;
@@ -87,14 +87,14 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 * @return
 	 */
 	
-	public ServiceProviderDTO updateServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
-		ServiceProviderDTO original = getServiceProvider( resource.getId(), subject );
+	public ServiceProviderInstanceDTO updateServiceProvider(String subject, ServiceProviderInstanceDTO resource, URI eventSource) {
+		ServiceProviderInstanceDTO original = getServiceProvider( resource.getId(), subject );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
 		update(subject, resource, eventSource);
 		
-		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
+		hset( subject, ServiceProviderInstanceDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
 
 		return resource;
@@ -108,11 +108,11 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 */
 	
 	public void deleteServiceProvider(String serviceProviderId, String subject, URI eventSource) {		
-		ServiceProviderDTO resource = new ServiceProviderDTO(serviceProviderId);
+		ServiceProviderInstanceDTO resource = new ServiceProviderInstanceDTO(serviceProviderId);
 		
 		delete(subject, resource, eventSource);
 		
-		hdel( subject, ServiceProviderDTO.class.getName().concat(serviceProviderId) );
+		hdel( subject, ServiceProviderInstanceDTO.class.getName().concat(serviceProviderId) );
 		hdel( serviceProviderId, subject );
 	}
 	
@@ -123,8 +123,8 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 * @return
 	 */
 	
-	public ServiceProviderDTO getServiceProvider(String id, String subject) {
-		ServiceProviderDTO resource = hget( ServiceProviderDTO.class, id, subject );
+	public ServiceProviderInstanceDTO getServiceProvider(String id, String subject) {
+		ServiceProviderInstanceDTO resource = hget( ServiceProviderInstanceDTO.class, id, subject );
 		
 		if ( resource == null ) {
 			resource = find(id);

@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -15,11 +14,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.aws.api.dto.sforce.UserInfo;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.Token;
+import com.nowellpoint.aws.model.sforce.User;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -82,35 +81,18 @@ public class SalesforceResource {
 	}
 	
 	@GET
-	@Path("/user")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response queryUserInfo(@QueryParam(value="id") String id) {		
-		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
-		
-		Token token = salesforceService.findToken(subject, id.substring(id.lastIndexOf("/") + 1));
-		
-		UserInfo userInfo = salesforceService.getUserInfo(token);
-		
-		return Response.ok()
-				.entity(userInfo)
-				.build();
-	}
-	
-	@GET
 	@Path("/user/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUserInfo(@PathParam(value="userId") String userId) {		
 		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		//String subject = HttpServletRequestUtil.getSubject(servletRequest);
 		
-		Token token = salesforceService.findToken(subject, userId);
+		//Token token = salesforceService.findToken(subject, userId);
 		
-		UserInfo userInfo = salesforceService.getUserInfo(token);
+		User user = new User();
 		
 		return Response.ok()
-				.entity(userInfo)
+				.entity(user)
 				.build();
 	}
 	

@@ -14,8 +14,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.ServiceProvider;
-import com.nowellpoint.www.app.model.sforce.OAuthToken;
-import com.nowellpoint.www.app.model.sforce.UserInfo;
+import com.nowellpoint.www.app.model.ServiceProviderInstance;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -34,7 +33,7 @@ public class SalesforceController {
         
         get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/salesforce", (request, response) -> getInfo(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -87,18 +86,16 @@ public class SalesforceController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getInfo(Request request, Response response) throws IOException {
+	private static ModelAndView getServiceProvider(Request request, Response response) throws IOException {
 		
     	Token token = request.attribute("token");
     	
-    	HttpResponse httpResponse; 
-    			
-    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+    	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
+    			.path("provider")
     			.path("salesforce")
-    			.path("token")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
@@ -108,47 +105,14 @@ public class SalesforceController {
     		throw new BadRequestException(httpResponse.getAsString());
     	}
     	
-    	OAuthToken oauthToken = httpResponse.getEntity(OAuthToken.class);
-    	
-    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-    			.path("salesforce")
-    			.path("user")
-    			.queryParameter("id", oauthToken.getId())
-    			.execute();
-    	
-    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-    	
-    	if (httpResponse.getStatusCode() != 200) {
-    		throw new BadRequestException(httpResponse.getAsString());
-    	}
-    	
-    	UserInfo userInfo = httpResponse.getEntity(UserInfo.class);
-    	
-    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-    			.path("provider")
-    			.path("q")
-    			.queryParameter("type", "SALESFORCE")
-    			.queryParameter("account", userInfo.getUserId())
-    			.execute();
-    	
-    	ServiceProvider provider = null;
-    	if (httpResponse.getStatusCode() == 200) {
-    		provider = httpResponse.getEntity(ServiceProvider.class);
-    	}
+    	ServiceProviderInstance provider = httpResponse.getEntity(ServiceProviderInstance.class);
     	
     	Account account = request.attribute("account");
     	
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("userInfo", userInfo);
 		model.put("serviceProvider", provider);
 		
-		return new ModelAndView(model, "secure/salesforce-view.html");	
+		return new ModelAndView(model, "secure/service-providers.html");	
 	}
 }

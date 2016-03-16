@@ -17,10 +17,10 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.ServiceProvider;
+import com.nowellpoint.aws.data.mongodb.ServiceProviderInstance;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public class ServiceProviderMessageListener implements MessageListener {
+public class ServiceProviderInstanceMessageListener implements MessageListener {
 	
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
@@ -33,7 +33,7 @@ public class ServiceProviderMessageListener implements MessageListener {
 				Object object = ((ObjectMessage) message).getObject();
 				Event event = ((Event) object);
 				
-				ServiceProvider provider = objectMapper.readValue(event.getPayload(), ServiceProvider.class); 
+				ServiceProviderInstance provider = objectMapper.readValue(event.getPayload(), ServiceProviderInstance.class); 
 				
 				try {
 					if (EventAction.CREATE.name().equals(event.getEventAction())) {
@@ -62,15 +62,15 @@ public class ServiceProviderMessageListener implements MessageListener {
 		}
 	}
 	
-	private void create(ServiceProvider provider) throws JsonProcessingException {
+	private void create(ServiceProviderInstance provider) throws JsonProcessingException {
 		MongoDBDatastore.insertOne( provider );
 	}
 	
-	private void update(ServiceProvider provider) throws JsonProcessingException {
+	private void update(ServiceProviderInstance provider) throws JsonProcessingException {
 		MongoDBDatastore.replaceOne( provider );
 	}
 	
-	private void delete(ServiceProvider provider) {
+	private void delete(ServiceProviderInstance provider) {
 		MongoDBDatastore.deleteOne( provider );
 	}
 }

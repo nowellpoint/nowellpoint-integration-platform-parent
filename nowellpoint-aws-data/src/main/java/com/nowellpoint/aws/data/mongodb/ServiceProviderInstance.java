@@ -3,18 +3,18 @@ package com.nowellpoint.aws.data.mongodb;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.api.bus.ServiceProviderMessageListener;
-import com.nowellpoint.aws.data.ServiceProviderCodec;
+import com.nowellpoint.aws.api.bus.ServiceProviderInstanceMessageListener;
+import com.nowellpoint.aws.data.ServiceProviderInstanceCodec;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @MessageHandler(
 		queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", 
-		collectionName="service.providers", 
-		messageListener=ServiceProviderMessageListener.class, 
-		codec=ServiceProviderCodec.class)
+		collectionName="service.provider.instances", 
+		messageListener=ServiceProviderInstanceMessageListener.class, 
+		codec=ServiceProviderInstanceCodec.class)
 
-public class ServiceProvider extends AbstractDocument implements Serializable {
+public class ServiceProviderInstance extends AbstractDocument implements Serializable {
 
 	/**
 	 * 
@@ -24,7 +24,7 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	
 	private String type;
 	
-	private String key;
+	private String instanceId;
 	
 	private String instanceName;
 	
@@ -38,9 +38,9 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	
 	private User owner;
 	
-	private String organization;
+	private String name;
 	
-	public ServiceProvider() {
+	public ServiceProviderInstance() {
 		
 	}
 
@@ -52,12 +52,12 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 		this.type = type;
 	}
 
-	public String getKey() {
-		return key;
+	public String getInstanceId() {
+		return instanceId;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	public User getOwner() {
@@ -108,11 +108,11 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 		this.price = price;
 	}
 
-	public String getOrganization() {
-		return organization;
+	public String getName() {
+		return name;
 	}
 
-	public void setOrganization(String organization) {
-		this.organization = organization;
+	public void setName(String name) {
+		this.name = name;
 	}
 }
