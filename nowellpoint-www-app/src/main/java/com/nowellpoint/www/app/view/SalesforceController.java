@@ -13,7 +13,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.model.ServiceProviderInstance;
 
 import freemarker.log.Logger;
@@ -94,7 +93,7 @@ public class SalesforceController {
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-    			.path("provider")
+    			.path("providers")
     			.path("salesforce")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();

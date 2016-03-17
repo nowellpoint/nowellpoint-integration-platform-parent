@@ -1,22 +1,20 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
+import com.nowellpoint.aws.api.util.Subject;
+import com.nowellpoint.aws.api.util.SubjectContext;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.tools.TokenParser;
+
 @Provider
 public class SecurityInterceptor implements ContainerRequestFilter {
-
-	@Context
-	private HttpServletRequest servletRequest;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -24,49 +22,19 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 		String authorization = requestContext.getHeaderString("Authorization");
 		
 		if (authorization != null && ! authorization.isEmpty()) {
-			String token = authorization.replaceFirst("Bearer", "").trim();
+			String bearerToken = authorization.replaceFirst("Bearer", "").trim();
 			
-			if (token == null || token.isEmpty()) {
+			if (bearerToken == null || bearerToken.isEmpty()) {
 				Response response = Response.status(Status.BAD_REQUEST).build();
 				requestContext.abortWith(response);
 				return;
 			}
-		}
-		
-
-			/**
-			 * Check for null or empty authorization
-			 */
-
 			
-
-			/**
-			 * Decode the token into JWT
-			 */
-
-			Claims claims = null;
-			try {
-				claims = tokenProvider.decodeToken(token);
-			} catch (ExpiredJwtException e) {
-				requestContext.abortWith(INVALID_SESSION);
-				return;
-			} catch (SignatureException | MalformedJwtException | IllegalArgumentException e) {
-				requestContext.abortWith(INVALID_WEB_TOKEN);
-				return;
-			}
-
-			/**
-			 * Lookup the user record
-			 */
-
-			User user = userRepository.find(claims.getSubject());
-
-			/**
-			 * validate that the user is active
-			 */
-
-			if (!user.getIsActive()) {
-				requestContext.abortWith(INACTIVE_USER);
-			}
+			String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
+			
+			Subject user = new Subject(subject);
+			
+			requestContext.setSecurityContext(new SubjectContext(user));
+		}
 	}
 }

@@ -22,6 +22,8 @@ public class ServiceProviderInstance extends BaseEntity {
 	
 	private String instanceUrl;
 	
+	private String instanceId;
+	
 	private String account;
 	
 	private Boolean isActive;
@@ -86,6 +88,14 @@ public class ServiceProviderInstance extends BaseEntity {
 
 	public void setInstanceUrl(String instanceUrl) {
 		this.instanceUrl = instanceUrl;
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	public String getAccount() {

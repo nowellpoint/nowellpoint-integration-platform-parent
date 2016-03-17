@@ -53,7 +53,7 @@ public class ServiceProviderInstanceController {
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("provider")
+				.path("providers")
 				.execute();
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
@@ -82,7 +82,7 @@ public class ServiceProviderInstanceController {
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("provider")
+				.path("providers")
 				.path(serviceProviderId)
 				.execute();
 			
@@ -149,7 +149,7 @@ public class ServiceProviderInstanceController {
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
-					.path("provider")
+					.path("providers")
 					.body(serviceProvider)
 					.execute();
 			
@@ -159,7 +159,7 @@ public class ServiceProviderInstanceController {
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
-					.path("provider")
+					.path("providers")
 					.body(serviceProvider)
 					.execute();
 			
@@ -221,7 +221,7 @@ public class ServiceProviderInstanceController {
 		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("provider")
+				.path("providers")
 				.path(id)
 				.execute();
 		
