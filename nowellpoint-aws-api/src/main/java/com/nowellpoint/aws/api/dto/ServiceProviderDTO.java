@@ -23,6 +23,8 @@ public class ServiceProviderDTO implements Serializable {
 	
 	private String account;
 	
+	private Double price;
+
 	public ServiceProviderDTO() {
 		
 	}
@@ -81,5 +83,13 @@ public class ServiceProviderDTO implements Serializable {
 
 	public void setAccount(String account) {
 		this.account = account;
+	}
+	
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 }
