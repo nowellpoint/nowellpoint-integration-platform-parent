@@ -1,10 +1,16 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.Optional;
 
+import javax.annotation.security.PermitAll;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
@@ -15,25 +21,39 @@ import com.nowellpoint.aws.tools.TokenParser;
 
 @Provider
 public class SecurityInterceptor implements ContainerRequestFilter {
+	
+	@Context
+	ResourceInfo resourceInfo;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		
-		String authorization = requestContext.getHeaderString("Authorization");
+		Method method = resourceInfo.getResourceMethod();
 		
-		if (authorization != null && ! authorization.isEmpty()) {
-			String bearerToken = authorization.replaceFirst("Bearer", "").trim();
+		if (! method.isAnnotationPresent(PermitAll.class)) {
 			
+			Optional<String> authorization = Optional.ofNullable(requestContext.getHeaderString("Authorization"));
+			
+			if (! authorization.isPresent()) {
+				throw new BadRequestException("Missing Authorization Header");
+			}
+			
+			if (! authorization.get().startsWith("Bearer ")) {
+				throw new BadRequestException("Invalid authorization. Should be of type Bearer");
+			}
+			
+			String bearerToken = authorization.get().replaceFirst("Bearer", "").trim();
+				
 			if (bearerToken == null || bearerToken.isEmpty()) {
 				Response response = Response.status(Status.BAD_REQUEST).build();
 				requestContext.abortWith(response);
 				return;
 			}
-			
+				
 			String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
-			
+				
 			UserPrincipal user = new UserPrincipal(subject);
-			
+				
 			requestContext.setSecurityContext(new UserPrincipalSecurityContext(user));
 		}
 	}
