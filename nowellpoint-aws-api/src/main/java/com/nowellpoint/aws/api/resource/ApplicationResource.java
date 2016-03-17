@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,12 +15,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.api.service.ApplicationService;
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
 @Path("/application")
 public class ApplicationResource {
@@ -33,7 +32,7 @@ public class ApplicationResource {
 	private UriInfo uriInfo;
 	
 	@Context
-	private HttpServletRequest servletRequest;
+	private SecurityContext securityContext;
 	
 	/**
 	 * 
@@ -43,7 +42,7 @@ public class ApplicationResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		Set<ApplicationDTO> resources = applicationService.getAll(subject);
 		
@@ -60,7 +59,7 @@ public class ApplicationResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		ApplicationDTO resource = applicationService.getApplication( id, subject );
 		
@@ -77,7 +76,7 @@ public class ApplicationResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteApplication(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		applicationService.deleteApplication(id, subject, uriInfo.getBaseUri());
 		
@@ -94,7 +93,7 @@ public class ApplicationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createApplication(ApplicationDTO resource) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		applicationService.createApplication(subject, resource, uriInfo.getBaseUri());
 		
@@ -120,7 +119,7 @@ public class ApplicationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
 		

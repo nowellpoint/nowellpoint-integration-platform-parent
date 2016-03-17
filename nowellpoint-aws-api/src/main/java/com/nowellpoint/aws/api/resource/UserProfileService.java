@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -14,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
@@ -27,7 +27,6 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
@@ -49,7 +48,7 @@ public class UserProfileService {
 	private UriInfo uriInfo;
 	
 	@Context
-	private HttpServletRequest servletRequest;
+	private SecurityContext securityContext;
 	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
@@ -79,7 +78,7 @@ public class UserProfileService {
 		//
 		//
 		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		//
 		//
@@ -152,7 +151,7 @@ public class UserProfileService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUserProfile() {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		IdentityDTO resource = identityService.findIdentityBySubject( subject );
 		
@@ -166,7 +165,7 @@ public class UserProfileService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture() {
 		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		IdentityDTO resource = identityService.findIdentityBySubject( subject );
 		

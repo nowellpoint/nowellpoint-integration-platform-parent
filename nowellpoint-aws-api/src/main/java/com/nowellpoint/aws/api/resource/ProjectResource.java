@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -23,7 +23,6 @@ import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.service.ProjectService;
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 
 @Path("/project")
 public class ProjectResource {
@@ -38,7 +37,7 @@ public class ProjectResource {
 	private UriInfo uriInfo;
 	
 	@Context
-	private HttpServletRequest servletRequest;
+	private SecurityContext securityContext;
 	
 	/**
 	 * 
@@ -48,7 +47,7 @@ public class ProjectResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		Set<ProjectDTO> resources = projectService.getAll(subject);
 		
@@ -66,7 +65,7 @@ public class ProjectResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getProject(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		ProjectDTO resource = projectService.findProject( subject, id );
 		
@@ -84,7 +83,7 @@ public class ProjectResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteProject(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		projectService.deleteProject(id, subject, uriInfo.getBaseUri());
 		
@@ -102,7 +101,7 @@ public class ProjectResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(ProjectDTO resource) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
 		
@@ -131,7 +130,7 @@ public class ProjectResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(@PathParam("id") String id, ProjectDTO resource) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
 		

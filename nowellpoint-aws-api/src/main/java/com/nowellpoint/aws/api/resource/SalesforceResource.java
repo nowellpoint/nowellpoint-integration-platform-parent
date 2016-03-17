@@ -3,8 +3,8 @@ package com.nowellpoint.aws.api.resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,9 +13,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import com.nowellpoint.aws.api.service.SalesforceService;
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.Token;
 import com.nowellpoint.aws.model.sforce.User;
@@ -27,10 +27,11 @@ public class SalesforceResource {
 	private SalesforceService salesforceService;
 	
 	@Context
-	private HttpServletRequest servletRequest;
+	private SecurityContext securityContext;
 	
 	@GET
 	@Path("/oauth")
+	@PermitAll
 	public Response oauth() {
 		
 		String url = null;
@@ -71,7 +72,7 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getToken(@QueryParam(value="code") String code) {
 		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		Token token = salesforceService.getToken(subject, code);
 		
@@ -101,7 +102,7 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response describe(@PathParam(value="userId") String userId) {
 		
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		salesforceService.describe(subject, userId);
 		

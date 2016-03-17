@@ -3,8 +3,8 @@ package com.nowellpoint.aws.api.resource;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,6 +18,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -30,7 +31,6 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.service.SalesforceService;
-import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
 import com.nowellpoint.aws.data.mongodb.SalesforceProfile;
 
 @Path("/identity")
@@ -45,8 +45,8 @@ public class IdentityResource {
 	@Context
 	private UriInfo uriInfo;
 	
-	@Context
-	private HttpServletRequest servletRequest;
+	@Context 
+	private SecurityContext securityContext;
 	
 	/**
 	 * @api {get} /identity/:id/picture Get Profile Picture
@@ -60,8 +60,8 @@ public class IdentityResource {
 	@GET
 	@Path("/{id}/picture")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@PermitAll
 	public Response getPicture(@PathParam(value="id") String id) {
-		//HttpServletRequestUtil.getSubject(servletRequest);
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
@@ -105,7 +105,7 @@ public class IdentityResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIdentity(@PathParam("id") String id) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		IdentityDTO resource = identityService.findIdentity( id, subject );
 		
@@ -117,7 +117,7 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createIdentity(IdentityDTO resource) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		identityService.createIdentity( subject, resource, uriInfo.getBaseUri() );
 		
@@ -134,7 +134,7 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateIdentity(@PathParam("id") String id, IdentityDTO resource) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
 		
@@ -146,7 +146,6 @@ public class IdentityResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIdentityBySubject(@QueryParam("subject") String subject) {
-		HttpServletRequestUtil.getSubject(servletRequest);
 		
 		IdentityDTO resource = identityService.findIdentityBySubject( subject );
 		
@@ -159,7 +158,7 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		IdentityDTO resource = identityService.findIdentity(id, subject);
 		
@@ -188,7 +187,7 @@ public class IdentityResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId, SalesforceProfile salesforceProfile) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		salesforceProfile.setUserId(userId);
 		
@@ -205,7 +204,7 @@ public class IdentityResource {
 	@Path("/{id}/salesforce-profile/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId) {
-		String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		String subject = securityContext.getUserPrincipal().getName();
 		
 		IdentityDTO resource = identityService.findIdentity(id, subject);
 		

@@ -3,6 +3,7 @@ package com.nowellpoint.aws.api.resource;
 import java.time.Instant;
 import java.util.Date;
 
+import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
@@ -47,6 +48,7 @@ public class SignUpService {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@PermitAll
     public Response signUp(
     		@FormParam("leadSource") @NotEmpty String leadSource,
     		@FormParam("firstName") String firstName,

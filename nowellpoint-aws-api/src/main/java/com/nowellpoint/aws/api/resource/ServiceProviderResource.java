@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -33,9 +32,6 @@ public class ServiceProviderResource {
 	
 	@Context
 	private UriInfo uriInfo;
-	
-	@Context
-	private HttpServletRequest servletRequest;
 	
 	@Inject
 	private ServiceProviderService serviceProviderService;

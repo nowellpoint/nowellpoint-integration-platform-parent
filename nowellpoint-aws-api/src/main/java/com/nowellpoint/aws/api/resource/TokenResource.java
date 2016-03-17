@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
+import javax.annotation.security.PermitAll;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,7 @@ public class TokenResource {
 	@POST
 	@Path("/token")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response authenticate() {
 		
 		//

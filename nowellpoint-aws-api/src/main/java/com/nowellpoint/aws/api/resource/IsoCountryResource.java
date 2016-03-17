@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -25,6 +26,7 @@ public class IsoCountryResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
     public Response findAll() {
 			
 		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
@@ -40,6 +42,7 @@ public class IsoCountryResource {
 	@GET
 	@Path("/{language}")
     @Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
     public Response findByLanguage(@PathParam("language") String language) {
 		
 		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
@@ -55,6 +58,7 @@ public class IsoCountryResource {
 	@GET
 	@Path("/{language}/{code}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
 		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
