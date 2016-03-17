@@ -1,15 +1,15 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.aws.api.util.Subject;
-import com.nowellpoint.aws.api.util.SubjectContext;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
@@ -32,9 +32,55 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 			
 			String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
 			
-			Subject user = new Subject(subject);
+			UserPrincipal user = new UserPrincipal(subject);
 			
-			requestContext.setSecurityContext(new SubjectContext(user));
+			requestContext.setSecurityContext(new UserPrincipalSecurityContext(user));
+		}
+	}
+	
+	class UserPrincipal implements Principal {
+		
+		private String name;
+		
+		public UserPrincipal(String subject) {
+			this.name = subject;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+	}
+	
+	class UserPrincipalSecurityContext implements SecurityContext {
+		
+		private UserPrincipal user;
+		
+		public UserPrincipalSecurityContext(UserPrincipal user) {
+			this.user = user;
+		}
+
+		@Override
+		public String getAuthenticationScheme() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Principal getUserPrincipal() {
+			return user;
+		}
+
+		@Override
+		public boolean isSecure() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isUserInRole(String arg0) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 	}
 }
