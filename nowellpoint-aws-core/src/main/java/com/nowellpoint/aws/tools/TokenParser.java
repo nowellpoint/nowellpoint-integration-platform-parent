@@ -8,13 +8,11 @@ import java.util.Base64;
 
 public class TokenParser {
 	
-	public static Jws<Claims> parseToken(String key, String token) {
-		return Jwts.parser()
+	public static String parseToken(String key, String token) {
+		Jws<Claims> claims = Jwts.parser()
 				.setSigningKey(Base64.getUrlEncoder().encodeToString(key.getBytes()))
-				.parseClaimsJws(token);
-	}
-	
-	public static String getSubject(String key, String token) {
-		return parseToken(key, token).getBody().getSubject();
+				.parseClaimsJws(token); 
+		
+		return claims.getBody().getSubject();
 	}
 }

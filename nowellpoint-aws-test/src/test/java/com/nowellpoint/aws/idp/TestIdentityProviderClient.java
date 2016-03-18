@@ -170,7 +170,7 @@ public class TestIdentityProviderClient {
 		
 		start = System.currentTimeMillis();
 		
-		String href = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), tokenResponse.getToken().getAccessToken()).getBody().getSubject();
+		String href = TokenParser.parseToken(System.getenv("STORMPATH_API_KEY_SECRET"), tokenResponse.getToken().getAccessToken());
 		
 		GetAccountRequest getAccountRequest = new GetAccountRequest()
 				.withApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))

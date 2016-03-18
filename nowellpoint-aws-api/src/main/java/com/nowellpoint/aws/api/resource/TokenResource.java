@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.nowellpoint.aws.tools.TokenParser;
+
 import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
@@ -86,7 +88,7 @@ public class TokenResource {
 		// fire the logged in event
 		//
 
-		loggedInEvent.fire(new LoggedInEvent(token, uriInfo.getBaseUri()));
+		loggedInEvent.fire(new LoggedInEvent(uriInfo.getBaseUri(), TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), token.getAccessToken())));
 		
 		//
 		// build and return the response

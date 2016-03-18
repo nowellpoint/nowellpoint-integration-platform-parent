@@ -2,21 +2,27 @@ package com.nowellpoint.aws.api.event;
 
 import java.net.URI;
 
-import com.nowellpoint.aws.idp.model.Token;
-
 public class LoggedInEvent {
 
 	private URI eventSource;
 	
-	private Token token;
+	private String subject;
 	
 	public LoggedInEvent() {
 		
 	}
 	
-	public LoggedInEvent(Token token, URI eventSource) {
+	public LoggedInEvent(URI eventSource, String subject) {
 		this.eventSource = eventSource;
-		this.token = token;
+		this.subject = subject;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public URI getEventSource() {
@@ -25,13 +31,5 @@ public class LoggedInEvent {
 
 	public void setEventSource(URI eventSource) {
 		this.eventSource = eventSource;
-	}
-
-	public Token getToken() {
-		return token;
-	}
-
-	public void setToken(Token token) {
-		this.token = token;
 	}
 }

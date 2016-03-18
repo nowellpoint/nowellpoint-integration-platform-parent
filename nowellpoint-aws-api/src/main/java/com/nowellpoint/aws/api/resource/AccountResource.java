@@ -31,9 +31,6 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.tools.TokenParser;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-
 @Path("/account")
 public class AccountResource {
 	
@@ -72,9 +69,7 @@ public class AccountResource {
 					.build();
 		}
 		
-		Jws<Claims> jws = TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
-		
-		String href = jws.getBody().getSubject();
+		String href = TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), bearerToken);
 		
 		GetAccountRequest getAccountRequest = new GetAccountRequest().withApiKeyId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.withApiKeySecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
@@ -82,7 +77,7 @@ public class AccountResource {
 		
 		GetAccountResponse getAccountResponse = identityProviderClient.account(getAccountRequest);
 		
-		Long exp = TimeUnit.MILLISECONDS.toSeconds(jws.getBody().getExpiration().getTime() - System.currentTimeMillis());
+		Long exp = TimeUnit.MILLISECONDS.toSeconds(86400);
 		
 		cacheManager.setex(bearerToken, exp.intValue(), getAccountResponse.getAccount());
 		

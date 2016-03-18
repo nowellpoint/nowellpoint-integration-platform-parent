@@ -24,8 +24,6 @@ import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.Photos;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.tools.TokenParser;
 
 public class IdentityService extends AbstractDataService<IdentityDTO, Identity> {
 	
@@ -43,12 +41,10 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 */
 	
 	public void loggedInEvent(@Observes LoggedInEvent event) {
-		String subject = TokenParser.getSubject(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), event.getToken().getAccessToken());
-		
-		IdentityDTO resource = findIdentityBySubject(subject);
+		IdentityDTO resource = findIdentityBySubject(event.getSubject());
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		updateIdentity( subject, resource, event.getEventSource() );
+		updateIdentity( event.getSubject(), resource, event.getEventSource() );
 		
 		LOGGER.info("Logged In: " + resource.getHref());
 	}
