@@ -30,18 +30,15 @@
                                     <br>
                                     <h1 class="statcard-number">${serviceProvider.price?string.currency}</h1>
                                     <br>
-                                    <!--
-                                    <span><a href="${serviceProvider.authUrl}" class="btn btn-primary" role="button">${authenticateLabel}</a></span>
--->
                                     <br>
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
-                                            <h3 class="panel-title">${serviceProvider.service.name}</h3>
+                                            <h3 class="panel-title">${serviceProvider.serviceDetail.name}</h3>
                                         </div>
                                         <div class="panel-body">
-                                            <p>${serviceProvider.service.description}</p>
+                                            <p>${serviceProvider.serviceDetail.description}</p>
                                             <br>
-                                            <a href="/app/providers" class="btn btn-primary center" role="button">${select}</a>
+                                            <a href="/app/providers/${serviceProvider.id}" class="btn btn-primary center" role="button">${select}</a>
                                         </div>
                                     </div>
                                 </div>

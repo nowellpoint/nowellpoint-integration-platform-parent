@@ -15,7 +15,6 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -55,6 +54,8 @@ public class ServiceProviderController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
+				.queryParameter("localeSidKey", "en_US")
+				.queryParameter("languageLocaleKey", "en_US")
 				.execute();
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
@@ -66,8 +67,6 @@ public class ServiceProviderController {
 		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
 		
 		providers = providers.stream().sorted((p1, p2) -> p1.getDisplayName().compareTo(p2.getDisplayName())).collect(Collectors.toList());
-		
-		System.out.println(new ObjectMapper().writeValueAsString(providers));
 			
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
@@ -97,17 +96,11 @@ public class ServiceProviderController {
 		
 		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
 		
-		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-				.execute();
-		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
 		model.put("serviceProvider", provider);
 		
-		return new ModelAndView(model, "secure/service-provider-configure.html");
+		return new ModelAndView(model, "secure/salesforce-outbound-messages.html");
 		
 	}
 	

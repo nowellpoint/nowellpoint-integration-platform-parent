@@ -1,12 +1,14 @@
 package com.nowellpoint.www.app.model;
 
-public class Service {
+public class ServiceDetail {
 	
 	private String name;
 	
 	private String description;
 	
-	public Service() {
+	private String configurationPage;
+	
+	public ServiceDetail() {
 		
 	}
 
@@ -26,4 +28,11 @@ public class Service {
 		this.description = description;
 	}
 
+	public String getConfigurationPage() {
+		return configurationPage;
+	}
+
+	public void setConfigurationPage(String configurationPage) {
+		this.configurationPage = configurationPage;
+	}
 }

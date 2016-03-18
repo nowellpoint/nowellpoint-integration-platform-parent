@@ -177,31 +177,6 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	
 	/**
 	 * 
-	 * @return
-	 */
-	
-	protected Set<R> findAllActive() {		
-		String collectionName = documentType.getAnnotation(MessageHandler.class).collectionName();
-		
-		FindIterable<D> documents = MongoDBDatastore.getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( documentType )
-				.find( eq ( "isActive", Boolean.TRUE ) );
-			
-		Set<R> resources = new HashSet<R>();
-		
-		documents.forEach(new Block<D>() {
-			@Override
-			public void apply(final D document) {
-		        resources.add(modelMapper.map( document, resourceType ));
-		    }
-		});
-		
-		return resources;
-	}
-	
-	/**
-	 * 
 	 * @param subject
 	 * @param resource
 	 * @param eventSource

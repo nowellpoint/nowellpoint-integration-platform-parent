@@ -40,7 +40,11 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	
 	private String image;
 	
-	private Service service;
+	private String localeSidKey;
+
+	private String languageLocaleKey;
+	
+	private ServiceDetail serviceDetail;
 
 	public ServiceProvider() {
 		
@@ -110,12 +114,12 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 		this.price = price;
 	}
 
-	public Service getService() {
-		return service;
+	public ServiceDetail getServiceDetail() {
+		return serviceDetail;
 	}
 
-	public void setService(Service service) {
-		this.service = service;
+	public void setServiceDetail(ServiceDetail serviceDetail) {
+		this.serviceDetail = serviceDetail;
 	}
 
 	public String getImage() {
@@ -124,5 +128,21 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public String getLocaleSidKey() {
+		return localeSidKey;
+	}
+
+	public void setLocaleSidKey(String localeSidKey) {
+		this.localeSidKey = localeSidKey;
+	}
+
+	public String getLanguageLocaleKey() {
+		return languageLocaleKey;
+	}
+
+	public void setLanguageLocaleKey(String languageLocaleKey) {
+		this.languageLocaleKey = languageLocaleKey;
 	}
 }

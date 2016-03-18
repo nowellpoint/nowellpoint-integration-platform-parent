@@ -13,7 +13,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.model.sforce.ServiceProviderInfo;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -49,6 +49,7 @@ public class SalesforceController {
     			.header("x-api-key", System.getenv("NCS_API_KEY"))
     			.path("salesforce")
     			.path("oauth")
+    			.queryParameter("state", request.queryParams("id"))
     			.execute();
     	
     	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " : " + httpResponse.getHeaders().get("Location"));
@@ -104,14 +105,14 @@ public class SalesforceController {
     		throw new BadRequestException(httpResponse.getAsString());
     	}
     	
-    	ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
+    	ServiceProviderInfo provider = httpResponse.getEntity(ServiceProviderInfo.class);
     	
     	Account account = request.attribute("account");
     	
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("serviceProvider", provider);
+		model.put("serviceProviderInfo", provider);
 		
-		return new ModelAndView(model, "secure/service-providers.html");	
+		return new ModelAndView(model, "secure/salesforce-view.html");	
 	}
 }

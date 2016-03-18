@@ -2,7 +2,7 @@ package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
 
-public class Service implements Serializable {
+public class ServiceDetail implements Serializable {
 
 	/**
 	 * 
@@ -13,8 +13,10 @@ public class Service implements Serializable {
 	private String name;
 	
 	private String description;
+
+	private String configurationPage;
 	
-	public Service() {
+	public ServiceDetail() {
 		
 	}
 
@@ -33,5 +35,12 @@ public class Service implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public String getConfigurationPage() {
+		return configurationPage;
+	}
 
+	public void setConfigurationPage(String configurationPage) {
+		this.configurationPage = configurationPage;
+	}
 }

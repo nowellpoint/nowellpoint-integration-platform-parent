@@ -32,7 +32,7 @@ public class SalesforceResource {
 	@GET
 	@Path("/oauth")
 	@PermitAll
-	public Response oauth() {
+	public Response oauth(@QueryParam(value="state") String state) {
 		
 		String url = null;
 		try {
@@ -54,6 +54,9 @@ public class SalesforceResource {
 					.append(URLEncoder.encode(System.getProperty(Properties.SALESFORCE_REDIRECT_URI), "UTF-8"))
 					.append("&")
 					.append("scope=web%20api%20refresh_token")
+					.append("&")
+					.append("state=")
+					.append(URLEncoder.encode(state, "UTF-8"))
 					.toString();
 			
 		} catch (UnsupportedEncodingException e) {

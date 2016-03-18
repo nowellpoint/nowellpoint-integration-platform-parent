@@ -18,8 +18,8 @@
 
         <script>
             $(document).ready(function(e) {
-                var params = location.search.substr(1).split("&");
-                window.location.replace('/app/salesforce?' + params[1])
+                var params = location.search.substr(1);
+                window.location.replace('/app/salesforce?' + params)
             });
         </script>
 

@@ -18,9 +18,13 @@ public class ServiceProvider extends BaseEntity {
 	
 	private String description;
 	
-	private Service service;
+	private ServiceDetail serviceDetail;
 	
 	private String image;
+	
+	private String localeSidKey;
+	
+	private String languageLocaleKey;
 
 	public ServiceProvider() {
 		
@@ -90,12 +94,12 @@ public class ServiceProvider extends BaseEntity {
 		this.description = description;
 	}
 
-	public Service getService() {
-		return service;
+	public ServiceDetail getServiceDetail() {
+		return serviceDetail;
 	}
 
-	public void setService(Service service) {
-		this.service = service;
+	public void setServiceDetail(ServiceDetail serviceDetail) {
+		this.serviceDetail = serviceDetail;
 	}
 
 	public String getImage() {
@@ -104,5 +108,21 @@ public class ServiceProvider extends BaseEntity {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+	
+	public String getLocaleSidKey() {
+		return localeSidKey;
+	}
+
+	public void setLocaleSidKey(String localeSidKey) {
+		this.localeSidKey = localeSidKey;
+	}
+
+	public String getLanguageLocaleKey() {
+		return languageLocaleKey;
+	}
+
+	public void setLanguageLocaleKey(String languageLocaleKey) {
+		this.languageLocaleKey = languageLocaleKey;
 	}
 }

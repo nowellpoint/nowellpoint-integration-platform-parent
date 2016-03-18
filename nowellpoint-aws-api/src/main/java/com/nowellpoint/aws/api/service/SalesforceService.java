@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.api.dto.ServiceDTO;
+import com.nowellpoint.aws.api.dto.sforce.ServiceProviderInfo;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -93,23 +94,23 @@ public class SalesforceService extends AbstractCacheService {
 		return token;
 	}
 	
-	public ServiceDTO getAsServiceProvider(String subject, String code) {
+	public ServiceProviderInfo getAsServiceProvider(String subject, String code) {
 		Token token = getToken(subject, code);
 		
 		Identity identity = getIdentity(token.getAccessToken(), token.getId());
 		
 		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
 		
-		ServiceDTO service = new ServiceDTO();
-		service.setAccount(identity.getUserId());
-		service.setType("SALESFORCE");
-		service.setInstanceId(organization.getId());
-		service.setInstanceName(organization.getInstanceName());
-		service.setInstanceUrl(token.getInstanceUrl());
-		service.setIsSandbox(organization.getIsSandbox());
-		service.setName(organization.getName());
+		ServiceProviderInfo serviceProviderInfo = new ServiceProviderInfo();
+		serviceProviderInfo.setAccount(identity.getUserId());
+		serviceProviderInfo.setType("SALESFORCE");
+		serviceProviderInfo.setInstanceId(organization.getId());
+		serviceProviderInfo.setInstanceName(organization.getInstanceName());
+		serviceProviderInfo.setInstanceUrl(token.getInstanceUrl());
+		serviceProviderInfo.setIsSandbox(organization.getIsSandbox());
+		serviceProviderInfo.setName(organization.getName());
 		
-		return service;
+		return serviceProviderInfo;
 	}
 	
 	/**

@@ -1,9 +1,16 @@
 package com.nowellpoint.aws.api.service;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.and;
+
 import java.net.URI;
 import java.util.Set;
 
+import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
 public class ServiceProviderService extends AbstractDataService<ServiceProviderDTO, ServiceProvider> {
@@ -12,12 +19,29 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 		super(ServiceProviderDTO.class, ServiceProvider.class);
 	}
 	
-	public Set<ServiceProviderDTO> getAllActive() {
-		Set<ServiceProviderDTO> resources = hscan( ServiceProviderDTO.class.getName(), ServiceProviderDTO.class );
+	public Set<ServiceProviderDTO> getAllActive(String localeSidKey, String languageLocaleKey) {
+		Set<ServiceProviderDTO> resources = hscan( ServiceProviderDTO.class.getName().concat(localeSidKey).concat(languageLocaleKey), ServiceProviderDTO.class );
 		
 		if (resources.isEmpty()) {
-			resources = findAllActive();
-			hset( ServiceProviderDTO.class.getName(), resources );
+			
+			String collectionName = ServiceProvider.class.getAnnotation(MessageHandler.class).collectionName();
+			
+			FindIterable<ServiceProvider> documents = MongoDBDatastore.getDatabase()
+					.getCollection( collectionName )
+					.withDocumentClass( ServiceProvider.class )
+					.find( and ( 
+							eq ( "isActive", Boolean.TRUE ), 
+							eq ( "localeSidKey", localeSidKey ), 
+							eq ( "languageLocaleKey", languageLocaleKey ) ) );
+			
+			documents.forEach(new Block<ServiceProvider>() {
+				@Override
+				public void apply(final ServiceProvider document) {
+			        resources.add(modelMapper.map( document, ServiceProviderDTO.class ));
+			    }
+			});
+
+			hset( ServiceProviderDTO.class.getName().concat(localeSidKey).concat(languageLocaleKey), resources );
 		}
 		
 		return resources;

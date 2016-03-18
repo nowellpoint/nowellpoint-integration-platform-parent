@@ -13,8 +13,8 @@
                     <div class="dashhead m-t-md">
                         <div class="dashhead">
                             <div class="dashhead-titles">
-                                <h6 class="dashhead-subtitle">${configureServiceProvider}</h6>
-                                <h2 class="dashhead-title">${serviceProvider.type!} (${serviceProvider.organization!})</h2>
+                                <h6 class="dashhead-subtitle">${serviceProvider.displayName}</h6>
+                                <h2 class="dashhead-title">${outboundMessageSetup}</h2>
                             </div>
                         </div>
                     </div>
@@ -25,10 +25,17 @@
 
                         <div class="hr-divider">
                             <h3 class="hr-divider-content hr-divider-heading">${outboundMessageListeners}</h3>
-                        </div>
+                        </div>                                               
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                
+                                <span><a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a></span>
+                                
+                            </div>    
+                        </div>    
                         
                         <p class="pull-right">
-                                    <a href="#profileDialog" class="btn btn-lg btn-primary-outline" role="button">${edit}</a>
+                                    <a href="" class="btn btn-lg btn-primary-outline" role="button">${edit}</a>
                                 </p>
 
 

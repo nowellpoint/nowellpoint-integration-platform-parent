@@ -21,6 +21,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.dto.sforce.ServiceProviderInfo;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 
@@ -41,12 +42,26 @@ public class ServiceProviderResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAllActive() {
+    public Response findAllActive(
+    		@QueryParam("localeSidKey") String localeSidKey, 
+    		@QueryParam("languageLocaleKey") String languageLocaleKey) {
 		
-		Set<ServiceProviderDTO> resources = serviceProviderService.getAllActive();
+		Set<ServiceProviderDTO> resources = serviceProviderService.getAllActive(localeSidKey, languageLocaleKey);
 		
 		return Response.ok(resources).build();
     }
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getServiceProvider(@PathParam("id") String id) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
+		
+		return Response.ok(resource)
+				.build();
+	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -77,18 +92,6 @@ public class ServiceProviderResource {
 		return Response.noContent().build();
 	}
 	
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getServiceProvider(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
-		
-		return Response.ok(resource)
-				.build();
-	}
-	
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -109,8 +112,8 @@ public class ServiceProviderResource {
 	public Response getSalesforceProvider(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		ServiceProviderInfo resource = salesforceService.getAsServiceProvider(subject, code);
 		
-		
-		return Response.ok().build();
+		return Response.ok(resource).build();
 	}
 }
