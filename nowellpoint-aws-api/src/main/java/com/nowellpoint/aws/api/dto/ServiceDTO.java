@@ -1,26 +1,12 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.dto;
 
-import java.io.Serializable;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.api.bus.ServiceProviderInstanceMessageListener;
-import com.nowellpoint.aws.data.ServiceProviderInstanceCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@MessageHandler(
-		queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", 
-		collectionName="service.provider.instances", 
-		messageListener=ServiceProviderInstanceMessageListener.class, 
-		codec=ServiceProviderInstanceCodec.class)
-
-public class ServiceProviderInstance extends AbstractDocument implements Serializable {
+public class ServiceDTO extends AbstractDTO {
 
 	/**
 	 * 
 	 */
 	
-	private static final long serialVersionUID = 8096961003246656184L;
+	private static final long serialVersionUID = 5553142927678572603L;
 	
 	private String type;
 	
@@ -36,12 +22,18 @@ public class ServiceProviderInstance extends AbstractDocument implements Seriali
 	
 	private Double price;
 	
-	private User owner;
-	
 	private String name;
 	
-	public ServiceProviderInstance() {
+	private IdentityDTO owner;
+	
+	private Boolean isSandbox;
+	
+	public ServiceDTO() {
 		
+	}
+	
+	public ServiceDTO(String id) {
+		setId(id);
 	}
 
 	public String getType() {
@@ -60,11 +52,11 @@ public class ServiceProviderInstance extends AbstractDocument implements Seriali
 		this.instanceId = instanceId;
 	}
 
-	public User getOwner() {
+	public IdentityDTO getOwner() {
 		return owner;
 	}
 
-	public void setOwner(User owner) {
+	public void setOwner(IdentityDTO owner) {
 		this.owner = owner;
 	}
 
@@ -115,4 +107,12 @@ public class ServiceProviderInstance extends AbstractDocument implements Seriali
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}	
 }

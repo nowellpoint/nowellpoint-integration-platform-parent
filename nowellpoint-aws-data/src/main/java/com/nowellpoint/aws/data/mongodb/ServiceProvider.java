@@ -1,14 +1,26 @@
-package com.nowellpoint.aws.api.dto;
+package com.nowellpoint.aws.data.mongodb;
 
-import com.nowellpoint.aws.data.mongodb.Service;
+import java.io.Serializable;
 
-public class ServiceProviderDTO extends AbstractDTO {
-	
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.aws.api.bus.ServiceProviderMessageListener;
+import com.nowellpoint.aws.data.ServiceProviderCodec;
+import com.nowellpoint.aws.data.annotation.MessageHandler;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@MessageHandler(
+		queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", 
+		collectionName="service.providers", 
+		messageListener=ServiceProviderMessageListener.class, 
+		codec=ServiceProviderCodec.class)
+
+public class ServiceProvider extends AbstractDocument implements Serializable {
+
 	/**
 	 * 
 	 */
 	
-	private static final long serialVersionUID = 1297944724385795255L;
+	private static final long serialVersionUID = 8096961003246656184L;
 	
 	private String type;
 	
@@ -30,12 +42,8 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private Service service;
 
-	public ServiceProviderDTO() {
+	public ServiceProvider() {
 		
-	}
-	
-	public ServiceProviderDTO(String id) {
-		setId(id);
 	}
 
 	public String getType() {
@@ -101,7 +109,7 @@ public class ServiceProviderDTO extends AbstractDTO {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	
+
 	public Service getService() {
 		return service;
 	}

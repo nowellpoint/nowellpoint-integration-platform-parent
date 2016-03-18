@@ -15,6 +15,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -22,7 +23,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Identity;
 import com.nowellpoint.www.app.model.SalesforceProfile;
-import com.nowellpoint.www.app.model.ServiceProviderInstance;
+import com.nowellpoint.www.app.model.ServiceProvider;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -31,11 +32,11 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class ServiceProviderInstanceController {
+public class ServiceProviderController {
 	
-	private static final Logger LOGGER = Logger.getLogger(ServiceProviderInstanceController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ServiceProviderController.class.getName());
 	
-	public ServiceProviderInstanceController(Configuration cfg) {     
+	public ServiceProviderController(Configuration cfg) {     
 		
         get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
@@ -62,9 +63,11 @@ public class ServiceProviderInstanceController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
-		List<ServiceProviderInstance> providers = httpResponse.getEntityList(ServiceProviderInstance.class);
+		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
 		
-		providers = providers.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate())).collect(Collectors.toList());
+		providers = providers.stream().sorted((p1, p2) -> p1.getDisplayName().compareTo(p2.getDisplayName())).collect(Collectors.toList());
+		
+		System.out.println(new ObjectMapper().writeValueAsString(providers));
 			
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
@@ -92,14 +95,12 @@ public class ServiceProviderInstanceController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
-		ServiceProviderInstance provider = httpResponse.getEntity(ServiceProviderInstance.class);
+		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
 		
 		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.path("salesforce")
-				.path(provider.getAccount())
-				.path("describe")
 				.execute();
 		
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -132,44 +133,44 @@ public class ServiceProviderInstanceController {
 		
 		Identity owner = httpResponse.getEntity(Identity.class);
 		
-		ServiceProviderInstance serviceProvider = new ServiceProviderInstance();
-		serviceProvider.setType(request.queryParams("type"));
-		serviceProvider.setKey(request.queryParams("organizationId"));
-		serviceProvider.setOrganization(request.queryParams("organizationName"));
-		serviceProvider.setAccount(request.queryParams("userId"));
-		serviceProvider.setIsActive(Boolean.TRUE);
-		serviceProvider.setInstanceName(request.queryParams("instanceName"));
-		serviceProvider.setInstanceUrl(request.queryParams("instanceUrl"));
-		serviceProvider.setPrice(0.00);
-		serviceProvider.setOwner(owner);
-		
-		if (request.queryParams("id") == null || request.queryParams("id").trim().isEmpty()) {
-			
-			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_JSON)
-					.path("providers")
-					.body(serviceProvider)
-					.execute();
-			
-		} else {
-			
-			httpResponse = RestResource.put(System.getenv("NCS_API_ENDPOINT"))
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_JSON)
-					.path("providers")
-					.body(serviceProvider)
-					.execute();
-			
-		}
-		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
-		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+//		ServiceProviderInstance serviceProvider = new ServiceProviderInstance();
+//		serviceProvider.setType(request.queryParams("type"));
+//		serviceProvider.setKey(request.queryParams("organizationId"));
+//		serviceProvider.setOrganization(request.queryParams("organizationName"));
+//		serviceProvider.setAccount(request.queryParams("userId"));
+//		serviceProvider.setIsActive(Boolean.TRUE);
+//		serviceProvider.setInstanceName(request.queryParams("instanceName"));
+//		serviceProvider.setInstanceUrl(request.queryParams("instanceUrl"));
+//		serviceProvider.setPrice(0.00);
+//		serviceProvider.setOwner(owner);
+//		
+//		if (request.queryParams("id") == null || request.queryParams("id").trim().isEmpty()) {
+//			
+//			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+//					.header("x-api-key", System.getenv("NCS_API_KEY"))
+//					.bearerAuthorization(token.getAccessToken())
+//					.contentType(MediaType.APPLICATION_JSON)
+//					.path("providers")
+//					.body(serviceProvider)
+//					.execute();
+//			
+//		} else {
+//			
+//			httpResponse = RestResource.put(System.getenv("NCS_API_ENDPOINT"))
+//					.header("x-api-key", System.getenv("NCS_API_KEY"))
+//					.bearerAuthorization(token.getAccessToken())
+//					.contentType(MediaType.APPLICATION_JSON)
+//					.path("providers")
+//					.body(serviceProvider)
+//					.execute();
+//			
+//		}
+//		
+//		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+//		
+//		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+//			throw new BadRequestException(httpResponse.getAsString());
+//		}
 		
 		SalesforceProfile salesforceProfile = new SalesforceProfile();
 		salesforceProfile.setCity(request.queryParams("city"));
@@ -205,7 +206,7 @@ public class ServiceProviderInstanceController {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		System.out.println(ServiceProviderInstanceController.class.getName() + " " + httpResponse.getAsString());
+		System.out.println(ServiceProviderController.class.getName() + " " + httpResponse.getAsString());
 		
 		response.redirect("/app/providers");
     	

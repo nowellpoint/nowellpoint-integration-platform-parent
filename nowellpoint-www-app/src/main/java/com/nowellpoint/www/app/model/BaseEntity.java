@@ -2,21 +2,13 @@ package com.nowellpoint.www.app.model;
 
 import java.util.Date;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class BaseEntity implements Serializable {
-	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 3468369885294317641L;
+public abstract class BaseEntity {
 
 	/**
 	 * 

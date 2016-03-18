@@ -13,7 +13,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.ServiceProviderInstance;
+import com.nowellpoint.www.app.model.ServiceProvider;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -104,7 +104,7 @@ public class SalesforceController {
     		throw new BadRequestException(httpResponse.getAsString());
     	}
     	
-    	ServiceProviderInstance provider = httpResponse.getEntity(ServiceProviderInstance.class);
+    	ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
     	
     	Account account = request.attribute("account");
     	

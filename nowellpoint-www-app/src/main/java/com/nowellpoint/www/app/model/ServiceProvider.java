@@ -1,21 +1,27 @@
 package com.nowellpoint.www.app.model;
 
-public class ServiceProvider {
-
+public class ServiceProvider extends BaseEntity {
+	
 	private String type;
 	
-	private String instanceId;
+	private Double price;
 	
-	private String instanceName;
+	private Boolean isActive;
 	
-	private Boolean isSandbox;
-		
-	private String name;
-		
-	private String instanceUrl;
+	private String uom;
 	
-	private String account;
+	private String authMethod;
 	
+	private String authUrl;
+	
+	private String displayName;
+	
+	private String description;
+	
+	private Service service;
+	
+	private String image;
+
 	public ServiceProvider() {
 		
 	}
@@ -28,51 +34,75 @@ public class ServiceProvider {
 		this.type = type;
 	}
 
-	public String getInstanceId() {
-		return instanceId;
+	public Double getPrice() {
+		return price;
 	}
 
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 
-	public String getInstanceName() {
-		return instanceName;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	public String getUom() {
+		return uom;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
+	public void setUom(String uom) {
+		this.uom = uom;
 	}
 
-	public String getName() {
-		return name;
+	public String getAuthMethod() {
+		return authMethod;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setAuthMethod(String authMethod) {
+		this.authMethod = authMethod;
 	}
 
-	public String getInstanceUrl() {
-		return instanceUrl;
+	public String getAuthUrl() {
+		return authUrl;
 	}
 
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
+	public void setAuthUrl(String authUrl) {
+		this.authUrl = authUrl;
 	}
 
-	public String getAccount() {
-		return account;
+	public String getDisplayName() {
+		return displayName;
 	}
 
-	public void setAccount(String account) {
-		this.account = account;
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

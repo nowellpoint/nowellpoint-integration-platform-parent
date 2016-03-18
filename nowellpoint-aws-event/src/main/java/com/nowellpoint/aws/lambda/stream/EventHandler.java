@@ -14,7 +14,7 @@ import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.data.mongodb.Application;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.Project;
-import com.nowellpoint.aws.data.mongodb.ServiceProviderInstance;
+import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
@@ -34,7 +34,7 @@ public class EventHandler {
 		eventMapping.put(Lead.class.getName(), LeadEventHandler.class.getName());
 		eventMapping.put(Project.class.getName(), DocumentEventHandler.class.getName());
 		eventMapping.put(Application.class.getName(), DocumentEventHandler.class.getName());
-		eventMapping.put(ServiceProviderInstance.class.getName(), DocumentEventHandler.class.getName());
+		eventMapping.put(ServiceProvider.class.getName(), DocumentEventHandler.class.getName());
 	}
 	
 	public String handleEvent(DynamodbEvent dynamodbEvent, Context context) {

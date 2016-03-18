@@ -20,10 +20,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.api.dto.ServiceProviderInstanceDTO;
-import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 
@@ -37,9 +34,6 @@ public class ServiceProviderResource {
 	private ServiceProviderService serviceProviderService;
 	
 	@Inject
-	private IdentityService identityService;
-	
-	@Inject
 	private SalesforceService salesforceService;
 	
 	@Context 
@@ -47,10 +41,9 @@ public class ServiceProviderResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll() {
-		String subject = securityContext.getUserPrincipal().getName();
+    public Response findAllActive() {
 		
-		Set<ServiceProviderInstanceDTO> resources = serviceProviderService.getAll(subject);
+		Set<ServiceProviderDTO> resources = serviceProviderService.getAllActive();
 		
 		return Response.ok(resources).build();
     }
@@ -58,12 +51,8 @@ public class ServiceProviderResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createServiceProvider(ServiceProviderInstanceDTO resource) {
+	public Response createServiceProvider(ServiceProviderDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
-		
-		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
-		
-		resource.setOwner(owner);
 		
 		serviceProviderService.createServiceProvider(subject, resource, uriInfo.getBaseUri());
 		
@@ -94,7 +83,7 @@ public class ServiceProviderResource {
 	public Response getServiceProvider(@PathParam("id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		ServiceProviderInstanceDTO resource = serviceProviderService.getServiceProvider(id, subject);
+		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
 		
 		return Response.ok(resource)
 				.build();
@@ -104,7 +93,7 @@ public class ServiceProviderResource {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderInstanceDTO resource) {
+	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
@@ -120,24 +109,8 @@ public class ServiceProviderResource {
 	public Response getSalesforceProvider(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		ServiceProviderDTO provider = salesforceService.getAsServiceProvider(subject, code);
 		
-		IdentityDTO owner = new IdentityDTO();
-		owner.setHref(subject);
 		
-		ServiceProviderInstanceDTO resource = new ServiceProviderInstanceDTO();
-		resource.setAccount(provider.getAccount());
-		resource.setInstanceId(provider.getInstanceId());
-		resource.setInstanceName(provider.getInstanceName());
-		resource.setInstanceUrl(provider.getInstanceUrl());
-		resource.setIsActive(Boolean.FALSE);
-		resource.setName(provider.getName());
-		resource.setType(provider.getType());
-		resource.setPrice(0.00);
-		resource.setOwner(owner);
-		
-		serviceProviderService.createServiceProvider(subject, resource, uriInfo.getBaseUri());
-		
-		return Response.ok(resource).build();
+		return Response.ok().build();
 	}
 }
