@@ -8,6 +8,8 @@ public class ServiceDetail {
 	
 	private String configurationPage;
 	
+	private String company;
+	
 	public ServiceDetail() {
 		
 	}
@@ -34,5 +36,13 @@ public class ServiceDetail {
 
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
 	}
 }

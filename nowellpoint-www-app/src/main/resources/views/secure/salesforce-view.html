@@ -1,77 +1,58 @@
-<#import "template.html" as t>
+<form class="form-vertical" role="form" method="post" action="/app/providers">
+    <dl class="dl-horizontal">
+        <dt>${name}</dt>
+        <dd>${(serviceProviderInfo.name)!}</dd>
+        <dt>${instanceId}</dt>
+        <dd>${(serviceProviderInfo.instanceId)!}</dd>
+        <dt>${instanceName}</dt>
+        <dd>${(serviceProviderInfo.instanceName)!}</dd>
+        <dt>${instanceUrl}</dt>
+        <dd>${(serviceProviderInfo.instanceUrl)!}</dd>
+        <dt>${accountLabel}</dt>
+        <dd>${(serviceProviderInfo.account)!}</dd>
+        <dt>${isSandbox}</dt>
+        <dd>${(serviceProviderInfo.isSandbox?string('Yes', 'No'))!}</dd>
+    </dl>
 
-    <@t.page>
+    <input type="hidden" name="type" id="type" value="${(serviceProviderInfo.type)!}" />
+    <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProviderInfo.instanceId)!}" />
+    <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProviderInfo.instanceName)!}" />
+    <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProviderInfo.instanceUrl)!}" />
+    <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProviderInfo.organization.isSandbox?string)!}" />
+    <input type="hidden" name="name" id="name" value="${(serviceProviderInfo.name)!}" />
 
-        <#include "navbar.html" />
-
-        <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h2 class="title">${serviceProviderInformation} - ${serviceProviderInfo.type}</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hr-divider m-t m-b-md">
-                <h3 class="hr-divider-content hr-divider-heading" />
-            </div>
-
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6">
-                        
-                         <br>
-
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">
-                                ${organizationInformation}
-                            </h3>
-                        </div>
-
-                        <br>
-                        
-                        <dl class="dl-horizontal">
-                            <dt>${name}</dt>
-                            <dd>${(serviceProviderInfo.name)!}</dd>
-                            <dt>${instanceId}</dt>
-                            <dd>${(serviceProviderInfo.instanceId)!}</dd>
-                            <dt>${instanceName}</dt>
-                            <dd>${(serviceProviderInfo.instanceName)!}</dd>
-                            <dt>${instanceUrl}</dt>
-                            <dd>${(serviceProviderInfo.instanceUrl)!}</dd>
-                            <dt>${accountLabel}</dt>
-                            <dd>${(serviceProviderInfo.account)!}</dd>
-                            <dt>${isSandbox}</dt>
-                            <dd>${(serviceProviderInfo.isSandbox?string('Yes', 'No'))!}</dd>
-                        </dl>
-                        
-                        
-                        <form class="form-vertical" role="form" method="post" action="/app/providers">
-                            <input type="hidden" name="type" id="type" value="${(serviceProviderInfo.type)!}" />
-                            <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProviderInfo.instanceId)!}" />                            
-                            <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProviderInfo.instanceName)!}" />
-                            <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProviderInfo.instanceUrl)!}" />
-                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProviderInfo.organization.isSandbox?string)!}" />
-                            <input type="hidden" name="name" id="name" value="${(serviceProviderInfo.name)!}" />
-                            <div class="pull-right">
-                                <a href="/app/providers">${cancel}</a>&nbsp;
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${addServiceProvider}</button>
+    <#if (serviceProviderInfo.sobjects)??>
+        <div class="container-fluid">
+            <div class="row">
+                <#list serviceProviderInfo.sobjects as sobject>
+                    <#if sobject.triggerable && sobject.searchable>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="checkbox custom-control custom-checkbox">
+                                <label>
+                                    <input type="checkbox" value="${sobject.name}" name="sobject">
+                                    <span class="custom-control-indicator"></span>
+                                    <p>${sobject.label}</p>
+                                </label>
                             </div>
-                        </form>
-
-                        
-                    </div>
-                    <div class="col-md-3"></div>
-                </div>
-                <br>
+                        </div>
+                    </#if>
+                </#list>
             </div>
         </div>
-        <br>
-        <br>
+    </#if>
 
-        <#include "progress-bar-dialog.html" />
+    <div class="pull-right">
+        <a href="/app/providers">${cancel}</a>&nbsp;
+        <#if !(serviceProviderInfo.type)??>
+            <a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a>
+        </#if>
+        <#if (serviceProviderInfo.type)??>
+            <button type="submit" name="submit" id="submit" class="btn btn-primary">${addServiceProvider}</button>
+        </#if>
+    </div>
+</form>
+
+<#include "progress-bar-dialog.html" />
 
         <script>
             $(document).ready(function(e) {
@@ -86,6 +67,3 @@
                 });
             });
         </script>
-
-
-    </@t.page>

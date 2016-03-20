@@ -13,6 +13,8 @@ public class ServiceDetail implements Serializable {
 	private String name;
 	
 	private String description;
+	
+	private String company;
 
 	private String configurationPage;
 	
@@ -42,5 +44,13 @@ public class ServiceDetail implements Serializable {
 
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
 	}
 }

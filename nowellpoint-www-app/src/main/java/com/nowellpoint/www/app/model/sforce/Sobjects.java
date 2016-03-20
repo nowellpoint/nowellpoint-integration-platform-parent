@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.api.dto.sforce;
+package com.nowellpoint.www.app.model.sforce;
 
 import java.io.Serializable;
 

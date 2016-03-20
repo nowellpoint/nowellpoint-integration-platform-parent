@@ -8,11 +8,15 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.ExceptionResponse;
+import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.model.sforce.ServiceProviderInfo;
 
 import freemarker.log.Logger;
@@ -90,6 +94,8 @@ public class SalesforceController {
 		
     	Token token = request.attribute("token");
     	
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	
     	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -101,18 +107,34 @@ public class SalesforceController {
     	
     	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
     	
-    	if (httpResponse.getStatusCode() != 200) {
-    		throw new BadRequestException(httpResponse.getAsString());
+    	if (httpResponse.getStatusCode() == 200) {
+    		ServiceProviderInfo serviceProviderInfo = httpResponse.getEntity(ServiceProviderInfo.class);
+    		model.put("serviceProviderInfo", serviceProviderInfo);
+    	} else {
+    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+    		model.put("errorMessage", error.getMessage());
+    	}	
+    	
+    	httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+    			.header("x-api-key", System.getenv("NCS_API_KEY"))
+    			.bearerAuthorization(token.getAccessToken())
+    			.path("providers")
+    			.path(request.queryParams("state"))
+    			.execute();
+    			
+    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+    			
+    	if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+    		throw new NotFoundException(httpResponse.getAsString());
     	}
+    		
+    	ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
+    		
+        Account account = request.attribute("account");
+        	
+    	model.put("account", account);
+    	model.put("serviceProvider", provider);	
     	
-    	ServiceProviderInfo provider = httpResponse.getEntity(ServiceProviderInfo.class);
-    	
-    	Account account = request.attribute("account");
-    	
-    	Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", account);
-		model.put("serviceProviderInfo", provider);
-		
-		return new ModelAndView(model, "secure/salesforce-view.html");	
+    	return new ModelAndView(model, "secure/".concat(provider.getServiceDetail().getConfigurationPage()));	
 	}
 }

@@ -1,5 +1,7 @@
 package com.nowellpoint.www.app.model.sforce;
 
+import java.util.List;
+
 public class ServiceProviderInfo {
 	
 	private String type;
@@ -19,6 +21,8 @@ public class ServiceProviderInfo {
 	private Boolean isSandbox;
 	
 	private String name;
+	
+	private List<Sobjects> sobjects;
 	
 	public ServiceProviderInfo() {
 		
@@ -94,5 +98,13 @@ public class ServiceProviderInfo {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<Sobjects> getSobjects() {
+		return sobjects;
+	}
+
+	public void setSobjects(List<Sobjects> sobjects) {
+		this.sobjects = sobjects;
 	}
 }

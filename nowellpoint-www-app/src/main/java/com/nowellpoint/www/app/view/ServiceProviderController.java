@@ -100,8 +100,7 @@ public class ServiceProviderController {
 		model.put("account", request.attribute("account"));
 		model.put("serviceProvider", provider);
 		
-		return new ModelAndView(model, "secure/salesforce-outbound-messages.html");
-		
+		return new ModelAndView(model, "secure/".concat(provider.getServiceDetail().getConfigurationPage()));
 	}
 	
 	private static String saveServiceProvider(Request request, Response response) throws IOException {
@@ -110,21 +109,23 @@ public class ServiceProviderController {
 		
 		Account account = request.attribute("account");
 		
-		HttpResponse httpResponse = null;
+		String[] sobjects = request.queryParamsValues("sobject");
 		
-		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.path("identity")
-				.queryParameter("subject", account.getHref())
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Identity owner = httpResponse.getEntity(Identity.class);
+//		HttpResponse httpResponse = null;
+//		
+//		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+//				.header("x-api-key", System.getenv("NCS_API_KEY"))
+//				.bearerAuthorization(token.getAccessToken())
+//				.accept(MediaType.APPLICATION_JSON)
+//				.path("identity")
+//				.queryParameter("subject", account.getHref())
+//				.execute();
+//		
+//		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+//			throw new BadRequestException(httpResponse.getAsString());
+//		}
+//		
+//		Identity owner = httpResponse.getEntity(Identity.class);
 		
 //		ServiceProviderInstance serviceProvider = new ServiceProviderInstance();
 //		serviceProvider.setType(request.queryParams("type"));
@@ -165,41 +166,41 @@ public class ServiceProviderController {
 //			throw new BadRequestException(httpResponse.getAsString());
 //		}
 		
-		SalesforceProfile salesforceProfile = new SalesforceProfile();
-		salesforceProfile.setCity(request.queryParams("city"));
-		salesforceProfile.setCountry(request.queryParams("country"));
-		salesforceProfile.setDisplayName(request.queryParams("displayName"));
-		salesforceProfile.setEmail(request.queryParams("email"));
-		salesforceProfile.setFirstName(request.queryParams("firstName"));
-		salesforceProfile.setUserId(request.queryParams("userId"));
-		salesforceProfile.setLanguage(request.queryParams("language"));
-		salesforceProfile.setLastName(request.queryParams("lastName"));
-		salesforceProfile.setLocale(new Locale(request.queryParams("locale")));
-		salesforceProfile.setMobilePhone(request.queryParams("mobilePhone"));
-		salesforceProfile.setState(request.queryParams("state"));
-		salesforceProfile.setStreet(request.queryParams("street"));
-		salesforceProfile.setUsername(request.queryParams("username"));
-		salesforceProfile.setZipPostalCode(request.queryParams("zipPostalCode"));
-		salesforceProfile.getPhotos().setProfilePicture(request.queryParams("profilePicture"));
-		
-		httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.path("identity")
-				.path(owner.getId())
-				.path("salesforce-profile")
-				.body(salesforceProfile)
-				.execute();
-		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
-		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		System.out.println(ServiceProviderController.class.getName() + " " + httpResponse.getAsString());
+//		SalesforceProfile salesforceProfile = new SalesforceProfile();
+//		salesforceProfile.setCity(request.queryParams("city"));
+//		salesforceProfile.setCountry(request.queryParams("country"));
+//		salesforceProfile.setDisplayName(request.queryParams("displayName"));
+//		salesforceProfile.setEmail(request.queryParams("email"));
+//		salesforceProfile.setFirstName(request.queryParams("firstName"));
+//		salesforceProfile.setUserId(request.queryParams("userId"));
+//		salesforceProfile.setLanguage(request.queryParams("language"));
+//		salesforceProfile.setLastName(request.queryParams("lastName"));
+//		salesforceProfile.setLocale(new Locale(request.queryParams("locale")));
+//		salesforceProfile.setMobilePhone(request.queryParams("mobilePhone"));
+//		salesforceProfile.setState(request.queryParams("state"));
+//		salesforceProfile.setStreet(request.queryParams("street"));
+//		salesforceProfile.setUsername(request.queryParams("username"));
+//		salesforceProfile.setZipPostalCode(request.queryParams("zipPostalCode"));
+//		salesforceProfile.getPhotos().setProfilePicture(request.queryParams("profilePicture"));
+//		
+//		httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+//				.header("x-api-key", System.getenv("NCS_API_KEY"))
+//				.bearerAuthorization(token.getAccessToken())
+//				.accept(MediaType.APPLICATION_JSON)
+//				.contentType(MediaType.APPLICATION_JSON)
+//				.path("identity")
+//				.path(owner.getId())
+//				.path("salesforce-profile")
+//				.body(salesforceProfile)
+//				.execute();
+//		
+//		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+//		
+//		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+//			throw new BadRequestException(httpResponse.getAsString());
+//		}
+//		
+//		System.out.println(ServiceProviderController.class.getName() + " " + httpResponse.getAsString());
 		
 		response.redirect("/app/providers");
     	

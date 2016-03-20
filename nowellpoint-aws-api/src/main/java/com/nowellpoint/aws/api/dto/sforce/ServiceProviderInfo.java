@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.dto.sforce;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ServiceProviderInfo implements Serializable {
 	
@@ -27,6 +28,8 @@ public class ServiceProviderInfo implements Serializable {
 	private Boolean isSandbox;
 	
 	private String name;
+	
+	private List<Sobject> sobjects;
 	
 	public ServiceProviderInfo() {
 		
@@ -108,4 +111,11 @@ public class ServiceProviderInfo implements Serializable {
 		return serialVersionUID;
 	}
 
+	public List<Sobject> getSobjects() {
+		return sobjects;
+	}
+
+	public void setSobjects(List<Sobject> sobjects) {
+		this.sobjects = sobjects;
+	}
 }

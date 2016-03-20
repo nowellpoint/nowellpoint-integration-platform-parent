@@ -2,7 +2,6 @@ package com.nowellpoint.aws.api.service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -10,8 +9,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.nowellpoint.aws.api.dto.ServiceDTO;
+import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
 import com.nowellpoint.aws.api.dto.sforce.ServiceProviderInfo;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
@@ -186,7 +184,6 @@ public class SalesforceService extends AbstractCacheService {
 	 */
 	
 	public Organization getOrganization(String bearerToken, String organizationId, String sobjectUrl) {
-		Organization organization = null;
 		
 		try {
 	     	
@@ -204,24 +201,23 @@ public class SalesforceService extends AbstractCacheService {
 				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
 			}
 	     	
-	     	organization = httpResponse.getEntity(Organization.class);
+			Organization organization = httpResponse.getEntity(Organization.class);
+			
+			return organization;
 	     	
 		} catch (IOException e) {
 			LOGGER.error( "getOrganization", e );
 			throw new WebApplicationException(e, Status.BAD_REQUEST);
 		}
-		
-		return organization;
 	}
 	
-	public List<String> describe(String subject, String userId) {
+	public DescribeSObjectsResult describe(String subject, String userId) {
 		
 		Token token = hget( Token.class, subject, Token.class.getName().concat(userId) );
 		
-		String describeGlobal = token.getInstanceUrl().concat("/services/data/v35.0/sobjects");
-		
 		try {
-			HttpResponse httpResponse = RestResource.get(describeGlobal)
+			
+			HttpResponse httpResponse = RestResource.get(token.getInstanceUrl().concat("/services/data/v35.0/sobjects"))
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 					.execute();
@@ -232,14 +228,13 @@ public class SalesforceService extends AbstractCacheService {
 				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
 			}
 			
-			System.out.println(httpResponse.getEntity(JsonNode.class));
+			DescribeSObjectsResult result = httpResponse.getEntity(DescribeSObjectsResult.class);
+			
+			return result;
 			
 		} catch (IOException e) {
 			LOGGER.error( "getSObjects", e );
 			throw new WebApplicationException(e, Status.BAD_REQUEST);
 		}
-		
-		return null;
-		
 	}
 }

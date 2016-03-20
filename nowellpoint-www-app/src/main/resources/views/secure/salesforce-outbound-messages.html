@@ -19,30 +19,98 @@
                         </div>
                     </div>
 
-                    <br>
+                    <div class="hr-divider m-t m-b-md">
+                        <h3 class="hr-divider-content hr-divider-heading"></h3>
+                    </div>
 
                     <div class="col-md-12">
 
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">${outboundMessageListeners}</h3>
-                        </div>                                               
-                        <div class="panel panel-primary">
-                            <div class="panel-body">
-                                
-                                <span><a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a></span>
-                                
-                            </div>    
-                        </div>    
-                        
-                        <p class="pull-right">
-                                    <a href="" class="btn btn-lg btn-primary-outline" role="button">${edit}</a>
-                                </p>
+                        <#if errorMessage??>
+                            <div id="alert" class="alert alert-danger">
+                                <a class="close" data-dismiss="alert">×</a>
+                                <div class="text-center">${errorMessage}</div>
+                            </div>
+                        </#if>
 
+                        <form class="form-vertical" role="form" method="post" action="/app/providers">
+                            <dl class="dl-horizontal">
+                                <dt>${name}</dt>
+                                <dd>${(serviceProviderInfo.name)!}</dd>
+                                <dt>${instanceId}</dt>
+                                <dd>${(serviceProviderInfo.instanceId)!}</dd>
+                                <dt>${instanceName}</dt>
+                                <dd>${(serviceProviderInfo.instanceName)!}</dd>
+                                <dt>${instanceUrl}</dt>
+                                <dd>${(serviceProviderInfo.instanceUrl)!}</dd>
+                                <dt>${accountLabel}</dt>
+                                <dd>${(serviceProviderInfo.account)!}</dd>
+                                <dt>${isSandbox}</dt>
+                                <dd>${(serviceProviderInfo.isSandbox?string('Yes', 'No'))!}</dd>
+                            </dl>
 
+                            <input type="hidden" name="type" id="type" value="${(serviceProviderInfo.type)!}" />
+                            <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProviderInfo.instanceId)!}" />
+                            <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProviderInfo.instanceName)!}" />
+                            <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProviderInfo.instanceUrl)!}" />
+                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProviderInfo.organization.isSandbox?string)!}" />
+                            <input type="hidden" name="name" id="name" value="${(serviceProviderInfo.name)!}" />
+
+                            <#if (serviceProviderInfo.sobjects)??>
+
+                                <div class="hr-divider">
+                                    <h3 class="hr-divider-content hr-divider-heading">${sobjects}</h3>
+                                </div>
+
+                                <br>
+
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <#list serviceProviderInfo.sobjects as sobject>
+                                            <#if sobject.triggerable && sobject.searchable>
+                                                <div class="col-lg-3 col-md-4 col-md-sm-2">
+                                                    <div class="checkbox custom-control custom-checkbox">
+                                                        <label>
+                                                            <input type="checkbox" value="${sobject.name}" name="sobject">
+                                                            <span class="custom-control-indicator"></span>
+                                                            <p>${sobject.label}</p>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </#if>
+                                        </#list>
+                                    </div>
+                                </div>
+                            </#if>
+                            <div class="pull-right">
+                                <a href="/app/providers">${cancel}</a>&nbsp;
+                                <#if !(serviceProviderInfo.type)??>
+                                    <a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a>
+                                </#if>
+                                <#if (serviceProviderInfo.type)??>
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${addServiceProvider}</button>
+                                </#if>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="col-md-2"></div>
             </div>
         </div>
+
+        <#include "progress-bar-dialog.html" />
+
+        <script>
+            $(document).ready(function(e) {
+                $('#clickable').click(function(e) {
+                    e.preventDefault();
+                    var body = 'photoUrl=' + $(this).data('id');
+                    $.ajax({
+                        type: "POST",
+                        url: "/app/user-profile/picture/salesforce",
+                        data: body
+                    });
+                });
+            });
+        </script>
 
     </@t.page>

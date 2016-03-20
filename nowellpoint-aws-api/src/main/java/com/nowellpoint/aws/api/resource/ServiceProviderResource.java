@@ -21,6 +21,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
 import com.nowellpoint.aws.api.dto.sforce.ServiceProviderInfo;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
@@ -113,6 +114,10 @@ public class ServiceProviderResource {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		ServiceProviderInfo resource = salesforceService.getAsServiceProvider(subject, code);
+		
+		DescribeSObjectsResult result = salesforceService.describe(subject, resource.getAccount());
+		
+		resource.setSobjects(result.getSobjects());
 		
 		return Response.ok(resource).build();
 	}

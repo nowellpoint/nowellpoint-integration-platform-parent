@@ -89,7 +89,7 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUserInfo(@PathParam(value="userId") String userId) {		
 		
-		//String subject = HttpServletRequestUtil.getSubject(servletRequest);
+		//String subject = securityContext.getUserPrincipal().getName();
 		
 		//Token token = salesforceService.findToken(subject, userId);
 		
