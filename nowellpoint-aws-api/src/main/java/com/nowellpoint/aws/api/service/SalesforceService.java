@@ -10,7 +10,8 @@ import javax.ws.rs.core.Response.Status;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
-import com.nowellpoint.aws.api.dto.sforce.ServiceProviderInfo;
+import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
+import com.nowellpoint.aws.api.exception.ServiceException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -43,7 +44,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public Token getToken(String subject, String code) {
+	public Token getToken(String subject, String code) throws ServiceException {
 		Token token = null;
 		
 		try {
@@ -61,7 +62,7 @@ public class SalesforceService extends AbstractCacheService {
 			LOGGER.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 			
 			if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+				throw new ServiceException(httpResponse.getAsString(), httpResponse.getStatusCode());
 			}
 			
 			token = httpResponse.getEntity(Token.class);
@@ -92,23 +93,26 @@ public class SalesforceService extends AbstractCacheService {
 		return token;
 	}
 	
-	public ServiceProviderInfo getAsServiceProvider(String subject, String code) {
+	public ServiceInfo getServiceInfo(String subject, String code) throws ServiceException {
 		Token token = getToken(subject, code);
 		
 		Identity identity = getIdentity(token.getAccessToken(), token.getId());
 		
 		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
 		
-		ServiceProviderInfo serviceProviderInfo = new ServiceProviderInfo();
-		serviceProviderInfo.setAccount(identity.getUserId());
-		serviceProviderInfo.setType("SALESFORCE");
-		serviceProviderInfo.setInstanceId(organization.getId());
-		serviceProviderInfo.setInstanceName(organization.getInstanceName());
-		serviceProviderInfo.setInstanceUrl(token.getInstanceUrl());
-		serviceProviderInfo.setIsSandbox(organization.getIsSandbox());
-		serviceProviderInfo.setName(organization.getName());
+		DescribeSObjectsResult result = describe(subject, identity.getUserId());
 		
-		return serviceProviderInfo;
+		ServiceInfo serviceInfo = new ServiceInfo();
+		serviceInfo.setAccount(identity.getUserId());
+		serviceInfo.setType("SALESFORCE");
+		serviceInfo.setInstanceId(organization.getId());
+		serviceInfo.setInstanceName(organization.getInstanceName());
+		serviceInfo.setInstanceUrl(token.getInstanceUrl());
+		serviceInfo.setIsSandbox(organization.getIsSandbox());
+		serviceInfo.setName(organization.getName());
+		serviceInfo.setSobjects(result.getSobjects());
+		
+		return serviceInfo;
 	}
 	
 	/**
@@ -217,6 +221,8 @@ public class SalesforceService extends AbstractCacheService {
 		
 		try {
 			
+			// sobjects":"https://na1.salesforce.com/services/data/v{version}/sobjects/",
+			
 			HttpResponse httpResponse = RestResource.get(token.getInstanceUrl().concat("/services/data/v35.0/sobjects"))
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
@@ -233,8 +239,29 @@ public class SalesforceService extends AbstractCacheService {
 			return result;
 			
 		} catch (IOException e) {
-			LOGGER.error( "getSObjects", e );
+			LOGGER.error( "describe", e );
 			throw new WebApplicationException(e, Status.BAD_REQUEST);
 		}
+	}
+	
+	public void describeSObject(String subject, String userId) {
+		
+		Token token = hget( Token.class, subject, Token.class.getName().concat(userId) );
+		
+		///vXX.X/sobjects/SObjectName/describe/
+		
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.get(token.getInstanceUrl().concat("/services/data/v35.0/sobjects"))
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.execute();
+		} catch (IOException e) {
+			LOGGER.error( "describeSObject", e );
+			throw new WebApplicationException(e, Status.BAD_REQUEST);
+		}
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+		
 	}
 }

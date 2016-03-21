@@ -20,14 +20,18 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.jboss.logging.Logger;
+
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
-import com.nowellpoint.aws.api.dto.sforce.ServiceProviderInfo;
+import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
+import com.nowellpoint.aws.api.exception.ServiceException;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 
 @Path("/providers")
 public class ServiceProviderResource {
+	
+	private static final Logger LOGGER = Logger.getLogger(ServiceProviderResource.class);
 	
 	@Context
 	private UriInfo uriInfo;
@@ -70,10 +74,13 @@ public class ServiceProviderResource {
 	public Response createServiceProvider(ServiceProviderDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		serviceProviderService.createServiceProvider(subject, resource, uriInfo.getBaseUri());
+		resource.setSubject(subject);
+		resource.setEventSource(uriInfo.getBaseUri());
+		
+		serviceProviderService.createServiceProvider(resource);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(ApplicationResource.class)
+				.path(ServiceProviderResource.class)
 				.path("/{id}")
 				.build(resource.getId());
 		
@@ -108,16 +115,19 @@ public class ServiceProviderResource {
 	}
 	
 	@GET
-	@Path("/salesforce")
+	@Path("/{id}/salesforce")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceProvider(@QueryParam(value="code") String code) {
+	public Response getSalesforceProvider(@PathParam(value="id") String id, @QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		ServiceProviderInfo resource = salesforceService.getAsServiceProvider(subject, code);
+		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
 		
-		DescribeSObjectsResult result = salesforceService.describe(subject, resource.getAccount());
-		
-		resource.setSobjects(result.getSobjects());
+		try {
+			ServiceInfo serviceInfo = salesforceService.getServiceInfo(subject, code);
+			resource.getService().setServiceInfo(serviceInfo);
+		} catch (ServiceException e) {
+			LOGGER.error(e);
+		}
 		
 		return Response.ok(resource).build();
 	}

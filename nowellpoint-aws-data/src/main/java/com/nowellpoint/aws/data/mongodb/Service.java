@@ -1,16 +1,24 @@
-package com.nowellpoint.www.app.model;
+package com.nowellpoint.aws.data.mongodb;
 
-public class ServiceDetail {
+import java.io.Serializable;
+
+public class Service implements Serializable {
+
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 1537820218475752902L;
 	
 	private String name;
 	
 	private String description;
 	
+	private String company;
+
 	private String configurationPage;
 	
-	private String company;
-	
-	public ServiceDetail() {
+	public Service() {
 		
 	}
 
@@ -29,7 +37,7 @@ public class ServiceDetail {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
 	public String getConfigurationPage() {
 		return configurationPage;
 	}

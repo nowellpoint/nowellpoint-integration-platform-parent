@@ -57,8 +57,8 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 	 * @return the created Identity resource
 	 */
 	
-	public IdentityDTO createIdentity(String subject, IdentityDTO resource, URI eventSource) {
-		resource.setHref(subject);
+	public IdentityDTO createIdentity(IdentityDTO resource) {
+		resource.setHref(resource.getSubject());
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		
@@ -67,10 +67,10 @@ public class IdentityService extends AbstractDataService<IdentityDTO, Identity> 
 		
 		resource.setPhotos(photos);
 		
-		create(subject, resource, eventSource);
+		create(resource);
 		
-		hset( resource.getId(), subject, resource );
-		hset( subject, IdentityDTO.class.getName(), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
+		hset( resource.getSubject(), IdentityDTO.class.getName(), resource );
 		
 		return resource;
 	}

@@ -18,7 +18,7 @@ public class ServiceProvider extends BaseEntity {
 	
 	private String description;
 	
-	private ServiceDetail serviceDetail;
+	private Service service;
 	
 	private String image;
 	
@@ -94,12 +94,12 @@ public class ServiceProvider extends BaseEntity {
 		this.description = description;
 	}
 
-	public ServiceDetail getServiceDetail() {
-		return serviceDetail;
+	public Service getService() {
+		return service;
 	}
 
-	public void setServiceDetail(ServiceDetail serviceDetail) {
-		this.serviceDetail = serviceDetail;
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 	public String getImage() {

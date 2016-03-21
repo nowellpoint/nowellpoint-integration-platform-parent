@@ -2,7 +2,7 @@ package com.nowellpoint.www.app.model.sforce;
 
 import java.io.Serializable;
 
-public class Sobjects implements Serializable {
+public class Sobject implements Serializable {
 
 	/**
 	 * 
@@ -50,7 +50,7 @@ public class Sobjects implements Serializable {
 	
 	private Boolean updateable;
 
-	public Sobjects() {
+	public Sobject() {
 		
 	}
 

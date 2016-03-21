@@ -112,6 +112,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 
 			@Override
 			protected User convert(IdentityDTO source) {
+				System.out.println("here: "+ source.getHref());
 				User user = new User();
 				if (source != null) {					
 					user.setHref(source.getHref());
@@ -134,7 +135,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	
 	protected R find(String id) {		
 		String collectionName = documentType.getAnnotation(MessageHandler.class).collectionName();
-		
+
 		D document = MongoDBDatastore.getDatabase().getCollection( collectionName )
 				.withDocumentClass( documentType )
 				.find( eq ( "_id", new ObjectId( id ) ) )
@@ -183,21 +184,21 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	 * @return
 	 */
 	
-	protected R create(String subject, R resource, URI eventSource) {
+	protected R create(R resource) {
 		AbstractDocument document = modelMapper.map( resource, documentType );
 		
 		document.setId(new ObjectId());
 		document.setCreatedDate(Date.from(Instant.now()));
 		document.setLastModifiedDate(Date.from(Instant.now()));
-		document.setCreatedById(subject);
-		document.setLastModifiedById(subject);
+		document.setCreatedById(resource.getSubject());
+		document.setLastModifiedById(resource.getSubject());
 		
 		Event event = null;
 		try {			
 			event = new EventBuilder()
-					.withSubject(subject)
+					.withSubject(resource.getSubject())
 					.withEventAction(EventAction.CREATE)
-					.withEventSource(eventSource)
+					.withEventSource(resource.getEventSource())
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
 					.withPayload(document)
 					.withType(document.getClass())

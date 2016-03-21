@@ -7,18 +7,18 @@ import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import com.nowellpoint.aws.api.exception.ServiceException;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.model.sforce.User;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -77,40 +77,16 @@ public class SalesforceResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		Token token = salesforceService.getToken(subject, code);
-		
+		Token token = null; 
+				
+		try {
+			salesforceService.getToken(subject, code);
+		} catch (ServiceException e) {
+			throw new WebApplicationException(e.getMessage(), e.getStatusCode());
+		}
+				
 		return Response.ok()
 				.entity(token)
-				.build();
-	}
-	
-	@GET
-	@Path("/user/{userId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUserInfo(@PathParam(value="userId") String userId) {		
-		
-		//String subject = securityContext.getUserPrincipal().getName();
-		
-		//Token token = salesforceService.findToken(subject, userId);
-		
-		User user = new User();
-		
-		return Response.ok()
-				.entity(user)
-				.build();
-	}
-	
-	@GET
-	@Path("/user/{userId}/describe")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response describe(@PathParam(value="userId") String userId) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		salesforceService.describe(subject, userId);
-		
-		return Response.ok()
-				.type(MediaType.APPLICATION_JSON)
 				.build();
 	}
 }

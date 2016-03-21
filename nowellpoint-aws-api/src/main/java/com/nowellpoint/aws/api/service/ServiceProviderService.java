@@ -55,11 +55,11 @@ public class ServiceProviderService extends AbstractDataService<ServiceProviderD
 	 * @return
 	 */
 	
-	public ServiceProviderDTO createServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
-		create(subject, resource, eventSource);
+	public ServiceProviderDTO createServiceProvider(ServiceProviderDTO resource) {
+		create(resource);
 
-		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( resource.getSubject(), ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
 		
 		return resource;
 	}

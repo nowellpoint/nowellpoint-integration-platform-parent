@@ -7,7 +7,6 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,12 +15,9 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.Identity;
-import com.nowellpoint.www.app.model.SalesforceProfile;
 import com.nowellpoint.www.app.model.ServiceProvider;
 
 import freemarker.log.Logger;
@@ -100,7 +96,7 @@ public class ServiceProviderController {
 		model.put("account", request.attribute("account"));
 		model.put("serviceProvider", provider);
 		
-		return new ModelAndView(model, "secure/".concat(provider.getServiceDetail().getConfigurationPage()));
+		return new ModelAndView(model, "secure/".concat(provider.getService().getConfigurationPage()));
 	}
 	
 	private static String saveServiceProvider(Request request, Response response) throws IOException {

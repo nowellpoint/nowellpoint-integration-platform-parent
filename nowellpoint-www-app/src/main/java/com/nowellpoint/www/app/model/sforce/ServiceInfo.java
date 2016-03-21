@@ -1,16 +1,9 @@
-package com.nowellpoint.aws.api.dto.sforce;
+package com.nowellpoint.www.app.model.sforce;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class ServiceProviderInfo implements Serializable {
+public class ServiceInfo {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -5192557167082668573L;
-
 	private String type;
 	
 	private String instanceId;
@@ -31,7 +24,7 @@ public class ServiceProviderInfo implements Serializable {
 	
 	private List<Sobject> sobjects;
 	
-	public ServiceProviderInfo() {
+	public ServiceInfo() {
 		
 	}
 
@@ -105,10 +98,6 @@ public class ServiceProviderInfo implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public List<Sobject> getSobjects() {

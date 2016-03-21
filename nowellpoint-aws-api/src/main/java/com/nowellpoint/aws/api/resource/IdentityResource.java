@@ -119,7 +119,10 @@ public class IdentityResource {
     public Response createIdentity(IdentityDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		identityService.createIdentity( subject, resource, uriInfo.getBaseUri() );
+		resource.setSubject(subject);
+		resource.setEventSource(uriInfo.getBaseUri());
+		
+		identityService.createIdentity( resource );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)

@@ -55,11 +55,11 @@ public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
 	 * @return the created project
 	 */
 	
-	public ProjectDTO createProject(String subject, ProjectDTO resource, URI eventSource) {
-		create(subject, resource, eventSource);
+	public ProjectDTO createProject(ProjectDTO resource) {
+		create(resource);
 		
-		hset( subject, ProjectDTO.class.getName().concat( resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( resource.getSubject(), ProjectDTO.class.getName().concat( resource.getId()), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
 		
 		return resource;
 	}

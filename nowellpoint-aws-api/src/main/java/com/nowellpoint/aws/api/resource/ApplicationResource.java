@@ -95,7 +95,10 @@ public class ApplicationResource {
 	public Response createApplication(ApplicationDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		applicationService.createApplication(subject, resource, uriInfo.getBaseUri());
+		resource.setSubject(subject);
+		resource.setEventSource(uriInfo.getBaseUri());
+		
+		applicationService.createApplication(resource);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ApplicationResource.class)

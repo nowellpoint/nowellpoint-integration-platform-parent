@@ -1,12 +1,6 @@
 package com.nowellpoint.www.app.model;
 
 public class Project extends BaseEntity {
-	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -4568819604209454827L;
 
 	private String name;
 	

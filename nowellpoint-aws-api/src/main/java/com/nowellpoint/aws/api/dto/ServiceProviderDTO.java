@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.api.dto;
 
-import com.nowellpoint.aws.data.mongodb.ServiceDetail;
-
 public class ServiceProviderDTO extends AbstractDTO {
 	
 	/**
@@ -32,7 +30,7 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private String languageLocaleKey;
 	
-	private ServiceDetail serviceDetail;
+	private ServiceDTO service;
 
 	public ServiceProviderDTO() {
 		
@@ -106,12 +104,12 @@ public class ServiceProviderDTO extends AbstractDTO {
 		this.price = price;
 	}
 	
-	public ServiceDetail getServiceDetail() {
-		return serviceDetail;
+	public ServiceDTO getService() {
+		return service;
 	}
 
-	public void setServiceDetail(ServiceDetail serviceDetail) {
-		this.serviceDetail = serviceDetail;
+	public void setService(ServiceDTO service) {
+		this.service = service;
 	}
 
 	public String getImage() {

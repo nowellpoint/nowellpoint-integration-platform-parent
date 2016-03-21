@@ -106,8 +106,10 @@ public class ProjectResource {
 		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
 		
 		resource.setOwner(owner);
+		resource.setSubject(subject);
+		resource.setEventSource(uriInfo.getBaseUri());
 		
-		projectService.createProject(subject, resource, uriInfo.getBaseUri());
+		projectService.createProject(resource);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ProjectResource.class)

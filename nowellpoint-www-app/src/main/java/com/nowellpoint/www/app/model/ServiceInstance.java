@@ -1,8 +1,14 @@
-package com.nowellpoint.www.app.model.sforce;
+package com.nowellpoint.www.app.model;
 
-import java.util.List;
+public class ServiceInstance {
+	
+	private String serviceProviderId;
 
-public class ServiceProviderInfo {
+	private String uom;
+	
+	private String configuration;
+	
+	private String description;
 	
 	private String type;
 	
@@ -18,14 +24,46 @@ public class ServiceProviderInfo {
 	
 	private Double price;
 	
-	private Boolean isSandbox;
-	
 	private String name;
 	
-	private List<Sobjects> sobjects;
+	private Identity owner;
 	
-	public ServiceProviderInfo() {
+	private Boolean isSandbox;
+	
+	public ServiceInstance() {
 		
+	}
+	
+	public String getServiceProviderId() {
+		return serviceProviderId;
+	}
+
+	public void setServiceProviderId(String serviceProviderId) {
+		this.serviceProviderId = serviceProviderId;
+	}
+
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
+	public String getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(String configuration) {
+		this.configuration = configuration;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getType() {
@@ -42,6 +80,14 @@ public class ServiceProviderInfo {
 
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
+	}
+
+	public Identity getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Identity owner) {
+		this.owner = owner;
 	}
 
 	public String getInstanceName() {
@@ -84,14 +130,6 @@ public class ServiceProviderInfo {
 		this.price = price;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
-	}
-
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -100,11 +138,11 @@ public class ServiceProviderInfo {
 		this.name = name;
 	}
 
-	public List<Sobjects> getSobjects() {
-		return sobjects;
+	public Boolean getIsSandbox() {
+		return isSandbox;
 	}
 
-	public void setSobjects(List<Sobjects> sobjects) {
-		this.sobjects = sobjects;
-	}
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}	
 }
