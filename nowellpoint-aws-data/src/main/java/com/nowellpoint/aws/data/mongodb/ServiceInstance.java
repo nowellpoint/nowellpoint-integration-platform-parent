@@ -44,6 +44,8 @@ public class ServiceInstance extends AbstractDocument {
 	private String name;
 	
 	private String description;
+	
+	private User owner;
 
 	public ServiceInstance() {
 		
@@ -151,5 +153,13 @@ public class ServiceInstance extends AbstractDocument {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 }

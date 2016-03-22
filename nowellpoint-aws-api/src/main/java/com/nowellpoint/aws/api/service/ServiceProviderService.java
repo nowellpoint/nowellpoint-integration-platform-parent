@@ -13,7 +13,7 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
-public class ServiceProviderService extends AbstractDataService<ServiceProviderDTO, ServiceProvider> {
+public class ServiceProviderService extends AbstractDocumentService<ServiceProviderDTO, ServiceProvider> {
 	
 	public ServiceProviderService() {
 		super(ServiceProviderDTO.class, ServiceProvider.class);

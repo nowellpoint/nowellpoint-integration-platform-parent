@@ -18,30 +18,23 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.Block;
 import com.mongodb.DBRef;
+import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
-import com.nowellpoint.aws.data.dynamodb.Event;
-import com.nowellpoint.aws.data.dynamodb.EventAction;
-import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.User;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public abstract class AbstractDataService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {
+public abstract class AbstractDocumentService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {
 	
-	private static final Logger LOGGER = Logger.getLogger(AbstractDataService.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractDocumentService.class);
 	
-	protected final ModelMapper modelMapper;
-	
-	private final DynamoDBMapper dynamoDBMapper;
+	protected final ModelMapper modelMapper = new ModelMapper();
 	
 	private final Class<R> resourceType;
 	
@@ -53,15 +46,11 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	 * @param documentType
 	 */
 	
-	public AbstractDataService(Class<R> resourceType, Class<D> documentType) {		
+	public AbstractDocumentService(Class<R> resourceType, Class<D> documentType) {		
 		this.resourceType = resourceType;
 		this.documentType = documentType;
 		
-		this.modelMapper = new ModelMapper();
-		this.dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
-		
-		configureModelMapper(this.modelMapper);
-		
+		configureModelMapper();
 	}
 	
 	/**
@@ -69,7 +58,7 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	 * @param modelMapper
 	 */
 	
-	private void configureModelMapper(ModelMapper modelMapper) {
+	private void configureModelMapper() {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
 		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
@@ -112,14 +101,29 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 
 			@Override
 			protected User convert(IdentityDTO source) {
-				System.out.println("here: "+ source.getHref());
+				String collectionName = MongoDBDatastore.getCollectionName( Identity.class );
+				ObjectId id = null;
+				
 				User user = new User();
 				if (source != null) {					
 					user.setHref(source.getHref());
-					if (source.getId() != null) {
-						DBRef identity = new DBRef( MongoDBDatastore.getCollectionName( Identity.class ), new ObjectId( source.getId() ) );
-						user.setIdentity(identity);
+					if (source.getId() == null) {
+						
+						Identity identity = MongoDBDatastore.getDatabase()
+								.getCollection( collectionName )
+								.withDocumentClass( Identity.class )
+								.find( eq ( "href", source.getHref() ) )
+								.first();
+						
+						id = identity.getId();
+						
+					} else {
+						id = new ObjectId( source.getId() );
 					}
+
+					DBRef reference = new DBRef( collectionName, id );
+					user.setIdentity(reference);
+
 				}
 				
 				return user; 
@@ -187,27 +191,15 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	protected R create(R resource) {
 		AbstractDocument document = modelMapper.map( resource, documentType );
 		
-		document.setId(new ObjectId());
 		document.setCreatedDate(Date.from(Instant.now()));
 		document.setLastModifiedDate(Date.from(Instant.now()));
 		document.setCreatedById(resource.getSubject());
 		document.setLastModifiedById(resource.getSubject());
 		
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(resource.getSubject())
-					.withEventAction(EventAction.CREATE)
-					.withEventSource(resource.getEventSource())
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(document)
-					.withType(document.getClass())
-					.build();
-			
-			dynamoDBMapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Create Document exception", e.getCause() );
+		try {
+			MongoDBDatastore.insertOne( document );
+		} catch (MongoException e) {
+			LOGGER.error( "Create Document exception", e.getCause());
 			throw new WebApplicationException(e);
 		}
 		
@@ -230,21 +222,10 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 		document.setLastModifiedDate(Date.from(Instant.now()));
 		document.setLastModifiedById(subject);
 		
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.UPDATE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(document)
-					.withType(document.getClass())
-					.build();
-			
-			dynamoDBMapper.save(event);
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Update Document exception", e.getCause() );
+		try {
+			MongoDBDatastore.replaceOne( document );
+		} catch (MongoException e) {
+			LOGGER.error( "Update Document exception", e.getCause());
 			throw new WebApplicationException(e);
 		}
 				
@@ -263,22 +244,11 @@ public abstract class AbstractDataService<R extends AbstractDTO, D extends Abstr
 	protected void delete(String subject, R resource, URI eventSource) {		
 		AbstractDocument document = modelMapper.map( resource, documentType );
 		
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.DELETE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(document)
-					.withType(document.getClass())
-					.build();
-			
-			dynamoDBMapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Delete Document exception", e.getCause() );
-			throw new WebApplicationException( e, Status.INTERNAL_SERVER_ERROR );
+		try {
+			MongoDBDatastore.deleteOne( document );
+		} catch (MongoException e) {
+			LOGGER.error( "Delete Document exception", e.getCause());
+			throw new WebApplicationException(e);
 		}
 	}
 }

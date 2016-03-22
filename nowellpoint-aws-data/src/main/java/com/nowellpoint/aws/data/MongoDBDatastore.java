@@ -16,7 +16,6 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
@@ -62,11 +61,11 @@ public class MongoDBDatastore implements ServletContextListener {
 		return mongoDatabase;
 	}
 	
-	public static void replaceOne(AbstractDocument document) throws JsonProcessingException {	
+	public static void replaceOne(AbstractDocument document) {	
 		getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
 	}
 	
-	public static void insertOne(AbstractDocument document) throws JsonProcessingException {
+	public static void insertOne(AbstractDocument document) {
 		getCollection( document ).insertOne( document );
 	}
 	

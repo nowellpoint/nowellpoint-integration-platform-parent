@@ -6,7 +6,7 @@ import java.util.Set;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.data.mongodb.Application;
 
-public class ApplicationService extends AbstractDataService<ApplicationDTO, Application> {
+public class ApplicationService extends AbstractDocumentService<ApplicationDTO, Application> {
 	
 	public ApplicationService() {
 		super(ApplicationDTO.class, Application.class);

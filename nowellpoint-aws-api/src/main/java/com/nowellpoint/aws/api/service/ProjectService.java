@@ -20,7 +20,7 @@ import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.mongodb.Project;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-public class ProjectService extends AbstractDataService<ProjectDTO, Project> {
+public class ProjectService extends AbstractDocumentService<ProjectDTO, Project> {
 	
 	private static final Logger LOGGER = Logger.getLogger(ProjectService.class);
 	

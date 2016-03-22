@@ -5,7 +5,7 @@ import java.util.Set;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
-public class ServiceInstanceService extends AbstractDataService<ServiceInstanceDTO, ServiceInstance> {
+public class ServiceInstanceService extends AbstractDocumentService<ServiceInstanceDTO, ServiceInstance> {
 
 	public ServiceInstanceService() {
 		super(ServiceInstanceDTO.class, ServiceInstance.class);

@@ -25,7 +25,7 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.Photos;
 
-public class IdentityService extends AbstractDataService<IdentityDTO, Identity> {
+public class IdentityService extends AbstractDocumentService<IdentityDTO, Identity> {
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityService.class);
 	

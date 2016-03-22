@@ -40,47 +40,20 @@
                                 </div>
                                 <div id="collapseOne" class="panel-collapse collapse in">
                                     <div class="panel-body">
-
-                                        <form class="form-vertical" role="form" method="post" action="/app/services">
-                                            <dl class="dl-horizontal">
-                                                <dt>${name}</dt>
-                                                <dd>${(serviceProvider.service.serviceInfo.name)!}</dd>
-                                                <dt>${instanceId}</dt>
-                                                <dd>${(serviceProvider.service.serviceInfo.instanceId)!}</dd>
-                                                <dt>${instanceName}</dt>
-                                                <dd>${(serviceProvider.service.serviceInfo.instanceName)!}</dd>
-                                                <dt>${instanceUrl}</dt>
-                                                <dd>${(serviceProvider.service.serviceInfo.instanceUrl)!}</dd>
-                                                <dt>${accountLabel}</dt>
-                                                <dd>${(serviceProvider.service.serviceInfo.account)!}</dd>
-                                                <dt>${isSandbox}</dt>
-                                                <dd>${(serviceProvider.service.serviceInfo.isSandbox?string('Yes', 'No'))!}</dd>
-                                            </dl>
-
-                                            <input type="hidden" name="id" id="id" value="" />
-                                            <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${(serviceProvider.id)!}" />
-                                            <input type="hidden" name="type" id="type" value="${(serviceProvider.type)!}" />
-                                            <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProvider.service.serviceInfo.instanceId)!}" />
-                                            <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProvider.service.serviceInfo.instanceName)!}" />
-                                            <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProvider.service.serviceInfo.instanceUrl)!}" />
-                                            <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProvider.service.serviceInfo.organization.isSandbox?string)!}" />
-                                            <input type="hidden" name="name" id="name" value="${(serviceProvider.service.serviceInfo.name)!}" />
-                                            <input type="hidden" name="account" id="account" value="${(serviceProvider.service.serviceInfo.account)!}" />
-                                            <input type="hidden" name="price" id="price" value="${(serviceProvider.price?string)!}" />
-                                            <input type="hidden" name="uom" id="uom" value="${(serviceProvider.uom)!}" />
-
-                                            <div class="pull-right">
-                                                <a href="/app/providers">${cancel}</a>&nbsp;
-                                                <#if !(serviceProvider.service.serviceInfo)??>
-                                                    <a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a>
-                                                </#if>
-                                                <#if (serviceProvider.service.serviceInfo)??>
-                                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${addService}</button>
-                                                </#if>
-                                            </div>
-
-                                        </form>
-
+                                        <dl class="dl-horizontal">
+                                            <dt>${name}</dt>
+                                            <dd>${(serviceProvider.service.serviceInfo.name)!}</dd>
+                                            <dt>${instanceId}</dt>
+                                            <dd>${(serviceProvider.service.serviceInfo.instanceId)!}</dd>
+                                            <dt>${instanceName}</dt>
+                                            <dd>${(serviceProvider.service.serviceInfo.instanceName)!}</dd>
+                                            <dt>${instanceUrl}</dt>
+                                            <dd>${(serviceProvider.service.serviceInfo.instanceUrl)!}</dd>
+                                            <dt>${accountLabel}</dt>
+                                            <dd>${(serviceProvider.service.serviceInfo.account)!}</dd>
+                                            <dt>${isSandbox}</dt>
+                                            <dd>${(serviceProvider.service.serviceInfo.isSandbox?string('Yes', 'No'))!}</dd>
+                                        </dl>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +61,6 @@
                             <br>
 
                             <#if (serviceProvider.service.serviceInfo.sobjects)??>
-
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                         <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">2. ${selectSObjects}</a></h4>
@@ -111,10 +83,33 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </#if>
+                            
+                            <br>
 
+                            <form class="form-vertical" role="form" method="post" action="/app/services">
+                                <input type="hidden" name="id" id="id" value="" />
+                                <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${(serviceProvider.id)!}" />
+                                <input type="hidden" name="type" id="type" value="${(serviceProvider.type)!}" />
+                                <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProvider.service.serviceInfo.instanceId)!}" />
+                                <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProvider.service.serviceInfo.instanceName)!}" />
+                                <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProvider.service.serviceInfo.instanceUrl)!}" />
+                                <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProvider.service.serviceInfo.organization.isSandbox?string)!}" />
+                                <input type="hidden" name="name" id="name" value="${(serviceProvider.service.serviceInfo.name)!}" />
+                                <input type="hidden" name="account" id="account" value="${(serviceProvider.service.serviceInfo.account)!}" />
+                                <input type="hidden" name="price" id="price" value="${(serviceProvider.price?string)!}" />
+                                <input type="hidden" name="uom" id="uom" value="${(serviceProvider.uom)!}" />
 
+                                <div class="pull-right">
+                                    <a href="/app/providers">${cancel}</a>&nbsp;
+                                    <#if !(serviceProvider.service.serviceInfo)??>
+                                        <a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a>
+                                    </#if>
+                                    <#if (serviceProvider.service.serviceInfo)??>
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${addService}</button>
+                                    </#if>
+                                </div>
+                            </form>
 
                         </div>
                     </div>

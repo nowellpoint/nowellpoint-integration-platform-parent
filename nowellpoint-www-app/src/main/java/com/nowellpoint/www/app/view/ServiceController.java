@@ -16,7 +16,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Identity;
-import com.nowellpoint.www.app.model.Project;
 import com.nowellpoint.www.app.model.ServiceInstance;
 
 import freemarker.log.Logger;
@@ -63,6 +62,7 @@ public class ServiceController {
 		serviceInstance.setName(request.queryParams("name"));
 		serviceInstance.setPrice(Double.valueOf(request.queryParams("price")));
 		serviceInstance.setUom(request.queryParams("uom"));
+		serviceInstance.setServiceProviderId(request.queryParams("serviceProviderId"));
 		serviceInstance.setOwner(owner);
 		
 		HttpResponse httpResponse = null;

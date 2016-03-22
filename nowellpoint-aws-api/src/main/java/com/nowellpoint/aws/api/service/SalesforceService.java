@@ -12,6 +12,8 @@ import org.jboss.logging.Logger;
 import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
 import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
 import com.nowellpoint.aws.api.exception.ServiceException;
+import com.nowellpoint.aws.data.mongodb.SalesforceInstance;
+import com.nowellpoint.aws.data.mongodb.sforce.Contact;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -111,6 +113,37 @@ public class SalesforceService extends AbstractCacheService {
 		serviceInfo.setIsSandbox(organization.getIsSandbox());
 		serviceInfo.setName(organization.getName());
 		serviceInfo.setSobjects(result.getSobjects());
+		
+		SalesforceInstance salesforceInstance = new SalesforceInstance();
+		salesforceInstance.setDefaultLocaleSidKey(organization.getDefaultLocaleSidKey());
+		salesforceInstance.setDivision(organization.getDivision());
+		salesforceInstance.setFax(organization.getFax());
+		salesforceInstance.setFiscalYearStartMonth(organization.getFiscalYearStartMonth());
+		salesforceInstance.setInstanceName(organization.getInstanceName());
+		salesforceInstance.setLanguageLocaleKey(organization.getLanguageLocaleKey());
+		salesforceInstance.setName(organization.getName());
+		salesforceInstance.setOrganizationType(organization.getOrganizationType());
+		salesforceInstance.setPhone(organization.getPhone());
+		salesforceInstance.setPrimaryContact(organization.getPrimaryContact());
+		
+		Contact contact = new Contact();
+		contact.setActive(identity.getActive());
+		contact.setCity(identity.getAddrCity());
+		contact.setCountry(identity.getAddrCountry());
+		contact.setDisplayName(identity.getDisplayName());
+		contact.setEmail(identity.getEmail());
+		contact.setFirstName(identity.getFirstName());
+		contact.setLanguage(identity.getLanguage());
+		contact.setLastName(identity.getLastName());
+		contact.setLocale(identity.getLocale());
+		contact.setMobilePhone(identity.getMobilePhone());
+		contact.setNickName(identity.getNickName());
+		contact.setState(identity.getAddrState());
+		contact.setStreet(identity.getAddrStreet());
+		contact.setUsername(identity.getUsername());
+		contact.setZipPostalCode(identity.getAddrZip());
+		
+		salesforceInstance.addContact(contact);
 		
 		return serviceInfo;
 	}
