@@ -1,16 +1,11 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.api.bus.ServiceInstanceMessageListener;
 import com.nowellpoint.aws.data.ServiceInstanceCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
+import com.nowellpoint.aws.data.annotation.Document;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@MessageHandler(
-		queueName="MONGODB_SERVICE_INSTANCE_COLLECTION_QUEUE", 
-		collectionName="service.instances", 
-		messageListener=ServiceInstanceMessageListener.class, 
-		codec=ServiceInstanceCodec.class)
+@Document(collectionName="service.instances", codec=ServiceInstanceCodec.class)
 public class ServiceInstance extends AbstractDocument {
 
 	/**

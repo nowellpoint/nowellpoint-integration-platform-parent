@@ -5,15 +5,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.aws.api.bus.IdentityMessageListener;
 import com.nowellpoint.aws.data.IdentityCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
+import com.nowellpoint.aws.data.annotation.Document;
 
-@MessageHandler(
-		queueName="MONGODB_IDENTITY_COLLECTION_QUEUE", 
-		collectionName="identities", 
-		messageListener=IdentityMessageListener.class, 
-		codec=IdentityCodec.class)
+@Document(collectionName="identities", codec=IdentityCodec.class)
 public class Identity extends AbstractDocument {
 
 	/**

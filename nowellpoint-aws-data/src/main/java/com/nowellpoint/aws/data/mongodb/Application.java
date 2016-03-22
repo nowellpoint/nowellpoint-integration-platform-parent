@@ -4,11 +4,10 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.aws.api.bus.ApplicationMessageListener;
 import com.nowellpoint.aws.data.ApplicationCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
+import com.nowellpoint.aws.data.annotation.Document;
 
-@MessageHandler(queueName="MONGODB_APPLICATION_COLLECTION_QUEUE", collectionName="applications", messageListener=ApplicationMessageListener.class, codec=ApplicationCodec.class)
+@Document(collectionName="applications", codec=ApplicationCodec.class)
 public class Application extends AbstractDocument implements Serializable {
 	
 	/**

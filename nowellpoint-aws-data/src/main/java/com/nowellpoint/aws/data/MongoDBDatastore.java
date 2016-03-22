@@ -22,7 +22,6 @@ import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -86,7 +85,7 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static <T extends AbstractDocument> String getCollectionName(Class<T> type) {
-		return type.getAnnotation(MessageHandler.class).collectionName();
+		return type.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
 	}
 	
 	@SuppressWarnings("unchecked")

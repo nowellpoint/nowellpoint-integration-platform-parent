@@ -25,6 +25,7 @@ import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.data.mongodb.Identity;
@@ -138,7 +139,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected R find(String id) {		
-		String collectionName = documentType.getAnnotation(MessageHandler.class).collectionName();
+		String collectionName = documentType.getAnnotation(Document.class).collectionName();
 
 		D document = MongoDBDatastore.getDatabase().getCollection( collectionName )
 				.withDocumentClass( documentType )
@@ -161,7 +162,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected Set<R> findAllByOwner(String subject) {		
-		String collectionName = documentType.getAnnotation(MessageHandler.class).collectionName();
+		String collectionName = documentType.getAnnotation(Document.class).collectionName();
 		
 		FindIterable<D> documents = MongoDBDatastore.getDatabase()
 				.getCollection( collectionName )

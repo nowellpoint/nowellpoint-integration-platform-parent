@@ -4,17 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.api.bus.ServiceInstanceMessageListener;
 import com.nowellpoint.aws.data.ServiceInstanceCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
+import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.sforce.Contact;
 
-@MessageHandler(
-		queueName="MONGODB_SERVICE_INSTANCE_COLLECTION_QUEUE", 
-		collectionName="service.instances", 
-		messageListener=ServiceInstanceMessageListener.class, 
-		codec=ServiceInstanceCodec.class)
-
+@Document(collectionName="service.instances", codec=ServiceInstanceCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceInstance extends AbstractDocument {
 

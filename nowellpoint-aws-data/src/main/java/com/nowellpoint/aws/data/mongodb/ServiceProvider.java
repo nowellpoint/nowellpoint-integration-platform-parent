@@ -3,17 +3,11 @@ package com.nowellpoint.aws.data.mongodb;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.api.bus.ServiceProviderMessageListener;
 import com.nowellpoint.aws.data.ServiceProviderCodec;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
+import com.nowellpoint.aws.data.annotation.Document;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@MessageHandler(
-		queueName="MONGODB_SERVICE_PROVIDER_COLLECTION_QUEUE", 
-		collectionName="service.providers", 
-		messageListener=ServiceProviderMessageListener.class, 
-		codec=ServiceProviderCodec.class)
-
+@Document(collectionName="service.providers", codec=ServiceProviderCodec.class)
 public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	/**

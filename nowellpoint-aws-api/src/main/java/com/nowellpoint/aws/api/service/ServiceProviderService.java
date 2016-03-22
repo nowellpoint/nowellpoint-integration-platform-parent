@@ -10,7 +10,7 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.MongoDBDatastore;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
+import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
 public class ServiceProviderService extends AbstractDocumentService<ServiceProviderDTO, ServiceProvider> {
@@ -24,7 +24,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 		
 		if (resources.isEmpty()) {
 			
-			String collectionName = ServiceProvider.class.getAnnotation(MessageHandler.class).collectionName();
+			String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
 			
 			FindIterable<ServiceProvider> documents = MongoDBDatastore.getDatabase()
 					.getCollection( collectionName )

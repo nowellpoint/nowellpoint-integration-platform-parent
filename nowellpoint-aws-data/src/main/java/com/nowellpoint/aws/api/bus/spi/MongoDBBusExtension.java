@@ -19,6 +19,7 @@ import org.bson.codecs.Codec;
 
 import com.nowellpoint.aws.api.bus.MongoDBQueueListener;
 import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 
 public class MongoDBBusExtension implements Extension {
@@ -32,13 +33,17 @@ public class MongoDBBusExtension implements Extension {
     private List<Codec<?>> codecs = new ArrayList<Codec<?>>();
     private Map<String,Class<?>> queueMap = new HashMap<String,Class<?>>();
     
-    public <T> void processAnnotatedType(@Observes @WithAnnotations({MessageHandler.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
+    public <T> void processAnnotatedType(@Observes @WithAnnotations({Document.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
     	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(MessageHandler.class)) {    
     		LOGGER.info("processAnnotatedType: " + type.getAnnotatedType().getJavaClass().getName());
     		try {
-    			MessageHandler messageHandler = type.getAnnotatedType().getJavaClass().getAnnotation(MessageHandler.class);
-				codecs.add((Codec<?>) messageHandler.codec().newInstance());
-				queueMap.put(messageHandler.queueName(), messageHandler.messageListener());
+    			Document document = type.getAnnotatedType().getJavaClass().getAnnotation(Document.class);
+    			codecs.add((Codec<?>) document.codec().newInstance());
+    			
+    			if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(MessageHandler.class)) {
+    				MessageHandler messageHandler = type.getAnnotatedType().getJavaClass().getAnnotation(MessageHandler.class);
+    				queueMap.put(messageHandler.queueName(), messageHandler.messageListener());
+    			}
 			} catch (InstantiationException | IllegalAccessException e) {
 				LOGGER.error(e);
 			}
