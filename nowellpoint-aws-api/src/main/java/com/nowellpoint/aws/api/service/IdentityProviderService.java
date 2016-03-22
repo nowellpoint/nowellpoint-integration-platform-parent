@@ -13,11 +13,30 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.model.admin.Properties;
 
+import com.stormpath.sdk.client.Clients;
+import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.client.ClientBuilder;
+import com.stormpath.sdk.tenant.*;
+import com.stormpath.sdk.application.*;
+
+
 public class IdentityProviderService {
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class.getName());
 	
 	public Token authenticate(String username, String password) {
+		ClientBuilder builder = Clients.builder();    
+
+		// Build the client instance that you will use throughout your application code
+		Client client = builder.build();
+		
+		Tenant tenant = client.getCurrentTenant();
+		ApplicationList applications = tenant.getApplications(
+		        Applications.where(Applications.name().eqIgnoreCase("Nowellpoint"))
+		);
+
+		Application application = applications.iterator().next();
+		
 		Token token = null;
 
 		try {

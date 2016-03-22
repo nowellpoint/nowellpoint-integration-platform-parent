@@ -16,27 +16,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly-swarm>1.0.0.Beta2</version.wildfly-swarm>
+		<version.wildfly-swarm>1.0.0.Beta4</version.wildfly-swarm>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-bom</artifactId>
-				<version>${aws.sdk.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
-		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>undertow</artifactId>
-			<version>${version.wildfly-swarm}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>jaxrs</artifactId>
@@ -52,8 +35,25 @@
 			<artifactId>jaxrs-multipart</artifactId>
 			<version>${version.wildfly-swarm}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.stormpath.sdk</groupId>
+			<artifactId>stormpath-sdk-api</artifactId>
+			<version>1.0.RC8.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.stormpath.sdk</groupId>
+			<artifactId>stormpath-sdk-httpclient</artifactId>
+			<version>1.0.RC8.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.stormpath.sdk</groupId>
+			<artifactId>stormpath-sdk-oauth</artifactId>
+			<version>1.0.RC8.5</version>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>swagger</artifactId> 
-			<version>1.0.0.Beta1</version> </dependency> -->
+			<version>1.0.0.Beta3</version> </dependency> -->
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>weld</artifactId>
@@ -69,11 +69,6 @@
 			<artifactId>modelmapper</artifactId>
 			<version>0.7.5</version>
 		</dependency>
-		<dependency>
-    <groupId>org.logback-extensions</groupId>
-    <artifactId>logback-ext-loggly</artifactId>
-    <version>0.1.2</version>
-</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>nowellpoint-aws-idp</artifactId>
@@ -91,7 +86,7 @@
 			<plugin>
 				<groupId>org.wildfly.swarm</groupId>
 				<artifactId>wildfly-swarm-plugin</artifactId>
-				<version>${version.wildfly-swarm}</version>
+				<version>1.0.0.Beta6</version>
 				<configuration>
 					<mainClass>com.nowellpoint.aws.api.Main</mainClass>
 				</configuration>
