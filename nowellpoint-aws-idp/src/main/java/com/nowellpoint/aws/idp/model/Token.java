@@ -28,6 +28,14 @@ public class Token implements Serializable {
 	public Token() {
 		
 	}
+	
+	private Token(TokenBuilder builder) {
+		this.access_token = builder.access_token;
+		this.expires_in = builder.expires_in;
+		this.refresh_token = builder.refresh_token;
+		this.stormpath_access_token_href = builder.stormpath_access_token_href;
+		this.token_type = builder.token_type;
+	}
 
 	public String getAccessToken() {
 		return access_token;
@@ -76,5 +84,51 @@ public class Token implements Serializable {
 				+ ", expires_in=" + expires_in
 				+ ", stormpath_access_token_href="
 				+ stormpath_access_token_href + "]";
+	}
+	
+	public static TokenBuilder builder() {
+		return new Token().new TokenBuilder();
+	}
+	
+	public class TokenBuilder {
+		
+		private String access_token;
+		
+		private String refresh_token;
+		
+		private String token_type;
+		
+		private Long expires_in;
+		
+		private String stormpath_access_token_href;
+
+		public TokenBuilder setAccessToken(String access_token) {
+			this.access_token = access_token;
+			return this;
+		}
+
+		public TokenBuilder setRefreshToken(String refresh_token) {
+			this.refresh_token = refresh_token;
+			return this;
+		}
+
+		public TokenBuilder setTokenType(String token_type) {
+			this.token_type = token_type;
+			return this;
+		}
+
+		public TokenBuilder setExpiresIn(Long expires_in) {
+			this.expires_in = expires_in;
+			return this;
+		}
+
+		public TokenBuilder setStormpathAccessTokenHref(String stormpath_access_token_href) {
+			this.stormpath_access_token_href = stormpath_access_token_href;
+			return this;
+		}
+		
+		public Token build() {
+			return new Token(this);
+		}
 	}
 }

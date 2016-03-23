@@ -34,7 +34,7 @@ public class MongoDBBusExtension implements Extension {
     private Map<String,Class<?>> queueMap = new HashMap<String,Class<?>>();
     
     public <T> void processAnnotatedType(@Observes @WithAnnotations({Document.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
-    	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(MessageHandler.class)) {    
+    	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(Document.class)) {    
     		LOGGER.info("processAnnotatedType: " + type.getAnnotatedType().getJavaClass().getName());
     		try {
     			Document document = type.getAnnotatedType().getJavaClass().getAnnotation(Document.class);

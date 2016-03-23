@@ -38,7 +38,7 @@ public class MongoDBDatastore implements ServletContextListener {
 	
 	public static void registerCodecs(List<Codec<?>> codecs) {
 		
-		codecs.add(new IsoCountryCodec());
+		//codecs.add(new IsoCountryCodec());
 		
 		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(codecs));
 		

@@ -1,5 +1,9 @@
 package com.nowellpoint.aws.data.mongodb;
 
+import com.nowellpoint.aws.data.IsoCountryCodec;
+import com.nowellpoint.aws.data.annotation.Document;
+
+@Document(collectionName="iso.countries", codec=IsoCountryCodec.class)
 public class IsoCountry extends AbstractDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
