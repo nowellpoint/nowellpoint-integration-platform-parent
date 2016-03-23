@@ -15,7 +15,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -50,8 +49,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 			String subject = null;
 			
 			try {
-				String key = System.getProperty(Properties.STORMPATH_API_KEY_SECRET);
-				subject = TokenParser.parseToken(key, bearerToken);
+				subject = TokenParser.parseToken(bearerToken);
 			} catch (MalformedJwtException e) {
 				throw new NotAuthorizedException("Invalid token. Bearer token is invalid");
 			} catch (SignatureException e) {

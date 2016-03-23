@@ -8,6 +8,10 @@ import java.util.Base64;
 
 public class TokenParser {
 	
+	public static String parseToken(String token) {
+		return parseToken(System.getProperty("stormpath.api.key.secret"), token);
+	}
+	
 	public static String parseToken(String key, String token) {
 		Jws<Claims> claims = Jwts.parser()
 				.setSigningKey(Base64.getUrlEncoder().encodeToString(key.getBytes()))

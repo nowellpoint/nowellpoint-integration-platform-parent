@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.tools.TokenParser;
-import com.stormpath.sdk.oauth.JwtAuthenticationRequest;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.HttpServletRequestUtil;
