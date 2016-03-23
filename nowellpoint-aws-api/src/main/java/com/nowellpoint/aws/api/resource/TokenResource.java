@@ -112,6 +112,8 @@ public class TokenResource {
 		
 		String bearerToken = HttpServletRequestUtil.getBearerToken(servletRequest);
 		
+		identityProviderService.verify(bearerToken);
+		
 		//
 		// build the token verification request
 		//
