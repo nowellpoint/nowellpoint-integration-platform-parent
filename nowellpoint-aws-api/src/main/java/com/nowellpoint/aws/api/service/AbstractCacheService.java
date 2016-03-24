@@ -41,12 +41,29 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * @param key
+	 * @param expire
+	 * @param value
+	 */
+	
+	protected void setex(String key, int expire, Object value) {
+		Jedis jedis = cacheManager.getCache();
+		try {
+			jedis.setex(key.getBytes(), expire, serialize(value));
+		} finally {
+			jedis.close();
+		}
+		
+	}
+	
+	/**
+	 * 
 	 * @param <T>
 	 * @param key
 	 * @return
 	 */
 	
-	protected <T extends AbstractDTO> T get(Class<T> type, String key) {
+	protected <T> T get(Class<T> type, String key) {
 		Jedis jedis = cacheManager.getCache();
 		byte[] bytes = null;
 		try {
@@ -60,6 +77,20 @@ public abstract class AbstractCacheService {
 			value = deserialize(bytes, type);
 		}
 		return value;
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 */
+	
+	protected void del(String key) {
+		Jedis jedis = cacheManager.getCache();
+		try {
+			jedis.del(key.getBytes());
+		} finally {
+			jedis.close();
+		}
 	}
 	
 	/**
@@ -148,7 +179,7 @@ public abstract class AbstractCacheService {
 	 * @return
 	 */
 	
-	protected <T extends AbstractDTO> Set<T> hscan(String key, Class<T> type) {
+	protected <T> Set<T> hscan(String key, Class<T> type) {
 		Jedis jedis = cacheManager.getCache();
 		ScanParams params = new ScanParams();
 	    params.match(type.getName().concat("*"));

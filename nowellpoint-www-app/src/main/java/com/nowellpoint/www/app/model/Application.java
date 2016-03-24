@@ -1,6 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-public class Application extends BaseEntity {
+public class Application extends Resource {
 	
 	/**
 	 * 

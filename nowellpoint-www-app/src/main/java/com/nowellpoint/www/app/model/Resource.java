@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class BaseEntity {
+public abstract class Resource {
 
 	/**
 	 * 
@@ -40,7 +40,7 @@ public abstract class BaseEntity {
 	
 	private Date lastModifiedDate;
 
-	public BaseEntity() {
+	public Resource() {
 		
 	}
 

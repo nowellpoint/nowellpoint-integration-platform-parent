@@ -6,7 +6,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 
-public class HttpServletRequestUtil {
+public class AuthorizationHeader {
 
 	public static String getBearerToken(HttpServletRequest servletRequest) throws BadRequestException {
 		

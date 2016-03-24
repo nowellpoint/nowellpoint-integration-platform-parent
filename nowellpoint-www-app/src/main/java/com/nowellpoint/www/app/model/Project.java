@@ -1,6 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-public class Project extends BaseEntity {
+public class Project extends Resource {
 
 	private String name;
 	

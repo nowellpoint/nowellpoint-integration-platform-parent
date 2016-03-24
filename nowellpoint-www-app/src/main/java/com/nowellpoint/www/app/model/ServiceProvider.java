@@ -1,6 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-public class ServiceProvider extends BaseEntity {
+public class ServiceProvider extends Resource {
 	
 	private String type;
 	

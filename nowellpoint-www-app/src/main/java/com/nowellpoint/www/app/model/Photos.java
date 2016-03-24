@@ -1,18 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-import java.io.Serializable;
-
-public class Photos implements Serializable {
-	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -8432369417826197600L;
-	
-	/**
-	 * 
-	 */
+public class Photos {
 	
 	private String profilePicture;
 	

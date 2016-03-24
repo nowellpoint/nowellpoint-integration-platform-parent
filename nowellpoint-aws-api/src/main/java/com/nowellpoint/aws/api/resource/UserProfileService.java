@@ -8,49 +8,38 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.logging.Logger;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.service.IdentityService;
-import com.nowellpoint.aws.data.dynamodb.Event;
-import com.nowellpoint.aws.data.dynamodb.EventAction;
-import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.Photos;
-import com.nowellpoint.aws.idp.model.Account;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 @Path("/user-profile")
 public class UserProfileService {
 	
-	private static final Logger LOGGER = Logger.getLogger(UserProfileService.class);
-	
 	@Inject
 	private IdentityService identityService;
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 	
 	@Context
 	private UriInfo uriInfo;
 	
 	@Context
 	private SecurityContext securityContext;
-	
-	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -73,47 +62,14 @@ public class UserProfileService {
     		@FormParam("state") String state,
     		@FormParam("postalCode") String postalCode,
     		@FormParam("countryCode") @NotEmpty String countryCode) {
-		
-		//
-		//
-		//
-		
+				
 		String subject = securityContext.getUserPrincipal().getName();
-		
-		//
-		//
-		//
-		
-		Event event = null;
 				
 		//
 		// update account
 		//
 		
-		Account account = new Account();
-		account.setGivenName(firstName);
-		account.setMiddleName(null);
-		account.setSurname(lastName);
-		account.setEmail(email);
-		account.setUsername(email);
-		account.setHref(subject);
-		
-		try {			
-			event = new EventBuilder()
-					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
-					.withEventAction(EventAction.UPDATE)
-					.withEventSource(uriInfo.getRequestUri())
-					.withPayload(account)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withType(Account.class)
-					.build();
-			
-			mapper.save( event );
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Parse Account Exception", e.getCause() );
-			throw new WebApplicationException( e, Status.BAD_REQUEST );
-		}
+		identityProviderService.updateAccount(firstName, null, lastName, email, email, subject);
 		
 		//
 		// update identity

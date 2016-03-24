@@ -37,6 +37,7 @@ public class Main {
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
         		.addPackage("com.nowellpoint.aws.api.dto")
+        		.addPackage("com.nowellpoint.aws.api.dto.idp")
         		.addPackage("com.nowellpoint.aws.api.dto.sforce")
         		.addPackage("com.nowellpoint.aws.api.event")
         		.addPackage("com.nowellpoint.aws.api.resource")

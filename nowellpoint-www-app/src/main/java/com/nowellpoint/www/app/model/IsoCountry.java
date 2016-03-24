@@ -1,8 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-public class IsoCountry extends BaseEntity {
-
-	private static final long serialVersionUID = 2884164327750192485L;
+public class IsoCountry extends Resource {
 	
 	private String language;
 	

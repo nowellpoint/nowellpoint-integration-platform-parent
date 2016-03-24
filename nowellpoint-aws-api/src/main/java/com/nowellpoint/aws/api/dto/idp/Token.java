@@ -1,12 +1,10 @@
-package com.nowellpoint.aws.idp.model;
+package com.nowellpoint.aws.api.dto.idp;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Token implements Serializable {
 
 	/**
