@@ -94,7 +94,7 @@ public class IdentityProviderService extends AbstractCacheService {
 	}
 	
 	public void updateAccount(String givenName, String middleName, String surname, String email, String username, String href) {
-		Account account = client.instantiate(Account.class);
+		Account account = client.getResource(href, Account.class);
 		account.setGivenName(givenName);
 		account.setMiddleName(middleName);
 		account.setSurname(surname);
