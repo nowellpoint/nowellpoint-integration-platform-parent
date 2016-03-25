@@ -1,1 +1,1 @@
-com.nowellpoint.aws.api.bus.spi.MongoDBBusExtension
+com.nowellpoint.mongo.spi.MongoPersistenceExtension

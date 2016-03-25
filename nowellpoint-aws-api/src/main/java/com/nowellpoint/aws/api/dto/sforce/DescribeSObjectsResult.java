@@ -15,7 +15,7 @@ public class DescribeSObjectsResult implements Serializable {
 	
 	private Integer maxBatchSize;
 	
-	private List<Sobject> sobjects;
+	private List<SObject> sobjects;
 	
 	public DescribeSObjectsResult() {
 		
@@ -37,11 +37,11 @@ public class DescribeSObjectsResult implements Serializable {
 		this.maxBatchSize = maxBatchSize;
 	}
 
-	public List<Sobject> getSobjects() {
+	public List<SObject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(List<Sobject> sobjects) {
+	public void setSobjects(List<SObject> sobjects) {
 		this.sobjects = sobjects;
 	}
 }

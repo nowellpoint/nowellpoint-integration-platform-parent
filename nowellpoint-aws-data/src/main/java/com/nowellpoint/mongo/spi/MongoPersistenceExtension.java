@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.api.bus.spi;
+package com.nowellpoint.mongo.spi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,13 +22,13 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.annotation.MessageHandler;
 
-public class MongoDBBusExtension implements Extension {
+public class MongoPersistenceExtension implements Extension {
 	
 	/**
      * 
      */
     
-    private static final Logger LOGGER = Logger.getLogger(MongoDBBusExtension.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MongoPersistenceExtension.class.getName());
     
     private List<Codec<?>> codecs = new ArrayList<Codec<?>>();
     private Map<String,Class<?>> queueMap = new HashMap<String,Class<?>>();

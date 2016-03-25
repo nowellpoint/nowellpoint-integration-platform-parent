@@ -21,6 +21,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.dto.idp.AccountDTO;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.service.IdentityService;
 import com.nowellpoint.aws.data.mongodb.Address;
@@ -69,7 +70,16 @@ public class UserProfileService {
 		// update account
 		//
 		
-		identityProviderService.updateAccount(firstName, null, lastName, email, email, subject);
+		
+		AccountDTO account = new AccountDTO();
+		account.setGivenName(firstName);
+		account.setMiddleName(null);
+		account.setSurname(lastName);
+		account.setEmail(email);
+		account.setUsername(email);
+		account.setHref(subject);
+
+		identityProviderService.updateAccount(account);
 		
 		//
 		// update identity

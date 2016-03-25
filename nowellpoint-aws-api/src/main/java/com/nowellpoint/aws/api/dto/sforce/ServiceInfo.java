@@ -29,7 +29,7 @@ public class ServiceInfo implements Serializable {
 	
 	private String name;
 	
-	private List<Sobject> sobjects;
+	private List<SObject> sobjects;
 	
 	public ServiceInfo() {
 		
@@ -107,11 +107,11 @@ public class ServiceInfo implements Serializable {
 		this.name = name;
 	}
 
-	public List<Sobject> getSobjects() {
+	public List<SObject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(List<Sobject> sobjects) {
+	public void setSobjects(List<SObject> sobjects) {
 		this.sobjects = sobjects;
 	}
 }

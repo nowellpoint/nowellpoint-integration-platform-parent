@@ -19,7 +19,7 @@ import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.mongodb.IsoCountry;
 
-@Path("/iso-country")
+@Path("/iso-countries")
 public class IsoCountryResource {
 	
 	private static final String COLLECTION_NAME = "iso.countries";

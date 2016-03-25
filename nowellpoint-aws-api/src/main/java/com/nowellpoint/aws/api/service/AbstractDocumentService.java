@@ -26,7 +26,6 @@ import com.nowellpoint.aws.api.dto.AbstractDTO;
 import com.nowellpoint.aws.api.dto.IdentityDTO;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.data.mongodb.User;

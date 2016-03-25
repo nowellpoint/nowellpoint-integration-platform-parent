@@ -41,8 +41,14 @@ public class IdentityProviderService extends AbstractCacheService {
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
 	}
 	
-	public Token authenticate(String username, String password) {	
-		
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return the Authentication token
+	 */
+	
+	public Token authenticate(String username, String password) {			
 		PasswordGrantRequest request = Oauth2Requests.PASSWORD_GRANT_REQUEST
 				.builder()
 				.setLogin(username)
@@ -69,7 +75,12 @@ public class IdentityProviderService extends AbstractCacheService {
         return token;
 	}
 	
-	public void createAccount(AccountDTO resource) {
+	/**
+	 * 
+	 * @param resource
+	 */
+	
+	public void createAccount(AccountDTO resource) {		
 		Account account = client.instantiate(Account.class);
 		account.setGivenName(resource.getGivenName());
 		account.setMiddleName(resource.getMiddleName());
@@ -81,30 +92,28 @@ public class IdentityProviderService extends AbstractCacheService {
 		application.createAccount(account);
 	}
 	
-	public void createAccount(String givenName, String middleName, String surname, String email, String username, String password) {
-		Account account = client.instantiate(Account.class);
-		account.setGivenName(givenName);
-		account.setMiddleName(middleName);
-		account.setSurname(surname);
-		account.setEmail(email);
-		account.setUsername(email);
-		account.setPassword(password);
-		account.setStatus(AccountStatus.UNVERIFIED);
-		application.createAccount(account);
-	}
+	/**
+	 * 
+	 * @param resource
+	 */
 	
-	public void updateAccount(String givenName, String middleName, String surname, String email, String username, String href) {
-		Account account = client.getResource(href, Account.class);
-		account.setGivenName(givenName);
-		account.setMiddleName(middleName);
-		account.setSurname(surname);
-		account.setEmail(email);
-		account.setUsername(email);
+	public void updateAccount(AccountDTO resource) {		
+		Account account = client.getResource(resource.getHref(), Account.class);
+		account.setGivenName(resource.getGivenName());
+		account.setMiddleName(resource.getMiddleName());
+		account.setSurname(resource.getSurname());
+		account.setEmail(resource.getEmail());
+		account.setUsername(resource.getEmail());
 		account.save();
 	}
 	
-	public AccountDTO getAccountBySubject(String subject) {
-		
+	/**
+	 * 
+	 * @param subject
+	 * @return
+	 */
+	
+	public AccountDTO getAccountBySubject(String subject) {		
 		AccountDTO resource = hget(AccountDTO.class, subject, AccountDTO.class.getName());
 		
 		if (resource == null) {
@@ -115,8 +124,13 @@ public class IdentityProviderService extends AbstractCacheService {
 		return resource;
 	}
 	
-	public Token refresh(String bearerToken) {
-		
+	/**
+	 * 
+	 * @param bearerToken
+	 * @return
+	 */
+	
+	public Token refresh(String bearerToken) {		
 		RefreshGrantRequest refreshRequest = Oauth2Requests.REFRESH_GRANT_REQUEST.builder()
 				  .setRefreshToken(bearerToken)
 				  .build();
@@ -137,8 +151,13 @@ public class IdentityProviderService extends AbstractCacheService {
         return token;
 	}
 	
-	public String verify(String bearerToken) {
-		
+	/**
+	 * 
+	 * @param bearerToken
+	 * @return
+	 */
+	
+	public String verify(String bearerToken) {		
 		JwtAuthenticationRequest request = Oauth2Requests.JWT_AUTHENTICATION_REQUEST.builder()
 				.setJwt(bearerToken)
 				.build();
@@ -151,6 +170,11 @@ public class IdentityProviderService extends AbstractCacheService {
 		return result.getJwt();
 	}
 	
+	/**
+	 * 
+	 * @param bearerToken
+	 */
+	
 	public void revoke(String bearerToken) {		
 		Optional.ofNullable(get(Token.class, bearerToken)).ifPresent(token -> {
 			del(bearerToken);
@@ -158,6 +182,12 @@ public class IdentityProviderService extends AbstractCacheService {
 			accessToken.delete();
 		});
 	}
+	
+	/**
+	 * 
+	 * @param account
+	 * @return
+	 */
 	
 	private AccountDTO getResource(Account account) {
 		AccountDTO resource = new AccountDTO();

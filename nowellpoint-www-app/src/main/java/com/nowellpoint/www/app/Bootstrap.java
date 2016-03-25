@@ -210,7 +210,7 @@ public class Bootstrap implements SparkApplication {
 		try {
 			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.path("iso-country")
+					.path("iso-countries")
 					.execute();
 			
 			return httpResponse.getEntityList(IsoCountry.class);

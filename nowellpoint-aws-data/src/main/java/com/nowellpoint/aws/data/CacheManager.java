@@ -22,6 +22,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.context.ApplicationScoped;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +37,8 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Protocol;
 
 @ApplicationScoped
-public class CacheManager {
+@WebListener
+public class CacheManager implements ServletContextListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -43,6 +47,16 @@ public class CacheManager {
 	private static Cipher cipher;
 	private static SecretKey secretKey;
 	private static IvParameterSpec iv;
+	
+	@Override
+	public void contextDestroyed(ServletContextEvent event) {
+		
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		getCache();
+	}
 	
 	@PostConstruct
 	public void postConstruct() {

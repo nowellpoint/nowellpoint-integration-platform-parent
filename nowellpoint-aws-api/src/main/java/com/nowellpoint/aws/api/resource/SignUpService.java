@@ -24,6 +24,7 @@ import org.jboss.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nowellpoint.aws.api.dto.idp.AccountDTO;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
@@ -110,13 +111,41 @@ public class SignUpService {
 		// create account
 		//
 		
-		identityProviderService.createAccount(
-				firstName, 
-				null, 
-				lastName, 
-				email, 
-				email, 
-				password);
+//		Account account = new Account();
+//		 -		account.setGivenName(firstName);
+//		 -		account.setMiddleName(null);
+//		 -		account.setSurname(lastName);
+//		 -		account.setEmail(email);
+//		 -		account.setUsername(email);
+//		 -		account.setPassword(password);
+//		 -		account.setStatus("UNVERIFIED");
+//		 -		
+//		 -		try {			
+//		 -			event = new EventBuilder()
+//		 -					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
+//		 -					.withEventAction(EventAction.CREATE)
+//		 -					.withEventSource(uriInfo.getRequestUri())
+//		 -					.withPayload(account)
+//		 -					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
+//		 -					.withType(Account.class)
+//		 -					.build();
+//		 -			
+//		 -			mapper.save( event );
+//		 -			
+//		 -		} catch (JsonProcessingException e) {
+//		 -			LOGGER.error( "Parse Account Exception", e.getCause() );
+//		 -			throw new WebApplicationException( e, Status.BAD_REQUEST );
+//		 -		}
+//		
+//		AccountDTO account = new AccountDTO();
+//		account.setGivenName(firstName);
+//		account.setMiddleName(null);
+//		account.setSurname(lastName);
+//		account.setEmail(email);
+//		account.setUsername(email);
+//		account.setPassword(password);
+//		
+//		identityProviderService.createAccount(account);
 			
 		//
 		// create identity
