@@ -38,14 +38,14 @@ public class Event implements Serializable {
 	@DynamoDBAttribute(attributeName="ProcessedDate")  
 	private Date processedDate;
 	
-	@DynamoDBAttribute(attributeName="Type")  
-	private String type;
-	
 	@DynamoDBAttribute(attributeName="Payload")
 	private String payload;
 	
 	@DynamoDBAttribute(attributeName="TargetId")
 	private String targetId;
+	
+	@DynamoDBAttribute(attributeName="TargetId")
+	private String type;
 	
 	@DynamoDBAttribute(attributeName="ExecutionTime")
 	private Long executionTime;
@@ -107,6 +107,15 @@ public class Event implements Serializable {
 	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
 	}
+	
+	@DoNotEncrypt
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	@DoNotEncrypt
 	public Date getProcessedDate() {
@@ -127,15 +136,6 @@ public class Event implements Serializable {
 	}
 
 	@DoNotEncrypt
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	@DoNotEncrypt
 	public String getSubject() {
 		return subject;
 	}
@@ -149,7 +149,6 @@ public class Event implements Serializable {
 	}
 
 	public void setPayload(String payload) {
-		System.out.println(payload);
 		this.payload = payload;
 	}
 

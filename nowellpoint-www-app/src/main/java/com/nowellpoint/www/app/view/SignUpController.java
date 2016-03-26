@@ -3,6 +3,7 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -43,20 +44,33 @@ public class SignUpController {
         	
         	if (request.queryParams("password").equals(request.queryParams("confirmPassword"))) {
         		      		
-        		StringBuilder body = new StringBuilder();
-    			request.queryParams().stream().limit(1).forEach(param -> {
-    				body.append(param).append("=").append(request.queryParams(param));
-    			});
-    			request.queryParams().stream().skip(1).forEach(param -> {
-    				body.append("&").append(param).append("=").append(request.queryParams(param));
-            	});
+        		String body = new StringBuilder()
+        				.append("leadSource=")
+        				.append(request.queryParams("leadSource"))
+        				.append("&firstName=")
+        				.append(URLEncoder.encode(request.queryParams("firstName"), "UTF-8"))
+        				.append("&lastName=")
+        				.append(URLEncoder.encode(request.queryParams("lastName"), "UTF-8"))
+        				.append("&email=")
+        				.append(request.queryParams("email"))
+        				.append("&phone=")
+        				.append(request.queryParams("phone"))
+        				.append("&company=")
+        				.append(URLEncoder.encode(request.queryParams("company"), "UTF-8"))
+        				.append("&title=")
+        				.append(URLEncoder.encode(request.queryParams("title"), "UTF-8"))
+        				.append("&countryCode=")
+        				.append(request.queryParams("countryCode"))
+        				.append("&password=")
+        				.append(URLEncoder.encode(request.queryParams("password"), "UTF-8"))
+        				.toString();
 	        	
 	    		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 	        			.header("x-api-key", System.getenv("NCS_API_KEY"))
 	        			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	        			.acceptCharset("UTF-8")
 	        			.path("signup")
-	        			.body(body.toString())
+	        			.body(body)
 	        			.execute();
 	        	
 	        	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());

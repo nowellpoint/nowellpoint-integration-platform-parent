@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.data.ProjectCodec;
 import com.nowellpoint.aws.data.annotation.Document;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="projects", codec=ProjectCodec.class)
 public class Project extends AbstractDocument {
 

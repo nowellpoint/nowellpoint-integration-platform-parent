@@ -81,7 +81,7 @@ public class EventBuilder {
 		if (propertyStore == null) {
 			throw new IllegalArgumentException("Missing Property Store value");
 		}
-		
+
 		return new Event(
 				type.getName(),
 				subject,

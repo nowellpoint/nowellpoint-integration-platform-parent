@@ -60,7 +60,7 @@ public class SearchAccount implements RequestHandler<SearchAccountRequest, Searc
 					.path("directories")
 					.path(request.getDirectoryId())
 					.path("accounts")
-					.path(query.toString())
+					.path(query)
 					.basicAuthorization(request.getApiKeyId(), request.getApiKeySecret())
 					.execute();
 				

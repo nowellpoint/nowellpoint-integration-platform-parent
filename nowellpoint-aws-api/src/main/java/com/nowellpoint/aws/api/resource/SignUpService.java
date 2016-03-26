@@ -1,11 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.time.Instant;
-import java.util.Date;
-
 import javax.annotation.security.PermitAll;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -24,15 +19,12 @@ import org.jboss.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nowellpoint.aws.api.dto.idp.AccountDTO;
-import com.nowellpoint.aws.api.service.IdentityProviderService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
-import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Identity;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.sforce.Lead;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 @Path("/signup")
@@ -43,21 +35,15 @@ public class SignUpService {
 	@Context
 	private UriInfo uriInfo;
 	
-	@Inject
-	private IdentityProviderService identityProviderService;
-	
-	@Context
-	private HttpServletRequest servletRequest;
-	
 	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 
+	@PermitAll
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@PermitAll
     public Response signUp(
     		@FormParam("leadSource") @NotEmpty String leadSource,
     		@FormParam("firstName") String firstName,
-    		@FormParam("lastName") @NotEmpty String lastName,
+    		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
     		@FormParam("email") @Email String email,
     		@FormParam("phone") String phone,
     		@FormParam("company") String company,
@@ -70,125 +56,35 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
     	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password) {
 		
-		//
-		//
-		//
+		ObjectNode signUp = new ObjectMapper().createObjectNode()
+				.put("leadSource", leadSource)
+				.put("firstName", firstName)
+				.put("lastName", lastName)
+				.put("email", email)
+				.put("phone", phone)
+				.put("company", company)
+				.put("title", title)
+				.put("countryCode", countryCode)
+				.put("password", password)
+				.put("username", email)
+				.putNull("middleName");
 		
-		Event event = null;
-		
-		//
-		// create lead
-		//
-		
-		Lead lead = new Lead();
-		lead.setLeadSource(leadSource);
-		lead.setFirstName(firstName);
-		lead.setLastName(lastName);
-		lead.setEmail(email);
-		lead.setPhone(phone);
-		lead.setCompany(company);
-		lead.setTitle(title);
-		lead.setCountryCode(countryCode);
-
 		try {			
-			event = new EventBuilder()
+			Event event = new EventBuilder()
 					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
-					.withEventAction(EventAction.ACTIVITY)
+					.withEventAction(EventAction.SIGN_UP)
 					.withEventSource(uriInfo.getBaseUri())
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(lead)
-					.withType(Lead.class)
+					.withPayload(signUp)
+					.withType(ObjectNode.class)
 					.build();
 				
 			mapper.save(event);
 				
 		} catch (JsonProcessingException e) {
-			LOGGER.error( "Parse Lead Exception", e.getCause() );
+			LOGGER.error( "Signup Exception", e.getCause() );
 			throw new WebApplicationException( e, Status.BAD_REQUEST );
 		}
-		
-		//
-		// create account
-		//
-		
-//		Account account = new Account();
-//		 -		account.setGivenName(firstName);
-//		 -		account.setMiddleName(null);
-//		 -		account.setSurname(lastName);
-//		 -		account.setEmail(email);
-//		 -		account.setUsername(email);
-//		 -		account.setPassword(password);
-//		 -		account.setStatus("UNVERIFIED");
-//		 -		
-//		 -		try {			
-//		 -			event = new EventBuilder()
-//		 -					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
-//		 -					.withEventAction(EventAction.CREATE)
-//		 -					.withEventSource(uriInfo.getRequestUri())
-//		 -					.withPayload(account)
-//		 -					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-//		 -					.withType(Account.class)
-//		 -					.build();
-//		 -			
-//		 -			mapper.save( event );
-//		 -			
-//		 -		} catch (JsonProcessingException e) {
-//		 -			LOGGER.error( "Parse Account Exception", e.getCause() );
-//		 -			throw new WebApplicationException( e, Status.BAD_REQUEST );
-//		 -		}
-//		
-//		AccountDTO account = new AccountDTO();
-//		account.setGivenName(firstName);
-//		account.setMiddleName(null);
-//		account.setSurname(lastName);
-//		account.setEmail(email);
-//		account.setUsername(email);
-//		account.setPassword(password);
-//		
-//		identityProviderService.createAccount(account);
-			
-		//
-		// create identity
-		//
-		
-		Identity identity = new Identity();
-		identity.setCreatedDate(Date.from(Instant.now()));
-		identity.setLastModifiedDate(Date.from(Instant.now()));
-		identity.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-		identity.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-		identity.setFirstName(firstName);
-		identity.setLastName(lastName);
-		identity.setEmail(email);
-		identity.setCompany(company);
-		identity.setTitle(title);
-		identity.setPhone(phone);
-		identity.setIsActive(Boolean.TRUE);
-		
-		Address address = new Address();
-		address.setCountryCode(countryCode);
-		
-		identity.setAddress(address);
-					
-		try {			
-			event = new EventBuilder()
-					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
-					.withEventAction(EventAction.SIGN_UP)
-					.withEventSource(uriInfo.getBaseUri())
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(identity)
-					.withType(Identity.class)
-					.build();
-				
-			mapper.save( event );
-				
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Parse Identity Exception", e.getCause() );
-			throw new WebApplicationException( e, Status.BAD_REQUEST );
-		}
-		
-		//
-		//
-		//
 		
 		return Response.ok().build();
 	}

@@ -4,9 +4,11 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.data.ApplicationCodec;
 import com.nowellpoint.aws.data.annotation.Document;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="applications", codec=ApplicationCodec.class)
 public class Application extends AbstractDocument implements Serializable {
 	

@@ -50,7 +50,15 @@ public class CacheManager implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
+		try {
+			jedisPool.destroy();
+        } catch (Exception e) {
+        	LOGGER.warning(String.format("Cannot properly close Jedis pool %s", e.getMessage()));
+        }
 		
+		LOGGER.info("disconnecting from cache...is connected: " + ! jedisPool.isClosed());
+		
+		jedisPool = null;
 	}
 
 	@Override
@@ -93,14 +101,7 @@ public class CacheManager implements ServletContextListener {
 	
 	@PreDestroy
 	public void preDestroy() {
-		try {
-			jedisPool.destroy();
-        } catch (Exception e) {
-        	LOGGER.warning(String.format("Cannot properly close Jedis pool %s", e.getMessage()));
-        }
-		jedisPool = null;
 		
-		LOGGER.info("disconnecting from cache...is connected: " + ! jedisPool.isClosed());
 	}
 	
 	/**
