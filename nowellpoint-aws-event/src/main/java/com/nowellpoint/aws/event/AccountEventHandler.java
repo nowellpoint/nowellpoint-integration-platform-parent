@@ -38,8 +38,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 		String apiKeyId = properties.get(Properties.STORMPATH_API_KEY_ID);
 		String apiKeySecret = properties.get(Properties.STORMPATH_API_KEY_SECRET);
 		
-//		final IdentityProviderClient identityProviderClient = new IdentityProviderClient();
-		
 		String href = null;
 		
 		if (EventAction.ACCOUNT.name().equals(event.getEventAction())) {
@@ -54,23 +52,6 @@ public class AccountEventHandler implements AbstractEventHandler {
 					.execute();
 			
 			SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
-			
-			//
-			// search for existing account with username
-			//
-			
-//			SearchAccountRequest searchAccountRequest = new SearchAccountRequest()
-//					.withDirectoryId(directoryId)
-//					.withApiEndpoint(apiEndpoint)
-//					.withApiKeyId(apiKeyId)
-//					.withApiKeySecret(apiKeySecret)
-//					.withUsername(account.getUsername());
-//			
-//			SearchAccountResponse searchAccountResponse = identityProviderClient.account(searchAccountRequest);
-//			
-//			logger.log(this.getClass().getName() + " account found: " + (searchAccountResponse.getSize() > 0));
-//			
-//			if (searchAccountResponse.getSize() == 0) {
 			
 			if (searchResult.getSize() == 0) {
 				
@@ -103,39 +84,8 @@ public class AccountEventHandler implements AbstractEventHandler {
 				
 				logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 				
-				//
-				// build the UpdateAccountRequest
-				//
-				
-//				UpdateAccountRequest updateAccountRequest = new UpdateAccountRequest()
-//						.withApiKeyId(apiKeyId)
-//						.withApiKeySecret(apiKeySecret)
-//						.withGivenName(account.getGivenName())
-//						.withEmail(account.getEmail())
-//						.withMiddleName(account.getMiddleName())
-//						.withSurname(account.getSurname())
-//						.withHref(searchAccountResponse.getItems().get(0).getHref());
-				
-				//
-				// execute the UpdateAccountRequest
-				//
-				
-//				UpdateAccountResponse updateAccountResponse = identityProviderClient.account(updateAccountRequest);	
-				
-				//
-				// throw exception for any issue with the identity provider
-				//
-				
-//				if (updateAccountResponse.getStatusCode() != 200) {
-//					throw new IOException(updateAccountResponse.getErrorMessage());
-//				}
-				
-//				href = updateAccountResponse.getAccount().getHref();
-				
 			}
 		} 
-
-		logger.log(this.getClass().getName() + " " + href);
 		
 		event.setProcessedDate(Date.from(Instant.now()));
 		event.setExecutionTime(System.currentTimeMillis() - event.getStartTime());
@@ -143,8 +93,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 		event.setTargetId(href);
 	}
 	
-	private void insertIdentityEvent(Event parentEvent, String username, String href) throws JsonProcessingException {	
-		
+	private void insertIdentityEvent(Event parentEvent, String username, String href) throws JsonProcessingException {		
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
 		Identity identity = new Identity();

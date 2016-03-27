@@ -44,7 +44,7 @@ public class Event implements Serializable {
 	@DynamoDBAttribute(attributeName="TargetId")
 	private String targetId;
 	
-	@DynamoDBAttribute(attributeName="TargetId")
+	@DynamoDBAttribute(attributeName="Type")
 	private String type;
 	
 	@DynamoDBAttribute(attributeName="ExecutionTime")

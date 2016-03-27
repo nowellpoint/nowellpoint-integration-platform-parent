@@ -3,12 +3,15 @@ package com.nowellpoint.aws.api.service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import javax.json.JsonObject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
 import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
 import com.nowellpoint.aws.api.exception.ServiceException;
@@ -113,6 +116,18 @@ public class SalesforceService extends AbstractCacheService {
 		serviceInfo.setIsSandbox(organization.getIsSandbox());
 		serviceInfo.setName(organization.getName());
 		serviceInfo.setSobjects(result.getSobjects());
+		
+		ObjectNode json = new ObjectMapper().createObjectNode()
+				.put("instanceUrl", token.getInstanceUrl())
+				.objectNode()
+				.putObject("organization")
+				.put("id", organization.getId())
+				.put("defaultLocaleSidKey", organization.getDefaultLocaleSidKey())
+				.put("division", organization.getDivision())
+				.put("fax", organization.getFax());
+		
+		LOGGER.info(json.toString());
+
 		
 		SalesforceInstance salesforceInstance = new SalesforceInstance();
 		salesforceInstance.setDefaultLocaleSidKey(organization.getDefaultLocaleSidKey());
@@ -253,9 +268,6 @@ public class SalesforceService extends AbstractCacheService {
 		Token token = hget( Token.class, subject, Token.class.getName().concat(userId) );
 		
 		try {
-			
-			// sobjects":"https://na1.salesforce.com/services/data/v{version}/sobjects/",
-			
 			HttpResponse httpResponse = RestResource.get(token.getInstanceUrl().concat("/services/data/v35.0/sobjects"))
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
@@ -295,6 +307,13 @@ public class SalesforceService extends AbstractCacheService {
 		}
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+		
+	}
+	
+	public void createOrUpdateTrigger() {
+		
+
+		
 		
 	}
 }
