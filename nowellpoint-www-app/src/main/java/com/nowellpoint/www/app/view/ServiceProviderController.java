@@ -35,12 +35,20 @@ public class ServiceProviderController {
 		
         get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/providers", (request, response) -> saveServiceProvider(request, response));
-        
         get("/app/providers/:id", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/providers", (request, response) -> saveServiceProvider(request, response));
         
         delete("/app/providers/:id", (request, response) -> deleteServiceProvider(request, response));
 	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
 	
 	private static ModelAndView getServiceProviders(Request request, Response response) throws IOException {
 		
@@ -70,6 +78,14 @@ public class ServiceProviderController {
     	
 		return new ModelAndView(model, "secure/service-providers.html");
 	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
 	
 	private static ModelAndView getServiceProvider(Request request, Response response) throws IOException {
 		

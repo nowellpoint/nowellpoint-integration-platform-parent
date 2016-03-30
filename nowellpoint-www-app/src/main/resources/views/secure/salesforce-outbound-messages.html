@@ -36,26 +36,11 @@
 
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">1. ${authenticateLabel}</a></h4>
+                                    <h4 class="panel-title">${authenticateLabel}</h4>
                                 </div>
-                                <div id="collapseOne" class="panel-collapse collapse in">
-                                    <div class="panel-body">
-                                        <dl class="dl-horizontal">
-                                            <dt>${name}</dt>
-                                            <dd>${(serviceProvider.service.serviceInfo.name)!}</dd>
-                                            <dt>${instanceId}</dt>
-                                            <dd>${(serviceProvider.service.serviceInfo.instanceId)!}</dd>
-                                            <dt>${instanceName}</dt>
-                                            <dd>${(serviceProvider.service.serviceInfo.instanceName)!}</dd>
-                                            <dt>${instanceUrl}</dt>
-                                            <dd>${(serviceProvider.service.serviceInfo.instanceUrl)!}</dd>
-                                            <dt>${accountLabel}</dt>
-                                            <dd>${(serviceProvider.service.serviceInfo.account)!}</dd>
-                                            <dt>${isSandbox}</dt>
-                                            <dd>${(serviceProvider.service.serviceInfo.isSandbox?string('Yes', 'No'))!}</dd>
-                                        </dl>
-                                    </div>
-                                </div>
+                                
+                                <#include "salesforce-authenticate.html" />
+                                
                             </div>
 
                             <br>
