@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -21,7 +19,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -36,7 +33,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Protocol;
 
-@ApplicationScoped
 @WebListener
 public class CacheManager implements ServletContextListener {
 	
@@ -63,11 +59,6 @@ public class CacheManager implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		getCache();
-	}
-	
-	@PostConstruct
-	public void postConstruct() {
 		String endpoint = System.getProperty(Properties.REDIS_HOST);
 		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
 		
@@ -99,17 +90,12 @@ public class CacheManager implements ServletContextListener {
 		LOGGER.info("connecting to cache...is connected: " + ! jedisPool.isClosed());
 	}
 	
-	@PreDestroy
-	public void preDestroy() {
-		
-	}
-	
 	/**
 	 * 
 	 * @return cache
 	 */
 	
-	public Jedis getCache() {
+	public static Jedis getCache() {
 		return jedisPool.getResource();
 	}
 	
@@ -119,7 +105,7 @@ public class CacheManager implements ServletContextListener {
 	 * @param values
 	 */
 	
-	public <T> void sadd(String key, Set<T> values) {
+	public static <T> void sadd(String key, Set<T> values) {
 		Jedis jedis = getCache();
 		Pipeline p = jedis.pipelined();
 		try {
@@ -143,7 +129,7 @@ public class CacheManager implements ServletContextListener {
 	 * @return
 	 */
 	
-	public <T> Set<T> smembers(Class<T> type, String key) {
+	public static <T> Set<T> smembers(Class<T> type, String key) {
 		Jedis jedis = getCache();
 		Set<T> results = new HashSet<T>();
 		
@@ -165,7 +151,7 @@ public class CacheManager implements ServletContextListener {
 	 * @return
 	 */
 	
-	public <T> T get(Class<T> type, String key) {
+	public static <T> T get(Class<T> type, String key) {
 		Jedis jedis = getCache();
 		byte[] bytes = null;
 		
@@ -190,7 +176,7 @@ public class CacheManager implements ServletContextListener {
 	 * @param value
 	 */
 	
-	public <T> void setex(String key, int seconds, T value) {
+	public static <T> void setex(String key, int seconds, T value) {
 		Jedis jedis = getCache();
 		try {
 			jedis.setex(key.getBytes(), seconds, serialize(value));
@@ -204,7 +190,7 @@ public class CacheManager implements ServletContextListener {
 	 * @param key
 	 */
 	
-	public void del(String key) {
+	public static void del(String key) {
 		Jedis jedis = getCache();
 		try {
 			jedis.del(key.getBytes());
@@ -219,7 +205,7 @@ public class CacheManager implements ServletContextListener {
 	 * @return
 	 */
 	
-	public <T> Set<T> hgetAll(Class<T> type, String key) {
+	public static <T> Set<T> hgetAll(Class<T> type, String key) {
 		Jedis jedis = getCache();
 		Set<T> results = new HashSet<T>();
 		try {
@@ -244,7 +230,7 @@ public class CacheManager implements ServletContextListener {
 	 * @return
 	 */
 	
-	public <T> T hget(Class<T> type, String key, String field) {
+	public static <T> T hget(Class<T> type, String key, String field) {
 		Jedis jedis = getCache();
 		byte[] bytes = null;
 		

@@ -71,7 +71,7 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static <T extends AbstractDocument> void updateOne(Class<T> documentClass, ObjectId id, String json) {
-		getDatabase().getCollection( getCollectionName( documentClass ) ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
+		getCollection( documentClass ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
 	}
 	
 	public static void checkStatus() {
@@ -87,7 +87,11 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> MongoCollection<T> getCollection(AbstractDocument document) {
+	public static <T extends AbstractDocument> MongoCollection<T> getCollection(AbstractDocument document) {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(document.getClass()), document.getClass());
+	}
+	
+	public static <T extends AbstractDocument> MongoCollection<T> getCollection(Class<T> type) {
+		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(type), type);
 	}
 }
