@@ -156,6 +156,8 @@ public class AccountProfile extends AbstractDocument {
 	
 	private Photos photos;
 	
+	//private Identity identity;
+	
 	/**
 	 * 
 	 */
