@@ -8,13 +8,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.aws.data.IdentityCodec;
+import com.nowellpoint.aws.data.AccountProfileCodec;
 import com.nowellpoint.aws.data.annotation.Document;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="identities", codec=IdentityCodec.class)
-public class Identity extends AbstractDocument {
+@Document(collectionName="account.profiles", codec=AccountProfileCodec.class)
+public class AccountProfile extends AbstractDocument {
 
 	/**
 	 * 
@@ -162,7 +162,7 @@ public class Identity extends AbstractDocument {
 	
 	private List<SalesforceProfile> salesforceProfiles;
 	
-	public Identity() {
+	public AccountProfile() {
 
 	}
 

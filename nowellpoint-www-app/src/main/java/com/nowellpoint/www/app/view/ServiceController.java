@@ -15,7 +15,7 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.Identity;
+import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.ServiceInstance;
 
 import freemarker.log.Logger;
@@ -46,7 +46,7 @@ public class ServiceController {
 		Token token = request.attribute("token");
 		Account account = request.attribute("account");
 		
-		Identity owner = new Identity();
+		AccountProfile owner = new AccountProfile();
 		//owner.setId(request.queryParams("ownerId").trim().isEmpty() ? null : request.queryParams("ownerId"));
 		owner.setHref(account.getHref());
 		

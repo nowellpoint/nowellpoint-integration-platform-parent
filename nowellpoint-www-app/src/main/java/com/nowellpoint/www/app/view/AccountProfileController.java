@@ -16,7 +16,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.Identity;
+import com.nowellpoint.www.app.model.AccountProfile;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -25,19 +25,19 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class UserProfileController {
+public class AccountProfileController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ProjectController.class.getName());
 	
-	public UserProfileController(Configuration cfg) {
+	public AccountProfileController(Configuration cfg) {
 	    
-		get("/app/user-profile", (request, response) -> getUserProfile(request, response), new FreeMarkerEngine(cfg));
+		get("/app/account-profile", (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(cfg));
 		
-		post("/app/user-profile", (request, response) -> updateUserProfile(request, response), new FreeMarkerEngine(cfg));
+		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(cfg));
 		
-		post("/app/user-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
+		post("/app/account-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
 		
-		delete("/app/user-profile/picture", (request, response) -> removeProfilePicture(request, response));
+		delete("/app/account-profile/picture", (request, response) -> removeProfilePicture(request, response));
 		
 	}
 	
@@ -49,14 +49,14 @@ public class UserProfileController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getUserProfile(Request request, Response response) throws IOException {
+	private static ModelAndView getAccountProfile(Request request, Response response) throws IOException {
 		
 		Token token = request.attribute("token");
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("user-profile")
+				.path("account-profile")
 				.execute();
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
@@ -65,13 +65,13 @@ public class UserProfileController {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
-		Identity identity = httpResponse.getEntity(Identity.class);
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 			
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
-		model.put("identity", identity);
+		model.put("accountProfile", accountProfile);
 			
-		return new ModelAndView(model, "secure/user-profile.html");			
+		return new ModelAndView(model, "secure/account-profile.html");			
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class UserProfileController {
 	 * @throws IOException
 	 */
 	
-	public static ModelAndView updateUserProfile(Request request, Response response) throws IOException {
+	public static ModelAndView updateAccountProfile(Request request, Response response) throws IOException {
 		
 		Token token = request.attribute("token");
 		
@@ -99,7 +99,7 @@ public class UserProfileController {
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
     			.acceptCharset("UTF-8")
-				.path("user-profile")
+				.path("account-profile")
 				.body(body.toString())
 				.execute();
 		
@@ -109,13 +109,13 @@ public class UserProfileController {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		Identity identity = httpResponse.getEntity(Identity.class);
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
-		model.put("identity", identity);
+		model.put("accountProfile", accountProfile);
 		
-		return new ModelAndView(model, "secure/user-profile.html");		
+		return new ModelAndView(model, "secure/account-profile.html");		
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public class UserProfileController {
     			.bearerAuthorization(token.getAccessToken())
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
         		.acceptCharset("UTF-8")
-        		.path("user-profile")
+        		.path("account-profile")
         		.path("photo")
         		.path("salesforce")
         		.body("photoUrl=".concat(request.queryParams("photoUrl")))
@@ -167,16 +167,16 @@ public class UserProfileController {
 		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
     			.bearerAuthorization(token.getAccessToken())
-        		.path("user-profile")
+        		.path("account-profile")
         		.path("photo")
         		.execute();
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
 		
-		Identity identity = httpResponse.getEntity(Identity.class);
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
-		model.put("identity", identity);
+		model.put("accountProfile", accountProfile);
 		
-		return new ModelAndView(model, "secure/user-profile.html");		
+		return new ModelAndView(model, "secure/account-profile.html");		
 	}
 }

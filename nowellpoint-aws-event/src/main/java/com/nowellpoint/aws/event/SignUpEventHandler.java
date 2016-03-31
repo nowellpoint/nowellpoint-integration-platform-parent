@@ -15,7 +15,7 @@ import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.model.sforce.Lead;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
@@ -55,7 +55,7 @@ public class SignUpEventHandler implements AbstractEventHandler {
 		account.setPassword(signup.getPassword());
 		account.setStatus("UNVERIFIED");
 		
-		Identity identity = new Identity();
+		AccountProfile identity = new AccountProfile();
 		identity.setCreatedById(event.getSubject());
 		identity.setLastModifiedById(event.getSubject());
 		identity.setFirstName(signup.getFirstName());

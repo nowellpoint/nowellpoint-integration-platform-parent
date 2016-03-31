@@ -70,8 +70,8 @@ public class MongoDBDatastore implements ServletContextListener {
 		getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
 	}
 	
-	public static void updateOne(String collectionName, ObjectId id, String json) {
-		getDatabase().getCollection( collectionName ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
+	public static <T extends AbstractDocument> void updateOne(Class<T> documentClass, ObjectId id, String json) {
+		getDatabase().getCollection( getCollectionName( documentClass ) ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
 	}
 	
 	public static void checkStatus() {

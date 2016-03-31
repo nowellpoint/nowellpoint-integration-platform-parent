@@ -26,7 +26,7 @@ public class ServiceInstance {
 	
 	private String name;
 	
-	private Identity owner;
+	private AccountProfile owner;
 	
 	private Boolean isSandbox;
 	
@@ -82,11 +82,11 @@ public class ServiceInstance {
 		this.instanceId = instanceId;
 	}
 
-	public Identity getOwner() {
+	public AccountProfile getOwner() {
 		return owner;
 	}
 
-	public void setOwner(Identity owner) {
+	public void setOwner(AccountProfile owner) {
 		this.owner = owner;
 	}
 

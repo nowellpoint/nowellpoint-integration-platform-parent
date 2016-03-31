@@ -32,7 +32,7 @@ public class ServiceInstanceDTO extends AbstractDTO {
 	
 	private String name;
 	
-	private IdentityDTO owner;
+	private AccountProfileDTO owner;
 	
 	private Boolean isSandbox;
 	
@@ -92,11 +92,11 @@ public class ServiceInstanceDTO extends AbstractDTO {
 		this.instanceId = instanceId;
 	}
 
-	public IdentityDTO getOwner() {
+	public AccountProfileDTO getOwner() {
 		return owner;
 	}
 
-	public void setOwner(IdentityDTO owner) {
+	public void setOwner(AccountProfileDTO owner) {
 		this.owner = owner;
 	}
 

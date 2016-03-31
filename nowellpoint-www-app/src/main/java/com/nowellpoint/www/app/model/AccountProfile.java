@@ -1,15 +1,10 @@
-package com.nowellpoint.aws.api.dto;
+package com.nowellpoint.www.app.model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
-import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Photos;
-import com.nowellpoint.aws.data.mongodb.SalesforceProfile;
-
-public class IdentityDTO extends AbstractDTO {
+public class AccountProfile extends Resource {
 	
 	/**
 	 * 
@@ -147,12 +142,6 @@ public class IdentityDTO extends AbstractDTO {
 	 * 
 	 */
 	
-	private String picture;
-	
-	/**
-	 * 
-	 */
-	
 	private Photos photos;
 	
 	/**
@@ -160,10 +149,11 @@ public class IdentityDTO extends AbstractDTO {
 	 */
 	
 	private List<SalesforceProfile> salesforceProfiles;
-
 	
-	public IdentityDTO() {
-		
+	public AccountProfile() {
+		address = new Address();
+		photos = new Photos();
+		salesforceProfiles = new ArrayList<SalesforceProfile>();
 	}
 
 	public String getUsername() {
@@ -334,14 +324,6 @@ public class IdentityDTO extends AbstractDTO {
 		this.href = href;
 	}
 
-	public String getPicture() {
-		return picture;
-	}
-
-	public void setPicture(String picture) {
-		this.picture = picture;
-	}
-
 	public Photos getPhotos() {
 		return photos;
 	}
@@ -356,29 +338,5 @@ public class IdentityDTO extends AbstractDTO {
 
 	public void setSalesforceProfiles(List<SalesforceProfile> salesforceProfiles) {
 		this.salesforceProfiles = salesforceProfiles;
-	}
-	
-	public void addSalesforceProfile(SalesforceProfile salesforceProfile) {
-		if (salesforceProfiles == null) {
-			salesforceProfiles = new ArrayList<SalesforceProfile>();
-		}
-		
-		Optional<SalesforceProfile> profile = getSalesforceProfiles().stream().filter(p -> p.getUserId().equals(salesforceProfile.getUserId())).findFirst();
-		
-		if (profile.isPresent()) {
-			salesforceProfiles.remove(profile.get());
-		}
-		
-		salesforceProfiles.add(salesforceProfile);
-	}
-	
-	public void removeSalesforceProfile(String userId) {
-		if (salesforceProfiles != null) {
-			Optional<SalesforceProfile> profile = getSalesforceProfiles().stream().filter(p -> p.getUserId().equals(userId)).findFirst();
-			
-			if (profile.isPresent()) {
-				salesforceProfiles.remove(profile.get());
-			}
-		}
 	}
 }

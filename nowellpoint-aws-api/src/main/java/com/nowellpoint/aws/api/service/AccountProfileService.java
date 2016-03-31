@@ -19,20 +19,19 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.data.MongoDBDatastore;
-import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.data.mongodb.Photos;
 
-public class IdentityService extends AbstractDocumentService<IdentityDTO, Identity> {
+public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
 	
-	private static final Logger LOGGER = Logger.getLogger(IdentityService.class);
+	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
-	private static final String COLLECTION_NAME = "identities";
-	
-	public IdentityService() {
-		super(IdentityDTO.class, Identity.class);
+	public AccountProfileService() {
+		super(AccountProfileDTO.class, AccountProfile.class);
 	}
 	
 	/**
@@ -41,10 +40,10 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 	 */
 	
 	public void loggedInEvent(@Observes LoggedInEvent event) {
-		IdentityDTO resource = findIdentityBySubject(event.getSubject());
+		AccountProfileDTO resource = findAccountProfileBySubject(event.getSubject());
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		updateIdentity( event.getSubject(), resource, event.getEventSource() );
+		updateAccountProfile( event.getSubject(), resource, event.getEventSource() );
 		
 		LOGGER.info("Logged In: " + resource.getHref());
 	}
@@ -57,7 +56,7 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 	 * @return the created Identity resource
 	 */
 	
-	public IdentityDTO createIdentity(IdentityDTO resource) {
+	public AccountProfileDTO createAccountProfile(AccountProfileDTO resource) {
 		resource.setHref(resource.getSubject());
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
@@ -70,7 +69,7 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 		create(resource);
 		
 		hset( resource.getId(), resource.getSubject(), resource );
-		hset( resource.getSubject(), IdentityDTO.class.getName(), resource );
+		hset( resource.getSubject(), AccountProfileDTO.class.getName(), resource );
 		
 		return resource;
 	}
@@ -83,8 +82,8 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 	 * @return the updated Identity resource
 	 */
 	
-	public IdentityDTO updateIdentity(String subject, IdentityDTO resource, URI eventSource) {
-		IdentityDTO original = findIdentity( resource.getId(), subject );
+	public AccountProfileDTO updateAccountProfile(String subject, AccountProfileDTO resource, URI eventSource) {
+		AccountProfileDTO original = findAccountProfile( resource.getId(), subject );
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
@@ -98,10 +97,18 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 			resource.setLastLoginDate(original.getLastLoginDate());
 		}
 		
-		update(subject, resource, eventSource);
+		if (resource.getPhotos() == null) {
+			resource.setPhotos(original.getPhotos());
+		}
+		
+		if (resource.getSalesforceProfiles() == null) {
+			resource.setSalesforceProfiles(original.getSalesforceProfiles());
+		}
+		
+		replace(subject, resource, eventSource);
 
 		hset( resource.getId(), subject, resource );
-		hset( subject, IdentityDTO.class.getName(), resource );
+		hset( subject, AccountProfileDTO.class.getName(), resource );
 		
 		return resource;
 	}
@@ -112,13 +119,13 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 	 * @return Identity resource for id
 	 */
 	
-	public IdentityDTO findIdentity(String id, String subject) {
-		IdentityDTO resource = hget( IdentityDTO.class, id, subject );
+	public AccountProfileDTO findAccountProfile(String id, String subject) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		
 		if ( resource == null ) {
 			resource = find(id);
 			hset( resource.getId(), subject, resource );
-			hset( subject, IdentityDTO.class.getName(), resource );
+			hset( subject, AccountProfileDTO.class.getName(), resource );
 		}
 		
 		return resource;
@@ -130,24 +137,25 @@ public class IdentityService extends AbstractDocumentService<IdentityDTO, Identi
 	 * @return Identity resource for subject
 	 */
 	
-	public IdentityDTO findIdentityBySubject(String subject) {
-		IdentityDTO resource = hget( IdentityDTO.class, subject, IdentityDTO.class.getName() );
+	public AccountProfileDTO findAccountProfileBySubject(String subject) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, subject, AccountProfileDTO.class.getName() );
 
-		if ( resource == null ) {			
-			Identity identity = MongoDBDatastore.getDatabase()
-					.getCollection( COLLECTION_NAME )
-					.withDocumentClass( Identity.class )
+		if ( resource == null ) {		
+
+			AccountProfile accountProfile = MongoDBDatastore.getDatabase()
+					.getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
+					.withDocumentClass( AccountProfile.class )
 					.find( eq ( "href", subject ) )
 					.first();
 			
-			if ( identity == null ) {
-				throw new WebApplicationException( String.format( "Identity for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
+			if ( accountProfile == null ) {
+				throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
 			}
-			
-			resource = modelMapper.map( identity, IdentityDTO.class );
+
+			resource = modelMapper.map( accountProfile, AccountProfileDTO.class );
 
 			hset( resource.getId(), subject, resource );
-			hset( subject, IdentityDTO.class.getName(), resource );
+			hset( subject, AccountProfileDTO.class.getName(), resource );
 		}
 		
 		return resource;		

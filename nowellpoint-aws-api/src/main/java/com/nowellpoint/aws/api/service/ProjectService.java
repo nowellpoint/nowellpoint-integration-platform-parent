@@ -77,7 +77,7 @@ public class ProjectService extends AbstractDocumentService<ProjectDTO, Project>
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		update(subject, resource, eventSource);
+		replace(subject, resource, eventSource);
 		
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

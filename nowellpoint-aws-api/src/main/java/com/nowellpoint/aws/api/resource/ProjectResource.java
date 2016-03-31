@@ -19,9 +19,9 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
-import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ProjectService;
 
 @Path("/project")
@@ -31,7 +31,7 @@ public class ProjectResource {
 	private ProjectService projectService;
 	
 	@Inject
-	private IdentityService identityService;
+	private AccountProfileService identityService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -103,7 +103,7 @@ public class ProjectResource {
 	public Response createProject(ProjectDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
+		AccountProfileDTO owner = identityService.findAccountProfileBySubject(resource.getOwner().getHref());	
 		
 		resource.setOwner(owner);
 		resource.setSubject(subject);

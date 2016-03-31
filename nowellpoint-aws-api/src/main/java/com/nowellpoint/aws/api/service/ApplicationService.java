@@ -60,7 +60,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		update(subject, resource, eventSource);
+		replace(subject, resource, eventSource);
 		
 		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

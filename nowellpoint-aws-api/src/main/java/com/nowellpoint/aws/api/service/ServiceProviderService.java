@@ -77,7 +77,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		update(subject, resource, eventSource);
+		replace(subject, resource, eventSource);
 		
 		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );

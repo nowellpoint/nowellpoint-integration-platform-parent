@@ -16,9 +16,9 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ServiceInstanceService;
 
 @Path("/services")
@@ -34,7 +34,7 @@ public class ServiceInstanceResource {
 	private ServiceInstanceService serviceInstanceService;
 	
 	@Inject
-	private IdentityService identityService;
+	private AccountProfileService identityService;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +53,7 @@ public class ServiceInstanceResource {
 	public Response createServiceInstance(ServiceInstanceDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		IdentityDTO owner = identityService.findIdentityBySubject(resource.getOwner().getHref());	
+		AccountProfileDTO owner = identityService.findAccountProfileBySubject(resource.getOwner().getHref());	
 		
 		resource.setOwner(owner);
 		

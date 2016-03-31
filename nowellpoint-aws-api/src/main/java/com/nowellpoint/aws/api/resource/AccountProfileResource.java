@@ -7,6 +7,7 @@ import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -20,24 +21,36 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
-import com.nowellpoint.aws.api.dto.IdentityDTO;
-import com.nowellpoint.aws.api.service.IdentityService;
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
+import com.nowellpoint.aws.api.dto.idp.AccountDTO;
+import com.nowellpoint.aws.api.service.AccountProfileService;
+import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.service.SalesforceService;
+import com.nowellpoint.aws.data.mongodb.Address;
+import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.data.mongodb.SalesforceProfile;
 
-@Path("/identity")
-public class IdentityResource {
+@Path("/account-profile")
+public class AccountProfileResource {
 	
 	@Inject
-	private IdentityService identityService;
+	private AccountProfileService accountProfileService;
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 	
 	@Inject
 	private SalesforceService salesforceService;
@@ -47,6 +60,90 @@ public class IdentityResource {
 	
 	@Context 
 	private SecurityContext securityContext;
+	
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUserProfile() {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
+		
+		return Response.ok(resource)
+				.build();
+	}
+	
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response udpate(
+			@FormParam("id") @NotEmpty String id,
+			@FormParam("firstName") String firstName,
+    		@FormParam("lastName") @NotEmpty String lastName,
+    		@FormParam("company") String company,
+    		@FormParam("division") String division,
+    		@FormParam("department") String department,
+    		@FormParam("title") String title,
+    		@FormParam("email") @Email String email,
+    		@FormParam("fax") String fax,
+    		@FormParam("mobilePhone") String mobilePhone,
+    		@FormParam("phone") String phone,
+    		@FormParam("extension") String extension,
+    		@FormParam("street") String street,
+    		@FormParam("city") String city,
+    		@FormParam("state") String state,
+    		@FormParam("postalCode") String postalCode,
+    		@FormParam("countryCode") @NotEmpty String countryCode) {
+				
+		String subject = securityContext.getUserPrincipal().getName();
+				
+		//
+		// update account
+		//
+		
+		
+		AccountDTO account = new AccountDTO();
+		account.setGivenName(firstName);
+		account.setMiddleName(null);
+		account.setSurname(lastName);
+		account.setEmail(email);
+		account.setUsername(email);
+		account.setHref(subject);
+
+		identityProviderService.updateAccount(account);
+		
+		//
+		// update identity
+		//
+		
+		AccountProfileDTO resource = new AccountProfileDTO();
+		resource.setId(id);
+		resource.setFirstName(firstName);
+		resource.setLastName(lastName);
+		resource.setEmail(email);
+		resource.setCompany(company);
+		resource.setDivision(division);
+		resource.setDepartment(department);
+		resource.setFax(fax);
+		resource.setTitle(title);
+		resource.setMobilePhone(mobilePhone);
+		resource.setPhone(phone);
+		resource.setExtension(extension);
+		
+		Address address = new Address();
+		address.setStreet(street);
+		address.setCity(city);
+		address.setState(state);
+		address.setPostalCode(postalCode);
+		address.setCountryCode(countryCode);
+		
+		resource.setAddress(address);
+		
+		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
+		
+		return Response.ok(resource)
+				.build();
+	}
 	
 	/**
 	 * @api {get} /identity/:id/picture Get Profile Picture
@@ -107,7 +204,7 @@ public class IdentityResource {
     public Response getIdentity(@PathParam("id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		IdentityDTO resource = identityService.findIdentity( id, subject );
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( id, subject );
 		
 		return Response.ok(resource)
 				.build();
@@ -116,16 +213,16 @@ public class IdentityResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createIdentity(IdentityDTO resource) {
+    public Response createIdentity(AccountProfileDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setSubject(subject);
 		resource.setEventSource(uriInfo.getBaseUri());
 		
-		identityService.createIdentity( resource );
+		accountProfileService.createAccountProfile( resource );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(IdentityResource.class)
+				.path(AccountProfileResource.class)
 				.path("/{id}")
 				.build(resource.getId());
 		
@@ -136,21 +233,20 @@ public class IdentityResource {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateIdentity(@PathParam("id") String id, IdentityDTO resource) {
+    public Response updateIdentity(@PathParam("id") String id, AccountProfileDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
 		
-		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
 		
 		return Response.ok(resource).build();
 	}
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIdentityBySubject(@QueryParam("subject") String subject) {
-		
-		IdentityDTO resource = identityService.findIdentityBySubject( subject );
+    public Response getIdentityBySubject(@QueryParam("subject") String subject) {		
+		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
 		
 		return Response.ok(resource)
 				.build();
@@ -163,14 +259,14 @@ public class IdentityResource {
 	public Response addSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		IdentityDTO resource = identityService.findIdentity(id, subject);
+		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
 		
 		String profileHref = salesforceProfile.getPhotos().getProfilePicture() + "?oauth_token=" + salesforceService.findToken( subject, salesforceProfile.getUserId() ).getAccessToken();
 		
-		identityService.addSalesforceProfilePicture( salesforceProfile.getUserId(), profileHref );
+		accountProfileService.addSalesforceProfilePicture( salesforceProfile.getUserId(), profileHref );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(IdentityResource.class)
+				.path(AccountProfileResource.class)
 				.path("{id}")
 				.path("salesforce")
 				.path("{userId}")
@@ -180,9 +276,36 @@ public class IdentityResource {
 		
 		resource.addSalesforceProfile(salesforceProfile);
 		
-		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
 		
 		return Response.ok(resource).build();
+	}
+	
+	@DELETE
+	@Path("/photo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response removeProfilePicture() {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("aws-microservices", resource.getId());
+		
+		s3Client.deleteObject(deleteObjectRequest);
+		
+		Photos photos = new Photos();
+		photos.setProfilePicture("/images/person-generic.jpg");
+		
+		resource.setPhotos(photos);
+		
+		accountProfileService.updateAccountProfile(subject, resource, uriInfo.getBaseUri());
+		
+		return Response.ok(resource)
+				.build();
 	}
 	
 	@PUT
@@ -194,11 +317,11 @@ public class IdentityResource {
 		
 		salesforceProfile.setUserId(userId);
 		
-		IdentityDTO resource = identityService.findIdentity(id, subject);
+		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
 		
 		resource.addSalesforceProfile(salesforceProfile);
 		
-		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
 		
 		return Response.ok(resource).build();
 	}
@@ -209,11 +332,11 @@ public class IdentityResource {
 	public Response removeSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		IdentityDTO resource = identityService.findIdentity(id, subject);
+		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
 		
 		resource.removeSalesforceProfile(userId);
 		
-		identityService.updateIdentity( subject, resource, uriInfo.getBaseUri() );
+		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
 		
 		return Response.ok(resource).build();
 	}

@@ -12,7 +12,7 @@ import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -96,7 +96,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 	private void insertIdentityEvent(Event parentEvent, String username, String href) throws JsonProcessingException {		
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
-		Identity identity = new Identity();
+		AccountProfile identity = new AccountProfile();
 		identity.setUsername(username);
 		identity.setHref(href);
 		
