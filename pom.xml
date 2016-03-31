@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<aws.sdk.version>1.10.64</aws.sdk.version>
+		<aws.sdk.version>1.10.65</aws.sdk.version>
 		<jackson.version>2.7.0</jackson.version>
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>
@@ -31,8 +31,6 @@
 	<modules>
 		<module>nowellpoint-aws-core</module>	
 		<module>nowellpoint-aws-data</module>
-		<module>nowellpoint-aws-idp</module>
-		<module>nowellpoint-aws-idp-impl</module>
 		<module>nowellpoint-aws-sforce</module>
 		<module>nowellpoint-aws-event</module>
 		<!-- <module>nowellpoint-aws-util</module>  -->
