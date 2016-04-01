@@ -18,7 +18,7 @@ import javax.ws.rs.core.SecurityContext;
 import com.nowellpoint.aws.api.exception.ServiceException;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.sforce.Token;
+import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/salesforce")
 public class SalesforceResource {

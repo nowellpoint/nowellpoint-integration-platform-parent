@@ -3,7 +3,6 @@ package com.nowellpoint.aws.api.service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import javax.json.JsonObject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
@@ -19,11 +18,14 @@ import com.nowellpoint.aws.data.mongodb.SalesforceInstance;
 import com.nowellpoint.aws.data.mongodb.sforce.Contact;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.sforce.Identity;
-import com.nowellpoint.aws.model.sforce.Organization;
-import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.model.sforce.User;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
+import com.nowellpoint.client.sforce.OauthAuthorizationGrantResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.User;
 
 public class SalesforceService extends AbstractCacheService {
 	
@@ -50,39 +52,52 @@ public class SalesforceService extends AbstractCacheService {
 	 */
 	
 	public Token getToken(String subject, String code) throws ServiceException {
-		Token token = null;
 		
-		try {
-			HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType("application/x-www-form-urlencoded")
-					.parameter("grant_type", "authorization_code")
-					.parameter("code", code)
-					.parameter("client_id", System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-					.parameter("client_secret", System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-					.parameter("redirect_uri", System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
-					.execute();
-			
-			LOGGER.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				throw new ServiceException(httpResponse.getAsString(), httpResponse.getStatusCode());
-			}
-			
-			token = httpResponse.getEntity(Token.class);
-			
-			String userId = token.getId().substring(token.getId().lastIndexOf("/") + 1);
-			
-			LOGGER.info("Salesforce UserId authenticate: " + userId);
-			
-			hset( subject, Token.class.getName().concat( userId ), token);
-			//expire( subject, 3600 );
-			
-		} catch (IOException e) {
-			LOGGER.error( "getIdentity", e.getCause() );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
-		}
+		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST
+				.builder()
+				.setCode(code)
+				.build();
+		
+		OauthAuthorizationGrantResponse response = Authenticators.AUTHORIZATION_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		Token token = response.getToken();
+		
+		String userId = token.getId().substring(token.getId().lastIndexOf("/") + 1);
+		
+		hset( subject, Token.class.getName().concat( userId ), token);
+		
+//		try {
+//			HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
+//					.acceptCharset(StandardCharsets.UTF_8)
+//					.accept(MediaType.APPLICATION_JSON)
+//					.contentType("application/x-www-form-urlencoded")
+//					.parameter("grant_type", "authorization_code")
+//					.parameter("code", code)
+//					.parameter("client_id", System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+//					.parameter("client_secret", System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+//					.parameter("redirect_uri", System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
+//					.execute();
+//			
+//			LOGGER.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+//			
+//			if (httpResponse.getStatusCode() >= 400) {
+//				throw new ServiceException(httpResponse.getAsString(), httpResponse.getStatusCode());
+//			}
+//			
+//			token = httpResponse.getEntity(Token.class);
+//			
+//			String userId = token.getId().substring(token.getId().lastIndexOf("/") + 1);
+//			
+//			LOGGER.info("Salesforce UserId authenticate: " + userId);
+//			
+//			hset( subject, Token.class.getName().concat( userId ), token);
+//			//expire( subject, 3600 );
+//			
+//		} catch (IOException e) {
+//			LOGGER.error( "getIdentity", e.getCause() );
+//			throw new WebApplicationException(e, Status.BAD_REQUEST);
+//		}
 			
 		return token;
 	}

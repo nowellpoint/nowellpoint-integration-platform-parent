@@ -5,6 +5,7 @@
   <projects>
     <project>nowellpoint-aws-core</project>
     <project>nowellpoint-aws-data</project>
+    <project>nowellpoint-aws-sforce</project>
   </projects>
   <buildSpec>
     <buildCommand>
