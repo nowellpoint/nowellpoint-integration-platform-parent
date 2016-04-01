@@ -35,13 +35,13 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
-import com.nowellpoint.aws.api.dto.idp.AccountDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.data.mongodb.SalesforceProfile;
+import com.nowellpoint.aws.idp.model.Account;
 
 @Path("/account-profile")
 public class AccountProfileResource {
@@ -102,7 +102,7 @@ public class AccountProfileResource {
 		//
 		
 		
-		AccountDTO account = new AccountDTO();
+		Account account = new Account();
 		account.setGivenName(firstName);
 		account.setMiddleName(null);
 		account.setSurname(lastName);
@@ -110,7 +110,11 @@ public class AccountProfileResource {
 		account.setUsername(email);
 		account.setHref(subject);
 
-		identityProviderService.updateAccount(account);
+		try {
+			identityProviderService.updateAccount(account);
+		} catch (IOException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		//
 		// update identity
