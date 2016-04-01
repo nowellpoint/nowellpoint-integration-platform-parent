@@ -1,16 +1,8 @@
 package com.nowellpoint.client.sforce;
 
-public class AuthorizationGrantAuthorizerBuilder {
+public interface AuthorizationGrantAuthorizerBuilder {
 	
-	private String code;
+	public AuthorizationGrantAuthorizerBuilder setCode(String code);
 	
-	public AuthorizationGrantAuthorizerBuilder setCode(String code) {
-		this.code = code;
-		return this;
-	}
-	
-	public AuthorizationGrantRequest build() {
-		return new AuthorizationGrantRequest(code);
-	}
-
+	public AuthorizationGrantRequest build();
 }

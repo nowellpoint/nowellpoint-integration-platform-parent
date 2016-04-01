@@ -13,6 +13,19 @@ public class Authenticators {
 	
 	public static final AuthorizationGrantResponseFactory AUTHORIZATION_GRANT_AUTHENTICATOR = new AuthorizationGrantResponseFactory();
 	
+	public class OauthAuthorizationGrantResponseImpl implements OauthAuthorizationGrantResponse{
+		
+		private Token token;
+		
+		public OauthAuthorizationGrantResponseImpl(Token token) {
+			this.token = token;
+		}
+		
+		public Token getToken() {
+			return token;
+		}
+	}
+	
 	public static class AuthorizationGrantResponseFactory {
 		public OauthAuthorizationGrantResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
 			Token token = null;
@@ -39,7 +52,8 @@ public class Authenticators {
 				
 			}		
 			
-			OauthAuthorizationGrantResponse response = new OauthAuthorizationGrantResponse(token);
+			Authenticators authenticators = new Authenticators();
+			OauthAuthorizationGrantResponse response = authenticators.new OauthAuthorizationGrantResponseImpl(token);
 			return response;
 		}
 	}

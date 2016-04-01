@@ -1,15 +1,6 @@
 package com.nowellpoint.client.sforce;
 
-public class AuthorizationGrantRequest {
-
+public interface AuthorizationGrantRequest {
 	
-	private String code;
-	
-	public AuthorizationGrantRequest(String code) {
-		this.code = code;
-	}
-	
-	public String getCode() {
-		return code;
-	}
+	public String getCode();
 }
