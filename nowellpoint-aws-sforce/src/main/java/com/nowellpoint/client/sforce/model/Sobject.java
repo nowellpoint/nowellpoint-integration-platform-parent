@@ -1,11 +1,11 @@
-package com.nowellpoint.aws.api.dto.sforce;
+package com.nowellpoint.client.sforce.model;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SObject implements Serializable {
+public class Sobject implements Serializable {
 
 	/**
 	 * 
@@ -53,7 +53,7 @@ public class SObject implements Serializable {
 	
 	private Boolean updateable;
 
-	public SObject() {
+	public Sobject() {
 		
 	}
 

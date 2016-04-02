@@ -7,30 +7,20 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
+import com.nowellpoint.client.sforce.impl.OauthAuthorizationGrantResponseImpl;
+import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 
 public class Authenticators {
 	
 	public static final AuthorizationGrantResponseFactory AUTHORIZATION_GRANT_AUTHENTICATOR = new AuthorizationGrantResponseFactory();
 	
-	public class OauthAuthorizationGrantResponseImpl implements OauthAuthorizationGrantResponse{
-		
-		private Token token;
-		
-		public OauthAuthorizationGrantResponseImpl(Token token) {
-			this.token = token;
-		}
-		
-		public Token getToken() {
-			return token;
-		}
-	}
-	
 	public static class AuthorizationGrantResponseFactory {
 		public OauthAuthorizationGrantResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
 			Token token = null;
 			
 			try {
+				
 				HttpResponse httpResponse = RestResource.post(System.getProperty("salesforce.token.uri"))
 						.acceptCharset(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
@@ -50,10 +40,30 @@ public class Authenticators {
 				
 			} catch (IOException e) {
 				
-			}		
+			}	
 			
-			Authenticators authenticators = new Authenticators();
-			OauthAuthorizationGrantResponse response = authenticators.new OauthAuthorizationGrantResponseImpl(token);
+			Identity identity = null;
+			
+			try {
+				
+				HttpResponse httpResponse = RestResource.get(token.getId())
+						.acceptCharset(StandardCharsets.UTF_8)
+						.bearerAuthorization(token.getAccessToken())
+						.accept(MediaType.APPLICATION_JSON)
+						.queryParameter("version", "latest")
+						.execute();
+		    	
+		    	if (httpResponse.getStatusCode() >= 400) {
+					
+				}
+		    	
+		    	identity = httpResponse.getEntity(Identity.class);
+		    	
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			OauthAuthorizationGrantResponse response = new OauthAuthorizationGrantResponseImpl(token, identity);
 			return response;
 		}
 	}

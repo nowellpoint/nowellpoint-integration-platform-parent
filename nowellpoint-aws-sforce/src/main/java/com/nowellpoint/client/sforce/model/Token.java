@@ -2,12 +2,10 @@ package com.nowellpoint.client.sforce.model;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Token implements Serializable {
 	
 	private static final long serialVersionUID = -33102212500608631L;
@@ -39,7 +37,7 @@ public class Token implements Serializable {
 	public Token() {
 		
 	}
-
+	
 	public String getAccessToken() {
 		return access_token;
 	}

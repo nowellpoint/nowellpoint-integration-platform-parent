@@ -1,9 +1,9 @@
-package com.nowellpoint.aws.api.dto.sforce;
+package com.nowellpoint.client.sforce.model;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class DescribeSObjectsResult implements Serializable {
+public class DescribeSobjectsResult implements Serializable {
 
 	/**
 	 * 
@@ -15,9 +15,9 @@ public class DescribeSObjectsResult implements Serializable {
 	
 	private Integer maxBatchSize;
 	
-	private List<SObject> sobjects;
+	private List<Sobject> sobjects;
 	
-	public DescribeSObjectsResult() {
+	public DescribeSobjectsResult() {
 		
 	}
 	
@@ -37,11 +37,11 @@ public class DescribeSObjectsResult implements Serializable {
 		this.maxBatchSize = maxBatchSize;
 	}
 
-	public List<SObject> getSobjects() {
+	public List<Sobject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(List<SObject> sobjects) {
+	public void setSobjects(List<Sobject> sobjects) {
 		this.sobjects = sobjects;
 	}
 }

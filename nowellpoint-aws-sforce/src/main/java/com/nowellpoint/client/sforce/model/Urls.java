@@ -178,7 +178,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Urls implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -329107825780218997L;
 
 	@JsonProperty("enterprise")
 	private String enterprise;
@@ -211,13 +215,17 @@ public class Urls implements Serializable {
 	private String feeds;
 
 	@JsonProperty("feed_items")
-	private String feed_items;
+	private String feedItems;
 
 	@JsonProperty("groups")
 	private String groups;
 
 	@JsonProperty("users")
 	private String users;
+	
+	public Urls() {
+		
+	}
 
 	public String getEnterprise() {
 		return enterprise;
@@ -255,7 +263,7 @@ public class Urls implements Serializable {
 		return sobjects;
 	}
 
-	public void setSObjects(String sobjects) {
+	public void setSobjects(String sobjects) {
 		this.sobjects = sobjects;
 	}
 
@@ -300,11 +308,11 @@ public class Urls implements Serializable {
 	}
 
 	public String getFeedItems() {
-		return feed_items;
+		return feedItems;
 	}
 
 	public void setFeedItems(String feedItems) {
-		this.feed_items = feedItems;
+		this.feedItems = feedItems;
 	}
 
 	public String getGroups() {

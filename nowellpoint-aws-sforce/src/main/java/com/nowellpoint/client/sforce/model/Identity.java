@@ -173,12 +173,14 @@ package com.nowellpoint.client.sforce.model;
 import java.io.Serializable;
 import java.util.Locale;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Photos;
+import com.nowellpoint.client.sforce.model.Status;
+import com.nowellpoint.client.sforce.model.Urls;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Identity implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;
@@ -272,7 +274,7 @@ public class Identity implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-
+	
 	public Boolean getAssertedUser() {
 		return asserted_user;
 	}

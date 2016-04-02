@@ -75,12 +75,10 @@ public class SalesforceResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getToken(@QueryParam(value="code") String code) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
 		Token token = null; 
 				
 		try {
-			salesforceService.getToken(subject, code);
+			salesforceService.authenticate(code);
 		} catch (ServiceException e) {
 			throw new WebApplicationException(e.getMessage(), e.getStatusCode());
 		}

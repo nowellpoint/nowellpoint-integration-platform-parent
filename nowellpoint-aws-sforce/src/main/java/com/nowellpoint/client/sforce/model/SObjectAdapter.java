@@ -3,6 +3,8 @@ package com.nowellpoint.client.sforce.model;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.w3c.dom.Element;
 
+import com.nowellpoint.client.sforce.outbound.model.SObject;
+
 public class SObjectAdapter extends XmlAdapter<Object, SObject> {
 
 	@Override

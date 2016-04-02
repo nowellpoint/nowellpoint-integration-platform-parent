@@ -174,8 +174,6 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.model.sforce.Photos;
-import com.nowellpoint.aws.model.sforce.Urls;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {

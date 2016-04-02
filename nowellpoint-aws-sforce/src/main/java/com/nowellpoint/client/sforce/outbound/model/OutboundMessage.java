@@ -1,4 +1,4 @@
-package com.nowellpoint.client.sforce.model;
+package com.nowellpoint.client.sforce.outbound.model;
 
 import java.io.Serializable;
 import java.util.List;

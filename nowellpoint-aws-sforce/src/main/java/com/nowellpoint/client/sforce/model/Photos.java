@@ -176,13 +176,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Photos implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -9055234826108934569L;
 
 	@JsonProperty("picture")
 	private String picture;
 
 	@JsonProperty("thumbnail")
 	private String thumbnail;
+	
+	public Photos() {
+		
+	}
 
 	public String getPicture() {
 		return picture;

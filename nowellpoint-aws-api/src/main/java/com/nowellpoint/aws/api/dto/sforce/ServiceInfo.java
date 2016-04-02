@@ -3,6 +3,8 @@ package com.nowellpoint.aws.api.dto.sforce;
 import java.io.Serializable;
 import java.util.List;
 
+import com.nowellpoint.client.sforce.model.Sobject;
+
 public class ServiceInfo implements Serializable {
 	
 	/**
@@ -29,7 +31,7 @@ public class ServiceInfo implements Serializable {
 	
 	private String name;
 	
-	private List<SObject> sobjects;
+	private List<Sobject> sobjects;
 	
 	public ServiceInfo() {
 		
@@ -107,11 +109,11 @@ public class ServiceInfo implements Serializable {
 		this.name = name;
 	}
 
-	public List<SObject> getSobjects() {
+	public List<Sobject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(List<SObject> sobjects) {
+	public void setSobjects(List<Sobject> sobjects) {
 		this.sobjects = sobjects;
 	}
 }
