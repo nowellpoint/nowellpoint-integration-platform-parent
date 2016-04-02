@@ -8,6 +8,7 @@ import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
 import com.nowellpoint.aws.api.exception.ServiceException;
 import com.nowellpoint.aws.data.mongodb.SalesforceInstance;
 import com.nowellpoint.aws.data.mongodb.sforce.Contact;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.Client;
@@ -36,10 +37,12 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public OauthAuthorizationGrantResponse authenticate(String code) throws ServiceException {
-		
+	public OauthAuthorizationGrantResponse authenticate(String code) throws ServiceException {		
 		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST
 				.builder()
+				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setCallbackUri(System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
 				.setCode(code)
 				.build();
 		

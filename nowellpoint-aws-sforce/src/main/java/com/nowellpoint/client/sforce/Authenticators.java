@@ -27,9 +27,9 @@ public class Authenticators {
 						.contentType("application/x-www-form-urlencoded")
 						.parameter("grant_type", "authorization_code")
 						.parameter("code", authorizationGrantRequest.getCode())
-						.parameter("client_id", System.getProperty("salesforce.client.id"))
-						.parameter("client_secret", System.getProperty("salesforce.client.secret"))
-						.parameter("redirect_uri", System.getProperty("salesforce.redirect.uri"))
+						.parameter("client_id", authorizationGrantRequest.getClientId())
+						.parameter("client_secret", authorizationGrantRequest.getClientSecret())
+						.parameter("redirect_uri", authorizationGrantRequest.getCallbackUri())
 						.execute();
 				
 				if (httpResponse.getStatusCode() >= 400) {

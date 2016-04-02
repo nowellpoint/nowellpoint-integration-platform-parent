@@ -4,8 +4,33 @@ import com.nowellpoint.client.sforce.AuthorizationGrantAuthorizerBuilder;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 
 public class AuthorizationGrantAuthorizerBuilderImpl implements AuthorizationGrantAuthorizerBuilder {
+	
+	public String clientId;
+	 
+	public String clientSecret;
+		
+	public String callbackUri;
+	
 	private String code;
 	
+	@Override
+	public AuthorizationGrantAuthorizerBuilder setClientId(String clientId) {
+		this.clientId = clientId;
+		return this;
+	}
+
+	@Override
+	public AuthorizationGrantAuthorizerBuilder setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
+		return this;
+	}
+
+	@Override
+	public AuthorizationGrantAuthorizerBuilder setCallbackUri(String callbackUri) {
+		this.callbackUri = callbackUri;
+		return this;
+	}
+
 	@Override
 	public AuthorizationGrantAuthorizerBuilderImpl setCode(String code) {
 		this.code = code;
@@ -14,6 +39,6 @@ public class AuthorizationGrantAuthorizerBuilderImpl implements AuthorizationGra
 	
 	@Override
 	public AuthorizationGrantRequest build() {
-		return new AuthorizationGrantRequestImpl(code);
+		return new AuthorizationGrantRequestImpl(clientId, clientSecret, callbackUri, code);
 	}
 }

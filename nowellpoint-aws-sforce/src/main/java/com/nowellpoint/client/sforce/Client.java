@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.User;
@@ -25,6 +26,12 @@ public class Client {
 		
 	}
 	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	
 	public User getUser(GetUserRequest request) {
 		User user = null;
 		
@@ -38,11 +45,11 @@ public class Client {
 	     			.queryParameter("version", "latest")
 	     			.execute();
 			
-			if (httpResponse.getStatusCode() >= 400) {
+			if (httpResponse.getStatusCode() >= Status.OK) {
+				user = httpResponse.getEntity(User.class);
+			} else {
 				
 			}
-	     	
-	     	user = httpResponse.getEntity(User.class);
 	     	
 		} catch (IOException e) {
 
@@ -50,6 +57,12 @@ public class Client {
 		
 		return user;
 	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
 	
 	public Organization getOrganization(GetOrganizationRequest request) {
 		Organization organization = null;
@@ -78,6 +91,12 @@ public class Client {
 		
 		return organization;
 	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
 	
 	public DescribeSobjectsResult describe(DescribeSobjectsRequest request) {
 		DescribeSobjectsResult result = null;
