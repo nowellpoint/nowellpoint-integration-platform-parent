@@ -1,7 +1,5 @@
 package com.nowellpoint.client.sforce;
 
-import java.io.IOException;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -33,26 +31,20 @@ public class Client {
 	 */
 	
 	public User getUser(GetUserRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
+     			.bearerAuthorization(request.getAccessToken())
+     			.path("User")
+     			.path(request.getUserId())
+     			.queryParameter("fields", USER_FIELDS)
+     			.queryParameter("version", "latest")
+     			.execute();
+		
 		User user = null;
 		
-		try {
-	     	
-			HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
-	     			.bearerAuthorization(request.getAccessToken())
-	     			.path("User")
-	     			.path(request.getUserId())
-	     			.queryParameter("fields", USER_FIELDS)
-	     			.queryParameter("version", "latest")
-	     			.execute();
+		if (httpResponse.getStatusCode() == Status.OK) {
+			user = httpResponse.getEntity(User.class);
+		} else {
 			
-			if (httpResponse.getStatusCode() >= Status.OK) {
-				user = httpResponse.getEntity(User.class);
-			} else {
-				
-			}
-	     	
-		} catch (IOException e) {
-
 		}
 		
 		return user;
@@ -65,27 +57,19 @@ public class Client {
 	 */
 	
 	public Organization getOrganization(GetOrganizationRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
+     			.bearerAuthorization(request.getAccessToken())
+     			.path("Organization")
+     			.path(request.getOrganizationId())
+     			.queryParameter("fields", ORGANIZATION_FIELDS)
+     			.queryParameter("version", "latest")
+     			.execute();
+		
 		Organization organization = null;
 		
-		try {
-	     	
-			HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
-	     			.bearerAuthorization(request.getAccessToken())
-	     			.path("Organization")
-	     			.path(request.getOrganizationId())
-	     			.queryParameter("fields", ORGANIZATION_FIELDS)
-	     			.queryParameter("version", "latest")
-	     			.execute();
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				
-			}
-	     	
+		if (httpResponse.getStatusCode() == Status.OK) {
 			organization = httpResponse.getEntity(Organization.class);
-			
-			return organization;
-	     	
-		} catch (IOException e) {
+		} else {
 			
 		}
 		
@@ -99,22 +83,17 @@ public class Client {
 	 */
 	
 	public DescribeSobjectsResult describe(DescribeSobjectsRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(request.getAccessToken())
+				.execute();
+		
 		DescribeSobjectsResult result = null;
 		
-		try {
-			HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(request.getAccessToken())
-					.execute();
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				
-			}
-			
+		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeSobjectsResult.class);
+		} else {
 			
-		} catch (IOException e) {
-
 		}
 		
 		return result;

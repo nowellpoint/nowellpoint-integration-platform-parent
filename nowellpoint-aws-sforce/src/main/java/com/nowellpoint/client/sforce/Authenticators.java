@@ -1,6 +1,5 @@
 package com.nowellpoint.client.sforce;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.nowellpoint.aws.http.HttpResponse;
@@ -17,51 +16,41 @@ public class Authenticators {
 	
 	public static class AuthorizationGrantResponseFactory {
 		public OauthAuthorizationGrantResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
+			HttpResponse httpResponse;
+			
 			Token token = null;
 			
-			try {
+			httpResponse = RestResource.post(System.getProperty("salesforce.token.uri"))
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType("application/x-www-form-urlencoded")
+					.parameter("grant_type", "authorization_code")
+					.parameter("code", authorizationGrantRequest.getCode())
+					.parameter("client_id", authorizationGrantRequest.getClientId())
+					.parameter("client_secret", authorizationGrantRequest.getClientSecret())
+					.parameter("redirect_uri", authorizationGrantRequest.getCallbackUri())
+					.execute();
+			
+			if (httpResponse.getStatusCode() >= 400) {
 				
-				HttpResponse httpResponse = RestResource.post(System.getProperty("salesforce.token.uri"))
-						.acceptCharset(StandardCharsets.UTF_8)
-						.accept(MediaType.APPLICATION_JSON)
-						.contentType("application/x-www-form-urlencoded")
-						.parameter("grant_type", "authorization_code")
-						.parameter("code", authorizationGrantRequest.getCode())
-						.parameter("client_id", authorizationGrantRequest.getClientId())
-						.parameter("client_secret", authorizationGrantRequest.getClientSecret())
-						.parameter("redirect_uri", authorizationGrantRequest.getCallbackUri())
-						.execute();
-				
-				if (httpResponse.getStatusCode() >= 400) {
-					
-				}
-				
-				token = httpResponse.getEntity(Token.class);
-				
-			} catch (IOException e) {
-				
-			}	
+			}
+			
+			token = httpResponse.getEntity(Token.class);
 			
 			Identity identity = null;
 			
-			try {
+			httpResponse = RestResource.get(token.getId())
+					.acceptCharset(StandardCharsets.UTF_8)
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.queryParameter("version", "latest")
+					.execute();
+	    	
+	    	if (httpResponse.getStatusCode() >= 400) {
 				
-				HttpResponse httpResponse = RestResource.get(token.getId())
-						.acceptCharset(StandardCharsets.UTF_8)
-						.bearerAuthorization(token.getAccessToken())
-						.accept(MediaType.APPLICATION_JSON)
-						.queryParameter("version", "latest")
-						.execute();
-		    	
-		    	if (httpResponse.getStatusCode() >= 400) {
-					
-				}
-		    	
-		    	identity = httpResponse.getEntity(Identity.class);
-		    	
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+	    	
+	    	identity = httpResponse.getEntity(Identity.class);
 			
 			OauthAuthorizationGrantResponse response = new OauthAuthorizationGrantResponseImpl(token, identity);
 			return response;

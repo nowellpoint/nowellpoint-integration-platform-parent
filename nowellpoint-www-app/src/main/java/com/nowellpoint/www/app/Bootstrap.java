@@ -25,6 +25,7 @@ import javax.ws.rs.NotAuthorizedException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -215,7 +216,7 @@ public class Bootstrap implements SparkApplication {
 			
 			return httpResponse.getEntityList(IsoCountry.class);
 			
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			e.printStackTrace();
 			halt();
 		}
@@ -298,7 +299,7 @@ public class Bootstrap implements SparkApplication {
 	    	
 	    	return httpResponse.getAsString();
 	    	 	    	
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			throw new InternalServerErrorException(e);
 		}
 	}

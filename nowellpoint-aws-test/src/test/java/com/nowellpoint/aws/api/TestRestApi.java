@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -51,7 +52,7 @@ public class TestRestApi {
 			
 			
 			
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			e.printStackTrace();
 		}
 	}
