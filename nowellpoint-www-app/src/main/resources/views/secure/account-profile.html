@@ -24,7 +24,7 @@
                 <div class="col-sm-3">
 
                     <div class="sidebar-nav">
-                        <div class="navbar navbar-default" role="navigation">
+                        <nav class="navbar navbar-default" role="navigation">
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
                                     <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
@@ -34,7 +34,8 @@
 
                             <div class="navbar-collapse collapse sidebar-navbar-collapse">
                                 <ul class="nav navbar-nav">
-                                    <li class="active"><a href="#">Menu Item 1</a></li>
+                                    <li><a href="/app/account-profile/salesforce/instances">${salesforceInstancesLabel}</a></li>
+                                    <!--
                                     <li><a href="#">Menu Item 2</a></li>
                                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                                         <ul class="dropdown-menu">
@@ -49,15 +50,16 @@
                                     </li>
                                     <li><a href="#">Menu Item 4</a></li>
                                     <li><a href="#">Reviews <span class="badge">1,118</span></a></li>
+-->
                                 </ul>
                             </div>
                             <!--/.nav-collapse -->
-                        </div>
+                        </nav>
                     </div>
                 </div>
 
                 <div class="col-sm-9">
-                    <div class="panel panel-default">
+                    <div class="panel panel-primary">
 
                         <div class="panel-body">
 
@@ -115,44 +117,12 @@
                                     <dd>${accountProfile.address.city!}</dd>
                                     <dt>${state}</dt>
                                     <dd>${accountProfile.address.state!}</dd>
-                                    <dt>${postalCode}</dt>
+                                    <dt>${zipPostalCode}</dt>
                                     <dd>${accountProfile.address.postalCode!}</dd>
                                     <dt>${country}</dt>
                                     <dd>${accountProfile.address.countryCode!}</dd>
                                 </dl>
 
-                            </div>
-
-                            <div class="col-md-12">
-                                <div class="hr-divider">
-                                    <h3 class="hr-divider-content hr-divider-heading">${salesforceProfilesLabel}</h3>
-                                </div>
-                                <br>
-                                <div class="content table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <th>${username}</th>
-                                            <th>${name}</th>
-                                            <th>${email}</th>
-                                            <th>${address}</th>
-                                            <th>${action}</th>
-                                        </thead>
-                                        <tbody>
-                                            <#list accountProfile.salesforceProfiles as salesforceProfile>
-                                                <tr id="${salesforceProfile.userId}">
-                                                    <td>${salesforceProfile.username}</td>
-                                                    <td>${salesforceProfile.displayName}</td>
-                                                    <td>${salesforceProfile.email}</td>
-                                                    <td>${salesforceProfile.street}
-                                                        <br> ${salesforceProfile.city}, ${(salesforceProfile.state)!} ${(salesforceProfile.zipPostalCode)!}
-                                                        <br> ${salesforceProfile.country}
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
-                                            </#list>
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
                     </div>

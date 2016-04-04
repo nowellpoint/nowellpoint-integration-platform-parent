@@ -5,12 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 public class AccountProfile extends Resource {
-	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -856231703315633645L;
 
 	/**
 	 * 

@@ -4,8 +4,8 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.aws.api.dto.SalesforceInstanceDTO;
 import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
-import com.nowellpoint.aws.api.exception.ServiceException;
 import com.nowellpoint.aws.data.mongodb.SalesforceInstance;
 import com.nowellpoint.aws.data.mongodb.sforce.Contact;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -15,7 +15,7 @@ import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeSobjectsRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.GetUserRequest;
-import com.nowellpoint.client.sforce.OauthAuthorizationGrantResponse;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -37,7 +37,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public OauthAuthorizationGrantResponse authenticate(String code) throws ServiceException {		
+	public OauthAuthenticationResponse authenticate(String code) {		
 		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST
 				.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
@@ -46,7 +46,7 @@ public class SalesforceService extends AbstractCacheService {
 				.setCode(code)
 				.build();
 		
-		OauthAuthorizationGrantResponse response = Authenticators.AUTHORIZATION_GRANT_AUTHENTICATOR
+		OauthAuthenticationResponse response = Authenticators.AUTHORIZATION_GRANT_AUTHENTICATOR
 				.authenticate(request);
 			
 		return response;
@@ -63,8 +63,28 @@ public class SalesforceService extends AbstractCacheService {
 		return token;
 	}
 	
-	public ServiceInfo getServiceInfo(String subject, String code) throws ServiceException {
-		OauthAuthorizationGrantResponse response = authenticate(code);
+	public SalesforceInstanceDTO getSalesforceInstance(String subject, String code) {
+		OauthAuthenticationResponse response = authenticate(code);
+		
+		Token token = response.getToken();
+		
+		Identity identity = response.getIdentity();
+		
+		String userId = token.getId().substring(token.getId().lastIndexOf("/") + 1);
+		
+		hset( subject, Token.class.getName().concat( userId ), token);
+		
+		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
+		
+		SalesforceInstanceDTO resource = new SalesforceInstanceDTO();
+		resource.setOrganization(organization);
+		resource.setIdentity(identity);
+		
+		return resource;
+	}
+	
+	public ServiceInfo getServiceInfo(String subject, String code) {
+		OauthAuthenticationResponse response = authenticate(code);
 		
 		Token token = response.getToken();
 		

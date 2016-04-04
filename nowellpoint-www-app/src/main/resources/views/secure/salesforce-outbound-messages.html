@@ -4,119 +4,32 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
-            <div class="row">
-                <div class="col-md-2">
+        <div class="container">
 
-                </div>
-                <div class="col-md-10">
-                    <div class="dashhead m-t-md">
-                        <div class="dashhead">
-                            <div class="dashhead-titles">
-                                <h6 class="dashhead-subtitle">${serviceProvider.displayName}</h6>
-                                <h2 class="dashhead-title">${outboundMessageSetup}</h2>
-                            </div>
+            <br>
+            <br>
+            <br>
+            
+            <div class="col-md-12">
+
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+
+                <div class="panel-group" id="accordion">
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">${salesforceInstanceLabel}</h4>
                         </div>
+
                     </div>
-
-                    <div class="hr-divider m-t m-b-md">
-                        <h3 class="hr-divider-content hr-divider-heading"></h3>
-                    </div>
-
-                    <div class="col-md-12">
-
-                        <#if errorMessage??>
-                            <div id="alert" class="alert alert-danger">
-                                <a class="close" data-dismiss="alert">×</a>
-                                <div class="text-center">${errorMessage}</div>
-                            </div>
-                        </#if>
-
-                        <div class="panel-group" id="accordion">
-
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">${authenticateLabel}</h4>
-                                </div>
-                                
-                                <#include "salesforce-authenticate.html" />
-                                
-                            </div>
-
-                            <br>
-
-                            <#if (serviceProvider.service.serviceInfo.sobjects)??>
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">2. ${selectSObjects}</a></h4>
-                                    </div>
-                                    <div id="collapseOne" class="panel-collapse collapse in">
-                                        <div class="panel-body">
-                                            <#list serviceProvider.service.serviceInfo.sobjects as sobject>
-                                                <#if sobject.triggerable>
-                                                    <div class="col-lg-3 col-md-4 col-md-sm-2">
-                                                        <div class="checkbox custom-control custom-checkbox">
-                                                            <label>
-                                                                <input type="checkbox" value="${sobject.name}" name="sobject">
-                                                                <span class="custom-control-indicator"></span>
-                                                                <p>${sobject.label}</p>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </#if>
-                                            </#list>
-                                        </div>
-                                    </div>
-                                </div>
-                            </#if>
-                            
-                            <br>
-
-                            <form class="form-vertical" role="form" method="post" action="/app/services">
-                                <input type="hidden" name="id" id="id" value="" />
-                                <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${(serviceProvider.id)!}" />
-                                <input type="hidden" name="type" id="type" value="${(serviceProvider.type)!}" />
-                                <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProvider.service.serviceInfo.instanceId)!}" />
-                                <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProvider.service.serviceInfo.instanceName)!}" />
-                                <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProvider.service.serviceInfo.instanceUrl)!}" />
-                                <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProvider.service.serviceInfo.organization.isSandbox?string)!}" />
-                                <input type="hidden" name="name" id="name" value="${(serviceProvider.service.serviceInfo.name)!}" />
-                                <input type="hidden" name="account" id="account" value="${(serviceProvider.service.serviceInfo.account)!}" />
-                                <input type="hidden" name="price" id="price" value="${(serviceProvider.price?string)!}" />
-                                <input type="hidden" name="uom" id="uom" value="${(serviceProvider.uom)!}" />
-
-                                <div class="pull-right">
-                                    <a href="/app/providers">${cancel}</a>&nbsp;
-                                    <#if !(serviceProvider.service.serviceInfo)??>
-                                        <a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a>
-                                    </#if>
-                                    <#if (serviceProvider.service.serviceInfo)??>
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${addService}</button>
-                                    </#if>
-                                </div>
-                            </form>
-
-                        </div>
-                    </div>
+                    <br>
                 </div>
-                <div class="col-md-2"></div>
             </div>
         </div>
-
-        <#include "progress-bar-dialog.html" />
-
-        <script>
-            $(document).ready(function(e) {
-                $('#clickable').click(function(e) {
-                    e.preventDefault();
-                    var body = 'photoUrl=' + $(this).data('id');
-                    $.ajax({
-                        type: "POST",
-                        url: "/app/user-profile/picture/salesforce",
-                        data: body
-                    });
-                });
-            });
-        </script>
 
     </@t.page>

@@ -5,6 +5,7 @@ import static spark.Spark.post;
 import static spark.Spark.delete;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
 
@@ -38,6 +40,8 @@ public class AccountProfileController {
 		post("/app/account-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
 		
 		delete("/app/account-profile/picture", (request, response) -> removeProfilePicture(request, response));
+		
+		get("/app/account-profile/salesforce/instances", (request, response) -> getSalesforceInstances(request, response), new FreeMarkerEngine(cfg));
 		
 	}
 	
@@ -178,5 +182,24 @@ public class AccountProfileController {
 		model.put("accountProfile", accountProfile);
 		
 		return new ModelAndView(model, "secure/account-profile.html");		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView getSalesforceInstances(Request request, Response response) {
+		
+		Account account = request.attribute("account");
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+    	model.put("account", account);
+    	model.put("salesforceInstances", Collections.emptyList());
+    	
+    	return new ModelAndView(model, "secure/salesforce-instance-list.html");
+    	
 	}
 }

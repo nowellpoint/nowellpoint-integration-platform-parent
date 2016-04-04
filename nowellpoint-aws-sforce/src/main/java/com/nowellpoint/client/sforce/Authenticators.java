@@ -5,55 +5,93 @@ import java.nio.charset.StandardCharsets;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
-import com.nowellpoint.client.sforce.impl.OauthAuthorizationGrantResponseImpl;
+import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.sforce.impl.OauthAuthenticationResponseImpl;
+import com.nowellpoint.client.sforce.OauthConstants;
+import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 
 public class Authenticators {
 	
+	private static final String OAUTH_TOKEN_URI = "https://login.salesforce.com/services/oauth2/token";
+	
 	public static final AuthorizationGrantResponseFactory AUTHORIZATION_GRANT_AUTHENTICATOR = new AuthorizationGrantResponseFactory();
+	public static final UsernamePasswordGrantResponseFactory USERNAME_PASSWORD_GRANT_AUTHENTICATOR = new UsernamePasswordGrantResponseFactory();
 	
 	public static class AuthorizationGrantResponseFactory {
-		public OauthAuthorizationGrantResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
-			HttpResponse httpResponse;
+		public OauthAuthenticationResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
+			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.AUTHORIZATION_GRANT_TYPE)
+					.parameter(OauthConstants.CODE_PARAMETER, authorizationGrantRequest.getCode())
+					.parameter(OauthConstants.CLIENT_ID_PARAMETER, authorizationGrantRequest.getClientId())
+					.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, authorizationGrantRequest.getClientSecret())
+					.parameter(OauthConstants.REDIRECT_URI_PARAMETER, authorizationGrantRequest.getCallbackUri())
+					.execute();
 			
 			Token token = null;
 			
-			httpResponse = RestResource.post(System.getProperty("salesforce.token.uri"))
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType("application/x-www-form-urlencoded")
-					.parameter("grant_type", "authorization_code")
-					.parameter("code", authorizationGrantRequest.getCode())
-					.parameter("client_id", authorizationGrantRequest.getClientId())
-					.parameter("client_secret", authorizationGrantRequest.getClientSecret())
-					.parameter("redirect_uri", authorizationGrantRequest.getCallbackUri())
-					.execute();
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				
+			if (httpResponse.getStatusCode() == Status.OK) {
+	    		token = httpResponse.getEntity(Token.class);
+			} else {
+				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 			}
 			
-			token = httpResponse.getEntity(Token.class);
-			
-			Identity identity = null;
-			
-			httpResponse = RestResource.get(token.getId())
-					.acceptCharset(StandardCharsets.UTF_8)
-					.bearerAuthorization(token.getAccessToken())
-					.accept(MediaType.APPLICATION_JSON)
-					.queryParameter("version", "latest")
-					.execute();
+			Identity identity = getIdentity(token.getId(), token.getAccessToken());
 	    	
-	    	if (httpResponse.getStatusCode() >= 400) {
-				
-			}
-	    	
-	    	identity = httpResponse.getEntity(Identity.class);
-			
-			OauthAuthorizationGrantResponse response = new OauthAuthorizationGrantResponseImpl(token, identity);
+			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
 			return response;
 		}
+	}
+	
+	public static class UsernamePasswordGrantResponseFactory {
+		public OauthAuthenticationResponse authenticate(UsernamePasswordGrantRequest usernamePasswordGrantRequest) {
+			 HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.acceptCharset(StandardCharsets.UTF_8)
+					.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.PASSWORD_GRANT_TYPE)
+					.parameter(OauthConstants.CLIENT_ID_PARAMETER, usernamePasswordGrantRequest.getClientId())
+					.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, usernamePasswordGrantRequest.getClientSecret())
+					.parameter(OauthConstants.USERNAME_PARAMETER, usernamePasswordGrantRequest.getUsername())
+					.parameter(OauthConstants.PASSWORD_PARAMETER, usernamePasswordGrantRequest.getPassword()
+							.concat(usernamePasswordGrantRequest.getSecurityToken() != null ? usernamePasswordGrantRequest.getSecurityToken() : ""))
+					.execute();
+			
+			Token token = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+	    		token = httpResponse.getEntity(Token.class);
+			} else {
+				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+			}
+			
+			Identity identity = getIdentity(token.getId(), token.getAccessToken());
+			
+			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
+			return response;
+		}
+	}
+	
+	private static Identity getIdentity(String id, String accessToken) {
+		HttpResponse httpResponse = RestResource.get(id)
+				.acceptCharset(StandardCharsets.UTF_8)
+				.bearerAuthorization(accessToken)
+				.accept(MediaType.APPLICATION_JSON)
+				.queryParameter("version", "latest")
+				.execute();
+    	
+		Identity identity = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		identity = httpResponse.getEntity(Identity.class);
+		} else {
+			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+		}
+    	
+    	return identity;
 	}
 }

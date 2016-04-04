@@ -1,18 +1,240 @@
-<div id="collapseOne" class="panel-collapse collapse in">
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt>${name}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.name)!}</dd>
-            <dt>${instanceId}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.instanceId)!}</dd>
-            <dt>${instanceName}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.instanceName)!}</dd>
-            <dt>${instanceUrl}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.instanceUrl)!}</dd>
-            <dt>${accountLabel}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.account)!}</dd>
-            <dt>${isSandbox}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.isSandbox?string('Yes', 'No'))!}</dd>
-        </dl>
-    </div>
-</div>
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container">
+
+            <br>
+            <br>
+            <br>
+
+            <div class="col-md-12">
+
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">${salesforceInstanceLabel}</h4>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-body">
+
+                            <row>
+
+                                <div class="col-md-2">
+
+                                    <div>
+                                        <#if !(salesforceInstance)??>
+                                            <img src="/images/person-generic.jpg" class="img-circle img-responsive center-block" />
+                                        </#if>
+                                        <#if (salesforceInstance)??>
+                                            <img src="${(salesforceInstance.identity.photos.picture)!}" class="img-circle img-responsive center-block">
+                                        </#if>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-10">
+
+                                    <dl class="dl-horizontal">
+
+                                        <dt>${id}</dt>
+                                        <dd>${(salesforceInstance.identity.id)!}</dd>
+
+                                        <dt>${name}</dt>
+                                        <dd>${(salesforceInstance.identity.displayName)!}</dd>
+
+                                        <dt>${username}</dt>
+                                        <dd>${(salesforceInstance.identity.username)!}</dd>
+
+                                        <dt>${email}</dt>
+                                        <dd>${(salesforceInstance.identity.email)!}</dd>
+
+                                        <dt>${street}</dt>
+                                        <dd>${(salesforceInstance.identity.addrStreet)!}</dd>
+
+                                        <dt>${city}</dt>
+                                        <dd>${(salesforceInstance.identity.addrCity)!}</dd>
+
+                                        <dt>${country}</dt>
+                                        <dd>${(salesforceInstance.identity.addrCountry)!}</dd>
+
+                                        <dt>${state}</dt>
+                                        <dd>${(salesforceInstance.identity.addrState)!}</dd>
+
+                                        <dt>${zipPostalCode}</dt>
+                                        <dd>${(salesforceInstance.identity.addrZip)!}</dd>
+
+                                        <dt>${mobilePhone}</dt>
+                                        <dd>${(salesforceInstance.identity.mobilePhone)!}</dd>
+
+                                        <dt>${language}</dt>
+                                        <dd>${(salesforceInstance.identity.language)!}</dd>
+
+                                        <dt>${locale}</dt>
+                                        <dd>${(salesforceInstance.identity.locale)!}</dd>
+
+                                        <dt>${userType}</dt>
+                                        <dd>${(salesforceInstance.identity.userType)!}</dd>
+
+                                        <dt>${userId}</dt>
+                                        <dd>${(salesforceInstance.identity.userId)!}</dd>
+
+                                    </dl>
+
+                                    <div class="hr-divider m-t m-b-md">
+
+                                    </div>
+
+                                    <dl class="dl-horizontal">
+
+                                        <dt>${name}</dt>
+                                        <dd>${(salesforceInstance.organization.name)!}</dd>
+                                        
+                                        <dt>${phone}</dt>
+                                        <dd>${(salesforceInstance.organization.phone)!}</dd>
+                                        
+                                        <dt>${primaryContact}</dt>
+                                        <dd>${(salesforceInstance.organization.primaryContact)!}</dd>
+
+                                        <dt>${organizationType}</dt>
+                                        <dd>${(salesforceInstance.organization.organizationType)!}</dd>
+
+                                        <dt>${division}</dt>
+                                        <dd>${(salesforceInstance.organization.division)!}</dd>
+
+                                        <dt>${instanceName}</dt>
+                                        <dd>${(salesforceInstance.organization.instanceName)!}</dd>
+
+                                        <dt>${fiscalYearStartMonth}</dt>
+                                        <dd>${(salesforceInstance.organization.fiscalYearStartMonth)!}</dd>
+
+                                        <dt>${defaultLocaleSidKey}</dt>
+                                        <dd>${(salesforceInstance.organization.defaultLocaleSidKey)!}</dd>
+
+                                        <dt>${languageLocaleKey}</dt>
+                                        <dd>${(salesforceInstance.organization.languageLocaleKey)!}</dd>
+
+                                        <dt>${organizationId}</dt>
+                                        <dd>${(salesforceInstance.organization.id)!}</dd>
+
+                                    </dl>
+
+                                    <div class="hr-divider m-t m-b-md">
+
+                                    </div>
+
+                                    <dl class="dl-horizontal">
+
+                                        <dt>${metadata}</dt>
+                                        <dd>${(salesforceInstance.identity.urls.metadata)!}</dd>
+
+                                        <dt>${partner}</dt>
+                                        <dd>${(salesforceInstance.identity.urls.partner)!}</dd>
+
+                                        <dt>${rest}</dt>
+                                        <dd>${(salesforceInstance.identity.urls.rest)!}</dd>
+
+                                        <dt>${sobjects}</dt>
+                                        <dd>${(salesforceInstance.identity.urls.sobjects)!}</dd>
+
+                                        <dt>${profile}</dt>
+                                        <dd>${(salesforceInstance.identity.urls.profile)!}</dd>
+                                        
+                                        <dt>${query}</dt>
+                                        <dd>${(salesforceInstance.identity.urls.query)!}</dd>
+
+                                    </dl>
+                                </div>
+                            </row>
+
+                            <br>
+
+                            
+                            <form id='salesforceInstance' role="form" method="post" action="/app/salesforce/instance">
+                                <input type="hidden" id="identity.id" name="identity.id" value="${(salesforceInstance.identity.id)!}"/>
+                                <input type="hidden" id="identity.active" name="identity.active" value="${(salesforceInstance.identity.active?c)!}"/>
+                                <input type="hidden" id="identity.displayName" name="identity.displayName" value="${(salesforceInstance.identity.displayName)!}"/>
+                                <input type="hidden" id="identity.firstName" name="identity.firstName" value="${(salesforceInstance.identity.firstName)!}"/>
+                                <input type="hidden" id="identity.lastName" name="identity.lastName" value="${(salesforceInstance.identity.lastName)!}"/>
+                                <input type="hidden" id="identity.username" name="identity.username" value="${(salesforceInstance.identity.username)!}"/>
+                                <input type="hidden" id="identity.email" name="identity.email" value="${(salesforceInstance.identity.email)!}"/>
+                                <input type="hidden" id="identity.addrStreet" name="identity.addrStreet" value="${(salesforceInstance.identity.addrStreet)!}"/>
+                                <input type="hidden" id="identity.addrCity" name="identity.addrCity" value="${(salesforceInstance.identity.addrCity)!}"/>
+                                <input type="hidden" id="identity.addrCountry" name="identity.addrCountry" value="${(salesforceInstance.identity.addrCountry)!}"/>
+                                <input type="hidden" id="identity.addrState" name="identity.addrState" value="${(salesforceInstance.identity.addrState)!}"/>
+                                <input type="hidden" id="identity.addrZip" name="identity.addrZip" value="${(salesforceInstance.identity.addrZip)!}"/>
+                                <input type="hidden" id="identity.mobilePhone" name="identity.mobilePhone" value="${(salesforceInstance.identity.mobilePhone)!}"/>
+                                <input type="hidden" id="identity.nickName" name="identity.nickName" value="${(salesforceInstance.identity.nickName)!}"/>
+                                <input type="hidden" id="identity.language" name="identity.language" value="${(salesforceInstance.identity.language)!}"/>
+                                <input type="hidden" id="identity.locale" name="identity.locale" value="${(salesforceInstance.identity.locale)!}"/>
+                                <input type="hidden" id="identity.userType" name="identity.userType" value="${(salesforceInstance.identity.userType)!}"/>
+                                <input type="hidden" id="identity.userId" name="identity.userId" value="${(salesforceInstance.identity.userId)!}"/>                                
+                                <input type="hidden" id="identity.organizationId" name="identity.organizationId" value="${(salesforceInstance.identity.organizationId)!}"/>
+                                <input type="hidden" id="identity.utcOffset" name="identity.utcOffset" value="${(salesforceInstance.identity.utcOffset)!}"/>
+                                
+                                <input type="hidden" id="identity.photos.picture" name="identity.photos.picture" value="${(salesforceInstance.identity.photos.picture)!}"/>
+                                <input type="hidden" id="identity.photos.thumbnail" name="identity.photos.thumbnail" value="${(salesforceInstance.identity.photos.thumbnail)!}"/>
+                                
+                                <input type="hidden" id="identity.photos.picture" name="identity.photos.picture" value="${(salesforceInstance.identity.photos.picture)!}"/>
+                                <input type="hidden" id="identity.photos.thumbnail" name="identity.photos.thumbnail" value="${(salesforceInstance.identity.photos.thumbnail)!}"/>
+                                
+                                <input type="hidden" id="organization.name" name="organization.name" value="${(salesforceInstance.organization.name)!}"/>
+                                <input type="hidden" id="organization.organizationType" name="organization.organizationType" value="${(salesforceInstance.organization.organizationType)!}"/>
+                                <input type="hidden" id="organization.division" name="organization.division" value="${(salesforceInstance.organization.division)!}"/>
+                                <input type="hidden" id="organization.instanceName" name="organization.instanceName" value="${(salesforceInstance.organization.instanceName)!}"/>
+                                <input type="hidden" id="organization.fiscalYearStartMonth" name="organization.fiscalYearStartMonth" value="${(salesforceInstance.organization.fiscalYearStartMonth)!}"/>
+                                <input type="hidden" id="organization.defaultLocaleSidKey" name="organization.defaultLocaleSidKey" value="${(salesforceInstance.organization.defaultLocaleSidKey)!}"/>                                
+                                <input type="hidden" id="organization.languageLocaleKey" name="organization.languageLocaleKey" value="${(salesforceInstance.organization.languageLocaleKey)!}"/>
+                                <input type="hidden" id="organization.id" name="organization.id" value="${(salesforceInstance.organization.id)!}"/>                            
+                                <input type="hidden" id="organization.phone" name="organization.phone" value="${(salesforceInstance.organization.phone)!}"/>                                
+                                <input type="hidden" id="organization.primaryContact" name="organization.primaryContact" value="${(salesforceInstance.organization.primaryContact)!}"/>
+                                <input type="hidden" id="organization.usesStartDateAsFiscalYearName" name="organization.usesStartDateAsFiscalYearName" value="${(salesforceInstance.organization.usesStartDateAsFiscalYearName?c)!}"/>
+                                
+
+                            <div class="pull-right">
+                                <a href="/app/providers">${cancel}</a>&nbsp;
+                                <#if !(salesforceInstance)??>
+                                    <a href="/app/account-profile/salesforce/instances" class="btn btn-primary" role="button">${authenticateLabel}</a>
+                                </#if>
+                                <#if (salesforceInstance)??>
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${save}</button>
+                                </#if>
+                            </div>
+                                
+                            </form>    
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <#include "progress-bar-dialog.html" />
+
+        <script>
+            $(document).ready(function(e) {
+                $('#clickable').click(function(e) {
+                    e.preventDefault();
+                    var body = 'photoUrl=' + $(this).data('id');
+                    $.ajax({
+                        type: "POST",
+                        url: "/app/user-profile/picture/salesforce",
+                        data: body
+                    });
+                });
+            });
+        </script>
+
+    </@t.page>

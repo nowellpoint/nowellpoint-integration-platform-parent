@@ -170,83 +170,234 @@ END OF TERMS AND CONDITIONS
 
 package com.nowellpoint.www.app.model.sforce;
 
-import java.io.Serializable;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Urls implements Serializable {
+public class Identity {
 
-	private static final long serialVersionUID = 1L;
+	private String id;
 
-	@JsonProperty("metadata")
-	private String metadata;
+	private String userId;
 
-	@JsonProperty("partner")
-	private String partner;
+	private String organizationId;
 
-	@JsonProperty("rest")
-	private String rest;
+	private String username;
 
-	@JsonProperty("sobjects")
-	private String sobjects;
+	private String nickName;
 
-	@JsonProperty("query")
-	private String query;
+	private String displayName;
 
-	@JsonProperty("profile")
-	private String profile;
+	private String email;
+	
+	private String firstName;
+	
+	private String lastName;
+	
+	private String addrStreet;
+	
+	private String addrCity;
+	
+	private String addrCountry;
+	
+	private String addrState;
+	
+	private String addrZip;
+	
+	private String mobilePhone;
 
-	public Urls() {
-		
+	private Boolean active;
+
+	private String userType;
+
+	private String language;
+
+	private Locale locale;
+
+	private String utcOffset;
+
+	private Photos photos;
+	
+	private Urls urls;
+
+	public Identity() {
+
 	}
 
-	public String getMetadata() {
-		return metadata;
+	public String getId() {
+		return id;
 	}
 
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public String getPartner() {
-		return partner;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setPartner(String partner) {
-		this.partner = partner;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getRest() {
-		return rest;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setRest(String rest) {
-		this.rest = rest;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
-	public String getSobjects() {
-		return sobjects;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setSObjects(String sobjects) {
-		this.sobjects = sobjects;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public String getQuery() {
-		return query;
+	public String getNickName() {
+		return nickName;
 	}
 
-	public void setQuery(String query) {
-		this.query = query;
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 
-	public String getProfile() {
-		return profile;
+	public String getDisplayName() {
+		return displayName;
 	}
 
-	public void setProfile(String profile) {
-		this.profile = profile;
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getAddrStreet() {
+		return addrStreet;
+	}
+
+	public void setAddrStreet(String addrStreet) {
+		this.addrStreet = addrStreet;
+	}
+
+	public String getAddrCity() {
+		return addrCity;
+	}
+
+	public void setAddrCity(String addrCity) {
+		this.addrCity = addrCity;
+	}
+
+	public String getAddrCountry() {
+		return addrCountry;
+	}
+
+	public void setAddrCountry(String addrCountry) {
+		this.addrCountry = addrCountry;
+	}
+
+	public String getAddrState() {
+		return addrState;
+	}
+
+	public void setAddrState(String addrState) {
+		this.addrState = addrState;
+	}
+
+	public String getAddrZip() {
+		return addrZip;
+	}
+
+	public void setAddrZip(String addrZip) {
+		this.addrZip = addrZip;
+	}
+
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
+
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
+	}
+
+	public Urls getUrls() {
+		return urls;
+	}
+
+	public void setUrls(Urls urls) {
+		this.urls = urls;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public String getUtcOffset() {
+		return utcOffset;
+	}
+
+	public void setUtcOffset(String utcOffset) {
+		this.utcOffset = utcOffset;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
 	}
 }

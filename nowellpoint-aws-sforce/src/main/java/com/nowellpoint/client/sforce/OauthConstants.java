@@ -168,85 +168,47 @@ accepting any such warranty or additional liability.
 END OF TERMS AND CONDITIONS
  */
 
-package com.nowellpoint.www.app.model.sforce;
+package com.nowellpoint.client.sforce;
 
-import java.io.Serializable;
+public class OauthConstants {
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+	public static final String AUTHORIZE_ENDPOINT = "authorizeUrl";
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Urls implements Serializable {
+	public static final String TOKEN_ENDPOINT = "tokenUrl";
 
-	private static final long serialVersionUID = 1L;
+	public static final String REVOKE_ENDPOINT = "revokeUrl";
 
-	@JsonProperty("metadata")
-	private String metadata;
+	public static final String GRANT_TYPE_PARAMETER = "grant_type";
 
-	@JsonProperty("partner")
-	private String partner;
+	public static final String TOKEN_PARAMETER = "token";
 
-	@JsonProperty("rest")
-	private String rest;
+	public static final String CODE_PARAMETER = "code";
 
-	@JsonProperty("sobjects")
-	private String sobjects;
+	public static final String USERNAME_PARAMETER = "username";
 
-	@JsonProperty("query")
-	private String query;
+	public static final String PASSWORD_PARAMETER = "password";
 
-	@JsonProperty("profile")
-	private String profile;
+	public static final String RESPONSE_TYPE_PARAMETER = "response_type";
 
-	public Urls() {
-		
-	}
+	public static final String CLIENT_ID_PARAMETER = "client_id";
 
-	public String getMetadata() {
-		return metadata;
-	}
+	public static final String CLIENT_SECRET_PARAMETER = "client_secret";
 
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
-	}
+	public static final String SCOPE_PARAMETER = "scope";
 
-	public String getPartner() {
-		return partner;
-	}
+	public static final String DISPLAY_PARAMETER = "display";
 
-	public void setPartner(String partner) {
-		this.partner = partner;
-	}
+	public static final String REDIRECT_URI_PARAMETER = "redirect_uri";
 
-	public String getRest() {
-		return rest;
-	}
+	public static final String PROMPT_PARAMETER = "prompt";
 
-	public void setRest(String rest) {
-		this.rest = rest;
-	}
+	public static final String STATE_PARAMETER = "state";
 
-	public String getSobjects() {
-		return sobjects;
-	}
+	public static final String OAUTH_TOKEN_PARAMETER = "oauth_token";
 
-	public void setSObjects(String sobjects) {
-		this.sobjects = sobjects;
-	}
+	public static final String REFRESH_GRANT_TYPE = "refresh_token";
 
-	public String getQuery() {
-		return query;
-	}
+	public static final String AUTHORIZATION_GRANT_TYPE = "authorization_code";
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
-	public String getProfile() {
-		return profile;
-	}
-
-	public void setProfile(String profile) {
-		this.profile = profile;
-	}
+	public static final String PASSWORD_GRANT_TYPE = "password";
 }

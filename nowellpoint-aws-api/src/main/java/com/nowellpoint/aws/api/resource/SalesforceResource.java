@@ -9,13 +9,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import com.nowellpoint.aws.api.exception.ServiceException;
+import com.nowellpoint.aws.api.dto.SalesforceInstanceDTO;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.Token;
@@ -69,19 +68,23 @@ public class SalesforceResource {
 				.header("Location", url)
 				.build();
 	}
+	
+	@GET
+	@Path("/instance")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSalesforceInstance(@QueryParam(value="code") String code) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceInstanceDTO resource = salesforceService.getSalesforceInstance(subject, code);
+		
+		return Response.ok(resource).build();
+	}
 
 	@GET
 	@Path("/token")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getToken(@QueryParam(value="code") String code) {
-		
-		Token token = null; 
-				
-		try {
-			salesforceService.authenticate(code);
-		} catch (ServiceException e) {
-			throw new WebApplicationException(e.getMessage(), e.getStatusCode());
-		}
+		Token token = salesforceService.authenticate(code).getToken();
 				
 		return Response.ok()
 				.entity(token)

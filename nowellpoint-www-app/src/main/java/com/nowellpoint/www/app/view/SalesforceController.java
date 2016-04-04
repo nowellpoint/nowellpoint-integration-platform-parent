@@ -1,19 +1,28 @@
 package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.model.sforce.SalesforceInstance;
+import com.nowellpoint.www.app.model.sforce.Urls;
+import com.nowellpoint.www.app.model.sforce.Identity;
+import com.nowellpoint.www.app.model.sforce.Organization;
+import com.nowellpoint.www.app.model.sforce.Photos;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -32,7 +41,9 @@ public class SalesforceController {
         
         get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/salesforce", (request, response) -> getSalesforceServiceProvider(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce/instance", (request, response) -> getSalesforceInstance(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/salesforce/instance", (request, response) -> saveSalesforceInstance(request, response));
 	}
 	
 	/**
@@ -43,7 +54,7 @@ public class SalesforceController {
 	 * @throws IOException
 	 */
 	
-	private static String oauth(Request request, Response response) throws IOException {
+	private static String oauth(Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
     			.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -67,7 +78,7 @@ public class SalesforceController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView callback(Request request, Response response) throws IOException {
+	private static ModelAndView callback(Request request, Response response) {
     	
     	Optional<String> code = Optional.ofNullable(request.queryParams("code"));
     	
@@ -83,45 +94,107 @@ public class SalesforceController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws IOException
 	 */
 	
-	private static ModelAndView getSalesforceServiceProvider(Request request, Response response) throws IOException {
+	private static ModelAndView getSalesforceInstance(Request request, Response response) {
 		
-    	Token token = request.attribute("token");
-    	
-    	Account account = request.attribute("account");
-    	
-    	Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("account", account);
+		Token token = request.attribute("token");
     	
     	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-    			.path("providers")
-    			.path(request.queryParams("state"))
     			.path("salesforce")
+    			.path("instance")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
     	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
     	
-    	ServiceProvider serviceProvider = null;
-    	if (httpResponse.getStatusCode() == 200) {
-    		serviceProvider = httpResponse.getEntity(ServiceProvider.class);
-    		model.put("serviceProvider", serviceProvider);	
+    	SalesforceInstance salesforceInstance = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		salesforceInstance = httpResponse.getEntity(SalesforceInstance.class);	
     	} else {
     		throw new BadRequestException(httpResponse.getAsString());
     	}	
     	
-    	return new ModelAndView(model, "secure/".concat(serviceProvider.getService().getConfigurationPage()));	
+    	Account account = request.attribute("account");
+    	
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	model.put("account", account);
+    	model.put("salesforceInstance", salesforceInstance);	
+    	
+    	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
 	
-	private static ModelAndView describeSObjects(Request request, Response response) throws IOException {
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String saveSalesforceInstance(Request request, Response response) {
 		
-		String[] sobjects = request.queryParamsValues("sobject");
+		Photos photos = new Photos();
+		photos.setPicture(request.queryParams("identity.photos.picture"));
+		photos.setThumbnail(request.queryParams("identity.photos.thumbnail"));
 		
-		return null;
+		Urls urls = new Urls();
+		//urls.
+		
+		Identity identity = new Identity();
+		identity.setId(request.queryParams("identity.id"));
+		identity.setActive(Boolean.valueOf(request.queryParams("identity.active")));
+		identity.setAddrCity(request.queryParams("identity.addrCity"));
+		identity.setAddrCountry(request.queryParams("identity.addrCountry"));
+		identity.setAddrState(request.queryParams("identity.addrState"));
+		identity.setAddrStreet(request.queryParams("identity.addrStreet"));
+		identity.setAddrZip(request.queryParams("identity.addrZip"));
+		identity.setDisplayName(request.queryParams("identity.displayName"));
+		identity.setEmail(request.queryParams("identity.email"));
+		identity.setFirstName(request.queryParams("identity.firstName"));
+		identity.setLanguage(request.queryParams("identity.language"));
+		identity.setLastName(request.queryParams("identity.lastName"));
+		identity.setLocale(new Locale(request.queryParams("identity.locale")));
+		identity.setMobilePhone(request.queryParams("identity.mobilePhone"));
+		identity.setNickName(request.queryParams("identity.nickName"));
+		identity.setOrganizationId(request.queryParams("identity.organizationId"));
+		identity.setUserId(request.queryParams("identity.userId"));
+		identity.setUsername(request.queryParams("identity.username"));
+		identity.setUserType(request.queryParams("identity.userType"));
+		identity.setUtcOffset(request.queryParams("identity.utcOffset"));
+		identity.setPhotos(photos);
+		identity.setUrls(urls);
+		
+		Organization organization = new Organization();
+		organization.setDefaultLocaleSidKey(request.queryParams("organization.defaultLocaleSidKey"));
+		organization.setDivision(request.queryParams("organization.division"));
+		organization.setFiscalYearStartMonth(request.queryParams("organization.fiscalYearStartMonth"));
+		organization.setId(request.queryParams("organization.id"));
+		organization.setInstanceName(request.queryParams("organization.instanceName"));
+		organization.setLanguageLocaleKey(request.queryParams("organization.languageLocaleKey"));
+		organization.setName(request.queryParams("organization.name"));
+		organization.setOrganizationType(request.queryParams("organization.organizationType"));
+		organization.setPhone(request.queryParams("organization.phone"));
+		organization.setPrimaryContact(request.queryParams("organization.primaryContact"));
+		organization.setUsesStartDateAsFiscalYearName(Boolean.valueOf(request.queryParams("identity.usesStartDateAsFiscalYearName")));
+		
+
+		SalesforceInstance salesforceInstance = new SalesforceInstance();
+		salesforceInstance.setIdentity(identity);
+		salesforceInstance.setOrganization(organization);
+		
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(salesforceInstance));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		response.redirect("/app/account-profile");
+
+		return "";
 	}
 }

@@ -5,11 +5,11 @@ import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 
 public class AuthorizationGrantAuthorizerBuilderImpl implements AuthorizationGrantAuthorizerBuilder {
 	
-	public String clientId;
+	private String clientId;
 	 
-	public String clientSecret;
+	private String clientSecret;
 		
-	public String callbackUri;
+	private String callbackUri;
 	
 	private String code;
 	

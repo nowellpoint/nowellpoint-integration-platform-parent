@@ -1,16 +1,16 @@
 package com.nowellpoint.client.sforce.impl;
 
-import com.nowellpoint.client.sforce.OauthAuthorizationGrantResponse;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 
-public class OauthAuthorizationGrantResponseImpl implements OauthAuthorizationGrantResponse{
+public class OauthAuthenticationResponseImpl implements OauthAuthenticationResponse{
 	
 	private Token token;
 	
 	private Identity identity;
 	
-	public OauthAuthorizationGrantResponseImpl(Token token, Identity identity) {
+	public OauthAuthenticationResponseImpl(Token token, Identity identity) {
 		this.token = token;
 		this.identity = identity;
 	}
