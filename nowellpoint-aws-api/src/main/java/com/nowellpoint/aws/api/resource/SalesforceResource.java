@@ -117,9 +117,7 @@ public class SalesforceResource {
 		
 		Token token = response.getToken();
 		
-		String userId = parseUserId(token.getId());
-		
-		putToken(subject, userId, token);
+		putToken(subject, token.getId(), token);
 		
 		SalesforceInstanceDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
 		
@@ -133,9 +131,7 @@ public class SalesforceResource {
 	public Response saveSalesforceInstance(@FormParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		String userId = parseUserId(id);
-		
-		Token token = getToken(subject, userId);
+		Token token = getToken(subject, id);
 		
 		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
 		
@@ -193,7 +189,7 @@ public class SalesforceResource {
 		return token;
 	}
 	
-	private String parseUserId(String id) {
-		return id.substring(id.lastIndexOf("/") + 1);
-	}
+//	private String parseUserId(String id) {
+//		return id.substring(id.lastIndexOf("/") + 1);
+//	}
 }
