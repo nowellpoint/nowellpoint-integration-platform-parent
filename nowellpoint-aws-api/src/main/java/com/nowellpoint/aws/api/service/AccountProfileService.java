@@ -101,10 +101,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			resource.setPhotos(original.getPhotos());
 		}
 		
-		if (resource.getSalesforceProfiles() == null) {
-			resource.setSalesforceProfiles(original.getSalesforceProfiles());
-		}
-		
 		replace(subject, resource, eventSource);
 
 		hset( resource.getId(), subject, resource );

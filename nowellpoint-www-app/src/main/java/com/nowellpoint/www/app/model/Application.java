@@ -2,12 +2,6 @@ package com.nowellpoint.www.app.model;
 
 public class Application extends Resource {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -1315510190045597737L;
-	
 	private Boolean isSandbox;
 	
 	private String name;

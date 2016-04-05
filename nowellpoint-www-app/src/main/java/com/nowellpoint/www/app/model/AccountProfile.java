@@ -1,8 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class AccountProfile extends Resource {
 
@@ -138,16 +136,9 @@ public class AccountProfile extends Resource {
 	
 	private Photos photos;
 	
-	/**
-	 * 
-	 */
-	
-	private List<SalesforceProfile> salesforceProfiles;
-	
 	public AccountProfile() {
 		address = new Address();
 		photos = new Photos();
-		salesforceProfiles = new ArrayList<SalesforceProfile>();
 	}
 
 	public String getUsername() {
@@ -324,13 +315,5 @@ public class AccountProfile extends Resource {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
-	}
-
-	public List<SalesforceProfile> getSalesforceProfiles() {
-		return salesforceProfiles;
-	}
-
-	public void setSalesforceProfiles(List<SalesforceProfile> salesforceProfiles) {
-		this.salesforceProfiles = salesforceProfiles;
 	}
 }

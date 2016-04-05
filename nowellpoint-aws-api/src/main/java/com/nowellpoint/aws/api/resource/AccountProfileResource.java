@@ -37,10 +37,8 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
-import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.Photos;
-import com.nowellpoint.aws.data.mongodb.SalesforceProfile;
 import com.nowellpoint.aws.idp.model.Account;
 
 @Path("/account-profile")
@@ -51,9 +49,6 @@ public class AccountProfileResource {
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
-	
-	@Inject
-	private SalesforceService salesforceService;
 
 	@Context
 	private UriInfo uriInfo;
@@ -256,35 +251,6 @@ public class AccountProfileResource {
 				.build();
 	}
 	
-	@POST
-	@Path("/{id}/salesforce-profile")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addSalesforceProfile(@PathParam("id") String id, SalesforceProfile salesforceProfile) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
-		
-		String profileHref = salesforceProfile.getPhotos().getProfilePicture() + "?oauth_token=" + salesforceService.findToken( subject, salesforceProfile.getUserId() ).getAccessToken();
-		
-		accountProfileService.addSalesforceProfilePicture( salesforceProfile.getUserId(), profileHref );
-		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResource.class)
-				.path("{id}")
-				.path("salesforce")
-				.path("{userId}")
-				.build(id, salesforceProfile.getUserId());
-		
-		salesforceProfile.getPhotos().setProfilePicture(uri.toString());
-		
-		resource.addSalesforceProfile(salesforceProfile);
-		
-		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
-		
-		return Response.ok(resource).build();
-	}
-	
 	@DELETE
 	@Path("/photo")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -310,38 +276,5 @@ public class AccountProfileResource {
 		
 		return Response.ok(resource)
 				.build();
-	}
-	
-	@PUT
-	@Path("/{id}/salesforce-profile/{userId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId, SalesforceProfile salesforceProfile) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		salesforceProfile.setUserId(userId);
-		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
-		
-		resource.addSalesforceProfile(salesforceProfile);
-		
-		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
-		
-		return Response.ok(resource).build();
-	}
-	
-	@DELETE
-	@Path("/{id}/salesforce-profile/{userId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeSalesforceProfile(@PathParam("id") String id, @PathParam("userId") String userId) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
-		
-		resource.removeSalesforceProfile(userId);
-		
-		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
-		
-		return Response.ok(resource).build();
 	}
 }

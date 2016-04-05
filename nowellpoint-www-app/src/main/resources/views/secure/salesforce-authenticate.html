@@ -98,10 +98,10 @@
 
                                         <dt>${name}</dt>
                                         <dd>${(salesforceInstance.organization.name)!}</dd>
-                                        
+
                                         <dt>${phone}</dt>
                                         <dd>${(salesforceInstance.organization.phone)!}</dd>
-                                        
+
                                         <dt>${primaryContact}</dt>
                                         <dd>${(salesforceInstance.organization.primaryContact)!}</dd>
 
@@ -148,7 +148,7 @@
 
                                         <dt>${profile}</dt>
                                         <dd>${(salesforceInstance.identity.urls.profile)!}</dd>
-                                        
+
                                         <dt>${query}</dt>
                                         <dd>${(salesforceInstance.identity.urls.query)!}</dd>
 
@@ -158,59 +158,21 @@
 
                             <br>
 
-                            
-                            <form id='salesforceInstance' role="form" method="post" action="/app/salesforce/instance">
-                                <input type="hidden" id="identity.id" name="identity.id" value="${(salesforceInstance.identity.id)!}"/>
-                                <input type="hidden" id="identity.active" name="identity.active" value="${(salesforceInstance.identity.active?c)!}"/>
-                                <input type="hidden" id="identity.displayName" name="identity.displayName" value="${(salesforceInstance.identity.displayName)!}"/>
-                                <input type="hidden" id="identity.firstName" name="identity.firstName" value="${(salesforceInstance.identity.firstName)!}"/>
-                                <input type="hidden" id="identity.lastName" name="identity.lastName" value="${(salesforceInstance.identity.lastName)!}"/>
-                                <input type="hidden" id="identity.username" name="identity.username" value="${(salesforceInstance.identity.username)!}"/>
-                                <input type="hidden" id="identity.email" name="identity.email" value="${(salesforceInstance.identity.email)!}"/>
-                                <input type="hidden" id="identity.addrStreet" name="identity.addrStreet" value="${(salesforceInstance.identity.addrStreet)!}"/>
-                                <input type="hidden" id="identity.addrCity" name="identity.addrCity" value="${(salesforceInstance.identity.addrCity)!}"/>
-                                <input type="hidden" id="identity.addrCountry" name="identity.addrCountry" value="${(salesforceInstance.identity.addrCountry)!}"/>
-                                <input type="hidden" id="identity.addrState" name="identity.addrState" value="${(salesforceInstance.identity.addrState)!}"/>
-                                <input type="hidden" id="identity.addrZip" name="identity.addrZip" value="${(salesforceInstance.identity.addrZip)!}"/>
-                                <input type="hidden" id="identity.mobilePhone" name="identity.mobilePhone" value="${(salesforceInstance.identity.mobilePhone)!}"/>
-                                <input type="hidden" id="identity.nickName" name="identity.nickName" value="${(salesforceInstance.identity.nickName)!}"/>
-                                <input type="hidden" id="identity.language" name="identity.language" value="${(salesforceInstance.identity.language)!}"/>
-                                <input type="hidden" id="identity.locale" name="identity.locale" value="${(salesforceInstance.identity.locale)!}"/>
-                                <input type="hidden" id="identity.userType" name="identity.userType" value="${(salesforceInstance.identity.userType)!}"/>
-                                <input type="hidden" id="identity.userId" name="identity.userId" value="${(salesforceInstance.identity.userId)!}"/>                                
-                                <input type="hidden" id="identity.organizationId" name="identity.organizationId" value="${(salesforceInstance.identity.organizationId)!}"/>
-                                <input type="hidden" id="identity.utcOffset" name="identity.utcOffset" value="${(salesforceInstance.identity.utcOffset)!}"/>
-                                
-                                <input type="hidden" id="identity.photos.picture" name="identity.photos.picture" value="${(salesforceInstance.identity.photos.picture)!}"/>
-                                <input type="hidden" id="identity.photos.thumbnail" name="identity.photos.thumbnail" value="${(salesforceInstance.identity.photos.thumbnail)!}"/>
-                                
-                                <input type="hidden" id="identity.photos.picture" name="identity.photos.picture" value="${(salesforceInstance.identity.photos.picture)!}"/>
-                                <input type="hidden" id="identity.photos.thumbnail" name="identity.photos.thumbnail" value="${(salesforceInstance.identity.photos.thumbnail)!}"/>
-                                
-                                <input type="hidden" id="organization.name" name="organization.name" value="${(salesforceInstance.organization.name)!}"/>
-                                <input type="hidden" id="organization.organizationType" name="organization.organizationType" value="${(salesforceInstance.organization.organizationType)!}"/>
-                                <input type="hidden" id="organization.division" name="organization.division" value="${(salesforceInstance.organization.division)!}"/>
-                                <input type="hidden" id="organization.instanceName" name="organization.instanceName" value="${(salesforceInstance.organization.instanceName)!}"/>
-                                <input type="hidden" id="organization.fiscalYearStartMonth" name="organization.fiscalYearStartMonth" value="${(salesforceInstance.organization.fiscalYearStartMonth)!}"/>
-                                <input type="hidden" id="organization.defaultLocaleSidKey" name="organization.defaultLocaleSidKey" value="${(salesforceInstance.organization.defaultLocaleSidKey)!}"/>                                
-                                <input type="hidden" id="organization.languageLocaleKey" name="organization.languageLocaleKey" value="${(salesforceInstance.organization.languageLocaleKey)!}"/>
-                                <input type="hidden" id="organization.id" name="organization.id" value="${(salesforceInstance.organization.id)!}"/>                            
-                                <input type="hidden" id="organization.phone" name="organization.phone" value="${(salesforceInstance.organization.phone)!}"/>                                
-                                <input type="hidden" id="organization.primaryContact" name="organization.primaryContact" value="${(salesforceInstance.organization.primaryContact)!}"/>
-                                <input type="hidden" id="organization.usesStartDateAsFiscalYearName" name="organization.usesStartDateAsFiscalYearName" value="${(salesforceInstance.organization.usesStartDateAsFiscalYearName?c)!}"/>
-                                
 
-                            <div class="pull-right">
-                                <a href="/app/providers">${cancel}</a>&nbsp;
-                                <#if !(salesforceInstance)??>
-                                    <a href="/app/account-profile/salesforce/instances" class="btn btn-primary" role="button">${authenticateLabel}</a>
-                                </#if>
-                                <#if (salesforceInstance)??>
-                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${save}</button>
-                                </#if>
-                            </div>
-                                
-                            </form>    
+                            <form id='salesforceInstance' role="form" method="post" action="/app/salesforce/instance">
+                                <input type="hidden" id="id" name="id" value="${(salesforceInstance.identity.id)!}" />
+
+                                <div class="pull-right">
+                                    <a href="/app/providers">${cancel}</a>&nbsp;
+                                    <#if !(salesforceInstance)??>
+                                        <a href="/app/account-profile/salesforce/instances" class="btn btn-primary" role="button">${authenticateLabel}</a>
+                                    </#if>
+                                    <#if (salesforceInstance)??>
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${save}</button>
+                                    </#if>
+                                </div>
+
+                            </form>
 
                         </div>
 

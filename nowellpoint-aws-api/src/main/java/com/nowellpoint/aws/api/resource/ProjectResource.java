@@ -31,7 +31,7 @@ public class ProjectResource {
 	private ProjectService projectService;
 	
 	@Inject
-	private AccountProfileService identityService;
+	private AccountProfileService accountProfileService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -103,7 +103,7 @@ public class ProjectResource {
 	public Response createProject(ProjectDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO owner = identityService.findAccountProfileBySubject(resource.getOwner().getHref());	
+		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(resource.getOwner().getHref());	
 		
 		resource.setOwner(owner);
 		resource.setSubject(subject);

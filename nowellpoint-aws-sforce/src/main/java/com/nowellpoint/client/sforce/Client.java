@@ -1,10 +1,14 @@
 package com.nowellpoint.client.sforce;
 
+import java.nio.charset.StandardCharsets;
+
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.Error;
+import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.User;
 
@@ -22,6 +26,32 @@ public class Client {
 	
 	public Client() {
 		
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param accessToken
+	 * @return
+	 */
+	
+	public Identity getIdentity(GetIdentityRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getId())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.bearerAuthorization(request.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.queryParameter("version", "latest")
+				.execute();
+    	
+		Identity identity = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		identity = httpResponse.getEntity(Identity.class);
+		} else {
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+		}
+    	
+    	return identity;
 	}
 	
 	/**
@@ -44,7 +74,7 @@ public class Client {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			user = httpResponse.getEntity(User.class);
 		} else {
-			
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 		}
 		
 		return user;
@@ -70,7 +100,7 @@ public class Client {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			organization = httpResponse.getEntity(Organization.class);
 		} else {
-			
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 		}
 		
 		return organization;
@@ -93,7 +123,7 @@ public class Client {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeSobjectsResult.class);
 		} else {
-			
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 		}
 		
 		return result;

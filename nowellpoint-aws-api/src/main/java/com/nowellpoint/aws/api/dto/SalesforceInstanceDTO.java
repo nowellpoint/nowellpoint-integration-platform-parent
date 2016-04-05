@@ -6,6 +6,8 @@ import com.nowellpoint.client.sforce.model.Organization;
 public class SalesforceInstanceDTO extends AbstractDTO {
 
 	private static final long serialVersionUID = -6847034908687287362L;
+	
+	private AccountProfileDTO owner;
 
 	private Identity identity;
 	
@@ -13,6 +15,14 @@ public class SalesforceInstanceDTO extends AbstractDTO {
 	
 	public SalesforceInstanceDTO() {
 		
+	}
+
+	public AccountProfileDTO getOwner() {
+		return owner;
+	}
+
+	public void setOwner(AccountProfileDTO owner) {
+		this.owner = owner;
 	}
 
 	public Identity getIdentity() {

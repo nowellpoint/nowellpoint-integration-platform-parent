@@ -1,6 +1,8 @@
 package com.nowellpoint.www.app.model.sforce;
 
-public class SalesforceInstance {
+import com.nowellpoint.www.app.model.Resource;
+
+public class SalesforceInstance extends Resource {
 
 	private Identity identity;
 	

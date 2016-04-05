@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.model.Identity;
 
 public class TestSalesforceClient {
 	
@@ -30,8 +31,17 @@ public class TestSalesforceClient {
 					.authenticate(request);
 			
 			assertNotNull(response.getToken());
-			assertNotNull(response.getIdentity());
 			
+			GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+					.setAccessToken(response.getToken().getAccessToken())
+					.setId(response.getToken().getId());
+			
+			Client client = new Client();
+			
+			Identity identity = client.getIdentity(getIdentityRequest);
+			
+			assertNotNull(identity);
+				
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
 			System.out.println(e.getError());

@@ -58,24 +58,29 @@
                 </div>
 
                 <div class="col-sm-9">
-                    <div class="panel panel-primary">
-                        <div class="panel-body">
-                            <div class="content table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <th>${username}</th>
-                                        <th>${name}</th>
-                                        <th>${email}</th>
-                                        <th>${address}</th>
-                                        <th>${action}</th>
-                                    </thead>
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
+                    <div class="hr-divider">
+                    </div>
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th>${name}</th>
+                                <th>${username}</th>
+                                <th>${email}</th>
+                                <th>${address}</th>
+                                <th>${action}</th>
+                            </thead>
+                            <tbody>
+                                <#list salesforceInstanceList as salesforceInstance>
+                                    <tr id="${salesforceInstance.id}">
+                                        <td>${salesforceInstance.identity.displayName}</td>
+                                        <td>${salesforceInstance.identity.username}</td>
+                                        <td>${salesforceInstance.organization.name}</td>
+                                        <td>${salesforceInstance.organization.instanceName}</td>
+                                        <td></td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
