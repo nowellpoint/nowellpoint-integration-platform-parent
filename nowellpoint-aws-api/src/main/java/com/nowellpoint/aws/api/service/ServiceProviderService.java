@@ -95,7 +95,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	public void deleteServiceProvider(String serviceProviderId, String subject, URI eventSource) {		
 		ServiceProviderDTO resource = new ServiceProviderDTO(serviceProviderId);
 		
-		delete(subject, resource, eventSource);
+		delete(resource);
 		
 		hdel( subject, ServiceProviderDTO.class.getName().concat(serviceProviderId) );
 		hdel( serviceProviderId, subject );

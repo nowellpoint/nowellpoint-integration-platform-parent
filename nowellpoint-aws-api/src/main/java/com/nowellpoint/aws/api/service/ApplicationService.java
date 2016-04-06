@@ -78,7 +78,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	public void deleteApplication(String applicationId, String subject, URI eventSource) {		
 		ApplicationDTO resource = new ApplicationDTO(applicationId);
 		
-		delete(subject, resource, eventSource);
+		delete(resource);
 		
 		hdel( subject, ApplicationDTO.class.getName().concat(applicationId) );
 		hdel( applicationId, subject );

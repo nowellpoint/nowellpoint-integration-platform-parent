@@ -19,6 +19,13 @@
                     </div>
                 </#if>
 
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${successMessage}</div>
+                    </div>
+                </#if>
+
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h4 class="panel-title">${salesforceInstanceLabel}</h4>
@@ -164,9 +171,6 @@
 
                                 <div class="pull-right">
                                     <a href="/app/providers">${cancel}</a>&nbsp;
-                                    <#if !(salesforceInstance)??>
-                                        <a href="/app/account-profile/salesforce/instances" class="btn btn-primary" role="button">${authenticateLabel}</a>
-                                    </#if>
                                     <#if (salesforceInstance)??>
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary">${save}</button>
                                     </#if>

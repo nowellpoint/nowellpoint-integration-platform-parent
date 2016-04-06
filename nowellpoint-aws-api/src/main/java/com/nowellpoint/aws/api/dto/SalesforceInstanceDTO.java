@@ -16,6 +16,10 @@ public class SalesforceInstanceDTO extends AbstractDTO {
 	public SalesforceInstanceDTO() {
 		
 	}
+	
+	public SalesforceInstanceDTO(String id) {
+		setId(id);
+	}
 
 	public AccountProfileDTO getOwner() {
 		return owner;

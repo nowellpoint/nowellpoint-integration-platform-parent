@@ -71,7 +71,7 @@ public class AccountProfileResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response udpate(
+	public Response udpateAccountProfile(
 			@FormParam("id") @NotEmpty String id,
 			@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty String lastName,
@@ -200,7 +200,7 @@ public class AccountProfileResource {
 	@GET
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIdentity(@PathParam("id") String id) {
+    public Response getAccountProfile(@PathParam("id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		AccountProfileDTO resource = accountProfileService.findAccountProfile( id, subject );
@@ -212,7 +212,7 @@ public class AccountProfileResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createIdentity(AccountProfileDTO resource) {
+    public Response createAccountProfile(AccountProfileDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setSubject(subject);
@@ -232,7 +232,7 @@ public class AccountProfileResource {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateIdentity(@PathParam("id") String id, AccountProfileDTO resource) {
+    public Response udpateAccountProfile(@PathParam("id") String id, AccountProfileDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
@@ -244,7 +244,7 @@ public class AccountProfileResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIdentityBySubject(@QueryParam("subject") String subject) {		
+    public Response getAccountProfileBySubject(@QueryParam("subject") String subject) {		
 		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
 		
 		return Response.ok(resource)

@@ -13,7 +13,7 @@ public class OauthException extends RuntimeException {
 	private String errorDescription;
 
 	public OauthException(int statusCode, Error error) {
-		super();
+		super(error.getErrorDescription());
 		this.statusCode = statusCode;
 		this.error = error.getError();
 		this.errorDescription = error.getErrorDescription();

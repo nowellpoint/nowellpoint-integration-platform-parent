@@ -92,10 +92,10 @@ public class ProjectService extends AbstractDocumentService<ProjectDTO, Project>
 	 * @param eventSource
 	 */
 	
-	public void deleteProject(String id, String subject, URI eventSource) {
+	public void deleteProject(String id, String subject) {
 		ProjectDTO resource = new ProjectDTO(id);
 		
-		delete(subject, resource, eventSource);
+		delete(resource);
 		
 		hdel( subject, ProjectDTO.class.getName().concat(id) );
 		hdel( id, subject );

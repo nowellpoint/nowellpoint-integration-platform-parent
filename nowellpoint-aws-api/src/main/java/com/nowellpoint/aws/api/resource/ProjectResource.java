@@ -85,7 +85,7 @@ public class ProjectResource {
 	public Response deleteProject(@PathParam("id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		projectService.deleteProject(id, subject, uriInfo.getBaseUri());
+		projectService.deleteProject(id, subject);
 		
 		return Response.noContent()
 				.build();

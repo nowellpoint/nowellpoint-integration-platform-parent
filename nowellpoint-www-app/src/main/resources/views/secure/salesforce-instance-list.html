@@ -28,12 +28,12 @@
                                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
                                     <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
                                 </button>
-                                <span class="visible-xs navbar-brand">Sidebar menu</span>
+                                <span class="visible-xs navbar-brand">${menu}</span>
                             </div>
 
                             <div class="navbar-collapse collapse sidebar-navbar-collapse">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="/app/account-profile/salesforce/instances">${salesforceInstancesLabel}</a></li>
+                                    <li><a href="/app/salesforce/instances">${salesforceInstancesLabel}</a></li>
                                     <!--
                                     <li><a href="#">Menu Item 2</a></li>
                                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
@@ -63,15 +63,17 @@
                     <div class="content table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <th>${name}</th>
+                                <th></th>
+                                <th>${displayName}</th>
                                 <th>${username}</th>
-                                <th>${email}</th>
-                                <th>${address}</th>
+                                <th>${organization}</th>
+                                <th>${instanceName}</th>
                                 <th>${action}</th>
                             </thead>
                             <tbody>
                                 <#list salesforceInstanceList as salesforceInstance>
                                     <tr id="${salesforceInstance.id}">
+                                        <td><img src="${salesforceInstance.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
                                         <td>${salesforceInstance.identity.displayName}</td>
                                         <td>${salesforceInstance.identity.username}</td>
                                         <td>${salesforceInstance.organization.name}</td>

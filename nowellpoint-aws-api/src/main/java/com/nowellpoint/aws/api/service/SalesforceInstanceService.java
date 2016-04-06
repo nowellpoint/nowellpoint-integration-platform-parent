@@ -24,10 +24,15 @@ public class SalesforceInstanceService extends AbstractDocumentService<Salesforc
 
 	public SalesforceInstanceDTO createSalesforceInstance(SalesforceInstanceDTO resource) {
 		create( resource );
-		
 		hset( resource.getSubject(), SalesforceInstanceDTO.class.getName().concat( resource.getId()), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
-		
 		return resource;
+	}
+	
+	public void deleteSalesforceInstance(String id, String subject) {
+		SalesforceInstanceDTO resource = new SalesforceInstanceDTO(id);
+		delete(resource);
+		hdel( subject, SalesforceInstanceDTO.class.getName().concat(id) );
+		hdel( id, subject );
 	}
 }

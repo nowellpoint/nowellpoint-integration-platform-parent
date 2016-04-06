@@ -259,9 +259,8 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 * @param eventSource
 	 */
 	
-	protected void delete(String subject, R resource, URI eventSource) {		
+	protected void delete(R resource) {		
 		AbstractDocument document = modelMapper.map( resource, documentType );
-		
 		try {
 			MongoDBDatastore.deleteOne( document );
 		} catch (MongoException e) {
