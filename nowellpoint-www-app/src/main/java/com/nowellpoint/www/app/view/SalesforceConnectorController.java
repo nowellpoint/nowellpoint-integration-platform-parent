@@ -125,6 +125,7 @@ public class SalesforceConnectorController {
         	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
     	} else {
     		model.put("errorMessage", httpResponse.getAsString());
+    		new BadRequestException();
     	}	
     	
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");

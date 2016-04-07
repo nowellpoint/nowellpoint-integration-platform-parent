@@ -19,7 +19,7 @@
 
         <!-- Include the CSS -->
         <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
-        
+
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/custom.css" type="text/css" />
 
@@ -35,14 +35,16 @@
 
         <#nested/>
 
+
+
         <script type="text/javascript">
             $(document).ready(function() {
                 $(document)
                     .ajaxStart(function() {
-                        $('#progressDialog').modal('show');
+                        $('#spinner').show();
                     })
                     .ajaxStop(function() {
-                        $('#progressDialog').modal('hide');
+                        $('#spinner').hide();
                     });
             });
 
