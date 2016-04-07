@@ -38,15 +38,14 @@
 
 
         <script type="text/javascript">
-            $(document).ready(function() {
-                $(document)
+            
+            $(document)
                     .ajaxStart(function() {
                         $('#spinner').show();
                     })
                     .ajaxStop(function() {
                         $('#spinner').hide();
                     });
-            });
 
             $(document).ready(function() {
                 var path = window.location.pathname;
