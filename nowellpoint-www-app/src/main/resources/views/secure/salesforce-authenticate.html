@@ -14,17 +14,17 @@
 
                 <#if errorMessage??>
                     <div id="alert" class="alert alert-danger">
-                        <a class="close" data-dismiss="alert">×</a>
+                        <a class="close" data-dismiss="alert">&times;</a>
                         <div class="text-center">${errorMessage}</div>
                     </div>
                 </#if>
 
-                <#if successMessage??>
-                    <div id="success" class="alert alert-success">
-                        <a class="close" data-dismiss="alert">×</a>
-                        <div class="text-center">${successMessage}</div>
-                    </div>
-                </#if>
+
+                <div id="success" class="alert alert-success collapse">
+                    <a class="close" data-dismiss="alert">&times;</a>
+                    <div class="text-center">${(successMessage)!}</div>
+                </div>
+
 
                 <div class="panel panel-primary">
                     <div class="panel-heading">
@@ -165,40 +165,41 @@
 
                             <br>
 
-                            <form id='salesforceConnector' role="form" method="post" action="/app/salesforce/connector">
+                            <form id='salesforceConnector' role="form" method="post">
                                 <input type="hidden" id="id" name="id" value="${(salesforceConnector.identity.id)!}" />
-
                                 <div class="pull-right">
                                     <a href="/app/providers">${cancel}</a>&nbsp;
                                     <#if (salesforceConnector)??>
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${save}</button>
+                                        <button type="submit" name="save" id="save" class="btn btn-primary">${save}</button>
                                     </#if>
                                 </div>
-
                             </form>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
 
-
         <#include "progress-bar-dialog.html" />
 
         <script>
-            $(document).ready(function(e) {
-                $('#clickable').click(function(e) {
-                    e.preventDefault();
-                    var body = 'photoUrl=' + $(this).data('id');
-                    $.ajax({
-                        type: "POST",
-                        url: "/app/user-profile/picture/salesforce",
-                        data: body
-                    });
+            $('#salesforceConnector').submit(function(e) {
+                var data = $("#salesforceConnector").serialize()
+                $.ajax({
+                    type: "POST",
+                    url: "/app/salesforce/connector",
+                    data: data,
+                    success: function(data) {
+                        $('#success').show();
+                        window.setTimeout(function() {
+                    $(".alert").alert('close');
+                }, 2000);
+                    }
                 });
+
+                e.preventDefault();
+                
+
             });
         </script>
 

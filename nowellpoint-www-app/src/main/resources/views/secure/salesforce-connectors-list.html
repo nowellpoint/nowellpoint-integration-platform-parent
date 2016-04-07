@@ -45,7 +45,7 @@
                                         <td>${salesforceConnector.identity.username}</td>
                                         <td>${salesforceConnector.organization.name}</td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
-                                        <td></td>
+                                        <td><a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
                                     </tr>
                                 </#list>
                             </tbody>
@@ -54,4 +54,23 @@
                 </div>
             </div>
         </div>
+        
+        <#include "confirm-dialog.html"/>
+        <#include "progress-bar-dialog.html" />
+
+        <script>
+            $('#confirm').click(function(e) {
+                var id = $('#confirmDialog').data('id');
+                var row = $('#'.concat(id));
+                $.ajax({
+                    url: '/app/salesforce/connector/' + id,
+                    type: 'DELETE',
+                    success: function() {
+                        row.remove();
+                    }
+                });
+                $('#confirmDialog').modal('hide');
+            });
+        </script>
+        
     </@t.page>

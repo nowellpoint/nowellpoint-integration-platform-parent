@@ -160,7 +160,7 @@ public class SalesforceConnectorResource {
 	
 	@DELETE
 	@Path("connector/{id}")
-	public Response deleteSalesforceConnector(@FormParam(value="id") String id) {
+	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		salesforceConnectorService.deleteSalesforceConnector(id, subject);

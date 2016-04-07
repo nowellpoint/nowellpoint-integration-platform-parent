@@ -44,7 +44,7 @@ public class SalesforceConnectorController {
         
         post("/app/salesforce/connector", (request, response) -> saveSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
-        delete("/app/salesforce/connector", (request, response) -> deleteSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        delete("/app/salesforce/connector/:id", (request, response) -> deleteSalesforceConnector(request, response));
 	}
 	
 	/**
@@ -112,19 +112,20 @@ public class SalesforceConnectorController {
     	
     	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
     	
-    	SalesforceConnector salesforceConnector = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    	} else {
-    		throw new BadRequestException(httpResponse.getAsString());
-    	}	
-    	
     	Account account = request.attribute("account");
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("salesforceConnector", salesforceConnector);	
+    	
+    	SalesforceConnector salesforceConnector = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
+    		model.put("salesforceConnector", salesforceConnector);
+        	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
+    	} else {
+    		model.put("errorMessage", httpResponse.getAsString());
+    	}	
     	
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
@@ -172,6 +173,8 @@ public class SalesforceConnectorController {
 		
 		Token token = request.attribute("token");
 		
+		System.out.println(request.queryParams("id"));
+		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -201,7 +204,7 @@ public class SalesforceConnectorController {
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
 	
-	private static ModelAndView deleteSalesforceConnector(Request request, Response response) {
+	private static String deleteSalesforceConnector(Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -210,12 +213,11 @@ public class SalesforceConnectorController {
 				.bearerAuthorization(token.getAccessToken())
 				.path("salesforce")
     			.path("connector")
-    			.path(request.queryParams("id"))
+    			.path(request.params(":id"))
     			.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
-		return null;
-		
+		return "";
 	}
 }
