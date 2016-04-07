@@ -1,0 +1,57 @@
+<#import "template.html" as t>
+    <@t.page>
+        <#include "navbar.html" />
+
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h2 class="dashhead-title">${salesforceConnectorsLabel}</h2>
+                    </div>
+
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${add}</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <#include "sidebar.html" />
+                </div>
+
+                <div class="col-sm-9">
+                    <div class="hr-divider">
+                    </div>
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th></th>
+                                <th>${displayName}</th>
+                                <th>${username}</th>
+                                <th>${organization}</th>
+                                <th>${instanceName}</th>
+                                <th>${action}</th>
+                            </thead>
+                            <tbody>
+                                <#list salesforceConnectorsList as salesforceConnector>
+                                    <tr id="${salesforceConnector.id}">
+                                        <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
+                                        <td>${salesforceConnector.identity.displayName}</td>
+                                        <td>${salesforceConnector.identity.username}</td>
+                                        <td>${salesforceConnector.organization.name}</td>
+                                        <td>${salesforceConnector.organization.instanceName}</td>
+                                        <td></td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </@t.page>

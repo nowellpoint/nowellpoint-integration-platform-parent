@@ -18,7 +18,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.sforce.SalesforceInstance;
+import com.nowellpoint.www.app.model.sforce.SalesforceConnector;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.log.Logger;
@@ -28,23 +28,23 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class SalesforceInstanceController {
+public class SalesforceConnectorController {
 	
-	private static final Logger LOGGER = Logger.getLogger(SalesforceInstanceController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SalesforceConnectorController.class.getName());
 	
-	public SalesforceInstanceController(Configuration cfg) {
+	public SalesforceConnectorController(Configuration cfg) {
 		
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
         get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/salesforce/instances", (request, response) -> getSalesforceInstances(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce/connectors", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/salesforce/instance", (request, response) -> getSalesforceInstance(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce/connector", (request, response) -> getSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/salesforce/instance", (request, response) -> saveSalesforceInstance(request, response), new FreeMarkerEngine(cfg));
+        post("/app/salesforce/connector", (request, response) -> saveSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
-        delete("/app/salesforce/instance", (request, response) -> deleteSalesforceInstance(request, response), new FreeMarkerEngine(cfg));
+        delete("/app/salesforce/connector", (request, response) -> deleteSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class SalesforceInstanceController {
 	 * @return
 	 */
 	
-	private static ModelAndView getSalesforceInstance(Request request, Response response) {
+	private static ModelAndView getSalesforceConnector(Request request, Response response) {
 		
 		Token token = request.attribute("token");
     	
@@ -106,16 +106,16 @@ public class SalesforceInstanceController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
-    			.path("instance")
+    			.path("connector")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
     	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
     	
-    	SalesforceInstance salesforceInstance = null;
+    	SalesforceConnector salesforceConnector = null;
     	
     	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceInstance = httpResponse.getEntity(SalesforceInstance.class);	
+    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
     	} else {
     		throw new BadRequestException(httpResponse.getAsString());
     	}	
@@ -124,7 +124,7 @@ public class SalesforceInstanceController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("salesforceInstance", salesforceInstance);	
+    	model.put("salesforceConnector", salesforceConnector);	
     	
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
@@ -136,7 +136,7 @@ public class SalesforceInstanceController {
 	 * @return
 	 */
 	
-	private static ModelAndView getSalesforceInstances(Request request, Response response) {
+	private static ModelAndView getSalesforceConnectors(Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -144,20 +144,20 @@ public class SalesforceInstanceController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
-    			.path("instances")
+    			.path("connectors")
     			.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		List<SalesforceInstance> salesforceInstances = httpResponse.getEntityList(SalesforceInstance.class);
+		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
 		
 		Account account = request.attribute("account");
 		
 		Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("salesforceInstanceList", salesforceInstances);
+    	model.put("salesforceConnectorsList", salesforceConnectors);
     	
-    	return new ModelAndView(model, "secure/salesforce-instance-list.html");
+    	return new ModelAndView(model, "secure/salesforce-connectors-list.html");
     	
 	}
 	
@@ -168,7 +168,7 @@ public class SalesforceInstanceController {
 	 * @return
 	 */
 	
-	private static ModelAndView saveSalesforceInstance(Request request, Response response) {
+	private static ModelAndView saveSalesforceConnector(Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -177,16 +177,16 @@ public class SalesforceInstanceController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.path("salesforce")
-    			.path("instance")
+    			.path("connector")
     			.parameter("id", request.queryParams("id"))
     			.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
-		SalesforceInstance salesforceInstance = null;
+		SalesforceConnector salesforceConnector = null;
     	
     	if (httpResponse.getStatusCode() == Status.CREATED) {
-    		salesforceInstance = httpResponse.getEntity(SalesforceInstance.class);	
+    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
     	} else {
     		throw new BadRequestException(httpResponse.getAsString());
     	}	
@@ -195,13 +195,13 @@ public class SalesforceInstanceController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("salesforceInstance", salesforceInstance);	
+    	model.put("salesforceConnector", salesforceConnector);	
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
     	
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
 	
-	private static ModelAndView deleteSalesforceInstance(Request request, Response response) {
+	private static ModelAndView deleteSalesforceConnector(Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -209,7 +209,7 @@ public class SalesforceInstanceController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.path("salesforce")
-    			.path("instance")
+    			.path("connector")
     			.path(request.queryParams("id"))
     			.execute();
 		

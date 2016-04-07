@@ -6,9 +6,9 @@ import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.sforce.Identity;
 import com.nowellpoint.aws.data.mongodb.sforce.Organization;
 
-@Document(collectionName="salesforce.instances", codec=SalesforceInstanceCodec.class)
+@Document(collectionName="salesforce.connectors", codec=SalesforceInstanceCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SalesforceInstance extends AbstractDocument {
+public class SalesforceConnector extends AbstractDocument {
 
 	/**
 	 * 
@@ -22,7 +22,7 @@ public class SalesforceInstance extends AbstractDocument {
 	
 	private Organization organization;
 	
-	public SalesforceInstance() {
+	public SalesforceConnector() {
 		
 	}
 

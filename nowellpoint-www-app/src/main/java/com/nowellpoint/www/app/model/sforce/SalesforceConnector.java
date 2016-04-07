@@ -2,13 +2,13 @@ package com.nowellpoint.www.app.model.sforce;
 
 import com.nowellpoint.www.app.model.Resource;
 
-public class SalesforceInstance extends Resource {
+public class SalesforceConnector extends Resource {
 
 	private Identity identity;
 	
 	private Organization organization;
 	
-	public SalesforceInstance() {
+	public SalesforceConnector() {
 		
 	}
 

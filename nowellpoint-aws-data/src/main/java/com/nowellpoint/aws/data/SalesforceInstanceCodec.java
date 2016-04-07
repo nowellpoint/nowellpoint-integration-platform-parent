@@ -1,10 +1,10 @@
 package com.nowellpoint.aws.data;
 
-import com.nowellpoint.aws.data.mongodb.SalesforceInstance;
+import com.nowellpoint.aws.data.mongodb.SalesforceConnector;
 
-public class SalesforceInstanceCodec extends AbstractCodec<SalesforceInstance> {
+public class SalesforceInstanceCodec extends AbstractCodec<SalesforceConnector> {
 
 	public SalesforceInstanceCodec() {
-		super(SalesforceInstance.class);
+		super(SalesforceConnector.class);
 	}
 }

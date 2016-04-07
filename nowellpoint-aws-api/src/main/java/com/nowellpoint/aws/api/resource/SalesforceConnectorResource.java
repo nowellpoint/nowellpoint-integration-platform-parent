@@ -39,9 +39,9 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
-import com.nowellpoint.aws.api.dto.SalesforceInstanceDTO;
+import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
-import com.nowellpoint.aws.api.service.SalesforceInstanceService;
+import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.model.Token;
@@ -49,7 +49,7 @@ import com.nowellpoint.client.sforce.model.Token;
 import redis.clients.jedis.Jedis;
 
 @Path("/salesforce")
-public class SalesforceInstanceResource {
+public class SalesforceConnectorResource {
 	
 	@Inject
 	private AccountProfileService accountProfileService;
@@ -58,7 +58,7 @@ public class SalesforceInstanceResource {
 	private SalesforceService salesforceService;
 	
 	@Inject
-	private SalesforceInstanceService salesforceInstanceService;
+	private SalesforceConnectorService salesforceConnectorService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -67,21 +67,21 @@ public class SalesforceInstanceResource {
 	private UriInfo uriInfo;
 	
 	@GET
-	@Path("instances")
+	@Path("connectors")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		Set<SalesforceInstanceDTO> resources = salesforceInstanceService.getAll(subject);
+		Set<SalesforceConnectorDTO> resources = salesforceConnectorService.getAll(subject);
 		
 		return Response.ok(resources)
 				.build();
     }
 	
 	@GET
-	@Path("instance")
+	@Path("connector")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceInstance(@QueryParam(value="code") String code) {
+	public Response getSalesforceConnector(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		OauthAuthenticationResponse response = salesforceService.authenticate(code);
@@ -90,14 +90,14 @@ public class SalesforceInstanceResource {
 		
 		putToken(subject, token.getId(), token);
 		
-		SalesforceInstanceDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
+		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
 		
 		return Response.ok(resource).build();
 	}
 	
 	@PermitAll
 	@GET
-	@Path("instance/profilephoto/{id}")
+	@Path("connector/profilephoto/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProfilePhoto(@PathParam(value="id") String id) {
 		AmazonS3 s3Client = new AmazonS3Client();
@@ -129,24 +129,24 @@ public class SalesforceInstanceResource {
 	}
 	
 	@POST
-	@Path("instance")
+	@Path("connector")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createSalesforceInstance(@FormParam(value="id") String id) {
+	public Response createSalesforceConnector(@FormParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		Token token = getToken(subject, id);
 		
 		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
 		
-		SalesforceInstanceDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
+		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
 		resource.setOwner(owner);
 		resource.setSubject(subject);
 		resource.setEventSource(uriInfo.getBaseUri());
 		resource.getIdentity().getPhotos().setPicture(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getPicture()));
 		resource.getIdentity().getPhotos().setThumbnail(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getThumbnail()));
 		
-		salesforceInstanceService.createSalesforceInstance(resource);
+		salesforceConnectorService.createSalesforceConnector(resource);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceResource.class)
@@ -159,11 +159,11 @@ public class SalesforceInstanceResource {
 	}
 	
 	@DELETE
-	@Path("instance/{id}")
-	public Response deleteSalesforceInstance(@FormParam(value="id") String id) {
+	@Path("connector/{id}")
+	public Response deleteSalesforceConnector(@FormParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		salesforceInstanceService.deleteSalesforceInstance(id, subject);
+		salesforceConnectorService.deleteSalesforceConnector(id, subject);
 		
 		return Response.noContent()
 				.build(); 
@@ -217,8 +217,8 @@ public class SalesforceInstanceResource {
 	    	s3Client.putObject(putObjectRequest);
 	    	
 	    	URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-					.path(SalesforceInstanceResource.class)
-					.path("instance")
+					.path(SalesforceConnectorResource.class)
+					.path("connector")
 					.path("profilephoto")
 					.path("{id}")
 					.build(key);

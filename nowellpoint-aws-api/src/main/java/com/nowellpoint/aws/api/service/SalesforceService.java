@@ -2,7 +2,7 @@ package com.nowellpoint.aws.api.service;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.api.dto.SalesforceInstanceDTO;
+import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
@@ -49,7 +49,7 @@ public class SalesforceService {
 		return response;
 	}
 	
-	public SalesforceInstanceDTO getSalesforceInstance(String accessToken, String id) {
+	public SalesforceConnectorDTO getSalesforceInstance(String accessToken, String id) {
 		GetIdentityRequest request = new GetIdentityRequest()
 				.setAccessToken(accessToken)
 				.setId(id);
@@ -60,7 +60,7 @@ public class SalesforceService {
 		
 		Organization organization = getOrganization(accessToken, identity.getOrganizationId(), identity.getUrls().getSobjects());
 		
-		SalesforceInstanceDTO resource = new SalesforceInstanceDTO();
+		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		

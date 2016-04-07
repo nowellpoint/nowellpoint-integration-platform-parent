@@ -28,7 +28,7 @@
 
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h4 class="panel-title">${salesforceInstanceLabel}</h4>
+                        <h4 class="panel-title">${salesforceConnectorLabel}</h4>
                     </div>
 
                     <div class="panel">
@@ -39,11 +39,11 @@
                                 <div class="col-md-2">
 
                                     <div>
-                                        <#if !(salesforceInstance)??>
+                                        <#if !(salesforceConnector)??>
                                             <img src="/images/person-generic.jpg" class="img-circle img-responsive center-block" />
                                         </#if>
-                                        <#if (salesforceInstance)??>
-                                            <img src="${(salesforceInstance.identity.photos.picture)!}" class="img-circle img-responsive center-block">
+                                        <#if (salesforceConnector)??>
+                                            <img src="${(salesforceConnector.identity.photos.picture)!}" class="img-circle img-responsive center-block">
                                         </#if>
                                     </div>
 
@@ -54,46 +54,46 @@
                                     <dl class="dl-horizontal">
 
                                         <dt>${id}</dt>
-                                        <dd>${(salesforceInstance.identity.id)!}</dd>
+                                        <dd>${(salesforceConnector.identity.id)!}</dd>
 
                                         <dt>${name}</dt>
-                                        <dd>${(salesforceInstance.identity.displayName)!}</dd>
+                                        <dd>${(salesforceConnector.identity.displayName)!}</dd>
 
                                         <dt>${username}</dt>
-                                        <dd>${(salesforceInstance.identity.username)!}</dd>
+                                        <dd>${(salesforceConnector.identity.username)!}</dd>
 
                                         <dt>${email}</dt>
-                                        <dd>${(salesforceInstance.identity.email)!}</dd>
+                                        <dd>${(salesforceConnector.identity.email)!}</dd>
 
                                         <dt>${street}</dt>
-                                        <dd>${(salesforceInstance.identity.addrStreet)!}</dd>
+                                        <dd>${(salesforceConnector.identity.addrStreet)!}</dd>
 
                                         <dt>${city}</dt>
-                                        <dd>${(salesforceInstance.identity.addrCity)!}</dd>
+                                        <dd>${(salesforceConnector.identity.addrCity)!}</dd>
 
                                         <dt>${country}</dt>
-                                        <dd>${(salesforceInstance.identity.addrCountry)!}</dd>
+                                        <dd>${(salesforceConnector.identity.addrCountry)!}</dd>
 
                                         <dt>${state}</dt>
-                                        <dd>${(salesforceInstance.identity.addrState)!}</dd>
+                                        <dd>${(salesforceConnector.identity.addrState)!}</dd>
 
                                         <dt>${zipPostalCode}</dt>
-                                        <dd>${(salesforceInstance.identity.addrZip)!}</dd>
+                                        <dd>${(salesforceConnector.identity.addrZip)!}</dd>
 
                                         <dt>${mobilePhone}</dt>
-                                        <dd>${(salesforceInstance.identity.mobilePhone)!}</dd>
+                                        <dd>${(salesforceConnector.identity.mobilePhone)!}</dd>
 
                                         <dt>${language}</dt>
-                                        <dd>${(salesforceInstance.identity.language)!}</dd>
+                                        <dd>${(salesforceConnector.identity.language)!}</dd>
 
                                         <dt>${locale}</dt>
-                                        <dd>${(salesforceInstance.identity.locale)!}</dd>
+                                        <dd>${(salesforceConnector.identity.locale)!}</dd>
 
                                         <dt>${userType}</dt>
-                                        <dd>${(salesforceInstance.identity.userType)!}</dd>
+                                        <dd>${(salesforceConnector.identity.userType)!}</dd>
 
                                         <dt>${userId}</dt>
-                                        <dd>${(salesforceInstance.identity.userId)!}</dd>
+                                        <dd>${(salesforceConnector.identity.userId)!}</dd>
 
                                     </dl>
 
@@ -104,34 +104,34 @@
                                     <dl class="dl-horizontal">
 
                                         <dt>${name}</dt>
-                                        <dd>${(salesforceInstance.organization.name)!}</dd>
+                                        <dd>${(salesforceConnector.organization.name)!}</dd>
 
                                         <dt>${phone}</dt>
-                                        <dd>${(salesforceInstance.organization.phone)!}</dd>
+                                        <dd>${(salesforceConnector.organization.phone)!}</dd>
 
                                         <dt>${primaryContact}</dt>
-                                        <dd>${(salesforceInstance.organization.primaryContact)!}</dd>
+                                        <dd>${(salesforceConnector.organization.primaryContact)!}</dd>
 
                                         <dt>${organizationType}</dt>
-                                        <dd>${(salesforceInstance.organization.organizationType)!}</dd>
+                                        <dd>${(salesforceConnector.organization.organizationType)!}</dd>
 
                                         <dt>${division}</dt>
-                                        <dd>${(salesforceInstance.organization.division)!}</dd>
+                                        <dd>${(salesforceConnector.organization.division)!}</dd>
 
                                         <dt>${instanceName}</dt>
-                                        <dd>${(salesforceInstance.organization.instanceName)!}</dd>
+                                        <dd>${(salesforceConnector.organization.instanceName)!}</dd>
 
                                         <dt>${fiscalYearStartMonth}</dt>
-                                        <dd>${(salesforceInstance.organization.fiscalYearStartMonth)!}</dd>
+                                        <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}</dd>
 
                                         <dt>${defaultLocaleSidKey}</dt>
-                                        <dd>${(salesforceInstance.organization.defaultLocaleSidKey)!}</dd>
+                                        <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}</dd>
 
                                         <dt>${languageLocaleKey}</dt>
-                                        <dd>${(salesforceInstance.organization.languageLocaleKey)!}</dd>
+                                        <dd>${(salesforceConnector.organization.languageLocaleKey)!}</dd>
 
                                         <dt>${organizationId}</dt>
-                                        <dd>${(salesforceInstance.organization.id)!}</dd>
+                                        <dd>${(salesforceConnector.organization.id)!}</dd>
 
                                     </dl>
 
@@ -142,22 +142,22 @@
                                     <dl class="dl-horizontal">
 
                                         <dt>${metadata}</dt>
-                                        <dd>${(salesforceInstance.identity.urls.metadata)!}</dd>
+                                        <dd>${(salesforceConnector.identity.urls.metadata)!}</dd>
 
                                         <dt>${partner}</dt>
-                                        <dd>${(salesforceInstance.identity.urls.partner)!}</dd>
+                                        <dd>${(salesforceConnector.identity.urls.partner)!}</dd>
 
                                         <dt>${rest}</dt>
-                                        <dd>${(salesforceInstance.identity.urls.rest)!}</dd>
+                                        <dd>${(salesforceConnector.identity.urls.rest)!}</dd>
 
                                         <dt>${sobjects}</dt>
-                                        <dd>${(salesforceInstance.identity.urls.sobjects)!}</dd>
+                                        <dd>${(salesforceConnector.identity.urls.sobjects)!}</dd>
 
                                         <dt>${profile}</dt>
-                                        <dd>${(salesforceInstance.identity.urls.profile)!}</dd>
+                                        <dd>${(salesforceConnector.identity.urls.profile)!}</dd>
 
                                         <dt>${query}</dt>
-                                        <dd>${(salesforceInstance.identity.urls.query)!}</dd>
+                                        <dd>${(salesforceConnector.identity.urls.query)!}</dd>
 
                                     </dl>
                                 </div>
@@ -165,13 +165,12 @@
 
                             <br>
 
-
-                            <form id='salesforceInstance' role="form" method="post" action="/app/salesforce/instance">
-                                <input type="hidden" id="id" name="id" value="${(salesforceInstance.identity.id)!}" />
+                            <form id='salesforceConnector' role="form" method="post" action="/app/salesforce/connector">
+                                <input type="hidden" id="id" name="id" value="${(salesforceConnector.identity.id)!}" />
 
                                 <div class="pull-right">
                                     <a href="/app/providers">${cancel}</a>&nbsp;
-                                    <#if (salesforceInstance)??>
+                                    <#if (salesforceConnector)??>
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary">${save}</button>
                                     </#if>
                                 </div>

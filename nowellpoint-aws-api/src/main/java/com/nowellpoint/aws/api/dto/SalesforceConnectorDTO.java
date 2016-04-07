@@ -3,7 +3,7 @@ package com.nowellpoint.aws.api.dto;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 
-public class SalesforceInstanceDTO extends AbstractDTO {
+public class SalesforceConnectorDTO extends AbstractDTO {
 
 	private static final long serialVersionUID = -6847034908687287362L;
 	
@@ -13,11 +13,11 @@ public class SalesforceInstanceDTO extends AbstractDTO {
 	
 	private Organization organization;
 	
-	public SalesforceInstanceDTO() {
+	public SalesforceConnectorDTO() {
 		
 	}
 	
-	public SalesforceInstanceDTO(String id) {
+	public SalesforceConnectorDTO(String id) {
 		setId(id);
 	}
 
