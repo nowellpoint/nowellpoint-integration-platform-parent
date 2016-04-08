@@ -35,17 +35,14 @@
 
         <#nested/>
 
-
-
         <script type="text/javascript">
-            
             $(document)
-                    .ajaxStart(function() {
-                        $('#spinner').show();
-                    })
-                    .ajaxStop(function() {
-                        $('#spinner').hide();
-                    });
+                .ajaxStart(function() {
+                    $('#spinner').show();
+                })
+                .ajaxStop(function() {
+                    $('#spinner').hide();
+                });
 
             $(document).ready(function() {
                 var path = window.location.pathname;

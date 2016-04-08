@@ -12,13 +12,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	}
 	
 	public Set<SalesforceConnectorDTO> getAll(String subject) {
-		Set<SalesforceConnectorDTO> resources = hscan( subject, SalesforceConnectorDTO.class );
-		
+		Set<SalesforceConnectorDTO> resources = hscan( subject, SalesforceConnectorDTO.class );		
 		if (resources.isEmpty()) {
 			resources = findAllByOwner(subject);
 			hset( subject, resources );
 		}
-		
 		return resources;
 	}
 
@@ -34,5 +32,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		delete(resource);
 		hdel( subject, SalesforceConnectorDTO.class.getName().concat(id) );
 		hdel( id, subject );
+	}
+	
+	public SalesforceConnectorDTO findSalesforceConnector(String subject, String id) {
+		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id, subject );
+		if ( resource == null ) {		
+			resource = find(id);
+			hset( id, subject, resource );
+		}
+		return resource;
 	}
 }

@@ -1,11 +1,14 @@
 <#import "template.html" as t>
+    
     <@t.page>
+        
         <#include "navbar.html" />
 
         <div class="container-fluid container-fluid-spacious">
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle"></h6>
                         <h2 class="dashhead-title">${salesforceConnectorsLabel}</h2>
                     </div>
 
@@ -19,33 +22,41 @@
 
             <br>
 
+            <div class="hr-divider">
+            </div>
+
+            <br>
+
             <div class="row">
                 <div class="col-sm-3">
                     <#include "sidebar.html" />
                 </div>
 
                 <div class="col-sm-9">
-                    <div class="hr-divider">
-                    </div>
+
                     <div class="content table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <th></th>
-                                <th>${displayName}</th>
-                                <th>${username}</th>
                                 <th>${organization}</th>
                                 <th>${instanceName}</th>
+                                <th>${displayName}</th>
+                                <th>${username}</th>
                                 <th>${action}</th>
                             </thead>
                             <tbody>
                                 <#list salesforceConnectorsList as salesforceConnector>
                                     <tr id="${salesforceConnector.id}">
                                         <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
+                                        <td><a href="/app/salesforce/connector/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                        <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
                                         <td>${salesforceConnector.identity.username}</td>
-                                        <td>${salesforceConnector.organization.name}</td>
-                                        <td>${salesforceConnector.organization.instanceName}</td>
-                                        <td><a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                                        <td>
+                                            <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.instanceName}" data-title="${deleteMessage}">
+                                                <span class="icon icon-trash"></span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </#list>
                             </tbody>
@@ -54,9 +65,9 @@
                 </div>
             </div>
         </div>
-        
+
         <#include "confirm-dialog.html"/>
-        <#include "progress-bar-dialog.html" />
+        <#include "spinner.html" />
 
         <script>
             $('#confirm').click(function(e) {
@@ -72,5 +83,5 @@
                 $('#confirmDialog').modal('hide');
             });
         </script>
-        
+
     </@t.page>

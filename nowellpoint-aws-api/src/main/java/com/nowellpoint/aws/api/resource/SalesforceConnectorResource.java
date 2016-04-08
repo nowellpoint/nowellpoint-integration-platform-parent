@@ -44,6 +44,7 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
 
 import redis.clients.jedis.Jedis;
@@ -81,16 +82,33 @@ public class SalesforceConnectorResource {
 	@GET
 	@Path("connector")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceConnector(@QueryParam(value="code") String code) {
+	public Response getSalesforceConnectorDetails(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		OauthAuthenticationResponse response = salesforceService.authenticate(code);
+		OauthAuthenticationResponse response = null;
+		
+		try {
+			response = salesforceService.authenticate(code);
+		} catch (OauthException e) {
+			throw new WebApplicationException(e.getErrorDescription(), Status.BAD_REQUEST);
+		}
 		
 		Token token = response.getToken();
 		
 		putToken(subject, token.getId(), token);
 		
 		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
+		
+		return Response.ok(resource).build();
+	}
+	
+	@GET
+	@Path("connector/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSalesforceConnector(@PathParam(value="id") String id) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
 		
 		return Response.ok(resource).build();
 	}

@@ -52,18 +52,18 @@
     </div>
 </form>
 
-<#include "progress-bar-dialog.html" />
+<#include "spinner.html" />
 
-        <script>
-            $(document).ready(function(e) {
-                $('#clickable').click(function(e) {
-                    e.preventDefault();
-                    var body = 'photoUrl=' + $(this).data('id');
-                    $.ajax({
-                        type: "POST",
-                        url: "/app/user-profile/picture/salesforce",
-                        data: body
-                    });
-                });
+<script>
+    $(document).ready(function(e) {
+        $('#clickable').click(function(e) {
+            e.preventDefault();
+            var body = 'photoUrl=' + $(this).data('id');
+            $.ajax({
+                type: "POST",
+                url: "/app/user-profile/picture/salesforce",
+                data: body
             });
-        </script>
+        });
+    });
+</script>
