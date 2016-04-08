@@ -4,9 +4,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -22,10 +20,8 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class AuthenticationController {
 	
@@ -34,24 +30,10 @@ public class AuthenticationController {
 	private static final String API_KEY = System.getenv("NCS_API_KEY");
 	
 	public AuthenticationController(Configuration cfg) {
-		
-		get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(cfg));
         
-        post("/login", (request, response) -> postLogin(request, response));
+        post("/login", (request, response) -> login(request, response));
         
-        get("/logout", (request, response) -> getLogout(request, response));
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView getLogin(Request request, Response response) {
-		Map<String, Object> model = new HashMap<String, Object>();
-		return new ModelAndView(model, "login.html");
+        get("/logout", (request, response) -> logout(request, response));
 	}
 	
 	/**
@@ -62,7 +44,7 @@ public class AuthenticationController {
 	 * @throws IOException
 	 */
 	
-	private static String postLogin(Request request, Response response) throws IOException {
+	private static String login(Request request, Response response) throws IOException {
 		
 		ObjectMapper objectMapper = new ObjectMapper();
     	
@@ -101,7 +83,7 @@ public class AuthenticationController {
 	 * @throws IOException
 	 */
 	
-	private static String getLogout(Request request, Response response) throws IOException {
+	private static String logout(Request request, Response response) throws IOException {
 		
 		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	

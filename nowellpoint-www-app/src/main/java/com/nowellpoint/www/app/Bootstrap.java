@@ -130,13 +130,19 @@ public class Bootstrap implements SparkApplication {
         // configure routes
         //
         
-        get("/", (request, response) -> root(request, response), new FreeMarkerEngine(cfg));
+        get("/", (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
         
         //
         // search
         //
         
         get("/services", (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
+        
+        //
+        // login
+        //
+        
+        get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(cfg));
                 
         //
         //
@@ -231,7 +237,7 @@ public class Bootstrap implements SparkApplication {
 	 * @return
 	 */
 	
-	private static ModelAndView root(Request request, Response response) {
+	private static ModelAndView getContextRoot(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
     	return new ModelAndView(model, "index.html");
 	}
@@ -246,6 +252,18 @@ public class Bootstrap implements SparkApplication {
 	private static ModelAndView getServices(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
 		return new ModelAndView(model, "services.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView getLogin(Request request, Response response) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		return new ModelAndView(model, "login.html");
 	}
 	
 	/**

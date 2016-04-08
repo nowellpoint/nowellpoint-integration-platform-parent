@@ -3,33 +3,39 @@
     <@t.page>
 
         <#include "navbar.html" />
-
-        <div class="container">
-
-            <br>
-            <br>
-            <br>
-            
-            <div class="col-md-12">
-
-                <#if errorMessage??>
-                    <div id="alert" class="alert alert-danger">
-                        <a class="close" data-dismiss="alert">×</a>
-                        <div class="text-center">${errorMessage}</div>
+        
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h2 class="dashhead-title">${outboundMessageSetup}</h2>
                     </div>
-                </#if>
 
-                <div class="panel-group" id="accordion">
-
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">${salesforceInstanceLabel}</h4>
-                        </div>
-
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editUserProfile}">${edit}</a>
+                        </p>
                     </div>
-                    <br>
                 </div>
             </div>
+
+            <br>
+
+            <div class="hr-divider">
+            </div>
+
+            <br>
+            
+            <div class="row">
+                <div class="col-sm-3">
+                    <#include "sidebar.html" />
+                </div>
+
+                <div class="col-sm-9">
+                    
+                </div>
+            </div>    
+
         </div>
 
     </@t.page>
