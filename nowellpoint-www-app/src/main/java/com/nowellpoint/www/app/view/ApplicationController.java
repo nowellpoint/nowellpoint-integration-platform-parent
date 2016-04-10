@@ -5,6 +5,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Application;
+import com.nowellpoint.www.app.model.ConnectionType;
+import com.nowellpoint.www.app.model.sforce.SalesforceConnector;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
@@ -34,11 +37,64 @@ public class ApplicationController {
 	
 	public ApplicationController(Configuration cfg) {
 		
+		get("/app/application", (request, response) -> newApplication(request, response), new FreeMarkerEngine(cfg));
+		
+		get("/app/application/:id", (request, response) -> getApplication(request, response), new FreeMarkerEngine(cfg));
+		
 		get("/app/applications", (request, response) -> getApplications(request, response), new FreeMarkerEngine(cfg));
 		
-		delete("/app/applications/:id", (request, response) -> deleteApplication(request, response));
+		delete("/app/application/:id", (request, response) -> deleteApplication(request, response));
 		
-		post("/app/applications/configure/salesforce", (request, response) -> saveSalesforceApplication(request, response));
+		post("/app/applications", (request, response) -> createApplication(request, response));
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView newApplication(Request request, Response response) {
+		
+		Token token = request.attribute("token");
+		
+		List<ConnectionType> connectionTypes = new ArrayList<ConnectionType>(); 
+		ConnectionType connectionType = new ConnectionType();
+		connectionType.setName("SALESFORCE_OUTBOUND_MESSAGE");
+		connectionType.setDescription("Salesforce Outbound Message");
+		
+		connectionTypes.add(connectionType);
+		
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+    			.path("salesforce")
+    			.path("connectors")
+    			.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		
+		Account account = request.attribute("account");
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+    	model.put("account", account);
+    	model.put("connectionTypesList", connectionTypes);
+    	model.put("salesforceConnectorsList", salesforceConnectors);
+		model.put("application", new Application());
+		
+		return new ModelAndView(model, "secure/application.html");
+	}
+	
+	private static ModelAndView getApplication(Request request, Response response) {
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", request.attribute("account"));
+		model.put("application", new Application());
+		
+		return new ModelAndView(model, "secure/application.html");
 	}
 	
 	/**
@@ -49,7 +105,7 @@ public class ApplicationController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getApplications(Request request, Response response) throws IOException {
+	private static ModelAndView getApplications(Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -73,6 +129,14 @@ public class ApplicationController {
 		
 	}
 	
+	public static String createApplication(Request request, Response response) {
+		
+		request.queryParams().stream().forEach(p -> System.out.println(p + " : " + request.queryParams(p)));
+		
+		return "";
+		
+	}
+	
 	/**
 	 * 
 	 * @param request
@@ -81,7 +145,7 @@ public class ApplicationController {
 	 * @throws IOException
 	 */
 	
-	private static String deleteApplication(Request request, Response response) throws IOException {
+	private static String deleteApplication(Request request, Response response) {
 		
 		String applicationId = request.params(":id");
 		
@@ -107,17 +171,12 @@ public class ApplicationController {
 	 * @throws IOException
 	 */
 	
-	private static String saveSalesforceApplication(Request request, Response response) throws IOException {
+	private static String saveSalesforceApplication(Request request, Response response) {
 		Token token = request.attribute("token");
 		Account account = request.attribute("account");
 		
 		Application application = new Application();
-		application.setType(request.queryParams("type"));
-		application.setIsSandbox(Boolean.valueOf(request.queryParams("isSandbox")));
 		application.setName(request.queryParams("organizationName"));
-		application.setKey(request.queryParams("organizationId"));
-		application.setUrl(request.queryParams("url"));
-		application.setInstanceName(request.queryParams("instanceName"));
 		
 		HttpResponse httpResponse;
 		

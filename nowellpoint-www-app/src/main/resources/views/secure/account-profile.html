@@ -98,16 +98,6 @@
         <#include "account-profile-edit.html"/>
 
         <script>
-            $(document).ready(function() {
-                var $spinner = $('#spinner').hide();
-                $(document)
-                    .ajaxStart(function() {
-                        $spinner.show();
-                    })
-                    .ajaxStop(function() {
-                        $spinner.hide();
-                    });
-            });
             $(document).ready(function(e) {
                 $('#clickable').click(function(e) {
                     e.preventDefault();
