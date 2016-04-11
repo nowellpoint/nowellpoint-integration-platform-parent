@@ -19,7 +19,9 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
 
 @Path("/application")
@@ -27,6 +29,9 @@ public class ApplicationResource {
 	
 	@Inject
 	private ApplicationService applicationService;
+	
+	@Inject
+	private AccountProfileService accountProfileService;
 
 	@Context
 	private UriInfo uriInfo;
@@ -95,6 +100,9 @@ public class ApplicationResource {
 	public Response createApplication(ApplicationDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
+		
+		resource.setOwner(owner);
 		resource.setSubject(subject);
 		resource.setEventSource(uriInfo.getBaseUri());
 		

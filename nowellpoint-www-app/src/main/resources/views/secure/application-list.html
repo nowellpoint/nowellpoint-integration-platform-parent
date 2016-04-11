@@ -8,45 +8,58 @@
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h4 class="title">${applications}</h4>
+                        <h6 class="dashhead-subtitle"></h6>
+                        <h2 class="dashhead-title">${applications}</h2>
                     </div>
 
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="/app/application" class="btn btn-lg btn-primary-outline" role="button">${addApplication}</a>
+                            <a href="/app/providers" class="btn btn-lg btn-primary-outline" role="button">${add}</a>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div class="hr-divider m-t m-b-md">
+            <br>
 
+            <div class="hr-divider">
             </div>
 
-            <div class="content table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <th>${name}</th>
-                        <th>${type}</th>
-                        <th>${key}</th>
-                        <th>${url}</th>
-                        <th>${instanceName}</th>
-                        <th>${action}</th>
-                    </thead>
-                    <tbody>
-                        <#list applicationList as application>
-                            <tr id="${application.id}">
-                                <td><a href="/app/applications/${application.id}">${application.name}</a></td>
-                                <td>${application.type}</td>
-                                <td>${application.key}</td>
-                                <td>${application.url}</td>
-                                <td>${application.instanceName}</td>
-                                <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editProject}"><span class="icon icon-edit"></span></a>&nbsp;
-                                    <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
-                            </tr>
-                        </#list>
-                    </tbody>
-                </table>
+            <br>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <#include "sidebar.html" />
+                </div>
+
+                <div class="col-sm-9">
+
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th>${name}</th>
+                                <th>${type}</th>
+                                <th>${key}</th>
+                                <th>${url}</th>
+                                <th>${instanceName}</th>
+                                <th>${action}</th>
+                            </thead>
+                            <tbody>
+                                <#list applicationList as application>
+                                    <tr id="${application.id}">
+                                        <td><a href="/app/applications/${application.id}">${application.name}</a></td>
+                                        <td>${application.type}</td>
+                                        <td>${application.key}</td>
+                                        <td>${application.url}</td>
+                                        <td>${application.instanceName}</td>
+                                        <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editProject}"><span class="icon icon-edit"></span></a>&nbsp;
+                                            <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 

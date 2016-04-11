@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
+import com.nowellpoint.aws.data.mongodb.ServiceInstance;
+
 public class ApplicationDTO extends AbstractDTO {
 
 	/**
@@ -8,9 +10,11 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private static final long serialVersionUID = -365479731136738071L;
 	
+	private AccountProfileDTO owner;
+	
 	private String name;
 	
-	private ServiceInstanceDTO serviceInstance;
+	private ServiceInstance serviceInstance;
 	
 	private String sourceId;
 	
@@ -24,6 +28,14 @@ public class ApplicationDTO extends AbstractDTO {
 		setId(id);
 	}
 
+	public AccountProfileDTO getOwner() {
+		return owner;
+	}
+
+	public void setOwner(AccountProfileDTO owner) {
+		this.owner = owner;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -32,11 +44,11 @@ public class ApplicationDTO extends AbstractDTO {
 		return name;
 	}
 
-	public ServiceInstanceDTO getServiceInstance() {
+	public ServiceInstance getServiceInstance() {
 		return serviceInstance;
 	}
 
-	public void setServiceInstance(ServiceInstanceDTO serviceInstance) {
+	public void setServiceInstance(ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
 	}
 

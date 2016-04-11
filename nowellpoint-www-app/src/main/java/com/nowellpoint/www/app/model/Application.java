@@ -10,6 +10,8 @@ public class Application extends Resource {
 	
 	private String sourceName;
 	
+	private AccountProfile owner;
+	
 	public Application() {
 		
 	}
@@ -44,5 +46,13 @@ public class Application extends Resource {
 	
 	public void setSourceName(String sourceName) {
 		this.sourceName = sourceName;
+	}
+
+	public AccountProfile getOwner() {
+		return owner;
+	}
+
+	public void setOwner(AccountProfile owner) {
+		this.owner = owner;
 	}
 }

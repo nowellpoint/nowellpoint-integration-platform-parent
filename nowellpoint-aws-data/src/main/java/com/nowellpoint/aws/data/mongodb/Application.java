@@ -18,6 +18,8 @@ public class Application extends AbstractDocument implements Serializable {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
+	private User owner;
+	
 	private String name;
 	
 	private ServiceInstance serviceInstance;
@@ -35,6 +37,14 @@ public class Application extends AbstractDocument implements Serializable {
 		setId(id);
 	}
 	
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
