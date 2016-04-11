@@ -27,9 +27,12 @@
 
             <div class="col-lg-9 col-md-9 col-sm-9">
 
-                <form class="form-horizontal" id="form" role="form" method="post">
+                <form class="form-horizontal" id="form" role="form" method="post" action="/app/application">
                     
+                    <input type="hidden" name="id" id="id" value="${application.id!}" />
                     <input type="hidden" name="sourceId" id="sourceId" value="${application.sourceId!}" />
+                    <input type="hidden" name="sourceName" id="sourceName" value="${application.sourceName!}" />
+                    <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${serviceProvider.id!}" />
 
                     <div class="form-group">
                         <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${name}</label>
@@ -37,23 +40,25 @@
                             <input type="text" class="form-control input-lg" name="name" id="name" autofocus="" value="${application.name!}" />
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="type">${type}</label>
+                    
+                     <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="serviceName">${serviceName}</label>
                         <div class="col-sm-4 col-md-4 col-lg-4">
-                            <select id="type" name="type" class="form-control input-lg" required>
-                                <option value="" selected="selected">--- ${selectOne} ---</option>
-                                <#list connectionTypesList as connectionType>
-                                    <option value="${connectionType.name}"><i class="flag-icon flag-icon-us"></i>&nbsp;${connectionType.description}</option>
-                                </#list>
-                            </select>
+                            <div class="form-control-static">${serviceProvider.service.name!}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="serviceDescription">${serviceDescription}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-control-static">${serviceProvider.service.description!}</div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="sourceName">${source}</label>
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="dispalySourceName">${source}</label>
                         <div class="col-sm-4 col-md-4 col-lg-4">
-                            <input type="text" class="form-control input-lg" name="sourceName" id="sourceName" value="${application.sourceName!}" readonly="readonly" />
+                            <input type="text" class="form-control input-lg" name="dispalySourceName" id="dispalySourceName" value="${application.sourceName!}" disabled="disabled" />
                         </div>
                         <div class="col-sm-1 col-md-1 col-lg-1">
                             <a href="#sourceDialog" data-toggle="modal"><i class="fa fa-search fa-2x"></i></a>
@@ -68,7 +73,6 @@
                             </div>
                         </div>
                     </div>
-
                 </form>
             </div>
 
@@ -83,7 +87,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="content table-responsive">
-                                    <table class="table table-hover">
+                                    <table id="table" class="table table-hover">
                                         <thead>
                                             <th></th>
                                             <th>${organization}</th>
@@ -94,14 +98,14 @@
                                         </thead>
                                         <tbody>
                                             <#list salesforceConnectorsList as salesforceConnector>
-                                                <tr id="${salesforceConnector.id}">
+                                                <tr id="${salesforceConnector.id}" data-name="${salesforceConnector.organization.name}">
                                                     <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
                                                     <td>${salesforceConnector.organization.name}</td>
                                                     <td>${salesforceConnector.organization.instanceName}</td>
                                                     <td>${salesforceConnector.identity.displayName}</td>
                                                     <td>${salesforceConnector.identity.username}</td>
                                                     <td>
-                                                        <a href="" class="selectDialog" id="select" data-id="${salesforceConnector.id}" data-name="${salesforceConnector.organization.name}" data-dismiss="modal">
+                                                        <a href="" data-dismiss="modal">
                                                             ${select}
                                                         </a>
                                                     </td>
@@ -125,26 +129,12 @@
 
         <script>
             
-            $('#select').click(function(e) {
-                var id = $('#select').data('id');
-                var message = $('#select').data('name');
-                $('#sourceName').val(message);
+            $('#table').on('click', 'tr', function(e) {
+                var id = this.id;
+                var name = $(this).attr('data-name');
                 $('#sourceId').val(id);
-            });
-            
-            $('#form').submit(function(e) {
-                var data = $("#form").serialize()
-                $.ajax({
-                    type: "POST",
-                    url: "/app/applications",
-                    data: data,
-                    success: function(data) {
-                        //$('#success').show();
-                    }
-                });
-
-                e.preventDefault();
-
+                $('#sourceName').val(name);
+                $('#dispalySourceName').val(name);
             });
             
         </script>

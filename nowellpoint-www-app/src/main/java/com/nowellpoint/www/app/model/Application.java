@@ -4,7 +4,7 @@ public class Application extends Resource {
 	
 	private String name;
 	
-	private ConnectionType connectionType;
+	private ServiceInstance serviceInstance;
 	
 	private String sourceId;
 	
@@ -22,12 +22,12 @@ public class Application extends Resource {
 		return name;
 	}
 
-	public ConnectionType getConnectionType() {
-		return connectionType;
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
 	}
 
-	public void setConnectionType(ConnectionType connectionType) {
-		this.connectionType = connectionType;
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
 	}
 
 	public String getSourceId() {

@@ -1,12 +1,12 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.data.SalesforceInstanceCodec;
+import com.nowellpoint.aws.data.SalesforceConnectionCodec;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.sforce.Identity;
 import com.nowellpoint.aws.data.mongodb.sforce.Organization;
 
-@Document(collectionName="salesforce.connectors", codec=SalesforceInstanceCodec.class)
+@Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends AbstractDocument {
 

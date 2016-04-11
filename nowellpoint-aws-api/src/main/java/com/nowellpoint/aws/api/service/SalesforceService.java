@@ -3,7 +3,6 @@ package com.nowellpoint.aws.api.service;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
@@ -65,32 +64,6 @@ public class SalesforceService {
 		resource.setIdentity(identity);
 		
 		return resource;
-	}
-	
-	public ServiceInfo getServiceInfo(String accessToken, String id) {
-		GetIdentityRequest request = new GetIdentityRequest()
-				.setAccessToken(accessToken)
-				.setId(id);
-		
-		Client client = new Client();
-		
-		Identity identity = client.getIdentity(request);
-		
-		Organization organization = getOrganization(accessToken, identity.getOrganizationId(), identity.getUrls().getSobjects());
-		
-		DescribeSobjectsResult result = describe(accessToken, identity.getUrls().getSobjects());
-		
-		ServiceInfo serviceInfo = new ServiceInfo();
-		serviceInfo.setAccount(identity.getUserId());
-		serviceInfo.setType("SALESFORCE");
-		serviceInfo.setInstanceId(organization.getId());
-		serviceInfo.setInstanceName(organization.getInstanceName());
-		serviceInfo.setInstanceUrl(identity.getUrls().getPartner());
-		serviceInfo.setIsSandbox(organization.getIsSandbox());
-		serviceInfo.setName(organization.getName());
-		serviceInfo.setSobjects(result.getSobjects());
-				
-		return serviceInfo;
 	}
 	
 	public User getUser(String accessToken, String userId, String sobjectUrl) {	

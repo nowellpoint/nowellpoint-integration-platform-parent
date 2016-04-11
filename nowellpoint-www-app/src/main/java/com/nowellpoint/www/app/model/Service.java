@@ -1,8 +1,8 @@
 package com.nowellpoint.www.app.model;
 
-import com.nowellpoint.www.app.model.sforce.ServiceInfo;
-
 public class Service {
+	
+	private String code;
 	
 	private String name;
 	
@@ -12,10 +12,16 @@ public class Service {
 	
 	private String company;
 	
-	private ServiceInfo serviceInfo;
-	
 	public Service() {
 		
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getName() {
@@ -48,13 +54,5 @@ public class Service {
 
 	public void setCompany(String company) {
 		this.company = company;
-	}
-
-	public ServiceInfo getServiceInfo() {
-		return serviceInfo;
-	}
-
-	public void setServiceInfo(ServiceInfo serviceInfo) {
-		this.serviceInfo = serviceInfo;
 	}
 }

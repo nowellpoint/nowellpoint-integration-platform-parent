@@ -5,13 +5,13 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
@@ -22,7 +22,8 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Application;
-import com.nowellpoint.www.app.model.ConnectionType;
+import com.nowellpoint.www.app.model.ServiceInstance;
+import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.model.sforce.SalesforceConnector;
 
 import freemarker.template.Configuration;
@@ -37,7 +38,7 @@ public class ApplicationController {
 	
 	public ApplicationController(Configuration cfg) {
 		
-		get("/app/application", (request, response) -> newApplication(request, response), new FreeMarkerEngine(cfg));
+		get("/app/application/provider/:id", (request, response) -> newApplication(request, response), new FreeMarkerEngine(cfg));
 		
 		get("/app/application/:id", (request, response) -> getApplication(request, response), new FreeMarkerEngine(cfg));
 		
@@ -45,7 +46,7 @@ public class ApplicationController {
 		
 		delete("/app/application/:id", (request, response) -> deleteApplication(request, response));
 		
-		post("/app/applications", (request, response) -> createApplication(request, response));
+		post("/app/application", (request, response) -> saveApplication(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -59,14 +60,30 @@ public class ApplicationController {
 		
 		Token token = request.attribute("token");
 		
-		List<ConnectionType> connectionTypes = new ArrayList<ConnectionType>(); 
-		ConnectionType connectionType = new ConnectionType();
-		connectionType.setName("SALESFORCE_OUTBOUND_MESSAGE");
-		connectionType.setDescription("Salesforce Outbound Message");
-		
-		connectionTypes.add(connectionType);
+		String serviceProviderId = request.params(":id");
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("providers")
+				.path(serviceProviderId)
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+			
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+		
+		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setService(provider.getService());
+		
+		Application application = new Application();
+		application.setServiceInstance(serviceInstance);
+		
+		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
@@ -81,9 +98,9 @@ public class ApplicationController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("connectionTypesList", connectionTypes);
+    	model.put("serviceProvider", provider);
     	model.put("salesforceConnectorsList", salesforceConnectors);
-		model.put("application", new Application());
+		model.put("application", application);
 		
 		return new ModelAndView(model, "secure/application.html");
 	}
@@ -129,56 +146,44 @@ public class ApplicationController {
 		
 	}
 	
-	public static String createApplication(Request request, Response response) {
-		
-		request.queryParams().stream().forEach(p -> System.out.println(p + " : " + request.queryParams(p)));
-		
-		return "";
-		
-	}
-	
 	/**
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws IOException
 	 */
 	
-	private static String deleteApplication(Request request, Response response) {
-		
-		String applicationId = request.params(":id");
+	private static ModelAndView saveApplication(Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
-		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
+		String serviceProviderId = request.queryParams("serviceProviderId");
+		
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("application")
-				.path(applicationId)
+				.path("providers")
+				.path(serviceProviderId)
 				.execute();
-		
+			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+			
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
 		
-		return "";	
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private static String saveSalesforceApplication(Request request, Response response) {
-		Token token = request.attribute("token");
-		Account account = request.attribute("account");
+		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setDescription(provider.getService().getDescription());
+		serviceInstance.setService(provider.getService());
+		
 		
 		Application application = new Application();
-		application.setName(request.queryParams("organizationName"));
-		
-		HttpResponse httpResponse;
+		application.setName(request.queryParams("name"));
+		application.setSourceId(request.queryParams("sourceId"));
+		application.setSourceName(request.queryParams("sourceName"));
+		application.setServiceInstance(serviceInstance);
 		
 		if (request.queryParams("id").trim().isEmpty()) {
 			
@@ -207,14 +212,39 @@ public class ApplicationController {
 		
 		application = httpResponse.getEntity(Application.class);
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		
 		
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", account);
-		model.put("application", application);
+		model.put("account", request.attribute("account"));
 		
-		response.redirect("/app/applications");
+		return new ModelAndView(model, "secure/" + provider.getService().getConfigurationPage());
 		
-		return "";
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	
+	private static String deleteApplication(Request request, Response response) {
+		
+		String applicationId = request.params(":id");
+		
+		Token token = request.attribute("token");
+		
+		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("application")
+				.path(applicationId)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		return "";	
 	}
 }

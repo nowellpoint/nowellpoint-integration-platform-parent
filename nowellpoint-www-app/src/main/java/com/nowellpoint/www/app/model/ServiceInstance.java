@@ -3,6 +3,8 @@ package com.nowellpoint.www.app.model;
 public class ServiceInstance {
 	
 	private String serviceProviderId;
+	
+	private Service service;
 
 	private String uom;
 	
@@ -40,6 +42,14 @@ public class ServiceInstance {
 
 	public void setServiceProviderId(String serviceProviderId) {
 		this.serviceProviderId = serviceProviderId;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 	public String getUom() {

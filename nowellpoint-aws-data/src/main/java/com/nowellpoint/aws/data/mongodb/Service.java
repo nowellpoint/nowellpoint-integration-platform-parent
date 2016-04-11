@@ -10,6 +10,8 @@ public class Service implements Serializable {
 	
 	private static final long serialVersionUID = 1537820218475752902L;
 	
+	private String code;
+	
 	private String name;
 	
 	private String description;
@@ -20,6 +22,14 @@ public class Service implements Serializable {
 	
 	public Service() {
 		
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getName() {

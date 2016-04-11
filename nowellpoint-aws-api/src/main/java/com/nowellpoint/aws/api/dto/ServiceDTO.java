@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.api.dto;
 
-import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
-
 public class ServiceDTO extends AbstractDTO {
 
 	/**
@@ -9,6 +7,8 @@ public class ServiceDTO extends AbstractDTO {
 	 */
 	
 	private static final long serialVersionUID = 5553142927678572603L;
+	
+	private String code;
 	
 	private String name;
 	
@@ -18,10 +18,16 @@ public class ServiceDTO extends AbstractDTO {
 
 	private String configurationPage;
 	
-	private ServiceInfo serviceInfo;
-	
 	public ServiceDTO() {
 		
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getName() {
@@ -54,13 +60,5 @@ public class ServiceDTO extends AbstractDTO {
 
 	public void setCompany(String company) {
 		this.company = company;
-	}
-
-	public ServiceInfo getServiceInfo() {
-		return serviceInfo;
-	}
-
-	public void setServiceInfo(ServiceInfo serviceInfo) {
-		this.serviceInfo = serviceInfo;
 	}
 }
