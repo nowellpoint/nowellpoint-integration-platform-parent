@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.dto;
 
+import com.nowellpoint.aws.data.mongodb.Connector;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 public class ApplicationDTO extends AbstractDTO {
@@ -16,9 +17,7 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private ServiceInstance serviceInstance;
 	
-	private String sourceId;
-	
-	private String sourceName;
+	private Connector connector;
 	
 	public ApplicationDTO() {
 		
@@ -52,19 +51,11 @@ public class ApplicationDTO extends AbstractDTO {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public String getSourceId() {
-		return sourceId;
+	public Connector getConnector() {
+		return connector;
 	}
 
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
-	}
-
-	public String getSourceName() {
-		return sourceName;
-	}
-	
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
+	public void setConnector(Connector connector) {
+		this.connector = connector;
 	}
 }

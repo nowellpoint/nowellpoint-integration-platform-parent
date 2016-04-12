@@ -3,7 +3,6 @@ package com.nowellpoint.aws.api.service;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.and;
 
-import java.net.URI;
 import java.util.Set;
 
 import com.mongodb.Block;
@@ -57,10 +56,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	
 	public ServiceProviderDTO createServiceProvider(ServiceProviderDTO resource) {
 		create(resource);
-
-		hset( resource.getSubject(), ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), resource.getSubject(), resource );
-		
+		set(resource.getId(), resource);
 		return resource;
 	}
 	
@@ -72,16 +68,13 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	 * @return
 	 */
 	
-	public ServiceProviderDTO updateServiceProvider(String subject, ServiceProviderDTO resource, URI eventSource) {
-		ServiceProviderDTO original = getServiceProvider( resource.getId(), subject );
+	public ServiceProviderDTO updateServiceProvider(ServiceProviderDTO resource) {
+		ServiceProviderDTO original = getServiceProvider( resource.getId() );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		replace(subject, resource, eventSource);
-		
-		hset( subject, ServiceProviderDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
-
+		replace(resource);
+		set(resource.getId(), resource);
 		return resource;
 	}
 	
@@ -92,13 +85,10 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	 * @param eventSource
 	 */
 	
-	public void deleteServiceProvider(String serviceProviderId, String subject, URI eventSource) {		
+	public void deleteServiceProvider(String serviceProviderId) {		
 		ServiceProviderDTO resource = new ServiceProviderDTO(serviceProviderId);
-		
 		delete(resource);
-		
-		hdel( subject, ServiceProviderDTO.class.getName().concat(serviceProviderId) );
-		hdel( serviceProviderId, subject );
+		del(serviceProviderId);
 	}
 	
 	/**
@@ -108,14 +98,12 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	 * @return
 	 */
 	
-	public ServiceProviderDTO getServiceProvider(String id, String subject) {
-		ServiceProviderDTO resource = hget( ServiceProviderDTO.class, id, subject );
-		
+	public ServiceProviderDTO getServiceProvider(String id) {
+		ServiceProviderDTO resource = get( ServiceProviderDTO.class, id );
 		if ( resource == null ) {
 			resource = find(id);
-			hset( id, subject, resource );
+			set(resource.getId(), resource);
 		}
-		
 		return resource;
 	}	
 }

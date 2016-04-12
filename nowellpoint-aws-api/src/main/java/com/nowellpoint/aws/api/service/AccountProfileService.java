@@ -3,7 +3,6 @@ package com.nowellpoint.aws.api.service;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
@@ -42,9 +41,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	public void loggedInEvent(@Observes LoggedInEvent event) {
 		AccountProfileDTO resource = findAccountProfileBySubject(event.getSubject());
 		resource.setLastLoginDate(Date.from(Instant.now()));
-		
-		updateAccountProfile( event.getSubject(), resource, event.getEventSource() );
-		
+		updateAccountProfile(resource);
 		LOGGER.info("Logged In: " + resource.getHref());
 	}
 	
@@ -82,8 +79,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return the updated Identity resource
 	 */
 	
-	public AccountProfileDTO updateAccountProfile(String subject, AccountProfileDTO resource, URI eventSource) {
-		AccountProfileDTO original = findAccountProfile( resource.getId(), subject );
+	public AccountProfileDTO updateAccountProfile(AccountProfileDTO resource) {
+		AccountProfileDTO original = findAccountProfile( resource.getId(), resource.getSubject() );
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
@@ -101,10 +98,10 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			resource.setPhotos(original.getPhotos());
 		}
 		
-		replace(subject, resource, eventSource);
+		replace(resource);
 
-		hset( resource.getId(), subject, resource );
-		hset( subject, AccountProfileDTO.class.getName(), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
+		hset( resource.getSubject(), AccountProfileDTO.class.getName(), resource );
 		
 		return resource;
 	}

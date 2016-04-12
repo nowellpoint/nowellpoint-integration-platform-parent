@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
+import com.nowellpoint.aws.data.mongodb.Service;
+
 public class ServiceProviderDTO extends AbstractDTO {
 	
 	/**
@@ -10,15 +12,7 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private String type;
 	
-	private Double price;
-	
 	private Boolean isActive;
-	
-	private String uom;
-	
-	private String authMethod;
-	
-	private String authUrl;
 	
 	private String displayName;
 	
@@ -30,7 +24,7 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private String languageLocaleKey;
 	
-	private ServiceDTO service;
+	private Service service;
 
 	public ServiceProviderDTO() {
 		
@@ -56,30 +50,6 @@ public class ServiceProviderDTO extends AbstractDTO {
 		this.isActive = isActive;
 	}
 
-	public String getUom() {
-		return uom;
-	}
-
-	public void setUom(String uom) {
-		this.uom = uom;
-	}
-
-	public String getAuthMethod() {
-		return authMethod;
-	}
-
-	public void setAuthMethod(String authMethod) {
-		this.authMethod = authMethod;
-	}
-
-	public String getAuthUrl() {
-		return authUrl;
-	}
-
-	public void setAuthUrl(String authUrl) {
-		this.authUrl = authUrl;
-	}
-
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -95,20 +65,12 @@ public class ServiceProviderDTO extends AbstractDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
 	
-	public ServiceDTO getService() {
+	public Service getService() {
 		return service;
 	}
 
-	public void setService(ServiceDTO service) {
+	public void setService(Service service) {
 		this.service = service;
 	}
 

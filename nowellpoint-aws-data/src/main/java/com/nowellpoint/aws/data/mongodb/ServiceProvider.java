@@ -18,15 +18,7 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	
 	private String type;
 	
-	private Double price;
-	
 	private Boolean isActive;
-	
-	private String uom;
-	
-	private String authMethod;
-	
-	private String authUrl;
 	
 	private String displayName;
 	
@@ -60,30 +52,6 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public String getUom() {
-		return uom;
-	}
-
-	public void setUom(String uom) {
-		this.uom = uom;
-	}
-
-	public String getAuthMethod() {
-		return authMethod;
-	}
-
-	public void setAuthMethod(String authMethod) {
-		this.authMethod = authMethod;
-	}
-
-	public String getAuthUrl() {
-		return authUrl;
-	}
-
-	public void setAuthUrl(String authUrl) {
-		this.authUrl = authUrl;
-	}
-
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -98,14 +66,6 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
 	}
 
 	public Service getService() {

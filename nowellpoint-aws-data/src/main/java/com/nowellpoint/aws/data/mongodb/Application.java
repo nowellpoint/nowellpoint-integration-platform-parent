@@ -24,10 +24,7 @@ public class Application extends AbstractDocument implements Serializable {
 	
 	private ServiceInstance serviceInstance;
 	
-	private String sourceId;
-	
-	private String sourceName;
-	
+	private Connector connector;
 	
 	public Application() {
 		
@@ -61,19 +58,11 @@ public class Application extends AbstractDocument implements Serializable {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public String getSourceId() {
-		return sourceId;
+	public Connector getConnector() {
+		return connector;
 	}
 
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
-	}
-
-	public String getSourceName() {
-		return sourceName;
-	}
-	
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
+	public void setConnector(Connector connector) {
+		this.connector = connector;
 	}
 }

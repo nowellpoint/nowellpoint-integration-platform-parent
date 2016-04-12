@@ -21,6 +21,8 @@
             </div>
 
             <br>
+            
+            
 
             <div class="hr-divider">
             </div>
@@ -39,7 +41,7 @@
                             <thead>
                                 <th>${name}</th>
                                 <th>${type}</th>
-                                <th>${key}</th>
+                                <th>${serviceName}</th>
                                 <th>${url}</th>
                                 <th>${instanceName}</th>
                                 <th>${action}</th>
@@ -48,11 +50,11 @@
                                 <#list applicationList as application>
                                     <tr id="${application.id}">
                                         <td><a href="/app/applications/${application.id}">${application.name}</a></td>
-                                        <td>${application.type}</td>
-                                        <td>${application.key}</td>
-                                        <td>${application.url}</td>
-                                        <td>${application.instanceName}</td>
-                                        <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editProject}"><span class="icon icon-edit"></span></a>&nbsp;
+                                        <td>${application.serviceInstance.displayName}</td>
+                                        <td>${application.serviceInstance.name}</td>
+                                        <td>${application.connector.organizationName}</td>
+                                        <td>${application.connector.displayName}</td>
+                                        <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editApplication}"><span class="icon icon-edit"></span></a>&nbsp;
                                             <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
                                     </tr>
                                 </#list>

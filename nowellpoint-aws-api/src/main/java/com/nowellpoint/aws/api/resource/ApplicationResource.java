@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -19,10 +20,18 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
+import com.nowellpoint.aws.api.service.SalesforceConnectorService;
+import com.nowellpoint.aws.api.service.ServiceProviderService;
+import com.nowellpoint.aws.data.mongodb.Connector;
+import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 @Path("/application")
 public class ApplicationResource {
@@ -32,6 +41,12 @@ public class ApplicationResource {
 	
 	@Inject
 	private AccountProfileService accountProfileService;
+	
+	@Inject
+	private ServiceProviderService serviceProviderService;
+	
+	@Inject
+	private SalesforceConnectorService salesforceConnectorService;
 
 	@Context
 	private UriInfo uriInfo;
@@ -95,16 +110,49 @@ public class ApplicationResource {
 	 */
 	
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-	public Response createApplication(ApplicationDTO resource) {
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createApplication(
+			@FormParam("serviceProviderId") @NotEmpty String serviceProviderId,
+			@FormParam("name") @NotEmpty String name,
+			@FormParam("connectorId") @NotEmpty String connectorId) {
+		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
+		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);
+		
+		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
+		
+		ServiceInstance serviceInstance = new com.nowellpoint.aws.data.mongodb.ServiceInstance();
+		serviceInstance.setCode(provider.getService().getCode());
+		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
+		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
+		serviceInstance.setDescription(provider.getService().getDescription());
+		serviceInstance.setDisplayName(provider.getDisplayName());
+		serviceInstance.setImage(provider.getImage());
+		serviceInstance.setIsActive(provider.getService().getIsActive());
+		serviceInstance.setName(provider.getService().getName());
+		serviceInstance.setPrice(provider.getService().getPrice());
+		serviceInstance.setType(provider.getType());
+		serviceInstance.setUom(provider.getService().getUom());
+		
+		Connector connector = new Connector();
+		
+		if (provider.getType().equals("SALESFORCE")) {
+			SalesforceConnectorDTO salesforceConnector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
+			connector.setId(salesforceConnector.getId());
+			connector.setDisplayName(salesforceConnector.getIdentity().getDisplayName());
+			connector.setOrganizationName(salesforceConnector.getOrganization().getName());
+		}
+		
+		ApplicationDTO resource = new ApplicationDTO();
 		
 		resource.setOwner(owner);
 		resource.setSubject(subject);
 		resource.setEventSource(uriInfo.getBaseUri());
+		resource.setName(name);
+		resource.setServiceInstance(serviceInstance);
+		resource.setConnector(connector);
 		
 		applicationService.createApplication(resource);
 		
@@ -115,8 +163,31 @@ public class ApplicationResource {
 		
 		return Response.created(uri)
 				.entity(resource)
-				.build();
+				.build();	
 	}
+	
+//	@Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+//	public Response createApplication(ApplicationDTO resource) {
+//		String subject = securityContext.getUserPrincipal().getName();
+//		
+//		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
+//		
+//		resource.setOwner(owner);
+//		resource.setSubject(subject);
+//		resource.setEventSource(uriInfo.getBaseUri());
+//		
+//		applicationService.createApplication(resource);
+//		
+//		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+//				.path(ApplicationResource.class)
+//				.path("/{id}")
+//				.build(resource.getId());
+//		
+//		return Response.created(uri)
+//				.entity(resource)
+//				.build();
+//	}
 	
 	/**
 	 * 
@@ -132,9 +203,10 @@ public class ApplicationResource {
 	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		resource.setSubject(subject);
 		resource.setId(id);
 		
-		applicationService.updateApplication(subject, resource, uriInfo.getBaseUri());
+		applicationService.updateApplication(resource);
 		
 		return Response.ok(resource).build();
 	}

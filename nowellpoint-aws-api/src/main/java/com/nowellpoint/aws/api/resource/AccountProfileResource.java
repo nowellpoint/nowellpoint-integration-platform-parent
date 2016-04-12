@@ -128,6 +128,7 @@ public class AccountProfileResource {
 		resource.setMobilePhone(mobilePhone);
 		resource.setPhone(phone);
 		resource.setExtension(extension);
+		resource.setSubject(subject);
 		
 		Address address = new Address();
 		address.setStreet(street);
@@ -138,7 +139,7 @@ public class AccountProfileResource {
 		
 		resource.setAddress(address);
 		
-		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
+		accountProfileService.updateAccountProfile(resource);
 		
 		return Response.ok(resource)
 				.build();
@@ -236,8 +237,9 @@ public class AccountProfileResource {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
+		resource.setSubject(subject);
 		
-		accountProfileService.updateAccountProfile( subject, resource, uriInfo.getBaseUri() );
+		accountProfileService.updateAccountProfile(resource);
 		
 		return Response.ok(resource).build();
 	}
@@ -270,9 +272,10 @@ public class AccountProfileResource {
 		Photos photos = new Photos();
 		photos.setProfilePicture("/images/person-generic.jpg");
 		
+		resource.setSubject(subject);
 		resource.setPhotos(photos);
 		
-		accountProfileService.updateAccountProfile(subject, resource, uriInfo.getBaseUri());
+		accountProfileService.updateAccountProfile(resource);
 		
 		return Response.ok(resource)
 				.build();

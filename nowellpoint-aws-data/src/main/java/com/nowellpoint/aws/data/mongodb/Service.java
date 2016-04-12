@@ -10,6 +10,14 @@ public class Service implements Serializable {
 	
 	private static final long serialVersionUID = 1537820218475752902L;
 	
+	private Double price;
+	
+	private String currencyIsoCode;
+	
+	private Boolean isActive;
+	
+	private String uom;
+	
 	private String code;
 	
 	private String name;
@@ -22,6 +30,38 @@ public class Service implements Serializable {
 	
 	public Service() {
 		
+	}
+	
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+	
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 
 	public String getCode() {

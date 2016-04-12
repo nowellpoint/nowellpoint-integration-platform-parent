@@ -49,11 +49,8 @@ public class ServiceProviderResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getServiceProvider(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
-		
+	public Response getServiceProvider(@PathParam("id") String id) {		
+		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id);		
 		return Response.ok(resource)
 				.build();
 	}
@@ -83,10 +80,7 @@ public class ServiceProviderResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteServiceProvider(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		serviceProviderService.deleteServiceProvider(id, subject, uriInfo.getBaseUri());
-		
+		serviceProviderService.deleteServiceProvider(id);		
 		return Response.noContent().build();
 	}
 	
@@ -97,9 +91,10 @@ public class ServiceProviderResource {
 	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		resource.setSubject(subject);
 		resource.setId(id);
 		
-		serviceProviderService.updateServiceProvider(subject, resource, uriInfo.getBaseUri());
+		serviceProviderService.updateServiceProvider(resource);
 		
 		return Response.ok(resource).build();
 	}

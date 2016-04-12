@@ -207,8 +207,6 @@ public class SalesforceConnectorController {
 		
 		Token token = request.attribute("token");
 		
-		System.out.println(request.queryParams("id"));
-		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))

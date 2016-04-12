@@ -55,15 +55,15 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO updateApplication(String subject, ApplicationDTO resource, URI eventSource) {
-		ApplicationDTO original = getApplication( resource.getId(), subject );
+	public ApplicationDTO updateApplication(ApplicationDTO resource) {
+		ApplicationDTO original = getApplication( resource.getId(), resource.getSubject() );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		replace(subject, resource, eventSource);
+		replace(resource);
 		
-		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( resource.getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
 
 		return resource;
 	}

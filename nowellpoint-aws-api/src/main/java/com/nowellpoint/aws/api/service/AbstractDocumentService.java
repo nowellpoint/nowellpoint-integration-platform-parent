@@ -2,7 +2,6 @@ package com.nowellpoint.aws.api.service;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
@@ -216,11 +215,11 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 * @return
 	 */
 	
-	protected R replace(String subject, R resource, URI eventSource) {
+	protected R replace(R resource) {
 		AbstractDocument document = modelMapper.map( resource, documentType );
 		
 		document.setLastModifiedDate(Date.from(Instant.now()));
-		document.setLastModifiedById(subject);
+		document.setLastModifiedById(resource.getSubject());
 		
 		try {
 			MongoDBDatastore.replaceOne( document );

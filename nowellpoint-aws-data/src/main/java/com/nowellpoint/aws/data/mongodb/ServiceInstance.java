@@ -1,9 +1,11 @@
 package com.nowellpoint.aws.data.mongodb;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ServiceInstance extends AbstractDocument {
+public class ServiceInstance implements Serializable {
 
 	/**
 	 * 
@@ -11,60 +13,38 @@ public class ServiceInstance extends AbstractDocument {
 	
 	private static final long serialVersionUID = 3675473602093498225L;
 	
-	private String serviceProviderId;
-	
 	private String type;
-	
-	private Double price;
 	
 	private Boolean isActive;
 	
-	private String uom;
-	
-	private String configuration;
-	
-	private String account;
-	
-	private String instanceId;
-	
-	private String instanceName;
-	
-	private String instanceUrl;
-	
-	private Boolean isSandbox;
-	
-	private String name;
+	private String displayName;
 	
 	private String description;
 	
-	private User owner;
+	private String image;
+	
+	private Double price;
+	
+	private String currencyIsoCode;
+	
+	private String uom;
+	
+	private String code;
+	
+	private String name;
 
+	private String configurationPage;
+	
 	public ServiceInstance() {
 		
 	}
 
-	public String getServiceProviderId() {
-		return serviceProviderId;
-	}
-
-	public void setServiceProviderId(String serviceProviderId) {
-		this.serviceProviderId = serviceProviderId;
-	}
-	
 	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
 	}
 
 	public Boolean getIsActive() {
@@ -75,68 +55,12 @@ public class ServiceInstance extends AbstractDocument {
 		this.isActive = isActive;
 	}
 
-	public String getUom() {
-		return uom;
+	public String getDisplayName() {
+		return displayName;
 	}
 
-	public void setUom(String uom) {
-		this.uom = uom;
-	}
-
-	public String getConfiguration() {
-		return configuration;
-	}
-
-	public void setConfiguration(String configuration) {
-		this.configuration = configuration;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	public String getInstanceUrl() {
-		return instanceUrl;
-	}
-
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
-	}
-
-	public Boolean getIsSandbox() {
-		return isSandbox;
-	}
-
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	public String getDescription() {
@@ -147,11 +71,59 @@ public class ServiceInstance extends AbstractDocument {
 		this.description = description;
 	}
 
-	public User getOwner() {
-		return owner;
+	public String getImage() {
+		return image;
 	}
 
-	public void setOwner(User owner) {
-		this.owner = owner;
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getConfigurationPage() {
+		return configurationPage;
+	}
+
+	public void setConfigurationPage(String configurationPage) {
+		this.configurationPage = configurationPage;
 	}
 }

@@ -2,78 +2,30 @@ package com.nowellpoint.www.app.model;
 
 public class ServiceInstance {
 	
-	private String serviceProviderId;
-	
-	private Service service;
-
-	private String uom;
-	
-	private String configuration;
-	
-	private String description;
-	
 	private String type;
-	
-	private String instanceId;
-	
-	private String instanceName;
-	
-	private String instanceUrl;
-	
-	private String account;
 	
 	private Boolean isActive;
 	
+	private String displayName;
+	
+	private String description;
+	
+	private String image;
+	
 	private Double price;
 	
+	private String currencyIsoCode;
+	
+	private String uom;
+	
+	private String code;
+	
 	private String name;
-	
-	private AccountProfile owner;
-	
-	private Boolean isSandbox;
+
+	private String configurationPage;
 	
 	public ServiceInstance() {
 		
-	}
-	
-	public String getServiceProviderId() {
-		return serviceProviderId;
-	}
-
-	public void setServiceProviderId(String serviceProviderId) {
-		this.serviceProviderId = serviceProviderId;
-	}
-
-	public Service getService() {
-		return service;
-	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
-
-	public String getUom() {
-		return uom;
-	}
-
-	public void setUom(String uom) {
-		this.uom = uom;
-	}
-
-	public String getConfiguration() {
-		return configuration;
-	}
-
-	public void setConfiguration(String configuration) {
-		this.configuration = configuration;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getType() {
@@ -84,52 +36,36 @@ public class ServiceInstance {
 		this.type = type;
 	}
 
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public AccountProfile getOwner() {
-		return owner;
-	}
-
-	public void setOwner(AccountProfile owner) {
-		this.owner = owner;
-	}
-
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	public String getInstanceUrl() {
-		return instanceUrl;
-	}
-
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
-	}
-
 	public Boolean getIsActive() {
 		return isActive;
 	}
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	public Double getPrice() {
@@ -140,6 +76,30 @@ public class ServiceInstance {
 		this.price = price;
 	}
 
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -148,11 +108,13 @@ public class ServiceInstance {
 		this.name = name;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	public String getConfigurationPage() {
+		return configurationPage;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}	
+	public void setConfigurationPage(String configurationPage) {
+		this.configurationPage = configurationPage;
+	}
+	
+	
 }

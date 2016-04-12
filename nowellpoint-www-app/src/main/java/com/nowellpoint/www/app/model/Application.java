@@ -6,14 +6,12 @@ public class Application extends Resource {
 	
 	private ServiceInstance serviceInstance;
 	
-	private String sourceId;
-	
-	private String sourceName;
-	
 	private AccountProfile owner;
 	
+	private Connector connector;
+	
 	public Application() {
-		
+		connector = new Connector();
 	}
 	
 	public void setName(String name) {
@@ -32,27 +30,19 @@ public class Application extends Resource {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public String getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
-	}
-
-	public String getSourceName() {
-		return sourceName;
-	}
-	
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
-	}
-
 	public AccountProfile getOwner() {
 		return owner;
 	}
 
 	public void setOwner(AccountProfile owner) {
 		this.owner = owner;
+	}
+
+	public Connector getConnector() {
+		return connector;
+	}
+
+	public void setConnector(Connector connector) {
+		this.connector = connector;
 	}
 }

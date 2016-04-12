@@ -29,7 +29,7 @@
                                 <img src="${serviceProvider.image}">
                                 <h3>${serviceProvider.displayName}</h3>
                                 <br>
-                                <h1 class="statcard-number">${serviceProvider.price?string.currency}</h1>
+                                <h1 class="statcard-number">${serviceProvider.service.currencyIsoCode} ${serviceProvider.service.price?string["0.00"]}</h1>
                                 <br>
                                 <br>
                                 <div class="panel panel-primary">

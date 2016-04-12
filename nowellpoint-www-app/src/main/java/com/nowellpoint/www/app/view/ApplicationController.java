@@ -5,6 +5,8 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +14,16 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Application;
-import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.model.sforce.SalesforceConnector;
 
@@ -71,17 +72,11 @@ public class ApplicationController {
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 			
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 		
 		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
-		
-		ServiceInstance serviceInstance = new ServiceInstance();
-		serviceInstance.setService(provider.getService());
-		
-		Application application = new Application();
-		application.setServiceInstance(serviceInstance);
 		
 		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -100,12 +95,25 @@ public class ApplicationController {
     	model.put("account", account);
     	model.put("serviceProvider", provider);
     	model.put("salesforceConnectorsList", salesforceConnectors);
-		model.put("application", application);
+		model.put("application", new Application());
 		
 		return new ModelAndView(model, "secure/application.html");
 	}
 	
 	private static ModelAndView getApplication(Request request, Response response) {
+		
+		String applicationId = request.params(":id");
+		
+		Token token = request.attribute("token");
+		
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("application")
+				.path(applicationId)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
@@ -157,42 +165,32 @@ public class ApplicationController {
 		
 		Token token = request.attribute("token");
 		
-		String serviceProviderId = request.queryParams("serviceProviderId");
-		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-				.path("providers")
-				.path(serviceProviderId)
-				.execute();
+		String body;
+		try {
+			body = new StringBuilder()
+					.append("serviceProviderId=")
+					.append(request.queryParams("serviceProviderId"))
+					.append("&name=")
+					.append(URLEncoder.encode(request.queryParams("name"), "UTF-8"))
+					.append("&connectorId=")
+					.append(request.queryParams("connectorId"))
+					.toString();
 			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
-			
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			throw new NotFoundException(httpResponse.getAsString());
+		} catch (UnsupportedEncodingException e) {
+			throw new BadRequestException(e);
 		}
 		
-		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
-		
-		ServiceInstance serviceInstance = new ServiceInstance();
-		serviceInstance.setDescription(provider.getService().getDescription());
-		serviceInstance.setService(provider.getService());
-		
-		
-		Application application = new Application();
-		application.setName(request.queryParams("name"));
-		application.setSourceId(request.queryParams("sourceId"));
-		application.setSourceName(request.queryParams("sourceName"));
-		application.setServiceInstance(serviceInstance);
+		HttpResponse httpResponse = null;
 		
 		if (request.queryParams("id").trim().isEmpty()) {
 			
 			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
 					.path("application")
-					.body(application)
+					.body(body)
 					.execute();
 			
 		} else {
@@ -200,25 +198,26 @@ public class ApplicationController {
 			httpResponse = RestResource.put(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
 					.path("application")
-					.body(application)
+					.path(request.queryParams("id"))
+					.body(body)
 					.execute();
+			
 		}
 		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		application = httpResponse.getEntity(Application.class);
-		
-		
-		
+		Application application = httpResponse.getEntity(Application.class);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
+		model.put("application", application);
 		
-		return new ModelAndView(model, "secure/" + provider.getService().getConfigurationPage());
+		return new ModelAndView(model, "secure/" + application.getServiceInstance().getConfigurationPage());
 		
 	}
 	

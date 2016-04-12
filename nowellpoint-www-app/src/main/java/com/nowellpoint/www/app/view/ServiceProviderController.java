@@ -72,7 +72,7 @@ public class ServiceProviderController {
 		model.put("account", request.attribute("account"));
 		model.put("serviceProviders", providers);
     	
-		return new ModelAndView(model, "secure/service-providers.html");
+		return new ModelAndView(model, "secure/service-catalog.html");
 	}
 	
 	/**
