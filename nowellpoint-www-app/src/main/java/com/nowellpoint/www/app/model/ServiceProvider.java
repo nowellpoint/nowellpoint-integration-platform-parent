@@ -4,7 +4,7 @@ public class ServiceProvider extends Resource {
 	
 	private String type;
 	
-	private String displayName;
+	private String typeName;
 	
 	private String description;
 	
@@ -28,12 +28,12 @@ public class ServiceProvider extends Resource {
 		this.type = type;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public String getTypeName() {
+		return typeName;
 	}
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+	public void setTypeyName(String typeName) {
+		this.typeName = typeName;
 	}
 
 	public String getDescription() {

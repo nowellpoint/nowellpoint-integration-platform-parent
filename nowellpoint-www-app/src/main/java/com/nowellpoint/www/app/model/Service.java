@@ -1,5 +1,7 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.Set;
+
 public class Service {
 	
 	private Double price;
@@ -10,7 +12,7 @@ public class Service {
 	
 	private String uom;
 	
-	private String code;
+	private String type;
 	
 	private String name;
 	
@@ -19,6 +21,8 @@ public class Service {
 	private String configurationPage;
 	
 	private String company;
+	
+	private Set<String> configurationParams;
 	
 	public Service() {
 		
@@ -56,12 +60,12 @@ public class Service {
 		this.uom = uom;
 	}
 
-	public String getCode() {
-		return code;
+	public String getType() {
+		return type;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getName() {
@@ -94,5 +98,13 @@ public class Service {
 
 	public void setCompany(String company) {
 		this.company = company;
+	}
+
+	public Set<String> getConfigurationParams() {
+		return configurationParams;
+	}
+
+	public void setConfigurationParams(Set<String> configurationParams) {
+		this.configurationParams = configurationParams;
 	}
 }

@@ -127,6 +127,18 @@ public abstract class AbstractCacheService {
 	 */
 	
 	public <T> T hget(Class<T> type, String key, String field) {
+		if (type == null) {
+			throw new IllegalArgumentException("missing type parameter");
+		}
+		
+		if (key == null) {
+			throw new IllegalArgumentException("missing key parameter");
+		}
+		
+		if (field == null) {
+			throw new IllegalArgumentException("missing key parameter");
+		}
+		
 		Jedis jedis = CacheManager.getCache();
 		byte[] bytes = null;
 		try {

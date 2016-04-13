@@ -1,12 +1,14 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.Set;
+
 public class ServiceInstance {
 	
 	private String type;
 	
 	private Boolean isActive;
 	
-	private String displayName;
+	private String typeName;
 	
 	private String description;
 	
@@ -23,6 +25,8 @@ public class ServiceInstance {
 	private String name;
 
 	private String configurationPage;
+	
+	private Set<ConfigurationParam> configurationParams;
 	
 	public ServiceInstance() {
 		
@@ -44,12 +48,12 @@ public class ServiceInstance {
 		this.isActive = isActive;
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public String getTypeName() {
+		return typeName;
 	}
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 
 	public String getDescription() {
@@ -115,6 +119,12 @@ public class ServiceInstance {
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
 	}
-	
-	
+
+	public Set<ConfigurationParam> getConfigurationParams() {
+		return configurationParams;
+	}
+
+	public void setConfigurationParams(Set<ConfigurationParam> configurationParams) {
+		this.configurationParams = configurationParams;
+	}
 }

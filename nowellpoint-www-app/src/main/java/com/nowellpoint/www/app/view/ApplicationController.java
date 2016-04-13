@@ -100,6 +100,13 @@ public class ApplicationController {
 		return new ModelAndView(model, "secure/application.html");
 	}
 	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private static ModelAndView getApplication(Request request, Response response) {
 		
 		String applicationId = request.params(":id");
@@ -115,11 +122,13 @@ public class ApplicationController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
+		Application application = httpResponse.getEntity(Application.class);
+		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));
-		model.put("application", new Application());
+		model.put("application", application);
 		
-		return new ModelAndView(model, "secure/application.html");
+		return new ModelAndView(model, "secure/application-edit.html");
 	}
 	
 	/**
@@ -165,24 +174,24 @@ public class ApplicationController {
 		
 		Token token = request.attribute("token");
 		
-		String body;
-		try {
-			body = new StringBuilder()
-					.append("serviceProviderId=")
-					.append(request.queryParams("serviceProviderId"))
-					.append("&name=")
-					.append(URLEncoder.encode(request.queryParams("name"), "UTF-8"))
-					.append("&connectorId=")
-					.append(request.queryParams("connectorId"))
-					.toString();
-			
-		} catch (UnsupportedEncodingException e) {
-			throw new BadRequestException(e);
-		}
-		
 		HttpResponse httpResponse = null;
 		
 		if (request.queryParams("id").trim().isEmpty()) {
+			
+			String body;
+			try {
+				body = new StringBuilder()
+						.append("serviceProviderId=")
+						.append(request.queryParams("serviceProviderId"))
+						.append("&name=")
+						.append(URLEncoder.encode(request.queryParams("name"), "UTF-8"))
+						.append("&connectorId=")
+						.append(request.queryParams("connectorId"))
+						.toString();
+				
+			} catch (UnsupportedEncodingException e) {
+				throw new BadRequestException(e);
+			}
 			
 			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -194,6 +203,17 @@ public class ApplicationController {
 					.execute();
 			
 		} else {
+			
+			String body;
+			try {
+				body = new StringBuilder()
+						.append("name=")
+						.append(URLEncoder.encode(request.queryParams("name"), "UTF-8"))
+						.toString();
+				
+			} catch (UnsupportedEncodingException e) {
+				throw new BadRequestException(e);
+			}
 			
 			httpResponse = RestResource.put(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))

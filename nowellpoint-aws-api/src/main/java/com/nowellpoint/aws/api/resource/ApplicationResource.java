@@ -30,7 +30,7 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.Connector;
+import com.nowellpoint.aws.data.mongodb.ConfigurationParam;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 @Path("/application")
@@ -114,8 +114,8 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createApplication(
 			@FormParam("serviceProviderId") @NotEmpty String serviceProviderId,
-			@FormParam("name") @NotEmpty String name,
-			@FormParam("connectorId") @NotEmpty String connectorId) {
+			@FormParam("connectorId") @NotEmpty String connectorId,
+			@FormParam("name") @NotEmpty String name) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
@@ -123,12 +123,14 @@ public class ApplicationResource {
 		
 		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
 		
-		ServiceInstance serviceInstance = new com.nowellpoint.aws.data.mongodb.ServiceInstance();
-		serviceInstance.setCode(provider.getService().getCode());
+		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setCode(provider.getService().getType());
 		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
 		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
 		serviceInstance.setDescription(provider.getService().getDescription());
-		serviceInstance.setDisplayName(provider.getDisplayName());
+		serviceInstance.setTypeName(provider.getTypeName());
 		serviceInstance.setImage(provider.getImage());
 		serviceInstance.setIsActive(provider.getService().getIsActive());
 		serviceInstance.setName(provider.getService().getName());
@@ -136,13 +138,9 @@ public class ApplicationResource {
 		serviceInstance.setType(provider.getType());
 		serviceInstance.setUom(provider.getService().getUom());
 		
-		Connector connector = new Connector();
-		
-		if (provider.getType().equals("SALESFORCE")) {
-			SalesforceConnectorDTO salesforceConnector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
-			connector.setId(salesforceConnector.getId());
-			connector.setDisplayName(salesforceConnector.getIdentity().getDisplayName());
-			connector.setOrganizationName(salesforceConnector.getOrganization().getName());
+		if ("OUTBOUND_MESSAGE_LISTENER".equals(provider.getService().getType())) {
+			serviceInstance.addConfigurationParam(new ConfigurationParam("organizationName", connector.getOrganization().getName()));
+			serviceInstance.addConfigurationParam(new ConfigurationParam("instance", connector.getOrganization().getInstanceName()));
 		}
 		
 		ApplicationDTO resource = new ApplicationDTO();
@@ -152,7 +150,6 @@ public class ApplicationResource {
 		resource.setEventSource(uriInfo.getBaseUri());
 		resource.setName(name);
 		resource.setServiceInstance(serviceInstance);
-		resource.setConnector(connector);
 		
 		applicationService.createApplication(resource);
 		
@@ -192,22 +189,49 @@ public class ApplicationResource {
 	/**
 	 * 
 	 * @param id
-	 * @param resource
+	 * @param name
 	 * @return
 	 */
 	
 	@PUT
 	@Path("/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
+	public Response updateApplication(
+			@PathParam("id") String id,
+			@FormParam("name") @NotEmpty String name) {
+		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		resource.setSubject(subject);
+		ApplicationDTO resource = applicationService.getApplication(id, subject);
 		resource.setId(id);
+		resource.setSubject(subject);
+		resource.setName(name);
 		
 		applicationService.updateApplication(resource);
 		
-		return Response.ok(resource).build();
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(ApplicationResource.class)
+				.path("/{id}")
+				.build(resource.getId());
+		
+		return Response.created(uri)
+				.entity(resource)
+				.build();	
 	}
+	
+//	@PUT
+//	@Path("/{id}")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
+//		String subject = securityContext.getUserPrincipal().getName();
+//		
+//		resource.setSubject(subject);
+//		resource.setId(id);
+//		
+//		applicationService.updateApplication(resource);
+//		
+//		return Response.ok(resource).build();
+//	}
 }

@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class Service implements Serializable {
 
@@ -18,7 +19,7 @@ public class Service implements Serializable {
 	
 	private String uom;
 	
-	private String code;
+	private String type;
 	
 	private String name;
 	
@@ -27,6 +28,8 @@ public class Service implements Serializable {
 	private String company;
 
 	private String configurationPage;
+	
+	private Set<String> configurationParams;
 	
 	public Service() {
 		
@@ -64,12 +67,12 @@ public class Service implements Serializable {
 		this.price = price;
 	}
 
-	public String getCode() {
-		return code;
+	public String getType() {
+		return type;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getName() {
@@ -102,5 +105,13 @@ public class Service implements Serializable {
 
 	public void setCompany(String company) {
 		this.company = company;
+	}
+
+	public Set<String> getConfigurationParams() {
+		return configurationParams;
+	}
+
+	public void setConfigurationParams(Set<String> configurationParams) {
+		this.configurationParams = configurationParams;
 	}
 }

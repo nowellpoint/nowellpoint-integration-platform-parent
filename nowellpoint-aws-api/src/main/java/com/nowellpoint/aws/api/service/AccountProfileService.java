@@ -19,11 +19,13 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
-import com.nowellpoint.aws.api.event.LoggedInEvent;
+import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.data.mongodb.Photos;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.tools.TokenParser;
 
 public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
 	
@@ -38,10 +40,15 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @param token
 	 */
 	
-	public void loggedInEvent(@Observes LoggedInEvent event) {
-		AccountProfileDTO resource = findAccountProfileBySubject(event.getSubject());
+	public void loggedInEvent(@Observes Token token) {
+		String subject = TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), token.getAccessToken());
+		
+		AccountProfileDTO resource = findAccountProfileBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
+		resource.setSubject(subject);
+		
 		updateAccountProfile(resource);
+		
 		LOGGER.info("Logged In: " + resource.getHref());
 	}
 	

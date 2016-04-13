@@ -8,10 +8,10 @@ public class Application extends Resource {
 	
 	private AccountProfile owner;
 	
-	private Connector connector;
+	private String phase;
 	
 	public Application() {
-		connector = new Connector();
+		
 	}
 	
 	public void setName(String name) {
@@ -38,11 +38,11 @@ public class Application extends Resource {
 		this.owner = owner;
 	}
 
-	public Connector getConnector() {
-		return connector;
+	public String getPhase() {
+		return phase;
 	}
 
-	public void setConnector(Connector connector) {
-		this.connector = connector;
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 }

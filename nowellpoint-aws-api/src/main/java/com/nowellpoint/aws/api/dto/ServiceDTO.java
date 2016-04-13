@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.util.Set;
+
 public class ServiceDTO extends AbstractDTO {
 
 	/**
@@ -17,6 +19,8 @@ public class ServiceDTO extends AbstractDTO {
 	private String company;
 
 	private String configurationPage;
+	
+	private Set<String> configurationParams;
 	
 	public ServiceDTO() {
 		
@@ -60,5 +64,13 @@ public class ServiceDTO extends AbstractDTO {
 
 	public void setCompany(String company) {
 		this.company = company;
+	}
+
+	public Set<String> getConfigurationParams() {
+		return configurationParams;
+	}
+
+	public void setConfigurationParams(Set<String> configurationParams) {
+		this.configurationParams = configurationParams;
 	}
 }

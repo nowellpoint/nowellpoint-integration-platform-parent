@@ -39,7 +39,6 @@ public class Main {
         		.addPackage("com.nowellpoint.aws.api.dto")
         		.addPackage("com.nowellpoint.aws.api.dto.idp")
         		.addPackage("com.nowellpoint.aws.api.dto.sforce")
-        		.addPackage("com.nowellpoint.aws.api.event")
         		.addPackage("com.nowellpoint.aws.api.resource")
         		.addPackage("com.nowellpoint.aws.api.service")
         		.addPackage("com.nowellpoint.aws.api.util")

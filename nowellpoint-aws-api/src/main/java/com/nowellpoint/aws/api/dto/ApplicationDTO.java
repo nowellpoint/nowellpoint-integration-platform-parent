@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.api.dto;
 
-import com.nowellpoint.aws.data.mongodb.Connector;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 public class ApplicationDTO extends AbstractDTO {
@@ -17,7 +16,7 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private ServiceInstance serviceInstance;
 	
-	private Connector connector;
+	private String phase;
 	
 	public ApplicationDTO() {
 		
@@ -51,11 +50,11 @@ public class ApplicationDTO extends AbstractDTO {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public Connector getConnector() {
-		return connector;
+	public String getPhase() {
+		return phase;
 	}
 
-	public void setConnector(Connector connector) {
-		this.connector = connector;
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 }

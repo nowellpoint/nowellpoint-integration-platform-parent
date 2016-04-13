@@ -14,15 +14,13 @@
 
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="/app/providers" class="btn btn-lg btn-primary-outline" role="button">${add}</a>
+                            <a href="/app/providers" class="btn btn-lg btn-primary-outline" role="button">${createApplication}</a>
                         </p>
                     </div>
                 </div>
             </div>
 
             <br>
-            
-            
 
             <div class="hr-divider">
             </div>
@@ -42,19 +40,20 @@
                                 <th>${name}</th>
                                 <th>${type}</th>
                                 <th>${serviceName}</th>
-                                <th>${url}</th>
+                                <th>${phase}</th>
                                 <th>${instanceName}</th>
                                 <th>${action}</th>
                             </thead>
                             <tbody>
                                 <#list applicationList as application>
                                     <tr id="${application.id}">
-                                        <td><a href="/app/applications/${application.id}">${application.name}</a></td>
-                                        <td>${application.serviceInstance.displayName}</td>
+                                        <td><a href="/app/application/${application.id}">${application.name}</a></td>
+                                        <td>${application.serviceInstance.typeName}</td>
                                         <td>${application.serviceInstance.name}</td>
-                                        <td>${application.connector.organizationName}</td>
-                                        <td>${application.connector.displayName}</td>
+                                        <td>${application.phase}</td>
+                                        <td></td>
                                         <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editApplication}"><span class="icon icon-edit"></span></a>&nbsp;
+                                            <a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editApplication}"><span class="icon icon-cog"></span></a>&nbsp;
                                             <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
                                     </tr>
                                 </#list>

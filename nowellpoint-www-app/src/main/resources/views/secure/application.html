@@ -31,7 +31,7 @@
                     
                     <input type="hidden" name="id" id="id" value="${application.id!}" />
                     <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${serviceProvider.id!}" />
-                    <input type="hidden" name="connectorId" id="connectorId" value="${application.connector.id!}" />
+                    <input type="hidden" name="connectorId" id="connectorId" value="" />
 
                     <div class="form-group">
                         <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${name}</label>
@@ -57,7 +57,7 @@
                     <div class="form-group">
                         <label class="control-label col-sm-2 col-md-2 col-lg-2" for="connectorName">${connectorName}</label>
                         <div class="col-sm-4 col-md-4 col-lg-4">
-                            <input type="text" class="form-control input-lg" name="connectorName" id="connectorName" value="${application.connector.organizationName!}" disabled="disabled" />
+                            <input type="text" class="form-control input-lg" name="connectorName" id="connectorName" value="" disabled="disabled" />
                         </div>
                         <div class="col-sm-1 col-md-1 col-lg-1">
                             <a href="#sourceDialog" data-toggle="modal"><i class="fa fa-search fa-2x"></i></a>

@@ -8,6 +8,8 @@ import com.nowellpoint.aws.data.mongodb.Application;
 
 public class ApplicationService extends AbstractDocumentService<ApplicationDTO, Application> {
 	
+	private static final String CONFIGURATION_PHASE = "Configuration";
+	
 	public ApplicationService() {
 		super(ApplicationDTO.class, Application.class);
 	}
@@ -39,6 +41,8 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 */
 	
 	public ApplicationDTO createApplication(ApplicationDTO resource) {
+		resource.setPhase(CONFIGURATION_PHASE);
+		
 		create(resource);
 
 		hset( resource.getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
