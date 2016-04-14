@@ -126,17 +126,17 @@ public class ApplicationResource {
 		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
 		
 		ServiceInstance serviceInstance = new ServiceInstance();
-		serviceInstance.setCode(provider.getService().getType());
+		serviceInstance.setServiceType(provider.getService().getType());
 		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
 		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
 		serviceInstance.setDescription(provider.getService().getDescription());
-		serviceInstance.setTypeName(provider.getTypeName());
+		serviceInstance.setProviderName(provider.getName());
 		serviceInstance.setImage(provider.getImage());
 		serviceInstance.setIsActive(provider.getService().getIsActive());
-		serviceInstance.setName(provider.getService().getName());
+		serviceInstance.setServiceName(provider.getService().getName());
 		serviceInstance.setPrice(provider.getService().getPrice());
-		serviceInstance.setType(provider.getType());
-		serviceInstance.setUom(provider.getService().getUom());
+		serviceInstance.setProviderType(provider.getType());
+		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
 		
 		if ("OUTBOUND_MESSAGE_LISTENER".equals(provider.getService().getType())) {
 			serviceInstance.addConfigurationParam(new ConfigurationParam("organizationName", connector.getOrganization().getName()));

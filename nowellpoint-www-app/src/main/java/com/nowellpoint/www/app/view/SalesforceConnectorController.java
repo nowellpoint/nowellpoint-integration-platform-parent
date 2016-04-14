@@ -10,15 +10,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.sforce.SalesforceConnector;
+import com.nowellpoint.www.app.model.SalesforceConnector;
+import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.log.Logger;
@@ -47,6 +51,53 @@ public class SalesforceConnectorController {
         get("/app/salesforce/connector/:id", (request, response) -> getSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
         delete("/app/salesforce/connector/:id", (request, response) -> deleteSalesforceConnector(request, response));
+        
+        get("/app/salesforce/connector/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/salesforce/connector/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
+	}
+	
+	private static ModelAndView addService(Request request, Response response) {
+		
+		Token token = request.attribute("token");
+		
+		String body = new StringBuilder()
+					.append("serviceProviderId=")
+					.append(request.queryParams("serviceProviderId"))
+					.toString();
+		
+		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path("salesforce")
+				.path("connector")
+				.path(request.params(":id"))
+				.path("service")
+				.body(body)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
+			System.out.println(httpResponse.getAsString());
+		}
+		
+		SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+		
+		Account account = request.attribute("account");
+
+		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
+    	
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	model.put("account", account);
+    	model.put("salesforceConnector", salesforceConnector);
+    	model.put("serviceProviders", providers);
+    	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
+		
+    	return new ModelAndView(model, "secure/service-catalog.html");
+		
 	}
 	
 	/**
@@ -132,34 +183,30 @@ public class SalesforceConnectorController {
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
 	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private static ModelAndView getSalesforceConnector(Request request, Response response) {
 		
 		Token token = request.attribute("token");
-    	
-    	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-    			.path("salesforce")
-    			.path("connector")
-    			.path(request.params(":id"))
-    			.execute();
-    	
-    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
 		Account account = request.attribute("account");
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	
-    	SalesforceConnector salesforceConnector = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    		model.put("salesforceConnector", salesforceConnector);
-    	} else {
-    		model.put("errorMessage", httpResponse.getAsString());
-    	}
+		
+		SalesforceConnector salesforceConnector = null;
+		
+		try {
+			salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
+			model.put("salesforceConnector", salesforceConnector);
+		} catch (BadRequestException e) {
+			model.put("errorMessage", e.getMessage());
+		}
 		
 		return new ModelAndView(model, "secure/salesforce-connector.html");
 	}
@@ -236,6 +283,13 @@ public class SalesforceConnectorController {
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
 	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private static String deleteSalesforceConnector(Request request, Response response) {
 		
 		Token token = request.attribute("token");
@@ -251,5 +305,92 @@ public class SalesforceConnectorController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
 		return "";
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView getServiceProviders(Request request, Response response) {
+		
+		Token token = request.attribute("token");
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", request.attribute("account"));
+			
+		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
+		
+		model.put("serviceProviders", providers);
+		
+		SalesforceConnector salesforceConnector = null;
+		
+		try {
+			salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
+			model.put("salesforceConnector", salesforceConnector);
+		} catch (BadRequestException e) {
+			model.put("errorMessage", e.getMessage());
+		}
+    	
+		return new ModelAndView(model, "secure/service-catalog.html");
+	}
+	
+	/**
+	 * 
+	 * @param accessToken
+	 * @param id
+	 * @return
+	 */
+	
+	private static SalesforceConnector getSalesforceConnector(String accessToken, String id) {
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(accessToken)
+    			.path("salesforce")
+    			.path("connector")
+    			.path(id)
+    			.execute();
+    	
+    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+    	
+    	SalesforceConnector salesforceConnector = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
+    		return salesforceConnector;
+    	} else {
+    		throw new BadRequestException(httpResponse.getAsString());
+    	}
+	}
+	
+	/**
+	 * 
+	 * @param accessToken
+	 * @return
+	 */
+	
+	private static List<ServiceProvider> getServiceProviders(String accessToken) {
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(accessToken)
+				.path("providers")
+				.queryParameter("localeSidKey", "en_US")
+				.queryParameter("languageLocaleKey", "en_US")
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
+		
+		providers = providers.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
+		
+		return providers;
 	}
 }

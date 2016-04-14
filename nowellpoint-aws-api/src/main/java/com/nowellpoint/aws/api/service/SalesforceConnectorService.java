@@ -27,6 +27,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
+	public SalesforceConnectorDTO updateSalesforceConnector(SalesforceConnectorDTO resource) {
+		replace( resource );
+		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
+		return resource;
+	}
+	
 	public void deleteSalesforceConnector(String id, String subject) {
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO(id);
 		delete(resource);

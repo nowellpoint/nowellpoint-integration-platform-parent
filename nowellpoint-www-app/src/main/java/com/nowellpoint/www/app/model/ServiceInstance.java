@@ -4,11 +4,11 @@ import java.util.Set;
 
 public class ServiceInstance {
 	
-	private String type;
+	private String providerType;
 	
 	private Boolean isActive;
 	
-	private String typeName;
+	private String providerName;
 	
 	private String description;
 	
@@ -20,9 +20,9 @@ public class ServiceInstance {
 	
 	private String uom;
 	
-	private String code;
+	private String serviceType;
 	
-	private String name;
+	private String serviceName;
 
 	private String configurationPage;
 	
@@ -32,12 +32,12 @@ public class ServiceInstance {
 		
 	}
 
-	public String getType() {
-		return type;
+	public String getProviderType() {
+		return providerType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
 	}
 
 	public Boolean getIsActive() {
@@ -48,12 +48,12 @@ public class ServiceInstance {
 		this.isActive = isActive;
 	}
 
-	public String getTypeName() {
-		return typeName;
+	public String getProviderName() {
+		return providerName;
 	}
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
+	public void setProviderName(String providerName) {
+		this.providerName = providerName;
 	}
 
 	public String getDescription() {
@@ -96,20 +96,20 @@ public class ServiceInstance {
 		this.uom = uom;
 	}
 
-	public String getCode() {
-		return code;
+	public String getServiceType() {
+		return serviceType;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
 	}
 
-	public String getName() {
-		return name;
+	public String getServiceName() {
+		return serviceName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 	}
 
 	public String getConfigurationPage() {

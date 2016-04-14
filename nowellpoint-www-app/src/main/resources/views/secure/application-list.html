@@ -48,8 +48,8 @@
                                 <#list applicationList as application>
                                     <tr id="${application.id}">
                                         <td><a href="/app/application/${application.id}">${application.name}</a></td>
-                                        <td>${application.serviceInstance.typeName}</td>
-                                        <td>${application.serviceInstance.name}</td>
+                                        <td>${application.serviceInstance.providerName}</td>
+                                        <td>${application.serviceInstance.serviceName}</td>
                                         <td>${application.phase}</td>
                                         <td></td>
                                         <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editApplication}"><span class="icon icon-edit"></span></a>&nbsp;

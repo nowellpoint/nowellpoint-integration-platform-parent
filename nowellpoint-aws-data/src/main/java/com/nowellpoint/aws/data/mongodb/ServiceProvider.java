@@ -20,7 +20,7 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 	
 	private Boolean isActive;
 	
-	private String typeName;
+	private String name;
 	
 	private String description;
 	
@@ -52,12 +52,12 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public String getTypeName() {
-		return typeName;
+	public String getName() {
+		return name;
 	}
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {

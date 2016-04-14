@@ -22,32 +22,78 @@
                 <div class="col-sm-3">
                     <#include "sidebar.html" />
                 </div>
-                <div class="col-sm-9">
-                    <#list serviceProviders as serviceProvider>
-                        <div class="col-lg-3 col-md-3 text-center">
-                            <div>
-                                <img src="${serviceProvider.image}">
-                                <h3>${serviceProvider.typeName}</h3>
-                                <br>
-                                <h1 class="statcard-number">${serviceProvider.service.currencyIsoCode} ${serviceProvider.service.price?string["0.00"]}</h1>
-                                <br>
-                                <br>
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">${serviceProvider.service.name}</h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <p>${serviceProvider.service.description}</p>
-                                        <p><b>${developedBy}:</b> ${serviceProvider.service.company}</p>
-                                        <br>
-                                        <a href="/app/application/provider/${serviceProvider.id}" class="btn btn-primary center" role="button">${select}</a>
+                <div class="col-lg-9 col-md-9 col-sm-9">
+                    
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+
+ 
+                        <div id="success" class="alert alert-success collapse">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${successMessage!}</div>
+                        </div>
+
+
+                    <div class="flextable">
+                        <div class="flextable-item">
+                            <a href="/app/salesforce/connector/${salesforceConnector.id}"><span class="icon icon-back"></span> ${backTo}: ${salesforceConnector.organization.name}</a>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="row">
+                        <#list serviceProviders as serviceProvider>
+                            <div class="col-lg-3 col-md-3 col-sm-3 text-center">
+                                <div>
+                                    <img src="${serviceProvider.image}">
+                                    <h3>${serviceProvider.name}</h3>
+                                    <br>
+                                    <h1 class="statcard-number">${serviceProvider.service.currencyIsoCode} ${serviceProvider.service.price?string["0.00"]}</h1>
+                                    <br>
+                                    <br>
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">${serviceProvider.service.name}</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p>${serviceProvider.service.description}</p>
+                                            <p><b>${developedBy}:</b> ${serviceProvider.service.company}</p>
+                                            <br>
+                                            <form id="form" role="form" method="post">
+                                                <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${serviceProvider.id}" />
+                                                <button type="submit" class="btn btn-primary center" role="button">${select}</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </#list>
-
+                        </#list>
+                    </div>
                 </div>
             </div>
+
+            <#include "spinner.html" />
+
+            <script>
+                $('#form').submit(function(e) {
+                    var data = $("#form").serialize()
+                    $.ajax({
+                        type: "POST",
+                        url: "/app/salesforce/connector/${salesforceConnector.id}/service",
+                        data: data,
+                        success: function(data) {
+                            $('#success').show();
+                        }
+                    });
+
+                    e.preventDefault();
+
+                });
+            </script>
 
     </@t.page>

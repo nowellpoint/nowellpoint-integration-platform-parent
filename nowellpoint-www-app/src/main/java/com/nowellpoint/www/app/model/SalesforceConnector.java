@@ -1,7 +1,9 @@
-package com.nowellpoint.www.app.model.sforce;
+package com.nowellpoint.www.app.model;
 
-import com.nowellpoint.www.app.model.AccountProfile;
-import com.nowellpoint.www.app.model.Resource;
+import java.util.List;
+
+import com.nowellpoint.www.app.model.sforce.Identity;
+import com.nowellpoint.www.app.model.sforce.Organization;
 
 public class SalesforceConnector extends Resource {
 
@@ -10,6 +12,8 @@ public class SalesforceConnector extends Resource {
 	private Organization organization;
 	
 	private AccountProfile owner;
+	
+	private List<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnector() {
 		
@@ -37,5 +41,13 @@ public class SalesforceConnector extends Resource {
 
 	public void setOwner(AccountProfile owner) {
 		this.owner = owner;
+	}
+
+	public List<ServiceInstance> getServiceInstances() {
+		return serviceInstances;
+	}
+
+	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
+		this.serviceInstances = serviceInstances;
 	}
 }

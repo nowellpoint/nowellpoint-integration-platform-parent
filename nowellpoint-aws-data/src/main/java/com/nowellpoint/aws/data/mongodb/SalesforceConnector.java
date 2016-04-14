@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.data.mongodb;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.data.SalesforceConnectionCodec;
 import com.nowellpoint.aws.data.annotation.Document;
@@ -21,6 +23,8 @@ public class SalesforceConnector extends AbstractDocument {
 	private Identity identity;
 	
 	private Organization organization;
+	
+	private List<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnector() {
 		
@@ -48,5 +52,13 @@ public class SalesforceConnector extends AbstractDocument {
 
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
+	}
+
+	public List<ServiceInstance> getServiceInstances() {
+		return serviceInstances;
+	}
+
+	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
+		this.serviceInstances = serviceInstances;
 	}
 }

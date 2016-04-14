@@ -66,7 +66,7 @@ public class ServiceProviderController {
 			
 		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
 		
-		providers = providers.stream().sorted((p1, p2) -> p1.getTypeName().compareTo(p2.getTypeName())).collect(Collectors.toList());
+		providers = providers.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
 			
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", request.attribute("account"));

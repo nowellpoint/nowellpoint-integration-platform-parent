@@ -17,7 +17,7 @@ public class Service implements Serializable {
 	
 	private Boolean isActive;
 	
-	private String uom;
+	private String unitOfMeasure;
 	
 	private String type;
 	
@@ -51,12 +51,12 @@ public class Service implements Serializable {
 		this.currencyIsoCode = currencyIsoCode;
 	}
 
-	public String getUom() {
-		return uom;
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
 	}
 
-	public void setUom(String uom) {
-		this.uom = uom;
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 	
 	public Double getPrice() {

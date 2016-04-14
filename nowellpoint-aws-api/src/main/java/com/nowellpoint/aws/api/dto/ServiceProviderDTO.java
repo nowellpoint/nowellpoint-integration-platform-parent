@@ -14,7 +14,7 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private Boolean isActive;
 	
-	private String typeName;
+	private String name;
 	
 	private String description;
 	
@@ -50,12 +50,12 @@ public class ServiceProviderDTO extends AbstractDTO {
 		this.isActive = isActive;
 	}
 
-	public String getTypeName() {
-		return typeName;
+	public String getName() {
+		return name;
 	}
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {

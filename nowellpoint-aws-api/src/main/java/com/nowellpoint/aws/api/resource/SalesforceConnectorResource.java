@@ -40,9 +40,13 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
+import com.nowellpoint.aws.api.service.ServiceProviderService;
+import com.nowellpoint.aws.data.mongodb.ConfigurationParam;
+import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
@@ -60,6 +64,9 @@ public class SalesforceConnectorResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
+	
+	@Inject
+	private ServiceProviderService serviceProviderService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -185,6 +192,53 @@ public class SalesforceConnectorResource {
 		
 		return Response.noContent()
 				.build(); 
+	}
+	
+	@POST
+	@Path("connector/{id}/service")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addService(
+			@PathParam(value="id") String id,
+			@FormParam(value="serviceProviderId") String serviceProviderId) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceType(provider.getService().getType());
+		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
+		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
+		serviceInstance.setDescription(provider.getService().getDescription());
+		serviceInstance.setProviderName(provider.getName());
+		serviceInstance.setImage(provider.getImage());
+		serviceInstance.setIsActive(provider.getService().getIsActive());
+		serviceInstance.setServiceName(provider.getService().getName());
+		serviceInstance.setPrice(provider.getService().getPrice());
+		serviceInstance.setProviderType(provider.getType());
+		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
+		
+		if ("OUTBOUND_MESSAGE_LISTENER".equals(provider.getService().getType())) {
+			serviceInstance.addConfigurationParam(new ConfigurationParam("organizationName", resource.getOrganization().getName()));
+			serviceInstance.addConfigurationParam(new ConfigurationParam("instance", resource.getOrganization().getInstanceName()));
+		}
+		
+		resource.setSubject(subject);
+		resource.addServiceInstance(serviceInstance);
+		
+		salesforceConnectorService.updateSalesforceConnector(resource);
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(SalesforceResource.class)
+				.path("/{id}")
+				.build(resource.getId());
+		
+		return Response.created(uri)
+				.entity(resource)
+				.build(); 	
 	}
 	
 	
