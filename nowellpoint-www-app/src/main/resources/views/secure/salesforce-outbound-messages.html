@@ -3,11 +3,12 @@
     <@t.page>
 
         <#include "navbar.html" />
-        
+
         <div class="container-fluid container-fluid-spacious">
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
+                        serviceInstance
                         <h2 class="dashhead-title">${outboundMessageSetup}</h2>
                     </div>
                 </div>
@@ -19,36 +20,61 @@
             </div>
 
             <br>
-            
+
             <div class="row">
                 <div class="col-sm-3">
                     <#include "sidebar.html" />
                 </div>
 
                 <div class="col-sm-9">
-                    
-                    <#if (serviceProviderInfo.sobjects)??>
-        <div class="container-fluid">
-            <div class="row">
-                <#list serviceProviderInfo.sobjects as sobject>
-                    <#if sobject.triggerable && sobject.searchable>
-                        <div class="col-lg-3 col-md-3">
-                            <div class="checkbox custom-control custom-checkbox">
-                                <label>
-                                    <input type="checkbox" value="${sobject.name}" name="sobject">
-                                    <span class="custom-control-indicator"></span>
-                                    <p>${sobject.label}</p>
-                                </label>
+
+                    <form class="form-horizontal" id="form" role="form" method="post" action="/app/application">
+
+                        <input type="hidden" name="key" id="key" value="${serviceInstance.key!}" />
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="instance">${instance}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <select id="instance" name="instance" class="form-control input-lg" required>
+                                    <option value="" selected="selected">--- ${selectOne} ---</option>
+                                    <option value="SANDBOX">Sandbox</option>
+                                    <option value="PRODUCTION">Production</option>
+                                </select>
                             </div>
                         </div>
-                    </#if>
-                </#list>
-            </div>
-        </div>
-    </#if>
-                    
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="username">${username}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <input type="text" class="form-control input-lg" name="username" id="username" required="" autofocus="" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="password">${password}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <input type="password" class="form-control input-lg" name="password" id="password" required="" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="securityToken">${securityToken}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <input type="password" class="form-control input-lg" name="securityToken" id="securityToken" required="" autocomplete="off" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class=" col-sm-6 col-md-6 col-lg-6">
+                                <div class="pull-right">
+                                    <a href="/app/applications">${cancel}</a>&nbsp;
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${logIn}</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
                 </div>
-            </div>    
+            </div>
 
         </div>
 

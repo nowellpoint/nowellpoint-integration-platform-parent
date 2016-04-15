@@ -7,6 +7,7 @@ import static com.nowellpoint.aws.data.CacheManager.serialize;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,7 +46,6 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.ConfigurationParam;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
@@ -204,27 +204,21 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
-		
 		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
 		
+		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
+		
 		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
 		serviceInstance.setServiceType(provider.getService().getType());
 		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
 		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
-		serviceInstance.setDescription(provider.getService().getDescription());
 		serviceInstance.setProviderName(provider.getName());
-		serviceInstance.setImage(provider.getImage());
-		serviceInstance.setIsActive(provider.getService().getIsActive());
+		serviceInstance.setIsActive(Boolean.FALSE);
 		serviceInstance.setServiceName(provider.getService().getName());
 		serviceInstance.setPrice(provider.getService().getPrice());
 		serviceInstance.setProviderType(provider.getType());
 		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
-		
-		if ("OUTBOUND_MESSAGE_LISTENER".equals(provider.getService().getType())) {
-			serviceInstance.addConfigurationParam(new ConfigurationParam("organizationName", resource.getOrganization().getName()));
-			serviceInstance.addConfigurationParam(new ConfigurationParam("instance", resource.getOrganization().getInstanceName()));
-		}
 		
 		resource.setSubject(subject);
 		resource.addServiceInstance(serviceInstance);
@@ -238,6 +232,28 @@ public class SalesforceConnectorResource {
 		
 		return Response.created(uri)
 				.entity(resource)
+				.build(); 	
+	}
+	
+	@GET
+	@Path("connector/{id}/service/{key}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getService(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO salesforceConnector = salesforceConnectorService.findSalesforceConnector(subject, id);
+		
+		Optional<ServiceInstance> serviceInstance = salesforceConnector.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		
+		if (! serviceInstance.isPresent()) {
+			throw new WebApplicationException(String.format("Key %s was not found", key), Status.NOT_FOUND);
+		}
+		
+		return Response.ok()
+				.entity(serviceInstance.get())
 				.build(); 	
 	}
 	

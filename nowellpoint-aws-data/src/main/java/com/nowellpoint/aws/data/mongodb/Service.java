@@ -34,7 +34,7 @@ public class Service implements Serializable {
 	public Service() {
 		
 	}
-	
+
 	public Boolean getIsActive() {
 		return isActive;
 	}

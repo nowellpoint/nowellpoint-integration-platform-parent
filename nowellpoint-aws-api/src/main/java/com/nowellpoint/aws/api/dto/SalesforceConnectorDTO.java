@@ -17,6 +17,8 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	
 	private Organization organization;
 	
+	private String tag;
+	
 	private List<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnectorDTO() {
@@ -49,6 +51,14 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public List<ServiceInstance> getServiceInstances() {

@@ -129,9 +129,7 @@ public class ApplicationResource {
 		serviceInstance.setServiceType(provider.getService().getType());
 		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
 		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
-		serviceInstance.setDescription(provider.getService().getDescription());
 		serviceInstance.setProviderName(provider.getName());
-		serviceInstance.setImage(provider.getImage());
 		serviceInstance.setIsActive(provider.getService().getIsActive());
 		serviceInstance.setServiceName(provider.getService().getName());
 		serviceInstance.setPrice(provider.getService().getPrice());

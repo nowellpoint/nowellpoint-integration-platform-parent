@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.nowellpoint.www.app.model.sforce.Identity;
@@ -13,10 +14,12 @@ public class SalesforceConnector extends Resource {
 	
 	private AccountProfile owner;
 	
+	private String tag;
+	
 	private List<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnector() {
-		
+		serviceInstances = new ArrayList<ServiceInstance>();
 	}
 
 	public Identity getIdentity() {
@@ -41,6 +44,14 @@ public class SalesforceConnector extends Resource {
 
 	public void setOwner(AccountProfile owner) {
 		this.owner = owner;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public List<ServiceInstance> getServiceInstances() {

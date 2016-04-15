@@ -24,6 +24,8 @@ public class SalesforceConnector extends AbstractDocument {
 	
 	private Organization organization;
 	
+	private String tag;
+	
 	private List<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnector() {
@@ -52,6 +54,14 @@ public class SalesforceConnector extends AbstractDocument {
 
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public List<ServiceInstance> getServiceInstances() {

@@ -90,6 +90,9 @@
 
                             <dt>${userId}</dt>
                             <dd>${(salesforceConnector.identity.userId)!}</dd>
+                            
+                            <dt>${tag}</dt>
+                            <dd>${(salesforceConnector.tag)!}</dd>
 
                         </dl>
 
@@ -162,6 +165,42 @@
                         </dl>
 
                     </div>
+
+                    <div class="col-md-12">
+
+                        <br>
+
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">${services}</h3>
+                        </div>
+
+                        <br>
+
+                        <div class="content table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <th>${type}</th>
+                                    <th>${serviceName}</th>
+                                    <th>${tag}</th>
+                                    <th>${active}</th>
+                                    <th>${action}</th>
+                                </thead>
+                                <tbody>
+                                    <#list salesforceConnector.serviceInstances as service>
+                                        <tr id="${service.key}">
+                                            <td><a href="/app/salesforce/connector/${salesforceConnector.id}/service/${service.key}">${service.providerName}</a></td>
+                                            <td>${service.serviceName}</td>
+                                            <td>${service.tag!}</td>
+                                            <td>${(service.isActive?then("Yes", "No"))!}</td>
+                                            <td></td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
         </div>

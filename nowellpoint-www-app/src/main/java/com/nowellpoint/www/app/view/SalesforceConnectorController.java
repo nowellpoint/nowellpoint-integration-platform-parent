@@ -22,6 +22,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.SalesforceConnector;
+import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.util.MessageProvider;
 
@@ -54,12 +55,51 @@ public class SalesforceConnectorController {
         
         get("/app/salesforce/connector/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
+        get("/app/salesforce/connector/:id/service/:key", (request, response) -> getService(request, response), new FreeMarkerEngine(cfg));
+        
         post("/app/salesforce/connector/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
 	}
+	
+	private static ModelAndView getService(Request request, Response response) {
+		
+		Token token = request.attribute("token");
+		
+		Account account = request.attribute("account");
+		
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+    			.path("salesforce")
+    			.path("connector")
+    			.path(request.params(":id"))
+    			.path("service")
+    			.path(request.params(":key"))
+    			.execute();
+    	
+    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+		
+    	ServiceInstance serviceInstance = httpResponse.getEntity(ServiceInstance.class);	
+    	
+    	Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", account);
+		model.put("serviceInstance", serviceInstance);
+		
+		return new ModelAndView(model, "secure/".concat(serviceInstance.getConfigurationPage()));
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	
 	private static ModelAndView addService(Request request, Response response) {
 		
 		Token token = request.attribute("token");
+		
+		Account account = request.attribute("account");
 		
 		String body = new StringBuilder()
 					.append("serviceProviderId=")
@@ -80,24 +120,24 @@ public class SalesforceConnectorController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
-		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
-			System.out.println(httpResponse.getAsString());
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", account);
+		
+		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
+		
+		model.put("serviceProviders", providers);
+		
+		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
+			SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+			
+	    	model.put("salesforceConnector", salesforceConnector);
+	    	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
+			
+		} else {
+			model.put("errorMessage", httpResponse.getAsString());
 		}
 		
-		SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-		
-		Account account = request.attribute("account");
-
-		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
-    	
-    	Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("account", account);
-    	model.put("salesforceConnector", salesforceConnector);
-    	model.put("serviceProviders", providers);
-    	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-		
     	return new ModelAndView(model, "secure/service-catalog.html");
-		
 	}
 	
 	/**
@@ -232,6 +272,8 @@ public class SalesforceConnectorController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		
+		salesforceConnectors.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate())).collect(Collectors.toList());
 		
 		Account account = request.attribute("account");
 		

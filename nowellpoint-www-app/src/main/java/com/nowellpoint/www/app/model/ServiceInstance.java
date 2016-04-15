@@ -4,15 +4,13 @@ import java.util.Set;
 
 public class ServiceInstance {
 	
+	private String key;
+	
 	private String providerType;
 	
 	private Boolean isActive;
 	
 	private String providerName;
-	
-	private String description;
-	
-	private String image;
 	
 	private Double price;
 	
@@ -23,6 +21,8 @@ public class ServiceInstance {
 	private String serviceType;
 	
 	private String serviceName;
+	
+	private String tag;
 
 	private String configurationPage;
 	
@@ -30,6 +30,14 @@ public class ServiceInstance {
 	
 	public ServiceInstance() {
 		
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getProviderType() {
@@ -54,22 +62,6 @@ public class ServiceInstance {
 
 	public void setProviderName(String providerName) {
 		this.providerName = providerName;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
 	}
 
 	public Double getPrice() {
@@ -110,6 +102,14 @@ public class ServiceInstance {
 
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public String getConfigurationPage() {

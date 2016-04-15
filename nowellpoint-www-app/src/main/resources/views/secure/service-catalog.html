@@ -23,23 +23,19 @@
                     <#include "sidebar.html" />
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-9">
-                    
-                    <#if errorMessage??>
-                        <div id="alert" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">&times;</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
-
- 
-                        <div id="success" class="alert alert-success collapse">
-                            <a class="close" data-dismiss="alert">&times;</a>
-                            <div class="text-center">${successMessage!}</div>
-                        </div>
-
 
                     <div class="flextable">
                         <div class="flextable-item">
+                            <div id="error" class="alert alert-danger collapse">
+                                <a class="close" data-dismiss="alert">&times;</a>
+                                <div class="text-center">${errorMessage!}</div>
+                            </div>
+                            <#if successMessage??>
+                            <div id="success" class="alert alert-success collapse">
+                                <a class="close" data-dismiss="alert">&times;</a>
+                                <div class="text-center">${successMessage!}</div>
+                            </div>
+                                </#if>
                             <a href="/app/salesforce/connector/${salesforceConnector.id}"><span class="icon icon-back"></span> ${backTo}: ${salesforceConnector.organization.name}</a>
                         </div>
                     </div>
@@ -88,6 +84,9 @@
                         data: data,
                         success: function(data) {
                             $('#success').show();
+                        },
+                        error: function(data) {
+                            $('#error').show();
                         }
                     });
 
