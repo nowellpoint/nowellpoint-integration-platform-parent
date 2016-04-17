@@ -1,5 +1,8 @@
 package com.nowellpoint.aws.api.service;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
@@ -17,6 +20,10 @@ import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.User;
+import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.fault.LoginFault;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
 
 public class SalesforceService {
 	
@@ -25,6 +32,38 @@ public class SalesforceService {
 	
 	public SalesforceService() {
 
+	}
+	
+	public DescribeSobjectsResult describe(String instance, String username, String password, String securityToken) {
+		ConnectorConfig config = new ConnectorConfig();
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+		config.setUsername(username);
+		config.setPassword(password.concat(securityToken));
+		
+		try {
+			PartnerConnection connection = com.sforce.soap.partner.Connector.newConnection(config);
+			
+			String sessionId = connection.getConfig().getSessionId();
+			String id = String.format("%s/id/%s/%s", instance, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
+			
+			GetIdentityRequest request = new GetIdentityRequest()
+					.setAccessToken(sessionId)
+					.setId(id);
+			
+			Client client = new Client();
+			
+			Identity identity = client.getIdentity(request);
+			
+			return describe(sessionId, identity.getUrls().getSobjects());
+			
+		} catch (ConnectionException e) {
+			if (e instanceof LoginFault) {
+				LoginFault loginFault = (LoginFault) e;
+				throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+			} else {
+				throw new InternalServerErrorException(e.getMessage());
+			}
+		}
 	}
 	
 	/**
@@ -65,6 +104,14 @@ public class SalesforceService {
 		
 		return resource;
 	}
+	
+	/**
+	 * 
+	 * @param accessToken
+	 * @param userId
+	 * @param sobjectUrl
+	 * @return
+	 */
 	
 	public User getUser(String accessToken, String userId, String sobjectUrl) {	
 		GetUserRequest request = new GetUserRequest()

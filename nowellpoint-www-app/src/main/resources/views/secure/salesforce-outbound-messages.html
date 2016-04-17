@@ -8,7 +8,7 @@
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        serviceInstance
+                        <h6 class="dashhead-subtitle">${serviceInstance.providerName!}</h6>
                         <h2 class="dashhead-title">${outboundMessageSetup}</h2>
                     </div>
                 </div>
@@ -28,51 +28,88 @@
 
                 <div class="col-sm-9">
 
-                    <form class="form-horizontal" id="form" role="form" method="post" action="/app/application">
-
-                        <input type="hidden" name="key" id="key" value="${serviceInstance.key!}" />
-
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="instance">${instance}</label>
-                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                <select id="instance" name="instance" class="form-control input-lg" required>
-                                    <option value="" selected="selected">--- ${selectOne} ---</option>
-                                    <option value="SANDBOX">Sandbox</option>
-                                    <option value="PRODUCTION">Production</option>
-                                </select>
-                            </div>
+                    <#if errorMessage??>
+                        <div id="error" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${errorMessage!}</div>
                         </div>
+                    </#if>
 
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="username">${username}</label>
-                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                <input type="text" class="form-control input-lg" name="username" id="username" required="" autofocus="" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="password">${password}</label>
-                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                <input type="password" class="form-control input-lg" name="password" id="password" required="" autocomplete="off" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="securityToken">${securityToken}</label>
-                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                <input type="password" class="form-control input-lg" name="securityToken" id="securityToken" required="" autocomplete="off" />
-                            </div>
-                        </div>
+                    <#if ! sobjects?has_content>
 
-                        <div class="form-group">
-                            <div class=" col-sm-6 col-md-6 col-lg-6">
+                        <form class="form-horizontal" id="form" role="form" method="get" action="/app/salesforce/connector/${(serviceInstance.parent.id)!}/service/${(serviceInstance.key)!}/sobjects">
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="instance">${instance}</label>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <select id="instance" name="instance" class="form-control input-lg" required="" autofocus="">
+                                        <option value="" selected="selected">--- ${selectOne} ---</option>
+                                        <option value="https://test.salesforce.com">Sandbox</option>
+                                        <option value="https://login.salesforce.com">Production</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="username">${username}</label>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <input type="text" class="form-control input-lg" name="username" id="username" required="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="password">${password}</label>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <input type="password" class="form-control input-lg" name="password" id="password" required="" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="securityToken">${securityToken}</label>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <input type="password" class="form-control input-lg" name="securityToken" id="securityToken" required="" autocomplete="off" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class=" col-sm-6 col-md-6 col-lg-6">
+                                    <div class="pull-right">
+                                        <a href="/app/salesforce/connector/${(serviceInstance.parent.id)!}">${cancel}</a>&nbsp;
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${logIn}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </#if>
+
+                    <#if sobjects?has_content>
+
+                        <div id="sobjects" class="container-fluid">
+                            <div class="row">
+                                <#list sobjects as sobject>
+                                    <#if sobject.triggerable && sobject.searchable>
+                                        <div class="col-lg-3 col-md-3">
+                                            <div class="checkbox custom-control custom-checkbox">
+                                                <label>
+                                                    <input type="checkbox" value="${sobject.name}" name="sobject">
+                                                    <span class="custom-control-indicator"></span>
+                                                    <p>${sobject.label}</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </#if>
+                                </#list>
+                            </div>
+
+                            <div class="form-group">
                                 <div class="pull-right">
-                                    <a href="/app/applications">${cancel}</a>&nbsp;
+                                    <a href="/app/salesforce/connector/${(serviceInstance.parent.id)!}/service/${(serviceInstance.key)!}">${reset}</a>&nbsp;
                                     <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${logIn}</button>
                                 </div>
                             </div>
+
                         </div>
 
-                    </form>
-
+                    </#if>
                 </div>
             </div>
 

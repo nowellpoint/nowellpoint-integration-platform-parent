@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -32,19 +32,21 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.IsoCountry;
-import com.nowellpoint.www.app.view.NotificationController;
+import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
 import com.nowellpoint.www.app.view.DashboardController;
-import com.nowellpoint.www.app.view.AccountProfileController;
+import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.ServiceProviderController;
 import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
+import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
@@ -119,6 +121,10 @@ public class Bootstrap implements SparkApplication {
 			}
         });
         
+        before("/", (request, response) -> {
+        	
+        });
+        
         //
         //
         //
@@ -174,8 +180,11 @@ public class Bootstrap implements SparkApplication {
         
         exception(NotAuthorizedException.class, (exception, request, response) -> {
         	
+        	ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
+        	
         	Map<String, Object> model = new HashMap<String, Object>();
         	model.put("errorMessage", exception.getMessage());
+    		model.put("messages", resourceBundleModel);
         	
         	Template template;
 			try {
@@ -261,6 +270,8 @@ public class Bootstrap implements SparkApplication {
 	
 	private static ModelAndView getLogin(Request request, Response response) {
 		Map<String, Object> model = new HashMap<String, Object>();
+		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
+		model.put ("messages", resourceBundleModel);
 		return new ModelAndView(model, "login.html");
 	}
 	

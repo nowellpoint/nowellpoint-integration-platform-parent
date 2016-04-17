@@ -1,13 +1,22 @@
-package com.nowellpoint.www.app.model;
+package com.nowellpoint.aws.api.dto;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.aws.data.mongodb.ConfigurationParam;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ServiceInstance {
+public class ServiceInstanceDTO implements Serializable {
+
+	/**
+	 * 
+	 */
 	
-	private Parent parent;
+	private static final long serialVersionUID = 3675473602093498225L;
+	
+	private ParentDTO parent;
 	
 	private String key;
 	
@@ -33,15 +42,15 @@ public class ServiceInstance {
 	
 	private Set<ConfigurationParam> configurationParams;
 	
-	public ServiceInstance() {
-		
+	public ServiceInstanceDTO() {
+		configurationParams = new HashSet<ConfigurationParam>();
 	}
-
-	public Parent getParent() {
+	
+	public ParentDTO getParent() {
 		return parent;
 	}
 
-	public void setParent(Parent parent) {
+	public void setParent(ParentDTO parent) {
 		this.parent = parent;
 	}
 
@@ -52,7 +61,7 @@ public class ServiceInstance {
 	public void setKey(String key) {
 		this.key = key;
 	}
-
+	
 	public String getProviderType() {
 		return providerType;
 	}
@@ -116,7 +125,7 @@ public class ServiceInstance {
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
-
+	
 	public String getTag() {
 		return tag;
 	}
@@ -124,7 +133,7 @@ public class ServiceInstance {
 	public void setTag(String tag) {
 		this.tag = tag;
 	}
-
+	
 	public String getConfigurationPage() {
 		return configurationPage;
 	}
@@ -139,5 +148,9 @@ public class ServiceInstance {
 
 	public void setConfigurationParams(Set<ConfigurationParam> configurationParams) {
 		this.configurationParams = configurationParams;
+	}
+	
+	public void addConfigurationParam(ConfigurationParam configurationParam) {
+		this.configurationParams.add(configurationParam);
 	}
 }

@@ -15,8 +15,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/salesforce")
@@ -83,7 +86,19 @@ public class SalesforceResource {
 				.build();
 	}
 	
-//	private String parseUserId(String id) {
-//		return id.substring(id.lastIndexOf("/") + 1);
-//	}
+	@GET
+	@Path("/sobjects")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response authenticate(
+			@QueryParam(value="instance") @NotEmpty String instance,
+			@QueryParam(value="username") @NotEmpty String username,
+			@QueryParam(value="password") @NotEmpty String password,
+			@QueryParam(value="securityToken") @NotEmpty String securityToken) {
+		
+		DescribeSobjectsResult result = salesforceService.describe(instance, username, password, securityToken);
+		
+		return Response.ok(result.getSobjects())
+				.build();
+		
+	}
 }

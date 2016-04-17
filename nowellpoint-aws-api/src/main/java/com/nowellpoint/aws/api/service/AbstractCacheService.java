@@ -7,6 +7,7 @@ import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.nowellpoint.aws.api.dto.AbstractDTO;
 import com.nowellpoint.aws.data.CacheManager;
@@ -127,16 +128,16 @@ public abstract class AbstractCacheService {
 	 */
 	
 	public <T> T hget(Class<T> type, String key, String field) {
-		if (type == null) {
+		if (! Optional.ofNullable(type).isPresent()) {
 			throw new IllegalArgumentException("missing type parameter");
 		}
 		
-		if (key == null) {
+		if (! Optional.ofNullable(key).isPresent()) {
 			throw new IllegalArgumentException("missing key parameter");
 		}
 		
-		if (field == null) {
-			throw new IllegalArgumentException("missing key parameter");
+		if (! Optional.ofNullable(field).isPresent()) {
+			throw new IllegalArgumentException("missing field parameter");
 		}
 		
 		Jedis jedis = CacheManager.getCache();

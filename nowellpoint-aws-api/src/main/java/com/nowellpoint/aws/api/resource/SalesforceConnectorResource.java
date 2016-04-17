@@ -7,7 +7,6 @@ import static com.nowellpoint.aws.data.CacheManager.serialize;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,6 +40,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
@@ -226,7 +226,7 @@ public class SalesforceConnectorResource {
 		salesforceConnectorService.updateSalesforceConnector(resource);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SalesforceResource.class)
+				.path(SalesforceConnectorResource.class)
 				.path("/{id}")
 				.build(resource.getId());
 		
@@ -244,19 +244,38 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO salesforceConnector = salesforceConnectorService.findSalesforceConnector(subject, id);
+		ServiceInstanceDTO resource = salesforceConnectorService.getServiceInstance(subject, id, key);
 		
-		Optional<ServiceInstance> serviceInstance = salesforceConnector.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
-		
-		if (! serviceInstance.isPresent()) {
+		if (resource == null) {
 			throw new WebApplicationException(String.format("Key %s was not found", key), Status.NOT_FOUND);
 		}
 		
 		return Response.ok()
-				.entity(serviceInstance.get())
+				.entity(resource)
 				.build(); 	
 	}
 	
+	@DELETE
+	@Path("connector/{id}/service/{key}")
+	public Response deleteService(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+		
+		resource.getServiceInstances().stream().forEach(p -> {
+			if (p.getKey().equals(key)) {
+				resource.getServiceInstances().remove(p);
+			}
+		});
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+		
+	}
 	
 	private void putToken(String subject, String userId, Token token) {
 		Jedis jedis = getCache();
