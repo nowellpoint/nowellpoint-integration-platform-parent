@@ -2,6 +2,7 @@ package com.nowellpoint.aws.api.service;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.ForbiddenException;
 
 import org.jboss.logging.Logger;
 
@@ -18,6 +19,7 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.User;
 import com.sforce.soap.partner.PartnerConnection;
@@ -25,7 +27,7 @@ import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 
-public class SalesforceService {
+public class SalesforceService extends AbstractCacheService {
 	
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
@@ -34,7 +36,7 @@ public class SalesforceService {
 
 	}
 	
-	public DescribeSobjectsResult describe(String instance, String username, String password, String securityToken) {
+	public LoginResult login(String instance, String username, String password, String securityToken) {
 		ConnectorConfig config = new ConnectorConfig();
 		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
 		config.setUsername(username);
@@ -43,18 +45,22 @@ public class SalesforceService {
 		try {
 			PartnerConnection connection = com.sforce.soap.partner.Connector.newConnection(config);
 			
-			String sessionId = connection.getConfig().getSessionId();
 			String id = String.format("%s/id/%s/%s", instance, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
 			
-			GetIdentityRequest request = new GetIdentityRequest()
-					.setAccessToken(sessionId)
-					.setId(id);
+			LoginResult result = new LoginResult()
+					.withAuthEndpoint(connection.getConfig().getAuthEndpoint())
+					.withDisplayName(connection.getUserInfo().getUserFullName())
+					.withId(id)
+					.withOrganizationId(connection.getUserInfo().getOrganizationId())
+					.withOrganziationName(connection.getUserInfo().getOrganizationName())
+					.withServiceEndpoint(connection.getConfig().getServiceEndpoint())
+					.withSessionId(connection.getConfig().getSessionId())
+					.withUserId(connection.getUserInfo().getUserId())
+					.withUserName(connection.getUserInfo().getUserName());
 			
-			Client client = new Client();
+			set(id, result);
 			
-			Identity identity = client.getIdentity(request);
-			
-			return describe(sessionId, identity.getUrls().getSobjects());
+			return result;
 			
 		} catch (ConnectionException e) {
 			if (e instanceof LoginFault) {
@@ -64,6 +70,25 @@ public class SalesforceService {
 				throw new InternalServerErrorException(e.getMessage());
 			}
 		}
+	}
+	
+	public DescribeSobjectsResult describe(String id) {
+		
+		LoginResult result = get(LoginResult.class, id);
+		
+		if (result == null) {
+			throw new ForbiddenException("Invalid id or Session has expired");
+		}
+			
+		GetIdentityRequest request = new GetIdentityRequest()
+				.setAccessToken(result.getSessionId())
+				.setId(id);
+			
+		Client client = new Client();
+			
+		Identity identity = client.getIdentity(request);
+			
+		return describe(result.getSessionId(), identity.getUrls().getSobjects());
 	}
 	
 	/**

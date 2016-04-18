@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,8 +28,6 @@ public class ServiceInstance {
 	private String tag;
 
 	private String configurationPage;
-	
-	private Set<ConfigurationParam> configurationParams;
 	
 	public ServiceInstance() {
 		
@@ -131,13 +127,5 @@ public class ServiceInstance {
 
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
-	}
-
-	public Set<ConfigurationParam> getConfigurationParams() {
-		return configurationParams;
-	}
-
-	public void setConfigurationParams(Set<ConfigurationParam> configurationParams) {
-		this.configurationParams = configurationParams;
 	}
 }

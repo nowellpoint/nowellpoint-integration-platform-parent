@@ -1,11 +1,8 @@
 package com.nowellpoint.aws.api.dto;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.data.mongodb.ConfigurationParam;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceInstanceDTO implements Serializable {
@@ -40,10 +37,8 @@ public class ServiceInstanceDTO implements Serializable {
 
 	private String configurationPage;
 	
-	private Set<ConfigurationParam> configurationParams;
-	
 	public ServiceInstanceDTO() {
-		configurationParams = new HashSet<ConfigurationParam>();
+		
 	}
 	
 	public ParentDTO getParent() {
@@ -140,17 +135,5 @@ public class ServiceInstanceDTO implements Serializable {
 
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
-	}
-
-	public Set<ConfigurationParam> getConfigurationParams() {
-		return configurationParams;
-	}
-
-	public void setConfigurationParams(Set<ConfigurationParam> configurationParams) {
-		this.configurationParams = configurationParams;
-	}
-	
-	public void addConfigurationParam(ConfigurationParam configurationParam) {
-		this.configurationParams.add(configurationParam);
 	}
 }

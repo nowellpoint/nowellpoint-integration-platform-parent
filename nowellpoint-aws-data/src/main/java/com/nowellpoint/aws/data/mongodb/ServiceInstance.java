@@ -1,8 +1,6 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -37,10 +35,8 @@ public class ServiceInstance implements Serializable {
 
 	private String configurationPage;
 	
-	private Set<ConfigurationParam> configurationParams;
-	
 	public ServiceInstance() {
-		configurationParams = new HashSet<ConfigurationParam>();
+		
 	}
 	
 	public String getKey() {
@@ -129,17 +125,5 @@ public class ServiceInstance implements Serializable {
 
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
-	}
-
-	public Set<ConfigurationParam> getConfigurationParams() {
-		return configurationParams;
-	}
-
-	public void setConfigurationParams(Set<ConfigurationParam> configurationParams) {
-		this.configurationParams = configurationParams;
-	}
-	
-	public void addConfigurationParam(ConfigurationParam configurationParam) {
-		this.configurationParams.add(configurationParam);
 	}
 }

@@ -5,7 +5,10 @@ import java.net.URLEncoder;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -20,6 +23,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/salesforce")
@@ -37,7 +41,8 @@ public class SalesforceResource {
 	@GET
 	@Path("/oauth")
 	@PermitAll
-	public Response oauth(@QueryParam(value="state") String state) {
+	public Response oauth(
+			@QueryParam(value="state") String state) {
 		
 		String url = null;
 		try {
@@ -78,7 +83,9 @@ public class SalesforceResource {
 	@GET
 	@Path("/token")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getToken(@QueryParam(value="code") String code) {
+	public Response getToken(
+			@QueryParam(value="code") String code) {
+		
 		Token token = salesforceService.authenticate(code).getToken();
 				
 		return Response.ok()
@@ -86,19 +93,32 @@ public class SalesforceResource {
 				.build();
 	}
 	
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response login(
+			@FormParam(value="instance") @NotEmpty String instance,
+			@FormParam(value="username") @NotEmpty String username,
+			@FormParam(value="password") @NotEmpty String password,
+			@FormParam(value="securityToken") @NotEmpty String securityToken) {
+		
+		LoginResult result = salesforceService.login(instance, username, password, securityToken);
+		
+		return Response.ok(result)
+				.build();
+		
+	}
+	
 	@GET
 	@Path("/sobjects")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response authenticate(
-			@QueryParam(value="instance") @NotEmpty String instance,
-			@QueryParam(value="username") @NotEmpty String username,
-			@QueryParam(value="password") @NotEmpty String password,
-			@QueryParam(value="securityToken") @NotEmpty String securityToken) {
+	public Response getSobjects(
+			@QueryParam(value="id") String id) {
 		
-		DescribeSobjectsResult result = salesforceService.describe(instance, username, password, securityToken);
+		DescribeSobjectsResult result = salesforceService.describe(id);
 		
 		return Response.ok(result.getSobjects())
 				.build();
-		
 	}
 }

@@ -30,7 +30,6 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.ConfigurationParam;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 @Path("/application")
@@ -135,11 +134,6 @@ public class ApplicationResource {
 		serviceInstance.setPrice(provider.getService().getPrice());
 		serviceInstance.setProviderType(provider.getType());
 		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
-		
-		if ("OUTBOUND_MESSAGE_LISTENER".equals(provider.getService().getType())) {
-			serviceInstance.addConfigurationParam(new ConfigurationParam("organizationName", connector.getOrganization().getName()));
-			serviceInstance.addConfigurationParam(new ConfigurationParam("instance", connector.getOrganization().getInstanceName()));
-		}
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		

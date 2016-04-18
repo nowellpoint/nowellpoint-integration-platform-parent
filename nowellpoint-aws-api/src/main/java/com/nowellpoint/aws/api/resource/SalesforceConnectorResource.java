@@ -33,6 +33,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -188,6 +189,18 @@ public class SalesforceConnectorResource {
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("outboundmessage")
+				.withKeys(
+						resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1),
+						resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)
+					);
+		
+		s3Client.deleteObjects(deleteObjectsRequest);
+		
 		salesforceConnectorService.deleteSalesforceConnector(id, subject);
 		
 		return Response.noContent()
@@ -234,6 +247,23 @@ public class SalesforceConnectorResource {
 				.entity(resource)
 				.build(); 	
 	}
+	
+	@POST
+	@Path("connector/{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addServiceConfiguration(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		salesforceConnectorService.addServiceConfiguration(subject, id, key);		
+		
+		return Response.ok()
+				.build(); 
+	}
+			
 	
 	@GET
 	@Path("connector/{id}/service/{key}")

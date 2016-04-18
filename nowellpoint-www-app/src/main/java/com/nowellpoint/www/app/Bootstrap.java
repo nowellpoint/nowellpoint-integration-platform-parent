@@ -271,7 +271,7 @@ public class Bootstrap implements SparkApplication {
 	private static ModelAndView getLogin(Request request, Response response) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
-		model.put ("messages", resourceBundleModel);
+		model.put("messages", resourceBundleModel);
 		return new ModelAndView(model, "login.html");
 	}
 	
