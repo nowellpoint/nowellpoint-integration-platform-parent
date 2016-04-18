@@ -44,9 +44,11 @@ public class SalesforceConnectorController {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceConnectorController.class.getName());
 	
-	private static final ResourceBundleModel messages = ResourceBundleUtil.getResourceBundle(SalesforceConnectorController.class.getName(), Locale.US);
+	private static ResourceBundleModel messages;
 	
 	public SalesforceConnectorController(Configuration cfg) {
+		
+		messages = ResourceBundleUtil.getResourceBundle(SalesforceConnectorController.class.getName(), cfg.getLocale());
 		
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
