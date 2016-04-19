@@ -15,7 +15,6 @@ public class ResourceBundleUtil {
 	//}
 	
 	public static ResourceBundleModel getResourceBundle(String baseName, Locale locale) {
-		System.out.println(baseName);
 		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle(baseName, locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
 		return resourceBundleModel;
 	}

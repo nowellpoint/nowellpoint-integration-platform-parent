@@ -5,6 +5,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,11 +45,11 @@ public class SalesforceConnectorController {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceConnectorController.class.getName());
 	
-	private static ResourceBundleModel messages;
+	private static ResourceBundleModel labels;
 	
 	public SalesforceConnectorController(Configuration cfg) {
 		
-		messages = ResourceBundleUtil.getResourceBundle(SalesforceConnectorController.class.getName(), cfg.getLocale());
+		labels = ResourceBundleUtil.getResourceBundle(SalesforceConnectorController.class.getName(), cfg.getLocale());
 		
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
@@ -74,7 +75,9 @@ public class SalesforceConnectorController {
         
         //**
         
-        post("/app/salesforce/connector/:id/service/:key/sobjects", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
+        post("/app/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/salesforce/connector/login", (request, response) -> login(request, response));
 	}
 	
 	/**
@@ -102,7 +105,7 @@ public class SalesforceConnectorController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("messages", ResourceBundleUtil.getResourceBundle(SalesforceConnectorController.class.getName(), Locale.US));
+		model.put("labels", labels);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance.isPresent() ? serviceInstance.get() : null);
 		model.put("sobjects", Collections.EMPTY_LIST);
@@ -141,7 +144,7 @@ public class SalesforceConnectorController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("messages", messages);
+		model.put("labels", labels);
 		
 		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
 		
@@ -231,7 +234,7 @@ public class SalesforceConnectorController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("messages", messages);
+    	model.put("labels", labels);
     	
     	SalesforceConnector salesforceConnector = null;
     	
@@ -263,7 +266,7 @@ public class SalesforceConnectorController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("messages", messages);
+    	model.put("labels", labels);
 		
 		SalesforceConnector salesforceConnector = null;
 		
@@ -307,7 +310,7 @@ public class SalesforceConnectorController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("messages", messages);
+    	model.put("labels", labels);
     	model.put("salesforceConnectorsList", salesforceConnectors);
     	
     	return new ModelAndView(model, "secure/salesforce-connectors-list.html");
@@ -350,7 +353,7 @@ public class SalesforceConnectorController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
-    	model.put("messages", messages);
+    	model.put("labels", labels);
     	model.put("salesforceConnector", salesforceConnector);	
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
     	
@@ -400,7 +403,7 @@ public class SalesforceConnectorController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("messages", messages);
+		model.put("labels", labels);
 			
 		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
 		
@@ -416,6 +419,33 @@ public class SalesforceConnectorController {
 		}
     	
 		return new ModelAndView(model, "secure/service-catalog.html");
+	}
+	
+	private static String login(Request request, Response response) {
+		RequestWrapper requestWrapper = new RequestWrapper(request);
+		
+		Token token = requestWrapper.getToken();
+		
+		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("salesforce")
+    			.path("login")
+    			.parameter("instance", request.queryParams("instance"))
+    			.parameter("username", request.queryParams("username"))
+    			.parameter("password", request.queryParams("password"))
+    			.parameter("securityToken", request.queryParams("securityToken"))
+    			.execute();
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			System.out.println("logged in");
+			response.body(httpResponse.getAsString());
+			response.status(200);
+		}
+		
+		return "";
 	}
 	
 	/**
@@ -435,7 +465,7 @@ public class SalesforceConnectorController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("messages", messages);
+		model.put("labels", labels);
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -498,7 +528,7 @@ public class SalesforceConnectorController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
-		model.put("messages", messages);
+		model.put("labels", labels);
 		
 //		Set<String> sobjects = new HashSet<String>();
 //		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
@@ -506,8 +536,14 @@ public class SalesforceConnectorController {
 //			sobjects.add(p);
 //		});
 		
+		Arrays.asList(request.queryMap("id").values()).stream().forEach(p -> {
+			System.out.println(p);
+		});
+		
 		Map<String,Object> configParams = new HashMap<String,Object>();
 		//configParams.put("sobjects", sobjects);
+		
+		
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.contentType(MediaType.APPLICATION_JSON)
