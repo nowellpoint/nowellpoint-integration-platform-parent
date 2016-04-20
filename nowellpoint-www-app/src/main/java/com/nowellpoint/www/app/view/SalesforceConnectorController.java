@@ -71,13 +71,7 @@ public class SalesforceConnectorController {
         
         post("/app/salesforce/connector/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
-        
-        //**
-        
         post("/app/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
-        
-        post("/app/salesforce/connector/login", (request, response) -> login(request, response));
 	}
 	
 	/**
@@ -108,7 +102,8 @@ public class SalesforceConnectorController {
 		model.put("labels", labels);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance.isPresent() ? serviceInstance.get() : null);
-		model.put("sobjects", Collections.EMPTY_LIST);
+		model.put("sobjects", Collections.emptyList());
+		model.put("loginResult", null);
 		
 		return new ModelAndView(model, "secure/".concat(serviceInstance.get().getConfigurationPage()));
 	}
@@ -145,6 +140,7 @@ public class SalesforceConnectorController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
 		model.put("labels", labels);
+		model.put("loginResult", null);
 		
 		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
 		
@@ -230,21 +226,23 @@ public class SalesforceConnectorController {
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
-    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+    	SalesforceConnector salesforceConnector = null;
+    	String successMessage = null;
+    	String errorMessage = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
+    		successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
+    	} else {
+    		errorMessage = httpResponse.getAsString();
+    	}	
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
     	model.put("labels", labels);
-    	
-    	SalesforceConnector salesforceConnector = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    		model.put("salesforceConnector", salesforceConnector);
-        	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-    	} else {
-    		model.put("errorMessage", httpResponse.getAsString());
-    	}	
+    	model.put("salesforceConnector", salesforceConnector);
+    	model.put("successMessage", successMessage);
+    	model.put("errorMessage", errorMessage);
     	
     	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
@@ -264,18 +262,20 @@ public class SalesforceConnectorController {
 		
 		Account account = requestWrapper.getAccount();
     	
-    	Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("account", account);
-    	model.put("labels", labels);
-		
 		SalesforceConnector salesforceConnector = null;
+		String errorMessage = null;
 		
 		try {
 			salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
-			model.put("salesforceConnector", salesforceConnector);
 		} catch (BadRequestException e) {
-			model.put("errorMessage", e.getMessage());
+			errorMessage = e.getMessage();
 		}
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+    	model.put("account", account);
+    	model.put("labels", labels);
+    	model.put("salesforceConnector", salesforceConnector);
+    	model.put("errorMessage", errorMessage);
 		
 		return new ModelAndView(model, "secure/salesforce-connector.html");
 	}
@@ -401,51 +401,30 @@ public class SalesforceConnectorController {
 		
 		Account account = requestWrapper.getAccount();
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", account);
-		model.put("labels", labels);
-			
-		List<ServiceProvider> providers = getServiceProviders(token.getAccessToken());
-		
-		model.put("serviceProviders", providers);
-		
+		List<ServiceProvider> providers = Collections.emptyList();
 		SalesforceConnector salesforceConnector = null;
+		String errorMessage = null;
+		
+		try {
+			providers = getServiceProviders(token.getAccessToken());
+		} catch (BadRequestException e) {
+			errorMessage = e.getMessage();
+		}
 		
 		try {
 			salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
-			model.put("salesforceConnector", salesforceConnector);
 		} catch (BadRequestException e) {
-			model.put("errorMessage", e.getMessage());
+			errorMessage = e.getMessage();
 		}
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", account);
+		model.put("labels", labels);
+		model.put("serviceProviders", providers);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("errorMessage", errorMessage);
     	
 		return new ModelAndView(model, "secure/service-catalog.html");
-	}
-	
-	private static String login(Request request, Response response) {
-		RequestWrapper requestWrapper = new RequestWrapper(request);
-		
-		Token token = requestWrapper.getToken();
-		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-    			.path("login")
-    			.parameter("instance", request.queryParams("instance"))
-    			.parameter("username", request.queryParams("username"))
-    			.parameter("password", request.queryParams("password"))
-    			.parameter("securityToken", request.queryParams("securityToken"))
-    			.execute();
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			System.out.println("logged in");
-			response.body(httpResponse.getAsString());
-			response.status(200);
-		}
-		
-		return "";
 	}
 	
 	/**
@@ -461,11 +440,9 @@ public class SalesforceConnectorController {
 		
 		Token token = requestWrapper.getToken();
 		
-		Account account = requestWrapper.getAccount();
-		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", account);
-		model.put("labels", labels);
+		List<Sobject> sobjects = Collections.emptyList();
+		LoginResult result = null;
+		String errorMessage = null;
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -481,8 +458,7 @@ public class SalesforceConnectorController {
     			.execute();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			LoginResult result = httpResponse.getEntity(LoginResult.class);
-			model.put("loginResult", result);
+			result = httpResponse.getEntity(LoginResult.class);
 			
 			httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -492,23 +468,34 @@ public class SalesforceConnectorController {
 	    			.path("sobjects")
 	    			.queryParameter("id", result.getId())
 	    			.execute();
-			
+
 			if (httpResponse.getStatusCode() == Status.OK) {
-				List<Sobject> sobjects = httpResponse.getEntityList(Sobject.class);
-				model.put("sobjects", sobjects);
+				sobjects = httpResponse.getEntityList(Sobject.class);
 			} else {
-				model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
-				model.put("sobjects", Collections.EMPTY_LIST);
+				errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
+				
 			}
 		} else {
-			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			model.put("sobjects", Collections.EMPTY_LIST);
+			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
 		
-		ServiceInstance serviceInstance = getServiceInstance(token.getAccessToken(), request.params(":id"), request.params(":key"));
-		model.put("serviceInstance", serviceInstance);
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
+    	
+    	Optional<ServiceInstance> serviceInstance = salesforceConnector
+    			.getServiceInstances()
+    			.stream()
+    			.filter(p -> p.getKey().equals(request.params(":key")))
+    			.findFirst();
+    	
+    	Map<String, Object> model = new HashMap<String, Object>();
+		model.put("labels", labels);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance.isPresent() ? serviceInstance.get() : null);
+		model.put("sobjects", sobjects);
+		model.put("loginResult", result);
+		model.put("errorMessage", errorMessage);
 		
-		return new ModelAndView(model, String.format("secure/%s", serviceInstance.getConfigurationPage()));
+		return new ModelAndView(model, "secure/salesforce-outbound-message-part.html");
 	}
 	
 	/**
@@ -526,9 +513,8 @@ public class SalesforceConnectorController {
 		
 		Account account = requestWrapper.getAccount();
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", account);
-		model.put("labels", labels);
+		List<Sobject> sobjects = Collections.emptyList();
+		String errorMessage = null;
 		
 //		Set<String> sobjects = new HashSet<String>();
 //		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
@@ -561,12 +547,18 @@ public class SalesforceConnectorController {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			//model.put("yaml", httpResponse.getHeaders().get("Location"));
 		} else {
-			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			model.put("sobjects", Collections.EMPTY_LIST);
+			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
+			
 		}
 		
 		ServiceInstance serviceInstance = getServiceInstance(token.getAccessToken(), request.params(":id"), request.params(":key"));
+				
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", account);
+		model.put("labels", labels);
 		model.put("serviceInstance", serviceInstance);
+		model.put("sobjects", sobjects);
+		model.put("errorMessage", errorMessage);
 		
 		return new ModelAndView(model, String.format("secure/%s", serviceInstance.getConfigurationPage()));
 	}
@@ -587,8 +579,6 @@ public class SalesforceConnectorController {
     			.path("connector")
     			.path(id)
     			.execute();
-    	
-    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
     	
     	SalesforceConnector salesforceConnector = null;
     	
@@ -615,8 +605,6 @@ public class SalesforceConnectorController {
 				.queryParameter("languageLocaleKey", "en_US")
 				.execute();
 			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
-			
 		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
@@ -639,8 +627,6 @@ public class SalesforceConnectorController {
     			.path("service")
     			.path(key)
     			.execute();
-    	
-    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
 		
     	ServiceInstance serviceInstance = httpResponse.getEntity(ServiceInstance.class);	
     	

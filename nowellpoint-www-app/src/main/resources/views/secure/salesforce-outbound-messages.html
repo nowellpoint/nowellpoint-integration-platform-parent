@@ -27,243 +27,68 @@
                 </div>
 
                 <div class="col-sm-9">
-
-                    <#if errorMessage??>
-                        <div id="error" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">&times;</a>
-                            <div class="text-center">${errorMessage!}</div>
+                    
+                    <div class="col-sm-2">
+                    
+                        <div>
+                            <img src="/images/new_message_icon.png">
                         </div>
-                    </#if>
+                    
+                    </div>
+                    
+                    <div class="col-sm-10">
 
-                    <form class="form-horizontal" id="form" role="form" method="post" action="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects">
+                    <dl class="dl-horizontal">
 
-                        <dl class="dl-horizontal">
+                        <dt>${labels["production"]}</dt>
+                        <dd></dd>
 
-                            <dt>${labels["name"]}</dt>
-                            <dd><b>${labels["production"]}</b></dd>
+                        <dt>${labels["id"]}</dt>
+                        <dd>${(salesforceConnector.identity.id)!}</dd>
 
-                            <dt>${labels["id"]}</dt>
-                            <dd>${(salesforceConnector.identity.id)!}</dd>
+                        <dt>${labels["name"]}</dt>
+                        <dd>${(salesforceConnector.organization.name)!}</dd>
 
-                            <dt>${labels["name"]}</dt>
-                            <dd>${(salesforceConnector.organization.name)!}</dd>
+                        <dt>${labels["organization.type"]}</dt>
+                        <dd>${(salesforceConnector.organization.organizationType)!}</dd>
 
-                            <dt>${labels["organization.type"]}</dt>
-                            <dd>${(salesforceConnector.organization.organizationType)!}</dd>
+                        <dt>${labels["instance.name"]}</dt>
+                        <dd>${(salesforceConnector.organization.instanceName)!}</dd>
 
-                            <dt>${labels["instance.name"]}</dt>
-                            <dd>${(salesforceConnector.organization.instanceName)!}</dd>
-
-                        </dl>
-
-                        <br>
-
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">${labels["sandboxes"]}</h3>
-                        </div>
+                    </dl>   
                         
-                        <br>
+                    </div>  
+                    
+                    <div class="col-sm-12">
 
-                        <div class="flextable">
-                            <div class="flextable-item">
-                                <div class="text-center">
-                                    <a href="#loginDialog" class="btn btn-lg btn-primary" role="button" data-toggle="modal">${labels["add"]}</a>
-                                </div>    
-                            </div>
+                    <div class="hr-divider">
+                        <h3 class="hr-divider-content hr-divider-heading">${labels["sobjects"]}</h3>
+                    </div>
 
-                        </div>
+                    <br>
+
+                    <div id="auto_load_div">
+                        <#include "salesforce-outbound-message-part.html" />
+                    </div>
                         
-                        <br>
-
-                        <div class="content table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <th class="col-lg-1 col-md-1 col-sm-1">#</th>
-                                    <th class="col-lg-2 col-md-2 col-sm-2">${labels["name"]}</th>
-                                    <th class="col-lg-4 col-md-4 col-sm-4">${labels["id"]}</th>
-                                    <th class="col-lg-2 col-md-2 col-sm-2">${labels["username"]}</th>
-                                    <th class="col-lg-2 col-md-2 col-sm-2">${labels["service.endpoint"]}</th>
-                                    <th class="col-lg-1 col-md-1 col-sm-1">${action}</th>
-                                </thead>
-                                <tbody>
-                                    <#list [ '1', '2', '3', '4', '5']>
-                                        <#items as x>
-
-                                            <tr id="${x?index}">
-                                                <td>${x?counter}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-
-                                        </#items>
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <br>
-
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">${labels["sobjects"]}</h3>
-                        </div>
-
-                        <br>
-
-                        <div id="sobjects" class="container-fluid">
-                            <div class="row">
-                                <#if sobjects?has_content>
-                                    <#list sobjects as sobject>
-                                        <#if sobject.triggerable && sobject.searchable>
-                                            <div class="col-lg-3 col-md-3">
-                                                <div class="checkbox custom-control custom-checkbox">
-                                                    <label>
-                                                        <input type="checkbox" value="${sobject.name}" name="sobject">
-                                                        <span class="custom-control-indicator"></span>
-                                                        <p>${sobject.label}</p>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </#if>
-                                    </#list>
-
-                                    <div class="form-group">
-                                        <div class="pull-right">
-                                            <a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["reset"]}</a>&nbsp;
-                                            <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${labels["submit.build"]}</button>
-                                        </div>
-                                    </div>
-
-                                </#if>
-
-                                <#if ! sobjects?has_content>
-
-                                    <#if ! sobjects?has_content>
-
-                        <form class="form-horizontal" id="form" role="form" method="get" action="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects">
-
-                            <div class="form-group">
-                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="instance">${messages["instance"]}</label>
-                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                    <select id="instance" name="instance" class="form-control input-lg" required="" autofocus="">
-                                        <option value="" selected="selected">--- ${messages["select.one"]} ---</option>
-                                        <option value="https://test.salesforce.com">Sandbox</option>
-                                        <option value="https://login.salesforce.com">Production</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="username">${messages["username"]}</label>
-                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                    <input type="text" class="form-control input-lg" name="username" id="username" required="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="password">${messages["password"]}</label>
-                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                    <input type="password" class="form-control input-lg" name="password" id="password" required="" autocomplete="off" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-sm-2 col-md-2 col-lg-2" for="securityToken">${messages["security.token"]}</label>
-                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                    <input type="password" class="form-control input-lg" name="securityToken" id="securityToken" required="" autocomplete="off" />
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class=" col-sm-6 col-md-6 col-lg-6">
-                                    <div class="pull-right">
-                                        <a href="/app/salesforce/connector/${(salesforceConnector.id)!}">${messages["cancel"]}</a>&nbsp;
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${messages["login"]}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-
-                    </#if>
-
-                                </#if>
-
-                            </div>
-
-                        </div>
-
-                        <br>
-
-                        <div class="pull-right">
-                            <a href="/app/salesforce/connector/${(salesforceConnector.id)!}">${labels["cancel"]}</a>&nbsp;
-                            <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${labels["save"]}</button>
-                        </div>
-
-                    </form>
+                                        </div>     
 
                 </div>
             </div>
         </div>
 
-        <!-- Modal Dialog -->
-        <div class="modal fade" id="loginDialog" role="dialog" tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">${labels['loginToSalesforce']}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form id="loginForm" role="form">
-                            <div class="form-group">
-                                <label class="control-label" for="instance">${labels["instance"]}</label>
-                                <select id="instance" name="instance" class="form-control" required="" autofocus="">
-                                    <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
-                                    <option value="https://test.salesforce.com">${labels["sandbox"]}</option>
-                                    <option value="https://login.salesforce.com">${labels["production"]}</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label" for="username">${labels["username"]}</label>
-                                <input type="text" class="form-control" name="username" id="username" required="" />
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="password">${labels["password"]}</label>
-                                <input type="password" class="form-control" name="password" id="password" required="" autocomplete="off" />
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label" for="securityToken">${labels["security.token"]}</label>
-                                <input type="password" class="form-control" name="securityToken" id="securityToken" required="" autocomplete="off" />
-                            </div>
-
-                            <div class="modal-footer">
-                                <div class="pull-right">
-                                    <button type="button" name="cancel" id="cancel" class="btn btn-default" data-dismiss="modal">${cancel}</button>
-                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["login"]}</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-        
         <#include "spinner.html" />
 
         <script>
             $('#loginForm').submit(function(e) {
                 var params = $("#loginForm").serialize();
                 $.ajax({
-                    dataType: "json",
+                    dataType: "html",
                     type: "POST",
-                    url: "/app/salesforce/connector/login",
+                    url: "/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects",
                     data: params,
                     complete: function(data) {
-                        alert('logged in');
-                        console.log(data);
+                        $("#auto_load_div").html(data.responseText);
                     }
                 });
 
