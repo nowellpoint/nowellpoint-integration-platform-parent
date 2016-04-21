@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -72,6 +74,8 @@ public class SalesforceConnectorController {
         post("/app/salesforce/connector/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/salesforce/connector/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -505,7 +509,7 @@ public class SalesforceConnectorController {
 	 * @return
 	 */
 	
-	public static ModelAndView saveConfiguration(Request request, Response respose) {
+	private static ModelAndView saveConfiguration(Request request, Response respose) {
 		
 		RequestWrapper requestWrapper = new RequestWrapper(request);
 		
@@ -513,23 +517,15 @@ public class SalesforceConnectorController {
 		
 		Account account = requestWrapper.getAccount();
 		
-		List<Sobject> sobjects = Collections.emptyList();
 		String errorMessage = null;
 		
-//		Set<String> sobjects = new HashSet<String>();
-//		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
-//			System.out.println(p);
-//			sobjects.add(p);
-//		});
-		
-		Arrays.asList(request.queryMap("id").values()).stream().forEach(p -> {
-			System.out.println(p);
+		Set<String> sobjects = new HashSet<String>();
+		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
+			sobjects.add(p);
 		});
 		
 		Map<String,Object> configParams = new HashMap<String,Object>();
-		//configParams.put("sobjects", sobjects);
-		
-		
+		configParams.put("sobjects", sobjects);
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.contentType(MediaType.APPLICATION_JSON)
@@ -541,7 +537,7 @@ public class SalesforceConnectorController {
 				.path(request.params(":id"))
 				.path("service")
 				.path(request.params(":key"))
-				//.body(configParams)
+				.body(configParams)
     			.execute();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
@@ -579,15 +575,14 @@ public class SalesforceConnectorController {
     			.path("connector")
     			.path(id)
     			.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
     	
-    	SalesforceConnector salesforceConnector = null;
+    	SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
     	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    		return salesforceConnector;
-    	} else {
-    		throw new BadRequestException(httpResponse.getAsString());
-    	}
+    	return salesforceConnector;
 	}
 	
 	/**

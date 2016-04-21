@@ -7,6 +7,7 @@ import static com.nowellpoint.aws.data.CacheManager.serialize;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,7 +42,6 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
@@ -254,35 +254,17 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceConfiguration(
 			@PathParam(value="id") String id,
-			@PathParam(value="key") String key) {
+			@PathParam(value="key") String key,
+			Map<String,Object> configParams) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		salesforceConnectorService.addServiceConfiguration(subject, id, key);		
+		salesforceConnectorService.addServiceConfiguration(subject, id, key, configParams);
+		
+		salesforceService.buildPackage(key);
 		
 		return Response.ok()
 				.build(); 
-	}
-			
-	
-	@GET
-	@Path("connector/{id}/service/{key}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getService(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ServiceInstanceDTO resource = salesforceConnectorService.getServiceInstance(subject, id, key);
-		
-		if (resource == null) {
-			throw new WebApplicationException(String.format("Key %s was not found", key), Status.NOT_FOUND);
-		}
-		
-		return Response.ok()
-				.entity(resource)
-				.build(); 	
 	}
 	
 	@DELETE
@@ -300,6 +282,8 @@ public class SalesforceConnectorResource {
 				resource.getServiceInstances().remove(p);
 			}
 		});
+		
+		salesforceConnectorService.updateSalesforceConnector(resource);
 		
 		return Response.ok()
 				.entity(resource)

@@ -1,11 +1,27 @@
 package com.nowellpoint.aws.api.service;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.ws.rs.ForbiddenException;
 
 import org.jboss.logging.Logger;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+import com.esotericsoftware.yamlbeans.YamlReader;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
@@ -21,7 +37,10 @@ import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Package;
 import com.nowellpoint.client.sforce.model.User;
+import com.nowellpoint.client.sforce.model.Type;
+import com.sforce.soap.metadata.MetadataConnection;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
@@ -48,9 +67,9 @@ public class SalesforceService extends AbstractCacheService {
 			String id = String.format("%s/id/%s/%s", instance, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
 			
 			LoginResult result = new LoginResult()
+					.withId(id)
 					.withAuthEndpoint(connection.getConfig().getAuthEndpoint())
 					.withDisplayName(connection.getUserInfo().getUserFullName())
-					.withId(id)
 					.withOrganizationId(connection.getUserInfo().getOrganizationId())
 					.withOrganziationName(connection.getUserInfo().getOrganizationName())
 					.withServiceEndpoint(connection.getConfig().getServiceEndpoint())
@@ -170,6 +189,86 @@ public class SalesforceService extends AbstractCacheService {
 		Organization organization = client.getOrganization(request);
 		
 		return organization;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void buildPackage(String key) {
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest("nowellpoint-configuration-files", key);
+    	
+    	S3Object configFile = s3Client.getObject(getObjectRequest);
+		
+		try {
+			StringReader sr = new StringReader(IOUtils.toString(configFile.getObjectContent()));
+			
+			YamlReader reader = new YamlReader(sr);
+			
+			Map<String,Object> configParams = (Map<String,Object>) reader.read();
+			reader.close();
+			
+			String id = configParams.get("id").toString();
+			String metadata = configParams.get("url.metadata").toString();
+			List<String> sobjects = (ArrayList<String>) configParams.get("sobjects");
+			
+			System.out.println(id);
+			
+			LoginResult loginResult = get(LoginResult.class, id);
+			
+			if (loginResult == null) {
+				throw new ForbiddenException("Invalid id or Session has expired");
+			}
+			
+			System.out.println(loginResult.getSessionId());
+				
+			final ConnectorConfig config = new ConnectorConfig();
+	        config.setServiceEndpoint(metadata);
+	        System.out.println(metadata);
+	        config.setSessionId(loginResult.getSessionId());
+	        
+	        MetadataConnection metadataConnection = new MetadataConnection(config);
+			
+			System.out.println(metadataConnection.getSessionHeader().getSessionId());
+			
+			String[][] artifacts = new String[][] {
+				{"Outbound_Event__c","CustomObject"},
+				{"Outbound_Event__c","Workflow"}
+			};
+			
+			List<Type> types = new ArrayList<Type>();
+			
+			for (int i = 0; i < artifacts.length; i++) {
+				Type type = new Type();
+				type.setMembers(artifacts[i][0]);
+				type.setName(artifacts[i][1]);
+				types.add(type);
+			}
+			
+			sobjects.stream().forEach(sobject -> {
+				Type type = new Type();
+				type.setMembers(String.format("%s_Event_Observer", sobject));
+				type.setName("ApexTrigger");
+				types.add(type);
+			});
+			
+			
+			Package manifest = new Package();
+			manifest.setTypes(types);
+			manifest.setVersion(36.0);
+			
+			StringWriter sw = new StringWriter();
+			
+			JAXBContext context = JAXBContext.newInstance( Package.class );
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
+			marshaller.marshal( manifest, System.out );
+			marshaller.marshal( manifest, sw );
+	        
+		} catch (IOException | ConnectionException | JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 		
 	/**

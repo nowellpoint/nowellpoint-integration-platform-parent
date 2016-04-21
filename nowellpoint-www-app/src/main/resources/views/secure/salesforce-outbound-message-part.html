@@ -49,7 +49,7 @@
 
 </#if>
 
-<form class="form-horizontal" id="form" role="form" method="post" action="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects">
+<form class="form-horizontal" id="form" role="form" method="post" action="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/configuration">
 
 
     <div class="panel panel-default">
@@ -79,12 +79,6 @@
             <div id="sobjects" class="container-fluid">
                 <div class="row">
                     <#if sobjects?has_content>
-
-                        <div class="pull-right">
-                        <a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["reset"]}</a>
-                        </div>
-                        
-                        <br>
                         
                         <#list sobjects as sobject>
                             <#if sobject.triggerable && sobject.searchable>
@@ -110,6 +104,7 @@
 
             <div class="pull-right">
                 <a href="/app/salesforce/connector/${(salesforceConnector.id)!}">${labels["cancel"]}</a>&nbsp;
+                <a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["reset"]}</a>&nbsp;
                 <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${labels["save"]}</button>
             </div>
 
