@@ -1,0 +1,79 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${serviceInstance.providerName!}</h6>
+                        <h2 class="dashhead-title">${labels["outbound.message.setup"]}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="hr-divider">
+
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-sm-2">
+
+                    <div class="sidebar-nav">
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                                </button>
+                                <span class="visible-xs navbar-brand">${menu}</span>
+                            </div>
+                            
+                            <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["details"]}</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li class="active"><a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/environments">${labels["environments"]}</a></li>
+                                </ul>
+                            </div>
+                            <!--/.nav-collapse -->
+                        </nav>
+                    </div>
+
+                </div>
+
+                <div class="col-sm-10">
+
+                    <form class="form-vertical" id="form" role="form">
+                        <#list serviceInstance.environments as environment>
+
+                            <div class="row">
+
+                                <div class="form-group col-sm-4 col-md-4 col-lg-4">
+                                    <label class="control-label" for="name">${labels["name"]}</label>
+                                    <input type="text" class="form-control" name="name" id="name" required="" value="${environment.name}" />
+                                </div>
+
+                                <div class="form-group col-sm-4 col-md-4 col-lg-4">
+                                    <label class="control-label" for="active">${labels["active"]}</label>
+                                    <input type="text" class="form-control" class="form-control" name="active" id="active" required="" />
+                                </div>
+
+                            </div>
+
+                        </#list>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </@t.page>

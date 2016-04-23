@@ -26,6 +26,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
@@ -76,6 +77,32 @@ public class SalesforceConnectorController {
         post("/app/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/salesforce/connector/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/salesforce/connector/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
+	}
+	
+	private static ModelAndView getEnvironments(Request request, Response response) {
+		RequestWrapper requestWrapper = new RequestWrapper(request);
+		
+		Token token = requestWrapper.getToken();
+		
+		Account account = requestWrapper.getAccount();
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
+    	
+    	Optional<ServiceInstance> serviceInstance = salesforceConnector
+    			.getServiceInstances()
+    			.stream()
+    			.filter(p -> p.getKey().equals(request.params(":key")))
+    			.findFirst();
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("account", account);
+		model.put("labels", labels);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance.isPresent() ? serviceInstance.get() : null);
+		
+		return new ModelAndView(model, "secure/environments.html");
 	}
 	
 	/**
@@ -494,7 +521,7 @@ public class SalesforceConnectorController {
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("labels", labels);
 		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance.isPresent() ? serviceInstance.get() : null);
+		model.put("serviceInstance", serviceInstance.get());
 		model.put("sobjects", sobjects);
 		model.put("loginResult", result);
 		model.put("errorMessage", errorMessage);
@@ -623,7 +650,13 @@ public class SalesforceConnectorController {
     			.path(key)
     			.execute();
 		
-    	ServiceInstance serviceInstance = httpResponse.getEntity(ServiceInstance.class);	
+    	ServiceInstance serviceInstance = httpResponse.getEntity(ServiceInstance.class);
+    	
+//    	Set<Environment> environments = serviceInstance.getEnvironments().stream().filter(p -> p.getName().equals(serviceInstance.getEnvironment())).collect(Collectors.toSet());
+//    	
+//    	serviceInstance.getEnvironments().clear();
+//    	
+//    	serviceInstance.getEnvironments().addAll(environments);
     	
     	return serviceInstance;
 	}

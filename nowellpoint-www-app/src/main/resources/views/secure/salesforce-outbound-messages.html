@@ -22,57 +22,122 @@
             <br>
 
             <div class="row">
-                <div class="col-sm-3">
-                    <#include "sidebar.html" />
+                <div class="col-sm-2">
+
+                    <div class="sidebar-nav">
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                                </button>
+                                <span class="visible-xs navbar-brand">${menu}</span>
+                            </div>
+                            
+                             <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li class="active"><a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["details"]}</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/environments">${labels["environments"]}</a></li>
+                                </ul>
+                            </div>
+                            <!--/.nav-collapse -->
+                        </nav>
+                    </div>
+
                 </div>
 
-                <div class="col-sm-9">
-                    
-                    <div class="col-sm-2">
-                    
+                <div class="col-sm-10">
+
+                    <div class="col-sm-1">
+
                         <div>
-                            <span class="glyphicon glyphicon-foler-open fa-3x"></span>
-                            <!--<img src="/images/new_message_icon.png"> -->
+                            <span class="icon icon-folder fa-4x"></span>
                         </div>
-                    
+
                     </div>
-                    
-                    <div class="col-sm-10">
 
-                    <dl class="dl-horizontal">
+                    <div class="col-sm-9">
 
-                        <dt>${labels["production"]}</dt>
-                        <dd></dd>
+                        <dl class="dl-horizontal">
 
-                        <dt>${labels["id"]}</dt>
-                        <dd>${(salesforceConnector.identity.id)!}</dd>
+                            <dt>${labels["production"]}</dt>
+                            <dd></dd>
 
-                        <dt>${labels["name"]}</dt>
-                        <dd>${(salesforceConnector.organization.name)!}</dd>
+                            <dt>${labels["id"]}</dt>
+                            <dd>${(salesforceConnector.identity.id)!}</dd>
 
-                        <dt>${labels["organization.type"]}</dt>
-                        <dd>${(salesforceConnector.organization.organizationType)!}</dd>
+                            <dt>${labels["name"]}</dt>
+                            <dd>${(salesforceConnector.organization.name)!}</dd>
 
-                        <dt>${labels["instance.name"]}</dt>
-                        <dd>${(salesforceConnector.organization.instanceName)!}</dd>
+                            <dt>${labels["organization.type"]}</dt>
+                            <dd>${(salesforceConnector.organization.organizationType)!}</dd>
 
-                    </dl>   
-                        
-                    </div>  
-                    
+                            <dt>${labels["instance.name"]}</dt>
+                            <dd>${(salesforceConnector.organization.instanceName)!}</dd>
+
+                        </dl>
+
+                    </div>
+
+                    <div class="col-sm-2">
+
+                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.environment)!}" required="" autofocus="">
+                            <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
+                            <option value="DEVELOPMENT">${labels["environment.development"]}</option>
+                            <option value="TEST">${labels["environment.test"]}</option>
+                            <option value="STAGE">${labels["environment.pre.production"]}</option>
+                            <option value="PRODUCTION">${labels["environment.production"]}</option>
+                        </select>
+
+                    </div>
+
                     <div class="col-sm-12">
 
-                    <div class="hr-divider">
-                        <h3 class="hr-divider-content hr-divider-heading">${labels["sobjects"]}</h3>
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">${labels["environment.variables"]}</h3>
+                        </div>
+
+                        <br>
+
+                        <div class="content table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <th>${labels["variable"]}</th>
+                                    <th>${labels["value"]}</th>
+                                    <th>${labels["action"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list serviceInstance.environments as environment>
+                                        <#list environment.environmentVariables as variable>
+                                            <tr>
+                                                <td>${(variable.variable)!}</td>
+                                                <td>${(variable.value)!}</td>
+                                                <td></td>
+                                            </tr>
+                                        </#list>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <br>
+                    <div class="col-sm-12">
 
-                    <div id="auto_load_div">
-                        <#include "salesforce-outbound-message-part.html" />
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">${labels["sobjects"]}</h3>
+                        </div>
+
+                        <br>
+
+                        <div id="auto_load_div">
+                            <#include "salesforce-outbound-message-part.html" />
+                        </div>
+
                     </div>
-                        
-                                        </div>     
 
                 </div>
             </div>
@@ -95,6 +160,16 @@
 
                 e.preventDefault();
 
+            });
+
+            $(function() {
+                $('select[value]').each(function() {
+                    $(this).val(this.getAttribute("value"));
+                });
+            });
+
+            $("#environment").change(function() {
+                alert("Handler for .change() called.");
             });
         </script>
 

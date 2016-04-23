@@ -1,5 +1,8 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -26,11 +29,15 @@ public class ServiceInstance {
 	private String serviceName;
 	
 	private String tag;
+	
+	private String environment;
+	
+	private Set<Environment> environments;
 
 	private String configurationPage;
 	
 	public ServiceInstance() {
-		
+		environments = new HashSet<Environment>();
 	}
 
 	public Parent getParent() {
@@ -121,11 +128,31 @@ public class ServiceInstance {
 		this.tag = tag;
 	}
 
+	public String getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(String environment) {
+		this.environment = environment;
+	}
+
 	public String getConfigurationPage() {
 		return configurationPage;
 	}
 
 	public void setConfigurationPage(String configurationPage) {
 		this.configurationPage = configurationPage;
+	}
+	
+	public Set<Environment> getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(Set<Environment> environments) {
+		this.environments = environments;
+	}
+
+	public void addEnvironment(String name, Boolean active) {
+		environments.add(new Environment(name, active));
 	}
 }
