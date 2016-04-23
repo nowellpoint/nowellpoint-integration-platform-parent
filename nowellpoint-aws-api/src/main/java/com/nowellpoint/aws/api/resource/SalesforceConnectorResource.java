@@ -7,6 +7,7 @@ import static com.nowellpoint.aws.data.CacheManager.serialize;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -47,6 +48,7 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
+import com.nowellpoint.aws.data.mongodb.Environment;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
@@ -233,6 +235,27 @@ public class SalesforceConnectorResource {
 		serviceInstance.setProviderType(provider.getType());
 		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
 		
+		Set<Environment> environments = new HashSet<Environment>();
+		
+		Environment environment = new Environment();
+		environment.setActive(Boolean.TRUE);
+		environment.setIndex(0);
+		environment.setLabel("Production");
+		environment.setLocked(Boolean.TRUE);
+		environment.setName("PRODUCTION");
+		environments.add(environment);
+		
+		for (int i = 0; i < 5; i++) {
+			environment = new Environment();
+			environment.setActive(Boolean.FALSE);
+			environment.setIndex(i + 1);
+			environment.setLocked(Boolean.FALSE);
+			environment.setName("SANDBOX_" + (i + 1));
+			environments.add(environment);
+		}
+		
+		serviceInstance.setEnvironments(environments);
+		
 		resource.setSubject(subject);
 		resource.addServiceInstance(serviceInstance);
 		
@@ -246,6 +269,23 @@ public class SalesforceConnectorResource {
 		return Response.created(uri)
 				.entity(resource)
 				.build(); 	
+	}
+	
+	@POST
+	@Path("connector/{id}/service/{key}/environments")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveEnvironments(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			Set<Environment> environments) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, environments);
+		
+		return Response.ok(resource)
+				.build(); 
 	}
 	
 	@POST

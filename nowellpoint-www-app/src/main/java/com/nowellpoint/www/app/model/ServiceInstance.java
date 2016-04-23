@@ -152,7 +152,7 @@ public class ServiceInstance {
 		this.environments = environments;
 	}
 
-	public void addEnvironment(String name, Boolean active) {
-		environments.add(new Environment(name, active));
+	public void addEnvironment(String name, String label, Boolean active, Boolean locked) {
+		environments.add(new Environment(name, label, active, locked));
 	}
 }

@@ -19,6 +19,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.data.mongodb.Environment;
 import com.nowellpoint.aws.data.mongodb.SalesforceConnector;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
@@ -45,9 +46,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	}
 	
 	public SalesforceConnectorDTO updateSalesforceConnector(SalesforceConnectorDTO resource) {
+		SalesforceConnectorDTO original = findSalesforceConnector(resource.getSubject(), resource.getId());
+		resource.setCreatedById(original.getCreatedById());
+		resource.setCreatedDate(original.getCreatedDate());
+		
 		replace( resource );
+		
 		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
+		
 		return resource;
 	}
 	
@@ -65,6 +72,22 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			hset( id, subject, resource );
 		}
 		return resource;
+	}
+	
+	public SalesforceConnectorDTO addEnvironments(String subject, String id, String key, Set<Environment> environments) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		
+		if (serviceInstance.isPresent()) {
+			serviceInstance.get().setEnvironments(environments);
+		}
+		
+		updateSalesforceConnector(resource);
+		
+		return resource;
+		
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

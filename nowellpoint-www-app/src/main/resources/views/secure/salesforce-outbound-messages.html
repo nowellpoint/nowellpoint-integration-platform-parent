@@ -87,10 +87,11 @@
 
                         <select id="environment" name="environment" class="form-control" value="${(serviceInstance.environment)!}" required="" autofocus="">
                             <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
-                            <option value="DEVELOPMENT">${labels["environment.development"]}</option>
-                            <option value="TEST">${labels["environment.test"]}</option>
-                            <option value="STAGE">${labels["environment.pre.production"]}</option>
-                            <option value="PRODUCTION">${labels["environment.production"]}</option>
+                            <#list serviceInstance.environments as environment>
+                                <#if environment.active>
+                                <option value="${environment.name}">${environment.label}</option>
+                                </#if>    
+                            </#list>
                         </select>
 
                     </div>

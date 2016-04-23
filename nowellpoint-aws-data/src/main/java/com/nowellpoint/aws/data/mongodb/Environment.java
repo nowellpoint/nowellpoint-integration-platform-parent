@@ -5,9 +5,15 @@ import java.util.Set;
 
 public class Environment {
 	
+	private Integer index;
+	
 	private String name;
 	
+	private String label;
+	
 	private Boolean active;
+	
+	private Boolean locked;
 	
 	private Set<EnvironmentVariable> environmentVariables;
 	
@@ -20,7 +26,15 @@ public class Environment {
 		setName(name);
 		setActive(active);
 	}
+	
+	public Integer getIndex() {
+		return index;
+	}
 
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -29,12 +43,28 @@ public class Environment {
 		this.name = name;
 	}
 
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	public Boolean getActive() {
 		return active;
 	}
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 
 	public Set<EnvironmentVariable> getEnvironmentVariables() {
