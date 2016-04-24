@@ -3,8 +3,9 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.a;
+
+import static com.nowellpoint.www.app.util.HtmlWriter.error;
+import static com.nowellpoint.www.app.util.HtmlWriter.success;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public class SalesforceConnectorController {
         
         get("/app/salesforce/connector", (request, response) -> getSalesforceConnectorDetails(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/salesforce/connector", (request, response) -> saveSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        post("/app/salesforce/connector", (request, response) -> saveSalesforceConnector(request, response));
         
         get("/app/salesforce/connector/:id", (request, response) -> getSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
@@ -253,7 +254,10 @@ public class SalesforceConnectorController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
-		return new ModelAndView(new HashMap<String, Object>(), "secure/salesforce-callback.html");	
+    	Map<String, Object> model = new HashMap<String, Object>();
+    	model.put("labels", labels);
+    	
+		return new ModelAndView(model, "secure/salesforce-callback.html");	
     }
 	
 	/**
@@ -378,7 +382,7 @@ public class SalesforceConnectorController {
 	 * @return
 	 */
 	
-	private static ModelAndView saveSalesforceConnector(Request request, Response response) {
+	private static String saveSalesforceConnector(Request request, Response response) {
 		
 		RequestWrapper requestWrapper = new RequestWrapper(request);
 		
@@ -397,21 +401,23 @@ public class SalesforceConnectorController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
-		SalesforceConnector salesforceConnector = null;
+//		SalesforceConnector salesforceConnector = null;
+//    	
+//    	if (httpResponse.getStatusCode() == Status.CREATED) {
+//    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
+//    	} else {
+//    		throw new BadRequestException(httpResponse.getAsString());
+//    	}	
     	
-    	if (httpResponse.getStatusCode() == Status.CREATED) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    	} else {
-    		throw new BadRequestException(httpResponse.getAsString());
-    	}	
-    	
-    	Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("account", account);
-    	model.put("labels", labels);
-    	model.put("salesforceConnector", salesforceConnector);	
-    	model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-    	
-    	return new ModelAndView(model, "secure/salesforce-authenticate.html");
+    	String html = null;
+		
+		if (httpResponse.getStatusCode() == Status.CREATED) {
+			html = success(MessageProvider.getMessage(Locale.US, "saveSuccess"));
+		} else {
+			html = error(httpResponse.getEntity(JsonNode.class).get("message").asText());
+		}
+		
+		return html;
 	}
 	
 	/**
@@ -601,17 +607,9 @@ public class SalesforceConnectorController {
 		String html = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			html = div()
-					.attr("id", "success")
-					.attr("class", "alert alert-success")
-					.with(a().attr("class", "close").attr("data-dismiss","alert").withText("x"))
-					.with(div().attr("class", "text-center").withText(MessageProvider.getMessage(Locale.US, "saveSuccess"))).toString();
+			html = success(MessageProvider.getMessage(Locale.US, "saveSuccess"));
 		} else {
-			html = div()
-					.attr("id", "error")
-					.attr("class", "alert alert-success")
-					.with(a().attr("class", "close").attr("data-dismiss","alert").withText("x"))
-					.with(div().attr("class", "text-center").withText(httpResponse.getEntity(JsonNode.class).get("message").asText())).toString();
+			html = error(httpResponse.getEntity(JsonNode.class).get("message").asText());
 		}
 		
 		return html;

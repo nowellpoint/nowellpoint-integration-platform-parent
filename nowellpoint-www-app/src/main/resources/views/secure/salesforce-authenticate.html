@@ -8,7 +8,7 @@
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${salesforceConnectorLabel}</h6>
+                        <h6 class="dashhead-subtitle">${labels["salesforce.connector"]}</h6>
                         <h2 class="dashhead-title">${(salesforceConnector.organization.name)!}</h2>
                     </div>
                 </div>
@@ -28,19 +28,9 @@
 
                 <div class="col-lg-9 col-md-9 col-sm-9">
 
-                    <#if errorMessage??>
-                        <div id="alert" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">&times;</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
+                    <div id="statusMessage">
 
-                    <#if successMessage??>
-                        <div id="success" class="alert alert-success collapse">
-                            <a class="close" data-dismiss="alert">&times;</a>
-                            <div class="text-center">${successMessage}</div>
-                        </div>
-                    </#if>
+                    </div>
 
                     <div class="col-md-2">
 
@@ -58,46 +48,46 @@
                     <div class="col-md-10">
                         <dl class="dl-horizontal">
 
-                            <dt>${id}</dt>
+                            <dt>${labels["id"]}</dt>
                             <dd>${(salesforceConnector.identity.id)!}</dd>
 
-                            <dt>${name}</dt>
+                            <dt>${labels["name"]}</dt>
                             <dd>${(salesforceConnector.identity.displayName)!}</dd>
 
-                            <dt>${username}</dt>
+                            <dt>${labels["username"]}</dt>
                             <dd>${(salesforceConnector.identity.username)!}</dd>
 
-                            <dt>${email}</dt>
+                            <dt>${labels["email"]}</dt>
                             <dd>${(salesforceConnector.identity.email)!}</dd>
 
-                            <dt>${street}</dt>
+                            <dt>${labels["street"]}</dt>
                             <dd>${(salesforceConnector.identity.addrStreet)!}</dd>
 
-                            <dt>${city}</dt>
+                            <dt>${labels["city"]}</dt>
                             <dd>${(salesforceConnector.identity.addrCity)!}</dd>
 
-                            <dt>${country}</dt>
+                            <dt>${labels["country"]}</dt>
                             <dd>${(salesforceConnector.identity.addrCountry)!}</dd>
 
-                            <dt>${state}</dt>
+                            <dt>${labels["state"]}</dt>
                             <dd>${(salesforceConnector.identity.addrState)!}</dd>
 
-                            <dt>${zipPostalCode}</dt>
+                            <dt>${labels["zip.postal.code"]}</dt>
                             <dd>${(salesforceConnector.identity.addrZip)!}</dd>
 
-                            <dt>${mobilePhone}</dt>
+                            <dt>${labels["mobile.phone"]}</dt>
                             <dd>${(salesforceConnector.identity.mobilePhone)!}</dd>
 
-                            <dt>${language}</dt>
+                            <dt>${labels["language"]}</dt>
                             <dd>${(salesforceConnector.identity.language)!}</dd>
 
-                            <dt>${locale}</dt>
+                            <dt>${labels["locale"]}</dt>
                             <dd>${(salesforceConnector.identity.locale)!}</dd>
 
-                            <dt>${userType}</dt>
+                            <dt>${labels["user.type"]}</dt>
                             <dd>${(salesforceConnector.identity.userType)!}</dd>
 
-                            <dt>${userId}</dt>
+                            <dt>${labels["user.id"]}</dt>
                             <dd>${(salesforceConnector.identity.userId)!}</dd>
 
                         </dl>
@@ -110,34 +100,34 @@
 
                         <dl class="dl-horizontal">
 
-                            <dt>${name}</dt>
+                            <dt>${labels["name"]}</dt>
                             <dd>${(salesforceConnector.organization.name)!}</dd>
 
-                            <dt>${phone}</dt>
+                            <dt>${labels["phone"]}</dt>
                             <dd>${(salesforceConnector.organization.phone)!}</dd>
 
-                            <dt>${primaryContact}</dt>
+                            <dt>${labels["primary.contact"]}</dt>
                             <dd>${(salesforceConnector.organization.primaryContact)!}</dd>
 
-                            <dt>${organizationType}</dt>
+                            <dt>${labels["organization.type"]}</dt>
                             <dd>${(salesforceConnector.organization.organizationType)!}</dd>
 
-                            <dt>${division}</dt>
+                            <dt>${labels["division"]}</dt>
                             <dd>${(salesforceConnector.organization.division)!}</dd>
 
-                            <dt>${instanceName}</dt>
+                            <dt>${labels["instance.name"]}</dt>
                             <dd>${(salesforceConnector.organization.instanceName)!}</dd>
 
-                            <dt>${fiscalYearStartMonth}</dt>
+                            <dt>${labels["fiscal.year.start.month"]}</dt>
                             <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}</dd>
 
-                            <dt>${defaultLocaleSidKey}</dt>
+                            <dt>${labels["default.locale.sid.key"]}</dt>
                             <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}</dd>
 
-                            <dt>${languageLocaleKey}</dt>
+                            <dt>${labels["language.locale.key"]}</dt>
                             <dd>${(salesforceConnector.organization.languageLocaleKey)!}</dd>
 
-                            <dt>${organizationId}</dt>
+                            <dt>${labels["organization.id"]}</dt>
                             <dd>${(salesforceConnector.organization.id)!}</dd>
 
                         </dl>
@@ -150,22 +140,22 @@
 
                         <dl class="dl-horizontal">
 
-                            <dt>${metadata}</dt>
+                            <dt>${labels["metadata"]}</dt>
                             <dd>${(salesforceConnector.identity.urls.metadata)!}</dd>
 
-                            <dt>${partner}</dt>
+                            <dt>${labels["partner"]}</dt>
                             <dd>${(salesforceConnector.identity.urls.partner)!}</dd>
 
-                            <dt>${rest}</dt>
+                            <dt>${labels["rest"]}</dt>
                             <dd>${(salesforceConnector.identity.urls.rest)!}</dd>
 
-                            <dt>${sobjects}</dt>
+                            <dt>${labels["sobjects"]}</dt>
                             <dd>${(salesforceConnector.identity.urls.sobjects)!}</dd>
 
-                            <dt>${profile}</dt>
+                            <dt>${labels["profile"]}</dt>
                             <dd>${(salesforceConnector.identity.urls.profile)!}</dd>
 
-                            <dt>${query}</dt>
+                            <dt>${labels["query"]}</dt>
                             <dd>${(salesforceConnector.identity.urls.query)!}</dd>
 
                         </dl>
@@ -195,8 +185,8 @@
                     type: "POST",
                     url: "/app/salesforce/connector",
                     data: data,
-                    success: function(data) {
-                        $('#success').show();
+                    complete: function(data) {
+                        $("#statusMessage").html(data.responseText);
                     }
                 });
 
