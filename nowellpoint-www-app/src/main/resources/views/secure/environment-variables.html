@@ -47,14 +47,12 @@
                                         <th>${labels["action"]}</th>
                                     </thead>
                                     <tbody>
-                                        <#list serviceInstance.environments as environment>
-                                            <#list environment.environmentVariables as variable>
-                                                <tr>
-                                                    <td>${(variable.variable)!}</td>
-                                                    <td>${(variable.value)!}</td>
-                                                    <td></td>
-                                                </tr>
-                                            </#list>
+                                        <#list environment.environmentVariables as variable>
+                                            <tr>
+                                                <td>${(variable.variable)!}</td>
+                                                <td>${(variable.value)!}</td>
+                                                <td></td>
+                                            </tr>
                                         </#list>
                                     </tbody>
                                 </table>
@@ -103,7 +101,7 @@
                 e.preventDefault();
 
             });
-            
+
             $(function() {
                 $('select[value]').each(function() {
                     $(this).val(this.getAttribute("value"));
@@ -113,7 +111,6 @@
             $("#environment").change(function() {
                 alert("Handler for .change() called.");
             });
-            
         </script>
 
     </@t.page>

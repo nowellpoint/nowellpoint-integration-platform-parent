@@ -104,7 +104,7 @@ public class SalesforceConnectorController {
 	 * @return
 	 */
 	
-	public static ModelAndView getEnvironmentVariables(Request request, Response response) {
+	private static ModelAndView getEnvironmentVariables(Request request, Response response) {
 		RequestWrapper requestWrapper = new RequestWrapper(request);
 		
 		Token token = requestWrapper.getToken();
@@ -114,14 +114,25 @@ public class SalesforceConnectorController {
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
 		
 		ServiceInstance serviceInstance = getServiceInstance(salesforceConnector, request.params(":key"));
+		/**
+		 * Optional<ServiceInstance> serviceInstance = salesforceConnector
+    			.getServiceInstances()
+    			.stream()
+    			.filter(p -> p.getKey().equals(request.params(":key")))
+    			.findFirst();
+		 */
 		
-		serviceInstance.getEnvironments().get(0).getEnvironmentVariables();
+		Optional<Environment> environment = serviceInstance.getEnvironments()
+				.stream()
+				.filter(p -> p.getName().equals(serviceInstance.getEnvironment()))
+				.findFirst();
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
 		model.put("labels", labels);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
+		model.put("environment", environment.get());
 		
 		return new ModelAndView(model, "secure/environment-variables.html");
 	}
