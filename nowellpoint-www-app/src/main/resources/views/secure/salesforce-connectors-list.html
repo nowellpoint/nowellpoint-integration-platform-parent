@@ -28,11 +28,13 @@
             <br>
 
             <div class="row">
-                <div class="col-sm-3">
-                    <#include "sidebar.html" />
+                <div class="col-sm-2">
+                    
+                    <#include "sidebar.html"/>
+
                 </div>
 
-                <div class="col-sm-9">
+                <div class="col-sm-10">
 
                     <div class="content table-responsive">
                         <table class="table table-hover">
@@ -48,7 +50,7 @@
                                 <#list salesforceConnectorsList as salesforceConnector>
                                     <tr id="${salesforceConnector.id}">
                                         <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
-                                        <td><a href="/app/salesforce/connector/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                        <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
                                         <td>${salesforceConnector.identity.username}</td>
@@ -74,7 +76,7 @@
                 var id = $('#confirmDialog').data('id');
                 var row = $('#'.concat(id));
                 $.ajax({
-                    url: '/app/salesforce/connector/' + id,
+                    url: '/app/connectors/salesforce/connector/' + id,
                     type: 'DELETE',
                     success: function() {
                         row.remove();

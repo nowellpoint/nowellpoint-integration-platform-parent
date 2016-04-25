@@ -31,6 +31,20 @@
                     <div id="statusMessage">
 
                     </div>
+                    
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+
+                    <#if successMessage??>
+                        <div id="success" class="alert alert-success collapse">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${successMessage}</div>
+                        </div>
+                    </#if>
 
                     <div class="col-md-2">
 
@@ -183,7 +197,7 @@
                 var data = $("#form").serialize()
                 $.ajax({
                     type: "POST",
-                    url: "/app/salesforce/connector",
+                    url: "/app/connectors/salesforce/connector",
                     data: data,
                     complete: function(data) {
                         $("#statusMessage").html(data.responseText);
