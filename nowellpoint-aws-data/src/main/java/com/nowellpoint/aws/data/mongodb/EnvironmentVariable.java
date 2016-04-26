@@ -6,6 +6,8 @@ public class EnvironmentVariable {
 	
 	private String value;
 	
+	private Boolean locked;
+	
 	public EnvironmentVariable() {
 		
 	}
@@ -29,5 +31,13 @@ public class EnvironmentVariable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 }

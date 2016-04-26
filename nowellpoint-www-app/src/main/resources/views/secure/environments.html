@@ -53,7 +53,7 @@
 
                         </div>
 
-                        <#list serviceInstance.environments as environment>
+                        <#list serviceInstance.environments?sort_by("index") as environment>
                             <div class="row">
                                 <input type="hidden" name="locked" id="locked" value="${(environment.locked?c)!}" />
                                 <input type="hidden" name="index" id="index" value="${(environment.index + 1)!}" />

@@ -30,6 +30,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Environment;
+import com.nowellpoint.www.app.model.EnvironmentVariable;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
@@ -114,18 +115,14 @@ public class SalesforceConnectorController {
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
 		
 		ServiceInstance serviceInstance = getServiceInstance(salesforceConnector, request.params(":key"));
-		/**
-		 * Optional<ServiceInstance> serviceInstance = salesforceConnector
-    			.getServiceInstances()
-    			.stream()
-    			.filter(p -> p.getKey().equals(request.params(":key")))
-    			.findFirst();
-		 */
 		
 		Optional<Environment> environment = serviceInstance.getEnvironments()
 				.stream()
 				.filter(p -> p.getName().equals(serviceInstance.getEnvironment()))
 				.findFirst();
+		
+		serviceInstance.getEnvironmentVariables().add(new EnvironmentVariable());
+		environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
@@ -181,21 +178,17 @@ public class SalesforceConnectorController {
     	
     	SalesforceConnector salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
     	
-    	Optional<ServiceInstance> serviceInstance = salesforceConnector
-    			.getServiceInstances()
-    			.stream()
-    			.filter(p -> p.getKey().equals(request.params(":key")))
-    			.findFirst();
+    	ServiceInstance serviceInstance = getServiceInstance(salesforceConnector, request.params(":key"));
     	
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("account", account);
 		model.put("labels", labels);
 		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance.isPresent() ? serviceInstance.get() : null);
+		model.put("serviceInstance", serviceInstance);
 		model.put("sobjects", Collections.emptyList());
 		model.put("loginResult", null);
 		
-		return new ModelAndView(model, "secure/".concat(serviceInstance.get().getConfigurationPage()));
+		return new ModelAndView(model, "secure/".concat(serviceInstance.getConfigurationPage()));
 	}
 	
 	/**
@@ -384,10 +377,7 @@ public class SalesforceConnectorController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class)
-				.stream()
-				.sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate()))
-				.collect(Collectors.toList());
+		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
     	model.put("account", account);
@@ -554,17 +544,13 @@ public class SalesforceConnectorController {
 		}
 		
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token.getAccessToken(), request.params(":id"));
-    	
-    	Optional<ServiceInstance> serviceInstance = salesforceConnector
-    			.getServiceInstances()
-    			.stream()
-    			.filter(p -> p.getKey().equals(request.params(":key")))
-    			.findFirst();
+		
+		ServiceInstance serviceInstance = getServiceInstance(salesforceConnector, request.params(":key"));
     	
     	Map<String, Object> model = new HashMap<String, Object>();
 		model.put("labels", labels);
 		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance.get());
+		model.put("serviceInstance", serviceInstance);
 		model.put("sobjects", sobjects);
 		model.put("loginResult", result);
 		model.put("errorMessage", errorMessage);
@@ -709,12 +695,6 @@ public class SalesforceConnectorController {
     	
     	SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
     	
-    	salesforceConnector.setServiceInstances(salesforceConnector
-    			.getServiceInstances()
-    			.stream()
-    			.sorted((p1, p2) -> p1.getKey().compareTo(p2.getKey()))
-    			.collect(Collectors.toList()));
-    	
     	return salesforceConnector;
 	}
 	
@@ -763,13 +743,6 @@ public class SalesforceConnectorController {
     			.stream()
     			.filter(p -> p.getKey().equals(key))
     			.findFirst();
-		
-		if (serviceInstance.isPresent()) {
-    		serviceInstance.get().setEnvironments(serviceInstance.get().getEnvironments()
-    				.stream()
-    				.sorted((p1, p2) -> p1.getIndex().compareTo(p2.getIndex()))
-    				.collect(Collectors.toList()));
-    	}
     	
     	return serviceInstance.get();
 	}

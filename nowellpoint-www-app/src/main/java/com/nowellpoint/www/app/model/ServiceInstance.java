@@ -33,11 +33,14 @@ public class ServiceInstance {
 	private String environment;
 	
 	private List<Environment> environments;
+	
+	private List<EnvironmentVariable> environmentVariables;
 
 	private String configurationPage;
 	
 	public ServiceInstance() {
 		environments = new ArrayList<Environment>();
+		environmentVariables = new ArrayList<EnvironmentVariable>();
 	}
 
 	public Parent getParent() {
@@ -154,5 +157,13 @@ public class ServiceInstance {
 
 	public void addEnvironment(String name, String label, Boolean active, Boolean locked) {
 		environments.add(new Environment(name, label, active, locked));
+	}
+	
+	public List<EnvironmentVariable> getEnvironmentVariables() {
+		return environmentVariables;
+	}
+
+	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
+		this.environmentVariables = environmentVariables;
 	}
 }

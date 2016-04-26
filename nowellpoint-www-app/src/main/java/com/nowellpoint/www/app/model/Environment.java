@@ -19,6 +19,7 @@ public class Environment {
 	
 	public Environment() {
 		setEnvironmentVariables(new HashSet<EnvironmentVariable>());
+		environmentVariables.add(new EnvironmentVariable());
 		setLocked(Boolean.FALSE);
 		setActive(Boolean.FALSE);
 	}

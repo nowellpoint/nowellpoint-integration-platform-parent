@@ -47,7 +47,7 @@
                                 <th>${labels["action"]}</th>
                             </thead>
                             <tbody>
-                                <#list salesforceConnectorsList as salesforceConnector>
+                                <#list salesforceConnectorsList?sort_by("createdDate") as salesforceConnector>
                                     <tr id="${salesforceConnector.id}">
                                         <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
                                         <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>

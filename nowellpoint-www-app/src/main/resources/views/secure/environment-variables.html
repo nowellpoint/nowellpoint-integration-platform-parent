@@ -35,31 +35,103 @@
 
                     </div>
 
-
                     <div class="col-sm-10">
                         <form class="form-vertical" id="form" role="form">
 
-                            <div class="content table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <th>${labels["variable"]}</th>
-                                        <th>${labels["value"]}</th>
-                                        <th>${labels["action"]}</th>
-                                    </thead>
-                                    <tbody>
-                                        <#list environment.environmentVariables as variable>
-                                            <tr>
-                                                <td>${(variable.variable)!}</td>
-                                                <td>${(variable.value)!}</td>
-                                                <td></td>
-                                            </tr>
-                                        </#list>
-                                    </tbody>
-                                </table>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">${labels["default.environment.variables"]}</div>
+                                <div class="panel-body">
+
+                                    <div class="content table-responsive">
+                                        <table id="defaultVariables" class="table table-hover">
+                                            <thead>
+                                                <th>${labels["variable"]}</th>
+                                                <th>${labels["value"]}</th>
+                                                <th>${labels["remove"]}</th>
+                                            </thead>
+                                            <tbody>
+                                                <#list serviceInstance.environmentVariables as variable>
+                                                    <tr>
+                                                        <#if ! variable.locked>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(variable.variable)!}" />
+                                                            </td>
+                                                        </#if>
+                                                        <#if variable.locked>
+                                                            <td>${(variable.variable)!}</td>
+                                                        </#if>
+                                                        <#if ! variable.locked>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="value" id="value" value="${(variable.value)!}" />
+                                                            </td>
+                                                        </#if>
+                                                        <#if variable.locked>
+                                                            <td>${(variable.value)!}</td>
+                                                        </#if>
+                                                        <td>
+                                                            <#if ! variable.locked>
+                                                                <a id="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a>
+                                                            </#if>
+                                                        </td>
+                                                    </tr>
+                                                </#list>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="pull-right">
+                                        <a id="addDefaultVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                                    </div>
+
+                                </div>
                             </div>
 
-                            <div class="pull-right">
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">${labels["instance.environment.variables"]}</div>
+                                <div class="panel-body">
+                                    <div class="content table-responsive">
+                                        <table id="instanceVariables" class="table table-hover">
+                                            <thead>
+                                                <th>${labels["variable"]}</th>
+                                                <th>${labels["value"]}</th>
+                                                <th>${labels["remove"]}</th>
+                                            </thead>
+                                            <tbody>
+                                                <#list environment.environmentVariables as variable>
+                                                    <tr>
+                                                        <#if ! variable.locked>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(variable.variable)!}" />
+                                                            </td>
+                                                        </#if>
+                                                        <#if variable.locked>
+                                                            <td>${(variable.variable)!}</td>
+                                                        </#if>
+                                                        <#if ! variable.locked>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="value" id="value" value="${(variable.value)!}" />
+                                                            </td>
+                                                        </#if>
+                                                        <#if variable.locked>
+                                                            <td>${(variable.value)!}</td>
+                                                        </#if>
+                                                        <td>
+                                                            <#if ! variable.locked>
+                                                                <a href="#" id="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a>
+                                                            </#if>
+                                                        </td>
+                                                </#list>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="pull-right">
+                                        <a id="addInstanceVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                                    </div>
+                                </div>
                             </div>
 
                         </form>
@@ -67,7 +139,6 @@
                     </div>
 
                     <div class="col-sm-2">
-
                         <select id="environment" name="environment" class="form-control" value="${(serviceInstance.environment)!}" required="" autofocus="">
                             <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
                             <#list serviceInstance.environments as environment>
@@ -76,9 +147,7 @@
                                 </#if>
                             </#list>
                         </select>
-
                     </div>
-
                 </div>
             </div>
         </div>
@@ -110,6 +179,25 @@
 
             $("#environment").change(function() {
                 alert("Handler for .change() called.");
+            });
+
+            $('#addDefaultVariable').click(function() {
+                $('#defaultVariables tbody').append('<tr><td><input type="text" class="form-control" name="variable" id="variable" autofocus=""/>' 
+                                                    + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>'
+                                                    + '<a id="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
+            });
+
+            $('#addInstanceVariable').click(function() {
+                $('#instanceVariables tbody').append('<tr><td><input type="text" class="form-control" name="variable" id="variable" autofocus=""/>' 
+                                                    + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>'
+                                                    + '<a id="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
+            });
+
+            $('#removeInstanceVariable').click(function() {
+                $(this).closest('tr').fadeTo(400, 0, function() {
+                    $(this).remove();
+                });
+                return false;
             });
         </script>
 

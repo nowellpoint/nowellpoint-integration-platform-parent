@@ -186,7 +186,7 @@
                                     <th>${labels["action"]}</th>
                                 </thead>
                                 <tbody>
-                                    <#list salesforceConnector.serviceInstances as service>
+                                    <#list salesforceConnector.serviceInstances?sort_by("key") as service>
                                         <tr id="${service.key}">
                                             <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}/service/${service.key}/details">${service.providerName}</a></td>
                                             <td>${service.serviceName}</td>
