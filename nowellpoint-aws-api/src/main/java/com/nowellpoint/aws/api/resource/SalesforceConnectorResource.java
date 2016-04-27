@@ -49,6 +49,7 @@ import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.aws.data.mongodb.Environment;
+import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
@@ -287,6 +288,24 @@ public class SalesforceConnectorResource {
 		return Response.ok(resource)
 				.build(); 
 	}
+	
+	@POST
+	@Path("connector/{id}/service/{key}/variables")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveVariables(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			Set<EnvironmentVariable> environmentVariables) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.addVariables(subject, id, key, null, environmentVariables);
+		
+		return Response.ok(resource)
+				.build(); 
+		
+	}		
 	
 	@POST
 	@Path("connector/{id}/service/{key}")

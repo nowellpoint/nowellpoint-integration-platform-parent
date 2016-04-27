@@ -40,8 +40,10 @@ import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.RequestWrapper;
 import com.nowellpoint.www.app.util.ResourceBundleUtil;
 
+import org.slf4j.*;
+
 import freemarker.ext.beans.ResourceBundleModel;
-import freemarker.log.Logger;
+//import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.ModelAndView;
 import spark.Request;
@@ -50,7 +52,9 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 public class SalesforceConnectorController {
 	
-	private static final Logger LOGGER = Logger.getLogger(SalesforceConnectorController.class.getName());
+	//private static final Logger LOGGER = Logger.getLogger(SalesforceConnectorController.class.getName());
+	
+	private final static Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
 	
 	private static ResourceBundleModel labels;
 	
@@ -95,6 +99,8 @@ public class SalesforceConnectorController {
         get("/app/connectors/salesforce/connector/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/connector/:id/service/:key/environments", (request, response) -> saveEnvironments(request, response));
+        
+        post("/app/connectors/salesforce/connector/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response));
         
 	}
 	
@@ -216,7 +222,7 @@ public class SalesforceConnectorController {
 				.parameter("serviceProviderId", request.queryParams("serviceProviderId"))
 				.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
 		String html = null;
 		
@@ -246,7 +252,7 @@ public class SalesforceConnectorController {
     			.queryParameter("state", request.queryParams("id"))
     			.execute();
     	
-    	LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " : " + httpResponse.getHeaders().get("Location"));
+    	LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " : " + httpResponse.getHeaders().get("Location"));
 		
 		response.redirect(httpResponse.getHeaders().get("Location").get(0));		
 		
@@ -375,7 +381,7 @@ public class SalesforceConnectorController {
     			.path("connectors")
     			.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
 		
@@ -410,7 +416,7 @@ public class SalesforceConnectorController {
     			.parameter("id", request.queryParams("id"))
     			.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());	
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());	
     	
     	String html = null;
 		
@@ -444,7 +450,7 @@ public class SalesforceConnectorController {
     			.path(request.params(":id"))
     			.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
 		return "";
 	}
@@ -582,7 +588,7 @@ public class SalesforceConnectorController {
 			if (! names[i].trim().isEmpty()) {
 				Environment environment = new Environment();
 				environment.setIndex(Integer.valueOf(indexes[i]));
-				environment.setName(names[i]);
+				environment.setName(names[i].toUpperCase());
 				environment.setLabel(label[i]);
 				environment.setActive(request.queryMap().get("active" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
 				environment.setLocked(Boolean.valueOf(locked[i]));
@@ -605,6 +611,57 @@ public class SalesforceConnectorController {
     			.execute();
 		
 		String html = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			html = success(MessageProvider.getMessage(Locale.US, "saveSuccess"));
+		} else {
+			html = error(httpResponse.getEntity(JsonNode.class).get("message").asText());
+		}
+		
+		return html;
+	}
+	
+	private static String saveEnvironmentVariables(Request request, Response respose) {
+		
+		RequestWrapper requestWrapper = new RequestWrapper(request);
+		
+		Token token = requestWrapper.getToken();
+		
+		String environmentName = request.queryParams("environment");
+		String[] locked = request.queryParamsValues("locked");
+		String[] variables = request.queryParamsValues("variable");
+		String[] values = request.queryParamsValues("value");
+		
+		LOG.info(environmentName);
+		
+		Set<EnvironmentVariable> environmentVariables = new HashSet<EnvironmentVariable>();
+		
+		for (int i = 0; i < values.length; i++) {
+			if (! values[i].trim().isEmpty()) {
+				EnvironmentVariable environmentVariable = new EnvironmentVariable();
+				environmentVariable.setLocked(Boolean.valueOf(locked[i]));
+				environmentVariable.setValue(values[i].toUpperCase());
+				environmentVariable.setVariable(variables[i]);
+				environmentVariables.add(environmentVariable);
+			}	
+		}
+		
+		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("salesforce")
+				.path("connector")
+				.path(request.params(":id"))
+				.path("service")
+				.path(request.params(":key"))
+				.path("variables")
+				.body(environmentVariables)
+    			.execute();
+
+		
+		String html = "";
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			html = success(MessageProvider.getMessage(Locale.US, "saveSuccess"));

@@ -35,13 +35,15 @@
 
                     </div>
 
-                    <div class="col-sm-10">
-                        <form class="form-vertical" id="form" role="form">
-
+                        <div class="col-sm-10">
+                            
+                            <form class="form-vertical" id="defaultVariablesForm" role="form">
 
                             <div class="panel panel-default">
                                 <div class="panel-heading">${labels["default.environment.variables"]}</div>
                                 <div class="panel-body">
+                                    
+                                    
 
                                     <div class="content table-responsive">
                                         <table id="defaultVariables" class="table table-hover">
@@ -53,6 +55,7 @@
                                             <tbody>
                                                 <#list serviceInstance.environmentVariables as variable>
                                                     <tr>
+                                                        <input type="hidden" name="locked" id="locked" value="${(variable.locked?c)!}" />
                                                         <#if ! variable.locked>
                                                             <td>
                                                                 <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(variable.variable)!}" />
@@ -87,6 +90,10 @@
 
                                 </div>
                             </div>
+                                
+                                </form>    
+                            
+                            <form class="form-vertical" id="instanceVariablesForm" role="form">
 
                             <div class="panel panel-default">
                                 <div class="panel-heading">${labels["instance.environment.variables"]}</div>
@@ -101,6 +108,7 @@
                                             <tbody>
                                                 <#list environment.environmentVariables as variable>
                                                     <tr>
+                                                        <input type="hidden" name="locked" id="locked" value="${(variable.locked?c)!}" />
                                                         <#if ! variable.locked>
                                                             <td>
                                                                 <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(variable.variable)!}" />
@@ -133,21 +141,22 @@
                                     </div>
                                 </div>
                             </div>
+                                
+                                </form>
 
-                        </form>
+                        </div>
 
-                    </div>
-
-                    <div class="col-sm-2">
-                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.environment)!}" required="" autofocus="">
-                            <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
-                            <#list serviceInstance.environments as environment>
-                                <#if environment.active>
-                                    <option value="${environment.name}">${environment.label}</option>
-                                </#if>
-                            </#list>
-                        </select>
-                    </div>
+                        <div class="col-sm-2">
+                            <select id="environment" name="environment" class="form-control" value="${(serviceInstance.environment)!}">
+                                <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
+                                <#list serviceInstance.environments as environment>
+                                    <#if environment.active>
+                                        <option value="${environment.name}">${environment.label}</option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </div>
+                   
                 </div>
             </div>
         </div>
@@ -155,12 +164,28 @@
         <#include "spinner.html" />
 
         <script>
-            $('#form').submit(function(e) {
-                var params = $("#form").serialize();
+            $('#defaultVariablesForm').submit(function(e) {
+                var params = $("#defaultVariablesForm").serialize();
                 $.ajax({
                     dataType: "html",
                     type: "POST",
-                    url: "/app/connectors/salesforce/connector/${id!}/service/${key!}/environments",
+                    url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
+                    data: params,
+                    complete: function(data) {
+                        $("#statusMessage").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+            
+            $('#instanceVariablesForm').submit(function(e) {
+                var params = $("#instanceVariablesForm").serialize();
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
                     data: params,
                     complete: function(data) {
                         $("#statusMessage").html(data.responseText);
@@ -182,15 +207,11 @@
             });
 
             $('#addDefaultVariable').click(function() {
-                $('#defaultVariables tbody').append('<tr><td><input type="text" class="form-control" name="variable" id="variable" autofocus=""/>' 
-                                                    + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>'
-                                                    + '<a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
+                $('#defaultVariables tbody').append('<tr><input type="hidden" name="locked" id="locked" value="false" /><td><input type="text" class="form-control" name="variable" id="variable"/>' + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>' + '<a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
             });
 
             $('#addInstanceVariable').click(function() {
-                $('#instanceVariables tbody').append('<tr><td><input type="text" class="form-control" name="variable" id="variable" autofocus=""/>' 
-                                                    + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>'
-                                                    + '<a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
+                $('#instanceVariables tbody').append('<tr><input type="hidden" name="locked" id="locked" value="false" /><td><input type="text" class="form-control" name="variable" id="variable"/>' + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>' + '<a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
             });
 
             $(document).on("click", 'a.removeInstanceVariable', function() {
@@ -199,7 +220,6 @@
                 });
                 return false;
             })
-
         </script>
 
     </@t.page>

@@ -47,6 +47,11 @@
 			<version>0.7</version>
 		</dependency>
 		<dependency>
+			<groupId>org.logback-extensions</groupId>
+			<artifactId>logback-ext-loggly</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>nowellpoint-aws-core</artifactId>
 			<version>${project.version}</version>
