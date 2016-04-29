@@ -6,6 +6,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
+//import org.wildfly.swarm.swagger.SwaggerArchive;
 
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -36,13 +37,7 @@ public class Main {
         // 
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
-        		.addPackage("com.nowellpoint.aws.api.dto")
-        		.addPackage("com.nowellpoint.aws.api.dto.idp")
-        		.addPackage("com.nowellpoint.aws.api.dto.sforce")
-        		.addPackage("com.nowellpoint.aws.api.resource")
-        		.addPackage("com.nowellpoint.aws.api.service")
-        		.addPackage("com.nowellpoint.aws.api.util")
-        		.addPackage("com.nowellpoint.aws.api.exception")
+        		.addPackages(true, Package.getPackage("com.nowellpoint.aws.api"))
         		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebInfResource(new ClassLoaderAsset("META-INF/beans.xml", Main.class.getClassLoader()), "beans.xml")
         		.addAllDependencies();
@@ -51,7 +46,7 @@ public class Main {
 //        		.setVersion("1.0")
 //        		.setTitle("Nowellpoint Cloud Services API")
 //        		.setContextRoot("/");
-        
+//        
 //        archive.setResourcePackages("com.nowellpoint.aws.api.resource");
         
         //
