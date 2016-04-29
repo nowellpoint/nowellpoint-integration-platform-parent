@@ -39,13 +39,27 @@
             </table>
         </div>
 
-        <div class="pull-right">
-            <#if successMessage??>
-                <span id="success-message" class="glyphicon glyphicon-ok fa-2x"></span>
-            </#if>
-            ${errorMessage!}
-            <a id="addDefaultVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
-            <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+        ${errorMessage!}
+
+        <div class="row">
+            <div class="col-sm-10">
+                <div class="pull-right">
+                <#if successMessage??>
+                    <p id="success-message" class="text-success">
+                        ${successMessage!}
+                    </p>
+                </#if>
+                </div>    
+            </div>
+
+            <div class="col-sm-2">
+                <div class="pull-right">
+
+                    <a id="addDefaultVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
+                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
