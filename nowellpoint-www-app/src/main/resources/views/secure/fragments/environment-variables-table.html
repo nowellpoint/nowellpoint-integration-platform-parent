@@ -1,0 +1,25 @@
+<#list environment.environmentVariables as variable>
+    <tr>
+        <input type="hidden" name="locked" id="locked" value="${(variable.locked?c)!}" />
+        <#if ! variable.locked>
+            <td>
+                <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(variable.variable)!}" />
+            </td>
+        </#if>
+        <#if variable.locked>
+            <td>${(variable.variable)!}</td>
+        </#if>
+        <#if ! variable.locked>
+            <td>
+                <input type="text" class="form-control" name="value" id="value" value="${(variable.value)!}" />
+            </td>
+        </#if>
+        <#if variable.locked>
+            <td>${(variable.value)!}</td>
+        </#if>
+        <td>
+            <#if ! variable.locked>
+                <a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a>
+            </#if>
+        </td>
+</#list>

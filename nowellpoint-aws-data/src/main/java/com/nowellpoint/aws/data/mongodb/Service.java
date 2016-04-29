@@ -26,8 +26,12 @@ public class Service implements Serializable {
 	private String description;
 	
 	private String company;
+	
+	private Integer sandboxCount;
 
 	private String configurationPage;
+	
+	private Set<EnvironmentVariable> environmentVariables;
 	
 	private Set<String> configurationParams;
 	
@@ -105,6 +109,22 @@ public class Service implements Serializable {
 
 	public void setCompany(String company) {
 		this.company = company;
+	}
+
+	public Integer getSandboxCount() {
+		return sandboxCount;
+	}
+
+	public void setSandboxCount(Integer sandboxCount) {
+		this.sandboxCount = sandboxCount;
+	}
+	
+	public Set<EnvironmentVariable> getEnvironmentVariables() {
+		return environmentVariables;
+	}
+
+	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
+		this.environmentVariables = environmentVariables;
 	}
 
 	public Set<String> getConfigurationParams() {

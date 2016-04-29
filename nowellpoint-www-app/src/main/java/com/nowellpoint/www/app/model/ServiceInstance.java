@@ -30,7 +30,7 @@ public class ServiceInstance {
 	
 	private String tag;
 	
-	private String environment;
+	private String defaultEnvironment;
 	
 	private List<Environment> environments;
 	
@@ -131,12 +131,12 @@ public class ServiceInstance {
 		this.tag = tag;
 	}
 
-	public String getEnvironment() {
-		return environment;
+	public String getDefaultEnvironment() {
+		return defaultEnvironment;
 	}
 
-	public void setEnvironment(String environment) {
-		this.environment = environment;
+	public void setDefaultEnvironment(String defaultEnvironment) {
+		this.defaultEnvironment = defaultEnvironment;
 	}
 
 	public String getConfigurationPage() {

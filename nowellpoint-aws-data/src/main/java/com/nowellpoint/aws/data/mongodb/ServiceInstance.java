@@ -35,7 +35,7 @@ public class ServiceInstance implements Serializable {
 	
 	private String tag;
 	
-	private String environment;
+	private String defaultEnvironment;
 	
 	private Set<Environment> environments;
 	
@@ -136,12 +136,12 @@ public class ServiceInstance implements Serializable {
 		this.configurationPage = configurationPage;
 	}
 	
-	public String getEnvironment() {
-		return environment;
+	public String getDefaultEnvironment() {
+		return defaultEnvironment;
 	}
-	
-	public void setEnvironment(String environment) {
-		this.environment = environment;
+
+	public void setDefaultEnvironment(String defaultEnvironment) {
+		this.defaultEnvironment = defaultEnvironment;
 	}
 
 	public Set<Environment> getEnvironments() {

@@ -1,0 +1,51 @@
+<div class="panel panel-default">
+    <div class="panel-heading">${labels["default.environment.variables"]}</div>
+    <div class="panel-body">
+        <div class="content table-responsive">
+            <table id="defaultVariables" class="table table-hover">
+                <thead>
+                    <th>${labels["variable"]}</th>
+                    <th>${labels["value"]}</th>
+                    <th>${labels["remove"]}</th>
+                </thead>
+                <tbody>
+                    <#list serviceInstance.environmentVariables as variable>
+                        <tr>
+                            <input type="hidden" name="locked" id="locked" value="${(variable.locked?c)!}" />
+                            <#if ! variable.locked>
+                                <td>
+                                    <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(variable.variable)!}" />
+                                </td>
+                            </#if>
+                            <#if variable.locked>
+                                <td>${(variable.variable)!}</td>
+                            </#if>
+                            <#if ! variable.locked>
+                                <td>
+                                    <input type="text" class="form-control" name="value" id="value" value="${(variable.value)!}" />
+                                </td>
+                            </#if>
+                            <#if variable.locked>
+                                <td>${(variable.value)!}</td>
+                            </#if>
+                            <td>
+                                <#if ! variable.locked>
+                                    <a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a>
+                                </#if>
+                            </td>
+                        </tr>
+                    </#list>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pull-right">
+            <#if successMessage??>
+                <span id="success-message" class="glyphicon glyphicon-ok fa-2x"></span>
+            </#if>
+            ${errorMessage!}
+            <a id="addDefaultVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
+            <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+        </div>
+    </div>
+</div>

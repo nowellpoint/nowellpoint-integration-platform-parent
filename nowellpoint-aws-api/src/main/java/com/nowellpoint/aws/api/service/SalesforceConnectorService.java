@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +21,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.mongodb.Environment;
 import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
 import com.nowellpoint.aws.data.mongodb.SalesforceConnector;
@@ -72,6 +75,51 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			resource = find(id);
 			hset( id, subject, resource );
 		}
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO addService(ServiceProviderDTO serviceProvider, String subject, String id) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
+		serviceInstance.setServiceType(serviceProvider.getService().getType());
+		serviceInstance.setConfigurationPage(serviceProvider.getService().getConfigurationPage());
+		serviceInstance.setCurrencyIsoCode(serviceProvider.getService().getCurrencyIsoCode());
+		serviceInstance.setProviderName(serviceProvider.getName());
+		serviceInstance.setIsActive(Boolean.FALSE);
+		serviceInstance.setServiceName(serviceProvider.getService().getName());
+		serviceInstance.setPrice(serviceProvider.getService().getPrice());
+		serviceInstance.setProviderType(serviceProvider.getType());
+		serviceInstance.setUom(serviceProvider.getService().getUnitOfMeasure());
+		
+		Set<Environment> environments = new HashSet<Environment>();
+		
+		Environment environment = new Environment();
+		environment.setActive(Boolean.TRUE);
+		environment.setIndex(0);
+		environment.setLabel("Production");
+		environment.setLocked(Boolean.TRUE);
+		environment.setName("PRODUCTION");
+		environments.add(environment);
+		
+		for (int i = 0; i < serviceProvider.getService().getSandboxCount(); i++) {
+			environment = new Environment();
+			environment.setActive(Boolean.FALSE);
+			environment.setIndex(i + 1);
+			environment.setLocked(Boolean.FALSE);
+			environment.setName("SANDBOX_" + (i + 1));
+			environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
+			environments.add(environment);
+		}
+		
+		serviceInstance.setEnvironments(environments);
+		
+		resource.setSubject(subject);
+		resource.addServiceInstance(serviceInstance);
+		
+		updateSalesforceConnector(resource);
+		
 		return resource;
 	}
 	
