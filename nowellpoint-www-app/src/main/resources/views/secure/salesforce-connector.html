@@ -48,7 +48,7 @@
 
                     <div class="col-md-10">
                         <dl class="dl-horizontal">
-                                                     
+
                             <dt>${labels["id"]}</dt>
                             <dd>${(salesforceConnector.identity.id)!}</dd>
 
@@ -90,7 +90,7 @@
 
                             <dt>${labels["user.id"]}</dt>
                             <dd>${(salesforceConnector.identity.userId)!}</dd>
-                            
+
                             <dt>${labels["tag"]}</dt>
                             <dd>${(salesforceConnector.tag)!}</dd>
 
@@ -103,7 +103,7 @@
                         <br>
 
                         <dl class="dl-horizontal">
-                            
+
                             <dt>${labels["name"]}</dt>
                             <dd>${(salesforceConnector.organization.name)!}</dd>
 
@@ -133,7 +133,7 @@
 
                             <dt>${labels["organization.id"]}</dt>
                             <dd>${(salesforceConnector.organization.id)!}</dd>
-                            
+
                         </dl>
 
                         <div class="hr-divider">
@@ -166,43 +166,43 @@
 
                     </div>
 
+                    <br>
+
                     <div class="col-md-12">
-
-                        <br>
-
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">${services}</h3>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">${labels["services"]}</div>
+                            <div class="panel-body">
+                                <div class="content table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <th class="col-xs-2">${labels["type"]}</th>
+                                            <th class="col-xs-3">${labels["service.name"]}</th>
+                                            <th class="col-xs-6">${labels["tag"]}</th>
+                                            <th class="col-xs-1 text-center">${labels["active"]}</th>
+                                        </thead>
+                                        <tbody>
+                                            <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
+                                                <tr id="${service.key}">
+                                                    <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}/service/${service.key}/details">${service.providerName}</a></td>
+                                                    <td>${service.serviceName!}</td>
+                                                    <td>${service.tag!}</td>
+                                                    <td class="text-center">
+                                                        <#if service.isActive>
+                                                            ${labels["yes"]}
+                                                        </#if>
+                                                        <#if ! service.isActive>
+                                                            ${labels["no"]}
+                                                        </#if>
+                                                    </td>
+                                                </tr>
+                                            </#list>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-
-                        <br>
-
-                        <div class="content table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <th>${labels["type"]}</th>
-                                    <th>${labels["service.name"]}</th>
-                                    <th>${labels["tag"]}</th>
-                                    <th>${labels["active"]}</th>
-                                    <th>${labels["action"]}</th>
-                                </thead>
-                                <tbody>
-                                    <#list salesforceConnector.serviceInstances?sort_by("key") as service>
-                                        <tr id="${service.key}">
-                                            <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}/service/${service.key}/details">${service.providerName}</a></td>
-                                            <td>${service.serviceName}</td>
-                                            <td>${service.tag!}</td>
-                                            <td>${(service.isActive?then("Yes", "No"))!}</td>
-                                            <td></td>
-                                        </tr>
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
-
     </@t.page>

@@ -4,9 +4,9 @@
         <div class="content table-responsive">
             <table id="defaultVariables" class="table table-hover">
                 <thead>
-                    <th>${labels["variable"]}</th>
-                    <th>${labels["value"]}</th>
-                    <th>${labels["remove"]}</th>
+                    <th class="col-xs-5">${labels["variable"]}</th>
+                    <th class="col-xs-6">${labels["value"]}</th>
+                    <th class="col-xs-1 text-center">${labels["remove"]}</th>
                 </thead>
                 <tbody>
                     <#list serviceInstance.environmentVariables as variable>
@@ -28,7 +28,7 @@
                             <#if variable.locked>
                                 <td>${(variable.value)!}</td>
                             </#if>
-                            <td>
+                            <td class="text-center">
                                 <#if ! variable.locked>
                                     <a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a>
                                 </#if>
@@ -38,28 +38,27 @@
                 </tbody>
             </table>
         </div>
-
-        ${errorMessage!}
-
         <div class="row">
             <div class="col-sm-10">
                 <div class="pull-right">
-                <#if successMessage??>
-                    <p id="success-message" class="text-success">
-                        ${successMessage!}
-                    </p>
-                </#if>
-                </div>    
+                    <#if successMessage??>
+                        <p id="success-message" class="text-success">
+                            ${successMessage!}
+                        </p>
+                    </#if>
+                    <#if errorMessage??>
+                        <p id="error-message" class="text-danger">
+                            ${errorMessage!}
+                        </p>
+                    </#if>
+                </div>
             </div>
-
             <div class="col-sm-2">
                 <div class="pull-right">
-
                     <a id="addDefaultVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
                     <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                 </div>
             </div>
         </div>
-
     </div>
 </div>

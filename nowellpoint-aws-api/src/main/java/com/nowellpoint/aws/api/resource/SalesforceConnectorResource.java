@@ -313,15 +313,7 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
-		
-		resource.getServiceInstances().stream().forEach(p -> {
-			if (p.getKey().equals(key)) {
-				resource.getServiceInstances().remove(p);
-			}
-		});
-		
-		salesforceConnectorService.updateSalesforceConnector(resource);
+		SalesforceConnectorDTO resource = salesforceConnectorService.removeService(subject, id, key);
 		
 		return Response.ok()
 				.entity(resource)

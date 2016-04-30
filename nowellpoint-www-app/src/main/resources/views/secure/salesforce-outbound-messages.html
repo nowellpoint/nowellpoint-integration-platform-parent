@@ -11,21 +11,25 @@
                         <h6 class="dashhead-subtitle">${serviceInstance.providerName!}</h6>
                         <h2 class="dashhead-title">${labels["outbound.message.setup"]}</h2>
                     </div>
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="/app/providers" class="btn btn-lg btn-danger-outline" role="button">${labels["delete.service"]}</a>
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <br>
 
             <div class="hr-divider">
+                
             </div>
 
             <br>
 
             <div class="row">
                 <div class="col-sm-1">
-
                     <#include "salesforce-service-nav.html" />
-
                 </div>
 
                 <div class="col-sm-11">

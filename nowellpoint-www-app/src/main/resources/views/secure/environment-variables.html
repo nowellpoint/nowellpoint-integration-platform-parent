@@ -41,29 +41,8 @@
                             <#include "fragments/default-environment-variables-table.html" />
                         </form>
 
-                        <form class="form-vertical" id="instanceVariablesForm" role="form">
-                            <input type="hidden" name="defaultEnvironment" id="defaulEnvironment" value="${(serviceInstance.defaultEnvironment)!}" />
-                            <div class="panel panel-default">
-                                <div class="panel-heading">${labels["instance.environment.variables"]}</div>
-                                <div class="panel-body">
-                                    <div class="content table-responsive">
-                                        <table id="instanceVariables" class="table table-hover">
-                                            <thead>
-                                                <th>${labels["variable"]}</th>
-                                                <th>${labels["value"]}</th>
-                                                <th>${labels["remove"]}</th>
-                                            </thead>
-                                            <tbody id="table-body">
-                                                <#include "fragments/environment-variables-table.html" />
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="pull-right">
-                                        <a id="addInstanceVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
-                                    </div>
-                                </div>
-                            </div>
+                        <form class="form-vertical" id="instance-variables-form" role="form">
+                            <#include "fragments/environment-variables-table.html" />
                         </form>
                     </div>
                     <div class="col-sm-2">
@@ -100,15 +79,16 @@
 
             });
 
-            $('#instanceVariablesForm').submit(function(e) {
-                var params = $("#instanceVariablesForm").serialize();
+            $('#instance-variables-form').submit(function(e) {
+                var params = $("#instance-variables-form").serialize();
                 $.ajax({
                     dataType: "html",
                     type: "POST",
                     url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
                     data: params,
                     complete: function(data) {
-                        $("#status-message").html(data.responseText);
+                        $("#instance-variables-form").html(data.responseText);
+                        $("#success-message").fadeOut(3000);
                     }
                 });
 
@@ -138,11 +118,32 @@
             });
 
             $('#addDefaultVariable').click(function() {
-                $('#defaultVariables tbody').append('<tr><input type="hidden" name="locked" id="locked" value="false" /><td><input type="text" class="form-control" name="variable" id="variable"/>' + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>' + '<a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
+                $.ajax({
+                    dataType: "html",
+                    type: "GET",
+                    url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
+                    complete: function(data) {
+                        $("#default-variables-form").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
             });
 
             $('#addInstanceVariable').click(function() {
-                $('#instanceVariables tbody').append('<tr><input type="hidden" name="locked" id="locked" value="false" /><td><input type="text" class="form-control" name="variable" id="variable"/>' + '</td><td><input type="text" class="form-control" name="value" id="value" /></td><td>' + '<a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-2x"></span></a></span></td></tr>');
+                $("#defaultEnvironment").val(this.value);
+                $.ajax({
+                    dataType: "html",
+                    type: "GET",
+                    url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
+                    data: params,
+                    complete: function(data) {
+                        $("#instance-variables-form").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+
             });
 
             $(document).on("click", 'a.removeInstanceVariable', function() {

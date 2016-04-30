@@ -123,6 +123,20 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
+	public SalesforceConnectorDTO removeService(String subject, String id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		
+		resource.getServiceInstances().stream().forEach(p -> {
+			if (p.getKey().equals(key)) {
+				resource.getServiceInstances().remove(p);
+			}
+		});
+		
+		updateSalesforceConnector(resource);
+		
+		return resource;
+	}
+	
 	public SalesforceConnectorDTO addEnvironments(String subject, String id, String key, Set<Environment> environments) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);

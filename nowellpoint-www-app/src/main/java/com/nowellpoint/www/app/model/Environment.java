@@ -75,7 +75,6 @@ public class Environment {
 		if (environmentVariables == null) {
 			setEnvironmentVariables(new HashSet<EnvironmentVariable>());
 		}
-		environmentVariables.add(new EnvironmentVariable());
 		return environmentVariables;
 	}
 
