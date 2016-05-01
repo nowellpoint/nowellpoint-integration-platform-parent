@@ -1,16 +1,16 @@
-<table id="default-variables-table" class="table table-hover">
+<table id="instance-variables-table" class="table table-hover">
     <thead>
         <th class="col-xs-5">${labels["variable"]}</th>
         <th class="col-xs-6">${labels["value"]}</th>
         <th class="col-xs-1 text-center">${labels["remove"]}</th>
     </thead>
     <tbody>
-        <#list serviceInstance.environmentVariables as environmentVariable>
+        <#list environment.environmentVariables as environmentVariable>
             <tr>
                 <input type="hidden" name="locked" id="locked" value="${(environmentVariable.locked?c)!}" />
                 <td>
                     <#if ! environmentVariable.locked>
-                        <input type="text" class="form-control" name="variable" id="variable" autofocus="" value="${(environmentVariable.variable)!}" />
+                        <input type="text" class="form-control" name="variable" id="variable" value="${(environmentVariable.variable)!}" />
                     </#if>
                     <#if environmentVariable.locked>
                         <input type="hidden" name="variable" id="variable" value="${(environmentVariable.variable)!}" />
@@ -20,7 +20,7 @@
                 <td>
                     <#if environmentVariable.environmentVariableValues?? && environmentVariable.environmentVariableValues?size !=0>
                         <select id="value" name="value" class="form-control" value="${(environmentVariable.value)!}">
-                            <#list environmentVariable.environmentVariableValues?sort_by("value") as environmentVariableValue>
+                            <#list environmentVariable.environmentVariableValues?sort_by( "value") as environmentVariableValue>
                                 <option value="${environmentVariableValue.name}">${environmentVariableValue.value}</option>
                             </#list>
                         </select>
@@ -28,26 +28,28 @@
 
                     <#if ! environmentVariable.environmentVariableValues?? || environmentVariable.environmentVariableValues?size==0>
                         <input type="text" class="form-control" name="value" id="value" value="${(environmentVariable.value)!}" />
-                    </#if> 
-                    
+                    </#if>
                 </td>
                 <td class="text-center">
-                     <#if environmentVariable.locked>
+                    <#if environmentVariable.locked>
                         <span class="icon icon-lock fa-1x"></span>
                     </#if>
                     <#if ! environmentVariable.locked>
                         <a href="#" class="removeInstanceVariable"><span class="icon icon-cross fa-1x"></span></a>
                     </#if>
                 </td>
-            </tr>
-        </#list>
+        </#list>   
     </tbody>
 </table>
-
 <div class="pull-right">
     <#if successMessage??>
         <p id="success-message" class="text-success">
             ${successMessage!}
+        </p>
+    </#if>
+    <#if errorMessage??>
+        <p id="error-message" class="text-danger">
+            ${errorMessage!}
         </p>
     </#if>
 </div>

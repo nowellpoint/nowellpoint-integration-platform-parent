@@ -67,7 +67,7 @@
 
                     <div class="col-sm-2">
 
-                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.environment)!}" required="" autofocus="">
+                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="" autofocus="">
                             <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
                             <#list serviceInstance.environments as environment>
                                 <#if environment.active>

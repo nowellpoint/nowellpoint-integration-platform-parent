@@ -1,7 +1,10 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Environment {
 	
@@ -15,10 +18,11 @@ public class Environment {
 	
 	private Boolean locked;
 	
-	private Set<EnvironmentVariable> environmentVariables;
+	private List<EnvironmentVariable> environmentVariables;
+	
+	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
 	
 	public Environment() {
-		setEnvironmentVariables(new HashSet<EnvironmentVariable>());
 		setLocked(Boolean.FALSE);
 		setActive(Boolean.FALSE);
 	}
@@ -71,14 +75,30 @@ public class Environment {
 		this.locked = locked;
 	}
 	
-	public Set<EnvironmentVariable> getEnvironmentVariables() {
+	public List<EnvironmentVariable> getEnvironmentVariables() {
 		if (environmentVariables == null) {
-			setEnvironmentVariables(new HashSet<EnvironmentVariable>());
+			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
+		} else {
+			setEnvironmentVariables(environmentVariables
+					.stream()
+					.sorted((p1, p2) -> p1.getVariable().compareTo(p2.getVariable()))
+					.collect(Collectors.toList()));
 		}
 		return environmentVariables;
 	}
 
-	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
+	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
 		this.environmentVariables = environmentVariables;
+	}
+	
+	public Map<String,List<EnvironmentVariableValue>> getEnvironmentVariableValues() {
+		if (environmentVariableValues == null) {
+			setEnvironmentVariableValues(new HashMap<String, List<EnvironmentVariableValue>>());
+		}
+		return environmentVariableValues;
+	}
+
+	public void setEnvironmentVariableValues(Map<String, List<EnvironmentVariableValue>> environmentVariableValues) {
+		this.environmentVariableValues = environmentVariableValues;
 	}
 }

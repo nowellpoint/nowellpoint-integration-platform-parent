@@ -2,7 +2,11 @@ package com.nowellpoint.www.app.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -35,12 +39,13 @@ public class ServiceInstance {
 	private List<Environment> environments;
 	
 	private List<EnvironmentVariable> environmentVariables;
+	
+	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
 
 	private String configurationPage;
 	
 	public ServiceInstance() {
-		environments = new ArrayList<Environment>();
-		environmentVariables = new ArrayList<EnvironmentVariable>();
+
 	}
 
 	public Parent getParent() {
@@ -148,6 +153,9 @@ public class ServiceInstance {
 	}
 	
 	public List<Environment> getEnvironments() {
+		if (environments == null) {
+			setEnvironments(new ArrayList<Environment>());
+		}
 		return environments;
 	}
 
@@ -156,14 +164,50 @@ public class ServiceInstance {
 	}
 
 	public void addEnvironment(String name, String label, Boolean active, Boolean locked) {
-		environments.add(new Environment(name, label, active, locked));
+		getEnvironments().add(new Environment(name, label, active, locked));
 	}
 	
 	public List<EnvironmentVariable> getEnvironmentVariables() {
+		if (environmentVariables == null) {
+			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
+		} else {
+			setEnvironmentVariables(environmentVariables
+					.stream()
+					.sorted((p1, p2) -> p1.getVariable().compareTo(p2.getVariable()))
+					.collect(Collectors.toList()));
+		}
 		return environmentVariables;
 	}
 
 	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
 		this.environmentVariables = environmentVariables;
+	}
+	
+	public Map<String,List<EnvironmentVariableValue>> getEnvironmentVariableValues() {
+		return environmentVariableValues;
+	}
+
+	public void setEnvironmentVariableValues(Map<String, List<EnvironmentVariableValue>> environmentVariableValues) {
+		environmentVariables.stream().forEach(variable -> {
+			if (environmentVariableValues.containsKey(variable.getVariable())) {
+				variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+			}
+		});
+		environments.stream().forEach(environment -> {
+			environment.getEnvironmentVariables().stream().forEach(variable -> {
+				if (environmentVariableValues.containsKey(variable.getVariable())) {
+					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+				}
+			});
+		});
+		this.environmentVariableValues = environmentVariableValues;
+	}
+	
+	@JsonIgnore
+	public Optional<Environment> getEnvironment(String name) {
+		return getEnvironments()
+				.stream()
+				.filter(p -> p.getName().equals(name))
+				.findFirst();
 	}
 }

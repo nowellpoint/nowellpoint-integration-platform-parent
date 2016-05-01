@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 public class Service implements Serializable {
@@ -32,6 +33,8 @@ public class Service implements Serializable {
 	private String configurationPage;
 	
 	private Set<EnvironmentVariable> environmentVariables;
+	
+	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 	
 	private Set<String> configurationParams;
 	
@@ -133,5 +136,13 @@ public class Service implements Serializable {
 
 	public void setConfigurationParams(Set<String> configurationParams) {
 		this.configurationParams = configurationParams;
+	}
+
+	public Map<String, Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
+		return environmentVariableValues;
+	}
+
+	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
+		this.environmentVariableValues = environmentVariableValues;
 	}
 }

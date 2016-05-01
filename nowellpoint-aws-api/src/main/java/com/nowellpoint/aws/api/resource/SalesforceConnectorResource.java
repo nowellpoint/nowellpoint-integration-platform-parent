@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -260,7 +261,12 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addVariables(subject, id, key, null, environmentVariables);
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, null, environmentVariables);
+		} catch (UnsupportedOperationException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		return Response.ok(resource)
 				.build(); 
@@ -279,7 +285,12 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addVariables(subject, id, key, environment, environmentVariables);
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environment, environmentVariables);
+		} catch (UnsupportedOperationException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		return Response.ok(resource)
 				.build(); 

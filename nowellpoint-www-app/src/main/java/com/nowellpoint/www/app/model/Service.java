@@ -2,6 +2,9 @@ package com.nowellpoint.www.app.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Service {
 	
 	private Double price;
@@ -21,6 +24,8 @@ public class Service {
 	private String configurationPage;
 	
 	private String company;
+	
+	private Integer sandboxCount;
 	
 	private Set<String> configurationParams;
 	
@@ -98,6 +103,14 @@ public class Service {
 
 	public void setCompany(String company) {
 		this.company = company;
+	}
+
+	public Integer getSandboxCount() {
+		return sandboxCount;
+	}
+
+	public void setSandboxCount(Integer sandboxCount) {
+		this.sandboxCount = sandboxCount;
 	}
 
 	public Set<String> getConfigurationParams() {

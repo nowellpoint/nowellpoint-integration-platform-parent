@@ -2,10 +2,14 @@ package com.nowellpoint.www.app.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.www.app.model.sforce.Identity;
 import com.nowellpoint.www.app.model.sforce.Organization;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends Resource {
 
 	private Identity identity;
@@ -19,7 +23,7 @@ public class SalesforceConnector extends Resource {
 	private List<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnector() {
-		serviceInstances = new ArrayList<ServiceInstance>();
+		
 	}
 
 	public Identity getIdentity() {
@@ -55,10 +59,21 @@ public class SalesforceConnector extends Resource {
 	}
 
 	public List<ServiceInstance> getServiceInstances() {
+		if (serviceInstances == null) {
+			setServiceInstances(new ArrayList<ServiceInstance>());
+		}
 		return serviceInstances;
 	}
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+	
+	@JsonIgnore
+	public Optional<ServiceInstance> getServiceInstance(String key) {
+		return getServiceInstances()
+    			.stream()
+    			.filter(p -> p.getKey().equals(key))
+    			.findFirst();
 	}
 }

@@ -92,6 +92,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setPrice(serviceProvider.getService().getPrice());
 		serviceInstance.setProviderType(serviceProvider.getType());
 		serviceInstance.setUom(serviceProvider.getService().getUnitOfMeasure());
+		serviceInstance.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
+		serviceInstance.setEnvironmentVariableValues(serviceProvider.getService().getEnvironmentVariableValues());
 		
 		Set<Environment> environments = new HashSet<Environment>();
 		
@@ -153,9 +155,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 	}
 	
-	public SalesforceConnectorDTO addVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariable> environmentVariables) {
+	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariable> environmentVariables) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
+		
+		Set<String> variables = new HashSet<String>();
+		environmentVariables.stream().forEach(variable -> {
+			if (variables.contains(variable.getVariable())) {
+				throw new UnsupportedOperationException("Duplicate variable names: " + variable.getVariable());
+			}
+			variables.add(variable.getVariable());
+		});
 		
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
 		

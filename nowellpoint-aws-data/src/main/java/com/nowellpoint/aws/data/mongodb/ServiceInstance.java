@@ -1,7 +1,9 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -40,12 +42,15 @@ public class ServiceInstance implements Serializable {
 	private Set<Environment> environments;
 	
 	private Set<EnvironmentVariable> environmentVariables;
+	
+	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 
 	private String configurationPage;
 	
 	public ServiceInstance() {
 		environments = new LinkedHashSet<Environment>();
 		environmentVariables = new LinkedHashSet<EnvironmentVariable>();
+		setEnvironmentVariableValues(Collections.emptyMap());
 	}
 	
 	public String getKey() {
@@ -162,5 +167,13 @@ public class ServiceInstance implements Serializable {
 
 	public void addEnvironment(String name, Boolean active) {
 		environments.add(new Environment(name, active));
+	}
+	
+	public Map<String,Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
+		return environmentVariableValues;
+	}
+
+	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
+		this.environmentVariableValues = environmentVariableValues;
 	}
 }
