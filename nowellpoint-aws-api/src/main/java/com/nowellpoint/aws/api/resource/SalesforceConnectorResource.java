@@ -318,6 +318,7 @@ public class SalesforceConnectorResource {
 	
 	@DELETE
 	@Path("connector/{id}/service/{key}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteService(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key) {

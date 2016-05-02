@@ -81,7 +81,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         post("/app/connectors/salesforce/connector/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
         
-        delete("/app/connectors/salesforce/connector/:id/service/:key", (request, response) -> removeService(request, response), new FreeMarkerEngine(cfg));
+        delete("/app/connectors/salesforce/connector/:id/service/:key", (request, response) -> deleteService(request, response));
         
         post("/app/connectors/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
@@ -107,7 +107,7 @@ public class SalesforceConnectorController extends AbstractController {
 		return new ModelAndView(new HashMap<String, Object>(), "secure/fragments/environment-table-row.html");
 	}
 	
-	private static ModelAndView removeService(Request request, Response response) {
+	private static String deleteService(Request request, Response response) {
 		RequestWrapper requestWrapper = new RequestWrapper(request);
 		
 		Token token = requestWrapper.getToken();
@@ -120,20 +120,15 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("connector")
 				.path(request.params(":id"))
 				.path("service")
-				.path(request.queryParams("key"))
+				.path(request.params(":key"))
 				.execute();
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
-		Map<String, Object> model = new HashMap<String, Object>();
+		response.redirect("/app/connectors/salesforce");
+		response.status(204);
 		
-		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
-			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-			return new ModelAndView(model, "secure/fragments/success-message.html");
-		} else {
-			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			return new ModelAndView(model, "secure/fragments/error-message.html");
-		}
+		return "";
 	}
 	
 	private static ModelAndView getEnvironmentVariablesForInstance(Request request, Response response) {

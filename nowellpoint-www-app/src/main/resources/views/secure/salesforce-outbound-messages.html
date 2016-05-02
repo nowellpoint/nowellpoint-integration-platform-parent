@@ -13,7 +13,7 @@
                     </div>
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="/app/providers" class="btn btn-lg btn-danger-outline" role="button">${labels["delete.service"]}</a>
+
                         </p>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
             <br>
 
             <div class="hr-divider">
-                
+
             </div>
 
             <br>
@@ -62,6 +62,15 @@
                             <dd>${(salesforceConnector.organization.instanceName)!}</dd>
 
                         </dl>
+                        
+                        <br>
+                        
+                         <p class="text-danger">
+                            ${labels["delete.warning"]}
+                        </p>
+
+                        <a href="" class="btn btn-lg btn-danger-outline confirm-delete" title="${labels['delete.service']}" data-toggle="modal" aria-hidden="true" role="button" data-id="${serviceInstance.key!}" data-message="${serviceInstance.serviceName!}" data-title="${deleteMessage}">${labels["delete.service"]}</a>
+
 
                     </div>
 
@@ -71,13 +80,18 @@
                             <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
                             <#list serviceInstance.environments as environment>
                                 <#if environment.active>
-                                <option value="${environment.name}">${environment.label}</option>
-                                </#if>    
+                                    <option value="${environment.name}">${environment.label}</option>
+                                </#if>
                             </#list>
                         </select>
 
                     </div>
 
+                    
+
+                   
+
+                    <!--
                     <div class="col-sm-12">
 
                         <div class="hr-divider">
@@ -91,14 +105,28 @@
                         </div>
 
                     </div>
-
+-->
                 </div>
             </div>
         </div>
 
+        <#include "confirm-dialog.html"/>
         <#include "spinner.html" />
 
         <script>
+
+            $('#confirm').click(function(e) {
+                $('#confirmDialog').modal('hide');
+                $.ajax({
+                    url: "/app/connectors/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
+                    type: "DELETE",
+                    success : function(data, status) {
+                        window.location.href = "/app/connectors/salesforce/connector/${(salesforceConnector.id)!}";
+                    }
+                });
+            });
+            
+            
             $('#loginForm').submit(function(e) {
                 var params = $("#loginForm").serialize();
                 $.ajax({

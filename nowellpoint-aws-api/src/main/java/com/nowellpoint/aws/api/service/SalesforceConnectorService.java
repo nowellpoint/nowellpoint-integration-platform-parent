@@ -127,13 +127,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	public SalesforceConnectorDTO removeService(String subject, String id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
 		
-		resource.getServiceInstances().stream().forEach(p -> {
-			if (p.getKey().equals(key)) {
-				resource.getServiceInstances().remove(p);
-			}
-		});
-		
+		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));
+
 		updateSalesforceConnector(resource);
 		
 		return resource;

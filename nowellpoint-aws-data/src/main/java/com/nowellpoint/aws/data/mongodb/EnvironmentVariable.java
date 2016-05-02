@@ -8,6 +8,8 @@ public class EnvironmentVariable {
 	
 	private Boolean locked;
 	
+	private Boolean encrypted;
+	
 	public EnvironmentVariable() {
 		
 	}
@@ -39,5 +41,13 @@ public class EnvironmentVariable {
 
 	public void setLocked(Boolean locked) {
 		this.locked = locked;
+	}
+
+	public Boolean getEncrypted() {
+		return encrypted;
+	}
+
+	public void setEncrypted(Boolean encrypted) {
+		this.encrypted = encrypted;
 	}
 }
