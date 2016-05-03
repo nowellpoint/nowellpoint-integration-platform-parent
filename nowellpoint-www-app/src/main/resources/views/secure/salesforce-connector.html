@@ -22,11 +22,17 @@
             <br>
 
             <div class="hr-divider">
+                
             </div>
 
             <br>
 
             <div class="row">
+                
+                <#if successMessage??>
+                    <#include "fragments/success-message.html" />
+                </#if>
+                    
                 <div class="col-sm-2">
                     <#include "sidebar.html" />
                 </div>

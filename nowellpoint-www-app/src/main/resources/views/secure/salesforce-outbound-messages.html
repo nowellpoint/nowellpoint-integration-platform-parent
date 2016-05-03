@@ -76,11 +76,16 @@
 
                     <div class="col-sm-2">
 
-                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="" autofocus="">
-                            <option value="" selected="selected">--- ${labels["select.one"]} ---</option>
+                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                            <option value="">--- ${labels["select.environment"]} ---</option>
                             <#list serviceInstance.environments as environment>
                                 <#if environment.active>
-                                    <option value="${environment.name}">${environment.label}</option>
+                                    <#if environment.name == (serviceInstance.defaultEnvironment)!"">
+                                        <option value="${environment.name}" selected>${environment.label}</option>
+                                    </#if>
+                                    <#if environment.name != (serviceInstance.defaultEnvironment)!"">
+                                         <option value="${environment.name}">${environment.label}</option>
+                                    </#if>     
                                 </#if>
                             </#list>
                         </select>
@@ -120,8 +125,8 @@
                 $.ajax({
                     url: "/app/connectors/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
                     type: "DELETE",
-                    success : function(data, status) {
-                        window.location.href = "/app/connectors/salesforce/connector/${(salesforceConnector.id)!}";
+                    complete : function(data) {
+                        window.location.replace("/app/connectors/salesforce/connector/${(salesforceConnector.id)!}");
                     }
                 });
             });
@@ -143,11 +148,7 @@
 
             });
 
-            $(function() {
-                $('select[value]').each(function() {
-                    $(this).val(this.getAttribute("value"));
-                });
-            });
+
 
             $("#environment").change(function() {
                 alert("Handler for .change() called.");

@@ -62,10 +62,16 @@
                         </form>
                     </div>
                     <div class="col-sm-2">
-                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}">
+                         <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                            <option value="">--- ${labels["select.environment"]} ---</option>
                             <#list serviceInstance.environments?sort_by( "name") as environment>
                                 <#if environment.active>
-                                    <option value="${environment.name}">${environment.label}</option>
+                                    <#if environment.name == (serviceInstance.defaultEnvironment)!"">
+                                        <option value="${environment.name}" selected>${environment.label}</option>
+                                    </#if>
+                                    <#if environment.name != (serviceInstance.defaultEnvironment)!"">
+                                         <option value="${environment.name}">${environment.label}</option>
+                                    </#if>     
                                 </#if>
                             </#list>
                         </select>
@@ -115,12 +121,6 @@
 
                 e.preventDefault();
 
-            });
-
-            $(function() {
-                $('select[value]').each(function() {
-                    $(this).val(this.getAttribute("value"));
-                });
             });
 
             $("#environment").change(function() {

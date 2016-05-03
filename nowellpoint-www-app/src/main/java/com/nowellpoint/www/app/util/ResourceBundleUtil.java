@@ -9,11 +9,6 @@ import freemarker.template.DefaultObjectWrapperBuilder;
 
 public class ResourceBundleUtil {
 	
-	//public static ResourceBundleModel getResourceBundle(Locale locale) {
-	//	ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
-	//	return resourceBundleModel;
-	//}
-	
 	public static ResourceBundleModel getResourceBundle(String baseName, Locale locale) {
 		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle(baseName, locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
 		return resourceBundleModel;
