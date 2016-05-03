@@ -56,7 +56,7 @@ import com.nowellpoint.client.sforce.model.Token;
 
 import redis.clients.jedis.Jedis;
 
-@Path("/salesforce")
+@Path("/salesforce/connectors")
 public class SalesforceConnectorResource {
 	
 	@Inject
@@ -78,7 +78,6 @@ public class SalesforceConnectorResource {
 	private UriInfo uriInfo;
 	
 	@GET
-	@Path("connectors")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		String subject = securityContext.getUserPrincipal().getName();
@@ -125,7 +124,7 @@ public class SalesforceConnectorResource {
 	
 	@PermitAll
 	@GET
-	@Path("connector/profilephoto/{id}")
+	@Path("profilephoto/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProfilePhoto(@PathParam(value="id") String id) {
 		AmazonS3 s3Client = new AmazonS3Client();
