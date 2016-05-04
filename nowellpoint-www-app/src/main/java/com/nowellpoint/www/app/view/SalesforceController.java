@@ -72,6 +72,6 @@ public class SalesforceController extends AbstractController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
-		return new ModelAndView(model, "secure/salesforce-callback.html");	
+		return new ModelAndView(getModel(), "secure/salesforce-callback.html");	
     }
 }

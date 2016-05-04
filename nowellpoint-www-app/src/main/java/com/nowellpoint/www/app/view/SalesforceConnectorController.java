@@ -94,7 +94,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 */
 	
 	private ModelAndView addEnvironmentVariable(Request request, Response response) {	
-		return new ModelAndView(model, "secure/fragments/environment-table-row.html");
+		return new ModelAndView(getModel(), "secure/fragments/environment-table-row.html");
 	}
 	
 	/**
@@ -129,6 +129,7 @@ public class SalesforceConnectorController extends AbstractController {
     		errorMessage = httpResponse.getAsString();
     	}	
     	
+    	Map<String, Object> model = getModel();
     	model.put("account", account);
     	model.put("salesforceConnector", salesforceConnector);
     	model.put("successMessage", successMessage);
@@ -162,6 +163,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.execute();
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		
+		Map<String, Object> model = getModel();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			model.put("successMessage", MessageProvider.getMessage(Locale.US, "deleteSuccess"));
@@ -202,6 +205,7 @@ public class SalesforceConnectorController extends AbstractController {
 			environment.getEnvironmentVariables().add(new EnvironmentVariable());
 		}
 		
+		Map<String, Object> model = getModel();
 		model.put("environment", environment);
 		
 		return new ModelAndView(model, "secure/fragments/instance-environment-variables-table.html");
@@ -237,6 +241,7 @@ public class SalesforceConnectorController extends AbstractController {
 			environment.getEnvironmentVariables().add(new EnvironmentVariable());
 		}
 		
+		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
@@ -264,6 +269,7 @@ public class SalesforceConnectorController extends AbstractController {
     	
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 		
+		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
@@ -290,6 +296,7 @@ public class SalesforceConnectorController extends AbstractController {
     	
     	ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
+    	Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
@@ -326,6 +333,8 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
+		Map<String, Object> model = getModel();
+		
 		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
 			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
 			return new ModelAndView(model, "secure/fragments/success-message.html");
@@ -356,6 +365,7 @@ public class SalesforceConnectorController extends AbstractController {
 			errorMessage = e.getMessage();
 		}
 		
+		Map<String, Object> model = getModel();
     	model.put("account", account);
     	model.put("salesforceConnector", salesforceConnector);
     	model.put("errorMessage", errorMessage);
@@ -392,6 +402,7 @@ public class SalesforceConnectorController extends AbstractController {
 			salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
 		}
 		
+		Map<String, Object> model = getModel();
     	model.put("account", account);
     	model.put("salesforceConnectorsList", salesforceConnectors);
     	
@@ -419,6 +430,8 @@ public class SalesforceConnectorController extends AbstractController {
     			.execute();
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());	
+		
+		Map<String, Object> model = getModel();
 		
 		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
 			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
@@ -480,6 +493,7 @@ public class SalesforceConnectorController extends AbstractController {
 			errorMessage = e.getMessage();
 		}
 		
+		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("serviceProviders", providers);
 		model.put("id", salesforceConnector.getId());
@@ -545,6 +559,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
+		Map<String, Object> model = getModel();
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
 		model.put("sobjects", sobjects);
@@ -597,6 +612,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.body(environments)
     			.execute();
 		
+		Map<String, Object> model = getModel();
+		
 		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
 			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
 			return new ModelAndView(model, "secure/fragments/success-message.html");
@@ -631,6 +648,8 @@ public class SalesforceConnectorController extends AbstractController {
 				}	
 			}
 		}
+		
+		Map<String, Object> model = getModel();
 		
 		if (environmentVariables == null) {
 			model.put("errorMessage", MessageProvider.getMessage(Locale.US, "nothingToSave"));
@@ -771,6 +790,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		ServiceInstance serviceInstance = getServiceInstance(token.getAccessToken(), request.params(":id"), request.params(":key"));
 				
+		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("serviceInstance", serviceInstance);
 		model.put("sobjects", sobjects);
