@@ -83,7 +83,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         post("/app/connectors/salesforce/connector/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id/service/:key/variables/:environment", (request, response) -> getEnvironmentVariablesForInstance(request, response), new FreeMarkerEngine(cfg));        
+        get("/app/connectors/salesforce/connector/:id/service/:key/variables/:defaultEnvironment", (request, response) -> getEnvironmentVariablesForInstance(request, response), new FreeMarkerEngine(cfg));        
 	}
 	
 	/**
@@ -113,8 +113,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
+    			.path("connectors")
     			.path("salesforce")
-    			.path("connector")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
@@ -154,8 +154,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("salesforce")
-				.path("connector")
+				.path("connectors")
+    			.path("salesforce")
 				.path(id)
 				.path("service")
 				.path(key)
@@ -182,20 +182,27 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getEnvironmentVariablesForInstance(Request request, Response response) {		
 		Token token = getToken(request);
 		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, request.params(":id"));
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String defaultEnvironment = request.params(":defaultEnvironment");
 		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(request.params(":key")).get();
+		System.out.println(defaultEnvironment);
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 
-		Optional<Environment> environment = serviceInstance.getEnvironments()
+		Environment environment = serviceInstance.getEnvironments()
 				.stream()
-				.filter(p -> p.getName().equals(request.params(":environment")))
-				.findFirst();
+				.filter(p -> p.getName().equals(defaultEnvironment))
+				.findFirst()
+				.orElse(new Environment());
 		
-		if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
-			environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
+		if (environment.getEnvironmentVariables().size() == 0) {
+			environment.getEnvironmentVariables().add(new EnvironmentVariable());
 		}
 		
-		model.put("environment", environment.get());
+		model.put("environment", environment);
 		
 		return new ModelAndView(model, "secure/fragments/instance-environment-variables-table.html");
 	}
@@ -214,25 +221,26 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token, request.params(":id"));
 		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(request.params(":key")).get();
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(request.params(":key"));
 		
-		Optional<Environment> environment = serviceInstance.getEnvironments()
+		Environment environment = serviceInstance.getEnvironments()
 				.stream()
 				.filter(p -> p.getName().equals(serviceInstance.getDefaultEnvironment()))
-				.findFirst();
+				.findFirst()
+				.orElse(new Environment());
 		
 		if (serviceInstance.getEnvironmentVariables().size() == 0) {
 			serviceInstance.getEnvironmentVariables().add(new EnvironmentVariable());
 		}
 		
-		if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
-			environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
+		if (environment.getEnvironmentVariables().size() == 0) {
+			environment.getEnvironmentVariables().add(new EnvironmentVariable());
 		}
 		
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
-		model.put("environment", environment.isPresent() ? environment.get() : null);
+		model.put("environment", environment);
 		
 		return new ModelAndView(model, "secure/environment-variables.html");
 	}
@@ -254,7 +262,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
     	
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key).get();
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 		
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
@@ -280,7 +288,7 @@ public class SalesforceConnectorController extends AbstractController {
     	
     	SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
     	
-    	ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key).get();
+    	ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
@@ -301,16 +309,19 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView addService(Request request, Response response) {
 		Token token = getToken(request);
 		
+		String id = request.params(":id");
+		String serviceProviderId = request.params(":serviceProviderId");
+		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
-				.path("salesforce")
-				.path("connector")
-				.path(request.params(":id"))
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
 				.path("service")
-				.parameter("serviceProviderId", request.queryParams("serviceProviderId"))
+				.parameter("serviceProviderId", serviceProviderId)
 				.execute();
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
@@ -367,13 +378,19 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
     			.path("salesforce")
-    			.path("connectors")
     			.execute();
-		
+
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		List<SalesforceConnector> salesforceConnectors = null;
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			System.out.println(httpResponse.getAsString());
+		} else {
+			salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		}
 		
     	model.put("account", account);
     	model.put("salesforceConnectorsList", salesforceConnectors);
@@ -396,8 +413,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-    			.path("connector")
+				.path("connectors")
+    			.path("salesforce")
     			.parameter("id", request.queryParams("id"))
     			.execute();
 		
@@ -425,8 +442,8 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-    			.path("connector")
+				.path("connectors")
+    			.path("salesforce")
     			.path(request.params(":id"))
     			.execute();
 		
@@ -482,6 +499,9 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getSobjects(Request request, Response response) {
 		Token token = getToken(request);
 		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
 		List<Sobject> sobjects = Collections.emptyList();
 		LoginResult result = null;
 		String errorMessage = null;
@@ -521,9 +541,9 @@ public class SalesforceConnectorController extends AbstractController {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
 		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, request.params(":id"));
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
 		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(request.params(":key")).get();
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
@@ -568,8 +588,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-				.path("connector")
+				.path("connectors")
+    			.path("salesforce")
 				.path(request.params(":id"))
 				.path("service")
 				.path(request.params(":key"))
@@ -629,8 +649,8 @@ public class SalesforceConnectorController extends AbstractController {
 					.accept(MediaType.APPLICATION_JSON)
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
-					.path("salesforce")
-					.path("connector")
+					.path("connectors")
+	    			.path("salesforce")
 					.path(id)
 					.path("service")
 					.path(key)
@@ -646,7 +666,7 @@ public class SalesforceConnectorController extends AbstractController {
 				
 				salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 				
-				ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key).get();
+				ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 				
 				Optional<Environment> environment = serviceInstance.getEnvironment(defaultEnvironment);
 				
@@ -671,8 +691,8 @@ public class SalesforceConnectorController extends AbstractController {
 					.accept(MediaType.APPLICATION_JSON)
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(token.getAccessToken())
-					.path("salesforce")
-					.path("connector")
+					.path("connectors")
+	    			.path("salesforce")
 					.path(id)
 					.path("service")
 					.path(key)
@@ -687,7 +707,7 @@ public class SalesforceConnectorController extends AbstractController {
 				
 				salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 				
-				ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key).get();
+				ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 				
 				if (serviceInstance.getEnvironmentVariables().size() == 0) {
 					serviceInstance.getEnvironmentVariables().add(new EnvironmentVariable());
@@ -734,8 +754,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-				.path("connector")
+				.path("connectors")
+    			.path("salesforce")
 				.path(request.params(":id"))
 				.path("service")
 				.path(request.params(":key"))
@@ -771,8 +791,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
     			.path("salesforce")
-    			.path("connector")
     			.path(id)
     			.execute();
 		
@@ -816,8 +836,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(accessToken)
+				.path("connectors")
     			.path("salesforce")
-    			.path("connector")
     			.path(id)
     			.path("service")
     			.path(key)

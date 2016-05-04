@@ -188,18 +188,6 @@ public class ServiceInstance {
 	}
 
 	public void setEnvironmentVariableValues(Map<String, List<EnvironmentVariableValue>> environmentVariableValues) {
-		environmentVariables.stream().forEach(variable -> {
-			if (environmentVariableValues.containsKey(variable.getVariable())) {
-				variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
-			}
-		});
-		environments.stream().forEach(environment -> {
-			environment.getEnvironmentVariables().stream().forEach(variable -> {
-				if (environmentVariableValues.containsKey(variable.getVariable())) {
-					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
-				}
-			});
-		});
 		this.environmentVariableValues = environmentVariableValues;
 	}
 	

@@ -141,6 +141,7 @@
                     type: "GET",
                     url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
                     complete: function(data) {
+                        console.log(data);
                         $('#default-variables-table tbody').append(data.responseText);
                     }
                 });

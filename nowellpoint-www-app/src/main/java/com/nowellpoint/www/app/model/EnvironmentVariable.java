@@ -3,7 +3,7 @@ package com.nowellpoint.www.app.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EnvironmentVariable {
 	
@@ -15,6 +15,7 @@ public class EnvironmentVariable {
 	
 	private Boolean encrypted;
 	
+	//@JsonProperty(access = Access.WRITE_ONLY)
 	private List<EnvironmentVariableValue> environmentVariableValues;
 	
 	public EnvironmentVariable() {
@@ -53,7 +54,6 @@ public class EnvironmentVariable {
 		this.encrypted = encrypted;
 	}
 
-	@JsonIgnore
 	public List<EnvironmentVariableValue> getEnvironmentVariableValues() {
 		if (environmentVariableValues == null) {
 			setEnvironmentVariableValues(new ArrayList<EnvironmentVariableValue>());
@@ -61,7 +61,6 @@ public class EnvironmentVariable {
 		return environmentVariableValues;
 	}
 
-	@JsonIgnore
 	public void setEnvironmentVariableValues(List<EnvironmentVariableValue> environmentVariableValues) {
 		this.environmentVariableValues = environmentVariableValues;
 	}

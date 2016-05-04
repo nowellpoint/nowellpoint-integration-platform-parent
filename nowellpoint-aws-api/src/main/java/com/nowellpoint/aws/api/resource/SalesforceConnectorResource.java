@@ -7,6 +7,8 @@ import static com.nowellpoint.aws.data.CacheManager.serialize;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -36,6 +38,7 @@ import javax.ws.rs.core.UriInfo;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -56,7 +59,7 @@ import com.nowellpoint.client.sforce.model.Token;
 
 import redis.clients.jedis.Jedis;
 
-@Path("/salesforce/connectors")
+@Path("connectors/salesforce")
 public class SalesforceConnectorResource {
 	
 	@Inject
@@ -82,6 +85,8 @@ public class SalesforceConnectorResource {
     public Response findAll() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		System.out.println("here " + subject);
+		
 		Set<SalesforceConnectorDTO> resources = salesforceConnectorService.getAll(subject);
 		
 		return Response.ok(resources)
@@ -89,7 +94,6 @@ public class SalesforceConnectorResource {
     }
 	
 	@GET
-	@Path("connector")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnectorDetails(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
@@ -112,7 +116,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("connector/{id}")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
@@ -156,7 +160,6 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("connector")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createSalesforceConnector(@FormParam(value="id") String id) {
@@ -186,7 +189,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("connector/{id}")
+	@Path("{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
@@ -194,11 +197,14 @@ public class SalesforceConnectorResource {
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
-		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("outboundmessage")
-				.withKeys(
-						resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1),
-						resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)
-					);
+		System.out.println(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1));
+		System.out.println(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1));
+		
+		List<KeyVersion> keys = new ArrayList<KeyVersion>();
+		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
+		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
+		
+		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
 		
 		s3Client.deleteObjects(deleteObjectsRequest);
 		
@@ -209,7 +215,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("connector/{id}/service")
+	@Path("{id}/service")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addService(
@@ -233,7 +239,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("connector/{id}/service/{key}/environments")
+	@Path("{id}/service/{key}/environments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironments(
@@ -250,7 +256,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("connector/{id}/service/{key}/variables")
+	@Path("{id}/service/{key}/variables")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironmentVariables(
@@ -273,7 +279,7 @@ public class SalesforceConnectorResource {
 	}		
 	
 	@POST
-	@Path("connector/{id}/service/{key}/variables/{environment}")
+	@Path("{id}/service/{key}/variables/{environment}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironmentVariables(
@@ -297,7 +303,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("connector/{id}/service/{key}")
+	@Path("{id}/service/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceConfiguration(
@@ -316,7 +322,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("connector/{id}/service/{key}")
+	@Path("{id}/service/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteService(
 			@PathParam(value="id") String id,

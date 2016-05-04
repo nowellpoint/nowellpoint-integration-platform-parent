@@ -2,7 +2,6 @@ package com.nowellpoint.www.app.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -70,10 +69,11 @@ public class SalesforceConnector extends Resource {
 	}
 	
 	@JsonIgnore
-	public Optional<ServiceInstance> getServiceInstance(String key) {
+	public ServiceInstance getServiceInstance(String key) {
 		return getServiceInstances()
     			.stream()
     			.filter(p -> p.getKey().equals(key))
-    			.findFirst();
+    			.findFirst()
+    			.orElse(new ServiceInstance());
 	}
 }

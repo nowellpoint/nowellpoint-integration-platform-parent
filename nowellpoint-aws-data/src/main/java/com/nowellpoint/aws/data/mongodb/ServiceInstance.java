@@ -1,8 +1,7 @@
 package com.nowellpoint.aws.data.mongodb;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,9 +47,7 @@ public class ServiceInstance implements Serializable {
 	private String configurationPage;
 	
 	public ServiceInstance() {
-		environments = new LinkedHashSet<Environment>();
-		environmentVariables = new LinkedHashSet<EnvironmentVariable>();
-		setEnvironmentVariableValues(Collections.emptyMap());
+		
 	}
 	
 	public String getKey() {
@@ -172,8 +169,25 @@ public class ServiceInstance implements Serializable {
 	public Map<String,Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
 		return environmentVariableValues;
 	}
-
+	
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
+		environmentVariables.stream().forEach(variable -> {
+			if (environmentVariableValues.containsKey(variable.getVariable())) {
+				variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
+				variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+			}
+		});
+		environments.stream().forEach(environment -> {
+			environment.getEnvironmentVariables().stream().forEach(variable -> {
+				if (environmentVariableValues.containsKey(variable.getVariable())) {
+					if (variable.getEnvironmentVariableValues() == null) {
+						
+					}
+					variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
+					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+				}
+			});
+		});
 		this.environmentVariableValues = environmentVariableValues;
 	}
 }

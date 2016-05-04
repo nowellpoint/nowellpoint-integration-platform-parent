@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.data.mongodb;
 
+import java.util.Set;
+
 public class EnvironmentVariable {
 	
 	private String variable;
@@ -9,6 +11,8 @@ public class EnvironmentVariable {
 	private Boolean locked;
 	
 	private Boolean encrypted;
+	
+	private Set<EnvironmentVariableValue> environmentVariableValues;
 	
 	public EnvironmentVariable() {
 		
@@ -49,5 +53,13 @@ public class EnvironmentVariable {
 
 	public void setEncrypted(Boolean encrypted) {
 		this.encrypted = encrypted;
+	}
+	
+	public Set<EnvironmentVariableValue> getEnvironmentVariableValues() {
+		return environmentVariableValues;
+	}
+
+	public void setEnvironmentVariableValues(Set<EnvironmentVariableValue> environmentVariableValues) {
+		this.environmentVariableValues = environmentVariableValues;
 	}
 }
