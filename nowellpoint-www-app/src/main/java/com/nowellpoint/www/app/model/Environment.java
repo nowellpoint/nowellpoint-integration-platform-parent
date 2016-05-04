@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 public class Environment {
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private Integer index;
 	
 	private String name;
@@ -16,8 +20,10 @@ public class Environment {
 	
 	private Boolean active;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private Boolean locked;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private List<EnvironmentVariable> environmentVariables;
 	
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;

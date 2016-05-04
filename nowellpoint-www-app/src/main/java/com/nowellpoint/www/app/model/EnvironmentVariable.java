@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 public class EnvironmentVariable {
 	
@@ -11,11 +12,13 @@ public class EnvironmentVariable {
 	
 	private String value;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private Boolean locked;
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private Boolean encrypted;
 	
-	//@JsonProperty(access = Access.WRITE_ONLY)
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private List<EnvironmentVariableValue> environmentVariableValues;
 	
 	public EnvironmentVariable() {
