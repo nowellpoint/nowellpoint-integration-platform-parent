@@ -162,10 +162,6 @@ public class ServiceInstance {
 	public void setEnvironments(List<Environment> environments) {
 		this.environments = environments;
 	}
-
-	public void addEnvironment(String name, String label, Boolean active, Boolean locked) {
-		getEnvironments().add(new Environment(name, label, active, locked));
-	}
 	
 	public List<EnvironmentVariable> getEnvironmentVariables() {
 		if (environmentVariables == null) {

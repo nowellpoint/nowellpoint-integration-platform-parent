@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.data.mongodb;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class Environment {
@@ -18,7 +17,7 @@ public class Environment {
 	private Set<EnvironmentVariable> environmentVariables;
 	
 	public Environment() {
-		environmentVariables = new HashSet<EnvironmentVariable>();
+
 	}
 	
 	public Environment(String name, Boolean active) {

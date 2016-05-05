@@ -45,13 +45,13 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
+import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.Environment;
 import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
@@ -245,11 +245,11 @@ public class SalesforceConnectorResource {
 	public Response saveEnvironments(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			Set<Environment> environments) {
+			Set<EnvironmentDTO> resources) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, environments);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, resources);
 		
 		return Response.ok(resource)
 				.build(); 

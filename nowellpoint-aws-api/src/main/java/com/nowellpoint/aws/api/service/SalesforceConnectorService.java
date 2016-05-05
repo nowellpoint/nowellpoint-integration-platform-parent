@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -20,6 +21,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
+import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.mongodb.Environment;
@@ -136,14 +138,31 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addEnvironments(String subject, String id, String key, Set<Environment> environments) {
+	public SalesforceConnectorDTO addEnvironments(String subject, String id, String key, Set<EnvironmentDTO> environments) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
 		
 		if (serviceInstance.isPresent()) {
-			serviceInstance.get().setEnvironments(environments);
+			Map<Integer,Environment> map = serviceInstance.get().getEnvironments().stream().collect(Collectors.toMap(p -> p.getIndex(), (p) -> p));
+			serviceInstance.get().getEnvironments().clear();
+			for (int i = 0; i < environments.size(); i++) {
+				EnvironmentDTO e = environments.iterator().next();
+				
+				Environment environment = null;
+				if (map.containsKey(e.getIndex())) {
+					environment = map.get(e.getIndex());
+				} else {
+				    environment = new Environment();
+				    environment.setLocked(Boolean.FALSE);
+				    environment.setIndex(i);
+				}
+				environment.setName(e.getName());
+				environment.setActive(e.getActive());
+				environment.setLabel(e.getLabel());
+				serviceInstance.get().getEnvironments().add(environment);
+			}
 		}
 		
 		updateSalesforceConnector(resource);

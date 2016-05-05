@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
+@JsonInclude(Include.NON_EMPTY)
 public class Environment {
 	
-	@JsonProperty(access = Access.WRITE_ONLY)
 	private Integer index;
 	
 	private String name;
@@ -31,14 +33,6 @@ public class Environment {
 	public Environment() {
 		setLocked(Boolean.FALSE);
 		setActive(Boolean.FALSE);
-	}
-	
-	public Environment(String name, String label, Boolean active, Boolean locked) {
-		super();
-		setName(name);
-		setLabel(label);
-		setActive(active);
-		setLocked(locked);
 	}
 
 	public Integer getIndex() {

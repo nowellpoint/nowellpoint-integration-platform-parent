@@ -19,6 +19,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -581,20 +583,17 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String[] indexes = request.queryParamsValues("index");
 		String[] names = request.queryParamsValues("name");
-		String[] locked = request.queryParamsValues("locked");
 		String[] label = request.queryParamsValues("label");
 		
-		Set<Environment> environments = new HashSet<Environment>();
+		ArrayNode node = new ObjectMapper().createArrayNode();
 
 		for (int i = 0; i < names.length; i++) {
 			if (names != null && ! names[i].trim().isEmpty()) {
-				Environment environment = new Environment();
-				environment.setIndex(Integer.valueOf(indexes[i]));
-				environment.setName(names[i].toUpperCase());
-				environment.setLabel(label[i]);
-				environment.setActive(request.queryMap().get("active" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
-				environment.setLocked(Boolean.valueOf(locked[i]));
-				environments.add(environment);
+				node.addObject()
+					.put("index", Integer.valueOf(indexes[i]))
+					.put("name", names[i].toUpperCase())
+					.put("label", label[i])
+					.put("active", request.queryMap().get("active" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
 			}
 		}
 		
@@ -609,7 +608,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("service")
 				.path(request.params(":key"))
 				.path("environments")
-				.body(environments)
+				.body(node)
     			.execute();
 		
 		Map<String, Object> model = getModel();
