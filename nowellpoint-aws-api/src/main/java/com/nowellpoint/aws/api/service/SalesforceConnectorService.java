@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
@@ -147,22 +148,23 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		if (serviceInstance.isPresent()) {
 			Map<Integer,Environment> map = serviceInstance.get().getEnvironments().stream().collect(Collectors.toMap(p -> p.getIndex(), (p) -> p));
 			serviceInstance.get().getEnvironments().clear();
-			for (int i = 0; i < environments.size(); i++) {
-				EnvironmentDTO e = environments.iterator().next();
-				
+			AtomicInteger index = new AtomicInteger();
+			environments.stream().sorted((p1,p2) -> p2.getIndex().compareTo(p1.getIndex())).forEach(e -> {
+				System.out.println(e.getIndex());
 				Environment environment = null;
 				if (map.containsKey(e.getIndex())) {
 					environment = map.get(e.getIndex());
 				} else {
 				    environment = new Environment();
 				    environment.setLocked(Boolean.FALSE);
-				    environment.setIndex(i);
+				    environment.setIndex(index.get());
 				}
 				environment.setName(e.getName());
 				environment.setActive(e.getActive());
 				environment.setLabel(e.getLabel());
 				serviceInstance.get().getEnvironments().add(environment);
-			}
+				index.incrementAndGet();
+			});
 		}
 		
 		updateSalesforceConnector(resource);

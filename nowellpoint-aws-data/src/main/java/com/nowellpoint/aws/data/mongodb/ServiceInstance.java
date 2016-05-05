@@ -178,6 +178,9 @@ public class ServiceInstance implements Serializable {
 			}
 		});
 		environments.stream().forEach(environment -> {
+			if (environment.getEnvironmentVariables() == null) {
+				environment.setEnvironmentVariables(new HashSet<EnvironmentVariable>());
+			}
 			environment.getEnvironmentVariables().stream().forEach(variable -> {
 				if (environmentVariableValues.containsKey(variable.getVariable())) {
 					if (variable.getEnvironmentVariableValues() == null) {
