@@ -7,7 +7,6 @@
     <tbody>
         <#list environment.environmentVariables as environmentVariable>
             <tr>
-                <input type="hidden" name="locked" id="locked" value="${(environmentVariable.locked?c)!}" />
                 <td>
                     <#if ! environmentVariable.locked>
                         <input type="text" class="form-control" name="variable" id="variable" value="${(environmentVariable.variable)!}" />

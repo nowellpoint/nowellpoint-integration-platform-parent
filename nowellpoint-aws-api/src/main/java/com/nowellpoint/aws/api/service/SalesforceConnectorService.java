@@ -13,6 +13,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
@@ -26,12 +28,16 @@ import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.data.mongodb.AuditEntry;
 import com.nowellpoint.aws.data.mongodb.Environment;
 import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
 import com.nowellpoint.aws.data.mongodb.SalesforceConnector;
 import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
+	
+	@Inject
+	private Event<AuditEntry> auditEvent;
 	
 	public SalesforceConnectorService() {
 		super(SalesforceConnectorDTO.class, SalesforceConnector.class);
@@ -50,6 +56,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		create( resource );
 		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
+		auditEvent.fire(new AuditEntry());
 		return resource;
 	}
 	
@@ -169,6 +176,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		updateSalesforceConnector(resource);
 		
+		AuditEntry auditEntry = new AuditEntry();
+		auditEntry.setAction("UPDATE");
+		auditEntry.setCreatedById(subject);
+		auditEntry.setLastModifiedById(subject);
+		//auditEntry.setCreatedDate();
+		
+		auditEvent.fire(auditEntry);
+		
 		return resource;
 		
 	}
@@ -225,6 +240,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		
 		updateSalesforceConnector(resource);
+		
+		AuditEntry auditEntry = new AuditEntry();
+		auditEntry.setAction("UPDATE");
+		auditEntry.setCreatedById(subject);
+		auditEntry.setLastModifiedById(subject);
+		//auditEntry.setCreatedDate();
+		
+		auditEvent.fire(auditEntry);
 		
 		return resource;
 	}
