@@ -92,7 +92,7 @@
                     data: params,
                     success: function(data, status) {
                         $("#default-variables-table").html(data);
-                        $("#success-message").fadeOut(3000);
+                        $("#success-message-default").fadeOut(3000);
                     },
                     error: function(data) {
                         $("#error").html(data.responseText);
@@ -112,7 +112,7 @@
                     data: params,
                     success: function(data, status) {
                         $("#instance-variables-table").html(data);
-                        $("#success-message").fadeOut(3000);
+                        $("#success-message-instance").fadeOut(3000);
                     },
                     error: function(data) {
                         $("#error").html(data.responseText);
@@ -141,7 +141,6 @@
                     type: "GET",
                     url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
                     complete: function(data) {
-                        console.log(data);
                         $('#default-variables-table tbody').append(data.responseText);
                     }
                 });

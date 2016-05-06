@@ -12,14 +12,17 @@ import spark.Request;
 
 abstract class AbstractController {
 	
-	private final Map<String, Object> model;
+	private Class<?> controllerClass;
+	private Configuration configuration;
 	
-	public AbstractController(Class<?> controller, Configuration cfg) {		
-		model = new HashMap<String, Object>();
-		model.put("labels", ResourceBundleUtil.getResourceBundle(controller.getName(), cfg.getLocale()));
+	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
+		this.controllerClass = controllerClass;
+		this.configuration = configuration;
 	}
 	
 	protected Map<String, Object> getModel() {
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("labels", ResourceBundleUtil.getResourceBundle(controllerClass.getName(), configuration.getLocale()));
 		return model;
 	}
 	

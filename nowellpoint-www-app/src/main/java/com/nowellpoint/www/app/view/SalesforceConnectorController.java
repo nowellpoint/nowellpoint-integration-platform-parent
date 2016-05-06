@@ -591,7 +591,7 @@ public class SalesforceConnectorController extends AbstractController {
 			if (names != null && ! names[i].trim().isEmpty()) {
 				node.addObject()
 					.put("index", Integer.valueOf(indexes[i]))
-					.put("name", names[i].toUpperCase())
+					.put("name", names[i])
 					.put("label", label[i])
 					.put("active", request.queryMap().get("active" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
 			}
@@ -629,32 +629,27 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		String defaultEnvironment = request.queryParams("defaultEnvironment");
 		
-		String[] locked = request.queryParamsValues("locked");
+		Map<String, Object> model = getModel();
+		
 		String[] variables = request.queryParamsValues("variable");
 		String[] values = request.queryParamsValues("value");
 		
-		Set<EnvironmentVariable> environmentVariables = null;
-		
+		ArrayNode node = new ObjectMapper().createArrayNode();
+
 		if (variables != null) {
-			environmentVariables = new HashSet<EnvironmentVariable>();
 			for (int i = 0; i < variables.length; i++) {
-				if (variables[i] != null && ! variables[i].trim().isEmpty()) {
-					EnvironmentVariable environmentVariable = new EnvironmentVariable();
-					environmentVariable.setLocked(Boolean.valueOf(locked[i]));
-					environmentVariable.setValue(values[i]);
-					environmentVariable.setVariable(variables[i].toUpperCase());
-					environmentVariables.add(environmentVariable);
-				}	
+				if (variables != null && ! variables[i].trim().isEmpty()) {
+					node.addObject()
+						.put("value", values[i])
+						.put("variable", variables[i])
+						.put("encrypted", request.queryMap().get("encrypted" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
+				}
 			}
-		}
-		
-		Map<String, Object> model = getModel();
-		
-		if (environmentVariables == null) {
+		} else {
 			model.put("errorMessage", MessageProvider.getMessage(Locale.US, "nothingToSave"));
 			return new ModelAndView(model, "secure/fragments/error-message.html");
 		}
-		
+
 		SalesforceConnector salesforceConnector = null;
 		
 		HttpResponse httpResponse = null;
@@ -674,7 +669,7 @@ public class SalesforceConnectorController extends AbstractController {
 					.path(key)
 					.path("variables")
 					.path(defaultEnvironment)
-					.body(environmentVariables)
+					.body(node)
 	    			.execute();
 			
 			response.status(httpResponse.getStatusCode());
@@ -715,7 +710,7 @@ public class SalesforceConnectorController extends AbstractController {
 					.path("service")
 					.path(key)
 					.path("variables")
-					.body(environmentVariables)
+					.body(node)
 	    			.execute();
 			
 			response.status(httpResponse.getStatusCode());		
@@ -734,12 +729,10 @@ public class SalesforceConnectorController extends AbstractController {
 				model.put("successMessage", successMessage);
 				model.put("serviceInstance", serviceInstance);
 				
-				System.out.println(salesforceConnector.getId());
-				
 				return new ModelAndView(model, "secure/fragments/default-environment-variables-table.html");
 				
 			} else {				
-				model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
+				model.put("errorMessage", httpResponse.getAsString());
 				return new ModelAndView(model, "secure/fragments/error-message.html");
 			}
 		}

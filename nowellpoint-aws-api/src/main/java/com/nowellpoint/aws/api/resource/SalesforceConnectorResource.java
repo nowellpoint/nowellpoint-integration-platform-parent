@@ -46,20 +46,20 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
+import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
 
 import redis.clients.jedis.Jedis;
 
-@Path("connectors/salesforce")
+@Path("connectors")
 public class SalesforceConnectorResource {
 	
 	@Inject
@@ -81,11 +81,10 @@ public class SalesforceConnectorResource {
 	private UriInfo uriInfo;
 	
 	@GET
+	@Path("salesforce")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		String subject = securityContext.getUserPrincipal().getName();
-		
-		System.out.println("here " + subject);
 		
 		Set<SalesforceConnectorDTO> resources = salesforceConnectorService.getAll(subject);
 		
@@ -94,6 +93,7 @@ public class SalesforceConnectorResource {
     }
 	
 	@GET
+	@Path("salesforce")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnectorDetails(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
@@ -116,7 +116,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("{id}")
+	@Path("salesforce/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
@@ -128,7 +128,7 @@ public class SalesforceConnectorResource {
 	
 	@PermitAll
 	@GET
-	@Path("profilephoto/{id}")
+	@Path("salesforce/profilephoto/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getProfilePhoto(@PathParam(value="id") String id) {
 		AmazonS3 s3Client = new AmazonS3Client();
@@ -160,6 +160,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
+	@Path("salesforce")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createSalesforceConnector(@FormParam(value="id") String id) {
@@ -189,7 +190,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("{id}")
+	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
@@ -215,7 +216,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("{id}/service")
+	@Path("salesforce/{id}/service")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addService(
@@ -239,7 +240,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("{id}/service/{key}/environments")
+	@Path("salesforce/{id}/service/{key}/environments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironments(
@@ -256,13 +257,13 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("{id}/service/{key}/variables")
+	@Path("salesforce/{id}/service/{key}/variables")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironmentVariables(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			Set<EnvironmentVariable> environmentVariables) {
+			Set<EnvironmentVariableDTO> environmentVariables) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
@@ -279,14 +280,14 @@ public class SalesforceConnectorResource {
 	}		
 	
 	@POST
-	@Path("{id}/service/{key}/variables/{environment}")
+	@Path("salesforce/{id}/service/{key}/variables/{environment}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironmentVariables(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
 			@PathParam(value="environment") String environment,
-			Set<EnvironmentVariable> environmentVariables) {
+			Set<EnvironmentVariableDTO> environmentVariables) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
@@ -303,7 +304,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("{id}/service/{key}")
+	@Path("salesforce/{id}/service/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceConfiguration(
@@ -322,7 +323,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("{id}/service/{key}")
+	@Path("salesforce/{id}/service/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteService(
 			@PathParam(value="id") String id,

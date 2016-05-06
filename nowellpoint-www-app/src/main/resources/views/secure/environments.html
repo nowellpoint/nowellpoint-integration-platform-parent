@@ -27,12 +27,9 @@
 
             <br>
 
-            <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-1">
-
+                <div class="col-lg-1 col-md-1 col-sm-1">
                     <#include "salesforce-service-nav.html" />
-
                 </div>
 
                 <div class="col-sm-11">
@@ -41,18 +38,18 @@
 
                     </div>
 
-                    <div class="col-sm-10">
+                    <div class="col-lg-10 col-md-10 col-sm-10">
 
                         <div class="panel panel-default">
                             <div class="panel-heading">${labels["environments"]}</div>
                             <div class="panel-body">
                                 <div class="row">
 
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                    <div class="col-sm-3 col-md-3 col-lg-3">
                                         <b>${labels['name']}</b>
                                     </div>
 
-                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <div class="col-sm-5 col-md-5 col-lg-5">
                                         <b>${labels['label']}</b>
                                     </div>
 
@@ -69,7 +66,7 @@
                                         <div class="row">
                                             <input type="hidden" name="index" id="index" value="${(environment.index)!}" />
 
-                                            <div class="form-group col-sm-2 col-md-2 col-lg-2">
+                                            <div class="form-group col-sm-3 col-md-3 col-lg-3">
                                                 <#if ! environment.locked>
                                                     <input type="text" class="form-control" name="name" id="name" placeholder="${labels['name']}" value="${(environment.name)!}" />
                                                 </#if>
@@ -79,7 +76,7 @@
                                                 </#if>
                                             </div>
 
-                                            <div class="form-group col-sm-4 col-md-4 col-lg-4">
+                                            <div class="form-group col-sm-5 col-md-5 col-lg-5">
                                                 <#if ! environment.locked>
                                                     <input type="text" class="form-control" name="label" id="label" placeholder="${labels['label']}" value="${(environment.label)!}" />
                                                 </#if>
@@ -125,7 +122,6 @@
                     <div class="col-sm-2"></div>
                 </div>
             </div>
-            </div>    
         </div>
 
         <#include "spinner.html" />

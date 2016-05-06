@@ -23,6 +23,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
+import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.mongodb.Environment;
@@ -150,7 +151,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			serviceInstance.get().getEnvironments().clear();
 			AtomicInteger index = new AtomicInteger();
 			environments.stream().sorted((p1,p2) -> p2.getIndex().compareTo(p1.getIndex())).forEach(e -> {
-				System.out.println(e.getIndex());
 				Environment environment = null;
 				if (map.containsKey(e.getIndex())) {
 					environment = map.get(e.getIndex());
@@ -159,7 +159,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				    environment.setLocked(Boolean.FALSE);
 				    environment.setIndex(index.get());
 				}
-				environment.setName(e.getName());
+				environment.setName(e.getName().toUpperCase());
 				environment.setActive(e.getActive());
 				environment.setLabel(e.getLabel());
 				serviceInstance.get().getEnvironments().add(environment);
@@ -173,7 +173,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 	}
 	
-	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariable> environmentVariables) {
+	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariableDTO> environmentVariables) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
@@ -188,12 +188,38 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
 		
 		if (serviceInstance.isPresent()) {
-			if (environmentName == null) {
-				serviceInstance.get().setEnvironmentVariables(environmentVariables);
+			if (environmentName == null || environmentName.trim().isEmpty()) {
+				Map<String,EnvironmentVariable> map = serviceInstance.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
+				serviceInstance.get().getEnvironmentVariables().clear();
+				environmentVariables.stream().forEach(e -> {
+					EnvironmentVariable environmentVariable = null;
+					if (map.containsKey(e.getVariable().toUpperCase())) {
+						environmentVariable = map.get(e.getVariable());
+					} else {
+						environmentVariable = new EnvironmentVariable();
+						environmentVariable.setVariable(e.getVariable().toUpperCase());
+					}
+					environmentVariable.setValue(e.getValue());
+					environmentVariable.setEncrypted(e.getEncrypted());
+					serviceInstance.get().getEnvironmentVariables().add(environmentVariable);
+				});
 			} else {
 				Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
 				if (environment.isPresent()) {
-					environment.get().setEnvironmentVariables(environmentVariables);
+					Map<String,EnvironmentVariable> map = environment.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
+					environment.get().getEnvironmentVariables().clear();
+					environmentVariables.stream().forEach(e -> {
+						EnvironmentVariable environmentVariable = null;
+						if (map.containsKey(e.getVariable().toUpperCase())) {
+							environmentVariable = map.get(e.getVariable());
+						} else {
+							environmentVariable = new EnvironmentVariable();
+							environmentVariable.setVariable(e.getVariable().toUpperCase());
+						}
+						environmentVariable.setValue(e.getValue());
+						environmentVariable.setEncrypted(e.getEncrypted());
+						environment.get().getEnvironmentVariables().add(environmentVariable);
+					});
 				}
 			}
 		}
