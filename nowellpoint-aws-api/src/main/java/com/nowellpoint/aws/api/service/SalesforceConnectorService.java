@@ -192,6 +192,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
+		AuditEntry auditEntry = new AuditEntry();
+		auditEntry.setAction("UPDATE");
+		auditEntry.setCreatedById(subject);
+		auditEntry.setLastModifiedById(subject);
+		auditEntry.setObject(environmentVariables);
+		
+		auditEvent.fire(auditEntry);
+		
 		Set<String> variables = new HashSet<String>();
 		environmentVariables.stream().forEach(variable -> {
 			if (variables.contains(variable.getVariable())) {
@@ -240,14 +248,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		
 		updateSalesforceConnector(resource);
-		
-		AuditEntry auditEntry = new AuditEntry();
-		auditEntry.setAction("UPDATE");
-		auditEntry.setCreatedById(subject);
-		auditEntry.setLastModifiedById(subject);
-		//auditEntry.setCreatedDate();
-		
-		auditEvent.fire(auditEntry);
 		
 		return resource;
 	}
