@@ -9,7 +9,7 @@
             <tr>
                 <td>
                     <#if ! environmentVariable.locked>
-                        <input type="text" class="form-control" name="variable" id="variable" value="${(environmentVariable.variable)!}" />
+                        <input type="text" style='text-transform:uppercase' class="form-control" name="variable" id="variable" value="${(environmentVariable.variable)!}" />
                     </#if>
                     <#if environmentVariable.locked>
                         <input type="hidden" name="variable" id="variable" value="${(environmentVariable.variable)!}" />
