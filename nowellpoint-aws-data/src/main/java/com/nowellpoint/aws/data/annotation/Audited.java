@@ -10,7 +10,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target({ TYPE })
 @Retention(RUNTIME)
-public @interface Document {
-	String collectionName();
-	Class<?> codec();
+public @interface Audited {
+
 }

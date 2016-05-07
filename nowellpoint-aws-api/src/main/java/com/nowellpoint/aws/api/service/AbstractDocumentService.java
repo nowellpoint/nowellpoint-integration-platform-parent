@@ -2,8 +2,6 @@ package com.nowellpoint.aws.api.service;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -188,10 +186,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected R create(R resource) {
-		AbstractDocument document = modelMapper.map( resource, documentType );
-		
-		document.setCreatedDate(Date.from(Instant.now()));
-		document.setLastModifiedDate(Date.from(Instant.now()));
+		AbstractDocument document = modelMapper.map( resource, documentType );		
 		document.setCreatedById(resource.getSubject());
 		document.setLastModifiedById(resource.getSubject());
 		
@@ -217,8 +212,6 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	
 	protected R replace(R resource) {
 		AbstractDocument document = modelMapper.map( resource, documentType );
-		
-		document.setLastModifiedDate(Date.from(Instant.now()));
 		document.setLastModifiedById(resource.getSubject());
 		
 		try {

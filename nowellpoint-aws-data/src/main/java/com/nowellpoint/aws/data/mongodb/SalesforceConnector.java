@@ -4,10 +4,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.data.SalesforceConnectionCodec;
+import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.sforce.Identity;
 import com.nowellpoint.aws.data.mongodb.sforce.Organization;
 
+@Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends AbstractDocument {
