@@ -2,7 +2,6 @@ package com.nowellpoint.aws.api.resource;
 
 import static com.nowellpoint.aws.data.CacheManager.deserialize;
 import static com.nowellpoint.aws.data.CacheManager.getCache;
-import static com.nowellpoint.aws.data.CacheManager.serialize;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,7 +24,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -53,8 +51,6 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
-import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
 
 import redis.clients.jedis.Jedis;
@@ -91,29 +87,6 @@ public class SalesforceConnectorResource {
 		return Response.ok(resources)
 				.build();
     }
-	
-	@GET
-	@Path("salesforce")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceConnectorDetails(@QueryParam(value="code") String code) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		OauthAuthenticationResponse response = null;
-		
-		try {
-			response = salesforceService.authenticate(code);
-		} catch (OauthException e) {
-			throw new WebApplicationException(e.getErrorDescription(), Status.BAD_REQUEST);
-		}
-		
-		Token token = response.getToken();
-		
-		putToken(subject, token.getId(), token);
-		
-		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
-		
-		return Response.ok(resource).build();
-	}
 	
 	@GET
 	@Path("salesforce/{id}")
@@ -339,15 +312,6 @@ public class SalesforceConnectorResource {
 		
 	}
 	
-	private void putToken(String subject, String userId, Token token) {
-		Jedis jedis = getCache();
-		try {
-			jedis.hset(subject.getBytes(), Token.class.getName().concat( userId ).getBytes(), serialize(token));
-		} finally {
-			jedis.close();
-		}
-	}
-	
 	private Token getToken(String subject, String userId) {
 		Jedis jedis = getCache();
 		byte[] bytes = null;
@@ -387,7 +351,7 @@ public class SalesforceConnectorResource {
 	    	
 	    	URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 					.path(SalesforceConnectorResource.class)
-					.path("connector")
+					.path("salesforce")
 					.path("profilephoto")
 					.path("{id}")
 					.build(key);

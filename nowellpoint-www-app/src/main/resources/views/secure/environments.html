@@ -112,7 +112,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "POST",
-                    url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/environments",
+                    url: "/app/connectors/salesforce/${salesforceConnector.id!}/service/${serviceInstance.key!}/environments",
                     data: params,
                     complete: function(data) {
                         $("#statusMessage").html(data.responseText);

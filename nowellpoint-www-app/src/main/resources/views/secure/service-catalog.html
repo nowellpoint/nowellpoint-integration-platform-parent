@@ -28,7 +28,7 @@
 
                     <div class="flextable">
                         <div class="flextable-item">
-                            <a href="/app/connectors/salesforce/connector/${id}"><span class="icon icon-back fa-2x">&nbsp;${organizationName}</span></a>
+                            <a href="/app/connectors/salesforce/${id}"><span class="icon icon-back fa-2x">&nbsp;${organizationName}</span></a>
                         </div>
                     </div>
 
@@ -72,7 +72,7 @@
                     var data = $("#form").serialize()
                     $.ajax({
                         type: "POST",
-                        url: "/app/connectors/salesforce/connector/${id}/service",
+                        url: "/app/connectors/salesforce/${id}/service",
                         data: data,
                         complete: function(data) {
                             $("#statusMessage").html(data.responseText);

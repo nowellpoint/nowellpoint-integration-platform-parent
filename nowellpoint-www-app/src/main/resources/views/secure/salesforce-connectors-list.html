@@ -50,7 +50,7 @@
                                 <#list salesforceConnectorsList?sort_by("createdDate") as salesforceConnector>
                                     <tr id="${salesforceConnector.id}">
                                         <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
-                                        <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                        <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
                                         <td>${salesforceConnector.identity.username}</td>
@@ -76,7 +76,7 @@
                 var id = $('#confirmDialog').data('id');
                 var row = $('#'.concat(id));
                 $.ajax({
-                    url: '/app/connectors/salesforce/connector/' + id,
+                    url: '/app/connectors/salesforce/' + id,
                     type: 'DELETE',
                     success: function() {
                         row.remove();

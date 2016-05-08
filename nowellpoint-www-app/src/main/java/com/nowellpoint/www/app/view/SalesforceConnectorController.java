@@ -52,40 +52,38 @@ public class SalesforceConnectorController extends AbstractController {
 	public SalesforceConnectorController(Configuration cfg) {
 		
 		super(SalesforceConnectorController.class, cfg);
-		
-		get("/app/salesforce/connector", (request, response) -> getSalesforceConnectorDetails(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/connector", (request, response) -> saveSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce", (request, response) -> saveSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id", (request, response) -> getSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id", (request, response) -> getSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
-        delete("/app/connectors/salesforce/connector/:id", (request, response) -> deleteSalesforceConnector(request, response));
+        delete("/app/connectors/salesforce/:id", (request, response) -> deleteSalesforceConnector(request, response));
         
-        get("/app/connectors/salesforce/connector/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/connector/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
         
-        delete("/app/connectors/salesforce/connector/:id/service/:key", (request, response) -> deleteService(request, response), new FreeMarkerEngine(cfg));
+        delete("/app/connectors/salesforce/:id/service/:key", (request, response) -> deleteService(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/connector/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/connector/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id/service/:key/details", (request, response) -> getService(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/details", (request, response) -> getService(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id/service/:key/variables/add", (request, response) -> addEnvironmentVariable(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/variables/add", (request, response) -> addEnvironmentVariable(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/connector/:id/service/:key/environments", (request, response) -> saveEnvironments(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> saveEnvironments(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/connector/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/connector/:id/service/:key/variables/:defaultEnvironment", (request, response) -> getEnvironmentVariablesForInstance(request, response), new FreeMarkerEngine(cfg));        
+        get("/app/connectors/salesforce/:id/service/:key/variables/:defaultEnvironment", (request, response) -> getEnvironmentVariablesForInstance(request, response), new FreeMarkerEngine(cfg));        
 	}
 	
 	/**
@@ -97,47 +95,6 @@ public class SalesforceConnectorController extends AbstractController {
 	
 	private ModelAndView addEnvironmentVariable(Request request, Response response) {	
 		return new ModelAndView(getModel(), "secure/fragments/environment-table-row.html");
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private ModelAndView getSalesforceConnectorDetails(Request request, Response response) {
-		Token token = getToken(request);
-		
-		Account account = getAccount(request);
-    	
-    	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
-    			.path("connectors")
-    			.path("salesforce")
-    			.queryParameter("code", request.queryParams("code"))
-    			.execute();
-    	
-    	SalesforceConnector salesforceConnector = null;
-    	String successMessage = null;
-    	String errorMessage = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    		successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
-    	} else {
-    		errorMessage = httpResponse.getAsString();
-    	}	
-    	
-    	Map<String, Object> model = getModel();
-    	model.put("account", account);
-    	model.put("salesforceConnector", salesforceConnector);
-    	model.put("successMessage", successMessage);
-    	model.put("errorMessage", errorMessage);
-    	
-    	return new ModelAndView(model, "secure/salesforce-authenticate.html");
 	}
 	
 	/**
@@ -403,6 +360,8 @@ public class SalesforceConnectorController extends AbstractController {
 		} else {
 			salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
 		}
+		
+		System.out.println(salesforceConnectors.size());
 		
 		Map<String, Object> model = getModel();
     	model.put("account", account);

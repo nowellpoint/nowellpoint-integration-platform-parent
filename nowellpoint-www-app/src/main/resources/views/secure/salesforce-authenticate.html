@@ -197,7 +197,7 @@
                 var data = $("#form").serialize()
                 $.ajax({
                     type: "POST",
-                    url: "/app/connectors/salesforce/connector",
+                    url: "/app/connectors/salesforce",
                     data: data,
                     complete: function(data) {
                         $("#statusMessage").html(data.responseText);
