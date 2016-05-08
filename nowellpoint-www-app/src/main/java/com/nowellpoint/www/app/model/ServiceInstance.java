@@ -41,6 +41,8 @@ public class ServiceInstance {
 	private List<EnvironmentVariable> environmentVariables;
 	
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
+	
+	private Long activeEnvironments;
 
 	private String configurationPage;
 	
@@ -187,6 +189,14 @@ public class ServiceInstance {
 		this.environmentVariableValues = environmentVariableValues;
 	}
 	
+	public Long getActiveEnvironments() {
+		return activeEnvironments;
+	}
+
+	public void setActiveEnvironments(Long activeEnvironments) {
+		this.activeEnvironments = activeEnvironments;
+	}
+
 	@JsonIgnore
 	public Optional<Environment> getEnvironment(String name) {
 		return getEnvironments()

@@ -65,8 +65,6 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static void replaceOne(AbstractDocument document) {	
-		document.setId(new ObjectId());
-		document.setCreatedDate(Instant.now().toDate());
 		document.setLastModifiedDate(Instant.now().toDate());
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
@@ -80,6 +78,8 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static void insertOne(AbstractDocument document) {
+		document.setId(new ObjectId());
+		document.setCreatedDate(Instant.now().toDate());
 		document.setLastModifiedDate(Instant.now().toDate());
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override

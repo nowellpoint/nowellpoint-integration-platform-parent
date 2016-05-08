@@ -581,6 +581,9 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView saveEnvironments(Request request, Response respose) {
 		Token token = getToken(request);
 		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
 		String[] indexes = request.queryParamsValues("index");
 		String[] names = request.queryParamsValues("name");
 		String[] label = request.queryParamsValues("label");
@@ -597,6 +600,8 @@ public class SalesforceConnectorController extends AbstractController {
 			}
 		}
 		
+		System.out.println(node);
+		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
@@ -604,9 +609,9 @@ public class SalesforceConnectorController extends AbstractController {
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
-				.path(request.params(":id"))
+				.path(id)
 				.path("service")
-				.path(request.params(":key"))
+				.path(key)
 				.path("environments")
 				.body(node)
     			.execute();

@@ -269,7 +269,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, null, environmentVariables);
+			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentVariables);
 		} catch (UnsupportedOperationException e) {
 			throw new BadRequestException(e.getMessage());
 		}

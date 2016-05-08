@@ -34,11 +34,18 @@
 
                 <div class="col-sm-11">
 
+                    <div class="row">
+                        <div class="col-lg-2 col-md-2 col-sm-2">
+                            <div class="statcard p-a-md m-b">
+                                <h3 class="statcard-number">${serviceInstance.activeEnvironments} ${labels["of"]} ${serviceInstance.environments?size}</h3>    
+                                <span class="statcard-desc">${labels["active.environments"]}</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-sm-1">
 
-                        <div>
-                            <span class="icon icon-folder fa-4x"></span>
-                        </div>
+                        
 
                     </div>
 
@@ -62,10 +69,10 @@
                             <dd>${(salesforceConnector.organization.instanceName)!}</dd>
 
                         </dl>
-                        
+
                         <br>
-                        
-                         <p class="text-danger">
+
+                        <p class="text-danger">
                             ${labels["delete.warning"]}
                         </p>
 
@@ -80,21 +87,21 @@
                             <option value="">--- ${labels["select.environment"]} ---</option>
                             <#list serviceInstance.environments as environment>
                                 <#if environment.active>
-                                    <#if environment.name == (serviceInstance.defaultEnvironment)!"">
+                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
                                         <option value="${environment.name}" selected>${environment.label}</option>
                                     </#if>
-                                    <#if environment.name != (serviceInstance.defaultEnvironment)!"">
-                                         <option value="${environment.name}">${environment.label}</option>
-                                    </#if>     
+                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                        <option value="${environment.name}">${environment.label}</option>
+                                    </#if>
                                 </#if>
                             </#list>
                         </select>
 
                     </div>
 
-                    
 
-                   
+
+
 
                     <!--
                     <div class="col-sm-12">
@@ -119,19 +126,18 @@
         <#include "spinner.html" />
 
         <script>
-
             $('#confirm').click(function(e) {
                 $('#confirmDialog').modal('hide');
                 $.ajax({
                     url: "/app/connectors/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
                     type: "DELETE",
-                    complete : function(data) {
+                    complete: function(data) {
                         window.location.replace("/app/connectors/salesforce/connector/${(salesforceConnector.id)!}");
                     }
                 });
             });
-            
-            
+
+
             $('#loginForm').submit(function(e) {
                 var params = $("#loginForm").serialize();
                 $.ajax({

@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
@@ -60,7 +61,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		replace( resource );
 		
-		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
+		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
 		
 		return resource;
@@ -149,6 +150,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		if (serviceInstance.isPresent()) {
 			Map<Integer,Environment> map = serviceInstance.get().getEnvironments().stream().collect(Collectors.toMap(p -> p.getIndex(), (p) -> p));
 			serviceInstance.get().getEnvironments().clear();
+			serviceInstance.get().setActiveEnvironments(new Long(0));
 			AtomicInteger index = new AtomicInteger();
 			environments.stream().sorted((p1,p2) -> p2.getIndex().compareTo(p1.getIndex())).forEach(e -> {
 				Environment environment = null;
@@ -162,6 +164,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				environment.setName(e.getName().toUpperCase());
 				environment.setActive(e.getActive());
 				environment.setLabel(e.getLabel());
+				AtomicLong activeEnvironments = new AtomicLong(serviceInstance.get().getActiveEnvironments());
+				if (e.getActive()) {
+					activeEnvironments.incrementAndGet();
+				}
+				serviceInstance.get().setActiveEnvironments(activeEnvironments.get());
 				serviceInstance.get().getEnvironments().add(environment);
 				index.incrementAndGet();
 			});
@@ -171,6 +178,42 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return resource;
 		
+	}
+	
+	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, Set<EnvironmentVariableDTO> environmentVariables) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Set<String> variables = new HashSet<String>();
+		environmentVariables.stream().forEach(variable -> {
+			if (variables.contains(variable.getVariable())) {
+				throw new UnsupportedOperationException("Duplicate variable names: " + variable.getVariable());
+			}
+			variables.add(variable.getVariable());
+		});
+		
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		
+		if (serviceInstance.isPresent()) {
+			Map<String,EnvironmentVariable> map = serviceInstance.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
+			serviceInstance.get().getEnvironmentVariables().clear();
+			environmentVariables.stream().forEach(e -> {
+				EnvironmentVariable environmentVariable = null;
+				if (map.containsKey(e.getVariable().toUpperCase())) {
+					environmentVariable = map.get(e.getVariable());
+				} else {
+					environmentVariable = new EnvironmentVariable();
+					environmentVariable.setVariable(e.getVariable().toUpperCase());
+				}
+				environmentVariable.setValue(e.getValue());
+				environmentVariable.setEncrypted(e.getEncrypted());
+				serviceInstance.get().getEnvironmentVariables().add(environmentVariable);
+			});
+			
+			updateSalesforceConnector(resource);
+		}
+		
+		return resource;
 	}
 	
 	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariableDTO> environmentVariables) {
@@ -188,9 +231,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
 		
 		if (serviceInstance.isPresent()) {
-			if (environmentName == null || environmentName.trim().isEmpty()) {
-				Map<String,EnvironmentVariable> map = serviceInstance.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
-				serviceInstance.get().getEnvironmentVariables().clear();
+			Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
+			if (environment.isPresent()) {
+				Map<String,EnvironmentVariable> map = environment.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
+				environment.get().getEnvironmentVariables().clear();
 				environmentVariables.stream().forEach(e -> {
 					EnvironmentVariable environmentVariable = null;
 					if (map.containsKey(e.getVariable().toUpperCase())) {
@@ -201,30 +245,12 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					}
 					environmentVariable.setValue(e.getValue());
 					environmentVariable.setEncrypted(e.getEncrypted());
-					serviceInstance.get().getEnvironmentVariables().add(environmentVariable);
+					environment.get().getEnvironmentVariables().add(environmentVariable);
 				});
-			} else {
-				Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
-				if (environment.isPresent()) {
-					Map<String,EnvironmentVariable> map = environment.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
-					environment.get().getEnvironmentVariables().clear();
-					environmentVariables.stream().forEach(e -> {
-						EnvironmentVariable environmentVariable = null;
-						if (map.containsKey(e.getVariable().toUpperCase())) {
-							environmentVariable = map.get(e.getVariable());
-						} else {
-							environmentVariable = new EnvironmentVariable();
-							environmentVariable.setVariable(e.getVariable().toUpperCase());
-						}
-						environmentVariable.setValue(e.getValue());
-						environmentVariable.setEncrypted(e.getEncrypted());
-						environment.get().getEnvironmentVariables().add(environmentVariable);
-					});
-				}
 			}
+			
+			updateSalesforceConnector(resource);
 		}
-		
-		updateSalesforceConnector(resource);
 		
 		return resource;
 	}

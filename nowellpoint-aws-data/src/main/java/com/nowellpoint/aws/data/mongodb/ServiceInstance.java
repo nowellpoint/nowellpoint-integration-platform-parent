@@ -43,6 +43,8 @@ public class ServiceInstance implements Serializable {
 	private Set<EnvironmentVariable> environmentVariables;
 	
 	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
+	
+	private Long activeEnvironments;
 
 	private String configurationPage;
 	
@@ -152,6 +154,7 @@ public class ServiceInstance implements Serializable {
 
 	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
+		setActiveEnvironments(this.environments.stream().filter(environment -> environment.getActive()).count());
 	}
 
 	public Set<EnvironmentVariable> getEnvironmentVariables() {
@@ -170,6 +173,14 @@ public class ServiceInstance implements Serializable {
 		return environmentVariableValues;
 	}
 	
+	public Long getActiveEnvironments() {
+		return activeEnvironments;
+	}
+
+	public void setActiveEnvironments(Long activeEnvironments) {
+		this.activeEnvironments = activeEnvironments;
+	}
+
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
 		environmentVariables.stream().forEach(variable -> {
 			if (environmentVariableValues.containsKey(variable.getVariable())) {
