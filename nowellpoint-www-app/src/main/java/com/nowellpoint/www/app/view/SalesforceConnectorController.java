@@ -654,9 +654,7 @@ public class SalesforceConnectorController extends AbstractController {
 				model.put("successMessage", successMessage);
 				model.put("serviceInstance", serviceInstance);
 				model.put("environment", environment.get());
-				
-				return new ModelAndView(model, "secure/fragments/instance-environment-variables-table.html");
-				
+				return new ModelAndView(model, "secure/fragments/success-message.html");
 			} else {
 				model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
 				return new ModelAndView(model, "secure/fragments/error-message.html");

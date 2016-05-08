@@ -161,7 +161,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				    environment.setLocked(Boolean.FALSE);
 				    environment.setIndex(index.get());
 				}
-				environment.setName(e.getName().toUpperCase());
+				environment.setName(e.getName());
 				environment.setActive(e.getActive());
 				environment.setLabel(e.getLabel());
 				AtomicLong activeEnvironments = new AtomicLong(serviceInstance.get().getActiveEnvironments());
@@ -190,6 +190,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				throw new UnsupportedOperationException("Duplicate variable names: " + variable.getVariable());
 			}
 			variables.add(variable.getVariable());
+			if (variable.getVariable().contains(" ")) {
+				throw new IllegalArgumentException("Environment variables must not contain spaces: " + variable.getVariable());
+			}
 		});
 		
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
@@ -199,11 +202,12 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			serviceInstance.get().getEnvironmentVariables().clear();
 			environmentVariables.stream().forEach(e -> {
 				EnvironmentVariable environmentVariable = null;
-				if (map.containsKey(e.getVariable().toUpperCase())) {
+				if (map.containsKey(e.getVariable())) {
 					environmentVariable = map.get(e.getVariable());
 				} else {
 					environmentVariable = new EnvironmentVariable();
-					environmentVariable.setVariable(e.getVariable().toUpperCase());
+					environmentVariable.setVariable(e.getVariable());
+					environmentVariable.setLocked(Boolean.FALSE);
 				}
 				environmentVariable.setValue(e.getValue());
 				environmentVariable.setEncrypted(e.getEncrypted());
@@ -226,6 +230,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				throw new UnsupportedOperationException("Duplicate variable names: " + variable.getVariable());
 			}
 			variables.add(variable.getVariable());
+			if (variable.getVariable().contains(" ")) {
+				throw new IllegalArgumentException("Environment variables must not contain spaces: " + variable.getVariable());
+			}
 		});
 		
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
@@ -237,11 +244,12 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				environment.get().getEnvironmentVariables().clear();
 				environmentVariables.stream().forEach(e -> {
 					EnvironmentVariable environmentVariable = null;
-					if (map.containsKey(e.getVariable().toUpperCase())) {
+					if (map.containsKey(e.getVariable())) {
 						environmentVariable = map.get(e.getVariable());
 					} else {
 						environmentVariable = new EnvironmentVariable();
-						environmentVariable.setVariable(e.getVariable().toUpperCase());
+						environmentVariable.setVariable(e.getVariable());
+						environmentVariable.setLocked(Boolean.FALSE);
 					}
 					environmentVariable.setValue(e.getValue());
 					environmentVariable.setEncrypted(e.getEncrypted());

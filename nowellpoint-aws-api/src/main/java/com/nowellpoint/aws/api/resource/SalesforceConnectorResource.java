@@ -240,7 +240,7 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentVariables);
-		} catch (UnsupportedOperationException e) {
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
@@ -264,7 +264,7 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environment, environmentVariables);
-		} catch (UnsupportedOperationException e) {
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		

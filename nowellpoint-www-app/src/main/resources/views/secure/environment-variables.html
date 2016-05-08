@@ -23,9 +23,10 @@
             <br>
 
             <div class="row">
-                <div id="error" class="col-lg-12 col-md-12 col-sm-12">
+                <div id="status-message" class="col-lg-12 col-md-12 col-sm-12">
                             
                 </div>
+                
                 <div class="col-lg-1 col-md-1 col-sm-1">
                     <#include "salesforce-service-nav.html" />
                 </div>
@@ -56,7 +57,8 @@
                                         <#include "fragments/instance-environment-variables-table.html" />
                                     </div>
                                     <div class="pull-right">
-                                        <a id="addInstanceVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
+                                        <a id="reset" name="reset" role="button">${labels["reset"]}</a>&nbsp;
+                                        <a id="addInstanceVariable" name="add" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                                     </div>
                                 </div>
@@ -92,12 +94,8 @@
                     type: "POST",
                     url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
                     data: params,
-                    success: function(data, status) {
-                        $("#default-variables-table").html(data);
-                        $("#success-message-default").fadeOut(3000);
-                    },
-                    error: function(data) {
-                        $("#error").html(data.responseText);
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
                     }
                 });
 
@@ -112,12 +110,8 @@
                     type: "POST",
                     url: "/app/connectors/salesforce/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
                     data: params,
-                    success: function(data, status) {
-                        $("#instance-variables-table").html(data);
-                        $("#success-message-instance").fadeOut(3000);
-                    },
-                    error: function(data) {
-                        $("#error").html(data.responseText);
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
                     }
                 });
 
@@ -155,6 +149,18 @@
                     url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
                     complete: function(data) {
                         $('#instance-variables-table tbody').append(data.responseText);
+                    }
+                });
+
+            });
+            
+            $('#reset').click(function() {
+                $.ajax({
+                    dataType: "html",
+                    type: "GET",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.defaultEnvironment!)}",
+                    complete: function(data) {
+                        $('#instance-variables-table').html(data.responseText);
                     }
                 });
 
