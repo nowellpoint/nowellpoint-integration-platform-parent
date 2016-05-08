@@ -130,7 +130,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "GET",
-                    url: "/app/connectors/salesforce/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/".concat(this.value),
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/".concat(this.value),
                     complete: function(data) {
                         $("#instance-variables-table").html(data.responseText);
                     }
@@ -141,7 +141,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "GET",
-                    url: "/app/connectors/salesforce/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
                     complete: function(data) {
                         $('#default-variables-table tbody').append(data.responseText);
                     }
@@ -152,7 +152,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "GET",
-                    url: "/app/connectors/salesforce/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
                     complete: function(data) {
                         $('#instance-variables-table tbody').append(data.responseText);
                     }

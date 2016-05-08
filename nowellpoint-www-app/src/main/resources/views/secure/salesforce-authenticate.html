@@ -178,7 +178,7 @@
                         <form id="form" role="form" method="post">
                             <input type="hidden" id="id" name="id" value="${(salesforceConnector.identity.id)!}" />
                             <div class="pull-right">
-                                <a href="/app/connectors/salesforce">${cancel}</a>&nbsp;
+                                <a href="${labels['base.path']}">${cancel}</a>&nbsp;
                                 <#if (salesforceConnector)??>
                                     <button type="submit" name="save" id="save" class="btn btn-primary">${save}</button>
                                 </#if>
@@ -197,7 +197,7 @@
                 var data = $("#form").serialize()
                 $.ajax({
                     type: "POST",
-                    url: "/app/connectors/salesforce",
+                    url: "${labels['base.path']}",
                     data: data,
                     complete: function(data) {
                         $("#statusMessage").html(data.responseText);

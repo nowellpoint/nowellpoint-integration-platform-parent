@@ -4,21 +4,21 @@
 
     <ul class="nav nav-pills iconav-nav">
         <li>
-            <a href="/app/connectors/salesforce/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/details" title="${labels['details']}" data-toggle="tooltip" data-placement="right" data-container="body">
+            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/details" title="${labels['details']}" data-toggle="tooltip" data-placement="right" data-container="body">
                 <span class="icon icon-info"></span>
                 <br>
                 <span class="iconav-nav-label">${labels["details"]}</span></a>
         </li>
 
         <li>
-            <a href="/app/connectors/salesforce/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/environments" title="${labels['environments']}" data-toggle="tooltip" data-placement="right" data-container="body">
+            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/environments" title="${labels['environments']}" data-toggle="tooltip" data-placement="right" data-container="body">
                 <span class="icon icon-list"></span>
                 <br>
                 <span class="iconav-nav-label">${labels["environments"]}</span></a>
         </li>
 
         <li>
-            <a href="/app/connectors/salesforce/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables" title="${labels['environment.variables']}" data-toggle="tooltip" data-placement="right" data-container="body">
+            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables" title="${labels['environment.variables']}" data-toggle="tooltip" data-placement="right" data-container="body">
                 <span class="icon icon-cog"></span>
                 <br>
                 <span class="iconav-nav-label">${labels["environment.variables"]}</span></a>

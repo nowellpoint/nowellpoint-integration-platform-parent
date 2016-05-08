@@ -9,12 +9,12 @@
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle"></h6>
-                        <h2 class="dashhead-title">${salesforceConnectorsLabel}</h2>
+                        <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
                     </div>
 
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${add}</a>
+                            <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
                         </p>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                 var id = $('#confirmDialog').data('id');
                 var row = $('#'.concat(id));
                 $.ajax({
-                    url: '/app/connectors/salesforce/' + id,
+                    url: "${labels['base.path']}" + id,
                     type: 'DELETE',
                     success: function() {
                         row.remove();

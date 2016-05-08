@@ -100,8 +100,8 @@
             <br>
 
             <div class="pull-right">
-                <a href="/app/salesforce/connector/${(salesforceConnector.id)!}">${labels["cancel"]}</a>&nbsp;
-                <a href="/app/salesforce/connector/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["reset"]}</a>&nbsp;
+                <a href="${labels['base.path']}/${(salesforceConnector.id)!}">${labels["cancel"]}</a>&nbsp;
+                <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}">${labels["reset"]}</a>&nbsp;
                 <button type="submit" name="submit" id="submit" class="btn btn-primary btn-lg">${labels["save"]}</button>
             </div>
 

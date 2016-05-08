@@ -13,7 +13,7 @@
                     </div>
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="/app/connectors/salesforce/${salesforceConnector.id}/providers" class="btn btn-lg btn-primary-outline" role="button">${addService}</a>
+                            <a href="${labels['base.path']}/${salesforceConnector.id}/providers" class="btn btn-lg btn-primary-outline" role="button">${addService}</a>
                         </p>
                     </div>
                 </div>
@@ -189,7 +189,7 @@
                                         <tbody>
                                             <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
                                                 <tr id="${service.key}">
-                                                    <td><a href="/app/connectors/salesforce/connector/${salesforceConnector.id}/service/${service.key}/details">${service.providerName}</a></td>
+                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.providerName}</a></td>
                                                     <td>${service.serviceName!}</td>
                                                     <td>${service.tag!}</td>
                                                     <td class="text-center">

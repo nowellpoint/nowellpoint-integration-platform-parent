@@ -54,7 +54,7 @@
                         <dl class="dl-horizontal">
 
                             <dt>${labels["connector"]}</dt>
-                            <dd><a href="/app/connectors/salesforce/${(salesforceConnector.id)!}">${(salesforceConnector.id)!}</a></dd>
+                            <dd><a href="${labels['base.path']}/${(salesforceConnector.id)!}">${(salesforceConnector.id)!}</a></dd>
 
                             <dt>${labels["id"]}</dt>
                             <dd>${(salesforceConnector.identity.id)!}</dd>
@@ -129,10 +129,10 @@
             $('#confirm').click(function(e) {
                 $('#confirmDialog').modal('hide');
                 $.ajax({
-                    url: "/app/connectors/salesforce/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
                     type: "DELETE",
                     complete: function(data) {
-                        window.location.replace("/app/connectors/salesforce/${(salesforceConnector.id)!}");
+                        window.location.replace("${labels['base.path']}/${(salesforceConnector.id)!}");
                     }
                 });
             });
@@ -143,7 +143,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "POST",
-                    url: "/app/connectors/salesforce/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects",
                     data: params,
                     complete: function(data) {
                         $("#auto_load_div").html(data.responseText);
@@ -153,8 +153,6 @@
                 e.preventDefault();
 
             });
-
-
 
             $("#environment").change(function() {
                 alert("Handler for .change() called.");

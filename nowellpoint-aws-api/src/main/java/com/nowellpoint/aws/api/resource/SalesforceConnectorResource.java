@@ -171,12 +171,9 @@ public class SalesforceConnectorResource {
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
-		System.out.println(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1));
-		System.out.println(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1));
-		
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
-		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
+		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getThumbnail().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
 		
 		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
 		
