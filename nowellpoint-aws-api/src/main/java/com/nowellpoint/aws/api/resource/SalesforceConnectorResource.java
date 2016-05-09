@@ -162,6 +162,24 @@ public class SalesforceConnectorResource {
 				.build(); 
 	}
 	
+	@POST
+	@Path("salesforce/{id}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		resource.setTag(tag);
+		
+		salesforceConnectorService.updateSalesforceConnector(resource);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+	}
+	
 	@DELETE
 	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {

@@ -1,36 +1,17 @@
 <#import "template.html" as t>
 
     <@t.page>
-
+        
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${serviceInstance.providerName!}</h6>
-                        <h2 class="dashhead-title">${labels["outbound.message.setup"]}</h2>
-                    </div>
-                </div>
-            </div>
-
+        <div class="container-fluid">
             <br>
-
-            <div class="hr-divider">
-
-            </div>
-
-            <br>
-
             <div class="row">
-                <div id="status-message" class="col-lg-12 col-md-12 col-sm-12">
-                            
-                </div>
-                
-                <div class="col-lg-1 col-md-1 col-sm-1">
+                <div id="status-message"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
                     <#include "salesforce-service-nav.html" />
                 </div>
-                <div class="col-lg-11 col-md-11 col-sm-11">
+                <div class="col-lg-10 col-md-10 col-sm-10">
                     <div class="col-lg-10 col-md-10 col-sm-10">
                         <!--
                         <form class="form-vertical" id="default-variables-form" role="form">
@@ -66,16 +47,16 @@
                         </form>
                     </div>
                     <div class="col-sm-2">
-                         <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
                             <option value="">--- ${labels["select.environment"]} ---</option>
                             <#list serviceInstance.environments?sort_by( "name") as environment>
                                 <#if environment.active>
-                                    <#if environment.name == (serviceInstance.defaultEnvironment)!"">
+                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
                                         <option value="${environment.name}" selected>${environment.label}</option>
                                     </#if>
-                                    <#if environment.name != (serviceInstance.defaultEnvironment)!"">
-                                         <option value="${environment.name}">${environment.label}</option>
-                                    </#if>     
+                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                        <option value="${environment.name}">${environment.label}</option>
+                                    </#if>
                                 </#if>
                             </#list>
                         </select>
@@ -92,7 +73,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "POST",
-                    url: "/app/connectors/salesforce/connector/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
                     data: params,
                     complete: function(data) {
                         $("#status-message").html(data.responseText);
@@ -108,7 +89,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "POST",
-                    url: "/app/connectors/salesforce/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
                     data: params,
                     complete: function(data) {
                         $("#status-message").html(data.responseText);
@@ -153,7 +134,7 @@
                 });
 
             });
-            
+
             $('#reset').click(function() {
                 $.ajax({
                     dataType: "html",
@@ -172,7 +153,6 @@
                 });
                 return false;
             });
-
         </script>
 
     </@t.page>

@@ -41,18 +41,9 @@
 
                     <div class="col-md-2">
 
-                        <div>
-                            <#if !(salesforceConnector)??>
-                                <img src="/images/person-generic.jpg" class="img-circle img-responsive center-block" />
-                            </#if>
-                            <#if (salesforceConnector)??>
-                                <img src="${(salesforceConnector.identity.photos.picture)!}" class="img-circle img-responsive center-block">
-                            </#if>
-                        </div>
-
                     </div>
 
-                    <div class="col-md-10">
+                    <div class="col-md-9">
                         <dl class="dl-horizontal">
 
                             <dt>${labels["id"]}</dt>
@@ -171,8 +162,10 @@
                         </dl>
 
                     </div>
-
-                    <br>
+                    
+                    <div class="col-md-1">
+                        <a href="${labels['base.path']}/${salesforceConnector.id!}/edit"><span class="icon icon-edit fa-2x"></span></a>
+                    </div>
 
                     <div class="col-md-12">
                         <div class="panel panel-default">

@@ -55,9 +55,13 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce", (request, response) -> saveSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce", (request, response) -> createSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id", (request, response) -> getSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/connectors/salesforce/:id/edit", (request, response) -> editSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/connectors/salesforce/:id", (request, response) -> updateSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
         delete("/app/connectors/salesforce/:id", (request, response) -> deleteSalesforceConnector(request, response));
         
@@ -339,6 +343,35 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
+	private ModelAndView editSalesforceConnector(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+    	
+		SalesforceConnector salesforceConnector = null;
+		String errorMessage = null;
+		
+		try {
+			salesforceConnector = getSalesforceConnector(token, request.params(":id"));
+		} catch (BadRequestException e) {
+			errorMessage = e.getMessage();
+		}
+		
+		Map<String, Object> model = getModel();
+    	model.put("account", account);
+    	model.put("salesforceConnector", salesforceConnector);
+    	model.put("errorMessage", errorMessage);
+		
+		return new ModelAndView(model, "secure/salesforce-connector-edit.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private ModelAndView getSalesforceConnectors(Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -371,6 +404,29 @@ public class SalesforceConnectorController extends AbstractController {
     	
 	}
 	
+	private ModelAndView updateSalesforceConnector(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String tag = request.queryParams("tag");
+		
+		System.out.println(tag);
+		
+		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.parameter("tag", tag)
+    			.execute();
+		
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());	
+		
+		return getSalesforceConnector(request, response);
+	}
+	
 	/**
 	 * 
 	 * @param request
@@ -378,7 +434,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView saveSalesforceConnector(Request request, Response response) {
+	private ModelAndView createSalesforceConnector(Request request, Response response) {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))

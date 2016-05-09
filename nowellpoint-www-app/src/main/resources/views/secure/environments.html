@@ -4,37 +4,14 @@
 
         <#include "navbar.html" />
 
-        <div class="container">
-
-
-        </div>
-
-        <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${serviceInstance.providerName!}</h6>
-                        <h2 class="dashhead-title">${labels["outbound.message.setup"]}</h2>
-                    </div>
-                </div>
-            </div>
-
+        <div class="container-fluid">
             <br>
-
-            <div class="hr-divider">
-
-            </div>
-
-            <br>
-
             <div class="row">
-                <div id="statusMessage">
-
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-1">
+                <div id="status-message"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
                     <#include "salesforce-service-nav.html" />
                 </div>
-                <div class="col-lg-11 col-md-11 col-sm-11">
+                <div class="col-lg-10 col-md-10 col-sm-10">
                     <div class="col-lg-10 col-md-10 col-sm-10">
                         <form class="form-vertical" id="form" role="form">
                             <div class="panel panel-default">
@@ -102,26 +79,25 @@
                     <div class="col-sm-2"></div>
                 </div>
             </div>
-        </div>
 
-        <#include "spinner.html" />
+            <#include "spinner.html" />
 
-        <script>
-            $('#form').submit(function(e) {
-                var params = $("#form").serialize();
-                $.ajax({
-                    dataType: "html",
-                    type: "POST",
-                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/environments",
-                    data: params,
-                    complete: function(data) {
-                        $("#statusMessage").html(data.responseText);
-                    }
+            <script>
+                $('#form').submit(function(e) {
+                    var params = $("#form").serialize();
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/environments",
+                        data: params,
+                        complete: function(data) {
+                            $("#statusMessage").html(data.responseText);
+                        }
+                    });
+
+                    e.preventDefault();
+
                 });
-
-                e.preventDefault();
-
-            });
-        </script>
+            </script>
 
     </@t.page>
