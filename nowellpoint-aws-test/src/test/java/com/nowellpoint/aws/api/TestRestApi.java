@@ -1,13 +1,13 @@
 package com.nowellpoint.aws.api;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.aws.model.admin.Properties;
 
 public class TestRestApi {
 	
@@ -51,7 +51,7 @@ public class TestRestApi {
 			
 			
 			
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			e.printStackTrace();
 		}
 	}

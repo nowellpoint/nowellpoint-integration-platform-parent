@@ -1,18 +1,212 @@
-<div id="collapseOne" class="panel-collapse collapse in">
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt>${name}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.name)!}</dd>
-            <dt>${instanceId}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.instanceId)!}</dd>
-            <dt>${instanceName}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.instanceName)!}</dd>
-            <dt>${instanceUrl}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.instanceUrl)!}</dd>
-            <dt>${accountLabel}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.account)!}</dd>
-            <dt>${isSandbox}</dt>
-            <dd>${(serviceProvider.service.serviceInfo.isSandbox?string('Yes', 'No'))!}</dd>
-        </dl>
-    </div>
-</div>
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${labels["salesforce.connector"]}</h6>
+                        <h2 class="dashhead-title">${(salesforceConnector.organization.name)!}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="hr-divider">
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <#include "sidebar.html" />
+                </div>
+
+                <div class="col-lg-9 col-md-9 col-sm-9">
+
+                    <div id="statusMessage">
+
+                    </div>
+                    
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+
+                    <#if successMessage??>
+                        <div id="success" class="alert alert-success collapse">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${successMessage}</div>
+                        </div>
+                    </#if>
+
+                    <div class="col-md-2">
+
+                        <div>
+                            <#if !(salesforceConnector)??>
+                                <img src="/images/person-generic.jpg" class="img-circle img-responsive center-block" />
+                            </#if>
+                            <#if (salesforceConnector)??>
+                                <img src="${(salesforceConnector.identity.photos.picture)!}" class="img-circle img-responsive center-block">
+                            </#if>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-10">
+                        <dl class="dl-horizontal">
+
+                            <dt>${labels["id"]}</dt>
+                            <dd>${(salesforceConnector.identity.id)!}</dd>
+
+                            <dt>${labels["name"]}</dt>
+                            <dd>${(salesforceConnector.identity.displayName)!}</dd>
+
+                            <dt>${labels["username"]}</dt>
+                            <dd>${(salesforceConnector.identity.username)!}</dd>
+
+                            <dt>${labels["email"]}</dt>
+                            <dd>${(salesforceConnector.identity.email)!}</dd>
+
+                            <dt>${labels["street"]}</dt>
+                            <dd>${(salesforceConnector.identity.addrStreet)!}</dd>
+
+                            <dt>${labels["city"]}</dt>
+                            <dd>${(salesforceConnector.identity.addrCity)!}</dd>
+
+                            <dt>${labels["country"]}</dt>
+                            <dd>${(salesforceConnector.identity.addrCountry)!}</dd>
+
+                            <dt>${labels["state"]}</dt>
+                            <dd>${(salesforceConnector.identity.addrState)!}</dd>
+
+                            <dt>${labels["zip.postal.code"]}</dt>
+                            <dd>${(salesforceConnector.identity.addrZip)!}</dd>
+
+                            <dt>${labels["mobile.phone"]}</dt>
+                            <dd>${(salesforceConnector.identity.mobilePhone)!}</dd>
+
+                            <dt>${labels["language"]}</dt>
+                            <dd>${(salesforceConnector.identity.language)!}</dd>
+
+                            <dt>${labels["locale"]}</dt>
+                            <dd>${(salesforceConnector.identity.locale)!}</dd>
+
+                            <dt>${labels["user.type"]}</dt>
+                            <dd>${(salesforceConnector.identity.userType)!}</dd>
+
+                            <dt>${labels["user.id"]}</dt>
+                            <dd>${(salesforceConnector.identity.userId)!}</dd>
+
+                        </dl>
+
+                        <div class="hr-divider">
+
+                        </div>
+
+                        <br>
+
+                        <dl class="dl-horizontal">
+
+                            <dt>${labels["name"]}</dt>
+                            <dd>${(salesforceConnector.organization.name)!}</dd>
+
+                            <dt>${labels["phone"]}</dt>
+                            <dd>${(salesforceConnector.organization.phone)!}</dd>
+
+                            <dt>${labels["primary.contact"]}</dt>
+                            <dd>${(salesforceConnector.organization.primaryContact)!}</dd>
+
+                            <dt>${labels["organization.type"]}</dt>
+                            <dd>${(salesforceConnector.organization.organizationType)!}</dd>
+
+                            <dt>${labels["division"]}</dt>
+                            <dd>${(salesforceConnector.organization.division)!}</dd>
+
+                            <dt>${labels["instance.name"]}</dt>
+                            <dd>${(salesforceConnector.organization.instanceName)!}</dd>
+
+                            <dt>${labels["fiscal.year.start.month"]}</dt>
+                            <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}</dd>
+
+                            <dt>${labels["default.locale.sid.key"]}</dt>
+                            <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}</dd>
+
+                            <dt>${labels["language.locale.key"]}</dt>
+                            <dd>${(salesforceConnector.organization.languageLocaleKey)!}</dd>
+
+                            <dt>${labels["organization.id"]}</dt>
+                            <dd>${(salesforceConnector.organization.id)!}</dd>
+
+                        </dl>
+
+                        <div class="hr-divider">
+
+                        </div>
+
+                        <br>
+
+                        <dl class="dl-horizontal">
+
+                            <dt>${labels["metadata"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.metadata)!}</dd>
+
+                            <dt>${labels["partner"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.partner)!}</dd>
+
+                            <dt>${labels["rest"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.rest)!}</dd>
+
+                            <dt>${labels["sobjects"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.sobjects)!}</dd>
+
+                            <dt>${labels["profile"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.profile)!}</dd>
+
+                            <dt>${labels["query"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.query)!}</dd>
+
+                        </dl>
+
+
+                        <form id="form" role="form" method="post">
+                            <input type="hidden" id="id" name="id" value="${(salesforceConnector.identity.id)!}" />
+                            <div class="pull-right">
+                                <a href="${labels['base.path']}">${cancel}</a>&nbsp;
+                                <#if (salesforceConnector)??>
+                                    <button type="submit" name="save" id="save" class="btn btn-primary">${save}</button>
+                                </#if>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <#include "spinner.html" />
+
+        <script>
+            $('#form').submit(function(e) {
+                var data = $("#form").serialize()
+                $.ajax({
+                    type: "POST",
+                    url: "${labels['base.path']}",
+                    data: data,
+                    complete: function(data) {
+                        $("#statusMessage").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+        </script>
+
+    </@t.page>

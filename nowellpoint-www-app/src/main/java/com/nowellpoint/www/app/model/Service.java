@@ -1,8 +1,21 @@
 package com.nowellpoint.www.app.model;
 
-import com.nowellpoint.www.app.model.sforce.ServiceInfo;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Service {
+	
+	private Double price;
+	
+	private String currencyIsoCode;
+	
+	private Boolean isActive;
+	
+	private String unitOfMeasure;
+	
+	private String type;
 	
 	private String name;
 	
@@ -12,10 +25,52 @@ public class Service {
 	
 	private String company;
 	
-	private ServiceInfo serviceInfo;
+	private Integer sandboxCount;
+	
+	private Set<String> configurationParams;
 	
 	public Service() {
 		
+	}
+	
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getName() {
@@ -50,11 +105,19 @@ public class Service {
 		this.company = company;
 	}
 
-	public ServiceInfo getServiceInfo() {
-		return serviceInfo;
+	public Integer getSandboxCount() {
+		return sandboxCount;
 	}
 
-	public void setServiceInfo(ServiceInfo serviceInfo) {
-		this.serviceInfo = serviceInfo;
+	public void setSandboxCount(Integer sandboxCount) {
+		this.sandboxCount = sandboxCount;
+	}
+
+	public Set<String> getConfigurationParams() {
+		return configurationParams;
+	}
+
+	public void setConfigurationParams(Set<String> configurationParams) {
+		this.configurationParams = configurationParams;
 	}
 }

@@ -180,9 +180,6 @@ public class Urls implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@JsonProperty("enterprise")
-	private String enterprise;
-
 	@JsonProperty("metadata")
 	private String metadata;
 
@@ -195,36 +192,14 @@ public class Urls implements Serializable {
 	@JsonProperty("sobjects")
 	private String sobjects;
 
-	@JsonProperty("search")
-	private String search;
-
 	@JsonProperty("query")
 	private String query;
-
-	@JsonProperty("recent")
-	private String recent;
 
 	@JsonProperty("profile")
 	private String profile;
 
-	@JsonProperty("feeds")
-	private String feeds;
-
-	@JsonProperty("feed_items")
-	private String feed_items;
-
-	@JsonProperty("groups")
-	private String groups;
-
-	@JsonProperty("users")
-	private String users;
-
-	public String getEnterprise() {
-		return enterprise;
-	}
-
-	public void setEnterprise(String enterprise) {
-		this.enterprise = enterprise;
+	public Urls() {
+		
 	}
 
 	public String getMetadata() {
@@ -259,14 +234,6 @@ public class Urls implements Serializable {
 		this.sobjects = sobjects;
 	}
 
-	public String getSearch() {
-		return search;
-	}
-
-	public void setSearch(String search) {
-		this.search = search;
-	}
-
 	public String getQuery() {
 		return query;
 	}
@@ -275,51 +242,11 @@ public class Urls implements Serializable {
 		this.query = query;
 	}
 
-	public String getRecent() {
-		return recent;
-	}
-
-	public void setRecent(String recent) {
-		this.recent = recent;
-	}
-
 	public String getProfile() {
 		return profile;
 	}
 
 	public void setProfile(String profile) {
 		this.profile = profile;
-	}
-
-	public String getFeeds() {
-		return feeds;
-	}
-
-	public void setFeeds(String feeds) {
-		this.feeds = feeds;
-	}
-
-	public String getFeedItems() {
-		return feed_items;
-	}
-
-	public void setFeedItems(String feedItems) {
-		this.feed_items = feedItems;
-	}
-
-	public String getGroups() {
-		return groups;
-	}
-
-	public void setGroups(String groups) {
-		this.groups = groups;
-	}
-
-	public String getUsers() {
-		return users;
-	}
-
-	public void setUsers(String users) {
-		this.users = users;
 	}
 }

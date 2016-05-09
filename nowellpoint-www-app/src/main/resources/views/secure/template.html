@@ -16,12 +16,12 @@
 
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
-        
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/custom.css" type="text/css" />
 
         <!-- Include the CSS -->
         <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/custom.css" type="text/css" />
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
@@ -36,16 +36,13 @@
         <#nested/>
 
         <script type="text/javascript">
-            $(document).ready(function() {
-                $(document)
-                    .ajaxStart(function() {
-                        $('#progressDialog').modal('show');
-                    })
-                    .ajaxStop(function() {
-                        $('#progressDialog').modal('hide');
-                    });
-            });
-
+            $(document)
+                .ajaxStart(function() {
+                    $('#spinner').show();
+                })
+                .ajaxStop(function() {
+                    $('#spinner').hide();
+                });
 
             $(document).ready(function() {
                 var path = window.location.pathname;
@@ -87,7 +84,6 @@
 
             });
 
-            $("#countryCode option[text=" + myText + "]").attr("selected", "selected");
         </script>
 
     </body>

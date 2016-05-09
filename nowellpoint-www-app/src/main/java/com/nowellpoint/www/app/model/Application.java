@@ -2,73 +2,47 @@ package com.nowellpoint.www.app.model;
 
 public class Application extends Resource {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -1315510190045597737L;
-	
-	private Boolean isSandbox;
-	
 	private String name;
 	
-	private String type;
+	private ServiceInstance serviceInstance;
 	
-	private String key;
+	private AccountProfile owner;
 	
-	private String instanceName;
-	
-	private String url;
+	private String phase;
 	
 	public Application() {
 		
 	}
-
-	public Boolean getIsSandbox() {
-		return isSandbox;
-	}
-
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
 	}
 
-	public String getType() {
-		return type;
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public AccountProfile getOwner() {
+		return owner;
 	}
 
-	public String getKey() {
-		return key;
+	public void setOwner(AccountProfile owner) {
+		this.owner = owner;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public String getPhase() {
+		return phase;
 	}
 
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 }

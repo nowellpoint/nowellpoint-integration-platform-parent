@@ -6,6 +6,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -15,6 +16,7 @@ import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
+import org.joda.time.Instant;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -22,7 +24,9 @@ import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.AuditHistory;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @WebListener
@@ -37,6 +41,8 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static void registerCodecs(List<Codec<?>> codecs) {
+		
+		codecs.add(new AuditHistoryCodec());
 		
 		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(codecs));
 		
@@ -59,19 +65,47 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static void replaceOne(AbstractDocument document) {	
-		getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
+		document.setLastModifiedDate(Instant.now().toDate());
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
+				if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
+					audit( document, AuditHistory.Event.UPDATE );
+				}
+			}
+		});
 	}
 	
 	public static void insertOne(AbstractDocument document) {
-		getCollection( document ).insertOne( document );
+		document.setId(new ObjectId());
+		document.setCreatedDate(Instant.now().toDate());
+		document.setLastModifiedDate(Instant.now().toDate());
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				getCollection( document ).insertOne( document );
+				if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
+					audit( document, AuditHistory.Event.INSERT );
+				}
+			}
+		});
 	}
 	
 	public static void deleteOne(AbstractDocument document) {
-		getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
+				if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
+					audit( document, AuditHistory.Event.DELETE );
+				}
+			}
+		});
 	}
 	
-	public static void updateOne(String collectionName, ObjectId id, String json) {
-		getDatabase().getCollection( collectionName ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
+	public static <T extends AbstractDocument> void updateOne(Class<T> documentClass, ObjectId id, String json) {
+		getCollection( documentClass ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
 	}
 	
 	public static void checkStatus() {
@@ -87,7 +121,26 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> MongoCollection<T> getCollection(AbstractDocument document) {
+	public static <T extends AbstractDocument> MongoCollection<T> getCollection(AbstractDocument document) {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(document.getClass()), document.getClass());
+	}
+	
+	public static <T extends AbstractDocument> MongoCollection<T> getCollection(Class<T> type) {
+		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(type), type);
+	}
+	
+	private static void audit( AbstractDocument document, AuditHistory.Event event ) {
+		String collectionName = getCollectionName( document.getClass() ).concat( ".history" );
+		
+		MongoCollection<AuditHistory> collection = mongoDatabase.getCollection( collectionName, AuditHistory.class );
+				
+		AuditHistory auditHistory = new AuditHistory()
+				.withSourceId(document.getId())
+				.withCreatedById(document.getLastModifiedById())
+				.withDocument(document)
+				.withEvent(event)
+				.withLastModifiedById(document.getLastModifiedById());
+				
+		collection.insertOne( auditHistory );
 	}
 }

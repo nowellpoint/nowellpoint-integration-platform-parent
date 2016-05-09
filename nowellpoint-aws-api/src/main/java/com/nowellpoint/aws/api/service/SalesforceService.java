@@ -1,46 +1,113 @@
 package com.nowellpoint.aws.api.service;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import javax.json.JsonObject;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.ws.rs.ForbiddenException;
 
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.api.dto.sforce.DescribeSObjectsResult;
-import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
-import com.nowellpoint.aws.api.exception.ServiceException;
-import com.nowellpoint.aws.data.mongodb.SalesforceInstance;
-import com.nowellpoint.aws.data.mongodb.sforce.Contact;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+import com.esotericsoftware.yamlbeans.YamlReader;
+import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.sforce.Identity;
-import com.nowellpoint.aws.model.sforce.Organization;
-import com.nowellpoint.aws.model.sforce.Token;
-import com.nowellpoint.aws.model.sforce.User;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
+import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.DescribeSobjectsRequest;
+import com.nowellpoint.client.sforce.GetIdentityRequest;
+import com.nowellpoint.client.sforce.GetOrganizationRequest;
+import com.nowellpoint.client.sforce.GetUserRequest;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.LoginResult;
+import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Package;
+import com.nowellpoint.client.sforce.model.User;
+import com.nowellpoint.client.sforce.model.Type;
+import com.sforce.soap.metadata.MetadataConnection;
+import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.fault.LoginFault;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
 
 public class SalesforceService extends AbstractCacheService {
 	
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
-	
-	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
-			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
-			+ "Email,SenderEmail,SenderName,Signature,Phone,Fax,MobilePhone,Alias,"
-			+ "CommunityNickname,IsActive,TimeZoneSidKey,LocaleSidKey,EmailEncodingKey,"
-			+ "UserType,LanguageLocaleKey,EmployeeNumber,DelegatedApproverId,ManagerId,AboutMe";
-	
-	private static final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
- 			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
- 			+ "UsesStartDateAsFiscalYearName";
 	
 	public SalesforceService() {
 
+	}
+	
+	public LoginResult login(String instance, String username, String password, String securityToken) {
+		ConnectorConfig config = new ConnectorConfig();
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+		config.setUsername(username);
+		config.setPassword(password.concat(securityToken));
+		
+		try {
+			PartnerConnection connection = com.sforce.soap.partner.Connector.newConnection(config);
+			
+			String id = String.format("%s/id/%s/%s", instance, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
+			
+			LoginResult result = new LoginResult()
+					.withId(id)
+					.withAuthEndpoint(connection.getConfig().getAuthEndpoint())
+					.withDisplayName(connection.getUserInfo().getUserFullName())
+					.withOrganizationId(connection.getUserInfo().getOrganizationId())
+					.withOrganziationName(connection.getUserInfo().getOrganizationName())
+					.withServiceEndpoint(connection.getConfig().getServiceEndpoint())
+					.withSessionId(connection.getConfig().getSessionId())
+					.withUserId(connection.getUserInfo().getUserId())
+					.withUserName(connection.getUserInfo().getUserName());
+			
+			set(id, result);
+			
+			return result;
+			
+		} catch (ConnectionException e) {
+			if (e instanceof LoginFault) {
+				LoginFault loginFault = (LoginFault) e;
+				throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+			} else {
+				throw new InternalServerErrorException(e.getMessage());
+			}
+		}
+	}
+	
+	public DescribeSobjectsResult describe(String id) {
+		
+		LoginResult result = get(LoginResult.class, id);
+		
+		if (result == null) {
+			throw new ForbiddenException("Invalid id or Session has expired");
+		}
+			
+		GetIdentityRequest request = new GetIdentityRequest()
+				.setAccessToken(result.getSessionId())
+				.setId(id);
+			
+		Client client = new Client();
+			
+		Identity identity = client.getIdentity(request);
+			
+		return describe(result.getSessionId(), identity.getUrls().getSobjects());
 	}
 	
 	/**
@@ -49,181 +116,57 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	public Token getToken(String subject, String code) throws ServiceException {
-		Token token = null;
+	public OauthAuthenticationResponse authenticate(String code) {		
+		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST
+				.builder()
+				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setCallbackUri(System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
+				.setCode(code)
+				.build();
 		
-		try {
-			HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.SALESFORCE_TOKEN_URI))
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType("application/x-www-form-urlencoded")
-					.parameter("grant_type", "authorization_code")
-					.parameter("code", code)
-					.parameter("client_id", System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-					.parameter("client_secret", System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-					.parameter("redirect_uri", System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
-					.execute();
+		OauthAuthenticationResponse response = Authenticators.AUTHORIZATION_GRANT_AUTHENTICATOR
+				.authenticate(request);
 			
-			LOGGER.info("Token response status: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				throw new ServiceException(httpResponse.getAsString(), httpResponse.getStatusCode());
-			}
-			
-			token = httpResponse.getEntity(Token.class);
-			
-			String userId = token.getId().substring(token.getId().lastIndexOf("/") + 1);
-			
-			LOGGER.info("Salesforce UserId authenticate: " + userId);
-			
-			hset( subject, Token.class.getName().concat( userId ), token);
-			//expire( subject, 3600 );
-			
-		} catch (IOException e) {
-			LOGGER.error( "getIdentity", e.getCause() );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
-		}
-			
-		return token;
+		return response;
+	}
+	
+	public SalesforceConnectorDTO getSalesforceInstance(String accessToken, String id) {
+		GetIdentityRequest request = new GetIdentityRequest()
+				.setAccessToken(accessToken)
+				.setId(id);
+		
+		Client client = new Client();
+		
+		Identity identity = client.getIdentity(request);
+		
+		Organization organization = getOrganization(accessToken, identity.getOrganizationId(), identity.getUrls().getSobjects());
+		
+		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
+		resource.setOrganization(organization);
+		resource.setIdentity(identity);
+		
+		return resource;
 	}
 	
 	/**
 	 * 
-	 * @param subject
+	 * @param accessToken
+	 * @param userId
+	 * @param sobjectUrl
 	 * @return
 	 */
 	
-	public Token findToken(String subject, String userId) {
-		Token token = hget( Token.class, subject, Token.class.getName().concat( userId ) );
-		return token;
-	}
-	
-	public ServiceInfo getServiceInfo(String subject, String code) throws ServiceException {
-		Token token = getToken(subject, code);
+	public User getUser(String accessToken, String userId, String sobjectUrl) {	
+		GetUserRequest request = new GetUserRequest()
+				.setAccessToken(accessToken)
+				.setSobjectUrl(sobjectUrl)
+				.setUserId(userId);
 		
-		Identity identity = getIdentity(token.getAccessToken(), token.getId());
+		Client client = new Client();
 		
-		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
-		
-		DescribeSObjectsResult result = describe(subject, identity.getUserId());
-		
-		ServiceInfo serviceInfo = new ServiceInfo();
-		serviceInfo.setAccount(identity.getUserId());
-		serviceInfo.setType("SALESFORCE");
-		serviceInfo.setInstanceId(organization.getId());
-		serviceInfo.setInstanceName(organization.getInstanceName());
-		serviceInfo.setInstanceUrl(token.getInstanceUrl());
-		serviceInfo.setIsSandbox(organization.getIsSandbox());
-		serviceInfo.setName(organization.getName());
-		serviceInfo.setSobjects(result.getSobjects());
-		
-		ObjectNode json = new ObjectMapper().createObjectNode()
-				.put("instanceUrl", token.getInstanceUrl())
-				.objectNode()
-				.putObject("organization")
-				.put("id", organization.getId())
-				.put("defaultLocaleSidKey", organization.getDefaultLocaleSidKey())
-				.put("division", organization.getDivision())
-				.put("fax", organization.getFax());
-		
-		LOGGER.info(json.toString());
+		User user = client.getUser(request);
 
-		
-		SalesforceInstance salesforceInstance = new SalesforceInstance();
-		salesforceInstance.setDefaultLocaleSidKey(organization.getDefaultLocaleSidKey());
-		salesforceInstance.setDivision(organization.getDivision());
-		salesforceInstance.setFax(organization.getFax());
-		salesforceInstance.setFiscalYearStartMonth(organization.getFiscalYearStartMonth());
-		salesforceInstance.setInstanceName(organization.getInstanceName());
-		salesforceInstance.setLanguageLocaleKey(organization.getLanguageLocaleKey());
-		salesforceInstance.setName(organization.getName());
-		salesforceInstance.setOrganizationType(organization.getOrganizationType());
-		salesforceInstance.setPhone(organization.getPhone());
-		salesforceInstance.setPrimaryContact(organization.getPrimaryContact());
-		
-		Contact contact = new Contact();
-		contact.setActive(identity.getActive());
-		contact.setCity(identity.getAddrCity());
-		contact.setCountry(identity.getAddrCountry());
-		contact.setDisplayName(identity.getDisplayName());
-		contact.setEmail(identity.getEmail());
-		contact.setFirstName(identity.getFirstName());
-		contact.setLanguage(identity.getLanguage());
-		contact.setLastName(identity.getLastName());
-		contact.setLocale(identity.getLocale());
-		contact.setMobilePhone(identity.getMobilePhone());
-		contact.setNickName(identity.getNickName());
-		contact.setState(identity.getAddrState());
-		contact.setStreet(identity.getAddrStreet());
-		contact.setUsername(identity.getUsername());
-		contact.setZipPostalCode(identity.getAddrZip());
-		
-		salesforceInstance.addContact(contact);
-		
-		return serviceInfo;
-	}
-	
-	/**
-	 * 
-	 * @param bearerToken
-	 * @param tokenId
-	 * @return identity
-	 */
-	
-	public Identity getIdentity(String bearerToken, String tokenId) {
-		Identity identity = null;
-		
-		try {
-			
-			HttpResponse httpResponse = RestResource.get(tokenId)
-					.acceptCharset(StandardCharsets.UTF_8)
-					.bearerAuthorization(bearerToken)
-					.accept(MediaType.APPLICATION_JSON)
-					.queryParameter("version", "latest")
-					.execute();
-			
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
-	    	
-	    	if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
-			}
-	    	
-	    	identity = httpResponse.getEntity(Identity.class);
-	    	
-		} catch (IOException e) {
-			LOGGER.error( "getIdentity", e.getCause() );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
-		}
-		
-		return identity;
-	}
-	
-	public User getUser(String bearerToken, String userId, String sobjectUrl) {
-		User user = null;
-		
-		try {
-	     	
-			HttpResponse httpResponse = RestResource.get(sobjectUrl)
-	     			.bearerAuthorization(bearerToken)
-	     			.path("User")
-	     			.path(userId)
-	     			.queryParameter("fields", USER_FIELDS)
-	     			.queryParameter("version", "latest")
-	     			.execute();
-	     	
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
-			}
-	     	
-	     	user = httpResponse.getEntity(User.class);
-	     	
-		} catch (IOException e) {
-			LOGGER.error( "getOrganization", e );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
-		}
-		
 		return user;
 	}
 	
@@ -235,85 +178,114 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return Organization
 	 */
 	
-	public Organization getOrganization(String bearerToken, String organizationId, String sobjectUrl) {
+	public Organization getOrganization(String accessToken, String organizationId, String sobjectUrl) {		
+		GetOrganizationRequest request = new GetOrganizationRequest()
+				.setAccessToken(accessToken)
+				.setOrganizationId(organizationId)
+				.setSobjectUrl(sobjectUrl);
 		
-		try {
-	     	
-			HttpResponse httpResponse = RestResource.get(sobjectUrl)
-	     			.bearerAuthorization(bearerToken)
-	     			.path("Organization")
-	     			.path(organizationId)
-	     			.queryParameter("fields", ORGANIZATION_FIELDS)
-	     			.queryParameter("version", "latest")
-	     			.execute();
-	     	
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
-			
-			if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
-			}
-	     	
-			Organization organization = httpResponse.getEntity(Organization.class);
-			
-			return organization;
-	     	
-		} catch (IOException e) {
-			LOGGER.error( "getOrganization", e );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
-		}
+		Client client = new Client();
+		
+		Organization organization = client.getOrganization(request);
+		
+		return organization;
 	}
 	
-	public DescribeSObjectsResult describe(String subject, String userId) {
+	@SuppressWarnings("unchecked")
+	public void buildPackage(String key) {
 		
-		Token token = hget( Token.class, subject, Token.class.getName().concat(userId) );
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest("nowellpoint-configuration-files", key);
+    	
+    	S3Object configFile = s3Client.getObject(getObjectRequest);
 		
 		try {
-			HttpResponse httpResponse = RestResource.get(token.getInstanceUrl().concat("/services/data/v35.0/sobjects"))
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.execute();
+			StringReader sr = new StringReader(IOUtils.toString(configFile.getObjectContent()));
 			
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
+			YamlReader reader = new YamlReader(sr);
 			
-			if (httpResponse.getStatusCode() >= 400) {
-				throw new WebApplicationException(httpResponse.getAsString(), httpResponse.getStatusCode());
+			Map<String,Object> configParams = (Map<String,Object>) reader.read();
+			reader.close();
+			
+			String id = configParams.get("id").toString();
+			String metadata = configParams.get("url.metadata").toString();
+			List<String> sobjects = (ArrayList<String>) configParams.get("sobjects");
+			
+			System.out.println(id);
+			
+			LoginResult loginResult = get(LoginResult.class, id);
+			
+			if (loginResult == null) {
+				throw new ForbiddenException("Invalid id or Session has expired");
 			}
 			
-			DescribeSObjectsResult result = httpResponse.getEntity(DescribeSObjectsResult.class);
+			System.out.println(loginResult.getSessionId());
+				
+			final ConnectorConfig config = new ConnectorConfig();
+	        config.setServiceEndpoint(metadata);
+	        System.out.println(metadata);
+	        config.setSessionId(loginResult.getSessionId());
+	        
+	        MetadataConnection metadataConnection = new MetadataConnection(config);
 			
-			return result;
+			System.out.println(metadataConnection.getSessionHeader().getSessionId());
 			
-		} catch (IOException e) {
-			LOGGER.error( "describe", e );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
+			String[][] artifacts = new String[][] {
+				{"Outbound_Event__c","CustomObject"},
+				{"Outbound_Event__c","Workflow"}
+			};
+			
+			List<Type> types = new ArrayList<Type>();
+			
+			for (int i = 0; i < artifacts.length; i++) {
+				Type type = new Type();
+				type.setMembers(artifacts[i][0]);
+				type.setName(artifacts[i][1]);
+				types.add(type);
+			}
+			
+			sobjects.stream().forEach(sobject -> {
+				Type type = new Type();
+				type.setMembers(String.format("%s_Event_Observer", sobject));
+				type.setName("ApexTrigger");
+				types.add(type);
+			});
+			
+			
+			Package manifest = new Package();
+			manifest.setTypes(types);
+			manifest.setVersion(36.0);
+			
+			StringWriter sw = new StringWriter();
+			
+			JAXBContext context = JAXBContext.newInstance( Package.class );
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
+			marshaller.marshal( manifest, System.out );
+			marshaller.marshal( manifest, sw );
+	        
+		} catch (IOException | ConnectionException | JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+		
+	/**
+	 * 
+	 * @param token
+	 * @return
+	 */
 	
-	public void describeSObject(String subject, String userId) {
+	private DescribeSobjectsResult describe(String accessToken, String sobjectUrl) {
+		DescribeSobjectsRequest request = new DescribeSobjectsRequest()
+				.setAccessToken(accessToken)
+				.setSobjectUrl(sobjectUrl);
 		
-		Token token = hget( Token.class, subject, Token.class.getName().concat(userId) );
+		Client client = new Client();
 		
-		///vXX.X/sobjects/SObjectName/describe/
+		DescribeSobjectsResult result = client.describe(request);
 		
-		HttpResponse httpResponse = null;
-		try {
-			httpResponse = RestResource.get(token.getInstanceUrl().concat("/services/data/v35.0/sobjects"))
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.execute();
-		} catch (IOException e) {
-			LOGGER.error( "describeSObject", e );
-			throw new WebApplicationException(e, Status.BAD_REQUEST);
-		}
-		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " : " + httpResponse.getURL());
-		
-	}
-	
-	public void createOrUpdateTrigger() {
-		
-
-		
-		
+		return result;
 	}
 }

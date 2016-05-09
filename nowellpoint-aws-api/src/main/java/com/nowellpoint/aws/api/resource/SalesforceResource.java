@@ -1,11 +1,17 @@
 package com.nowellpoint.aws.api.resource;
 
+import static com.nowellpoint.aws.data.CacheManager.getCache;
+import static com.nowellpoint.aws.data.CacheManager.serialize;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -14,11 +20,21 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
-import com.nowellpoint.aws.api.exception.ServiceException;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.sforce.Token;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
+import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.LoginResult;
+import com.nowellpoint.client.sforce.model.Token;
+
+import redis.clients.jedis.Jedis;
 
 @Path("/salesforce")
 public class SalesforceResource {
@@ -29,10 +45,14 @@ public class SalesforceResource {
 	@Context
 	private SecurityContext securityContext;
 	
+	@Context
+	private UriInfo uriInfo;
+	
 	@GET
 	@Path("/oauth")
 	@PermitAll
-	public Response oauth(@QueryParam(value="state") String state) {
+	public Response oauth(
+			@QueryParam(value="state") String state) {
 		
 		String url = null;
 		try {
@@ -69,24 +89,78 @@ public class SalesforceResource {
 				.header("Location", url)
 				.build();
 	}
-
+	
 	@GET
-	@Path("/token")
+	@Path("connector")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getToken(@QueryParam(value="code") String code) {
-		
+	public Response getSalesforceConnectorDetails(@QueryParam(value="code") String code) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		Token token = null; 
-				
+		OauthAuthenticationResponse response = null;
+		
 		try {
-			salesforceService.getToken(subject, code);
-		} catch (ServiceException e) {
-			throw new WebApplicationException(e.getMessage(), e.getStatusCode());
+			response = salesforceService.authenticate(code);
+		} catch (OauthException e) {
+			throw new WebApplicationException(e.getErrorDescription(), Status.BAD_REQUEST);
 		}
+		
+		Token token = response.getToken();
+		
+		putToken(subject, token.getId(), token);
+		
+		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
+		
+		return Response.ok(resource).build();
+	}
+
+	@GET
+	@Path("token")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getToken(
+			@QueryParam(value="code") String code) {
+		
+		Token token = salesforceService.authenticate(code).getToken();
 				
 		return Response.ok()
 				.entity(token)
 				.build();
+	}
+	
+	@POST
+	@Path("login")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response login(
+			@FormParam(value="instance") @NotEmpty String instance,
+			@FormParam(value="username") @NotEmpty String username,
+			@FormParam(value="password") @NotEmpty String password,
+			@FormParam(value="securityToken") @NotEmpty String securityToken) {
+		
+		LoginResult result = salesforceService.login(instance, username, password, securityToken);
+		
+		return Response.ok(result)
+				.build();
+		
+	}
+	
+	@GET
+	@Path("sobjects")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSobjects(
+			@QueryParam(value="id") String id) {
+		
+		DescribeSobjectsResult result = salesforceService.describe(id);
+		
+		return Response.ok(result.getSobjects())
+				.build();
+	}
+	
+	private void putToken(String subject, String userId, Token token) {
+		Jedis jedis = getCache();
+		try {
+			jedis.hset(subject.getBytes(), Token.class.getName().concat( userId ).getBytes(), serialize(token));
+		} finally {
+			jedis.close();
+		}
 	}
 }

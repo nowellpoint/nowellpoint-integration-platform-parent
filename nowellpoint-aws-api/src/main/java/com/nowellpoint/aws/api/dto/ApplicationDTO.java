@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
+import com.nowellpoint.aws.data.mongodb.ServiceInstance;
+
 public class ApplicationDTO extends AbstractDTO {
 
 	/**
@@ -8,17 +10,13 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private static final long serialVersionUID = -365479731136738071L;
 	
-	private Boolean isSandbox;
+	private AccountProfileDTO owner;
 	
 	private String name;
 	
-	private String type;
+	private ServiceInstance serviceInstance;
 	
-	private String key;
-	
-	private String instanceName;
-	
-	private String url;
+	private String phase;
 	
 	public ApplicationDTO() {
 		
@@ -28,51 +26,35 @@ public class ApplicationDTO extends AbstractDTO {
 		setId(id);
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	public AccountProfileDTO getOwner() {
+		return owner;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}
-
-	public String getName() {
-		return name;
+	public void setOwner(AccountProfileDTO owner) {
+		this.owner = owner;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
 	}
 
-	public String getKey() {
-		return key;
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public String getPhase() {
+		return phase;
 	}
 
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 }

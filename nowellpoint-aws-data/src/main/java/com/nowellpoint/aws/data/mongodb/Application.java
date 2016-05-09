@@ -18,17 +18,13 @@ public class Application extends AbstractDocument implements Serializable {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
-	private Boolean isSandbox;
+	private User owner;
 	
 	private String name;
 	
-	private String type;
+	private ServiceInstance serviceInstance;
 	
-	private String key;
-	
-	private String instanceName;
-	
-	private String url;
+	private String phase;
 	
 	public Application() {
 		
@@ -37,52 +33,36 @@ public class Application extends AbstractDocument implements Serializable {
 	public Application(ObjectId id) {
 		setId(id);
 	}
-
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	
+	public User getOwner() {
+		return owner;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}
-
-	public String getName() {
-		return name;
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public ServiceInstance getServiceInstance() {
+		return serviceInstance;
 	}
 
-	public String getKey() {
-		return key;
+	public void setServiceInstance(ServiceInstance serviceInstance) {
+		this.serviceInstance = serviceInstance;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public String getPhase() {
+		return phase;
 	}
 
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 }

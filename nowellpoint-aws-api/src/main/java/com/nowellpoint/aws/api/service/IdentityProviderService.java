@@ -2,13 +2,17 @@ package com.nowellpoint.aws.api.service;
 
 import com.stormpath.sdk.oauth.JwtAuthenticationResult;
 
+import java.io.IOException;
 import java.util.Optional;
 
-import com.nowellpoint.aws.api.dto.idp.AccountDTO;
+import org.jboss.logging.Logger;
+
 import com.nowellpoint.aws.api.dto.idp.Token;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
@@ -24,11 +28,14 @@ import com.stormpath.sdk.oauth.RefreshGrantRequest;
 
 public class IdentityProviderService extends AbstractCacheService {
 	
+	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class);
+	
+	private static ApiKey apiKey;
 	private static Client client;
 	private static Application application;
 	
 	static {
-		ApiKey apiKey = ApiKeys.builder()
+		apiKey = ApiKeys.builder()
 				.setId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
 				.setSecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 				.build();
@@ -59,9 +66,19 @@ public class IdentityProviderService extends AbstractCacheService {
         		.forApplication(application)
         		.authenticate(request);
         
-        AccountDTO resource = getResource(result.getAccessToken().getAccount());
+        AccessToken accessToken = result.getAccessToken();
         
-        hset(resource.getHref(), AccountDTO.class.getName(), resource);
+        Account account = new Account();
+        account.setEmail(accessToken.getAccount().getEmail());
+        account.setFullName(accessToken.getAccount().getFullName());
+        account.setGivenName(accessToken.getAccount().getGivenName());
+        account.setHref(accessToken.getAccount().getHref());
+        account.setMiddleName(accessToken.getAccount().getMiddleName());
+        account.setSurname(accessToken.getAccount().getSurname());
+        account.setStatus(accessToken.getAccount().getStatus().name());
+        account.setUsername(accessToken.getAccount().getUsername());
+        
+        hset(account.getHref(), Account.class.getName(), account);
         
         Token token = new Token();
 		token.setAccessToken(result.getAccessTokenString());
@@ -78,50 +95,50 @@ public class IdentityProviderService extends AbstractCacheService {
 	/**
 	 * 
 	 * @param resource
+	 * @throws IOException 
 	 */
 	
-	public void createAccount(AccountDTO resource) {		
-		Account account = client.instantiate(Account.class);
-		account.setGivenName(resource.getGivenName());
-		account.setMiddleName(resource.getMiddleName());
-		account.setSurname(resource.getSurname());
-		account.setEmail(resource.getEmail());
-		account.setUsername(resource.getUsername());
-		account.setPassword(resource.getPassword());
-		account.setStatus(AccountStatus.UNVERIFIED);
-		application.createAccount(account);
-	}
-	
-	/**
-	 * 
-	 * @param resource
-	 */
-	
-	public void updateAccount(AccountDTO resource) {		
-		Account account = client.getResource(resource.getHref(), Account.class);
-		account.setGivenName(resource.getGivenName());
-		account.setMiddleName(resource.getMiddleName());
-		account.setSurname(resource.getSurname());
-		account.setEmail(resource.getEmail());
-		account.setUsername(resource.getEmail());
-		account.save();
+	public void updateAccount(Account account) throws IOException {	
+		HttpResponse httpResponse = RestResource.post(account.getHref())
+				.contentType(MediaType.APPLICATION_JSON)
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.body(account)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() == 200) {
+			account = httpResponse.getEntity(Account.class);
+		} else {
+			LOGGER.error(httpResponse.getAsString());
+		}
 	}
 	
 	/**
 	 * 
 	 * @param subject
 	 * @return
+	 * @throws IOException 
 	 */
 	
-	public AccountDTO getAccountBySubject(String subject) {		
-		AccountDTO resource = hget(AccountDTO.class, subject, AccountDTO.class.getName());
+	public Account getAccountBySubject(String subject) throws IOException {		
+		Account account = hget(Account.class, subject, Account.class.getName());
 		
-		if (resource == null) {
-			Account account = client.getResource(subject, com.stormpath.sdk.account.Account.class);
-			resource = getResource(account);
+		if (account == null) {			
+			HttpResponse httpResponse = RestResource.get(subject)
+					.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+					.execute();
+				
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+			
+			if (httpResponse.getStatusCode() == 200) {
+				account = httpResponse.getEntity(Account.class);
+			} else {
+				LOGGER.error(httpResponse.getAsString());
+			}
 		}
 		
-		return resource;
+		return account;
 	}
 	
 	/**
@@ -181,24 +198,5 @@ public class IdentityProviderService extends AbstractCacheService {
 			AccessToken accessToken = client.getResource(token.getStormpathAccessTokenHref(), AccessToken.class);
 			accessToken.delete();
 		});
-	}
-	
-	/**
-	 * 
-	 * @param account
-	 * @return
-	 */
-	
-	private AccountDTO getResource(Account account) {
-		AccountDTO resource = new AccountDTO();
-		resource.setEmail(account.getEmail());
-		resource.setFullName(account.getFullName());
-		resource.setGivenName(account.getGivenName());
-		resource.setHref(account.getHref());
-		resource.setMiddleName(account.getMiddleName());
-		resource.setSurname(account.getSurname());
-		resource.setStatus(account.getStatus().name());
-		resource.setUsername(account.getUsername());
-		return resource;
 	}
 }

@@ -1,117 +1,77 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceInstance {
 	
-	private String serviceProviderId;
-
-	private String uom;
+	private Parent parent;
 	
-	private String configuration;
+	private String key;
 	
-	private String description;
-	
-	private String type;
-	
-	private String instanceId;
-	
-	private String instanceName;
-	
-	private String instanceUrl;
-	
-	private String account;
+	private String providerType;
 	
 	private Boolean isActive;
 	
+	private String providerName;
+	
 	private Double price;
 	
-	private String name;
+	private String currencyIsoCode;
 	
-	private Identity owner;
+	private String uom;
 	
-	private Boolean isSandbox;
+	private String serviceType;
+	
+	private String serviceName;
+	
+	private String tag;
+	
+	private String defaultEnvironment;
+	
+	private List<Environment> environments;
+	
+	private List<EnvironmentVariable> environmentVariables;
+	
+	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
+	
+	private Long activeEnvironments;
+
+	private String configurationPage;
 	
 	public ServiceInstance() {
-		
-	}
-	
-	public String getServiceProviderId() {
-		return serviceProviderId;
+
 	}
 
-	public void setServiceProviderId(String serviceProviderId) {
-		this.serviceProviderId = serviceProviderId;
+	public Parent getParent() {
+		return parent;
 	}
 
-	public String getUom() {
-		return uom;
+	public void setParent(Parent parent) {
+		this.parent = parent;
 	}
 
-	public void setUom(String uom) {
-		this.uom = uom;
+	public String getKey() {
+		return key;
 	}
 
-	public String getConfiguration() {
-		return configuration;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
-	public void setConfiguration(String configuration) {
-		this.configuration = configuration;
+	public String getProviderType() {
+		return providerType;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getInstanceId() {
-		return instanceId;
-	}
-
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-
-	public Identity getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Identity owner) {
-		this.owner = owner;
-	}
-
-	public String getInstanceName() {
-		return instanceName;
-	}
-
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	public String getInstanceUrl() {
-		return instanceUrl;
-	}
-
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
 	}
 
 	public Boolean getIsActive() {
@@ -122,6 +82,14 @@ public class ServiceInstance {
 		this.isActive = isActive;
 	}
 
+	public String getProviderName() {
+		return providerName;
+	}
+
+	public void setProviderName(String providerName) {
+		this.providerName = providerName;
+	}
+
 	public Double getPrice() {
 		return price;
 	}
@@ -130,19 +98,110 @@ public class ServiceInstance {
 		this.price = price;
 	}
 
-	public String getName() {
-		return name;
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	public String getUom() {
+		return uom;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}	
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public String getDefaultEnvironment() {
+		return defaultEnvironment;
+	}
+
+	public void setDefaultEnvironment(String defaultEnvironment) {
+		this.defaultEnvironment = defaultEnvironment;
+	}
+
+	public String getConfigurationPage() {
+		return configurationPage;
+	}
+
+	public void setConfigurationPage(String configurationPage) {
+		this.configurationPage = configurationPage;
+	}
+	
+	public List<Environment> getEnvironments() {
+		if (environments == null) {
+			setEnvironments(new ArrayList<Environment>());
+		}
+		return environments;
+	}
+
+	public void setEnvironments(List<Environment> environments) {
+		this.environments = environments;
+	}
+	
+	public List<EnvironmentVariable> getEnvironmentVariables() {
+		if (environmentVariables == null) {
+			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
+		} else {
+			setEnvironmentVariables(environmentVariables
+					.stream()
+					.sorted((p1, p2) -> p1.getVariable().compareTo(p2.getVariable()))
+					.collect(Collectors.toList()));
+		}
+		return environmentVariables;
+	}
+
+	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
+		this.environmentVariables = environmentVariables;
+	}
+	
+	public Map<String,List<EnvironmentVariableValue>> getEnvironmentVariableValues() {
+		return environmentVariableValues;
+	}
+
+	public void setEnvironmentVariableValues(Map<String, List<EnvironmentVariableValue>> environmentVariableValues) {
+		this.environmentVariableValues = environmentVariableValues;
+	}
+	
+	public Long getActiveEnvironments() {
+		return activeEnvironments;
+	}
+
+	public void setActiveEnvironments(Long activeEnvironments) {
+		this.activeEnvironments = activeEnvironments;
+	}
+
+	@JsonIgnore
+	public Optional<Environment> getEnvironment(String name) {
+		return getEnvironments()
+				.stream()
+				.filter(p -> p.getName().equals(name))
+				.findFirst();
+	}
 }

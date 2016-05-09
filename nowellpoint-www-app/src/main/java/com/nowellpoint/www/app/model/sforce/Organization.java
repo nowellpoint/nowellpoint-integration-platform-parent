@@ -1,45 +1,54 @@
 package com.nowellpoint.www.app.model.sforce;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization {
 	
-	private String organizationId;
+	@JsonProperty(value="Id")
+	private String id;
 	
+	@JsonProperty(value="Division")
 	private String division;
 	
-	private String fax;
-	
+	@JsonProperty(value="DefaultLocaleSidKey")
 	private String defaultLocaleSidKey;
 	
+	@JsonProperty(value="FiscalYearStartMonth")
 	private String fiscalYearStartMonth;
 	
+	@JsonProperty(value="InstanceName")
 	private String instanceName;
 	
-	private Boolean isSandbox;
-	
+	@JsonProperty(value="LanguageLocaleKey")
 	private String languageLocaleKey;
 	
+	@JsonProperty(value="Name")
 	private String name;
 	
+	@JsonProperty(value="OrganizationType")
 	private String organizationType;
 	
+	@JsonProperty(value="Phone")
 	private String phone;
 	
+	@JsonProperty(value="PrimaryContact")
 	private String primaryContact;
 	
+	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
-	
-	private String instanceUrl;
 	
 	public Organization() {
 
 	}
 	
-	public String getOrganizationId() {
-		return organizationId;
+	public String getId() {
+		return id;
 	}
 	
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getDivision() {
@@ -48,14 +57,6 @@ public class Organization {
 
 	public void setDivision(String division) {
 		this.division = division;
-	}
-
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
 	}
 
 	public String getDefaultLocaleSidKey() {
@@ -80,14 +81,6 @@ public class Organization {
 
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
-	}
-
-	public Boolean getIsSandbox() {
-		return isSandbox;
-	}
-
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
 	}
 
 	public String getLanguageLocaleKey() {
@@ -136,13 +129,5 @@ public class Organization {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
-	}
-	
-	public String getInstanceUrl() {
-		return instanceUrl;
-	}
-
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
 	}
 }

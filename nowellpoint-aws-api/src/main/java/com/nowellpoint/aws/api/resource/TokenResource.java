@@ -16,11 +16,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.aws.api.dto.idp.Token;
-import com.nowellpoint.aws.api.event.LoggedInEvent;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.AuthorizationHeader;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.tools.TokenParser;
 
 @Path("/oauth")
 public class TokenResource {
@@ -29,7 +26,7 @@ public class TokenResource {
 	private IdentityProviderService identityProviderService;
 	
 	@Inject
-	private Event<LoggedInEvent> loggedInEvent;
+	private Event<Token> loggedInEvent;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -54,7 +51,7 @@ public class TokenResource {
 		
 		params = null;
 			
-		loggedInEvent.fire(new LoggedInEvent(uriInfo.getBaseUri(), TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), token.getAccessToken())));
+		loggedInEvent.fire(token);
 		
 		return Response.ok()
 				.entity(token)

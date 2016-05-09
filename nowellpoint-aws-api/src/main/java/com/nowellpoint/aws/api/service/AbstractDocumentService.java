@@ -2,9 +2,6 @@ package com.nowellpoint.aws.api.service;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.net.URI;
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,11 +20,11 @@ import com.mongodb.DBRef;
 import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
-import com.nowellpoint.aws.api.dto.IdentityDTO;
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
-import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.data.mongodb.User;
 
 public abstract class AbstractDocumentService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {
@@ -77,31 +74,31 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<User,IdentityDTO>() {
+		modelMapper.addConverter(new AbstractConverter<User,AccountProfileDTO>() {
 
 			@Override
-			protected IdentityDTO convert(User source) {
-				IdentityDTO resource = new IdentityDTO();
+			protected AccountProfileDTO convert(User source) {
+				AccountProfileDTO resource = new AccountProfileDTO();
 				if (source != null && source.getIdentity() != null) {
 					
-					Identity identity = MongoDBDatastore.getDatabase()
+					AccountProfile identity = MongoDBDatastore.getDatabase()
 							.getCollection( source.getIdentity().getCollectionName() )
-							.withDocumentClass( Identity.class )
+							.withDocumentClass( AccountProfile.class )
 							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
 							.first();
 					
-					resource = modelMapper.map(identity, IdentityDTO.class );
+					resource = modelMapper.map(identity, AccountProfileDTO.class );
 				}
 				
 				return resource; 
 			}			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<IdentityDTO,User>() {
+		modelMapper.addConverter(new AbstractConverter<AccountProfileDTO,User>() {
 
 			@Override
-			protected User convert(IdentityDTO source) {
-				String collectionName = MongoDBDatastore.getCollectionName( Identity.class );
+			protected User convert(AccountProfileDTO source) {
+				String collectionName = MongoDBDatastore.getCollectionName( AccountProfile.class );
 				ObjectId id = null;
 				
 				User user = new User();
@@ -109,9 +106,9 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 					user.setHref(source.getHref());
 					if (source.getId() == null) {
 						
-						Identity identity = MongoDBDatastore.getDatabase()
+						AccountProfile identity = MongoDBDatastore.getDatabase()
 								.getCollection( collectionName )
-								.withDocumentClass( Identity.class )
+								.withDocumentClass( AccountProfile.class )
 								.find( eq ( "href", source.getHref() ) )
 								.first();
 						
@@ -189,10 +186,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected R create(R resource) {
-		AbstractDocument document = modelMapper.map( resource, documentType );
-		
-		document.setCreatedDate(Date.from(Instant.now()));
-		document.setLastModifiedDate(Date.from(Instant.now()));
+		AbstractDocument document = modelMapper.map( resource, documentType );		
 		document.setCreatedById(resource.getSubject());
 		document.setLastModifiedById(resource.getSubject());
 		
@@ -216,11 +210,9 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 * @return
 	 */
 	
-	protected R update(String subject, R resource, URI eventSource) {
+	protected R replace(R resource) {
 		AbstractDocument document = modelMapper.map( resource, documentType );
-		
-		document.setLastModifiedDate(Date.from(Instant.now()));
-		document.setLastModifiedById(subject);
+		document.setLastModifiedById(resource.getSubject());
 		
 		try {
 			MongoDBDatastore.replaceOne( document );
@@ -234,6 +226,24 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 		return resource;
 	}
 	
+//	protected R update(String subject, R resource, URI eventSource) {
+//		AbstractDocument document = modelMapper.map( resource, documentType );
+//		
+//		document.setLastModifiedDate(Date.from(Instant.now()));
+//		document.setLastModifiedById(subject);
+//		
+//		try {
+//			MongoDBDatastore.updateOne( document.getClass(), document.getId(), );
+//		} catch (MongoException e) {
+//			LOGGER.error( "Update Document exception", e.getCause());
+//			throw new WebApplicationException(e);
+//		}
+//				
+//		modelMapper.map( document, resource );
+//		
+//		return resource;
+//	}
+	
 	/**
 	 * 
 	 * @param subject
@@ -241,9 +251,8 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 * @param eventSource
 	 */
 	
-	protected void delete(String subject, R resource, URI eventSource) {		
+	protected void delete(R resource) {		
 		AbstractDocument document = modelMapper.map( resource, documentType );
-		
 		try {
 			MongoDBDatastore.deleteOne( document );
 		} catch (MongoException e) {

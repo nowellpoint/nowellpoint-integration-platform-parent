@@ -1,5 +1,5 @@
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid>
+<nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
         <div class="navbar-header">
 
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -8,38 +8,46 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand navbar-brand-emphasized" href="/">
-                <span class="icon icon-leaf navbar-brand-icon"></span> ${applicationTitle}
-            </a>
+            <div class="navbar-brand navbar-brand-emphasized">
+                ${applicationTitle}
+            </div>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-
                 <li>
                     <a href="/app/start">
-                            ${start}
+                        <span class="icon icon-star"></span>
+                        <span class="iconav-nav-label">${start}</span>
                         </a>
-                </li>
-                <li>
-                    <a href="/app/providers">
-                        ${providersLabel}
-                    </a>
                 </li>
                 <li>
                     <a href="/app/dashboard">
-                            ${dashboard}
+                        <span class="icon icon-gauge"></span>
+                        <span class="iconav-nav-label">${dashboard}</span>
                         </a>
                 </li>
+
+                <li>
+
+                    <a href="/app/connectors/salesforce">
+                        <span class="icon icon-database"></span>
+                        <span class="iconav-nav-label">${connectors}</span>
+                    </a>
+
+                </li>
+
                 <li>
                     <a href="/app/applications">
                             ${applications}
                         </a>
                 </li>
+                <!--                
                 <li>
                     <a href="/app/projects">
                             ${projects}
                         </a>
                 </li>
+-->
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -49,7 +57,7 @@
                         </a>
                 </li>
                 <li>
-                    <a href="/app/user-profile">
+                    <a href="/app/account-profile">
                                 ${(account.fullName)!}
                             </a>
                 </li>
@@ -59,12 +67,8 @@
                             </a>
                 </li>
 
-<li>
-                    &nbsp;
-                </li>
-               
             </ul>
-         
+
         </div>
     </div>
 </nav>

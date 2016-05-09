@@ -1,0 +1,89 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h2 class="title">${createApplication}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="hr-divider">
+
+            </div>
+
+            <br>
+
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <#include "sidebar.html" />
+            </div>
+
+            <div class="col-lg-9 col-md-9 col-sm-9">
+
+                <form class="form-horizontal" id="form" role="form" method="post" action="/app/application">
+                    
+                    <input type="hidden" name="id" id="id" value="${application.id!}" />
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${name}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <input type="text" class="form-control input-lg" name="name" id="name" autofocus="" value="${application.name!}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2">${phase}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-control-static">${application.phase!}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2">${serviceName}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-control-static">${application.serviceInstance.serviceName!}</div>
+                        </div>
+                    </div>
+                    
+                     <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2">${type}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-control-static">${application.serviceInstance.providerName!}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2">${priceLabel}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-control-static">${application.serviceInstance.currencyIsoCode!} ${application.serviceInstance.price?string["0.00"]!}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="serviceName">${unitOfMeasure}</label>
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="form-control-static">${application.serviceInstance.uom!}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class=" col-sm-6 col-md-6 col-lg-6">
+                            <div class="pull-right">
+                                <a href="/app/applications">${cancel}</a>&nbsp;
+                                <button type="submit" name="save" id="save" class="btn btn-primary btn-lg">${save}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        
+    </@t.page>

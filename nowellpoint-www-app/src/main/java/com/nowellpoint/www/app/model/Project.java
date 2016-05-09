@@ -8,7 +8,7 @@ public class Project extends Resource {
 	
 	private String stage;
 	
-	private Identity owner;
+	private AccountProfile owner;
 	
 	public Project() {
 		
@@ -38,11 +38,11 @@ public class Project extends Resource {
 		this.stage = stage;
 	}
 
-	public Identity getOwner() {
+	public AccountProfile getOwner() {
 		return owner;
 	}
 
-	public void setOwner(Identity owner) {
+	public void setOwner(AccountProfile owner) {
 		this.owner = owner;
 	}
 }

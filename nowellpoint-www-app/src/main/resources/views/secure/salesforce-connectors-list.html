@@ -1,0 +1,89 @@
+<#import "template.html" as t>
+    
+    <@t.page>
+        
+        <#include "navbar.html" />
+
+        <div class="container-fluid container-fluid-spacious">
+            <div class="dashhead m-t-md">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle"></h6>
+                        <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
+                    </div>
+
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="hr-divider">
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-sm-2">
+                    
+                    <#include "sidebar.html"/>
+
+                </div>
+
+                <div class="col-sm-10">
+
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th></th>
+                                <th>${labels["organization"]}</th>
+                                <th>${labels["instance.name"]}</th>
+                                <th>${labels["display.name"]}</th>
+                                <th>${labels["username"]}</th>
+                                <th>${labels["action"]}</th>
+                            </thead>
+                            <tbody>
+                                <#list salesforceConnectorsList?sort_by("createdDate") as salesforceConnector>
+                                    <tr id="${salesforceConnector.id}">
+                                        <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
+                                        <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                        <td>${salesforceConnector.organization.instanceName}</td>
+                                        <td>${salesforceConnector.identity.displayName}</td>
+                                        <td>${salesforceConnector.identity.username}</td>
+                                        <td>
+                                            <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.instanceName}" data-title="${deleteMessage}">
+                                                <span class="icon icon-trash"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <#include "confirm-dialog.html"/>
+        <#include "spinner.html" />
+
+        <script>
+            $('#confirm').click(function(e) {
+                var id = $('#confirmDialog').data('id');
+                var row = $('#'.concat(id));
+                $.ajax({
+                    url: "${labels['base.path']}" + id,
+                    type: 'DELETE',
+                    success: function() {
+                        row.remove();
+                    }
+                });
+                $('#confirmDialog').modal('hide');
+            });
+        </script>
+
+    </@t.page>

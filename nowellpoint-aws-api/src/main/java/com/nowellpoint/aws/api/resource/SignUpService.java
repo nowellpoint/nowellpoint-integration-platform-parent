@@ -45,9 +45,6 @@ public class SignUpService {
     		@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
     		@FormParam("email") @Email String email,
-    		@FormParam("phone") String phone,
-    		@FormParam("company") String company,
-    		@FormParam("title") String title,
     		@FormParam("countryCode") @NotEmpty String countryCode,
     		@FormParam("password") @Pattern.List({
     	        @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit."),
@@ -61,9 +58,6 @@ public class SignUpService {
 				.put("firstName", firstName)
 				.put("lastName", lastName)
 				.put("email", email)
-				.put("phone", phone)
-				.put("company", company)
-				.put("title", title)
 				.put("countryCode", countryCode)
 				.put("password", password)
 				.put("username", email)

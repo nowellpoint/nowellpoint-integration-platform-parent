@@ -4,119 +4,152 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
+        <div class="container-fluid">
+            <br>
             <div class="row">
-                <div class="col-md-2">
-
+                <div id="status-message"></div>
+                <div class="col-sm-2">
+                    <#include "salesforce-service-nav.html" />
                 </div>
-                <div class="col-md-10">
-                    <div class="dashhead m-t-md">
-                        <div class="dashhead">
-                            <div class="dashhead-titles">
-                                <h6 class="dashhead-subtitle">${serviceProvider.displayName}</h6>
-                                <h2 class="dashhead-title">${outboundMessageSetup}</h2>
+                <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="col-lg-10 col-md-10 col-sm-10">
+
+                        <div class="row">
+
+                            <div class="col-lg-2 col-md-2 col-sm-2">
+                                <div class="panel panel-primary">
+                                    <div class="statcard p-a-md m-b">
+                                        <h3 class="statcard-number">${serviceInstance.activeEnvironments} ${labels["of"]} ${serviceInstance.environments?size}</h3>
+                                        <span class="statcard-desc">${labels["active.environments"]}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="hr-divider m-t m-b-md">
-                        <h3 class="hr-divider-content hr-divider-heading"></h3>
-                    </div>
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading"></h3>
+                        </div>
 
-                    <div class="col-md-12">
+                        <br>
 
-                        <#if errorMessage??>
-                            <div id="alert" class="alert alert-danger">
-                                <a class="close" data-dismiss="alert">×</a>
-                                <div class="text-center">${errorMessage}</div>
-                            </div>
-                        </#if>
+                        <div class="row">
 
-                        <div class="panel-group" id="accordion">
+                            <dl class="dl-horizontal">
+                                <dt>${labels["connector"]}</dt>
+                                <dd><a href="${labels['base.path']}/${(salesforceConnector.id)!}">${(salesforceConnector.id)!}</a></dd>
+                                <dt>${labels["id"]}</dt>
+                                <dd>${(salesforceConnector.identity.id)!}</dd>
+                                <dt>${labels["name"]}</dt>
+                                <dd>${(salesforceConnector.organization.name)!}</dd>
+                                <dt>${labels["organization.type"]}</dt>
+                                <dd>${(salesforceConnector.organization.organizationType)!}</dd>
+                                <dt>${labels["instance.name"]}</dt>
+                                <dd>${(salesforceConnector.organization.instanceName)!}</dd>
+                            </dl>
+                            
+                            <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading"></h3>
+                        </div>
 
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">${authenticateLabel}</h4>
-                                </div>
-                                
-                                <#include "salesforce-authenticate.html" />
-                                
-                            </div>
+                        <br>
 
-                            <br>
-
-                            <#if (serviceProvider.service.serviceInfo.sobjects)??>
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">2. ${selectSObjects}</a></h4>
-                                    </div>
-                                    <div id="collapseOne" class="panel-collapse collapse in">
-                                        <div class="panel-body">
-                                            <#list serviceProvider.service.serviceInfo.sobjects as sobject>
-                                                <#if sobject.triggerable>
-                                                    <div class="col-lg-3 col-md-4 col-md-sm-2">
-                                                        <div class="checkbox custom-control custom-checkbox">
-                                                            <label>
-                                                                <input type="checkbox" value="${sobject.name}" name="sobject">
-                                                                <span class="custom-control-indicator"></span>
-                                                                <p>${sobject.label}</p>
-                                                            </label>
-                                                        </div>
-                                                    </div>
+                            <form>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="defaultEnvironment">${labels["default.environment"]}</label>
+                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                        <select id="defaultEnvironment" name="defaultEnvironment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                                            <option value="">--- ${labels["select.environment"]} ---</option>
+                                            <#list serviceInstance.environments as environment>
+                                                <#if environment.active>
+                                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
+                                                        <option value="${environment.name}" selected>${environment.label}</option>
+                                                    </#if>
+                                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                                        <option value="${environment.name}">${environment.label}</option>
+                                                    </#if>
                                                 </#if>
                                             </#list>
-                                        </div>
+                                        </select>
                                     </div>
                                 </div>
-                            </#if>
-                            
-                            <br>
+                                
+                            </form>    
 
-                            <form class="form-vertical" role="form" method="post" action="/app/services">
-                                <input type="hidden" name="id" id="id" value="" />
-                                <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${(serviceProvider.id)!}" />
-                                <input type="hidden" name="type" id="type" value="${(serviceProvider.type)!}" />
-                                <input type="hidden" name="instanceId" id="instanceId" value="${(serviceProvider.service.serviceInfo.instanceId)!}" />
-                                <input type="hidden" name="instanceName" id="instanceName" value="${(serviceProvider.service.serviceInfo.instanceName)!}" />
-                                <input type="hidden" name="instanceUrl" id="instanceUrl" value="${(serviceProvider.service.serviceInfo.instanceUrl)!}" />
-                                <input type="hidden" name="isSandbox" id="isSandbox" value="${(serviceProvider.service.serviceInfo.organization.isSandbox?string)!}" />
-                                <input type="hidden" name="name" id="name" value="${(serviceProvider.service.serviceInfo.name)!}" />
-                                <input type="hidden" name="account" id="account" value="${(serviceProvider.service.serviceInfo.account)!}" />
-                                <input type="hidden" name="price" id="price" value="${(serviceProvider.price?string)!}" />
-                                <input type="hidden" name="uom" id="uom" value="${(serviceProvider.uom)!}" />
+                            <div class="col-lg-10 col-md-10 col-sm-10">
 
-                                <div class="pull-right">
-                                    <a href="/app/providers">${cancel}</a>&nbsp;
-                                    <#if !(serviceProvider.service.serviceInfo)??>
-                                        <a href="${serviceProvider.authUrl}?id=${serviceProvider.id}" class="btn btn-primary" role="button">${authenticateLabel}</a>
-                                    </#if>
-                                    <#if (serviceProvider.service.serviceInfo)??>
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${addService}</button>
-                                    </#if>
-                                </div>
-                            </form>
+                                <br>
 
+                                <p class="text-danger">
+                                    ${labels["delete.warning"]}
+                                </p>
+
+                                <a href="" class="btn btn-lg btn-danger-outline confirm-delete" title="${labels['delete.service']}" data-toggle="modal" aria-hidden="true" role="button" data-id="${serviceInstance.key!}" data-message="${serviceInstance.serviceName!}" data-title="${deleteMessage}">${labels["delete.service"]}</a>
+
+                            </div>
                         </div>
+
+
+
+
+
+
+
+                        <!--
+                    <div class="col-sm-12">
+
+                        <div class="hr-divider">
+                            <h3 class="hr-divider-content hr-divider-heading">${labels["sobjects"]}</h3>
+                        </div>
+
+                        <br>
+
+                        <div id="auto_load_div">
+                            <#include "salesforce-outbound-message-part.html" />
+                        </div>
+
+                    </div>
+-->
                     </div>
                 </div>
-                <div class="col-md-2"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                </div>
             </div>
-        </div>
 
-        <#include "progress-bar-dialog.html" />
+            <#include "confirm-dialog.html"/>
+            <#include "spinner.html" />
 
-        <script>
-            $(document).ready(function(e) {
-                $('#clickable').click(function(e) {
-                    e.preventDefault();
-                    var body = 'photoUrl=' + $(this).data('id');
+            <script>
+                $('#confirm').click(function(e) {
+                    $('#confirmDialog').modal('hide');
                     $.ajax({
-                        type: "POST",
-                        url: "/app/user-profile/picture/salesforce",
-                        data: body
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
+                        type: "DELETE",
+                        complete: function(data) {
+                            window.location.replace("${labels['base.path']}/${(salesforceConnector.id)!}");
+                        }
                     });
                 });
-            });
-        </script>
+
+
+                $('#loginForm').submit(function(e) {
+                    var params = $("#loginForm").serialize();
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects",
+                        data: params,
+                        complete: function(data) {
+                            $("#auto_load_div").html(data.responseText);
+                        }
+                    });
+
+                    e.preventDefault();
+
+                });
+
+                $("#environment").change(function() {
+                    alert("Handler for .change() called.");
+                });
+            </script>
 
     </@t.page>

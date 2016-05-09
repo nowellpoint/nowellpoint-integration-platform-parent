@@ -20,27 +20,17 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.jboss.logging.Logger;
-
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.api.dto.sforce.ServiceInfo;
-import com.nowellpoint.aws.api.exception.ServiceException;
-import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 
 @Path("/providers")
 public class ServiceProviderResource {
-	
-	private static final Logger LOGGER = Logger.getLogger(ServiceProviderResource.class);
 	
 	@Context
 	private UriInfo uriInfo;
 	
 	@Inject
 	private ServiceProviderService serviceProviderService;
-	
-	@Inject
-	private SalesforceService salesforceService;
 	
 	@Context 
 	private SecurityContext securityContext;
@@ -59,11 +49,8 @@ public class ServiceProviderResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getServiceProvider(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
-		
+	public Response getServiceProvider(@PathParam("id") String id) {		
+		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id);		
 		return Response.ok(resource)
 				.build();
 	}
@@ -93,10 +80,7 @@ public class ServiceProviderResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteServiceProvider(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		serviceProviderService.deleteServiceProvider(id, subject, uriInfo.getBaseUri());
-		
+		serviceProviderService.deleteServiceProvider(id);		
 		return Response.noContent().build();
 	}
 	
@@ -107,27 +91,10 @@ public class ServiceProviderResource {
 	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
+		resource.setSubject(subject);
 		resource.setId(id);
 		
-		serviceProviderService.updateServiceProvider(subject, resource, uriInfo.getBaseUri());
-		
-		return Response.ok(resource).build();
-	}
-	
-	@GET
-	@Path("/{id}/salesforce")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceProvider(@PathParam(value="id") String id, @QueryParam(value="code") String code) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ServiceProviderDTO resource = serviceProviderService.getServiceProvider(id, subject);
-		
-		try {
-			ServiceInfo serviceInfo = salesforceService.getServiceInfo(subject, code);
-			resource.getService().setServiceInfo(serviceInfo);
-		} catch (ServiceException e) {
-			LOGGER.error(e);
-		}
+		serviceProviderService.updateServiceProvider(resource);
 		
 		return Response.ok(resource).build();
 	}

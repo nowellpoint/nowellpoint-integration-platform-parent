@@ -13,32 +13,7 @@
 		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.amazonaws</groupId>
-				<artifactId>aws-java-sdk-bom</artifactId>
-				<version>${aws.sdk.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-dynamodb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-lambda-java-core</artifactId>
-			<version>1.1.0</version>
-		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>nowellpoint-aws-core</artifactId>
@@ -69,27 +44,6 @@
 								</goals>
 								<configuration>
 									<minimizeJar>true</minimizeJar>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<id>deploy</id>
-								<phase>install</phase>
-								<goals>
-									<goal>java</goal>
-								</goals>
-								<configuration>
-									<arguments>
-										<argument>${project.basedir}/target/${project.build.finalName}.jar</argument>
-										<argument>${project.basedir}/src/main/resources/nowellpoint-aws-deploy.json</argument>
-									</arguments>
-									<mainClass>com.nowellpoint.aws.tools.Deployer</mainClass>
 								</configuration>
 							</execution>
 						</executions>

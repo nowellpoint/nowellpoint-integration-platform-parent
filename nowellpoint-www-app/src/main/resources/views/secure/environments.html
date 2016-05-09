@@ -1,0 +1,108 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid">
+            <br>
+            <div class="row">
+                <div id="status-message"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <#include "salesforce-service-nav.html" />
+                </div>
+                <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="col-lg-10 col-md-10 col-sm-10">
+                        <form class="form-vertical" id="form" role="form">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><div class="flextable">
+                                        <div class="flextable-item">
+                                    <h3 class="panel-title">${labels["environments"]}</h3>
+                                    </div>
+                                    </div>
+                                </div>    
+                                <div class="panel-body">
+                                    <div class="content table-responsive">
+
+                                        <table id="default-variables-table" class="table table-hover">
+                                            <thead>
+                                                <th class="col-xs-5">${labels["name"]}</th>
+                                                <th class="col-xs-6">${labels["label"]}</th>
+                                                <th class="col-xs-1 text-center">${labels["active"]}</th>
+                                            </thead>
+                                            <tbody>
+                                                <#list serviceInstance.environments?sort_by( "index") as environment>
+                                                    <tr>
+                                                        <input type="hidden" name="index" id="index" value="${(environment.index)!}" />
+                                                        <td>
+                                                            <#if ! environment.locked>
+                                                                <input type="text" class="form-control" name="name" id="name" value="${(environment.name)!}" />
+                                                            </#if>
+                                                            <#if environment.locked>
+                                                                <input type="hidden" name="name" id="name" required="" value="${(environment.name)!}" />
+                                                                <p class="form-control-static">${(environment.name)!}</p>
+                                                            </#if>
+                                                        </td>
+                                                        <td>
+                                                            <#if ! environment.locked>
+                                                                <input type="text" class="form-control" name="label" id="label" value="${(environment.label)!}" />
+                                                            </#if>
+                                                            <#if environment.locked>
+                                                                <input type="hidden" name="label" id="label" required="" value="${(environment.label)!}" />
+                                                                <p class="form-control-static">${(environment.label)!}</p>
+                                                            </#if>
+
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <#if ! environment.locked>
+                                                                <label class="checkbox-inline">
+                                                                    <#if (environment.active)!>
+                                                                        <input type="checkbox" name="active${environment?index}" id="active" checked>
+                                                                    </#if>
+                                                                    <#if ! (environment.active)!>
+                                                                        <input type="checkbox" name="active${environment?index}" id="active">
+                                                                    </#if>
+                                                                </label>
+                                                            </#if>
+                                                            <#if environment.locked>
+                                                                <input type="hidden" name="active${environment?index}" id="active" value="${(environment.active?then('on','off'))!}" />
+                                                                <p class="form-control-static"><span class="icon icon-check fa-1x"></span></p>
+                                                            </#if>
+                                                        </td>
+                                                    </tr>
+                                                </#list>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="pull-right">
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+            </div>
+
+            <#include "spinner.html" />
+
+            <script>
+                $('#form').submit(function(e) {
+                    var params = $("#form").serialize();
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/environments",
+                        data: params,
+                        complete: function(data) {
+                            $("#statusMessage").html(data.responseText);
+                        }
+                    });
+
+                    e.preventDefault();
+
+                });
+            </script>
+
+    </@t.page>

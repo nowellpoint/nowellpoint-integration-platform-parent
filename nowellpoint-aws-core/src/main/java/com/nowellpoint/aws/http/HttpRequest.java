@@ -112,13 +112,24 @@ public abstract class HttpRequest {
 		return this;
 	}
 
-	public JsonNode asJson() throws IOException {
-		HttpResponse response = new HttpResponseImpl();
-		return objectMapper.readValue(response.getAsString(), JsonNode.class);
+	@Deprecated
+	public JsonNode asJson() throws HttpRequestException {
+		JsonNode json;
+		try {
+			HttpResponse response = new HttpResponseImpl();
+			json = objectMapper.readValue(response.getAsString(), JsonNode.class);
+		} catch (IOException e) {
+			throw new HttpRequestException(e);
+		}
+		return json;
 	}
 	
-	public HttpResponse execute() throws IOException {
-		return new HttpResponseImpl();
+	public HttpResponse execute() throws HttpRequestException {
+		try {
+			return new HttpResponseImpl();
+		} catch (IOException e) {
+			throw new HttpRequestException(e);
+		}
 	}
 	
 	private URL buildTarget() throws MalformedURLException{
@@ -231,16 +242,28 @@ public abstract class HttpRequest {
 			return connection.getURL();
 		}
 	
-		public String getAsString() throws IOException {
-			return parseResponse(entity);
+		public String getAsString() throws HttpRequestException {
+			try {
+				return parseResponse(entity);
+			} catch (IOException e) {
+				throw new HttpRequestException(e);
+			}
 		}
 		
-		public <T> T getEntity(Class<T> type) throws IOException {
-			return objectMapper.readValue(entity, type);
+		public <T> T getEntity(Class<T> type) throws HttpRequestException {
+			try {
+				return objectMapper.readValue(entity, type);
+			} catch (IOException e) {
+				throw new HttpRequestException(e);
+			}
 		}
 		
-		public <T> List<T> getEntityList(Class<T> type) throws IOException {
-			return objectMapper.readValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+		public <T> List<T> getEntityList(Class<T> type) throws HttpRequestException {
+			try {
+				return objectMapper.readValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+			} catch (IOException e) {
+				throw new HttpRequestException(e);
+			}
 		}
 		
 		public Map<String, List<String>> getHeaders() {

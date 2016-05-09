@@ -15,7 +15,8 @@ public class SalesforceResource {
 				.acceptCharset(StandardCharsets.UTF_8)
 				.bearerAuthorization(bearerToken)
 				.accept(MediaType.APPLICATION_JSON)
-				.asJson();
+				.execute()
+				.getEntity(JsonNode.class);
 	}
 	
 	public JsonNode getCurrentOrganization(String serviceEndpoint, String bearerToken) throws MalformedURLException, IOException {
@@ -23,7 +24,8 @@ public class SalesforceResource {
 				.acceptCharset(StandardCharsets.UTF_8)
 				.bearerAuthorization(bearerToken)
 				.accept(MediaType.APPLICATION_JSON)
-				.asJson();
+				.execute()
+				.getEntity(JsonNode.class);
 	}
 	
 	public JsonNode describeSObject(String serviceEndpoint, String bearerToken, String sObject) throws MalformedURLException, IOException {
@@ -31,6 +33,7 @@ public class SalesforceResource {
 				.acceptCharset(StandardCharsets.UTF_8)
 				.bearerAuthorization(bearerToken)
 				.accept(MediaType.APPLICATION_JSON)
-				.asJson();
+				.execute()
+				.getEntity(JsonNode.class);
 	}
 }

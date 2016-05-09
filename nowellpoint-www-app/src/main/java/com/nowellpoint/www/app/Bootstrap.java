@@ -19,32 +19,35 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.IsoCountry;
-import com.nowellpoint.www.app.view.NotificationController;
+import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
 import com.nowellpoint.www.app.view.DashboardController;
-import com.nowellpoint.www.app.view.UserProfileController;
+import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.ProjectController;
+import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceController;
-import com.nowellpoint.www.app.view.ServiceController;
 import com.nowellpoint.www.app.view.ServiceProviderController;
 import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
+import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
@@ -119,6 +122,10 @@ public class Bootstrap implements SparkApplication {
 			}
         });
         
+        before("/", (request, response) -> {
+        	
+        });
+        
         //
         //
         //
@@ -129,13 +136,19 @@ public class Bootstrap implements SparkApplication {
         // configure routes
         //
         
-        get("/", (request, response) -> root(request, response), new FreeMarkerEngine(cfg));
+        get("/", (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
         
         //
         // search
         //
         
         get("/services", (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
+        
+        //
+        // login
+        //
+        
+        get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(cfg));
                 
         //
         //
@@ -153,15 +166,15 @@ public class Bootstrap implements SparkApplication {
         new DashboardController(cfg);
         new ServiceProviderController(cfg);
         new ApplicationController(cfg);
-        new UserProfileController(cfg);
+        new AccountProfileController(cfg);
         new SignUpController(cfg);
         new ContactController(cfg);
         new AuthenticationController(cfg);
         new ProjectController(cfg);
         new SalesforceController(cfg);
+        new SalesforceConnectorController(cfg);
         new SetupController(cfg);
         new NotificationController(cfg);
-        new ServiceController(cfg);
         
         //
         // exception handlers
@@ -169,8 +182,11 @@ public class Bootstrap implements SparkApplication {
         
         exception(NotAuthorizedException.class, (exception, request, response) -> {
         	
+        	ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
+        	
         	Map<String, Object> model = new HashMap<String, Object>();
         	model.put("errorMessage", exception.getMessage());
+    		model.put("messages", resourceBundleModel);
         	
         	Template template;
 			try {
@@ -215,7 +231,7 @@ public class Bootstrap implements SparkApplication {
 			
 			return httpResponse.getEntityList(IsoCountry.class);
 			
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			e.printStackTrace();
 			halt();
 		}
@@ -230,7 +246,7 @@ public class Bootstrap implements SparkApplication {
 	 * @return
 	 */
 	
-	private static ModelAndView root(Request request, Response response) {
+	private static ModelAndView getContextRoot(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
     	return new ModelAndView(model, "index.html");
 	}
@@ -245,6 +261,20 @@ public class Bootstrap implements SparkApplication {
 	private static ModelAndView getServices(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
 		return new ModelAndView(model, "services.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static ModelAndView getLogin(Request request, Response response) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
+		model.put("messages", resourceBundleModel);
+		return new ModelAndView(model, "login.html");
 	}
 	
 	/**
@@ -298,7 +328,7 @@ public class Bootstrap implements SparkApplication {
 	    	
 	    	return httpResponse.getAsString();
 	    	 	    	
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			throw new InternalServerErrorException(e);
 		}
 	}

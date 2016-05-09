@@ -1,12 +1,14 @@
 package com.nowellpoint.aws.data.mongodb;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.data.ServiceInstanceCodec;
-import com.nowellpoint.aws.data.annotation.Document;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="service.instances", codec=ServiceInstanceCodec.class)
-public class ServiceInstance extends AbstractDocument {
+public class ServiceInstance implements Serializable {
 
 	/**
 	 * 
@@ -14,60 +16,56 @@ public class ServiceInstance extends AbstractDocument {
 	
 	private static final long serialVersionUID = 3675473602093498225L;
 	
-	private String serviceProviderId;
+	private String key;
 	
-	private String type;
-	
-	private Double price;
+	private String providerType;
 	
 	private Boolean isActive;
 	
+	private String providerName;
+	
+	private Double price;
+	
+	private String currencyIsoCode;
+	
 	private String uom;
 	
-	private String configuration;
+	private String serviceType;
 	
-	private String account;
+	private String serviceName;
 	
-	private String instanceId;
+	private String tag;
 	
-	private String instanceName;
+	private String defaultEnvironment;
 	
-	private String instanceUrl;
+	private Set<Environment> environments;
 	
-	private Boolean isSandbox;
+	private Set<EnvironmentVariable> environmentVariables;
 	
-	private String name;
+	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 	
-	private String description;
-	
-	private User owner;
+	private Long activeEnvironments;
 
+	private String configurationPage;
+	
 	public ServiceInstance() {
 		
 	}
-
-	public String getServiceProviderId() {
-		return serviceProviderId;
+	
+	public String getKey() {
+		return key;
 	}
 
-	public void setServiceProviderId(String serviceProviderId) {
-		this.serviceProviderId = serviceProviderId;
+	public void setKey(String key) {
+		this.key = key;
 	}
 	
-	public String getType() {
-		return type;
+	public String getProviderType() {
+		return providerType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
 	}
 
 	public Boolean getIsActive() {
@@ -78,6 +76,30 @@ public class ServiceInstance extends AbstractDocument {
 		this.isActive = isActive;
 	}
 
+	public String getProviderName() {
+		return providerName;
+	}
+
+	public void setProviderName(String providerName) {
+		this.providerName = providerName;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
 	public String getUom() {
 		return uom;
 	}
@@ -86,75 +108,100 @@ public class ServiceInstance extends AbstractDocument {
 		this.uom = uom;
 	}
 
-	public String getConfiguration() {
-		return configuration;
+	public String getServiceType() {
+		return serviceType;
 	}
 
-	public void setConfiguration(String configuration) {
-		this.configuration = configuration;
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
 	}
 
-	public String getAccount() {
-		return account;
+	public String getServiceName() {
+		return serviceName;
 	}
 
-	public void setAccount(String account) {
-		this.account = account;
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+	
+	public String getTag() {
+		return tag;
 	}
 
-	public String getInstanceId() {
-		return instanceId;
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	
+	public String getConfigurationPage() {
+		return configurationPage;
 	}
 
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
+	public void setConfigurationPage(String configurationPage) {
+		this.configurationPage = configurationPage;
+	}
+	
+	public String getDefaultEnvironment() {
+		return defaultEnvironment;
 	}
 
-	public String getInstanceName() {
-		return instanceName;
+	public void setDefaultEnvironment(String defaultEnvironment) {
+		this.defaultEnvironment = defaultEnvironment;
 	}
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
+	public Set<Environment> getEnvironments() {
+		return environments;
 	}
 
-	public String getInstanceUrl() {
-		return instanceUrl;
+	public void setEnvironments(Set<Environment> environments) {
+		this.environments = environments;
+		setActiveEnvironments(this.environments.stream().filter(environment -> environment.getActive()).count());
 	}
 
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
+	public Set<EnvironmentVariable> getEnvironmentVariables() {
+		return environmentVariables;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
+		this.environmentVariables = environmentVariables;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
+	public void addEnvironment(String name, Boolean active) {
+		environments.add(new Environment(name, active));
+	}
+	
+	public Map<String,Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
+		return environmentVariableValues;
+	}
+	
+	public Long getActiveEnvironments() {
+		return activeEnvironments;
 	}
 
-	public String getName() {
-		return name;
+	public void setActiveEnvironments(Long activeEnvironments) {
+		this.activeEnvironments = activeEnvironments;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public User getOwner() {
-		return owner;
-	}
-
-	public void setOwner(User owner) {
-		this.owner = owner;
+	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
+		environmentVariables.stream().forEach(variable -> {
+			if (environmentVariableValues.containsKey(variable.getVariable())) {
+				variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
+				variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+			}
+		});
+		environments.stream().forEach(environment -> {
+			if (environment.getEnvironmentVariables() == null) {
+				environment.setEnvironmentVariables(new HashSet<EnvironmentVariable>());
+			}
+			environment.getEnvironmentVariables().stream().forEach(variable -> {
+				if (environmentVariableValues.containsKey(variable.getVariable())) {
+					if (variable.getEnvironmentVariableValues() == null) {
+						
+					}
+					variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
+					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+				}
+			});
+		});
+		this.environmentVariableValues = environmentVariableValues;
 	}
 }

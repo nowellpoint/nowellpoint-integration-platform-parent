@@ -16,7 +16,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.Identity;
+import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class IdentityEventHandler implements AbstractEventHandler {
@@ -36,9 +36,9 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		try {
 			MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
 			
-			Identity identity = objectMapper.readValue(event.getPayload(), Identity.class);
+			AccountProfile identity = objectMapper.readValue(event.getPayload(), AccountProfile.class);
 			
-			String collectionName = Identity.class.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
+			String collectionName = AccountProfile.class.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
 			
 			Document document = null;
 			

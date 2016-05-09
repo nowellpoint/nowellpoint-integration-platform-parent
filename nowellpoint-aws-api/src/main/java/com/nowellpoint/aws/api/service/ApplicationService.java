@@ -8,6 +8,8 @@ import com.nowellpoint.aws.data.mongodb.Application;
 
 public class ApplicationService extends AbstractDocumentService<ApplicationDTO, Application> {
 	
+	private static final String CONFIGURATION_PHASE = "Configuration";
+	
 	public ApplicationService() {
 		super(ApplicationDTO.class, Application.class);
 	}
@@ -39,6 +41,8 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 */
 	
 	public ApplicationDTO createApplication(ApplicationDTO resource) {
+		resource.setPhase(CONFIGURATION_PHASE);
+		
 		create(resource);
 
 		hset( resource.getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
@@ -55,15 +59,15 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO updateApplication(String subject, ApplicationDTO resource, URI eventSource) {
-		ApplicationDTO original = getApplication( resource.getId(), subject );
+	public ApplicationDTO updateApplication(ApplicationDTO resource) {
+		ApplicationDTO original = getApplication( resource.getId(), resource.getSubject() );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
-		update(subject, resource, eventSource);
+		replace(resource);
 		
-		hset( subject, ApplicationDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), subject, resource );
+		hset( resource.getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), resource.getSubject(), resource );
 
 		return resource;
 	}
@@ -78,7 +82,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	public void deleteApplication(String applicationId, String subject, URI eventSource) {		
 		ApplicationDTO resource = new ApplicationDTO(applicationId);
 		
-		delete(subject, resource, eventSource);
+		delete(resource);
 		
 		hdel( subject, ApplicationDTO.class.getName().concat(applicationId) );
 		hdel( applicationId, subject );
