@@ -32,7 +32,32 @@
                         <form class="form-vertical" id="instance-variables-form" role="form">
                             <input type="hidden" name="defaultEnvironment" id="defaulEnvironment" value="${(serviceInstance.defaultEnvironment)!}" />
                             <div class="panel panel-default">
-                                <div class="panel-heading">${labels["instance.environment.variables"]}</div>
+                                <div class="panel-heading">
+                                    <div class="flextable">
+                                        <div class="flextable-item">
+                                    <h3 class="panel-title">
+${labels["instance.environment.variables"]}
+            </h3>
+                                        </div>
+                                        <div class="flextable-item">
+                                <div class="pull-right">
+                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                            <option value="">--- ${labels["select.environment"]} ---</option>
+                            <#list serviceInstance.environments?sort_by( "name") as environment>
+                                <#if environment.active>
+                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
+                                        <option value="${environment.name}" selected>${environment.label}</option>
+                                    </#if>
+                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                        <option value="${environment.name}">${environment.label}</option>
+                                    </#if>
+                                </#if>
+                            </#list>
+                        </select>
+                                </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="panel-body">
                                     <div class="content table-responsive">
                                         <#include "fragments/instance-environment-variables-table.html" />
@@ -47,19 +72,7 @@
                         </form>
                     </div>
                     <div class="col-sm-2">
-                        <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
-                            <option value="">--- ${labels["select.environment"]} ---</option>
-                            <#list serviceInstance.environments?sort_by( "name") as environment>
-                                <#if environment.active>
-                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
-                                        <option value="${environment.name}" selected>${environment.label}</option>
-                                    </#if>
-                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
-                                        <option value="${environment.name}">${environment.label}</option>
-                                    </#if>
-                                </#if>
-                            </#list>
-                        </select>
+                        
                     </div>
                 </div>
             </div>
