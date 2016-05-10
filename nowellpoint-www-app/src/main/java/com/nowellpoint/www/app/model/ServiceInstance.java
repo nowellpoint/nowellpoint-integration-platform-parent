@@ -36,6 +36,8 @@ public class ServiceInstance {
 	
 	private String defaultEnvironment;
 	
+	private String status;
+	
 	private List<Environment> environments;
 	
 	private List<EnvironmentVariable> environmentVariables;
@@ -144,6 +146,14 @@ public class ServiceInstance {
 
 	public void setDefaultEnvironment(String defaultEnvironment) {
 		this.defaultEnvironment = defaultEnvironment;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getConfigurationPage() {

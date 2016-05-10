@@ -40,6 +40,8 @@ public class ServiceInstance implements Serializable {
 	
 	private String defaultEnvironment;
 	
+	private String status;
+	
 	private Set<Environment> environments;
 	
 	private Set<EnvironmentVariable> environmentVariables;
@@ -156,6 +158,14 @@ public class ServiceInstance implements Serializable {
 
 	public void setDefaultEnvironment(String defaultEnvironment) {
 		this.defaultEnvironment = defaultEnvironment;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Set<Environment> getEnvironments() {

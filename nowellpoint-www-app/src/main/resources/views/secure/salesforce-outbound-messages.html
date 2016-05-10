@@ -13,9 +13,7 @@
                 </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
                     <div class="col-lg-10 col-md-10 col-sm-10">
-
                         <div class="row">
-
                             <div class="col-lg-2 col-md-2 col-sm-2">
                                 <div class="panel panel-primary">
                                     <div class="statcard p-a-md m-b">
@@ -52,14 +50,28 @@
                             </div>
 
                             <br>
-
+                            
                             <form id="form" name="form" class="form-horizontal" role="form">
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="status">${labels["service.status"]}</label>
+                                    <div class="col-sm-3 col-md-3 col-lg-3">
+                                        <p class="form-control-static" name="status"><h3><span class="label label-pill label-danger">Stopped</span></h3></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading"></h3>
+                            </div>
+                                
+                                <br>
+                            
                                 <div class="form-group">
                                     <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${labels["name"]}</label>
                                     <div class="col-sm-3 col-md-3 col-lg-3">
-                                        <input type="text" class="form-control" name="name" id="name"  value="${(serviceInstance.name)!}" required="" />
-                                    </div>    
-                                </div>    
+                                        <input type="text" class="form-control" name="name" id="name" value="${(serviceInstance.name)!}" required="" />
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label class="control-label col-sm-2 col-md-2 col-lg-2" for="defaultEnvironment">${labels["default.environment"]}</label>
                                     <div class="col-sm-3 col-md-3 col-lg-3">

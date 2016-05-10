@@ -1,7 +1,7 @@
 <#import "template.html" as t>
 
     <@t.page>
-        
+
         <#include "navbar.html" />
 
         <div class="container-fluid">
@@ -35,26 +35,24 @@
                                 <div class="panel-heading">
                                     <div class="flextable">
                                         <div class="flextable-item">
-                                    <h3 class="panel-title">
-${labels["instance.environment.variables"]}
-            </h3>
+                                            <h3 class="panel-title">${labels["instance.environment.variables"]}</h3>
                                         </div>
                                         <div class="flextable-item">
-                                <div class="pull-right">
-                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
-                            <option value="">--- ${labels["select.environment"]} ---</option>
-                            <#list serviceInstance.environments?sort_by( "name") as environment>
-                                <#if environment.active>
-                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
-                                        <option value="${environment.name}" selected>${environment.label}</option>
-                                    </#if>
-                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
-                                        <option value="${environment.name}">${environment.label}</option>
-                                    </#if>
-                                </#if>
-                            </#list>
-                        </select>
-                                </div>
+                                            <div class="pull-right">
+                                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                                                    <option value="">--- ${labels["select.environment"]} ---</option>
+                                                    <#list serviceInstance.environments?sort_by( "name") as environment>
+                                                        <#if environment.active>
+                                                            <#if environment.name==( serviceInstance.defaultEnvironment)! "">
+                                                                <option value="${environment.name}" selected>${environment.label}</option>
+                                                            </#if>
+                                                            <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                                                <option value="${environment.name}">${environment.label}</option>
+                                                            </#if>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -72,7 +70,7 @@ ${labels["instance.environment.variables"]}
                         </form>
                     </div>
                     <div class="col-sm-2">
-                        
+
                     </div>
                 </div>
             </div>
