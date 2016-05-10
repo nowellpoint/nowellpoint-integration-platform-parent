@@ -44,7 +44,7 @@ public class LeadEventHandler implements AbstractEventHandler {
 		HttpResponse httpResponse = null;
 		
 		httpResponse = RestResource.post(tokenUri)
-				.contentType("application/x-www-form-urlencoded")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.acceptCharset(StandardCharsets.UTF_8)
 				.parameter("grant_type", "password")
