@@ -21,6 +21,7 @@ import javax.ws.rs.NotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -69,6 +70,8 @@ public class SalesforceConnectorController extends AbstractController {
         
         post("/app/connectors/salesforce/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
         
+        post("/app/connectors/salesforce/:id/service/:key", (request, response) -> saveService(request, response), new FreeMarkerEngine(cfg));
+        
         delete("/app/connectors/salesforce/:id/service/:key", (request, response) -> deleteService(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
@@ -107,6 +110,44 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @param response
 	 * @return
 	 */
+	
+	private ModelAndView saveService(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String name = request.queryParams("name");
+		String defaultEnvironment = request.queryParams("defaultEnvironment");
+		
+		ObjectNode node = new ObjectMapper().createObjectNode()
+				.put("name", name)
+				.put("defaultEnvironment", defaultEnvironment);
+		
+		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.body(node)
+				.execute();
+		
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		
+		Map<String, Object> model = getModel();
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
+			return new ModelAndView(model, "secure/fragments/success-message.html");
+		} else {
+			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
+			return new ModelAndView(model, "secure/fragments/e-message.html");
+		}
+	}
 	
 	private ModelAndView deleteService(Request request, Response response) {
 		Token token = getToken(request);
@@ -410,8 +451,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String tag = request.queryParams("tag");
 		
-		System.out.println(tag);
-		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -614,8 +653,6 @@ public class SalesforceConnectorController extends AbstractController {
 					.put("active", request.queryMap().get("active" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
 			}
 		}
-		
-		System.out.println(node);
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.contentType(MediaType.APPLICATION_JSON)

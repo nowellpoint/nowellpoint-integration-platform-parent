@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceInstance {
 	
-	private Parent parent;
-	
 	private String key;
+	
+	private String name;
 	
 	private String providerType;
 	
@@ -50,12 +50,12 @@ public class ServiceInstance {
 
 	}
 
-	public Parent getParent() {
-		return parent;
+	public String getName() {
+		return name;
 	}
 
-	public void setParent(Parent parent) {
-		this.parent = parent;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getKey() {

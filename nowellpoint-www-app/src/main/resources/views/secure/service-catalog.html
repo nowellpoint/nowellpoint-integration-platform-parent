@@ -4,7 +4,7 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
+        <div class="container-fluid">
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
@@ -18,21 +18,21 @@
             </div>
 
             <br>
+            
+            <div id="status-message"></div>
 
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
 
-                    <div id="statusMessage">
-
+                        <ul class="nav">
+                            <li>
+                                <a href="/app/connectors/salesforce/${id}">
+                                    <span class="icon icon-back fa-1x">${organizationName}</span>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-
-                    <div class="flextable">
-                        <div class="flextable-item">
-                            <a href="/app/connectors/salesforce/${id}"><span class="icon icon-back fa-2x">&nbsp;${organizationName}</span></a>
-                        </div>
-                    </div>
-
-                    <br>
 
                     <div class="row">
                         <#list serviceProviders as serviceProvider>
@@ -64,24 +64,25 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <#include "spinner.html" />
+        <#include "spinner.html" />
 
-            <script>
-                $('#form').submit(function(e) {
-                    var data = $("#form").serialize()
-                    $.ajax({
-                        type: "POST",
-                        url: "/app/connectors/salesforce/${id}/service",
-                        data: data,
-                        complete: function(data) {
-                            $("#statusMessage").html(data.responseText);
-                        }
-                    });
-
-                    e.preventDefault();
-
+        <script>
+            $('#form').submit(function(e) {
+                var data = $("#form").serialize()
+                $.ajax({
+                    type: "POST",
+                    url: "/app/connectors/salesforce/${id}/service",
+                    data: data,
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
                 });
-            </script>
+
+                e.preventDefault();
+
+            });
+        </script>
 
     </@t.page>

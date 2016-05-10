@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,6 +27,7 @@ import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.data.mongodb.Environment;
 import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
@@ -125,6 +127,26 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.setSubject(subject);
 		resource.addServiceInstance(serviceInstance);
 		
+		updateSalesforceConnector(resource);
+		
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO updateService(String subject, String id, String key, ServiceInstanceDTO serviceInstance) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Map<String,ServiceInstance> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
+		resource.getServiceInstances().clear();
+		if (map.containsKey(key)) {
+			ServiceInstance original = map.get(key);
+			original.setDefaultEnvironment(serviceInstance.getDefaultEnvironment());
+			original.setName(serviceInstance.getName());
+			map.put(key, original);
+		}
+		
+		resource.setServiceInstances(new ArrayList<ServiceInstance>(map.values()));
+
 		updateSalesforceConnector(resource);
 		
 		return resource;

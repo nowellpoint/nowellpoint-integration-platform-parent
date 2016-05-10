@@ -18,6 +18,8 @@ public class ServiceInstance implements Serializable {
 	
 	private String key;
 	
+	private String name;
+	
 	private String providerType;
 	
 	private Boolean isActive;
@@ -54,6 +56,14 @@ public class ServiceInstance implements Serializable {
 	
 	public String getKey() {
 		return key;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setKey(String key) {

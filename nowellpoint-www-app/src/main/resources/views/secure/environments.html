@@ -96,7 +96,7 @@
                         url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/environments",
                         data: params,
                         complete: function(data) {
-                            $("#statusMessage").html(data.responseText);
+                            $("#status-message").html(data.responseText);
                         }
                     });
 

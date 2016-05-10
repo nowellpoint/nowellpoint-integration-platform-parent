@@ -46,6 +46,7 @@ import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
@@ -228,17 +229,35 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
+	@Path("salesforce/{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveService(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			ServiceInstanceDTO serviceInstance) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.updateService(subject, id, key, serviceInstance);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	@POST
 	@Path("salesforce/{id}/service/{key}/environments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveEnvironments(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			Set<EnvironmentDTO> resources) {
+			Set<EnvironmentDTO> environments) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, resources);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, environments);
 		
 		return Response.ok(resource)
 				.build(); 
@@ -292,7 +311,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/service/{key}")
+	@Path("salesforce/{id}/service/{key}/configuration")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceConfiguration(

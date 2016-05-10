@@ -4,7 +4,7 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
+        <div class="container-fluid">
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
@@ -174,7 +174,7 @@
                                 <div class="content table-responsive">
                                     <table class="table table-hover">
                                         <thead>
-                                            <th class="col-xs-2">${labels["type"]}</th>
+                                            <th class="col-xs-2">${labels["name"]}</th>
                                             <th class="col-xs-3">${labels["service.name"]}</th>
                                             <th class="col-xs-6">${labels["tag"]}</th>
                                             <th class="col-xs-1 text-center">${labels["active"]}</th>
@@ -182,7 +182,7 @@
                                         <tbody>
                                             <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
                                                 <tr id="${service.key}">
-                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.providerName}</a></td>
+                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name}</a></td>
                                                     <td>${service.serviceName!}</td>
                                                     <td>${service.tag!}</td>
                                                     <td class="text-center">
