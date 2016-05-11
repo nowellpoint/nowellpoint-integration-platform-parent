@@ -51,8 +51,7 @@ public class SalesforceResource {
 	@GET
 	@Path("/oauth")
 	@PermitAll
-	public Response oauth(
-			@QueryParam(value="state") String state) {
+	public Response oauth(@QueryParam(value="state") String state) {
 		
 		String url = null;
 		try {

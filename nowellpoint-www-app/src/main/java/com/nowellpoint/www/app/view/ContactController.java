@@ -52,7 +52,7 @@ public class ContactController {
         	HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
         			.header("x-api-key", System.getenv("NCS_API_KEY"))
         			.contentType(MediaType.APPLICATION_JSON)
-        			.path("lead")
+        			.path("contact")
         			.body(body.toString())
         			.execute();
         	

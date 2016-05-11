@@ -1,5 +1,8 @@
 package com.nowellpoint.aws.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import javax.ws.rs.FormParam;
 
 import org.hibernate.validator.constraints.Email;
@@ -38,7 +41,6 @@ public class TestRestApi {
 			System.out.println(token.getAccessToken());
 			
 			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
-					//.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 	    			.path("oauth")
 	    			.path("token")
@@ -58,6 +60,31 @@ public class TestRestApi {
 	}
 	
 	@Test
+	public void testContact() {
+		
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+					.accept(MediaType.APPLICATION_JSON)
+					.path("contact")
+					.parameter("leadSource", "Contact")
+					.parameter("firstName", "All")
+					.parameter("lastName", "Buyer")
+					.parameter("email", "allbuyer@aim.com")
+					.parameter("phone", "999-999-9919")
+					.parameter("company", URLEncoder.encode("Company Name", "UTF-8"))
+					.parameter("description", "Just need help")
+					.execute();
+			
+			System.out.println(httpResponse.getStatusCode());
+			System.out.println(httpResponse.getAsString());
+			
+		} catch (HttpRequestException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}	
+	}	
+	
+	@Test
 	public void testSignUp() {
 		
 		HttpResponse httpResponse = null;
@@ -70,13 +97,13 @@ public class TestRestApi {
 					.parameter("lastName", "Smith")
 					.parameter("email", "jherson@aim.com")
 					.parameter("countryCode", "US")
-					.parameter("password", "!t2U1&JUTJvY")
+					.parameter("password", URLEncoder.encode("!t2U1&JUTJvY", "UTF-8"))
 					.execute();
 			
 			System.out.println(httpResponse.getStatusCode());
 			System.out.println(httpResponse.getAsString());
 			
-		} catch (HttpRequestException e) {
+		} catch (HttpRequestException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}	
 	}	

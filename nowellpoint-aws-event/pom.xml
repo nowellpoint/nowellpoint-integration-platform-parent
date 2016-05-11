@@ -56,6 +56,11 @@
 			<version>${mongodb.driver.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nowellpoint-aws-sforce</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>nowellpoint-aws-core</artifactId>
 			<version>${project.version}</version>

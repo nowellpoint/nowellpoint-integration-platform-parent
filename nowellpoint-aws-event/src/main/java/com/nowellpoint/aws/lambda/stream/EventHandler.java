@@ -14,7 +14,7 @@ import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.event.AbstractEventHandler;
 import com.nowellpoint.aws.event.AccountEventHandler;
-import com.nowellpoint.aws.event.IdentityEventHandler;
+import com.nowellpoint.aws.event.AccountProfileEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
 import com.nowellpoint.aws.event.SignUpEventHandler;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -28,7 +28,7 @@ public class EventHandler {
 		eventMapping.put(EventAction.SIGN_UP.name(), SignUpEventHandler.class.getName());
 		eventMapping.put(EventAction.ACCOUNT.name(), AccountEventHandler.class.getName());
 		eventMapping.put(EventAction.LEAD.name(), LeadEventHandler.class.getName());
-		eventMapping.put(EventAction.IDENTITY.name(), IdentityEventHandler.class.getName());
+		eventMapping.put(EventAction.ACCOUNT_PROFILE.name(), AccountProfileEventHandler.class.getName());
 	}
 	
 	public String handleEvent(DynamodbEvent dynamodbEvent, Context context) {

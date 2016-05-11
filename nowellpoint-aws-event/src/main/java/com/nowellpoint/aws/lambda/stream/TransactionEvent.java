@@ -30,8 +30,8 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.FieldMappingEntry;
 import com.nowellpoint.aws.model.Mapping;
-import com.nowellpoint.aws.model.sforce.Notification;
 import com.nowellpoint.aws.sforce.SalesforceUrlFactory;
+import com.nowellpoint.client.sforce.outbound.model.Notification;
 
 public class TransactionEvent implements Callable<TransactionEventResponse> {
 	

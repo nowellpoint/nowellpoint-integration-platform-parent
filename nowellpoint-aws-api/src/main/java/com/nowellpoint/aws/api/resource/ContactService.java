@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
 import javax.annotation.security.PermitAll;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -10,11 +9,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
@@ -28,11 +26,11 @@ import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
-@Path("/signup")
-public class SignUpService {
-	
-	private static final Logger LOGGER = Logger.getLogger(SignUpService.class);
-	
+@Path("/contact")
+public class ContactService {
+
+	private static final Logger LOGGER = Logger.getLogger(ContactService.class);
+
 	@Context
 	private UriInfo uriInfo;
 	
@@ -41,36 +39,33 @@ public class SignUpService {
 	@PermitAll
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response signUp(
-    		@FormParam("leadSource") @NotEmpty(message = "Lead Source must be filled in") String leadSource,
+	public Response contact(
+			@FormParam("leadSource") @NotEmpty(message = "Lead Source must be filled in") String leadSource,
     		@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
     		@FormParam("email") @Email String email,
-    		@FormParam("countryCode") @NotEmpty String countryCode,
-    		@FormParam("password") @Length(min=8, max=100, message="Password must be between {min} and {max}") @Pattern.List({
-    	        @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit."),
-    	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one lowercase letter."),
-    	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one upper letter."),
-    	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
-    	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password) {
+    		@FormParam("phone") String phone,
+    		@FormParam("phone") String company,
+    		@FormParam("phone") String description) {
 		
-		ObjectNode signUp = new ObjectMapper().createObjectNode()
+		ObjectNode contact = new ObjectMapper().createObjectNode()
 				.put("leadSource", leadSource)
 				.put("firstName", firstName)
 				.put("lastName", lastName)
 				.put("email", email)
-				.put("countryCode", countryCode)
-				.put("password", password)
-				.put("username", email)
-				.putNull("middleName");
+				.put("phone", phone)
+				.put("company", company)
+				.put("description", description);
+		
+		System.out.println(contact.toString());
 		
 		try {			
 			Event event = new EventBuilder()
 					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
-					.withEventAction(EventAction.SIGN_UP)
+					.withEventAction(EventAction.LEAD)
 					.withEventSource(uriInfo.getBaseUri())
 					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(signUp)
+					.withPayload(contact)
 					.withType(ObjectNode.class)
 					.build();
 				

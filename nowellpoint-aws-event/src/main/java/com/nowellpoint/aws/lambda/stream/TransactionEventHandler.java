@@ -38,8 +38,8 @@ import com.nowellpoint.aws.data.dynamodb.Transaction;
 import com.nowellpoint.aws.data.dynamodb.TransactionResult;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.PropertyStore;
-import com.nowellpoint.aws.model.sforce.OutboundMessage;
 import com.nowellpoint.aws.sforce.SalesforceResource;
+import com.nowellpoint.client.sforce.outbound.model.OutboundMessage;
 
 public class TransactionEventHandler {
 	

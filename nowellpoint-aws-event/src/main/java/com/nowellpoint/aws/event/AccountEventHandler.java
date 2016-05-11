@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.event;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
@@ -16,6 +17,7 @@ import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -26,7 +28,7 @@ public class AccountEventHandler implements AbstractEventHandler {
 	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Map<String, String> properties, Context context) throws Exception {		
+	public void process(Event event, Map<String, String> properties, Context context) throws IOException {		
 		logger = context.getLogger();
 		
 		logger.log(this.getClass().getName() + " starting AccountEventHandler");
@@ -66,11 +68,15 @@ public class AccountEventHandler implements AbstractEventHandler {
 				
 				logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 				
+				if (httpResponse.getStatusCode() != Status.CREATED) {
+					throw new IOException(httpResponse.getAsString());
+				}
+				
 				account = httpResponse.getEntity(Account.class);
 				
 				href = account.getHref();
 				
-				insertIdentityEvent(event, account.getUsername(), href);
+				accountProfileEvent(event, account.getUsername(), href);
 				
 			} else {
 				
@@ -84,6 +90,9 @@ public class AccountEventHandler implements AbstractEventHandler {
 				
 				logger.log("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 				
+				if (httpResponse.getStatusCode() != Status.OK) {
+					throw new IOException(httpResponse.getAsString());
+				}
 			}
 		} 
 		
@@ -93,19 +102,20 @@ public class AccountEventHandler implements AbstractEventHandler {
 		event.setTargetId(href);
 	}
 	
-	private void insertIdentityEvent(Event parentEvent, String username, String href) throws JsonProcessingException {		
+	private void accountProfileEvent(Event parentEvent, String username, String href) throws JsonProcessingException {		
 		DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 		
-		AccountProfile identity = new AccountProfile();
-		identity.setUsername(username);
-		identity.setHref(href);
+		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setUsername(username);
+		accountProfile.setHref(href);
 		
 		Event event = new EventBuilder()
+				.withType(AccountProfile.class)
 				.withSubject(parentEvent.getSubject())
-				.withEventAction(EventAction.IDENTITY)
+				.withEventAction(EventAction.ACCOUNT_PROFILE)
 				.withEventSource(parentEvent.getEventSource())
 				.withPropertyStore(parentEvent.getPropertyStore())
-				.withPayload(identity)
+				.withPayload(accountProfile)
 				.withParentEventId(parentEvent.getId())
 				.build();
 		

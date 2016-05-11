@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.aws.model.sforce.Notification;
+import com.nowellpoint.client.sforce.outbound.model.Notification;
 
 public class TransactionEventRequest {
 	

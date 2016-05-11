@@ -19,7 +19,7 @@ import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.model.admin.Properties;
 
-public class IdentityEventHandler implements AbstractEventHandler {
+public class AccountProfileEventHandler implements AbstractEventHandler {
 	
 	private static LambdaLogger logger;
 
@@ -28,7 +28,7 @@ public class IdentityEventHandler implements AbstractEventHandler {
 		
 		logger = context.getLogger();
 		
-		logger.log(this.getClass().getName() + " starting IdentityEventHandler");
+		logger.log(this.getClass().getName() + " starting AccountProfileEventHandler");
 		
 		MongoClientURI mongoClientUri = new MongoClientURI("mongodb://".concat(properties.get(Properties.MONGO_CLIENT_URI)));
 		MongoClient mongoClient = new MongoClient(mongoClientUri);

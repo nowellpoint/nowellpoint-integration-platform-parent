@@ -16,8 +16,8 @@ import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.AccountProfile;
-import com.nowellpoint.aws.model.sforce.Lead;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
+import com.nowellpoint.client.sforce.model.Lead;
 
 public class SignUpEventHandler implements AbstractEventHandler {
 	
@@ -55,27 +55,27 @@ public class SignUpEventHandler implements AbstractEventHandler {
 		account.setPassword(signup.getPassword());
 		account.setStatus("UNVERIFIED");
 		
-		AccountProfile identity = new AccountProfile();
-		identity.setCreatedById(event.getSubject());
-		identity.setLastModifiedById(event.getSubject());
-		identity.setFirstName(signup.getFirstName());
-		identity.setLastName(signup.getLastName());
-		identity.setEmail(signup.getEmail());
-		identity.setCompany(signup.getCompany());
-		identity.setTitle(signup.getTitle());
-		identity.setPhone(signup.getPhone());
-		identity.setUsername(signup.getEmail());
-		identity.setIsActive(Boolean.TRUE);
+		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setCreatedById(event.getSubject());
+		accountProfile.setLastModifiedById(event.getSubject());
+		accountProfile.setFirstName(signup.getFirstName());
+		accountProfile.setLastName(signup.getLastName());
+		accountProfile.setEmail(signup.getEmail());
+		accountProfile.setCompany(signup.getCompany());
+		accountProfile.setTitle(signup.getTitle());
+		accountProfile.setPhone(signup.getPhone());
+		accountProfile.setUsername(signup.getEmail());
+		accountProfile.setIsActive(Boolean.TRUE);
 		
 		Address address = new Address();
 		address.setCountryCode(signup.getCountryCode());
 		
-		identity.setAddress(address);
+		accountProfile.setAddress(address);
 
 		try {			
 			insertEvent(event, lead, EventAction.LEAD);
 			insertEvent(event, account, EventAction.ACCOUNT);
-			insertEvent(event, identity, EventAction.IDENTITY);
+			insertEvent(event, accountProfile, EventAction.ACCOUNT_PROFILE);
 			event.setEventStatus(EventStatus.COMPLETE.toString());	
 		} catch (JsonProcessingException e) {
 			logger.log( "Signup Exception: " + e.getMessage());
