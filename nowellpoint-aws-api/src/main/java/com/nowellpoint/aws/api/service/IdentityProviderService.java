@@ -92,13 +92,58 @@ public class IdentityProviderService extends AbstractCacheService {
         return token;
 	}
 	
+	public Account getAccount(String id) {
+		
+		Account account = null;
+		
+		HttpResponse httpResponse = RestResource.get(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() == 200) {
+			account = httpResponse.getEntity(Account.class);
+		} else {
+			LOGGER.error(httpResponse.getAsString());
+		}
+		
+		return account;
+	}
+	
 	/**
 	 * 
 	 * @param resource
 	 * @throws IOException 
 	 */
 	
-	public void updateAccount(Account account) throws IOException {	
+	public Account createAccount(Account account) {	
+		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.contentType(MediaType.APPLICATION_JSON)
+				.path("directories")
+				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
+				.path("accounts")
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.body(account)
+				.execute();
+
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() == 201) {
+			account = httpResponse.getEntity(Account.class);
+		} else {
+			LOGGER.error(httpResponse.getAsString());
+		}
+		
+		return account;
+	}
+	
+	/**
+	 * 
+	 * @param resource
+	 */
+	
+	public Account updateAccount(Account account) {	
 		HttpResponse httpResponse = RestResource.post(account.getHref())
 				.contentType(MediaType.APPLICATION_JSON)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -110,6 +155,30 @@ public class IdentityProviderService extends AbstractCacheService {
 		if (httpResponse.getStatusCode() == 200) {
 			account = httpResponse.getEntity(Account.class);
 		} else {
+			LOGGER.error(httpResponse.getAsString());
+		}
+		
+		return account;
+	}
+	
+	/**
+	 * 
+	 * @param href
+	 */
+	
+	public void disableAccount(String id) {
+		Account account = new Account();
+		account.setStatus("DISABLED");
+		
+		HttpResponse httpResponse = RestResource.post(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
+				.contentType(MediaType.APPLICATION_JSON)
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.body(account)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() != 200) {
 			LOGGER.error(httpResponse.getAsString());
 		}
 	}

@@ -1,26 +1,30 @@
 package com.nowellpoint.aws.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import javax.ws.rs.FormParam;
-
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Test;
 
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 
 public class TestRestApi {
 	
 	private static final String NCS_API_ENDPOINT = "http://localhost:9090/rest";
 
-	@Test
+	//@Test
 	public void testAuthentication() {
+		
+		System.out.println("testAuthentication");
 		
 		HttpResponse httpResponse = null;
 		try {
@@ -30,29 +34,42 @@ public class TestRestApi {
 					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
 					.execute();
 			
-			System.out.println(httpResponse.getStatusCode());
+
+			assertTrue(httpResponse.getStatusCode() == Status.OK);
 			
 			if (httpResponse.getStatusCode() == 400) {
 				System.out.println(httpResponse.getAsString());
 			} else {
-			
-			Token token = httpResponse.getEntity(Token.class);
-			
-			System.out.println(token.getAccessToken());
-			
-			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
-					.bearerAuthorization(token.getAccessToken())
-	    			.path("oauth")
-	    			.path("token")
-	    			.execute();
-	    	
-	    	int statusCode = httpResponse.getStatusCode();
-	    	
-	    	System.out.println(statusCode);
-	    	System.out.println(httpResponse.getAsString());
+				Token token = httpResponse.getEntity(Token.class);
+				
+				System.out.println(token.getAccessToken());
+				
+				assertNotNull(token.getAccessToken());
+				
+				httpResponse = RestResource.get(NCS_API_ENDPOINT)
+						.bearerAuthorization(token.getAccessToken())
+						.path("account")
+						.path("me")
+						.execute();
+				
+				assertTrue(httpResponse.getStatusCode() == Status.OK);
+				
+				Account account = httpResponse.getEntity(Account.class);
+				
+				assertNotNull(account);
+				assertEquals(account.getEmail(), "john.d.herson@gmail.com");
+				
+				httpResponse = RestResource.delete(NCS_API_ENDPOINT)
+						.bearerAuthorization(token.getAccessToken())
+						.path("oauth")
+						.path("token")
+						.execute();
+				
+				assertTrue(httpResponse.getStatusCode() == Status.NO_CONTENT);
+				
+				System.out.println(httpResponse.getStatusCode());
+				System.out.println(httpResponse.getAsString());
 			}
-			
-			
 			
 		} catch (HttpRequestException e) {
 			e.printStackTrace();
@@ -60,7 +77,72 @@ public class TestRestApi {
 	}
 	
 	@Test
+	public void testAccount() {
+		
+		System.out.println("testAccount");
+		
+		Account account = new Account();
+		account.setEmail("allbuyer@aim.com");
+		account.setSurname("Buyer");
+		account.setGivenName("All");
+		account.setUsername("allbuyer@aim.com");
+		try {
+			account.setPassword(URLEncoder.encode("!t2U1&JUTJvY", "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+					.accept(MediaType.APPLICATION_JSON)
+					.path("oauth/token")
+					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
+					.execute();
+			
+			System.out.println("authenticate: " + httpResponse.getStatusCode());
+			
+			Token token = null;
+			
+			if (httpResponse.getStatusCode() == 400) {
+				System.out.println(httpResponse.getAsString());
+			} else {
+				token = httpResponse.getEntity(Token.class);
+			}
+			
+			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account")
+					.body(account)
+					.execute();
+			
+			System.out.println("create: " + httpResponse.getStatusCode());
+			
+			account = httpResponse.getEntity(Account.class);
+			
+			System.out.println(httpResponse.getHeaders().get("Location"));
+			
+			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account")
+					.path(account.getId())
+					.execute();
+			
+			System.out.println("disable: " + httpResponse.getStatusCode());
+			System.out.println(httpResponse.getAsString());
+			
+		} catch (HttpRequestException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	//@Test
 	public void testContact() {
+		
+		System.out.println("testContact");
 		
 		HttpResponse httpResponse = null;
 		try {
@@ -84,8 +166,10 @@ public class TestRestApi {
 		}	
 	}	
 	
-	@Test
+	//@Test
 	public void testSignUp() {
+		
+		System.out.println("testSignUp");
 		
 		HttpResponse httpResponse = null;
 		try {
