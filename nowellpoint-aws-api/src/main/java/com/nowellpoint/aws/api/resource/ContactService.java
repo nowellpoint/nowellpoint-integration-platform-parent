@@ -43,10 +43,10 @@ public class ContactService {
 			@FormParam("leadSource") @NotEmpty(message = "Lead Source must be filled in") String leadSource,
     		@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
-    		@FormParam("email") @Email String email,
+    		@FormParam("email") @Email @NotEmpty(message="Email must be filled in") String email,
     		@FormParam("phone") String phone,
-    		@FormParam("phone") String company,
-    		@FormParam("phone") String description) {
+    		@FormParam("company") String company,
+    		@FormParam("description") String description) {
 		
 		ObjectNode contact = new ObjectMapper().createObjectNode()
 				.put("leadSource", leadSource)
@@ -56,8 +56,6 @@ public class ContactService {
 				.put("phone", phone)
 				.put("company", company)
 				.put("description", description);
-		
-		System.out.println(contact.toString());
 		
 		try {			
 			Event event = new EventBuilder()

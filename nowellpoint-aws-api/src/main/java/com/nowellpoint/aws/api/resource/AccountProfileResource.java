@@ -39,6 +39,7 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.Photos;
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.idp.model.Account;
 
 @Path("/account-profile")
@@ -107,7 +108,7 @@ public class AccountProfileResource {
 
 		try {
 			identityProviderService.updateAccount(account);
-		} catch (IOException e) {
+		} catch (HttpRequestException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
 		
