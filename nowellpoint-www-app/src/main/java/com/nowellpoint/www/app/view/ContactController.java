@@ -3,6 +3,7 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -51,9 +52,15 @@ public class ContactController {
         	
         	HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
         			.header("x-api-key", System.getenv("NCS_API_KEY"))
-        			.contentType(MediaType.APPLICATION_JSON)
+        			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
         			.path("contact")
-        			.body(body.toString())
+					.parameter("leadSource", request.queryParams("leadSource"))
+					.parameter("firstName", request.queryParams("firstName"))
+					.parameter("lastName", request.queryParams("lastName"))
+					.parameter("email", request.queryParams("email"))
+					.parameter("phone", request.queryParams("phone"))
+					.parameter("company", request.queryParams("company"))
+					.parameter("description", request.queryParams("description"))
         			.execute();
         	
         	logger.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo() + " : " + httpResponse.getHeaders().get("Location"));

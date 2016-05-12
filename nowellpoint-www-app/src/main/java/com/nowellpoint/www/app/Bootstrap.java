@@ -316,6 +316,7 @@ public class Bootstrap implements SparkApplication {
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(accessToken)
 					.path("account")
+					.path("me")
 					.execute();
 			
 			int statusCode = httpResponse.getStatusCode();

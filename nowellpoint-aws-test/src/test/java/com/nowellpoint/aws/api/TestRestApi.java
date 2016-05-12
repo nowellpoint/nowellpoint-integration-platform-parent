@@ -65,7 +65,6 @@ public class TestRestApi {
 		HttpResponse httpResponse = null;
 		try {
 			httpResponse = RestResource.post(NCS_API_ENDPOINT)
-					.accept(MediaType.APPLICATION_JSON)
 					.path("contact")
 					.parameter("leadSource", "Contact")
 					.parameter("firstName", "All")
