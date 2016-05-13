@@ -183,6 +183,31 @@ public abstract class AbstractCacheService {
 	/**
 	 * 
 	 * @param key
+	 * @param field
+	 * @return
+	 */
+	
+	protected Boolean hexists(String key, String field) {		
+		if (! Optional.ofNullable(key).isPresent()) {
+			throw new IllegalArgumentException("missing key parameter");
+		}
+		
+		if (! Optional.ofNullable(field).isPresent()) {
+			throw new IllegalArgumentException("missing field parameter");
+		}
+		
+		Jedis jedis = CacheManager.getCache();
+		
+		try {
+			return jedis.hexists(key.getBytes(), field.getBytes());
+		} finally {
+			jedis.close();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param key
 	 * @param type
 	 * @return
 	 */

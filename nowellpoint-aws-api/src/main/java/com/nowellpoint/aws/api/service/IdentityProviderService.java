@@ -158,6 +158,10 @@ public class IdentityProviderService extends AbstractCacheService {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
+		if (hexists(account.getHref(), Account.class.getName())) {
+			hset(account.getHref(), Account.class.getName(), account);
+		}
+		
 		return account;
 	}
 	
@@ -170,7 +174,9 @@ public class IdentityProviderService extends AbstractCacheService {
 		Account account = new Account();
 		account.setStatus("DISABLED");
 		
-		HttpResponse httpResponse = RestResource.post(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
+		String href = String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id);
+		
+		HttpResponse httpResponse = RestResource.post(href)
 				.contentType(MediaType.APPLICATION_JSON)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.body(account)
@@ -180,6 +186,10 @@ public class IdentityProviderService extends AbstractCacheService {
 		
 		if (httpResponse.getStatusCode() != 200) {
 			LOGGER.error(httpResponse.getAsString());
+		}
+		
+		if (hexists(href, Account.class.getName())) {
+			hset(account.getHref(), Account.class.getName(), account);
 		}
 	}
 	

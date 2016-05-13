@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.aws.http.HttpRequestException;
@@ -16,10 +17,16 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.aws.model.admin.Properties;
 
 public class TestRestApi {
 	
 	private static final String NCS_API_ENDPOINT = "http://localhost:9090/rest";
+	
+	@BeforeClass
+	public static void init() {
+		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+	}
 
 	//@Test
 	public void testAuthentication() {
@@ -33,7 +40,6 @@ public class TestRestApi {
 					.path("oauth/token")
 					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
 					.execute();
-			
 
 			assertTrue(httpResponse.getStatusCode() == Status.OK);
 			
@@ -100,15 +106,15 @@ public class TestRestApi {
 					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
 					.execute();
 			
-			System.out.println("authenticate: " + httpResponse.getStatusCode());
+			assertEquals(httpResponse.getStatusCode(), 200);
 			
-			Token token = null;
+			Token token = httpResponse.getEntity(Token.class);
 			
-			if (httpResponse.getStatusCode() == 400) {
-				System.out.println(httpResponse.getAsString());
-			} else {
-				token = httpResponse.getEntity(Token.class);
-			}
+			assertNotNull(token.getAccessToken());
+			assertNotNull(token.getExpiresIn());
+			assertNotNull(token.getRefreshToken());
+			assertNotNull(token.getStormpathAccessTokenHref());
+			assertNotNull(token.getTokenType());
 			
 			httpResponse = RestResource.post(NCS_API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -118,11 +124,19 @@ public class TestRestApi {
 					.body(account)
 					.execute();
 			
-			System.out.println("create: " + httpResponse.getStatusCode());
+			assertEquals(httpResponse.getStatusCode(), 201);
+			assertNotNull(httpResponse.getHeaders().get("Location"));
 			
 			account = httpResponse.getEntity(Account.class);
 			
-			System.out.println(httpResponse.getHeaders().get("Location"));
+			assertNotNull(account.getEmail());
+			assertNotNull(account.getFullName());
+			assertNotNull(account.getGivenName());
+			assertNotNull(account.getHref());
+			assertNotNull(account.getId());
+			assertNotNull(account.getStatus());
+			assertNotNull(account.getSurname());
+			assertNotNull(account.getUsername());
 			
 			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_JSON)
@@ -131,8 +145,13 @@ public class TestRestApi {
 					.path(account.getId())
 					.execute();
 			
-			System.out.println("disable: " + httpResponse.getStatusCode());
-			System.out.println(httpResponse.getAsString());
+			assertEquals(httpResponse.getStatusCode(), 204);
+			
+			httpResponse = RestResource.delete(account.getHref())
+					.basicAuthorization(System.getProperty(Properties.STORMPATH_API_KEY_ID), System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+					.execute();
+			
+			assertEquals(httpResponse.getStatusCode(), 204);
 			
 		} catch (HttpRequestException e) {
 			e.printStackTrace();

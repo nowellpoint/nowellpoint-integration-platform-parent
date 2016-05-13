@@ -18,9 +18,14 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
 import org.joda.time.Instant;
 
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -69,9 +74,14 @@ public class MongoDBDatastore implements ServletContextListener {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
-				getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
-				if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
-					audit( document, AuditHistory.Event.UPDATE );
+				try {
+					getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
+					if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
+						audit( document, AuditHistory.Event.UPDATE );
+					}
+				} catch (MongoException e) {
+					publish(e);
+					e.printStackTrace();
 				}
 			}
 		});
@@ -84,9 +94,14 @@ public class MongoDBDatastore implements ServletContextListener {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
-				getCollection( document ).insertOne( document );
-				if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
-					audit( document, AuditHistory.Event.INSERT );
+				try {
+					getCollection( document ).insertOne( document );
+					if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
+						audit( document, AuditHistory.Event.INSERT );
+					}
+				} catch (MongoException e) {
+					publish(e);
+					e.printStackTrace();
 				}
 			}
 		});
@@ -96,9 +111,14 @@ public class MongoDBDatastore implements ServletContextListener {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
-				getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
-				if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
-					audit( document, AuditHistory.Event.DELETE );
+				try {
+					getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
+					if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
+						audit( document, AuditHistory.Event.DELETE );
+					}
+				} catch (MongoException e) {
+					publish(e);
+					e.printStackTrace();
 				}
 			}
 		});
@@ -142,5 +162,11 @@ public class MongoDBDatastore implements ServletContextListener {
 				.withLastModifiedById(document.getLastModifiedById());
 				
 		collection.insertOne( auditHistory );
+	}
+	
+	private static void publish(MongoException exception) {
+		AmazonSNS snsClient = new AmazonSNSClient();
+		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:MONGODB_EXCEPTION", exception.getMessage());
+		snsClient.publish(publishRequest);
 	}
 }
