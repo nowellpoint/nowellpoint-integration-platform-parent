@@ -32,6 +32,8 @@ public class Main {
 
         Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
         
+        System.out.println("redis host: " + System.getProperty(Properties.REDIS_HOST));
+        
         //
         // create the JAX-RS deployment archive
         // 

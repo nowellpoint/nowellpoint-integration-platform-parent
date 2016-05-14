@@ -13,6 +13,7 @@ public class Properties {
 	private static DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	public static final String LOGGLY_API_KEY = "loggly.api.key";
+	public static final String LOGGLY_API_ENDPOINT = "loggly.api.endpoint";
 	public static final String MONGO_CLIENT_URI = "mongo.client.uri";
 	public static final String SALESFORCE_CLIENT_ID = "salesforce.client.id";
 	public static final String SALESFORCE_CLIENT_SECRET = "salesforce.client.secret";

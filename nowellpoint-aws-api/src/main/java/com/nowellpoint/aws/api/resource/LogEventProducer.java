@@ -62,7 +62,8 @@ public class LogEventProducer implements ContainerResponseFilter {
 					
 					HttpURLConnection connection;
 					try {
-						connection = (HttpURLConnection) new URL("http://logs-01.loggly.com/inputs/"
+						connection = (HttpURLConnection) new URL(System.getProperty(Properties.LOGGLY_API_ENDPOINT)
+								.concat("/")
 								.concat(System.getProperty(Properties.LOGGLY_API_KEY))
 								.concat("/tag")
 								.concat("/api")

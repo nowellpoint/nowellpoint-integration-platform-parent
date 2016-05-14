@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+  <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
+  <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/enterprise/cdi-api/1.2/cdi-api-1.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" sourcepath="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jaxrs/1.0.0.Beta4/jaxrs-1.0.0.Beta4.jar"/>
@@ -74,20 +76,30 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/openjdk-orb/openjdk-orb/8.0.4.Final/openjdk-orb-8.0.4.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jaxrs-multipart/1.0.0.Beta4/jaxrs-multipart-1.0.0.Beta4.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.5/javax.mail-1.5.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.0.RC9/stormpath-sdk-api-1.0.RC9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/ejb/1.0.0.Beta4/ejb-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/ejb-api/1.0.0.Beta4/ejb-api-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/ejb/jboss-ejb-api_3.2_spec/1.0.0.Final/jboss-ejb-api_3.2_spec-1.0.0.Final.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/ejb-modules/1.0.0.Beta4/ejb-modules-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jca-modules/1.0.0.Beta4/jca-modules-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/connector-modules/1.0.0.Beta4/connector-modules-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jca/1.0.0.Beta4/jca-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jca-api/1.0.0.Beta4/jca-api-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/connector/1.0.0.Beta4/connector-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/connector-api/1.0.0.Beta4/connector-api-1.0.0.Beta4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.0.RC9.2/stormpath-sdk-api-1.0.RC9.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.8/slf4j-api-1.7.8.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.0.RC9/stormpath-sdk-impl-1.0.RC9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.0.RC9.2/stormpath-sdk-impl-1.0.RC9.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.5.1/jjwt-0.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.4.4/jackson-databind-2.4.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.4.0/jackson-annotations-2.4.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.4.4/jackson-core-2.4.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.1/joda-time-2.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-httpclient/1.0.RC9/stormpath-sdk-httpclient-1.0.RC9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-httpclient/1.0.RC9.2/stormpath-sdk-httpclient-1.0.RC9.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.4.1/httpclient-4.4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.8/jcl-over-slf4j-1.7.8.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-oauth/1.0.RC9/stormpath-sdk-oauth-1.0.RC9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-oauth/1.0.RC9.2/stormpath-sdk-oauth-1.0.RC9.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.authzserver/1.0.0/org.apache.oltu.oauth2.authzserver-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.common/1.0.0/org.apache.oltu.oauth2.common-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/json/json/20131018/json-20131018.jar"/>
@@ -109,21 +121,23 @@
   <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-core"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.10.58/aws-java-sdk-s3-1.10.58.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.10.58/aws-java-sdk-kms-1.10.58.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.10.58/aws-java-sdk-core-1.10.58.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.58/aws-java-sdk-lambda-1.10.58.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.10.77/aws-java-sdk-s3-1.10.77.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.10.77/aws-java-sdk-kms-1.10.77.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.10.77/aws-java-sdk-core-1.10.77.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.5.3/jackson-dataformat-cbor-2.5.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.10.77/aws-java-sdk-lambda-1.10.77.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-data"/>
   <classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.10.58/aws-java-sdk-dynamodb-1.10.58.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.10.77/aws-java-sdk-dynamodb-1.10.77.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.10.77/aws-java-sdk-sns-1.10.77.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.10.77/aws-java-sdk-sqs-1.10.77.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.0/amazon-sqs-java-messaging-lib-1.0.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.9.6/aws-java-sdk-sqs-1.9.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-dynamodb-encryption-java/0.0.6-SNAPSHOT/aws-dynamodb-encryption-java-0.0.6-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.2.0/mongodb-driver-3.2.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.2.0/bson-3.2.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.2.0/mongodb-driver-core-3.2.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.8.0/jedis-2.8.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-pool2/2.3/commons-pool2-2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.8.1/jedis-2.8.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
 </classpath>
