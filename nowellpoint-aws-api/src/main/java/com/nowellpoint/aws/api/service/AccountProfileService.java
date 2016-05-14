@@ -12,8 +12,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.jboss.logging.Logger;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -28,8 +26,6 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
-	
-	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
 	public AccountProfileService() {
 		super(AccountProfileDTO.class, AccountProfile.class);
@@ -48,8 +44,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setSubject(subject);
 		
 		updateAccountProfile(resource);
-		
-		LOGGER.info("Logged In: " + resource.getHref());
 	}
 	
 	/**

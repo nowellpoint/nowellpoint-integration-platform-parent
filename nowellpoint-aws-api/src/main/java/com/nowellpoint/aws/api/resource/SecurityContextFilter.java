@@ -22,7 +22,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 
 @Provider
-public class SecurityInterceptor implements ContainerRequestFilter {
+public class SecurityContextFilter implements ContainerRequestFilter {
 	
 	@Context
 	private ResourceInfo resourceInfo;
@@ -82,32 +82,29 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 	
 	class UserPrincipalSecurityContext implements SecurityContext {
 		
-		private UserPrincipal user;
+		private UserPrincipal userPrincipal;
 		
-		public UserPrincipalSecurityContext(UserPrincipal user) {
-			this.user = user;
+		public UserPrincipalSecurityContext(UserPrincipal userPrincipal) {
+			this.userPrincipal = userPrincipal;
 		}
 
 		@Override
 		public String getAuthenticationScheme() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Principal getUserPrincipal() {
-			return user;
+			return userPrincipal;
 		}
 
 		@Override
 		public boolean isSecure() {
-			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
-		public boolean isUserInRole(String arg0) {
-			// TODO Auto-generated method stub
+		public boolean isUserInRole(String role) {
 			return false;
 		}
 	}
