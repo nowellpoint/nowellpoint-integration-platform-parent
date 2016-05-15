@@ -46,11 +46,11 @@ public class Properties {
 		return getProperty(store.name(), key);
 	}
 	
-	public static Map<String,String> getProperties(PropertyStore store) {
+	public static Map<String,Property> getProperties(PropertyStore store) {
 		return getProperties(store.name());
 	}
 	
-	public static Map<String,String> getProperties(String store) {
+	public static Map<String,Property> getProperties(String store) {
 		Property property = new Property();
 		property.setStore(store);
 		
@@ -59,7 +59,7 @@ public class Properties {
 		
 		List<Property> properties = mapper.query(Property.class, queryExpression);
 		
-		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p.getValue()));
+		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p));
 	}
 	
 	public static void setSystemProperties(PropertyStore store) {
@@ -68,7 +68,7 @@ public class Properties {
 	
 	public static void setSystemProperties(String store) {
 		getProperties(store).entrySet().forEach(property -> {
-        	System.setProperty(property.getKey(), property.getValue());
+        	System.setProperty(property.getValue().getKey(), property.getValue().getValue());
         });
 	}
 }

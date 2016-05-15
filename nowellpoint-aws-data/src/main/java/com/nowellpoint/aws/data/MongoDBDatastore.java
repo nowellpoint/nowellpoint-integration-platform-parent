@@ -5,6 +5,8 @@ import static com.mongodb.MongoClientOptions.builder;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -16,7 +18,6 @@ import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
-import org.joda.time.Instant;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
@@ -69,7 +70,7 @@ public class MongoDBDatastore implements ServletContextListener {
 	}
 	
 	public static void replaceOne(AbstractDocument document) {	
-		document.setLastModifiedDate(Instant.now().toDate());
+		document.setLastModifiedDate(Date.from(Instant.now()));
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -88,8 +89,8 @@ public class MongoDBDatastore implements ServletContextListener {
 	
 	public static void insertOne(AbstractDocument document) {
 		document.setId(new ObjectId());
-		document.setCreatedDate(Instant.now().toDate());
-		document.setLastModifiedDate(Instant.now().toDate());
+		document.setCreatedDate(Date.from(Instant.now()));
+		document.setLastModifiedDate(Date.from(Instant.now()));
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {

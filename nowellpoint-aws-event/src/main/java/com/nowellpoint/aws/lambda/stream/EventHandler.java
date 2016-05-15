@@ -18,6 +18,7 @@ import com.nowellpoint.aws.event.AccountProfileEventHandler;
 import com.nowellpoint.aws.event.LeadEventHandler;
 import com.nowellpoint.aws.event.SignUpEventHandler;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class EventHandler {
@@ -92,7 +93,7 @@ public class EventHandler {
 			// lookup properties for the event
 			//
 			
-			Map<String, String> properties = Properties.getProperties(event.getPropertyStore());
+			Map<String, Property> properties = Properties.getProperties(event.getPropertyStore());
 			
 			//
 			// process the event

@@ -34,7 +34,7 @@ public class LogEventFilter implements ContainerResponseFilter {
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		
 		final String subject = getSubject(requestContext, responseContext);
-		final String address = httpRequest.getLocalAddr();
+		final String address = httpRequest.getLocalName();
 		final String path = httpRequest.getPathInfo().concat(httpRequest.getQueryString() != null ? "?".concat(httpRequest.getQueryString()) : "");
 		final Integer statusCode = responseContext.getStatus();
 		final String statusInfo = responseContext.getStatusInfo().toString();
@@ -46,8 +46,9 @@ public class LogEventFilter implements ContainerResponseFilter {
 				
 				ObjectNode node = new ObjectMapper().createObjectNode()
 						.put("subject", subject)
+						.put("date", System.currentTimeMillis())
 						.put("address", address)
-						.put("requestMethod", requestMethod)
+						.put("method", requestMethod)
 						.put("path", path)
 						.put("statusCode", statusCode)
 						.put("statusInfo", statusInfo);

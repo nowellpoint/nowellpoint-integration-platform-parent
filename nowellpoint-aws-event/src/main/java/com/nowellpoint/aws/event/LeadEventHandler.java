@@ -14,6 +14,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.client.sforce.model.Lead;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -22,18 +23,18 @@ public class LeadEventHandler implements AbstractEventHandler {
 	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Map<String,String> properties, Context context) throws Exception {
+	public void process(Event event, Map<String,Property> properties, Context context) throws Exception {
 		
 		logger = context.getLogger();
 
 		logger.log(this.getClass().getName() + " Starting LeadEventHandler");
 		
-		String tokenUri = properties.get(Properties.SALESFORCE_TOKEN_URI);
-		String clientId = properties.get(Properties.SALESFORCE_CLIENT_ID);
-		String clientSecret = properties.get(Properties.SALESFORCE_CLIENT_SECRET);
-		String username = properties.get(Properties.SALESFORCE_USERNAME);
-		String password = properties.get(Properties.SALESFORCE_PASSWORD);
-		String securityToken = properties.get(Properties.SALESFORCE_SECURITY_TOKEN);
+		String tokenUri = properties.get(Properties.SALESFORCE_TOKEN_URI).getValue();
+		String clientId = properties.get(Properties.SALESFORCE_CLIENT_ID).getValue();
+		String clientSecret = properties.get(Properties.SALESFORCE_CLIENT_SECRET).getValue();
+		String username = properties.get(Properties.SALESFORCE_USERNAME).getValue();
+		String password = properties.get(Properties.SALESFORCE_PASSWORD).getValue();
+		String securityToken = properties.get(Properties.SALESFORCE_SECURITY_TOKEN).getValue();
 		
 		//
 		// parse the event payload

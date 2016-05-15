@@ -18,6 +18,7 @@ import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.model.Lead;
+import com.nowellpoint.aws.model.admin.Property;
 
 public class SignUpEventHandler implements AbstractEventHandler {
 	
@@ -26,7 +27,7 @@ public class SignUpEventHandler implements AbstractEventHandler {
 	private static DynamoDBMapper mapper;
 
 	@Override
-	public void process(Event event, Map<String,String> properties, Context context) throws Exception {
+	public void process(Event event, Map<String,Property> properties, Context context) throws Exception {
 		
 		logger = context.getLogger();
 		

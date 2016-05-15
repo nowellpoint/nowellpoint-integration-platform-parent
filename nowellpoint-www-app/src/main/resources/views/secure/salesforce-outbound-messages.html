@@ -50,22 +50,29 @@
                             </div>
 
                             <br>
-                            
+
                             <form id="form" name="form" class="form-horizontal" role="form">
-                                
+
                                 <div class="form-group">
                                     <label class="control-label col-sm-2 col-md-2 col-lg-2" for="status">${labels["service.status"]}</label>
                                     <div class="col-sm-3 col-md-3 col-lg-3">
-                                        <p class="form-control-static" name="status"><h3><span class="label label-pill label-danger">Stopped</span></h3></p>
+                                        <p class="form-control-static" name="status">Stopped</p>
                                     </div>
                                 </div>
-                                
+
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-5 col-md-5 col-lg-5">
+                                        <a hre="#" class="btn btn-primary" role="button" name="start" id="start">${labels["start"]}</a>
+                                        <a hre="#" class="btn btn-warning" role="button" name="stop" id="stop">${labels["stop"]}</a>
+                                    </div>
+                                </div>
+
                                 <div class="hr-divider">
-                                <h3 class="hr-divider-content hr-divider-heading"></h3>
-                            </div>
-                                
+                                    <h3 class="hr-divider-content hr-divider-heading"></h3>
+                                </div>
+
                                 <br>
-                            
+
                                 <div class="form-group">
                                     <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${labels["name"]}</label>
                                     <div class="col-sm-3 col-md-3 col-lg-3">

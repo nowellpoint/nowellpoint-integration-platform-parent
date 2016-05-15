@@ -33,6 +33,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.IsoCountry;
 import com.nowellpoint.www.app.view.AccountProfileController;
+import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
@@ -163,6 +164,7 @@ public class Bootstrap implements SparkApplication {
         // routes
         //
         
+        new AdministrationController(cfg);
         new DashboardController(cfg);
         new ServiceProviderController(cfg);
         new ApplicationController(cfg);

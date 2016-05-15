@@ -193,8 +193,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		String defaultEnvironment = request.params(":defaultEnvironment");
 		
-		System.out.println(defaultEnvironment);
-		
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);

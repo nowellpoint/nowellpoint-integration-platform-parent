@@ -21,6 +21,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class AccountEventHandler implements AbstractEventHandler {
@@ -28,17 +29,17 @@ public class AccountEventHandler implements AbstractEventHandler {
 	private static LambdaLogger logger;
 
 	@Override
-	public void process(Event event, Map<String, String> properties, Context context) throws IOException {		
+	public void process(Event event, Map<String, Property> properties, Context context) throws IOException {		
 		logger = context.getLogger();
 		
 		logger.log(this.getClass().getName() + " starting AccountEventHandler");
 		
 		Account account = objectMapper.readValue(event.getPayload(), Account.class);
 		
-		String directoryId = properties.get(Properties.STORMPATH_DIRECTORY_ID);
-		String apiEndpoint = properties.get(Properties.STORMPATH_API_ENDPOINT);
-		String apiKeyId = properties.get(Properties.STORMPATH_API_KEY_ID);
-		String apiKeySecret = properties.get(Properties.STORMPATH_API_KEY_SECRET);
+		String directoryId = properties.get(Properties.STORMPATH_DIRECTORY_ID).getValue();
+		String apiEndpoint = properties.get(Properties.STORMPATH_API_ENDPOINT).getValue();
+		String apiKeyId = properties.get(Properties.STORMPATH_API_KEY_ID).getValue();
+		String apiKeySecret = properties.get(Properties.STORMPATH_API_KEY_SECRET).getValue();
 		
 		String href = null;
 		

@@ -28,7 +28,7 @@ public class TestRestApi {
 		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
 	}
 
-	//@Test
+	@Test
 	public void testAuthentication() {
 		
 		System.out.println("testAuthentication");
@@ -43,39 +43,42 @@ public class TestRestApi {
 
 			assertTrue(httpResponse.getStatusCode() == Status.OK);
 			
-			if (httpResponse.getStatusCode() == 400) {
-				System.out.println(httpResponse.getAsString());
-			} else {
-				Token token = httpResponse.getEntity(Token.class);
-				
-				System.out.println(token.getAccessToken());
-				
-				assertNotNull(token.getAccessToken());
-				
-				httpResponse = RestResource.get(NCS_API_ENDPOINT)
-						.bearerAuthorization(token.getAccessToken())
-						.path("account")
-						.path("me")
-						.execute();
-				
-				assertTrue(httpResponse.getStatusCode() == Status.OK);
-				
-				Account account = httpResponse.getEntity(Account.class);
-				
-				assertNotNull(account);
-				assertEquals(account.getEmail(), "john.d.herson@gmail.com");
-				
-				httpResponse = RestResource.delete(NCS_API_ENDPOINT)
-						.bearerAuthorization(token.getAccessToken())
-						.path("oauth")
-						.path("token")
-						.execute();
-				
-				assertTrue(httpResponse.getStatusCode() == Status.NO_CONTENT);
-				
-				System.out.println(httpResponse.getStatusCode());
-				System.out.println(httpResponse.getAsString());
-			}
+			Token token = httpResponse.getEntity(Token.class);
+			
+			assertNotNull(token.getAccessToken());
+			assertNotNull(token.getExpiresIn());
+			assertNotNull(token.getRefreshToken());
+			assertNotNull(token.getStormpathAccessTokenHref());
+			assertNotNull(token.getTokenType());
+			
+			httpResponse = RestResource.get(NCS_API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account")
+					.path("me")
+					.execute();
+			
+			assertTrue(httpResponse.getStatusCode() == Status.OK);
+			
+			Account account = httpResponse.getEntity(Account.class);
+			
+			assertNotNull(account);
+			assertNotNull(account.getEmail());
+			assertNotNull(account.getFullName());
+			assertNotNull(account.getGivenName());
+			assertNotNull(account.getHref());
+			assertNotNull(account.getId());
+			assertNotNull(account.getStatus());
+			assertNotNull(account.getSurname());
+			assertNotNull(account.getUsername());
+			assertEquals(account.getEmail(), "john.d.herson@gmail.com");
+			
+			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("oauth")
+					.path("token")
+					.execute();
+			
+			assertTrue(httpResponse.getStatusCode() == Status.NO_CONTENT);
 			
 		} catch (HttpRequestException e) {
 			e.printStackTrace();
@@ -109,12 +112,6 @@ public class TestRestApi {
 			assertEquals(httpResponse.getStatusCode(), 200);
 			
 			Token token = httpResponse.getEntity(Token.class);
-			
-			assertNotNull(token.getAccessToken());
-			assertNotNull(token.getExpiresIn());
-			assertNotNull(token.getRefreshToken());
-			assertNotNull(token.getStormpathAccessTokenHref());
-			assertNotNull(token.getTokenType());
 			
 			httpResponse = RestResource.post(NCS_API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_JSON)
