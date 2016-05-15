@@ -1,3 +1,5 @@
+https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent.svg?branch=dev
+
 # nowellpoint-aws
 Nowellpoint Small Business Integration Platform
 
