@@ -1,4 +1,4 @@
-https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent.svg?branch=dev
+[![Build Status](https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent.svg?branch=dev)](https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent)
 
 # nowellpoint-aws
 Nowellpoint Small Business Integration Platform
