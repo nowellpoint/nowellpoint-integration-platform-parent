@@ -3,7 +3,9 @@ package com.nowellpoint.aws.api.service;
 import com.stormpath.sdk.oauth.JwtAuthenticationResult;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jboss.logging.Logger;
 
@@ -12,6 +14,8 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.Group;
+import com.nowellpoint.aws.idp.model.Groups;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
@@ -78,6 +82,25 @@ public class IdentityProviderService extends AbstractCacheService {
         account.setStatus(accessToken.getAccount().getStatus().name());
         account.setUsername(accessToken.getAccount().getUsername());
         
+        Groups groups = new Groups();
+        groups.setHref(accessToken.getAccount().getGroups().getHref());
+        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
+        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
+        groups.setSize(accessToken.getAccount().getGroups().getSize());
+        
+        account.setGroups(groups);
+        
+        if (accessToken.getAccount().getGroups().getSize() > 0) {
+        	Set<Group> items = new HashSet<Group>();
+            accessToken.getAccount().getGroups().forEach(p -> {
+            	Group group = new Group();
+            	group.setHref(p.getHref());
+            	group.setName(p.getName());
+            	items.add(group);
+            });
+            account.getGroups().setItems(items);
+        }
+        
         hset(account.getHref(), Account.class.getName(), account);
         
         Token token = new Token();
@@ -98,6 +121,7 @@ public class IdentityProviderService extends AbstractCacheService {
 		
 		HttpResponse httpResponse = RestResource.get(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.queryParameter("expand","groups")
 				.execute();
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
@@ -200,12 +224,13 @@ public class IdentityProviderService extends AbstractCacheService {
 	 * @throws IOException 
 	 */
 	
-	public Account getAccountBySubject(String subject) throws IOException {		
+	public Account getAccountBySubject(String subject) throws IOException {
 		Account account = hget(Account.class, subject, Account.class.getName());
 		
 		if (account == null) {			
 			HttpResponse httpResponse = RestResource.get(subject)
 					.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+					.queryParameter("expand","groups")
 					.execute();
 				
 			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());

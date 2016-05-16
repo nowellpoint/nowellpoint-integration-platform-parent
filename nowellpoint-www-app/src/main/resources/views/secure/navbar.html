@@ -18,13 +18,13 @@
                     <a href="/app/start">
                         <span class="icon icon-star"></span>
                         <span class="iconav-nav-label">${start}</span>
-                        </a>
+                    </a>
                 </li>
                 <li>
                     <a href="/app/dashboard">
                         <span class="icon icon-gauge"></span>
                         <span class="iconav-nav-label">${dashboard}</span>
-                        </a>
+                    </a>
                 </li>
 
                 <li>
@@ -35,7 +35,7 @@
                     </a>
 
                 </li>
-<!--    
+                <!--    
                 <li>
                     <a href="/app/applications">
                             ${applications}
@@ -51,11 +51,16 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="/app/administration">
+                <#list account.groups.items as group>
+                    <#if group.name=="System Administrator">
+                        <li>
+                            <a href="/app/administration">
                             ${adminsitration}
                         </a>
-                </li>
+                        </li>
+                    </#if>
+                </#list>
+
                 <li>
                     <a href="/app/account-profile">
                                 ${(account.fullName)!}

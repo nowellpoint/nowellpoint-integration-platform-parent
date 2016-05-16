@@ -209,8 +209,14 @@ public class Bootstrap implements SparkApplication {
         });
         
         exception(BadRequestException.class, (exception, request, response) -> {
+        	response.status(400);
+            response.body(exception.getMessage());
+        });
+        
+        exception(NotAuthorizedException.class, (exception, request, response) -> {
         	response.status(401);
             response.body(exception.getMessage());
+            halt();
         });
         
         exception(InternalServerErrorException.class, (exception, request, response) -> {

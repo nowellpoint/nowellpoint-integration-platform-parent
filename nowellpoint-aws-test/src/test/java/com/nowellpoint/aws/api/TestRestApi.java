@@ -72,6 +72,15 @@ public class TestRestApi {
 			assertNotNull(account.getUsername());
 			assertEquals(account.getEmail(), "john.d.herson@gmail.com");
 			
+			httpResponse = RestResource.get(NCS_API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.path("properties")
+					.execute();
+			
+			System.out.println(httpResponse.getStatusCode());
+			System.out.println(httpResponse.getAsString());
+			
 			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
 					.bearerAuthorization(token.getAccessToken())
 					.path("oauth")

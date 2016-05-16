@@ -5,12 +5,13 @@ import static spark.Spark.get;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.NotAuthorizedException;
+
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Property;
@@ -46,16 +47,11 @@ public class AdministrationController extends AbstractController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		List<Property> properties = httpResponse.getEntityList(Property.class);
-		
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(properties));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (httpResponse.getStatusCode() == Status.NOT_AUTHORIZED) {
+			throw new NotAuthorizedException(httpResponse.getAsString());
 		}
 		
-		System.out.println("properties size: " + properties.size());
+		List<Property> properties = httpResponse.getEntityList(Property.class);
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
