@@ -4,17 +4,25 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
+import com.nowellpoint.aws.api.service.IdentityProviderService;
+import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.tools.TokenParser;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,6 +31,9 @@ import io.jsonwebtoken.SignatureException;
 
 @Provider
 public class SecurityContextFilter implements ContainerRequestFilter {
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 	
 	@Context
 	private ResourceInfo resourceInfo;
@@ -63,7 +74,32 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 			UserPrincipal user = new UserPrincipal(subject);
 				
 			requestContext.setSecurityContext(new UserPrincipalSecurityContext(user));
+			
+			if (method.isAnnotationPresent(RolesAllowed.class)) {
+				
+				Account account;
+				try {
+					account = identityProviderService.getAccountBySubject(subject);
+				} catch (IOException e) {
+					throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+				}
+				
+				Optional<Group> group = account
+						.getGroups()
+						.getItems()
+						.stream()
+						.filter(isSystemAdministrator(method.getAnnotation(RolesAllowed.class).value()))
+						.findFirst();
+				
+				if (! group.isPresent()) {
+					throw new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource");
+				}
+			}
 		}
+	}
+	
+	private static Predicate<Group> isSystemAdministrator(String[] roles) {
+	    return p -> "System Administrator".equals(p.getName()) || "System".equals(p.getName());
 	}
 	
 	class UserPrincipal implements Principal {

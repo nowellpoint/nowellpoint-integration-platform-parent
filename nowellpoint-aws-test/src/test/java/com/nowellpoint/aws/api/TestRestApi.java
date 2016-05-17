@@ -78,8 +78,7 @@ public class TestRestApi {
 					.path("properties")
 					.execute();
 			
-			System.out.println(httpResponse.getStatusCode());
-			System.out.println(httpResponse.getAsString());
+			assertTrue(httpResponse.getStatusCode() == Status.OK);
 			
 			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
 					.bearerAuthorization(token.getAccessToken())

@@ -8,6 +8,9 @@
             <br>
             <div class="row">
                 <div id="status-message"></div>
+                 <div class="col-lg-2 col-md-2 col-sm-2">
+                    <#include "administration-nav.html" />
+                </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
                     <form class="form-vertical" id="instance-variables-form" role="form">
                         <div class="panel-body">
@@ -19,13 +22,13 @@
                                         <th class="col-xs-1 text-center"></th>
                                     </thead>
                                     <tbody>
-                                        <#list propertyList as property>
+                                        <#list propertyList?sort_by( "key" ) as property>
                                             <tr>
                                                 <td>
-                                                    <input type="text" class="form-control" name="key" id="key" value="${(property.key)!}" />
+                                                    ${(property.key)!}
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control" name="value" id="value" value="${(property.value)!}" />
+                                                    ${(property.value)!}
                                                 </td>
                                                 <td class="text-center">
 
@@ -34,16 +37,15 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!--
                             <div class="pull-right">
                                 <a id="reset" name="reset" role="button">${labels["reset"]}</a>&nbsp;
                                 <a id="addInstanceVariable" name="add" class="btn btn-success" role="button">${labels["add.property"]}</a>&nbsp;
                                 <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                             </div>
+-->
                         </div>
                     </form>
-                </div>
-                <div class="col-sm-2">
-
                 </div>
             </div>
         </div>
