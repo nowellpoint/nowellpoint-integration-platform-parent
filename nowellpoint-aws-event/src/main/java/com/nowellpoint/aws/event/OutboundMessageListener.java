@@ -30,13 +30,13 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.amazonaws.util.Base64;
-import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.data.dynamodb.Transaction;
+import com.nowellpoint.aws.event.model.OutboundMessage;
 
 public class OutboundMessageListener implements RequestStreamHandler {
 	
@@ -71,7 +71,9 @@ public class OutboundMessageListener implements RequestStreamHandler {
 		 * 
 		 */
 		
-		JsonNode request = new ObjectMapper().readValue(IOUtils.toString(inputStream), JsonNode.class);
+		JsonNode request = new ObjectMapper().readValue(inputStream, JsonNode.class);
+		
+		logger.log(request.toString());
 		
 		String xml = request.get("body").asText().replace("\\", "");	
 		
@@ -81,6 +83,7 @@ public class OutboundMessageListener implements RequestStreamHandler {
 		try {
 			outboundMessage = convertToJson(xml);
 			saveOutboundMessage(outboundMessage);
+			convertToObject(xml);
 			response = getAckMessage(Boolean.TRUE);
 		} catch (ParserConfigurationException | SAXException | AmazonClientException e) {
 			e.printStackTrace();
@@ -88,6 +91,48 @@ public class OutboundMessageListener implements RequestStreamHandler {
 		}
 		
 		outputStream.write(response.getBytes());
+	}
+	
+	private OutboundMessage convertToObject(String xml) throws ParserConfigurationException, SAXException, IOException {
+		
+		//ObjectNode outboundMessage = JsonNodeFactory.instance.objectNode();
+		
+		OutboundMessage outboundMessage = new OutboundMessage();
+		
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+		document.getDocumentElement().normalize();
+		
+		NodeList nodes = document.getElementsByTagName("notifications");
+		
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				
+				Element element = (Element) node;
+				
+				outboundMessage.setOrganizationId(element.getElementsByTagName("OrganizationId").item(0).getTextContent());
+				outboundMessage.setOrganizationId(element.getElementsByTagName("ActionId").item(0).getTextContent());
+				outboundMessage.setOrganizationId(element.getElementsByTagName("SessionId").item(0).getTextContent());
+				outboundMessage.setOrganizationId(element.getElementsByTagName("EnterpriseUrl").item(0).getTextContent());
+				outboundMessage.setOrganizationId(element.getElementsByTagName("PartnerUrl").item(0).getTextContent());
+				
+				//outboundMessage.put("organizationId", element.getElementsByTagName("OrganizationId").item(0).getTextContent());
+				//outboundMessage.put("actionId", element.getElementsByTagName("ActionId").item(0).getTextContent());
+				//outboundMessage.put("sessionId", element.getElementsByTagName("SessionId").item(0).getTextContent());
+				//outboundMessage.put("enterpriseUrl", element.getElementsByTagName("EnterpriseUrl").item(0).getTextContent());
+				//outboundMessage.put("partnerUrl", element.getElementsByTagName("PartnerUrl").item(0).getTextContent());
+				
+				//ArrayNode arrayNode = outboundMessage.putArray("notifications");
+				
+				//arrayNode.add(addNotifications(element));
+			}
+		}
+		
+		mapper.save(outboundMessage);	
+		
+		return outboundMessage;
 	}
 	
 	private JsonNode convertToJson(String xml) throws ParserConfigurationException, SAXException, IOException {

@@ -3,10 +3,6 @@ package com.nowellpoint.aws.event.model;
 import java.io.Serializable;
 
 public class Signup implements Serializable {
-
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = -6256277679254098188L;
 	

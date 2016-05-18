@@ -51,7 +51,8 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <#list account.groups.items as group>
+                <#if account.groups.items?? >
+                    <#list account.groups.items as group>
                     <#if group.name=="System Administrator">
                         <li>
                             <a href="/app/administration">
@@ -60,6 +61,8 @@
                         </li>
                     </#if>
                 </#list>
+                </#if>
+                
 
                 <li>
                     <a href="/app/account-profile">

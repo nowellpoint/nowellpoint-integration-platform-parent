@@ -3,6 +3,7 @@ package com.nowellpoint.aws.api.resource;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -84,11 +85,23 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 					throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 				}
 				
+				Predicate<Group> isUserInRole = new Predicate<Group>() {
+				    @Override
+				    public boolean test(Group group) {
+				    	String[] roles = method.getAnnotation(RolesAllowed.class).value();
+				    	return Arrays.asList(roles)
+				    			.stream()
+				    			.filter(role -> role.equals(group.getName()))
+				    			.findFirst()
+				    			.isPresent();
+				    }
+				};
+				
 				Optional<Group> group = account
 						.getGroups()
 						.getItems()
 						.stream()
-						.filter(isSystemAdministrator(method.getAnnotation(RolesAllowed.class).value()))
+						.filter(isUserInRole)
 						.findFirst();
 				
 				if (! group.isPresent()) {
@@ -96,10 +109,6 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 				}
 			}
 		}
-	}
-	
-	private static Predicate<Group> isSystemAdministrator(String[] roles) {
-	    return p -> "System Administrator".equals(p.getName()) || "System".equals(p.getName());
 	}
 	
 	class UserPrincipal implements Principal {
