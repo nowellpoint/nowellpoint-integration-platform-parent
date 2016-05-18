@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.api.bus;
+package com.nowellpoint.aws.data;
 
 import java.util.Map;
 
@@ -17,13 +17,24 @@ import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 
 @WebListener
-public class MongoDBQueueListener implements ServletContextListener {
+public class SQSQueueListener implements ServletContextListener {
 	
-	private static final Logger LOGGER = Logger.getLogger(MongoDBQueueListener.class);
+	private static final Logger LOGGER = Logger.getLogger(SQSQueueListener.class);
 	
 	private static SQSConnection connection;
 	
-	public static void registerQueues(Map<String,Class<?>> queueMap) {
+	private Map<String,Class<?>> queueMap;
+	
+	public void registerQueues(Map<String,Class<?>> queueMap) {
+		this.queueMap = queueMap;
+	}
+	
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		
+		if (queueMap == null) {
+			return;
+		}
 		
 		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();	
 		 
@@ -46,10 +57,7 @@ public class MongoDBQueueListener implements ServletContextListener {
 		} catch (JMSException | InstantiationException | IllegalAccessException e) {
 			LOGGER.error(e);
 		}
-	}
-	
-	@Override
-	public void contextInitialized(ServletContextEvent event) {
+		
 		try {
 			connection.start();
 			Thread.sleep(1000);

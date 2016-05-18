@@ -1,11 +1,7 @@
-package com.nowellpoint.mongo.spi;
+package com.nowellpoint.mongodb.spi;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.jboss.logging.Logger;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
@@ -16,22 +12,20 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 
 import org.bson.codecs.Codec;
+import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.api.bus.MongoDBQueueListener;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.annotation.MessageHandler;
 
-public class MongoPersistenceExtension implements Extension {
+public class MongoDBBootstrapExtension implements Extension {
 	
 	/**
      * 
      */
     
-    private static final Logger LOGGER = Logger.getLogger(MongoPersistenceExtension.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MongoDBBootstrapExtension.class.getName());
     
     private List<Codec<?>> codecs = new ArrayList<Codec<?>>();
-    private Map<String,Class<?>> queueMap = new HashMap<String,Class<?>>();
     
     public <T> void processAnnotatedType(@Observes @WithAnnotations({Document.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
     	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(Document.class)) {    
@@ -39,11 +33,6 @@ public class MongoPersistenceExtension implements Extension {
     		try {
     			Document document = type.getAnnotatedType().getJavaClass().getAnnotation(Document.class);
     			codecs.add((Codec<?>) document.codec().newInstance());
-    			
-    			if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(MessageHandler.class)) {
-    				MessageHandler messageHandler = type.getAnnotatedType().getJavaClass().getAnnotation(MessageHandler.class);
-    				queueMap.put(messageHandler.queueName(), messageHandler.messageListener());
-    			}
 			} catch (InstantiationException | IllegalAccessException e) {
 				LOGGER.error(e);
 			}
@@ -56,7 +45,6 @@ public class MongoPersistenceExtension implements Extension {
     
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery discovery) {
     	MongoDBDatastore.registerCodecs(codecs);
-    	MongoDBQueueListener.registerQueues(queueMap);
     	LOGGER.info("finished the scanning process");
     }
 }

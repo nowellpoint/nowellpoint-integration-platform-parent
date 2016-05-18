@@ -10,9 +10,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.aws.data.AuditHistoryCodec;
+import com.nowellpoint.aws.data.annotation.Document;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collectionName="audit.history", codec=AuditHistoryCodec.class)
 public class AuditHistory extends AbstractDocument {
 
 	/**
