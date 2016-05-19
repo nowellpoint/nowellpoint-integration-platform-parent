@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -103,6 +105,7 @@ public class OutboundMessageListener implements RequestStreamHandler {
 				outboundMessage.setSessionId(element.getElementsByTagName("SessionId").item(0).getTextContent());
 				outboundMessage.setEnterpriseUrl(element.getElementsByTagName("EnterpriseUrl").item(0).getTextContent());
 				outboundMessage.setPartnerUrl(element.getElementsByTagName("PartnerUrl").item(0).getTextContent());
+				outboundMessage.setMessageDate(Date.from(Instant.now()));
 				outboundMessage.setNotifications(addNotifications(element));
 			}
 		}

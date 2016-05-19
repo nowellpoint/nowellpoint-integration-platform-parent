@@ -1,5 +1,6 @@
 package com.nowellpoint.sforce.model;
 
+import java.util.Date;
 import java.util.List;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
@@ -30,6 +31,9 @@ public class OutboundMessage {
 	
 	@DynamoDBAttribute(attributeName="PartnerUrl")  
 	private String partnerUrl;
+	
+	@DynamoDBAttribute(attributeName="MessageDate")  
+	private Date messageDate;
 	
 	@DynamoDBMarshalling(marshallerClass = NotificationMarshaller.class)
 	@DynamoDBAttribute(attributeName="Notifications")
@@ -85,6 +89,14 @@ public class OutboundMessage {
 
 	public void setPartnerUrl(String partnerUrl) {
 		this.partnerUrl = partnerUrl;
+	}
+
+	public Date getMessageDate() {
+		return messageDate;
+	}
+
+	public void setMessageDate(Date messageDate) {
+		this.messageDate = messageDate;
 	}
 
 	public List<Notification> getNotifications() {

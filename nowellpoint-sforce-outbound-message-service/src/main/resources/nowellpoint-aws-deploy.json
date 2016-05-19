@@ -6,14 +6,14 @@
       "runtime": "java8",
       "role": "arn:aws:iam::600862814314:role/lambda_basic_execution",
       "handler": "com.nowellpoint.sforce.OutboundMessageListener::handleRequest",
-      "description": "Salesforce Outbound Message Listener Function",
+      "description": "Salesforce Outbound Message Listener Service",
       "timeout": 15,
       "memorySize": 512,
       "version": "$LATEST"
     },
     "code": {
       "s3Bucket": "aws-microservices",
-      "s3Key": "nowellpoint-aws-event-0.0.2-SNAPSHOT.jar",
+      "s3Key": "nowellpoint-sforce-outbound-message-service-0.0.2-SNAPSHOT.jar",
       "s3ObjectVersion": null
     }
   }
