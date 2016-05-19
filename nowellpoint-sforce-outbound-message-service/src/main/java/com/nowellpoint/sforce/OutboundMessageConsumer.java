@@ -33,7 +33,7 @@ import com.nowellpoint.sforce.model.Notification;
 import com.nowellpoint.sforce.model.OutboundMessage;
 import com.nowellpoint.sforce.model.Sobject;
 
-public class OutboundMessageListener implements RequestStreamHandler {
+public class OutboundMessageConsumer implements RequestStreamHandler {
 	
 	private static LambdaLogger logger;
 	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
@@ -105,7 +105,7 @@ public class OutboundMessageListener implements RequestStreamHandler {
 				outboundMessage.setSessionId(element.getElementsByTagName("SessionId").item(0).getTextContent());
 				outboundMessage.setEnterpriseUrl(element.getElementsByTagName("EnterpriseUrl").item(0).getTextContent());
 				outboundMessage.setPartnerUrl(element.getElementsByTagName("PartnerUrl").item(0).getTextContent());
-				outboundMessage.setMessageDate(Date.from(Instant.now()));
+				outboundMessage.setReceivedDate(Date.from(Instant.now()));
 				outboundMessage.setNotifications(addNotifications(element));
 			}
 		}

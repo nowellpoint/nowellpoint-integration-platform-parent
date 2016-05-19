@@ -32,8 +32,8 @@ public class OutboundMessage {
 	@DynamoDBAttribute(attributeName="PartnerUrl")  
 	private String partnerUrl;
 	
-	@DynamoDBAttribute(attributeName="MessageDate")  
-	private Date messageDate;
+	@DynamoDBAttribute(attributeName="ReceivedDate")  
+	private Date receivedDate;
 	
 	@DynamoDBMarshalling(marshallerClass = NotificationMarshaller.class)
 	@DynamoDBAttribute(attributeName="Notifications")
@@ -91,12 +91,12 @@ public class OutboundMessage {
 		this.partnerUrl = partnerUrl;
 	}
 
-	public Date getMessageDate() {
-		return messageDate;
+	public Date getReceivedDate() {
+		return receivedDate;
 	}
 
-	public void setMessageDate(Date messageDate) {
-		this.messageDate = messageDate;
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
 	}
 
 	public List<Notification> getNotifications() {
