@@ -35,7 +35,7 @@
 		<!-- <module>nowellpoint-aws-event</module> -->
 		<!-- <module>nowellpoint-aws-util</module>  -->
 		<module>nowellpoint-aws-admin</module>
-                <module>nowellpoint-sforce-outbound-message-service</module>
+		<module>nowellpoint-sforce-outbound-message-service</module>
 		<module>nowellpoint-aws-api</module>
         <module>nowellpoint-www-app</module>
 		<module>nowellpoint-aws-test</module>
