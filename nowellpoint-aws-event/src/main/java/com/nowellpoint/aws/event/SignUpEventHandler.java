@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
+import com.nowellpoint.aws.event.model.Lead;
 import com.nowellpoint.aws.event.model.Signup;
 import com.nowellpoint.aws.idp.model.Account;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -17,7 +18,6 @@ import com.nowellpoint.aws.data.dynamodb.EventStatus;
 import com.nowellpoint.aws.data.mongodb.Address;
 import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
-import com.nowellpoint.client.sforce.model.Lead;
 import com.nowellpoint.aws.model.admin.Property;
 
 public class SignUpEventHandler implements AbstractEventHandler {

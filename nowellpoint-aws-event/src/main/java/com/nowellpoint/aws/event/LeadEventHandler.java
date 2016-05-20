@@ -10,12 +10,12 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
+import com.nowellpoint.aws.event.model.Lead;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.Property;
-import com.nowellpoint.client.sforce.model.Lead;
 import com.nowellpoint.client.sforce.model.Token;
 
 public class LeadEventHandler implements AbstractEventHandler {
@@ -65,8 +65,6 @@ public class LeadEventHandler implements AbstractEventHandler {
 			logger.log("Error: " + errorResponse.get("error").asText() + " Error Description: " + errorResponse.get("error_description").asText());
 			throw new Exception(errorResponse.get("error_description").asText());
 		}
-		
-		objectMapper.writeValueAsString(lead);
 		
 		httpResponse = RestResource.post(token.getInstanceUrl())
 				.contentType(MediaType.APPLICATION_JSON)

@@ -1,4 +1,4 @@
-package com.nowellpoint.client.sforce.model;
+package com.nowellpoint.aws.event.model;
 
 import java.io.Serializable;
 
