@@ -21,11 +21,11 @@ import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.AbstractDTO;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
+import com.nowellpoint.aws.api.model.AccountProfile;
+import com.nowellpoint.aws.api.model.User;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
-import com.nowellpoint.aws.data.mongodb.AccountProfile;
-import com.nowellpoint.aws.data.mongodb.User;
 
 public abstract class AbstractDocumentService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {
 	

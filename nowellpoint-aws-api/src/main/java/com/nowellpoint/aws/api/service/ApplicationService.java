@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Set;
 
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
-import com.nowellpoint.aws.data.mongodb.Application;
+import com.nowellpoint.aws.api.model.Application;
 
 public class ApplicationService extends AbstractDocumentService<ApplicationDTO, Application> {
 	

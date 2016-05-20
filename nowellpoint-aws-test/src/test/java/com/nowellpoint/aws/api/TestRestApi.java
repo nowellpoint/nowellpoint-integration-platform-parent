@@ -163,7 +163,7 @@ public class TestRestApi {
 		}		
 	}
 	
-	//@Test
+	@Test
 	public void testContact() {
 		
 		System.out.println("testContact");
@@ -189,7 +189,7 @@ public class TestRestApi {
 		}	
 	}	
 	
-	//@Test
+	@Test
 	public void testSignUp() {
 		
 		System.out.println("testSignUp");

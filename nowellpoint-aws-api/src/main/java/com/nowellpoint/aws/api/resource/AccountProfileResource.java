@@ -35,10 +35,10 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
+import com.nowellpoint.aws.api.model.Address;
+import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
-import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.idp.model.Account;
 

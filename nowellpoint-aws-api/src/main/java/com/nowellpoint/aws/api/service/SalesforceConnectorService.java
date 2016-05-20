@@ -29,10 +29,10 @@ import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.data.mongodb.Environment;
-import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
-import com.nowellpoint.aws.data.mongodb.SalesforceConnector;
-import com.nowellpoint.aws.data.mongodb.ServiceInstance;
+import com.nowellpoint.aws.api.model.Environment;
+import com.nowellpoint.aws.api.model.EnvironmentVariable;
+import com.nowellpoint.aws.api.model.SalesforceConnector;
+import com.nowellpoint.aws.api.model.ServiceInstance;
 
 public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
 	

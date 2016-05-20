@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
+import com.nowellpoint.aws.event.model.AccountProfile;
+import com.nowellpoint.aws.event.model.Address;
 import com.nowellpoint.aws.event.model.Lead;
 import com.nowellpoint.aws.event.model.Signup;
 import com.nowellpoint.aws.idp.model.Account;
@@ -15,8 +17,6 @@ import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.AccountProfile;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.aws.model.admin.Property;
 

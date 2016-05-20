@@ -145,6 +145,9 @@ public class OutboundMessageConsumer implements RequestStreamHandler {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {		
 				sobject.setType(((Element) node).getAttribute("xsi:type").replace("sf:", ""));
 				sobject.setId(((Element) node).getElementsByTagName("sf:Id").item(0).getTextContent());
+				sobject.setEventType(((Element) node).getElementsByTagName("sf:Event_Type__c").item(0).getTextContent());
+				sobject.setObjectId(((Element) node).getElementsByTagName("sf:Object_Id__c").item(0).getTextContent());
+				sobject.setObject(((Element) node).getElementsByTagName("sf:Object__c").item(0).getTextContent());
 			}
 		}
 		

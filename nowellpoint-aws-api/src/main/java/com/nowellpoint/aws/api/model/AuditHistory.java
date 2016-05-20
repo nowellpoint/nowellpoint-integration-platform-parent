@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.model;
 
 import java.util.Date;
 
@@ -10,8 +10,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.aws.data.AuditHistoryCodec;
+import com.nowellpoint.aws.api.codec.AuditHistoryCodec;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.ObjectIdDeserializer;
+import com.nowellpoint.aws.data.mongodb.ObjectIdSerializer;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -26,11 +26,11 @@ import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 @Path("/application")
 public class ApplicationResource {

@@ -3,7 +3,7 @@ package com.nowellpoint.aws.api.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nowellpoint.aws.data.mongodb.ServiceInstance;
+import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 

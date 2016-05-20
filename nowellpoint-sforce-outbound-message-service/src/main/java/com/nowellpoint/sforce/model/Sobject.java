@@ -6,6 +6,12 @@ public class Sobject {
 	
 	private String id;
 	
+	private String eventType;
+	
+	private String objectId;
+	
+	private String object;
+	
 	public Sobject() {
 		
 	}
@@ -24,5 +30,29 @@ public class Sobject {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getEventType() {
+		return eventType;
+	}
+
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
+	}
+
+	public String getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+
+	public String getObject() {
+		return object;
+	}
+
+	public void setObject(String object) {
+		this.object = object;
 	}
 }

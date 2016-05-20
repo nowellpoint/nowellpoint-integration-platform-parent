@@ -1,11 +1,12 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.model;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.data.SalesforceConnectionCodec;
+import com.nowellpoint.aws.api.codec.SalesforceConnectionCodec;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.data.mongodb.sforce.Identity;
 import com.nowellpoint.aws.data.mongodb.sforce.Organization;
 

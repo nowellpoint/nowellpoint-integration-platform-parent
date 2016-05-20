@@ -1,10 +1,11 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.data.ServiceProviderCodec;
+import com.nowellpoint.aws.api.codec.ServiceProviderCodec;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="service.providers", codec=ServiceProviderCodec.class)

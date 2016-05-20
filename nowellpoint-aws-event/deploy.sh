@@ -1,3 +1,5 @@
+mvn clean package
+
 aws s3 cp target/nowellpoint-aws-event-0.0.2-SNAPSHOT.jar \
 s3://aws-microservices/nowellpoint-aws-event-0.0.2-SNAPSHOT.jar
 

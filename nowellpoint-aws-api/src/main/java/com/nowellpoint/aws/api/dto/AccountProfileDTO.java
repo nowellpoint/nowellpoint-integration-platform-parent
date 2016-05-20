@@ -2,8 +2,8 @@ package com.nowellpoint.aws.api.dto;
 
 import java.util.Date;
 
-import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Photos;
+import com.nowellpoint.aws.api.model.Address;
+import com.nowellpoint.aws.api.model.Photos;
 
 public class AccountProfileDTO extends AbstractDTO {
 	

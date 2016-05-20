@@ -18,10 +18,10 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
+import com.nowellpoint.aws.api.model.AccountProfile;
+import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AccountProfile;
-import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 

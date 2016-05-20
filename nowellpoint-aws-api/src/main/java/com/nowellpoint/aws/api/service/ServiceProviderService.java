@@ -8,9 +8,9 @@ import java.util.Set;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.model.ServiceProvider;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.ServiceProvider;
 
 public class ServiceProviderService extends AbstractDocumentService<ServiceProviderDTO, ServiceProvider> {
 	

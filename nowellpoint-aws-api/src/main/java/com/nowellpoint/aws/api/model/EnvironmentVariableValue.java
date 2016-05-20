@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.model;
 
 public class EnvironmentVariableValue {
 	

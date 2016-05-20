@@ -31,7 +31,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
-import com.nowellpoint.aws.data.mongodb.AuditHistory;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @WebListener
@@ -75,7 +74,7 @@ public class MongoDBDatastore implements ServletContextListener {
 				try {
 					getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
 					if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
-						audit( document, AuditHistory.Event.UPDATE );
+						//audit( document, AuditHistory.Event.UPDATE );
 					}
 				} catch (MongoException e) {
 					publish(e);
@@ -95,7 +94,7 @@ public class MongoDBDatastore implements ServletContextListener {
 				try {
 					getCollection( document ).insertOne( document );
 					if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
-						audit( document, AuditHistory.Event.INSERT );
+						//audit( document, AuditHistory.Event.INSERT );
 					}
 				} catch (MongoException e) {
 					publish(e);
@@ -112,7 +111,7 @@ public class MongoDBDatastore implements ServletContextListener {
 				try {
 					getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
 					if ( document.getClass().isAnnotationPresent( Audited.class ) ) {
-						audit( document, AuditHistory.Event.DELETE );
+						//audit( document, AuditHistory.Event.DELETE );
 					}
 				} catch (MongoException e) {
 					publish(e);
@@ -147,20 +146,20 @@ public class MongoDBDatastore implements ServletContextListener {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(type), type);
 	}
 	
-	private static void audit( AbstractDocument document, AuditHistory.Event event ) {
-		String collectionName = getCollectionName( document.getClass() ).concat( ".history" );
-		
-		MongoCollection<AuditHistory> collection = mongoDatabase.getCollection( collectionName, AuditHistory.class );
-				
-		AuditHistory auditHistory = new AuditHistory()
-				.withSourceId(document.getId())
-				.withCreatedById(document.getLastModifiedById())
-				.withDocument(document)
-				.withEvent(event)
-				.withLastModifiedById(document.getLastModifiedById());
-				
-		collection.insertOne( auditHistory );
-	}
+//	private static void audit( AbstractDocument document, AuditHistory.Event event ) {
+//		String collectionName = getCollectionName( document.getClass() ).concat( ".history" );
+//		
+//		MongoCollection<AuditHistory> collection = mongoDatabase.getCollection( collectionName, AuditHistory.class );
+//				
+//		AuditHistory auditHistory = new AuditHistory()
+//				.withSourceId(document.getId())
+//				.withCreatedById(document.getLastModifiedById())
+//				.withDocument(document)
+//				.withEvent(event)
+//				.withLastModifiedById(document.getLastModifiedById());
+//				
+//		collection.insertOne( auditHistory );
+//	}
 	
 	private static void publish(MongoException exception) {
 		AmazonSNS snsClient = new AmazonSNSClient();

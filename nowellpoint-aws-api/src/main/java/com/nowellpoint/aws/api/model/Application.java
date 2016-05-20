@@ -1,12 +1,13 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.aws.data.ApplicationCodec;
+import com.nowellpoint.aws.api.codec.ApplicationCodec;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="applications", codec=ApplicationCodec.class)

@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.api.dto;
 
-import com.nowellpoint.aws.data.mongodb.Service;
+import com.nowellpoint.aws.api.model.Service;
 
 public class ServiceProviderDTO extends AbstractDTO {
 	

@@ -13,7 +13,7 @@ import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventAction;
 import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.AccountProfile;
+import com.nowellpoint.aws.event.model.AccountProfile;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;

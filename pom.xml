@@ -23,7 +23,7 @@
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>
 		<mongodb.driver.version>3.0.4</mongodb.driver.version>
-		<aws.dynamodb.encryption.version>0.0.5-SNAPSHOT</aws.dynamodb.encryption.version>
+		<aws.dynamodb.encryption.version>0.0.6-SNAPSHOT</aws.dynamodb.encryption.version>
 		<jedis.version>2.8.1</jedis.version>
 		<junit.version>4.12</junit.version>
 	</properties>

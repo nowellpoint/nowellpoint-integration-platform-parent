@@ -16,7 +16,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.dynamodb.Event;
 import com.nowellpoint.aws.data.dynamodb.EventStatus;
-import com.nowellpoint.aws.data.mongodb.AccountProfile;
+import com.nowellpoint.aws.event.model.AccountProfile;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.Property;
 
@@ -37,31 +37,31 @@ public class AccountProfileEventHandler implements AbstractEventHandler {
 		try {
 			MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
 			
-			AccountProfile identity = objectMapper.readValue(event.getPayload(), AccountProfile.class);
+			AccountProfile accountProfile = objectMapper.readValue(event.getPayload(), AccountProfile.class);
 			
 			String collectionName = AccountProfile.class.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
 			
 			Document document = null;
 			
-			Optional<Document> queryResult = Optional.ofNullable( mongoDatabase.getCollection( collectionName ).find( Filters.eq( "username", identity.getUsername() ) ).first() );
+			Optional<Document> queryResult = Optional.ofNullable( mongoDatabase.getCollection( collectionName ).find( Filters.eq( "username", accountProfile.getUsername() ) ).first() );
 			
 			if (queryResult.isPresent()) {
-				identity.setCreatedById(null);
-				identity.setLastModifiedDate(Date.from(Instant.now()));
-				document = Document.parse( new ObjectMapper().writeValueAsString(identity) );
+				accountProfile.setCreatedById(null);
+				accountProfile.setLastModifiedDate(Date.from(Instant.now()));
+				document = Document.parse( new ObjectMapper().writeValueAsString(accountProfile) );
 				mongoDatabase.getCollection( collectionName ).updateOne( Filters.eq ( "_id", queryResult.get().getObjectId("_id") ), new Document("$set", document ) );
-				identity.setId(queryResult.get().getObjectId("_id"));
+				accountProfile.setId(queryResult.get().getObjectId("_id"));
 			} else {	
 				Date now = Date.from(Instant.now());
-				identity.setCreatedDate(now);
-				identity.setLastModifiedDate(now);
-				document = Document.parse( new ObjectMapper().writeValueAsString( identity ) );
+				accountProfile.setCreatedDate(now);
+				accountProfile.setLastModifiedDate(now);
+				document = Document.parse( new ObjectMapper().writeValueAsString( accountProfile ) );
 				mongoDatabase.getCollection( collectionName ).insertOne( document );
-				identity.setId(document.getObjectId("_id"));
+				accountProfile.setId(document.getObjectId("_id"));
 			}
 			
 			event.setEventStatus(EventStatus.COMPLETE.name());
-			event.setTargetId(identity.getId().toString());
+			event.setTargetId(accountProfile.getId().toString());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

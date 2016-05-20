@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.aws.api.model;
 
 import java.util.Date;
 
@@ -7,8 +7,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.aws.data.AccountProfileCodec;
+import com.nowellpoint.aws.api.codec.AccountProfileCodec;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.DateDeserializer;
+import com.nowellpoint.aws.data.mongodb.DateSerializer;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)

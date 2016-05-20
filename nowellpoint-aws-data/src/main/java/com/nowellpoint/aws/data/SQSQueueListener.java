@@ -68,6 +68,11 @@ public class SQSQueueListener implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
+		
+		if (connection == null) {
+			return;
+		}
+		
 		try {
 			connection.close();
 		} catch (JMSException e) {
