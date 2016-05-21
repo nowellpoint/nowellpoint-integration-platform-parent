@@ -18,3 +18,17 @@ aws lambda update-function-code \
 --s3-key nowellpoint-sforce-outbound-message-service-0.0.2-SNAPSHOT.jar \
 --no-publish
 
+aws lambda update-function-configuration \
+--function-name SalesforceOutboundMessageHandler \
+--role arn:aws:iam::600862814314:role/lambda_basic_execution \
+--handler com.nowellpoint.sforce.OutboundMessageHandler::handleEvent \
+--runtime java8 \
+--description "Salesforce: Outbound Message Handler" \
+--timeout 15 \
+--memory-size 512
+
+aws lambda update-function-code \
+--function-name SalesforceOutboundMessageHandler \
+--s3-bucket aws-microservices \
+--s3-key nowellpoint-sforce-outbound-message-service-0.0.2-SNAPSHOT.jar \
+--no-publish

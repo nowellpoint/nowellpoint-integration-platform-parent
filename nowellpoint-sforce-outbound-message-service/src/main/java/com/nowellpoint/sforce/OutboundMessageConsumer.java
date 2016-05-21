@@ -86,6 +86,7 @@ public class OutboundMessageConsumer implements RequestStreamHandler {
 	private OutboundMessage xmlToOutboundMessage(String xml) throws ParserConfigurationException, SAXException, IOException {
 		
 		OutboundMessage outboundMessage = new OutboundMessage();
+		outboundMessage.setStatus("RECEIVED");
 		
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));

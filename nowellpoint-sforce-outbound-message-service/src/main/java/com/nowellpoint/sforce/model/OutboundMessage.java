@@ -35,6 +35,12 @@ public class OutboundMessage {
 	@DynamoDBAttribute(attributeName="ReceivedDate")  
 	private Date receivedDate;
 	
+	@DynamoDBAttribute(attributeName="ProcessedDate")  
+	private Date processedDate;
+	
+	@DynamoDBAttribute(attributeName="Status")
+	private String status;
+	
 	@DynamoDBMarshalling(marshallerClass = NotificationMarshaller.class)
 	@DynamoDBAttribute(attributeName="Notifications")
 	private List<Notification> notifications;
@@ -97,6 +103,22 @@ public class OutboundMessage {
 
 	public void setReceivedDate(Date receivedDate) {
 		this.receivedDate = receivedDate;
+	}
+
+	public Date getProcessedDate() {
+		return processedDate;
+	}
+
+	public void setProcessedDate(Date processedDate) {
+		this.processedDate = processedDate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public List<Notification> getNotifications() {
