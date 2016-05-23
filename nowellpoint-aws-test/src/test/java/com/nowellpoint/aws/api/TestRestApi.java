@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -18,6 +19,13 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.GetIdentityRequest;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.client.sforce.model.Identity;
 
 public class TestRestApi {
 	
@@ -171,6 +179,8 @@ public class TestRestApi {
 		HttpResponse httpResponse = null;
 		try {
 			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
 					.path("contact")
 					.parameter("leadSource", "Contact")
 					.parameter("firstName", "All")
@@ -181,15 +191,51 @@ public class TestRestApi {
 					.parameter("description", "Just need help")
 					.execute();
 			
-			System.out.println(httpResponse.getStatusCode());
-			System.out.println(httpResponse.getAsString());
+			assertEquals(httpResponse.getStatusCode(), 200);
 			
+			JsonNode node = httpResponse.getEntity(JsonNode.class);
+			
+			assertNotNull(node.get("leadId"));
+			
+			UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
+					.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+					.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+					.setUsername(System.getenv("SALESFORCE_USERNAME"))
+					.setPassword(System.getenv("SALESFORCE_PASSWORD"))
+					.setSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"))
+					.build();
+			
+			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
+					.authenticate(request);
+				
+			assertNotNull(response.getToken());
+			
+			GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+					.setAccessToken(response.getToken().getAccessToken())
+					.setId(response.getToken().getId());
+			
+			Client client = new Client();
+			
+			Identity identity = client.getIdentity(getIdentityRequest);
+				
+			assertNotNull(identity);
+			
+			httpResponse = RestResource.delete(identity.getUrls().getRest())
+				.contentType(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(response.getToken().getAccessToken())
+	    		.path("sobjects")
+	    		.path("Lead")
+	    		.path(node.get("leadId").asText())
+	    		.execute();
+			
+			assertEquals(Integer.valueOf(Status.NO_CONTENT), Integer.valueOf(httpResponse.getStatusCode()));
+			    
 		} catch (HttpRequestException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}	
 	}	
 	
-	@Test
+	//@Test
 	public void testSignUp() {
 		
 		System.out.println("testSignUp");
@@ -197,6 +243,7 @@ public class TestRestApi {
 		HttpResponse httpResponse = null;
 		try {
 			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("signup")
 					.parameter("leadSource", "Sign Up")
@@ -207,7 +254,8 @@ public class TestRestApi {
 					.parameter("password", URLEncoder.encode("!t2U1&JUTJvY", "UTF-8"))
 					.execute();
 			
-			System.out.println(httpResponse.getStatusCode());
+			assertEquals(httpResponse.getStatusCode(), 200);
+			
 			System.out.println(httpResponse.getAsString());
 			
 		} catch (HttpRequestException | UnsupportedEncodingException e) {

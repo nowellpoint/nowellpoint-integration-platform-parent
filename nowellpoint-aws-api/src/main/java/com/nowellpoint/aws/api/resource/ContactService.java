@@ -1,10 +1,19 @@
 package com.nowellpoint.aws.api.resource;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -14,31 +23,20 @@ import javax.ws.rs.core.Response.Status;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.logging.Logger;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.data.dynamodb.Event;
-import com.nowellpoint.aws.data.dynamodb.EventAction;
-import com.nowellpoint.aws.data.dynamodb.EventBuilder;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
+import com.nowellpoint.aws.api.model.sforce.Lead;
+import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
 
 @Path("/contact")
 public class ContactService {
 
-	private static final Logger LOGGER = Logger.getLogger(ContactService.class);
-
 	@Context
 	private UriInfo uriInfo;
-	
-	private DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 
 	@PermitAll
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response contact(
 			@FormParam("leadSource") @NotEmpty(message = "Lead Source must be filled in") String leadSource,
     		@FormParam("firstName") String firstName,
@@ -48,32 +46,30 @@ public class ContactService {
     		@FormParam("company") String company,
     		@FormParam("description") String description) {
 		
-		ObjectNode contact = new ObjectMapper().createObjectNode()
-				.put("leadSource", leadSource)
-				.put("firstName", firstName)
-				.put("lastName", lastName)
-				.put("email", email)
-				.put("phone", phone)
-				.put("company", company)
-				.put("description", description);
+		Lead lead = new Lead();
+		lead.setLeadSource(leadSource);
+		lead.setFirstName(firstName);
+		lead.setLastName(lastName);
+		lead.setEmail(email);
+		lead.setPhone(phone);
+		lead.setCompany(company);
+		lead.setDescription(description);
+		lead.setCountryCode("US");
 		
-		try {			
-			Event event = new EventBuilder()
-					.withSubject(System.getProperty(Properties.DEFAULT_SUBJECT))
-					.withEventAction(EventAction.LEAD)
-					.withEventSource(uriInfo.getBaseUri())
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(contact)
-					.withType(ObjectNode.class)
-					.build();
-				
-			mapper.save(event);
-				
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Signup Exception", e.getCause() );
-			throw new WebApplicationException( e, Status.BAD_REQUEST );
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		
+		Future<String> leadService = executor.submit(new SubmitLeadTask(lead));
+		executor.shutdown();
+		try {
+			executor.awaitTermination(30, TimeUnit.SECONDS);
+			lead.setId(leadService.get());
+		} catch (InterruptedException | ExecutionException e) {
+			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
-		return Response.ok().build();
+		Map<String,String> response = new HashMap<String,String>();
+		response.put("leadId", lead.getId());
+		
+		return Response.ok(response).build();
 	}
 }

@@ -45,6 +45,15 @@ public class OutboundMessage {
 	@DynamoDBAttribute(attributeName="Notifications")
 	private List<Notification> notifications;
 	
+	@DynamoDBAttribute(attributeName="ErrorMessage")
+	private String errorMessage;
+	
+	@DynamoDBAttribute(attributeName="MessageCount")
+	private Integer messageCount;
+	
+	@DynamoDBAttribute(attributeName="Duration")
+	private Long duration;
+	
 	public OutboundMessage() {
 		
 	}
@@ -127,5 +136,30 @@ public class OutboundMessage {
 
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
+		this.messageCount = notifications.size();
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public Integer getMessageCount() {
+		return messageCount;
+	}
+
+	public void setMessageCount(Integer messageCount) {
+		this.messageCount = messageCount;
+	}
+
+	public Long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Long duration) {
+		this.duration = duration;
 	}
 }

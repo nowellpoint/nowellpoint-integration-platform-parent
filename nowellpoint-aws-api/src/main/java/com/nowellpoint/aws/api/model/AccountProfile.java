@@ -158,6 +158,12 @@ public class AccountProfile extends AbstractDocument {
 	
 	private Photos photos;
 	
+	/**
+	 * 
+	 */
+	
+	private String leadId;
+	
 	public AccountProfile() {
 
 	}
@@ -336,5 +342,13 @@ public class AccountProfile extends AbstractDocument {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public String getLeadId() {
+		return leadId;
+	}
+
+	public void setLeadId(String leadId) {
+		this.leadId = leadId;
 	}
 }
