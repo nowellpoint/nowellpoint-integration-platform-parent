@@ -31,8 +31,6 @@ public class OutboundMessageHandler {
 		
 		LambdaLogger logger = context.getLogger();
 		
-		Long startTime = System.currentTimeMillis();
-		
 		event.getRecords().stream().filter(record -> "INSERT".equals(record.getEventName())).forEach(record -> {
 			
 			logger.log("DynamodbEvent received...Event Id: "
@@ -52,7 +50,7 @@ public class OutboundMessageHandler {
 				outboundMessage.setErrorMessage(e.getMessage());
 			} finally {
 				outboundMessage.setProcessedDate(Date.from(Instant.now()));
-				outboundMessage.setDuration(System.currentTimeMillis() - startTime);
+				outboundMessage.setDuration(System.currentTimeMillis() - outboundMessage.getReceivedDate().getTime());
 				outboundMessage.setSessionId(null);
 				mapper.save(outboundMessage);
 			}
