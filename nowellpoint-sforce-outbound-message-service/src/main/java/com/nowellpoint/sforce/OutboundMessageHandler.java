@@ -60,6 +60,7 @@ public class OutboundMessageHandler {
 	}
 	
 	private void process(OutboundMessage outboundMessage) throws ClientProtocolException, IOException, URISyntaxException {
+		
 		HttpClient client = HttpClientBuilder.create().build();
 		
 		String url = outboundMessage
@@ -74,6 +75,7 @@ public class OutboundMessageHandler {
 		
 		for (Notification notification : outboundMessage.getNotifications()) {
 			String query = String.format("SELECT Id, Name From %s Where Id = '%s'", notification.getSobject().getObject(), notification.getSobject().getObjectId());
+			
 			builder.addParameter("q", query);
 			
 			HttpGet get = new HttpGet(builder.build());
