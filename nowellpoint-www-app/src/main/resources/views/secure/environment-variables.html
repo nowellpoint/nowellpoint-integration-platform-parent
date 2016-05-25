@@ -13,29 +13,13 @@
                 </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
                     <div class="col-lg-10 col-md-10 col-sm-10">
-                        <!--
-                        <form class="form-vertical" id="default-variables-form" role="form">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">${labels["default.environment.variables"]}</div>
-                                <div class="panel-body">
-                                    <div class="content table-responsive">
-                                        <#include "fragments/default-environment-variables-table.html" />
-                                    </div>
-                                    <div class="pull-right">
-                                        <a id="addDefaultVariable" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
--->
-                        <form class="form-vertical" id="instance-variables-form" role="form">
+                        <form class="form-vertical" id="environment-variables-form" role="form">
                             <input type="hidden" name="defaultEnvironment" id="defaulEnvironment" value="${(serviceInstance.defaultEnvironment)!}" />
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <div class="flextable">
                                         <div class="flextable-item">
-                                            <h3 class="panel-title">${labels["instance.environment.variables"]}</h3>
+                                            <h3 class="panel-title">${labels["environment.variables"]}</h3>
                                         </div>
                                         <div class="flextable-item">
                                             <div class="pull-right">
@@ -58,11 +42,11 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="content table-responsive">
-                                        <#include "fragments/instance-environment-variables-table.html" />
+                                        <#include "fragments/environment-variables-table.html" />
                                     </div>
                                     <div class="pull-right">
                                         <a id="reset" name="reset" role="button">${labels["reset"]}</a>&nbsp;
-                                        <a id="addInstanceVariable" name="add" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
+                                        <a id="addEnvironmentVariable" name="add" class="btn btn-success" role="button">${labels["add.variable"]}</a>&nbsp;
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                                     </div>
                                 </div>
@@ -79,23 +63,8 @@
         <#include "spinner.html" />
 
         <script>
-            $('#default-variables-form').submit(function(e) {
-                var params = $("#default-variables-form").serialize();
-                $.ajax({
-                    dataType: "html",
-                    type: "POST",
-                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
-                    data: params,
-                    complete: function(data) {
-                        $("#status-message").html(data.responseText);
-                    }
-                });
 
-                e.preventDefault();
-
-            });
-
-            $('#instance-variables-form').submit(function(e) {
+            $('#environment-variables-form').submit(function(e) {
                 var params = $("#instance-variables-form").serialize();
                 $.ajax({
                     dataType: "html",
@@ -118,29 +87,18 @@
                     type: "GET",
                     url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/".concat(this.value),
                     complete: function(data) {
-                        $("#instance-variables-table").html(data.responseText);
+                        $("#environment-variables-table").html(data.responseText);
                     }
                 });
             });
 
-            $('#addDefaultVariable').click(function() {
+            $('#addEnvironmentVariable').click(function() {
                 $.ajax({
                     dataType: "html",
                     type: "GET",
                     url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
                     complete: function(data) {
-                        $('#default-variables-table tbody').append(data.responseText);
-                    }
-                });
-            });
-
-            $('#addInstanceVariable').click(function() {
-                $.ajax({
-                    dataType: "html",
-                    type: "GET",
-                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
-                    complete: function(data) {
-                        $('#instance-variables-table tbody').append(data.responseText);
+                        $('#environment-variables-table tbody').append(data.responseText);
                     }
                 });
 
@@ -152,13 +110,13 @@
                     type: "GET",
                     url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.defaultEnvironment!)}",
                     complete: function(data) {
-                        $('#instance-variables-table').html(data.responseText);
+                        $('#environment-variables-table').html(data.responseText);
                     }
                 });
 
             });
 
-            $(document).on("click", 'a.removeInstanceVariable', function() {
+            $(document).on("click", 'a.removeEnvironmentVariable', function() {
                 $(this).closest('tr').fadeTo(400, 0, function() {
                     $(this).remove();
                 });

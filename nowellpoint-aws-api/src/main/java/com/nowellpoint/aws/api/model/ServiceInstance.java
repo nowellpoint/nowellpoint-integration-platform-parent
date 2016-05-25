@@ -44,8 +44,6 @@ public class ServiceInstance implements Serializable {
 	
 	private Set<Environment> environments;
 	
-	private Set<EnvironmentVariable> environmentVariables;
-	
 	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 	
 	private Long activeEnvironments;
@@ -177,14 +175,6 @@ public class ServiceInstance implements Serializable {
 		setActiveEnvironments(this.environments.stream().filter(environment -> environment.getActive()).count());
 	}
 
-	public Set<EnvironmentVariable> getEnvironmentVariables() {
-		return environmentVariables;
-	}
-
-	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
-	}
-
 	public void addEnvironment(String name, Boolean active) {
 		environments.add(new Environment(name, active));
 	}
@@ -202,12 +192,6 @@ public class ServiceInstance implements Serializable {
 	}
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
-		environmentVariables.stream().forEach(variable -> {
-			if (environmentVariableValues.containsKey(variable.getVariable())) {
-				variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
-				variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
-			}
-		});
 		environments.stream().forEach(environment -> {
 			if (environment.getEnvironmentVariables() == null) {
 				environment.setEnvironmentVariables(new HashSet<EnvironmentVariable>());

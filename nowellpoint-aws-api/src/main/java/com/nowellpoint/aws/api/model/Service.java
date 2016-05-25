@@ -121,14 +121,6 @@ public class Service implements Serializable {
 	public void setSandboxCount(Integer sandboxCount) {
 		this.sandboxCount = sandboxCount;
 	}
-	
-	public Set<EnvironmentVariable> getEnvironmentVariables() {
-		return environmentVariables;
-	}
-
-	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
-	}
 
 	public Set<String> getConfigurationParams() {
 		return configurationParams;
@@ -136,6 +128,14 @@ public class Service implements Serializable {
 
 	public void setConfigurationParams(Set<String> configurationParams) {
 		this.configurationParams = configurationParams;
+	}
+	
+	public Set<EnvironmentVariable> getEnvironmentVariables() {
+		return environmentVariables;
+	}
+
+	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
+		this.environmentVariables = environmentVariables;
 	}
 
 	public Map<String, Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {

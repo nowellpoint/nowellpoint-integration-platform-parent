@@ -54,26 +54,6 @@
                             <form id="form" name="form" class="form-horizontal" role="form">
 
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="status">${labels["service.status"]}</label>
-                                    <div class="col-sm-3 col-md-3 col-lg-3">
-                                        <p class="form-control-static" name="status">Stopped</p>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-5 col-md-5 col-lg-5">
-                                        <a hre="#" class="btn btn-primary" role="button" name="start" id="start">${labels["start"]}</a>
-                                        <a hre="#" class="btn btn-warning" role="button" name="stop" id="stop">${labels["stop"]}</a>
-                                    </div>
-                                </div>
-
-                                <div class="hr-divider">
-                                    <h3 class="hr-divider-content hr-divider-heading"></h3>
-                                </div>
-
-                                <br>
-
-                                <div class="form-group">
                                     <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${labels["name"]}</label>
                                     <div class="col-sm-3 col-md-3 col-lg-3">
                                         <input type="text" class="form-control" name="name" id="name" value="${(serviceInstance.name)!}" required="" />
@@ -103,6 +83,32 @@
                                     </div>
                                 </div>
                             </form>
+
+                            <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading"></h3>
+                            </div>
+
+                            <#list serviceInstance.environments?sort_by( "index") as environment>
+                                <#if environment.active>
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <div class="panel">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">${(environment.name)!}</h3>
+                                        </div>
+
+                                        <div class="panel-body">
+                                            <div class="pull-left">
+                                                <b>${labels["label"]}:</b> ${(environment.label)!}
+                                            </div>
+                                        <br>
+                                            <a href="#" class="btn btn-sm btn-primary" role="button" name="start" id="start">${labels["start"]}</a>
+                                             <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/${(environment.name)!}" name="testConnection" id="testConnection">${labels["test.connection"]}</a>
+                                        </div> 
+
+                                    </div>
+                                </div>
+                                    </#if>    
+                            </#list>
 
                             <div class="col-lg-10 col-md-10 col-sm-10">
 
@@ -174,6 +180,7 @@
                     e.preventDefault();
 
                 });
+
 
                 $('#loginForm').submit(function(e) {
                     var params = $("#loginForm").serialize();

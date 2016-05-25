@@ -82,15 +82,17 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
-        
         get("/app/connectors/salesforce/:id/service/:key/variables/add", (request, response) -> addEnvironmentVariable(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> saveEnvironments(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/variables/:defaultEnvironment", (request, response) -> getEnvironmentVariablesForInstance(request, response), new FreeMarkerEngine(cfg));        
+        get("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/connectors/salesforce/:id/service/:key/variables/:defaultEnvironment", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));        
+        
+        get("/app/connectors/salesforce/:id/service/:key/test-connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -186,8 +188,9 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView getEnvironmentVariablesForInstance(Request request, Response response) {		
+	private ModelAndView getEnvironmentVariables(Request request, Response response) {		
 		Token token = getToken(request);
+		Account account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -196,60 +199,50 @@ public class SalesforceConnectorController extends AbstractController {
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-
-		Environment environment = serviceInstance.getEnvironments()
-				.stream()
-				.filter(p -> p.getName().equals(defaultEnvironment))
-				.findFirst()
-				.orElse(new Environment());
 		
-		if (environment.getEnvironmentVariables().size() == 0) {
-			environment.getEnvironmentVariables().add(new EnvironmentVariable());
-		}
+		Environment environment = null;
 		
 		Map<String, Object> model = getModel();
-		model.put("environment", environment);
 		
-		return new ModelAndView(model, "secure/fragments/instance-environment-variables-table.html");
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private ModelAndView getEnvironmentVariables(Request request, Response response) {		
-		Token token = getToken(request);
-		
-		Account account = getAccount(request);
-		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, request.params(":id"));
-		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(request.params(":key"));
-		
-		Environment environment = serviceInstance.getEnvironments()
-				.stream()
-				.filter(p -> p.getName().equals(serviceInstance.getDefaultEnvironment()))
-				.findFirst()
-				.orElse(new Environment());
-		
-		if (serviceInstance.getEnvironmentVariables().size() == 0) {
-			serviceInstance.getEnvironmentVariables().add(new EnvironmentVariable());
+		if (defaultEnvironment != null) {
+			environment = serviceInstance.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(defaultEnvironment))
+					.findFirst()
+					.orElse(new Environment());
+			
+			if (environment.getEnvironmentVariables().size() == 0) {
+				environment.getEnvironmentVariables().add(new EnvironmentVariable());
+			}
+			
+			model.put("environment", environment);
+			
+			return new ModelAndView(model, "secure/fragments/environment-variables-table.html");
+		} else {
+			environment = serviceInstance.getEnvironments()
+			.stream()
+			.filter(p -> p.getName().equals(serviceInstance.getDefaultEnvironment()))
+			.findFirst()
+			.orElse(new Environment());
+			
+			if (environment.getEnvironmentVariables().size() == 0) {
+				environment.getEnvironmentVariables().add(new EnvironmentVariable());
+			}
+			
+			model.put("account", account);
+			model.put("salesforceConnector", salesforceConnector);
+			model.put("serviceInstance", serviceInstance);
+			model.put("environment", environment);
+			
+			return new ModelAndView(model, "secure/environment-variables.html");
 		}
 		
-		if (environment.getEnvironmentVariables().size() == 0) {
-			environment.getEnvironmentVariables().add(new EnvironmentVariable());
-		}
 		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance);
-		model.put("environment", environment);
 		
-		return new ModelAndView(model, "secure/environment-variables.html");
+		
+		
+		
+		
 	}
 	
 	/**
@@ -677,6 +670,38 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 	}
 	
+	private ModelAndView testConnection(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String environment = request.params(":environment");
+		
+		System.out.println(token.getAccessToken());
+		System.out.println(id);
+		System.out.println(key);
+		System.out.println(environment);
+		
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("test-connection")
+				.path(environment)
+    			.execute();
+	
+		response.status(httpResponse.getStatusCode());
+		
+		Map<String, Object> model = getModel();
+		
+		return new ModelAndView(model, "secure/fragments/error-message.html");
+	}
+	
 	private ModelAndView saveEnvironmentVariables(Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -706,13 +731,10 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 
 		SalesforceConnector salesforceConnector = null;
-		
-		HttpResponse httpResponse = null;
 
 		String successMessage = null;
-		
-		if (defaultEnvironment != null) {
-			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+
+		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -726,68 +748,29 @@ public class SalesforceConnectorController extends AbstractController {
 					.path(defaultEnvironment)
 					.body(node)
 	    			.execute();
-			
-			response.status(httpResponse.getStatusCode());
-			
-			if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
-				successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
+		
+		response.status(httpResponse.getStatusCode());
+		
+		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
+			successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
 				
-				salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 				
-				ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 				
-				Optional<Environment> environment = serviceInstance.getEnvironment(defaultEnvironment);
+			Optional<Environment> environment = serviceInstance.getEnvironment(defaultEnvironment);
 				
-				if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
-					environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
-				}
-				
-				model.put("successMessage", successMessage);
-				model.put("serviceInstance", serviceInstance);
-				model.put("environment", environment.get());
-				return new ModelAndView(model, "secure/fragments/success-message.html");
-			} else {
-				model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
-				return new ModelAndView(model, "secure/fragments/error-message.html");
+			if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
+				environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
 			}
-			
+				
+			model.put("successMessage", successMessage);
+			model.put("serviceInstance", serviceInstance);
+			model.put("environment", environment.get());
+			return new ModelAndView(model, "secure/fragments/success-message.html");
 		} else {
-			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.bearerAuthorization(token.getAccessToken())
-					.path("connectors")
-	    			.path("salesforce")
-					.path(id)
-					.path("service")
-					.path(key)
-					.path("variables")
-					.body(node)
-	    			.execute();
-			
-			response.status(httpResponse.getStatusCode());		
-			
-			if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
-				successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
-				
-				salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-				
-				ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-				
-				if (serviceInstance.getEnvironmentVariables().size() == 0) {
-					serviceInstance.getEnvironmentVariables().add(new EnvironmentVariable());
-				}
-				
-				model.put("successMessage", successMessage);
-				model.put("serviceInstance", serviceInstance);
-				
-				return new ModelAndView(model, "secure/fragments/default-environment-variables-table.html");
-				
-			} else {				
-				model.put("errorMessage", httpResponse.getAsString());
-				return new ModelAndView(model, "secure/fragments/error-message.html");
-			}
+			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
+			return new ModelAndView(model, "secure/fragments/error-message.html");
 		}
 	}
 	

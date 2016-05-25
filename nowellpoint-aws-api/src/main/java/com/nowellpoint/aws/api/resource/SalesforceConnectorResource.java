@@ -264,29 +264,6 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/service/{key}/variables")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveEnvironmentVariables(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key,
-			Set<EnvironmentVariableDTO> environmentVariables) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = null;
-		try {
-			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentVariables);
-		} catch (UnsupportedOperationException | IllegalArgumentException e) {
-			throw new BadRequestException(e.getMessage());
-		}
-		
-		return Response.ok(resource)
-				.build(); 
-		
-	}		
-	
-	@POST
 	@Path("salesforce/{id}/service/{key}/variables/{environment}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -301,6 +278,28 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environment, environmentVariables);
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+		
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/test-connection/{environment}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response testConnection(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@PathParam(value="environment") String environment) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.testConnection(subject, id, key, environment);
 		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -39,8 +38,6 @@ public class ServiceInstance {
 	private String status;
 	
 	private List<Environment> environments;
-	
-	private List<EnvironmentVariable> environmentVariables;
 	
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
 	
@@ -173,22 +170,6 @@ public class ServiceInstance {
 
 	public void setEnvironments(List<Environment> environments) {
 		this.environments = environments;
-	}
-	
-	public List<EnvironmentVariable> getEnvironmentVariables() {
-		if (environmentVariables == null) {
-			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
-		} else {
-			setEnvironmentVariables(environmentVariables
-					.stream()
-					.sorted((p1, p2) -> p1.getVariable().compareTo(p2.getVariable()))
-					.collect(Collectors.toList()));
-		}
-		return environmentVariables;
-	}
-
-	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
 	}
 	
 	public Map<String,List<EnvironmentVariableValue>> getEnvironmentVariableValues() {
