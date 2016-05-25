@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -253,9 +254,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	public SalesforceConnectorDTO testConnection(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		
+
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
-		
+
 		if (serviceInstance.isPresent()) {
 			Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
 			if (environment.isPresent()) {
@@ -265,8 +266,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				String password = null;
 				String securityToken = null;
 				
-				while (environment.get().getEnvironmentVariables().iterator().hasNext()) {
-					EnvironmentVariable environmentVariable = environment.get().getEnvironmentVariables().iterator().next();
+				Iterator<EnvironmentVariable> variables = environment.get().getEnvironmentVariables().iterator();
+				
+				while (variables.hasNext()) {
+					EnvironmentVariable environmentVariable = variables.next();
 					if ("INSTANCE".equals(environmentVariable.getVariable())) {
 						instance = environmentVariable.getValue();
 					}
@@ -299,8 +302,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 						throw new InternalServerErrorException(e.getMessage());
 					}
 				}
-				
-				System.out.println(environment.get().getEnvironmentVariables());
 			}
 		}
 		

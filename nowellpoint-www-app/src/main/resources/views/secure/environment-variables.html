@@ -65,7 +65,7 @@
         <script>
 
             $('#environment-variables-form').submit(function(e) {
-                var params = $("#instance-variables-form").serialize();
+                var params = $("#environment-variables-form").serialize();
                 $.ajax({
                     dataType: "html",
                     type: "POST",
