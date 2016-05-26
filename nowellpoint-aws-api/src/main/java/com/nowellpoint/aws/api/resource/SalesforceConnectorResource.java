@@ -300,7 +300,7 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.testConnection(subject, id, key, environment);
-		} catch (UnsupportedOperationException | IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		

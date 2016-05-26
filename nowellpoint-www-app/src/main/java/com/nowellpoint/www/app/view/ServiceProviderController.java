@@ -4,10 +4,8 @@ import static spark.Spark.delete;
 import static spark.Spark.get;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -15,28 +13,24 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.ServiceProvider;
-import com.nowellpoint.www.app.util.ResourceBundleUtil;
 
-import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import freemarker.template.TemplateModelException;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class ServiceProviderController {
+public class ServiceProviderController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ServiceProviderController.class.getName());
 	
-	private static ResourceBundleModel labels;
-	
 	public ServiceProviderController(Configuration cfg) {   
 		
-		labels = ResourceBundleUtil.getResourceBundle(ServiceProviderController.class.getName(), cfg.getLocale());
+		super(ServiceProviderController.class, cfg);
 		
         get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
@@ -53,9 +47,11 @@ public class ServiceProviderController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getServiceProviders(Request request, Response response) throws IOException {
+	private ModelAndView getServiceProviders(Request request, Response response) throws IOException {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -72,20 +68,10 @@ public class ServiceProviderController {
 		}
 			
 		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
-		
-		providers = providers.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
 			
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
-		model.put("labels", labels);
+		Map<String, Object> model = getModel();
+		model.put("account", account);
 		model.put("serviceProviders", providers);
-		
-		try {
-			System.out.println(labels.get("cloud.provider.services"));
-		} catch (TemplateModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     	
 		return new ModelAndView(model, "secure/service-catalog.html");
 	}
@@ -98,11 +84,13 @@ public class ServiceProviderController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getServiceProvider(Request request, Response response) throws IOException {
+	private ModelAndView getServiceProvider(Request request, Response response) throws IOException {
 		
 		String id = request.params(":id");
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -119,19 +107,18 @@ public class ServiceProviderController {
 		
 		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
-		model.put("labels", labels);
+		Map<String, Object> model = getModel();
+		model.put("account", account);
 		model.put("serviceProvider", provider);
 		
 		return new ModelAndView(model, "secure/".concat(provider.getService().getConfigurationPage()));
 	}
 	
-	private static String deleteServiceProvider(Request request, Response response) throws IOException {
+	private String deleteServiceProvider(Request request, Response response) throws IOException {
 		
 		String id = request.params("id"); 
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))

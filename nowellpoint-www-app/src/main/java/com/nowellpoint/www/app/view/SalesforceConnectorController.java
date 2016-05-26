@@ -677,11 +677,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		String environment = request.params(":environment");
 		
-		System.out.println(token.getAccessToken());
-		System.out.println(id);
-		System.out.println(key);
-		System.out.println(environment);
-		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -697,9 +692,20 @@ public class SalesforceConnectorController extends AbstractController {
 	
 		response.status(httpResponse.getStatusCode());
 		
+		SalesforceConnector salesforceConnector = null;
+		
 		Map<String, Object> model = getModel();
 		
-		return new ModelAndView(model, "secure/fragments/error-message.html");
+		if (httpResponse.getStatusCode() == Status.OK) {
+			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+			
+			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+			
+			model.put("salesforceConnector", salesforceConnector);
+			model.put("serviceInstance", serviceInstance);
+		}
+		
+		return new ModelAndView(model, "secure/fragments/environment-list-row.html");
 	}
 	
 	private ModelAndView saveEnvironmentVariables(Request request, Response response) {

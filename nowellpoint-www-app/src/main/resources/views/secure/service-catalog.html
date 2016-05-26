@@ -28,14 +28,14 @@
                         <ul class="nav">
                             <li>
                                 <a href="/app/connectors/salesforce/${id}">
-                                    <span class="icon icon-back fa-1x">${organizationName}</span>
+                                    <span class="icon icon-back fa-1x">${labels["organization.name"]}</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
 
                     <div class="row">
-                        <#list serviceProviders as serviceProvider>
+                        <#list serviceProviders?sort_by("name") as serviceProvider>
                             <div class="col-lg-3 col-md-3 col-sm-3 text-center">
                                 <div>
                                     <img src="${serviceProvider.image}">

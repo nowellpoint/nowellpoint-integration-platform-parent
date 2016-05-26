@@ -22,6 +22,12 @@ public class Environment {
 	
 	private Boolean active;
 	
+	private String organization;
+	
+	private String endpoint;
+	
+	private String status;
+	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private Boolean locked;
 	
@@ -65,6 +71,30 @@ public class Environment {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Boolean getLocked() {

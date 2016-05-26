@@ -36,6 +36,7 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
+import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
@@ -116,6 +117,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setLabel("Production");
 		environment.setLocked(Boolean.TRUE);
 		environment.setName("PRODUCTION");
+		environment.setStatus("NOT STARTED");
 		environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
 		environments.add(environment);
 		
@@ -125,6 +127,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			environment.setIndex(i + 1);
 			environment.setLocked(Boolean.FALSE);
 			environment.setName("SANDBOX_" + (i + 1));
+			environment.setStatus("NOT STARTED");
 			environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
 			environments.add(environment);
 		}
@@ -284,15 +287,36 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					}
 				}
 				
+				if (instance == null) {
+					throw new IllegalArgumentException("Environment variable for INSTANCE is missing");
+				}
+				
+				if (username == null) {
+					throw new IllegalArgumentException("Environment variable for USERNAME is missing");
+				}
+				
+				if (securityToken == null) {
+					throw new IllegalArgumentException("Environment variable for SECURITY_TOKEN is missing");
+				}
+				
+				if (password == null) {
+					throw new IllegalArgumentException("Environment variable for PASSWORD is missing");
+				}
+				
 				ConnectorConfig config = new ConnectorConfig();
 				config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
 				config.setUsername(username);
 				config.setPassword(password.concat(securityToken));
 				
 				try {
-					PartnerConnection connection = com.sforce.soap.partner.Connector.newConnection(config);
+					PartnerConnection connection = Connector.newConnection(config);
+					
+					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
+					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
 					
 					System.out.println(connection.getConfig().getSessionId());
+					
+					updateSalesforceConnector(resource);
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
@@ -305,7 +329,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		}
 		
-		return null;
+		return resource;
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

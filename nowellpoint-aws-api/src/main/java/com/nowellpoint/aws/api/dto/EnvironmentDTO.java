@@ -10,6 +10,12 @@ public class EnvironmentDTO {
 	
 	private Boolean active;
 	
+	private String organization;
+	
+	private String endpoint;
+	
+	private String status;
+	
 	public EnvironmentDTO() {
 
 	}
@@ -44,5 +50,29 @@ public class EnvironmentDTO {
 
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

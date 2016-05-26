@@ -12,7 +12,7 @@
                     <#include "salesforce-service-nav.html" />
                 </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
-                    <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="row">
                             <div class="col-lg-2 col-md-2 col-sm-2">
                                 <div class="panel panel-primary">
@@ -88,27 +88,28 @@
                                 <h3 class="hr-divider-content hr-divider-heading"></h3>
                             </div>
 
-                            <#list serviceInstance.environments?sort_by( "index") as environment>
-                                <#if environment.active>
-                                <div class="col-lg-4 col-md-4 col-sm-4">
-                                    <div class="panel">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">${(environment.name)!}</h3>
-                                        </div>
 
-                                        <div class="panel-body">
-                                            <div class="pull-left">
-                                                <b>${labels["label"]}:</b> ${(environment.label)!}
-                                            </div>
-                                        <br>
-                                            <a href="#" class="btn btn-sm btn-primary" role="button" name="start" id="start">${labels["start"]}</a>
-                                             <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/${(environment.name)!}" name="testConnection" id="testConnection">${labels["test.connection"]}</a>
-                                        </div> 
+                            <table id="environments-table" class="table table-hover">
+                                <thead>
+                                    <th class="col-xs-2">${labels["name"]}</th>
+                                    <th class="col-xs-2">${labels["label"]}</th>
+                                    <th class="col-xs-2">${labels["organization"]}</th>
+                                    <th class="col-xs-3">${labels["service.endpoint"]}</th>
+                                    <th class="col-xs-2">${labels["service.status"]}</th>
+                                    <th class="col-xs-1 text-right">${labels["action"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list serviceInstance.environments?sort_by( "index") as environment>
+                                        <#if environment.active>
+                                            <#include "fragments/environment-list-row.html" />
+                                        </#if>
+                                    </#list>
+                                </tbody>
+                            </table>
 
-                                    </div>
-                                </div>
-                                    </#if>    
-                            </#list>
+                            <div class="hr-divider">
+                                <h3 class="hr-divider-content hr-divider-heading"></h3>
+                            </div>
 
                             <div class="col-lg-10 col-md-10 col-sm-10">
 
@@ -146,14 +147,28 @@
 -->
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-2 col-sm-2">
-                </div>
             </div>
 
             <#include "confirm-dialog.html"/>
             <#include "spinner.html" />
 
             <script>
+                
+                $('.test-connection').click(function(e) {
+                    var id = $(this).data('id');
+                    var row = $('#'.concat(id));
+                    $.ajax({
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/" + id,
+                        type: "GET",
+                        complete: function(data) {
+                            console.info(data.responseText);
+                            row.html(data.responseText);
+                        }
+                    });
+                    
+                    e.preventDefault();
+                });
+                
                 $('#confirm').click(function(e) {
                     $('#confirmDialog').modal('hide');
                     $.ajax({
@@ -198,9 +213,6 @@
 
                 });
 
-                $("#environment").change(function() {
-                    alert("Handler for .change() called.");
-                });
             </script>
 
     </@t.page>
