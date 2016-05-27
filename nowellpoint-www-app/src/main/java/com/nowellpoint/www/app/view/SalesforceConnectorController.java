@@ -696,16 +696,17 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		
+		System.out.println("status code: " + httpResponse.getStatusCode());
+		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 			
 			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 			
-			model.put("salesforceConnector", salesforceConnector);
 			model.put("serviceInstance", serviceInstance);
 		}
 		
-		return new ModelAndView(model, "secure/fragments/environment-list-row.html");
+		return new ModelAndView(model, "secure/fragments/environment-list.html");
 	}
 	
 	private ModelAndView saveEnvironmentVariables(Request request, Response response) {

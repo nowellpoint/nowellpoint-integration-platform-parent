@@ -88,24 +88,7 @@
                                 <h3 class="hr-divider-content hr-divider-heading"></h3>
                             </div>
 
-
-                            <table id="environments-table" class="table table-hover">
-                                <thead>
-                                    <th class="col-xs-2">${labels["name"]}</th>
-                                    <th class="col-xs-2">${labels["label"]}</th>
-                                    <th class="col-xs-2">${labels["organization"]}</th>
-                                    <th class="col-xs-3">${labels["service.endpoint"]}</th>
-                                    <th class="col-xs-2">${labels["service.status"]}</th>
-                                    <th class="col-xs-1 text-right">${labels["action"]}</th>
-                                </thead>
-                                <tbody>
-                                    <#list serviceInstance.environments?sort_by( "index") as environment>
-                                        <#if environment.active>
-                                            <#include "fragments/environment-list-row.html" />
-                                        </#if>
-                                    </#list>
-                                </tbody>
-                            </table>
+                            <#include "fragments/environment-list.html" />
 
                             <div class="hr-divider">
                                 <h3 class="hr-divider-content hr-divider-heading"></h3>
@@ -156,13 +139,12 @@
                 
                 $('.test-connection').click(function(e) {
                     var id = $(this).data('id');
-                    var row = $('#'.concat(id));
                     $.ajax({
                         url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/" + id,
                         type: "GET",
                         complete: function(data) {
                             console.info(data.responseText);
-                            row.html(data.responseText);
+                            $("#environments-table").html(data.responseText);
                         }
                     });
                     

@@ -257,6 +257,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	public SalesforceConnectorDTO testConnection(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
 
@@ -313,8 +314,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
 					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
-					
-					System.out.println(connection.getConfig().getSessionId());
 					
 					updateSalesforceConnector(resource);
 					
