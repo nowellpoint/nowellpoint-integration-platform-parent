@@ -28,6 +28,8 @@ public class Environment {
 	
 	private String status;
 	
+	private String statusMessage;
+	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private Boolean locked;
 	
@@ -97,6 +99,14 @@ public class Environment {
 		this.status = status;
 	}
 
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
+	
 	public Boolean getLocked() {
 		return locked;
 	}

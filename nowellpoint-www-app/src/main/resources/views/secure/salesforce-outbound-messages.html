@@ -137,20 +137,19 @@
 
             <script>
                 
-                $('.test-connection').click(function(e) {
+                $(document).on('click', '.test-connection', function(e) {
                     var id = $(this).data('id');
                     $.ajax({
                         url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/" + id,
                         type: "GET",
                         complete: function(data) {
-                            console.info(data.responseText);
                             $("#environments-table").html(data.responseText);
                         }
                     });
                     
                     e.preventDefault();
                 });
-                
+
                 $('#confirm').click(function(e) {
                     $('#confirmDialog').modal('hide');
                     $.ajax({
@@ -194,7 +193,6 @@
                     e.preventDefault();
 
                 });
-
             </script>
 
     </@t.page>

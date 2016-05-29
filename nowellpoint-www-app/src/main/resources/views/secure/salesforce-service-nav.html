@@ -1,7 +1,7 @@
 <ul class="nav nav-bordered nav-stacked">
     <li class="nav-header">${labels["outbound.message"]}</li>
     <li>
-        <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/details" title="${labels['details']}" data-toggle="tooltip" data-placement="right" data-container="body">
+        <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/details">
             <div>
                 <span class="icon icon-info fa-2x" style="vertical-align: middle;"></span>
                 <span class="iconav-nav-label">${labels["details"]}</span>
@@ -19,7 +19,7 @@
     </li>
 
     <li>
-        <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables" title="${labels['environment.variables']}">
+        <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables">
             <div>
                 <span class="icon icon-cog fa-2x" style="vertical-align: middle;"></span>
                 <span class="iconav-nav-label">${labels["environment.variables"]}</span>

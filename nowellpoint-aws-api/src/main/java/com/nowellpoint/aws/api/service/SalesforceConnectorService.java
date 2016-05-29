@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -259,10 +258,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 
 		if (serviceInstance.isPresent()) {
-			Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+			
 			if (environment.isPresent()) {
 				
 				String instance = null;
@@ -288,42 +296,35 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					}
 				}
 				
-				if (instance == null) {
-					throw new IllegalArgumentException("Environment variable for INSTANCE is missing");
-				}
-				
-				if (username == null) {
-					throw new IllegalArgumentException("Environment variable for USERNAME is missing");
-				}
-				
-				if (securityToken == null) {
-					throw new IllegalArgumentException("Environment variable for SECURITY_TOKEN is missing");
-				}
-				
-				if (password == null) {
-					throw new IllegalArgumentException("Environment variable for PASSWORD is missing");
-				}
-				
-				ConnectorConfig config = new ConnectorConfig();
-				config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
-				config.setUsername(username);
-				config.setPassword(password.concat(securityToken));
-				
 				try {
+					
+					if (instance == null || username == null || securityToken == null || password == null) {
+						throw new IllegalArgumentException();
+					}
+					
+					ConnectorConfig config = new ConnectorConfig();
+					config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+					config.setUsername(username);
+					config.setPassword(password.concat(securityToken));
+				
 					PartnerConnection connection = Connector.newConnection(config);
 					
 					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
 					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
-					
-					updateSalesforceConnector(resource);
+					environment.get().setStatus("TEST SUCCESSFUL");
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
 						LoginFault loginFault = (LoginFault) e;
-						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+						environment.get().setStatusMessage(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
+				} catch (IllegalArgumentException e) {
+					environment.get().setStatus("TEST FAIL");
+					environment.get().setStatusMessage("Missing connection enviroment variables");
+				} finally {
+					updateSalesforceConnector(resource);
 				}
 			}
 		}

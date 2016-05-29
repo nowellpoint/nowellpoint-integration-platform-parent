@@ -16,6 +16,8 @@ public class EnvironmentDTO {
 	
 	private String status;
 	
+	private String statusMessage;
+	
 	public EnvironmentDTO() {
 
 	}
@@ -74,5 +76,13 @@ public class EnvironmentDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
 	}
 }

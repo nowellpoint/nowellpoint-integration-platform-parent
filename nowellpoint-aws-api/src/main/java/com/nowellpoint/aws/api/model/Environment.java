@@ -20,18 +20,7 @@ public class Environment {
 	
 	private String status;
 	
-	/*
-	 * LoginResult result = new LoginResult()
-					.withId(id)
-					.withAuthEndpoint(connection.getConfig().getAuthEndpoint())
-					.withDisplayName(connection.getUserInfo().getUserFullName())
-					.withOrganizationId(connection.getUserInfo().getOrganizationId())
-					.withOrganziationName(connection.getUserInfo().getOrganizationName())
-					.withServiceEndpoint(connection.getConfig().getServiceEndpoint())
-					.withSessionId(connection.getConfig().getSessionId())
-					.withUserId(connection.getUserInfo().getUserId())
-					.withUserName(connection.getUserInfo().getUserName());
-	 */
+	private String statusMessage;
 	
 	private Set<EnvironmentVariable> environmentVariables;
 	
@@ -107,6 +96,14 @@ public class Environment {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
 	}
 
 	public Set<EnvironmentVariable> getEnvironmentVariables() {
