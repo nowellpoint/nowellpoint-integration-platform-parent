@@ -31,7 +31,7 @@ public class AdministrationController extends AbstractController {
 		
 		super(AdministrationController.class, cfg);
 		
-		get("/app/administration", (request, response) -> getProperties(request, response), new FreeMarkerEngine(cfg));	
+		get("/app/administration", (request, response) -> getAdministrationHome(request, response), new FreeMarkerEngine(cfg));	
 		
 		get("/app/administration/cache", (request, response) -> getCache(request, response), new FreeMarkerEngine(cfg));	
 		
@@ -39,6 +39,17 @@ public class AdministrationController extends AbstractController {
 		
 		delete("/app/administration/cache", (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
 			
+	}
+	
+	private ModelAndView getAdministrationHome(Request request, Response response) {
+		
+		Account account = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		
+		return new ModelAndView(model, "secure/administration-home.html");
+		
 	}
 	
 	private ModelAndView getCache(Request request, Response response) {

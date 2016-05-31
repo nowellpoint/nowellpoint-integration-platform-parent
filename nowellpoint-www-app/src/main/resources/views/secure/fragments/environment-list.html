@@ -1,19 +1,31 @@
 <table id="environments-table" class="table table-hover">
     <thead>
-        <th class="col-xs-3">${labels["name"]}</th>
-        <th class="col-xs-2">${labels["organization"]}</th>
-        <th class="col-xs-4">${labels["service.endpoint"]}</th>
-        <th class="col-xs-2">${labels["service.status"]}</th>
+        <th class="col-xs-2">${labels["name"]}</th>
+        <th class="col-xs-2">${labels["label"]}</th>
+        <th class="col-xs-3">${labels["service.endpoint"]}</th>
+        <th class="col-xs-1">${labels["service.status"]}</th>
+        <th class="col-xs-3">${labels["status.message"]}</th>
         <th class="col-xs-1 text-right">${labels["action"]}</th>
     </thead>
     <tbody>
         <#list serviceInstance.environments?sort_by( "index") as environment>
             <#if environment.active>
                 <tr id="${(environment.name)!}">
-                    <td>${(environment.name)!} (${(environment.label)!})</td>
-                    <td>${(environment.organization)!}</td>
+                    <td>${(environment.name)!}</td>
+                    <td>${(environment.label)!}</td>
                     <td>${(environment.endpoint)!}</td>
-                    <td>${(environment.status)!}&nbsp;<span class="icon icon-info fa-1x" data-toggle="tooltip" title="${(environment.statusMessage)!}"></span></td>
+                    <td>${(environment.status)!}</td>
+                    <td>
+                        <#if environment.test??>
+                            <#if environment.test>
+                                <span class="icon icon-check fa-1x"></span>
+                            </#if>
+                            <#if ! environment.test>
+                                <span class="icon icon-squared-cross fa-1x"></span>
+                            </#if>
+                        </#if>
+                        ${(environment.testMessage)!}
+                    </td>
                     <td class="text-right">
                         <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" type="button" id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

@@ -36,7 +36,14 @@ public class Client {
 	 */
 	
 	public Identity getIdentity(GetIdentityRequest request) {
-		HttpResponse httpResponse = RestResource.get(request.getId())
+		String id = null;
+		if (request.getId() == null) {
+			id = String.format("%s/id/%s/%s", request.getInstance(), request.getOrganizationId(), request.getUserId());
+		} else {
+			id = request.getId();
+		}
+		
+		HttpResponse httpResponse = RestResource.get(id)
 				.acceptCharset(StandardCharsets.UTF_8)
 				.bearerAuthorization(request.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)

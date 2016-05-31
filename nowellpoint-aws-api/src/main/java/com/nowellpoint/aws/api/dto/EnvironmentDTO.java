@@ -16,7 +16,9 @@ public class EnvironmentDTO {
 	
 	private String status;
 	
-	private String statusMessage;
+	private Boolean test;
+	
+	private String testMessage;
 	
 	public EnvironmentDTO() {
 
@@ -78,11 +80,19 @@ public class EnvironmentDTO {
 		this.status = status;
 	}
 	
-	public String getStatusMessage() {
-		return statusMessage;
+	public Boolean getTest() {
+		return test;
 	}
 
-	public void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
+	public void setTest(Boolean test) {
+		this.test = test;
+	}
+
+	public String getTestMessage() {
+		return testMessage;
+	}
+
+	public void setTestMessage(String testMessage) {
+		this.testMessage = testMessage;
 	}
 }

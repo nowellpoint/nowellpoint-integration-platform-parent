@@ -1,0 +1,74 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid">
+            <br>
+            <div class="row">
+                <div id="status-message"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <#include "salesforce-service-nav.html" />
+                </div>
+                <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <form id="form" name="form">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="flextable">
+                                        <div class="flextable-item">
+                                            <h3 class="panel-title">${labels["sobjects"]}</h3>
+                                        </div>
+                                        <div class="flextable-item">
+                                            <div class="pull-right">
+                                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                                                    <option value="">--- ${labels["select.environment"]} ---</option>
+                                                    <#list serviceInstance.environments?sort_by( "name") as environment>
+                                                        <#if environment.active>
+                                                            <#if environment.name==( serviceInstance.defaultEnvironment)! "">
+                                                                <option value="${environment.name}" selected>${environment.label}</option>
+                                                            </#if>
+                                                            <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                                                <option value="${environment.name}">${environment.label}</option>
+                                                            </#if>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <#include "fragments/sobjects-list.html" />
+                                    <div class="pull-right">
+                                        <a id="get-sobjects" name="get-sobjects" class="btn btn-success" role="button">${labels["get.sobjects"]}</a>&nbsp;
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <#include "spinner.html" />
+
+        <script>
+            $('#get-sobjects').click(function(e) {
+                var environment = $("#environment").val();
+                $.ajax({
+                    dataType: "html",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/" + environment,
+                    type: "GET",
+                    complete: function(data) {
+                        $("#sobjects").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+            });
+        </script>
+
+    </@t.page>

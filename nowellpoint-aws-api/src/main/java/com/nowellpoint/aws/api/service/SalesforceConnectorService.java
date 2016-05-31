@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -35,6 +36,11 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
+import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.DescribeSobjectsRequest;
+import com.nowellpoint.client.sforce.GetIdentityRequest;
+import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.Identity;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
@@ -117,6 +123,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setLocked(Boolean.TRUE);
 		environment.setName("PRODUCTION");
 		environment.setStatus("NOT STARTED");
+		environment.setTest(Boolean.FALSE);
 		environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
 		environments.add(environment);
 		
@@ -127,6 +134,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			environment.setLocked(Boolean.FALSE);
 			environment.setName("SANDBOX_" + (i + 1));
 			environment.setStatus("NOT STARTED");
+			environment.setTest(Boolean.FALSE);
 			environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
 			environments.add(environment);
 		}
@@ -311,18 +319,20 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
 					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
-					environment.get().setStatus("TEST SUCCESSFUL");
+					environment.get().setTest(Boolean.TRUE);
+					environment.get().setTestMessage("Success!");
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
 						LoginFault loginFault = (LoginFault) e;
-						environment.get().setStatusMessage(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+						environment.get().setTest(Boolean.FALSE);
+						environment.get().setTestMessage(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
 				} catch (IllegalArgumentException e) {
-					environment.get().setStatus("TEST FAIL");
-					environment.get().setStatusMessage("Missing connection enviroment variables");
+					environment.get().setTest(Boolean.FALSE);
+					environment.get().setTestMessage("Missing connection enviroment variables");
 				} finally {
 					updateSalesforceConnector(resource);
 				}
@@ -330,6 +340,95 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		
 		return resource;
+	}
+	
+	public DescribeSobjectsResult getSobjects(String subject, String id, String key, String environmentName) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		DescribeSobjectsResult result = null;
+
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				String instance = null;
+				String username = null;
+				String password = null;
+				String securityToken = null;
+				
+				Iterator<EnvironmentVariable> variables = environment.get().getEnvironmentVariables().iterator();
+				
+				while (variables.hasNext()) {
+					EnvironmentVariable environmentVariable = variables.next();
+					if ("INSTANCE".equals(environmentVariable.getVariable())) {
+						instance = environmentVariable.getValue();
+					}
+					if ("USERNAME".equals(environmentVariable.getVariable())) {
+						username = environmentVariable.getValue();
+					}
+					if ("SECURITY_TOKEN".equals(environmentVariable.getVariable())) {
+						securityToken = environmentVariable.getValue();
+					}
+					if ("PASSWORD".equals(environmentVariable.getVariable())) {
+						password = environmentVariable.getValue();
+					}
+				}
+				
+				try {
+					
+					if (instance == null || username == null || securityToken == null || password == null) {
+						throw new IllegalArgumentException();
+					}
+					
+					ConnectorConfig config = new ConnectorConfig();
+					config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+					config.setUsername(username);
+					config.setPassword(password.concat(securityToken));
+				
+					PartnerConnection connection = Connector.newConnection(config);
+					
+					GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+							.setAccessToken(connection.getConfig().getSessionId())
+							.setInstance(instance)
+							.setOrganizationId(connection.getUserInfo().getOrganizationId())
+							.setUserId(connection.getUserInfo().getUserId());
+						
+					Client client = new Client();
+						
+					Identity identity = client.getIdentity(getIdentityRequest);
+					
+					DescribeSobjectsRequest describeSobjectsRequest = new DescribeSobjectsRequest()
+							.setAccessToken(connection.getConfig().getSessionId())
+							.setSobjectUrl(identity.getUrls().getSobjects());
+					
+					result = client.describe(describeSobjectsRequest);
+					
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				} finally {
+					updateSalesforceConnector(resource);
+				}
+			}
+		}
+		
+		return result;
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

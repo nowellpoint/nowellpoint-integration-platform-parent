@@ -33,7 +33,6 @@ import com.nowellpoint.www.app.model.EnvironmentVariable;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
-import com.nowellpoint.www.app.model.sforce.LoginResult;
 import com.nowellpoint.www.app.model.sforce.Sobject;
 import com.nowellpoint.www.app.util.MessageProvider;
 
@@ -74,7 +73,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         delete("/app/connectors/salesforce/:id/service/:key", (request, response) -> deleteService(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
         
@@ -92,6 +91,8 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/variables/:environment", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));        
         
+        get("/app/connectors/salesforce/:id/service/:key/message-consumers", (request, response) -> getMessageConsumer(request, response), new FreeMarkerEngine(cfg));
+        
         get("/app/connectors/salesforce/:id/service/:key/test-connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
 	}
 	
@@ -104,6 +105,34 @@ public class SalesforceConnectorController extends AbstractController {
 	
 	private ModelAndView addEnvironmentVariable(Request request, Response response) {	
 		return new ModelAndView(getModel(), "secure/fragments/environment-table-row.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private ModelAndView getMessageConsumer(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance);
+		model.put("sobjects", Collections.emptyList());
+			
+		return new ModelAndView(model, "secure/message-consumers.html");
 	}
 	
 	/**
@@ -290,8 +319,6 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
-		model.put("sobjects", Collections.emptyList());
-		model.put("loginResult", null);
 		
 		return new ModelAndView(model, "secure/".concat(serviceInstance.getConfigurationPage()));
 	}
@@ -557,58 +584,37 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		
-		List<Sobject> sobjects = Collections.emptyList();
-		LoginResult result = null;
+		String environment = request.params(":environment");
 		String errorMessage = null;
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+		List<Sobject> sobjects = Collections.emptyList();
+		
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
-				.path("salesforce")
-    			.path("login")
-    			.parameter("instance", request.queryParams("instance"))
-    			.parameter("username", request.queryParams("username"))
-    			.parameter("password", request.queryParams("password"))
-    			.parameter("securityToken", request.queryParams("securityToken"))
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("sobjects")
+				.path(environment)
     			.execute();
+	
+		response.status(httpResponse.getStatusCode());
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			result = httpResponse.getEntity(LoginResult.class);
-			
-			httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.path("salesforce")
-	    			.path("sobjects")
-	    			.queryParameter("id", result.getId())
-	    			.execute();
-
-			if (httpResponse.getStatusCode() == Status.OK) {
-				sobjects = httpResponse.getEntityList(Sobject.class);
-			} else {
-				errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
-				
-			}
+			sobjects = httpResponse.getEntityList(Sobject.class);
 		} else {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
-		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
-		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
 		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance);
 		model.put("sobjects", sobjects);
-		model.put("loginResult", result);
 		model.put("errorMessage", errorMessage);
 		
-		return new ModelAndView(model, "secure/salesforce-outbound-message-part.html");
+		return new ModelAndView(model, "secure/fragments/sobjects-list.html");
 	}
 	
 	/**
