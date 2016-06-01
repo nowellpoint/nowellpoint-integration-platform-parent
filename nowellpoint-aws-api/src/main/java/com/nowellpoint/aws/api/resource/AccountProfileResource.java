@@ -59,6 +59,7 @@ public class AccountProfileResource {
 	
 	
 	@GET
+	@Path("/me")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUserProfile() {
 		String subject = securityContext.getUserPrincipal().getName();

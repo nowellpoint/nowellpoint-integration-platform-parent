@@ -2,6 +2,7 @@ package com.nowellpoint.aws.api.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
@@ -415,6 +418,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					result = client.describe(describeSobjectsRequest);
 					
+					AmazonS3 s3Client = new AmazonS3Client();
+					
+			        byte[] bytes = new ObjectMapper().writeValueAsString(result).getBytes(StandardCharsets.UTF_8);
+			        InputStream fileInputStream = new ByteArrayInputStream(bytes);
+			        
+			        ObjectMetadata metadata = new ObjectMetadata();
+			        metadata.setContentType("application/json");
+			        metadata.setContentLength(bytes.length);
+					
+			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", identity.getOrganizationId(), fileInputStream, metadata);
+			    	
+			    	s3Client.putObject(putObjectRequest);
+					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
 						LoginFault loginFault = (LoginFault) e;
@@ -422,6 +438,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
 				} finally {
 					updateSalesforceConnector(resource);
 				}

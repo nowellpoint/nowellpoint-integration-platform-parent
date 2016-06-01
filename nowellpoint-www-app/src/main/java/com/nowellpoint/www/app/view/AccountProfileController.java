@@ -5,7 +5,6 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
@@ -15,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
 
@@ -25,11 +25,13 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class AccountProfileController {
+public class AccountProfileController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ProjectController.class.getName());
 	
 	public AccountProfileController(Configuration cfg) {
+		
+		super(AccountProfileController.class, cfg);
 	    
 		get("/app/account-profile", (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(cfg));
 		
@@ -49,17 +51,20 @@ public class AccountProfileController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getAccountProfile(Request request, Response response) throws IOException {
+	private ModelAndView getAccountProfile(Request request, Response response) throws IOException {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
+				.path("me")
 				.execute();
 			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 			
 		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
 			throw new NotFoundException(httpResponse.getAsString());
@@ -67,8 +72,8 @@ public class AccountProfileController {
 			
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 			
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		Map<String, Object> model = getModel();
+		model.put("account", account);
 		model.put("accountProfile", accountProfile);
 			
 		return new ModelAndView(model, "secure/account-profile.html");			
@@ -82,9 +87,11 @@ public class AccountProfileController {
 	 * @throws IOException
 	 */
 	
-	public static ModelAndView updateAccountProfile(Request request, Response response) throws IOException {
+	public ModelAndView updateAccountProfile(Request request, Response response) throws IOException {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
 		
 		StringBuilder body = new StringBuilder();
 		request.queryParams().stream().filter(param -> ! request.queryParams(param).isEmpty()).limit(1).forEach(param -> {
@@ -111,8 +118,8 @@ public class AccountProfileController {
 		
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		Map<String, Object> model = getModel();
+		model.put("account", account);
 		model.put("accountProfile", accountProfile);
 		
 		return new ModelAndView(model, "secure/account-profile.html");		
@@ -126,12 +133,11 @@ public class AccountProfileController {
 	 * @throws IOException
 	 */
 	
-	private static String setSalesforceProfilePicture(Request request, Response response) throws IOException {
+	private String setSalesforceProfilePicture(Request request, Response response) throws IOException {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -146,6 +152,9 @@ public class AccountProfileController {
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
 		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		
 		return "";	
 	}
 	
@@ -157,12 +166,11 @@ public class AccountProfileController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView removeProfilePicture(Request request, Response response) throws IOException {
+	private ModelAndView removeProfilePicture(Request request, Response response) throws IOException {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -175,6 +183,8 @@ public class AccountProfileController {
 		
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
 		model.put("accountProfile", accountProfile);
 		
 		return new ModelAndView(model, "secure/account-profile.html");		
