@@ -39,12 +39,9 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
-import com.nowellpoint.client.sforce.Client;
-import com.nowellpoint.client.sforce.DescribeSobjectsRequest;
-import com.nowellpoint.client.sforce.GetIdentityRequest;
-import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
-import com.nowellpoint.client.sforce.model.Identity;
 import com.sforce.soap.partner.Connector;
+import com.sforce.soap.partner.DescribeGlobalResult;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
@@ -284,41 +281,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			
 			if (environment.isPresent()) {
 				
-				String instance = null;
-				String username = null;
-				String password = null;
-				String securityToken = null;
-				
-				Iterator<EnvironmentVariable> variables = environment.get().getEnvironmentVariables().iterator();
-				
-				while (variables.hasNext()) {
-					EnvironmentVariable environmentVariable = variables.next();
-					if ("INSTANCE".equals(environmentVariable.getVariable())) {
-						instance = environmentVariable.getValue();
-					}
-					if ("USERNAME".equals(environmentVariable.getVariable())) {
-						username = environmentVariable.getValue();
-					}
-					if ("SECURITY_TOKEN".equals(environmentVariable.getVariable())) {
-						securityToken = environmentVariable.getValue();
-					}
-					if ("PASSWORD".equals(environmentVariable.getVariable())) {
-						password = environmentVariable.getValue();
-					}
-				}
-				
 				try {
-					
-					if (instance == null || username == null || securityToken == null || password == null) {
-						throw new IllegalArgumentException();
-					}
-					
-					ConnectorConfig config = new ConnectorConfig();
-					config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
-					config.setUsername(username);
-					config.setPassword(password.concat(securityToken));
 				
-					PartnerConnection connection = Connector.newConnection(config);
+					PartnerConnection connection = login(environment.get());
 					
 					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
 					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
@@ -345,11 +310,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public DescribeSobjectsResult getSobjects(String subject, String id, String key, String environmentName) {
+	public DescribeGlobalSObjectResult[] getSobjects(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
-		DescribeSobjectsResult result = null;
+		DescribeGlobalResult result = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -366,57 +331,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			
 			if (environment.isPresent()) {
 				
-				String instance = null;
-				String username = null;
-				String password = null;
-				String securityToken = null;
-				
-				Iterator<EnvironmentVariable> variables = environment.get().getEnvironmentVariables().iterator();
-				
-				while (variables.hasNext()) {
-					EnvironmentVariable environmentVariable = variables.next();
-					if ("INSTANCE".equals(environmentVariable.getVariable())) {
-						instance = environmentVariable.getValue();
-					}
-					if ("USERNAME".equals(environmentVariable.getVariable())) {
-						username = environmentVariable.getValue();
-					}
-					if ("SECURITY_TOKEN".equals(environmentVariable.getVariable())) {
-						securityToken = environmentVariable.getValue();
-					}
-					if ("PASSWORD".equals(environmentVariable.getVariable())) {
-						password = environmentVariable.getValue();
-					}
-				}
-				
 				try {
 					
-					if (instance == null || username == null || securityToken == null || password == null) {
-						throw new IllegalArgumentException();
-					}
+					PartnerConnection connection = login(environment.get());
 					
-					ConnectorConfig config = new ConnectorConfig();
-					config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
-					config.setUsername(username);
-					config.setPassword(password.concat(securityToken));
-				
-					PartnerConnection connection = Connector.newConnection(config);
-					
-					GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
-							.setAccessToken(connection.getConfig().getSessionId())
-							.setInstance(instance)
-							.setOrganizationId(connection.getUserInfo().getOrganizationId())
-							.setUserId(connection.getUserInfo().getUserId());
-						
-					Client client = new Client();
-						
-					Identity identity = client.getIdentity(getIdentityRequest);
-					
-					DescribeSobjectsRequest describeSobjectsRequest = new DescribeSobjectsRequest()
-							.setAccessToken(connection.getConfig().getSessionId())
-							.setSobjectUrl(identity.getUrls().getSobjects());
-					
-					result = client.describe(describeSobjectsRequest);
+					result = connection.describeGlobal();
 					
 					AmazonS3 s3Client = new AmazonS3Client();
 					
@@ -427,7 +346,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			        metadata.setContentType("application/json");
 			        metadata.setContentLength(bytes.length);
 					
-			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", identity.getOrganizationId(), fileInputStream, metadata);
+			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", connection.getUserInfo().getOrganizationId(), fileInputStream, metadata);
 			    	
 			    	s3Client.putObject(putObjectRequest);
 					
@@ -446,7 +365,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		}
 		
-		return result;
+		return result.getSobjects();
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {
@@ -488,5 +407,44 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			e.printStackTrace();
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	private PartnerConnection login(Environment environment) throws IllegalArgumentException, ConnectionException {
+		
+		String instance = null;
+		String username = null;
+		String password = null;
+		String securityToken = null;
+		
+		Iterator<EnvironmentVariable> variables = environment.getEnvironmentVariables().iterator();
+		
+		while (variables.hasNext()) {
+			EnvironmentVariable environmentVariable = variables.next();
+			if ("INSTANCE".equals(environmentVariable.getVariable())) {
+				instance = environmentVariable.getValue();
+			}
+			if ("USERNAME".equals(environmentVariable.getVariable())) {
+				username = environmentVariable.getValue();
+			}
+			if ("SECURITY_TOKEN".equals(environmentVariable.getVariable())) {
+				securityToken = environmentVariable.getValue();
+			}
+			if ("PASSWORD".equals(environmentVariable.getVariable())) {
+				password = environmentVariable.getValue();
+			}
+		}
+			
+		if (instance == null || username == null || securityToken == null || password == null) {
+			throw new IllegalArgumentException();
+		}
+			
+		ConnectorConfig config = new ConnectorConfig();
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+		config.setUsername(username);
+		config.setPassword(password.concat(securityToken));
+		
+		PartnerConnection connection = Connector.newConnection(config);
+			
+		return connection;
 	}
 }

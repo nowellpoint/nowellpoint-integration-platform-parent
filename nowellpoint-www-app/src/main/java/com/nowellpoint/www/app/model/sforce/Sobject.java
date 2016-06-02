@@ -2,6 +2,9 @@ package com.nowellpoint.www.app.model.sforce;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sobject implements Serializable {
 
 	/**
@@ -9,7 +12,7 @@ public class Sobject implements Serializable {
 	 */
 	
 	private static final long serialVersionUID = -4468699493936717073L;
-	
+		
 	private Boolean activateable;
 	
 	private Boolean createable;
@@ -23,6 +26,8 @@ public class Sobject implements Serializable {
 	private Boolean deprecatedAndHidden;
 	
 	private Boolean feedEnabled;
+	
+	private Boolean idEnabled;
 	
 	private String keyPrefix;
 	
@@ -108,6 +113,14 @@ public class Sobject implements Serializable {
 
 	public void setFeedEnabled(Boolean feedEnabled) {
 		this.feedEnabled = feedEnabled;
+	}
+
+	public Boolean getIdEnabled() {
+		return idEnabled;
+	}
+
+	public void setIdEnabled(Boolean idEnabled) {
+		this.idEnabled = idEnabled;
 	}
 
 	public String getKeyPrefix() {

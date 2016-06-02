@@ -52,8 +52,8 @@ import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
 import com.nowellpoint.client.sforce.model.Token;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 
 import redis.clients.jedis.Jedis;
 
@@ -320,14 +320,14 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		DescribeSobjectsResult resource = null;
+		DescribeGlobalSObjectResult[] resource = null;
 		try {
 			resource = salesforceConnectorService.getSobjects(subject, id, key, environment);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
-		return Response.ok(resource.getSobjects())
+		return Response.ok(resource)
 				.build(); 
 		
 	}
