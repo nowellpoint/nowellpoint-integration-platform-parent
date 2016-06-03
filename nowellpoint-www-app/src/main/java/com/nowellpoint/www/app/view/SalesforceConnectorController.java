@@ -33,7 +33,6 @@ import com.nowellpoint.www.app.model.EnvironmentVariable;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
-import com.nowellpoint.www.app.model.sforce.Sobject;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import org.slf4j.Logger;
@@ -130,7 +129,6 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
-		model.put("sobjects", Collections.emptyList());
 			
 		return new ModelAndView(model, "secure/message-consumers.html");
 	}
@@ -587,7 +585,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String environment = request.params(":environment");
 		String errorMessage = null;
 		
-		List<Sobject> sobjects = Collections.emptyList();
+		SalesforceConnector salesforceConnector = null;
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.accept(MediaType.APPLICATION_JSON)
@@ -605,13 +603,13 @@ public class SalesforceConnectorController extends AbstractController {
 		response.status(httpResponse.getStatusCode());
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			sobjects = httpResponse.getEntityList(Sobject.class);
+			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 		} else {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
     	
 		Map<String, Object> model = getModel();
-		model.put("sobjects", sobjects);
+		model.put("salesforceConnector", salesforceConnector);
 		model.put("errorMessage", errorMessage);
 		
 		return new ModelAndView(model, "secure/fragments/sobjects-list.html");

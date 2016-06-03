@@ -12,41 +12,38 @@
                     <#include "salesforce-service-nav.html" />
                 </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="col-lg-10 col-md-10 col-sm-10">
                         <form id="form" name="form">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <div class="flextable">
-                                        <div class="flextable-item">
+                                        <div class="flextable-item flextable-primary">
                                             <h3 class="panel-title">${labels["sobjects"]}</h3>
                                         </div>
                                         <div class="flextable-item">
                                             <div class="pull-right">
-                                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
-                                                    <option value="">--- ${labels["select.environment"]} ---</option>
-                                                    <#list serviceInstance.environments?sort_by( "name") as environment>
-                                                        <#if environment.active>
-                                                            <#if environment.name==( serviceInstance.defaultEnvironment)! "">
-                                                                <option value="${environment.name}" selected>${environment.label}</option>
-                                                            </#if>
-                                                            <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
-                                                                <option value="${environment.name}">${environment.label}</option>
-                                                            </#if>
-                                                        </#if>
-                                                    </#list>
-                                                </select>
+                                                <b>${labels["default.environment"]}:</b>&nbsp;
+                                            </div>
+                                        </div>
+                                        <div class="flextable-item">
+                                            <div class="pull-right">
+                                                ${(serviceInstance.defaultEnvironment)!}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="panel-body">
+                                    <div class="content table-responsive">
                                     <#include "fragments/sobjects-list.html" />
+                                    </div>    
                                     <div class="pull-right">
                                         <a id="get-sobjects" name="get-sobjects" class="btn btn-success" role="button">${labels["get.sobjects"]}</a>&nbsp;
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2">
+                            </div>    
                         </form>
                     </div>
                 </div>
@@ -57,10 +54,9 @@
 
         <script>
             $('#get-sobjects').click(function(e) {
-                var environment = $("#environment").val();
                 $.ajax({
                     dataType: "html",
-                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/" + environment,
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}",
                     type: "GET",
                     complete: function(data) {
                         $("#sobjects").html(data.responseText);

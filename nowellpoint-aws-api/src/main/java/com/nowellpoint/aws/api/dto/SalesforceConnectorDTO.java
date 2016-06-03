@@ -6,6 +6,7 @@ import java.util.List;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 
 public class SalesforceConnectorDTO extends AbstractDTO {
 
@@ -20,6 +21,8 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	private String tag;
 	
 	private List<ServiceInstance> serviceInstances;
+	
+	private DescribeGlobalSObjectResult[] sobjects;
 	
 	public SalesforceConnectorDTO() {
 		serviceInstances = new ArrayList<ServiceInstance>();
@@ -71,5 +74,13 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	
 	public void addServiceInstance(ServiceInstance serviceInstance) {
 		serviceInstances.add(serviceInstance);
+	}
+
+	public DescribeGlobalSObjectResult[] getSobjects() {
+		return sobjects;
+	}
+
+	public void setSobjects(DescribeGlobalSObjectResult[] sobjects) {
+		this.sobjects = sobjects;
 	}
 }

@@ -1,19 +1,24 @@
-<div id="sobjects" class="container-fluid">
-    <div class="row">
-        <#if sobjects?has_content>
-            <#list sobjects as sobject>
+<table id="sobjects" class="table table-hover">
+    <thead>
+        <th class="col-xs-1"></th>
+        <th class="col-xs-5">${labels["name"]}</th>
+        <th class="col-xs-6">${labels["name"]}</th>
+    </thead>
+    <tbody>
+        <#if salesforceConnector.sobjects?has_content>
+            <#list salesforceConnector.sobjects as sobject>
                 <#if sobject.triggerable && sobject.searchable>
-                    <div class="col-lg-3 col-md-3 col-sm-3">
-                        <div class="checkbox custom-control custom-checkbox">
-                            <label>
-                                <input type="checkbox" value="${sobject.name}" name="sobject">
-                                <span class="custom-control-indicator"></span>
-                                <p>${sobject.label}</p>
-                            </label>
-                        </div>
-                    </div>
+                    <tr>
+                        <td>
+                            <input type="checkbox" value="${sobject.name}" name="sobject">
+                        </td>
+                        <td>
+                            ${sobject.label}
+                        </td>
+                        <td></td>
+                    </tr>
                 </#if>
             </#list>
         </#if>
-    </div>
-</div>
+    </tbody>
+</table>

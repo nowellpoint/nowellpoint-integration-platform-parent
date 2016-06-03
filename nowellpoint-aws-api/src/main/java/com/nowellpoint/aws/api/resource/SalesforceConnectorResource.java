@@ -53,7 +53,6 @@ import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
-import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 
 import redis.clients.jedis.Jedis;
 
@@ -320,16 +319,37 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		DescribeGlobalSObjectResult[] resource = null;
+		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.getSobjects(subject, id, key, environment);
+			resource = salesforceConnectorService.describeGlobal(subject, id, key, environment);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
 		return Response.ok(resource)
 				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/sobjects/{environment}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response describeSObjects (
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@PathParam(value="environment") String environment,
+			List<String> sobjects) {
 		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.describeGlobal(subject, id, key, environment);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
 	}
 	
 	@POST

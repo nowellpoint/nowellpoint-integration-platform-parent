@@ -2,17 +2,21 @@ package com.nowellpoint.aws.api.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -28,8 +32,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
@@ -41,7 +43,7 @@ import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.DescribeGlobalResult;
-import com.sforce.soap.partner.DescribeGlobalSObjectResult;
+import com.sforce.soap.partner.DescribeSObjectResult;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
@@ -310,11 +312,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public DescribeGlobalSObjectResult[] getSobjects(String subject, String id, String key, String environmentName) {
+	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
-		
-		DescribeGlobalResult result = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -335,20 +335,23 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					PartnerConnection connection = login(environment.get());
 					
-					result = connection.describeGlobal();
+					DescribeGlobalResult result = connection.describeGlobal();
 					
-					AmazonS3 s3Client = new AmazonS3Client();
-					
-			        byte[] bytes = new ObjectMapper().writeValueAsString(result).getBytes(StandardCharsets.UTF_8);
-			        InputStream fileInputStream = new ByteArrayInputStream(bytes);
-			        
-			        ObjectMetadata metadata = new ObjectMetadata();
-			        metadata.setContentType("application/json");
-			        metadata.setContentLength(bytes.length);
-					
-			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", connection.getUserInfo().getOrganizationId(), fileInputStream, metadata);
+//					AmazonS3 s3Client = new AmazonS3Client();
+//					
+//			        byte[] bytes = new ObjectMapper().writeValueAsString(result).getBytes(StandardCharsets.UTF_8);
+//			        
+//			        InputStream fileInputStream = new ByteArrayInputStream(bytes);
+//			        
+//			        ObjectMetadata metadata = new ObjectMetadata();
+//			        metadata.setContentType(MediaType.APPLICATION_JSON);
+//			        metadata.setContentLength(bytes.length);
+//					
+//			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", connection.getUserInfo().getOrganizationId(), fileInputStream, metadata);
+//			    	
+//			    	s3Client.putObject(putObjectRequest);
 			    	
-			    	s3Client.putObject(putObjectRequest);
+			    	resource.setSobjects(result.getSobjects());
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
@@ -357,15 +360,70 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
-				} catch (JsonProcessingException e) {
-					e.printStackTrace();
 				} finally {
 					updateSalesforceConnector(resource);
 				}
 			}
 		}
 		
-		return result.getSobjects();
+		return resource;
+	}
+	
+	public void describeSobjects(String subject, String id, String key, String environmentName, List<String> sobjects) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				try {
+					
+					PartnerConnection connection = login(environment.get());
+					
+					ExecutorService executor = Executors.newFixedThreadPool(sobjects.size());
+					
+					List<Future<String>> futures = new ArrayList<Future<String>>();
+					
+					sobjects.stream().forEach(s -> {
+						Callable<String> task = new Callable<String>() {
+
+							@Override
+							public String call() throws Exception {
+								DescribeSObjectResult result = connection.describeSObject(s);
+								return result.getFields()[0].getName();
+							}
+							
+						};
+						
+						futures.add(executor.submit(task));
+					});
+					
+					
+					
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				} finally {
+					updateSalesforceConnector(resource);
+				}
+			}
+		}
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

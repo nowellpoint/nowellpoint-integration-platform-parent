@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.www.app.model.sforce.Identity;
 import com.nowellpoint.www.app.model.sforce.Organization;
+import com.nowellpoint.www.app.model.sforce.Sobject;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends Resource {
@@ -20,6 +21,8 @@ public class SalesforceConnector extends Resource {
 	private String tag;
 	
 	private List<ServiceInstance> serviceInstances;
+	
+	private List<Sobject> sobjects;
 	
 	public SalesforceConnector() {
 		
@@ -68,6 +71,17 @@ public class SalesforceConnector extends Resource {
 		this.serviceInstances = serviceInstances;
 	}
 	
+	public List<Sobject> getSobjects() {
+		if (sobjects == null) {
+			setSobjects(new ArrayList<Sobject>());
+		}
+		return sobjects;
+	}
+
+	public void setSobjects(List<Sobject> sobjects) {
+		this.sobjects = sobjects;
+	}
+
 	@JsonIgnore
 	public ServiceInstance getServiceInstance(String key) {
 		return getServiceInstances()

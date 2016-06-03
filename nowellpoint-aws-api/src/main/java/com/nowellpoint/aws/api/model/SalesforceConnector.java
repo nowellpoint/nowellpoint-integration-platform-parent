@@ -9,6 +9,7 @@ import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.data.mongodb.sforce.Identity;
 import com.nowellpoint.aws.data.mongodb.sforce.Organization;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 
 @Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
@@ -30,6 +31,8 @@ public class SalesforceConnector extends AbstractDocument {
 	private String tag;
 	
 	private List<ServiceInstance> serviceInstances;
+	
+	private DescribeGlobalSObjectResult[] sobjects;
 	
 	public SalesforceConnector() {
 		
@@ -73,5 +76,13 @@ public class SalesforceConnector extends AbstractDocument {
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public DescribeGlobalSObjectResult[] getSobjects() {
+		return sobjects;
+	}
+
+	public void setSobjects(DescribeGlobalSObjectResult[] sobjects) {
+		this.sobjects = sobjects;
 	}
 }
