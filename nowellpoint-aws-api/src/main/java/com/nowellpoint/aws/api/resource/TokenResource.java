@@ -4,6 +4,7 @@ import javax.annotation.security.PermitAll;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.AuthorizationHeader;
+import com.stormpath.sdk.resource.ResourceException;
 
 @Path("/oauth")
 public class TokenResource {
@@ -47,7 +49,13 @@ public class TokenResource {
 			throw new WebApplicationException("Invalid Request - Missing username and/or password", Status.BAD_REQUEST);
 		}
 		
-		Token token = identityProviderService.authenticate(params[0], params[1]);
+		Token token = null;
+		
+		try {
+			identityProviderService.authenticate(params[0], params[1]);
+		} catch (ResourceException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		params = null;
 			

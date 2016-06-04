@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.api.service;
 
-import com.stormpath.sdk.oauth.JwtAuthenticationResult;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
@@ -25,10 +23,12 @@ import com.stormpath.sdk.client.Clients;
 import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.JwtAuthenticationRequest;
+import com.stormpath.sdk.oauth.JwtAuthenticationResult;
 import com.stormpath.sdk.oauth.Oauth2Requests;
 import com.stormpath.sdk.oauth.OauthGrantAuthenticationResult;
 import com.stormpath.sdk.oauth.PasswordGrantRequest;
 import com.stormpath.sdk.oauth.RefreshGrantRequest;
+import com.stormpath.sdk.resource.ResourceException;
 
 public class IdentityProviderService extends AbstractCacheService {
 	
@@ -59,7 +59,7 @@ public class IdentityProviderService extends AbstractCacheService {
 	 * @return the Authentication token
 	 */
 	
-	public Token authenticate(String username, String password) {			
+	public Token authenticate(String username, String password) throws ResourceException {			
 		PasswordGrantRequest request = Oauth2Requests.PASSWORD_GRANT_REQUEST
 				.builder()
 				.setLogin(username)
