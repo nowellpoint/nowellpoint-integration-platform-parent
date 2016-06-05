@@ -28,9 +28,10 @@ public class AdministrationController extends AbstractController {
 	private static final Logger LOGGER = Logger.getLogger(AdministrationController.class);
 	
 	public AdministrationController(Configuration cfg) {
-		
 		super(AdministrationController.class, cfg);
-		
+	}
+	
+	public void setupRoutes(Configuration cfg) {
 		get("/app/administration", (request, response) -> getAdministrationHome(request, response), new FreeMarkerEngine(cfg));	
 		
 		get("/app/administration/cache", (request, response) -> getCache(request, response), new FreeMarkerEngine(cfg));	
@@ -38,7 +39,6 @@ public class AdministrationController extends AbstractController {
 		get("/app/administration/properties", (request, response) -> getProperties(request, response), new FreeMarkerEngine(cfg));	
 		
 		delete("/app/administration/cache", (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
-			
 	}
 	
 	private ModelAndView getAdministrationHome(Request request, Response response) {
@@ -68,8 +68,8 @@ public class AdministrationController extends AbstractController {
 	private ModelAndView purgeCache(Request request, Response response) {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
 				.execute();
@@ -89,8 +89,8 @@ public class AdministrationController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("properties")
 				.execute();

@@ -30,9 +30,14 @@ public class AccountProfileController extends AbstractController {
 	private static final Logger LOGGER = Logger.getLogger(ProjectController.class.getName());
 	
 	public AccountProfileController(Configuration cfg) {
-		
 		super(AccountProfileController.class, cfg);
-	    
+	}
+	
+	/**
+	 * 
+	 */
+	
+	public void setupRoutes(Configuration cfg) {
 		get("/app/account-profile", (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(cfg));
 		
 		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(cfg));
@@ -40,7 +45,6 @@ public class AccountProfileController extends AbstractController {
 		post("/app/account-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
 		
 		delete("/app/account-profile/picture", (request, response) -> removeProfilePicture(request, response));
-		
 	}
 	
 	/**
@@ -57,8 +61,8 @@ public class AccountProfileController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
 				.path("me")
@@ -101,8 +105,8 @@ public class AccountProfileController extends AbstractController {
 			body.append("&").append(param).append("=").append(request.queryParams(param));
     	});
 
-		HttpResponse httpResponse = RestResource.put(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
     			.acceptCharset("UTF-8")
@@ -139,8 +143,8 @@ public class AccountProfileController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
     			.bearerAuthorization(token.getAccessToken())
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
         		.acceptCharset("UTF-8")
@@ -172,8 +176,8 @@ public class AccountProfileController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
     			.bearerAuthorization(token.getAccessToken())
         		.path("account-profile")
         		.path("photo")

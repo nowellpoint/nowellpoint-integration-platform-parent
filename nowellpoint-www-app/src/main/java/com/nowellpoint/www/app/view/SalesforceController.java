@@ -31,9 +31,10 @@ public class SalesforceController extends AbstractController {
 	private final static Logger LOG = LoggerFactory.getLogger(SalesforceController.class.getName());
 	
 	public SalesforceController(Configuration cfg) {
-		
 		super(SalesforceController.class, cfg);
-		
+	}
+	
+	public void setupRoutes(Configuration cfg) {
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
         get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
@@ -51,8 +52,8 @@ public class SalesforceController extends AbstractController {
 	
 	private String oauth(Request request, Response response) {
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-    			.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+    			.header("x-api-key", API_KEY)
     			.path("salesforce")
     			.path("oauth")
     			.queryParameter("state", request.queryParams("id"))
@@ -96,9 +97,9 @@ public class SalesforceController extends AbstractController {
 		
 		Account account = getAccount(request);
     	
-    	HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+    	HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
     			.path("connector")

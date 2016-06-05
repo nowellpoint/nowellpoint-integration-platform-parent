@@ -49,10 +49,11 @@ public class SalesforceConnectorController extends AbstractController {
 	private final static Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
 	
 	public SalesforceConnectorController(Configuration cfg) {
-		
 		super(SalesforceConnectorController.class, cfg);
-        
-        get("/app/connectors/salesforce", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
+	}
+	
+	public void setupRoutes(Configuration cfg) {
+		get("/app/connectors/salesforce", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce", (request, response) -> createSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
@@ -152,10 +153,10 @@ public class SalesforceConnectorController extends AbstractController {
 				.put("name", name)
 				.put("defaultEnvironment", defaultEnvironment);
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -184,8 +185,8 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path("connectors")
@@ -334,8 +335,8 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String serviceProviderId = request.params(":serviceProviderId");
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -429,8 +430,8 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -440,13 +441,11 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		List<SalesforceConnector> salesforceConnectors = null;
 		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			System.out.println(httpResponse.getAsString());
-		} else {
+		if (httpResponse.getStatusCode() == Status.OK) {
 			salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		} else {
+			throw new BadRequestException(httpResponse.getAsString());
 		}
-		
-		System.out.println(salesforceConnectors.size());
 		
 		Map<String, Object> model = getModel();
     	model.put("account", account);
@@ -462,9 +461,9 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String tag = request.queryParams("tag");
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -487,9 +486,9 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView createSalesforceConnector(Request request, Response response) {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -519,8 +518,8 @@ public class SalesforceConnectorController extends AbstractController {
 	private String deleteSalesforceConnector(Request request, Response response) {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -587,9 +586,9 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		SalesforceConnector salesforceConnector = null;
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -644,10 +643,10 @@ public class SalesforceConnectorController extends AbstractController {
 			}
 		}
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -678,9 +677,9 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -740,10 +739,10 @@ public class SalesforceConnectorController extends AbstractController {
 
 		String successMessage = null;
 
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
+					.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 					.path("connectors")
 	    			.path("salesforce")
@@ -802,10 +801,10 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String,Object> configParams = new HashMap<String,Object>();
 		configParams.put("sobjects", sobjects);
 		
-		HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -841,9 +840,9 @@ public class SalesforceConnectorController extends AbstractController {
 	 */
 	
 	private SalesforceConnector getSalesforceConnector(Token token, String id) {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -866,8 +865,8 @@ public class SalesforceConnectorController extends AbstractController {
 	 */
 	
 	private List<ServiceProvider> getServiceProviders(String accessToken) {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(accessToken)
 				.path("providers")
 				.queryParameter("localeSidKey", "en_US")
@@ -886,9 +885,9 @@ public class SalesforceConnectorController extends AbstractController {
 	}
 	
 	private ServiceInstance getServiceInstance(String accessToken, String id, String key) {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(accessToken)
 				.path("connectors")
     			.path("salesforce")

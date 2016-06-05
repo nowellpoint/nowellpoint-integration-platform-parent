@@ -6,13 +6,13 @@
             <div class="dashhead m-t-md">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${userProfile}</h6>
+                        <h6 class="dashhead-subtitle">${labels["user.profile"]}</h6>
                         <h2 class="dashhead-title">${accountProfile.name!}</h2>
                     </div>
 
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${editUserProfile}">${edit}</a>
+                            <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${labels['edit.user.profile']}">${labels["edit"]}</a>
                         </p>
                     </div>
                 </div>
@@ -25,11 +25,11 @@
             <br>
 
             <div class="row">
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     
                 </div>
 
-                <div class="col-sm-8">
+                <div class="col-sm-6">
 
                     <div class="col-md-2">
                         <div>
@@ -38,7 +38,7 @@
                         <br>
                         <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
                             <div class="text-center">
-                                <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${delete}
+                                <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
                                 </a>
                             </div>
                         </#if>
@@ -48,52 +48,52 @@
                     <div class="col-md-10">
 
                         <dl class="dl-horizontal">
-                            <dt>${firstName}</dt>
+                            <dt>${labels["first.name"]}</dt>
                             <dd>${accountProfile.firstName!}</dd>
-                            <dt>${lastName}</dt>
+                            <dt>${labels["last.name"]}</dt>
                             <dd>${accountProfile.lastName!}</dd>
-                            <dt>${company}</dt>
+                            <dt>${labels["company"]}</dt>
                             <dd>${accountProfile.company!}</dd>
-                            <dt>${division}</dt>
+                            <dt>${labels["division"]}</dt>
                             <dd>${accountProfile.division!}</dd>
-                            <dt>${department}</dt>
+                            <dt>${labels["department"]}</dt>
                             <dd>${accountProfile.department!}</dd>
-                            <dt>${title}</dt>
+                            <dt>${labels["title"]}</dt>
                             <dd>${accountProfile.title!}</dd>
-                            <dt>${fax}</dt>
+                            <dt>${labels["fax"]}</dt>
                             <dd>${accountProfile.fax!}</dd>
-                            <dt>${mobilePhone}</dt>
+                            <dt>${labels["mobile.phone"]}</dt>
                             <dd>${accountProfile.mobilePhone!}</dd>
-                            <dt>${phone}</dt>
+                            <dt>${labels["phone"]}</dt>
                             <dd>${accountProfile.phone!}</dd>
-                            <dt>${extension}</dt>
+                            <dt>${labels["extension"]}</dt>
                             <dd>${accountProfile.extension!}</dd>
                         </dl>
 
                         <br>
 
                         <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading">${address}</h3>
+                            <h3 class="hr-divider-content hr-divider-heading">${labels["address"]}</h3>
                         </div>
 
                         <br>
 
                         <dl class="dl-horizontal">
-                            <dt>${address}</dt>
+                            <dt>${labels["street"]}</dt>
                             <dd>${accountProfile.address.street!}</dd>
-                            <dt>${city}</dt>
+                            <dt>${labels["city"]}</dt>
                             <dd>${accountProfile.address.city!}</dd>
-                            <dt>${state}</dt>
+                            <dt>${labels["state"]}</dt>
                             <dd>${accountProfile.address.state!}</dd>
-                            <dt>${zipPostalCode}</dt>
+                            <dt>${labels["zip.postal.code"]}</dt>
                             <dd>${accountProfile.address.postalCode!}</dd>
-                            <dt>${country}</dt>
+                            <dt>${labels["country"]}</dt>
                             <dd>${accountProfile.address.countryCode!}</dd>
                         </dl>
 
                     </div>
                 </div>
-                 <div class="col-sm-2">
+                 <div class="col-sm-3">
                     
                 </div>
             </div>

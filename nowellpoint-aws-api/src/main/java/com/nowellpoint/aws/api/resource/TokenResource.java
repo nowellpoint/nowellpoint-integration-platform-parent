@@ -52,7 +52,7 @@ public class TokenResource {
 		Token token = null;
 		
 		try {
-			identityProviderService.authenticate(params[0], params[1]);
+			token = identityProviderService.authenticate(params[0], params[1]);
 		} catch (ResourceException e) {
 			throw new BadRequestException(e.getMessage());
 		}

@@ -2,28 +2,38 @@ package com.nowellpoint.www.app.view;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.util.ResourceBundleUtil;
 
+import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import spark.Request;
 
 abstract class AbstractController {
 	
-	private Class<?> controllerClass;
-	private Configuration configuration;
+	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
+	protected static final String API_KEY = System.getenv("NCS_API_KEY");
+	
+	private ResourceBundleModel lables;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
-		this.controllerClass = controllerClass;
-		this.configuration = configuration;
+		this.lables = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
+		setupRoutes(configuration);
 	}
+	
+	public abstract void setupRoutes(Configuration configuration);
 	
 	protected Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("labels", ResourceBundleUtil.getResourceBundle(controllerClass.getName(), configuration.getLocale()));
+		model.put("labels", lables);
 		return model;
+	}
+	
+	protected String getValue(String key) {
+		return lables.getBundle().getString(key);
 	}
 	
 	protected Token getToken(Request request) {

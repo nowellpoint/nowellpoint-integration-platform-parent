@@ -29,10 +29,11 @@ public class ServiceProviderController extends AbstractController {
 	private static final Logger LOGGER = Logger.getLogger(ServiceProviderController.class.getName());
 	
 	public ServiceProviderController(Configuration cfg) {   
-		
 		super(ServiceProviderController.class, cfg);
-		
-        get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
+	}
+	
+	public void setupRoutes(Configuration cfg) {
+		get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/providers/:id", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
         
@@ -53,8 +54,8 @@ public class ServiceProviderController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.queryParameter("localeSidKey", "en_US")
@@ -92,8 +93,8 @@ public class ServiceProviderController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.path(id)
@@ -120,8 +121,8 @@ public class ServiceProviderController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.path(id)
