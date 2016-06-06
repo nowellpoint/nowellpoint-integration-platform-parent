@@ -75,6 +75,8 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
+        get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment/fields", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
+        
         post("/app/connectors/salesforce/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/details", (request, response) -> getService(request, response), new FreeMarkerEngine(cfg));
@@ -611,7 +613,64 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("errorMessage", errorMessage);
 		
-		return new ModelAndView(model, "secure/fragments/sobjects-list.html");
+		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private ModelAndView getFields(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String environment = request.params(":environment");
+		
+		String errorMessage = null;
+		
+		StringBuilder list = new StringBuilder();
+		
+		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
+			list.append(p);
+			list.append(",");
+		});
+		
+		SalesforceConnector salesforceConnector = null;
+		
+		System.out.println(list.toString().substring(0, list.length() - 1));
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("sobjects")
+				.path(environment)
+				.path("fields")
+				.queryParameter("sobjects", list.toString().substring(0, list.length() - 1))
+    			.execute();
+	
+		response.status(httpResponse.getStatusCode());
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+		} else {
+			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
+		}
+    	
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("errorMessage", errorMessage);
+		
+		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
 	}
 	
 	/**

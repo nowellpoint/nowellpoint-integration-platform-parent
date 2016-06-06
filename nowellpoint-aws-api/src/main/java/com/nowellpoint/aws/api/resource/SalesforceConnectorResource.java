@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -331,19 +333,19 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/service/{key}/sobjects/{environment}")
+	@Path("salesforce/{id}/service/{key}/sobjects/{environment}/fields")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response describeSObjects (
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
 			@PathParam(value="environment") String environment,
-			List<String> sobjects) {
+			@QueryParam(value="sobjects") String sobjects) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.describeGlobal(subject, id, key, environment);
+			resource = salesforceConnectorService.describeSobjects(subject, id, key, environment, Arrays.asList(sobjects.split("\\s*,\\s*")));
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}

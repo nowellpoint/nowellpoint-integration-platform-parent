@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,9 +15,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -41,10 +44,12 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
+import com.nowellpoint.client.sforce.model.Field;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.DescribeGlobalResult;
 import com.sforce.soap.partner.DescribeSObjectResult;
 import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.fault.InvalidSObjectFault;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
@@ -337,6 +342,39 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					DescribeGlobalResult result = connection.describeGlobal();
 					
+					ExecutorService executor = Executors.newFixedThreadPool(result.getSobjects().length);
+					
+					List<Future<DescribeSObjectResult>> futures = new ArrayList<Future<DescribeSObjectResult>>();
+					
+					Arrays.asList(result.getSobjects()).stream().forEach(s -> {
+						Callable<DescribeSObjectResult> task = new Callable<DescribeSObjectResult>() {
+
+							@Override
+							public DescribeSObjectResult call() throws Exception {
+								DescribeSObjectResult result = connection.describeSObject(s.getName());
+								return result;
+							}
+							
+						};
+						
+						futures.add(executor.submit(task));
+					});
+					
+					executor.shutdown();
+					executor.awaitTermination(3, TimeUnit.SECONDS);
+					
+					DescribeSObjectResult[] sobjects = new DescribeSObjectResult[result.getSobjects().length];
+					
+					for (int i = 0; i < futures.size(); i++) {
+						sobjects[i] = futures.get(i).get();
+						
+						
+						Field field = new Field();
+						field.setAutoNumber(futures.get(i).get().getFields()[0].getAutoNumber());
+					}
+					
+					//resource.setSobjects(sobjects);
+					
 //					AmazonS3 s3Client = new AmazonS3Client();
 //					
 //			        byte[] bytes = new ObjectMapper().writeValueAsString(result).getBytes(StandardCharsets.UTF_8);
@@ -350,16 +388,21 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", connection.getUserInfo().getOrganizationId(), fileInputStream, metadata);
 //			    	
 //			    	s3Client.putObject(putObjectRequest);
-			    	
-			    	resource.setSobjects(result.getSobjects());
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
 						LoginFault loginFault = (LoginFault) e;
 						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else if (e instanceof InvalidSObjectFault) {
+						InvalidSObjectFault fault = (InvalidSObjectFault) e;
+						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
+				} catch (InterruptedException e) {
+					throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+				} catch (ExecutionException e) {
+					throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 				} finally {
 					updateSalesforceConnector(resource);
 				}
@@ -369,7 +412,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public void describeSobjects(String subject, String id, String key, String environmentName, List<String> sobjects) {
+	public SalesforceConnectorDTO describeSobjects(String subject, String id, String key, String environmentName, List<String> sobjects) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 
@@ -394,15 +437,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					ExecutorService executor = Executors.newFixedThreadPool(sobjects.size());
 					
-					List<Future<String>> futures = new ArrayList<Future<String>>();
+					List<Future<DescribeSObjectResult>> futures = new ArrayList<Future<DescribeSObjectResult>>();
 					
 					sobjects.stream().forEach(s -> {
-						Callable<String> task = new Callable<String>() {
+						Callable<DescribeSObjectResult> task = new Callable<DescribeSObjectResult>() {
 
 							@Override
-							public String call() throws Exception {
+							public DescribeSObjectResult call() throws Exception {
 								DescribeSObjectResult result = connection.describeSObject(s);
-								return result.getFields()[0].getName();
+								return result;
 							}
 							
 						};
@@ -410,20 +453,30 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 						futures.add(executor.submit(task));
 					});
 					
+					executor.shutdown();
+					executor.awaitTermination(3, TimeUnit.SECONDS);
+					
 					
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
 						LoginFault loginFault = (LoginFault) e;
 						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else if (e instanceof InvalidSObjectFault) {
+						InvalidSObjectFault fault = (InvalidSObjectFault) e;
+						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
+				} catch (InterruptedException e) {
+					throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 				} finally {
 					updateSalesforceConnector(resource);
 				}
 			}
 		}
+		
+		return resource;
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

@@ -34,16 +34,17 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="content table-responsive">
-                                    <#include "fragments/sobjects-list.html" />
-                                    </div>    
+                                        <#include "fragments/sobjects-table.html" />
+                                    </div>
                                     <div class="pull-right">
+                                        <a id="get-fields" name="get-fields" class="btn btn-success" role="button">${labels["get.fields"]}</a>&nbsp;
                                         <a id="get-sobjects" name="get-sobjects" class="btn btn-success" role="button">${labels["get.sobjects"]}</a>&nbsp;
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2 col-sm-2">
-                            </div>    
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -58,6 +59,21 @@
                     dataType: "html",
                     url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}",
                     type: "GET",
+                    complete: function(data) {
+                        $("#sobjects").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+            });
+
+            $('#get-fields').click(function(e) {
+                var params = $("#form").serialize();
+                $.ajax({
+                    dataType: "html",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields",
+                    type: "GET",
+                    data: params,
                     complete: function(data) {
                         $("#sobjects").html(data.responseText);
                     }

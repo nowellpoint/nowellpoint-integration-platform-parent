@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.SalesforceConnectionCodec;
+import com.nowellpoint.aws.api.model.sforce.Sobject;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.data.mongodb.sforce.Identity;
 import com.nowellpoint.aws.data.mongodb.sforce.Organization;
-import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 
 @Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
@@ -32,7 +32,7 @@ public class SalesforceConnector extends AbstractDocument {
 	
 	private List<ServiceInstance> serviceInstances;
 	
-	private DescribeGlobalSObjectResult[] sobjects;
+	private List<Sobject> sobjects;
 	
 	public SalesforceConnector() {
 		
@@ -78,11 +78,11 @@ public class SalesforceConnector extends AbstractDocument {
 		this.serviceInstances = serviceInstances;
 	}
 
-	public DescribeGlobalSObjectResult[] getSobjects() {
+	public List<Sobject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(DescribeGlobalSObjectResult[] sobjects) {
+	public void setSobjects(List<Sobject> sobjects) {
 		this.sobjects = sobjects;
 	}
 }

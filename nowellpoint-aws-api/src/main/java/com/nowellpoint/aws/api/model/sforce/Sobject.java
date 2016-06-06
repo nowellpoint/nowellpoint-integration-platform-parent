@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.model.sforce;
+package com.nowellpoint.aws.api.model.sforce;
 
 import java.util.List;
 
