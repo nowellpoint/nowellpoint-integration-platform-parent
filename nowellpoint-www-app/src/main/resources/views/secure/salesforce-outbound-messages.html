@@ -109,7 +109,26 @@
                     </div>
                 </div>
             </div>
-           
+
+            <!-- Modal Dialog -->
+            <div class="modal fade" id="environment-variables-modal" name="environment-variables-modal" role="dialog" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">${cancel}</button>
+                            <button type="button" class="btn btn-danger" id="confirm">${confirm}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <#include "confirm-dialog.html"/>
             <#include "spinner.html" />
 
@@ -126,7 +145,21 @@
 
                     e.preventDefault();
                 });
-
+                
+                $("#environment-variables-modal").on("shown.bs.modal", function () { 
+    //var id = $(this).data('id');
+                    //console.log(id);
+                    $.ajax({
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables/DEVELOPMENT",
+                        type: "GET",
+                        dataType: "html",
+                        success: function(data) {
+                            console.log(data);
+                            $("#modal-body").html(data);
+                        }
+                    });
+});
+                
                 $('.environment-variables').on('click', function(e) {
                     var id = $(this).data('id');
                     $.ajax({
@@ -168,7 +201,6 @@
                     e.preventDefault();
 
                 });
-
             </script>
 
     </@t.page>
