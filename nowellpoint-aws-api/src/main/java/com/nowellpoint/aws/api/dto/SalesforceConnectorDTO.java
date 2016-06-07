@@ -3,7 +3,6 @@ package com.nowellpoint.aws.api.dto;
 import java.util.List;
 
 import com.nowellpoint.aws.api.model.ServiceInstance;
-import com.nowellpoint.aws.api.model.sforce.Sobject;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 
@@ -20,8 +19,6 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	private String tag;
 	
 	private List<ServiceInstance> serviceInstances;
-	
-	private List<Sobject> sobjects;
 	
 	public SalesforceConnectorDTO() {
 		
@@ -73,13 +70,5 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	
 	public void addServiceInstance(ServiceInstance serviceInstance) {
 		serviceInstances.add(serviceInstance);
-	}
-
-	public List<Sobject> getSobjects() {
-		return sobjects;
-	}
-
-	public void setSobjects(List<Sobject> sobjects) {
-		this.sobjects = sobjects;
 	}
 }

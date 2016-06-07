@@ -1,5 +1,8 @@
 package com.nowellpoint.www.app.model.sforce;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
 	
 	private Boolean autonumber;

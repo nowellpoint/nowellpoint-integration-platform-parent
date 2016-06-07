@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +24,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -55,6 +53,8 @@ import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
+import com.sforce.soap.partner.Field;
 
 import redis.clients.jedis.Jedis;
 
@@ -321,7 +321,7 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = null;
+		DescribeGlobalSObjectResult[] resource = null;
 		try {
 			resource = salesforceConnectorService.describeGlobal(subject, id, key, environment);
 		} catch (IllegalArgumentException e) {
@@ -333,19 +333,19 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/service/{key}/sobjects/{environment}/fields")
+	@Path("salesforce/{id}/service/{key}/sobjects/{environment}/fields/{sobject}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response describeSObjects (
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
 			@PathParam(value="environment") String environment,
-			@QueryParam(value="sobjects") String sobjects) {
+			@PathParam(value="sobject") String sobject) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = null;
+		Field[] resource = null;
 		try {
-			resource = salesforceConnectorService.describeSobjects(subject, id, key, environment, Arrays.asList(sobjects.split("\\s*,\\s*")));
+			resource = salesforceConnectorService.describeSobject(subject, id, key, environment, sobject);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}

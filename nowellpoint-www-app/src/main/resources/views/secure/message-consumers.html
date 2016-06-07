@@ -12,38 +12,25 @@
                     <#include "salesforce-service-nav.html" />
                 </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
-                    <div class="col-lg-10 col-md-10 col-sm-10">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                         <form id="form" name="form">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <div class="flextable">
-                                        <div class="flextable-item flextable-primary">
-                                            <h3 class="panel-title">${labels["sobjects"]}</h3>
-                                        </div>
-                                        <div class="flextable-item">
-                                            <div class="pull-right">
-                                                <b>${labels["default.environment"]}:</b>&nbsp;
-                                            </div>
-                                        </div>
-                                        <div class="flextable-item">
-                                            <div class="pull-right">
-                                                ${(serviceInstance.defaultEnvironment)!}
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="flextable">
+                                <div class="flextable-item flextable-primary">
+                                    <b>${labels["default.environment"]}:</b>&nbsp;${(serviceInstance.defaultEnvironment)!}&nbsp;<a href="#" id="get-sobjects" name="get-sobjects"><span class="icon icon-download fa-2x"></span></a>
                                 </div>
-                                <div class="panel-body">
-                                    <div class="content table-responsive">
-                                        <#include "fragments/sobjects-table.html" />
-                                    </div>
-                                    <div class="pull-right">
-                                        <a id="get-fields" name="get-fields" class="btn btn-success" role="button">${labels["get.fields"]}</a>&nbsp;
-                                        <a id="get-sobjects" name="get-sobjects" class="btn btn-success" role="button">${labels["get.sobjects"]}</a>&nbsp;
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
-                                    </div>
-                                </div>
+                                <div class="flextable-item">
+                                    <button type="submit" name="submit" id="submit" class="btn btn-lg btn-primary-outline">${labels["save"]}</button>
+                                </div>    
                             </div>
+                            <br>
                             <div class="col-lg-2 col-md-2 col-sm-2">
+                                <#include "fragments/sobjects-table.html" />
+                            </div>
+                            <div class="col-lg-10 col-md-10 col-sm-10">
+                                <#include "fragments/query-text.html" />
+                                <div class="pull-right">
+                                      <a id="test-query" name="testQuery" class="btn btn-success" role="button">${labels["test.query"]}</a>
+                                </div>    
                             </div>
                         </form>
                     </div>
@@ -67,15 +54,14 @@
                 e.preventDefault();
             });
 
-            $('#get-fields').click(function(e) {
-                var params = $("#form").serialize();
+            $(document).on('click', '.get-query', function(e) {
+                var id = $(this).data('id');
                 $.ajax({
                     dataType: "html",
-                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields/" + id,
                     type: "GET",
-                    data: params,
                     complete: function(data) {
-                        $("#sobjects").html(data.responseText);
+                        $("#query-text").html(data.responseText);
                     }
                 });
 

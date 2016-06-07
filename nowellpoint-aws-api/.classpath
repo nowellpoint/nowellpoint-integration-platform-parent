@@ -118,7 +118,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0.jar" sourcepath="/Users/jherson/.m2/repository/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0-sources.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.1/aws-java-sdk-s3-1.11.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.1/aws-java-sdk-kms-1.11.1.jar"/>

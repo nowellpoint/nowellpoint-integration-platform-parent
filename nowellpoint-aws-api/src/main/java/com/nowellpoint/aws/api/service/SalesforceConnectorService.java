@@ -5,21 +5,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -44,10 +36,11 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
-import com.nowellpoint.client.sforce.model.Field;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.DescribeGlobalResult;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 import com.sforce.soap.partner.DescribeSObjectResult;
+import com.sforce.soap.partner.Field;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.InvalidSObjectFault;
 import com.sforce.soap.partner.fault.LoginFault;
@@ -317,9 +310,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key, String environmentName) {
+	public DescribeGlobalSObjectResult[] describeGlobal(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
+		
+		DescribeGlobalSObjectResult[] sobjects = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -342,36 +337,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					DescribeGlobalResult result = connection.describeGlobal();
 					
-					ExecutorService executor = Executors.newFixedThreadPool(result.getSobjects().length);
-					
-					List<Future<DescribeSObjectResult>> futures = new ArrayList<Future<DescribeSObjectResult>>();
-					
-					Arrays.asList(result.getSobjects()).stream().forEach(s -> {
-						Callable<DescribeSObjectResult> task = new Callable<DescribeSObjectResult>() {
-
-							@Override
-							public DescribeSObjectResult call() throws Exception {
-								DescribeSObjectResult result = connection.describeSObject(s.getName());
-								return result;
-							}
-							
-						};
-						
-						futures.add(executor.submit(task));
-					});
-					
-					executor.shutdown();
-					executor.awaitTermination(3, TimeUnit.SECONDS);
-					
-					DescribeSObjectResult[] sobjects = new DescribeSObjectResult[result.getSobjects().length];
-					
-					for (int i = 0; i < futures.size(); i++) {
-						sobjects[i] = futures.get(i).get();
-						
-						
-						Field field = new Field();
-						field.setAutoNumber(futures.get(i).get().getFields()[0].getAutoNumber());
-					}
+					sobjects = result.getSobjects();
 					
 					//resource.setSobjects(sobjects);
 					
@@ -393,28 +359,21 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					if (e instanceof LoginFault) {
 						LoginFault loginFault = (LoginFault) e;
 						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
-					} else if (e instanceof InvalidSObjectFault) {
-						InvalidSObjectFault fault = (InvalidSObjectFault) e;
-						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
-				} catch (InterruptedException e) {
-					throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-				} catch (ExecutionException e) {
-					throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-				} finally {
-					updateSalesforceConnector(resource);
 				}
 			}
 		}
 		
-		return resource;
+		return sobjects;
 	}
 	
-	public SalesforceConnectorDTO describeSobjects(String subject, String id, String key, String environmentName, List<String> sobjects) {
+	public Field[] describeSobject(String subject, String id, String key, String environmentName, String sobject) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
+		
+		Field[] fields = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -435,28 +394,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					PartnerConnection connection = login(environment.get());
 					
-					ExecutorService executor = Executors.newFixedThreadPool(sobjects.size());
+					DescribeSObjectResult result = connection.describeSObject(sobject);
 					
-					List<Future<DescribeSObjectResult>> futures = new ArrayList<Future<DescribeSObjectResult>>();
-					
-					sobjects.stream().forEach(s -> {
-						Callable<DescribeSObjectResult> task = new Callable<DescribeSObjectResult>() {
-
-							@Override
-							public DescribeSObjectResult call() throws Exception {
-								DescribeSObjectResult result = connection.describeSObject(s);
-								return result;
-							}
-							
-						};
-						
-						futures.add(executor.submit(task));
-					});
-					
-					executor.shutdown();
-					executor.awaitTermination(3, TimeUnit.SECONDS);
-					
-					
+					fields = result.getFields();
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
@@ -468,15 +408,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
 					}
-				} catch (InterruptedException e) {
-					throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
-				} finally {
-					updateSalesforceConnector(resource);
 				}
 			}
 		}
 		
-		return resource;
+		return fields;
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

@@ -33,6 +33,8 @@ import com.nowellpoint.www.app.model.EnvironmentVariable;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.model.sforce.Field;
+import com.nowellpoint.www.app.model.sforce.Sobject;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import org.slf4j.Logger;
@@ -75,7 +77,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment/fields", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment/fields/:sobject", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
         
@@ -586,7 +588,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String environment = request.params(":environment");
 		String errorMessage = null;
 		
-		SalesforceConnector salesforceConnector = null;
+		List<Sobject> sobjects = Collections.emptyList();
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
@@ -604,13 +606,13 @@ public class SalesforceConnectorController extends AbstractController {
 		response.status(httpResponse.getStatusCode());
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+			sobjects = httpResponse.getEntityList(Sobject.class);
 		} else {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
     	
 		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
+		model.put("sobjects", sobjects);
 		model.put("errorMessage", errorMessage);
 		
 		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
@@ -629,19 +631,12 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		String environment = request.params(":environment");
+		String sobject = request.params(":sobject");
 		
+		String query = "Select %s From " + sobject;
 		String errorMessage = null;
 		
-		StringBuilder list = new StringBuilder();
-		
-		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
-			list.append(p);
-			list.append(",");
-		});
-		
-		SalesforceConnector salesforceConnector = null;
-		
-		System.out.println(list.toString().substring(0, list.length() - 1));
+		List<Field> fields = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
@@ -655,22 +650,23 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("sobjects")
 				.path(environment)
 				.path("fields")
-				.queryParameter("sobjects", list.toString().substring(0, list.length() - 1))
+				.path(sobject)
     			.execute();
 	
 		response.status(httpResponse.getStatusCode());
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+			fields = httpResponse.getEntityList(Field.class);
+			query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
 		} else {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
     	
 		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
+		model.put("query", query);
 		model.put("errorMessage", errorMessage);
 		
-		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
+		return new ModelAndView(model, "secure/fragments/query-text.html");
 	}
 	
 	/**

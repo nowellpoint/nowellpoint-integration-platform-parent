@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.SalesforceConnectionCodec;
-import com.nowellpoint.aws.api.model.sforce.Sobject;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
@@ -31,8 +30,6 @@ public class SalesforceConnector extends AbstractDocument {
 	private String tag;
 	
 	private List<ServiceInstance> serviceInstances;
-	
-	private List<Sobject> sobjects;
 	
 	public SalesforceConnector() {
 		
@@ -76,13 +73,5 @@ public class SalesforceConnector extends AbstractDocument {
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
-	}
-
-	public List<Sobject> getSobjects() {
-		return sobjects;
-	}
-
-	public void setSobjects(List<Sobject> sobjects) {
-		this.sobjects = sobjects;
 	}
 }

@@ -1,24 +1,14 @@
-<table id="sobjects" class="table table-hover">
-    <thead>
-        <th class="col-xs-1"></th>
-        <th class="col-xs-5">${labels["name"]}</th>
-        <th class="col-xs-6">${labels["name"]}</th>
-    </thead>
-    <tbody>
-        <#if salesforceConnector.sobjects?has_content>
-            <#list salesforceConnector.sobjects as sobject>
+<div id="sobjects">
+    <ul class="nav nav-bordered nav-stacked">
+        <li class="nav-header">${labels["sobjects"]}</li>
+        <#if sobjects?has_content>
+            <#list sobjects as sobject>
                 <#if sobject.triggerable && sobject.searchable>
-                    <tr>
-                        <td>
-                            <input type="checkbox" value="${sobject.name}" name="sobject">
-                        </td>
-                        <td>
-                            ${sobject.label}
-                        </td>
-                        <td></td>
-                    </tr>
+                    <li>
+                        <a href="#" class="get-query" data-id="${sobject.name}">${sobject.label}</a>
+                    </li>
                 </#if>
             </#list>
         </#if>
-    </tbody>
-</table>
+    </ul>
+</div>
