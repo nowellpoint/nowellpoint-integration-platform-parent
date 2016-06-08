@@ -24,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -55,6 +56,7 @@ import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
 import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 import com.sforce.soap.partner.Field;
+import com.sforce.soap.partner.sobject.SObject;
 
 import redis.clients.jedis.Jedis;
 

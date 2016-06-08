@@ -834,6 +834,12 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 	}
 	
+	private ModelAndView addCallback(Request request, Response respose) {
+		Token token = getToken(request);
+		
+		return null;
+	}
+	
 	/**
 	 * 
 	 * @param request

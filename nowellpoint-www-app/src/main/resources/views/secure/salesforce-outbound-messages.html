@@ -102,7 +102,7 @@
                                     ${labels["delete.warning"]}
                                 </p>
 
-                                <a href="" class="btn btn-lg btn-danger-outline confirm-delete" title="${labels['delete.service']}" data-toggle="modal" aria-hidden="true" role="button" data-id="${serviceInstance.key!}" data-message="${serviceInstance.serviceName!}" data-title="${deleteMessage}">${labels["delete.service"]}</a>
+                                <a href="" class="btn btn-lg btn-danger-outline confirm-delete" title="${labels['delete.service']}" data-toggle="modal" aria-hidden="true" role="button" data-id="${serviceInstance.key!}" data-message="${serviceInstance.serviceName!}" data-title="${labels['delete.message']}">${labels["delete.service"]}</a>
 
                             </div>
                         </div>
@@ -111,22 +111,27 @@
             </div>
 
             <!-- Modal Dialog -->
-            <div class="modal fade" id="environment-variables-modal" name="environment-variables-modal" role="dialog" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title"></h4>
-                        </div>
-                        <div class="modal-body" id="modal-body">
-                            
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">${cancel}</button>
-                            <button type="button" class="btn btn-danger" id="confirm">${confirm}</button>
+            <div class="modal fade" id="environment-variables-modal" role="dialog" tabindex="-1" aria-hidden="true">
+                <form class="form-vertical" id="environment-variables-form" role="form">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title">${labels["environment.variables"]}</h4>
+                            </div>
+                            <div class="modal-body" id="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="pull-right">
+                                    <a id="reset" name="reset" role="button">${labels["reset"]}</a>&nbsp;
+                                    <a id="addVariable" name="add" class="btn btn-default" role="button">${labels["add.variable"]}</a>&nbsp;
+                                    <a id="saveVariables" name="save" class="btn btn-primary" role="button">${labels["save"]}</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
 
             <#include "confirm-dialog.html"/>
@@ -136,7 +141,7 @@
                 $(document).on('click', '.test-connection', function(e) {
                     var id = $(this).data('id');
                     $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/" + id,
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/".concat(id),
                         type: "GET",
                         complete: function(data) {
                             $("#environments-table").html(data.responseText);
@@ -146,33 +151,59 @@
                     e.preventDefault();
                 });
                 
-                $("#environment-variables-modal").on("shown.bs.modal", function () { 
-    //var id = $(this).data('id');
-                    //console.log(id);
+                $(document).on('click', 'a.removeEnvironmentVariable', function(e) {
+                    $(this).closest('tr').fadeTo(400, 0, function() {
+                        $(this).remove();
+                    });
+                    
+                    e.preventDefault();
+                });
+
+                $("#environment-variables-modal").on("show.bs.modal", function(e) {
+                    var id = $(e.relatedTarget).attr('data-id');
                     $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables/DEVELOPMENT",
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables/".concat(id),
                         type: "GET",
                         dataType: "html",
                         success: function(data) {
-                            console.log(data);
                             $("#modal-body").html(data);
                         }
                     });
-});
-                
-                $('.environment-variables').on('click', function(e) {
-                    var id = $(this).data('id');
+                });
+
+                $('#addVariable').click(function() {
                     $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables/" + id,
-                        type: "GET",
                         dataType: "html",
-                        success: function(data) {
-                            $("#environment-variables-form").html(data);
-                            $('#enviroment-variables-dialog').modal('show');
+                        type: "GET",
+                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
+                        complete: function(data) {
+                            $('#environment-variables-table tbody').append(data.responseText);
                         }
                     });
+                });
 
-                    e.preventDefault();
+                $('#saveVariables').click(function() {
+                    var params = $("#environment-variables-form").serialize();
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
+                        data: params,
+                        complete: function(data) {
+                            $("#environment-variables-modal").modal('hide');
+                        }
+                    });
+                });
+
+                $('#reset').click(function() {
+                    $.ajax({
+                        dataType: "html",
+                        type: "GET",
+                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.defaultEnvironment!)}",
+                        complete: function(data) {
+                            $('#environment-variables-table').html(data.responseText);
+                        }
+                    });
                 });
 
                 $('#confirm').click(function(e) {

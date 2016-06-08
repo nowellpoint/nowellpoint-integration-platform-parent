@@ -12,28 +12,35 @@
                     <#include "salesforce-service-nav.html" />
                 </div>
                 <div class="col-lg-10 col-md-10 col-sm-10">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                        <form id="form" name="form">
-                            <div class="flextable">
-                                <div class="flextable-item flextable-primary">
-                                    <b>${labels["default.environment"]}:</b>&nbsp;${(serviceInstance.defaultEnvironment)!}&nbsp;<a href="#" id="get-sobjects" name="get-sobjects"><span class="icon icon-download fa-2x"></span></a>
-                                </div>
-                                <div class="flextable-item">
-                                    <button type="submit" name="submit" id="submit" class="btn btn-lg btn-primary-outline">${labels["save"]}</button>
-                                </div>    
+
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h6 class="dashhead-subtitle">${labels["default.environment"]}</h6>
+                            <h3 class="dashhead-title">${(serviceInstance.defaultEnvironment)!}</h3>
+                            <a href="#" id="get-sobjects" name="get-sobjects"><span class="icon icon-download fa-2x"></span></a>
+                        </div>
+                        <div class="dashhead-toolbar">
+                            <div class="dashhead-toolbar-item">
+                                
                             </div>
-                            <br>
-                            <div class="col-lg-2 col-md-2 col-sm-2">
-                                <#include "fragments/sobjects-table.html" />
+                            <span class="dashhead-toolbar-divider hidden-xs"></span>
+                            <div class="dashhead-toolbar-item">
+                                <button type="submit" name="submit" id="submit" class="btn btn-lg btn-primary-outline">${labels["save"]}</button>
                             </div>
-                            <div class="col-lg-10 col-md-10 col-sm-10">
-                                <#include "fragments/query-text.html" />
-                                <div class="pull-right">
-                                      <a id="test-query" name="testQuery" class="btn btn-success" role="button">${labels["test.query"]}</a>
-                                </div>    
-                            </div>
-                        </form>
+                        </div>
                     </div>
+
+                    <br>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        <#include "fragments/sobjects-table.html" />
+                    </div>
+                    <div class="col-lg-8 col-md-8 col-sm-8">
+                        <#include "fragments/query-text.html" />
+                        <div class="pull-right">
+                            <a id="test-query" name="testQuery" class="btn btn-success" role="button">${labels["test.query"]}</a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

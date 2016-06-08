@@ -47,6 +47,8 @@ public class ServiceInstance implements Serializable {
 	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 	
 	private Long activeEnvironments;
+	
+	private Set<Callback> callbacks;
 
 	private String configurationPage;
 	
@@ -189,6 +191,14 @@ public class ServiceInstance implements Serializable {
 
 	public void setActiveEnvironments(Long activeEnvironments) {
 		this.activeEnvironments = activeEnvironments;
+	}
+
+	public Set<Callback> getCallbacks() {
+		return callbacks;
+	}
+
+	public void setCallbacks(Set<Callback> callbacks) {
+		this.callbacks = callbacks;
 	}
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
