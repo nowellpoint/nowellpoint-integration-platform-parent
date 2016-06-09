@@ -156,6 +156,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
+		if (resource.getServiceInstances() == null) {
+			resource.setServiceInstances(Collections.emptyList());
+		}
+		
 		Map<String,ServiceInstance> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
 		resource.getServiceInstances().clear();
 		if (map.containsKey(key)) {
