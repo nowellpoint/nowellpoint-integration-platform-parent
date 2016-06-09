@@ -48,7 +48,7 @@ public class ServiceInstance implements Serializable {
 	
 	private Long activeEnvironments;
 	
-	private Set<Callback> callbacks;
+	private Set<EventListener> eventListeners;
 
 	private String configurationPage;
 	
@@ -193,12 +193,12 @@ public class ServiceInstance implements Serializable {
 		this.activeEnvironments = activeEnvironments;
 	}
 
-	public Set<Callback> getCallbacks() {
-		return callbacks;
+	public Set<EventListener> getEventListeners() {
+		return eventListeners;
 	}
 
-	public void setCallbacks(Set<Callback> callbacks) {
-		this.callbacks = callbacks;
+	public void setEventListeners(Set<EventListener> eventListeners) {
+		this.eventListeners = eventListeners;
 	}
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {

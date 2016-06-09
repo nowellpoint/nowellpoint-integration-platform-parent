@@ -24,7 +24,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -46,6 +45,7 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
+import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
@@ -56,7 +56,6 @@ import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
 import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 import com.sforce.soap.partner.Field;
-import com.sforce.soap.partner.sobject.SObject;
 
 import redis.clients.jedis.Jedis;
 
@@ -282,6 +281,31 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environment, environmentVariables);
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+		
+	}
+	
+	@POST
+	@Path("salesforce/{id}/service/{key}/listeners")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveEventListeners(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			Set<EventListenerDTO> eventListeners) {
+		
+		System.out.println("here");
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.addEventListeners(subject, id, key, eventListeners);
 		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}

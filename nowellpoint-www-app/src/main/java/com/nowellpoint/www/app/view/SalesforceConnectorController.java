@@ -4,10 +4,12 @@ import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -30,6 +33,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.EnvironmentVariable;
+import com.nowellpoint.www.app.model.EventListener;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
@@ -42,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
+import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -96,6 +101,8 @@ public class SalesforceConnectorController extends AbstractController {
         get("/app/connectors/salesforce/:id/service/:key/variables/:environment", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));        
         
         get("/app/connectors/salesforce/:id/service/:key/message-consumers", (request, response) -> getMessageConsumer(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> saveEventListeners(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/test-connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
 	}
@@ -834,10 +841,56 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 	}
 	
-	private ModelAndView addCallback(Request request, Response respose) {
+	private ModelAndView saveEventListeners(Request request, Response respose) {
 		Token token = getToken(request);
 		
-		return null;
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		String[] sobjects = request.queryParamsValues("sobject");
+		String[] create = request.queryParamsValues("create");
+		String[] update = request.queryParamsValues("update");
+		String[] delete = request.queryParamsValues("delete");
+		
+		List<EventListener> eventListeners = new ArrayList<EventListener>();
+		
+		Arrays.asList(sobjects).stream().forEach(p -> {
+			eventListeners.add(new EventListener(p,
+					Arrays.asList(create).contains(p), 
+					Arrays.asList(update).contains(p),
+					Arrays.asList(delete).contains(p)));
+		});
+	
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("listeners")
+				.body(eventListeners)
+    			.execute();
+		
+		System.out.println(httpResponse.getStatusCode());
+		System.out.println(httpResponse.getURL());
+	
+		SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+		
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(salesforceConnector));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
+		
+		return new ModelAndView(model, "secure/fragments/success-message.html");
 	}
 	
 	/**

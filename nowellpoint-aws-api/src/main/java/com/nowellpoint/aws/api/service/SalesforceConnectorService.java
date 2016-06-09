@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,11 +30,13 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
+import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
+import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.sforce.soap.partner.Connector;
@@ -255,6 +258,35 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					environment.get().getEnvironmentVariables().add(environmentVariable);
 				});
 			}
+			
+			updateSalesforceConnector(resource);
+		}
+		
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO addEventListeners(String subject, String id, String key, Set<EventListenerDTO> eventListeners) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		
+		if (serviceInstance.isPresent()) {
+			
+			if (serviceInstance.get().getEventListeners() == null) {
+				serviceInstance.get().setEventListeners(Collections.emptySet());
+			}
+			
+			Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getType(), (p) -> p));
+			
+			serviceInstance.get().getEventListeners().clear();
+			
+			eventListeners.stream().forEach(p -> {
+				EventListener eventListener =  modelMapper.map(p, EventListener.class);
+				map.put(p.getType(), eventListener);
+			});
+			
+			serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
 			
 			updateSalesforceConnector(resource);
 		}

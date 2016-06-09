@@ -12,15 +12,16 @@
                     <tr>
                         <td>
                             <a href="#" class="get-query" data-id="${sobject.name}">${sobject.label}</a>
+                            <input type="hidden" id="sobject" name="sobject" value="${sobject.name}" />
                         </td>
                         <td>
-                            <input type="checkbox" name="create">
+                            <input type="checkbox" id="create" name="create" value="${sobject.name}">
                         </td>
                         <td>
-                            <input type="checkbox" name="update">
+                            <input type="checkbox" id="update" name="update" value="${sobject.name}">
                         </td>
                         <td>
-                            <input type="checkbox" name="delete">
+                            <input type="checkbox" id="delete" name="delete" value="${sobject.name}">
                         </td>
                     </tr>
                 </#if>

@@ -42,6 +42,8 @@ public class ServiceInstance {
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
 	
 	private Long activeEnvironments;
+	
+	private List<EventListener> eventListeners;
 
 	private String configurationPage;
 	
@@ -186,6 +188,14 @@ public class ServiceInstance {
 
 	public void setActiveEnvironments(Long activeEnvironments) {
 		this.activeEnvironments = activeEnvironments;
+	}
+
+	public List<EventListener> getEventListeners() {
+		return eventListeners;
+	}
+
+	public void setEventListeners(List<EventListener> eventListeners) {
+		this.eventListeners = eventListeners;
 	}
 
 	@JsonIgnore
