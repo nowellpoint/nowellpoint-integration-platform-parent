@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -157,11 +157,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.setSubject(subject);
 		
 		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptyList());
+			resource.setServiceInstances(Collections.emptySet());
 		}
 		
 		Map<String,ServiceInstance> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
+		
 		resource.getServiceInstances().clear();
+		
 		if (map.containsKey(key)) {
 			ServiceInstance original = map.get(key);
 			original.setDefaultEnvironment(serviceInstance.getDefaultEnvironment());
@@ -169,7 +171,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			map.put(key, original);
 		}
 		
-		resource.setServiceInstances(new ArrayList<ServiceInstance>(map.values()));
+		resource.setServiceInstances(new HashSet<ServiceInstance>(map.values()));
 
 		updateSalesforceConnector(resource);
 		
@@ -281,16 +283,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				serviceInstance.get().setEventListeners(Collections.emptySet());
 			}
 			
-			Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getType(), (p) -> p));
+			Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
 			
 			serviceInstance.get().getEventListeners().clear();
 			
 			eventListeners.stream().forEach(p -> {
-				EventListener eventListener =  modelMapper.map(p, EventListener.class);
-				map.put(p.getType(), eventListener);
+				EventListener eventListener =  map.get(p.getName());
+				eventListener.setCreate(p.getCreate());
+				eventListener.setUpdate(p.getUpdate());
+				eventListener.setDelete(p.getDelete());
+				map.put(p.getName(), eventListener);
+				
+				serviceInstance.get().getEventListeners().add(eventListener);
 			});
-			
-			serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
 			
 			updateSalesforceConnector(resource);
 		}
@@ -375,21 +380,37 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					sobjects = result.getSobjects();
 					
-					//resource.setSobjects(sobjects);
+					if (serviceInstance.get().getEventListeners() == null) {
+						serviceInstance.get().setEventListeners(new HashSet<EventListener>());
+					}
 					
-//					AmazonS3 s3Client = new AmazonS3Client();
-//					
-//			        byte[] bytes = new ObjectMapper().writeValueAsString(result).getBytes(StandardCharsets.UTF_8);
-//			        
-//			        InputStream fileInputStream = new ByteArrayInputStream(bytes);
-//			        
-//			        ObjectMetadata metadata = new ObjectMetadata();
-//			        metadata.setContentType(MediaType.APPLICATION_JSON);
-//			        metadata.setContentLength(bytes.length);
-//					
-//			    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", connection.getUserInfo().getOrganizationId(), fileInputStream, metadata);
-//			    	
-//			    	s3Client.putObject(putObjectRequest);
+					Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
+					
+					serviceInstance.get().getEventListeners().clear();
+					
+					Arrays.asList(sobjects).stream().forEach(p -> {
+						
+						EventListener eventListener = new EventListener();
+						eventListener.setName(p.getName());
+						eventListener.setLabel(p.getLabel());
+						eventListener.setTriggerable(p.getTriggerable());
+						eventListener.setSearchable(p.getSearchable());
+						
+						if (map.containsKey(p.getName())) {
+							eventListener.setCreate(map.get(p.getName()).getCreate());
+							eventListener.setDelete(map.get(p.getName()).getCreate());
+							eventListener.setUpdate(map.get(p.getName()).getCreate());
+						} else {
+							eventListener.setCreate(Boolean.FALSE);
+							eventListener.setDelete(Boolean.FALSE);
+							eventListener.setUpdate(Boolean.FALSE);
+						}
+						
+						serviceInstance.get().getEventListeners().add(eventListener);
+						
+					});
+					
+					updateSalesforceConnector(resource);
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {

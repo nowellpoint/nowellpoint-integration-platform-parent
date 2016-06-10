@@ -1,6 +1,6 @@
 package com.nowellpoint.aws.api.dto;
 
-import java.util.List;
+import java.util.Set;
 
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -18,7 +18,7 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	
 	private String tag;
 	
-	private List<ServiceInstance> serviceInstances;
+	private Set<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnectorDTO() {
 		
@@ -60,11 +60,11 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 		this.tag = tag;
 	}
 
-	public List<ServiceInstance> getServiceInstances() {
+	public Set<ServiceInstance> getServiceInstances() {
 		return serviceInstances;
 	}
 
-	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
+	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
 	}
 	

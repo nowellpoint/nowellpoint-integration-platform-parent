@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,7 +32,6 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.EnvironmentVariable;
-import com.nowellpoint.www.app.model.EventListener;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
@@ -46,7 +44,6 @@ import org.slf4j.LoggerFactory;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
-import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -848,18 +845,40 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		
 		String[] sobjects = request.queryParamsValues("sobject");
-		String[] create = request.queryParamsValues("create");
-		String[] update = request.queryParamsValues("update");
-		String[] delete = request.queryParamsValues("delete");
 		
-		List<EventListener> eventListeners = new ArrayList<EventListener>();
+		List<String> create = new ArrayList<String>();
+		List<String> update = new ArrayList<String>();
+		List<String> delete = new ArrayList<String>();
 		
-		Arrays.asList(sobjects).stream().forEach(p -> {
-			eventListeners.add(new EventListener(p,
-					Arrays.asList(create).contains(p), 
-					Arrays.asList(update).contains(p),
-					Arrays.asList(delete).contains(p)));
-		});
+		if (request.queryParamsValues("create") != null) {
+			create = Arrays.asList(request.queryParamsValues("create"));
+		}
+		
+		if (request.queryParamsValues("update") != null) {
+			update = Arrays.asList(request.queryParamsValues("update"));
+		}
+		
+		if (request.queryParamsValues("delete") != null) {
+			delete = Arrays.asList(request.queryParamsValues("delete"));
+		}
+		
+		Map<String, Object> model = getModel();
+		
+		ArrayNode node = new ObjectMapper().createArrayNode();
+		
+		if (sobjects != null) {
+			for (int i = 0; i < sobjects.length; i++) {
+				node.addObject().put("name", sobjects[i])
+					.put("create", create.contains(sobjects[i]))
+					.put("update", update.contains(sobjects[i]))
+					.put("delete", delete.contains(sobjects[i]));
+			}
+			
+			System.out.println(node.toString());
+		} else {
+			model.put("errorMessage", MessageProvider.getMessage(Locale.US, "nothingToSave"));
+			return new ModelAndView(model, "secure/fragments/error-message.html");
+		}
 	
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -872,7 +891,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("service")
 				.path(key)
 				.path("listeners")
-				.body(eventListeners)
+				.body(node)
     			.execute();
 		
 		System.out.println(httpResponse.getStatusCode());
@@ -887,7 +906,6 @@ public class SalesforceConnectorController extends AbstractController {
 			e.printStackTrace();
 		}
 		
-		Map<String, Object> model = getModel();
 		model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
 		
 		return new ModelAndView(model, "secure/fragments/success-message.html");

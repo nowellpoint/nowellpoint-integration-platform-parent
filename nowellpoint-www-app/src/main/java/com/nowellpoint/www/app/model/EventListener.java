@@ -2,7 +2,13 @@ package com.nowellpoint.www.app.model;
 
 public class EventListener {
 	
-	private String type;
+	private String name;
+	
+	private String label;
+	
+	private Boolean triggerable;
+	
+	private Boolean searchable;
 	
 	private Boolean create;
 	
@@ -13,20 +19,37 @@ public class EventListener {
 	public EventListener() {
 		
 	}
-	
-	public EventListener(String type, Boolean create, Boolean update, Boolean delete) {
-		this.type = type;
-		this.create = create;
-		this.update = update;
-		this.delete = delete;
+
+	public String getName() {
+		return name;
 	}
-	
-	public String getType() {
-		return type;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	
-	public void setType(String type) {
-		this.type = type;
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public Boolean getTriggerable() {
+		return triggerable;
+	}
+
+	public void setTriggerable(Boolean triggerable) {
+		this.triggerable = triggerable;
+	}
+
+	public Boolean getSearchable() {
+		return searchable;
+	}
+
+	public void setSearchable(Boolean searchable) {
+		this.searchable = searchable;
 	}
 
 	public Boolean getCreate() {
