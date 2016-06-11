@@ -21,6 +21,8 @@ public class SalesforceConnector extends Resource {
 	
 	private List<ServiceInstance> serviceInstances;
 	
+	private List<EventListener> eventListeners;
+	
 	public SalesforceConnector() {
 		
 	}
@@ -66,6 +68,17 @@ public class SalesforceConnector extends Resource {
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public List<EventListener> getEventListeners() {
+		if (eventListeners == null) {
+			setEventListeners(new ArrayList<EventListener>());
+		}
+		return eventListeners;
+	}
+
+	public void setEventListeners(List<EventListener> eventListeners) {
+		this.eventListeners = eventListeners;
 	}
 
 	@JsonIgnore

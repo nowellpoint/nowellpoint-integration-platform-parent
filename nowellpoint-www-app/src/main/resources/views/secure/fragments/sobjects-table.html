@@ -6,9 +6,9 @@
         <th class="col-xs-1">Delete</th>
     </thead>
     <tbody>
-        <#if sobjects?has_content>
-            <#list sobjects as sobject>
-                <#if sobject.triggerable && sobject.searchable>
+        <#if serviceInstance.eventListeners?has_content>
+            <#list serviceInstance.eventListeners as sobject>
+                <#if sobject.triggerable >
                     <tr>
                         <td>
                             <a href="#" class="get-query" data-id="${sobject.name}">${sobject.label}</a>

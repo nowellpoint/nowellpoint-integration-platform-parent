@@ -351,11 +351,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public DescribeGlobalSObjectResult[] describeGlobal(String subject, String id, String key, String environmentName) {
+	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
-		
-		DescribeGlobalSObjectResult[] sobjects = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -378,7 +376,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					DescribeGlobalResult result = connection.describeGlobal();
 					
-					sobjects = result.getSobjects();
+					DescribeGlobalSObjectResult[] sobjects = result.getSobjects();
 					
 					if (serviceInstance.get().getEventListeners() == null) {
 						serviceInstance.get().setEventListeners(new HashSet<EventListener>());
@@ -395,6 +393,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 						eventListener.setLabel(p.getLabel());
 						eventListener.setTriggerable(p.getTriggerable());
 						eventListener.setSearchable(p.getSearchable());
+						eventListener.setQueryable(p.getQueryable());
 						
 						if (map.containsKey(p.getName())) {
 							eventListener.setCreate(map.get(p.getName()).getCreate());
@@ -423,7 +422,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		}
 		
-		return sobjects;
+		return resource;
 	}
 	
 	public Field[] describeSobject(String subject, String id, String key, String environmentName, String sobject) {

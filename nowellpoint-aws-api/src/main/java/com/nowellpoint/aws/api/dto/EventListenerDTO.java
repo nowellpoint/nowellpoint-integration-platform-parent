@@ -8,6 +8,8 @@ public class EventListenerDTO {
 	
 	private Boolean triggerable;
 	
+	private Boolean queryable;
+	
 	private Boolean searchable;
 	
 	private Boolean create;
@@ -42,6 +44,14 @@ public class EventListenerDTO {
 
 	public void setTriggerable(Boolean triggerable) {
 		this.triggerable = triggerable;
+	}
+
+	public Boolean getQueryable() {
+		return queryable;
+	}
+
+	public void setQueryable(Boolean queryable) {
+		this.queryable = queryable;
 	}
 
 	public Boolean getSearchable() {

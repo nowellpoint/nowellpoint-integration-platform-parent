@@ -10,6 +10,8 @@ public class EventListener {
 	
 	private Boolean searchable;
 	
+	private Boolean queryable;
+	
 	private Boolean create;
 	
 	private Boolean update;
@@ -52,6 +54,14 @@ public class EventListener {
 		this.searchable = searchable;
 	}
 
+	public Boolean getQueryable() {
+		return queryable;
+	}
+
+	public void setQueryable(Boolean queryable) {
+		this.queryable = queryable;
+	}
+	
 	public Boolean getCreate() {
 		return create;
 	}
