@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -292,10 +293,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				eventListener.setCreate(p.getCreate());
 				eventListener.setUpdate(p.getUpdate());
 				eventListener.setDelete(p.getDelete());
+				eventListener.setCallback(p.getCallback());
 				map.put(p.getName(), eventListener);
-				
-				serviceInstance.get().getEventListeners().add(eventListener);
 			});
+			
+			serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
 			
 			updateSalesforceConnector(resource);
 		}
@@ -392,13 +394,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 						eventListener.setName(p.getName());
 						eventListener.setLabel(p.getLabel());
 						eventListener.setTriggerable(p.getTriggerable());
-						eventListener.setSearchable(p.getSearchable());
+						eventListener.setCreateable(p.getCreateable());
+						eventListener.setDeleteable(p.getDeletable());
+						eventListener.setUpdateable(p.getUpdateable());
+						eventListener.setReplicateable(p.getReplicateable());
 						eventListener.setQueryable(p.getQueryable());
 						
 						if (map.containsKey(p.getName())) {
 							eventListener.setCreate(map.get(p.getName()).getCreate());
-							eventListener.setDelete(map.get(p.getName()).getCreate());
-							eventListener.setUpdate(map.get(p.getName()).getCreate());
+							eventListener.setDelete(map.get(p.getName()).getDelete());
+							eventListener.setUpdate(map.get(p.getName()).getUpdate());
+							eventListener.setCallback(map.get(p.getName()).getCallback());
 						} else {
 							eventListener.setCreate(Boolean.FALSE);
 							eventListener.setDelete(Boolean.FALSE);
@@ -425,11 +431,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public Field[] describeSobject(String subject, String id, String key, String environmentName, String sobject) {
+	public SalesforceConnectorDTO describeSobject(String subject, String id, String key, String environmentName, String sobject) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
-		
-		Field[] fields = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -452,7 +456,21 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					DescribeSObjectResult result = connection.describeSObject(sobject);
 					
-					fields = result.getFields();
+					List<Field> fields = Arrays.asList(result.getFields());
+					
+					String query = "Select %s From " + sobject;
+					query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
+					
+					Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
+					
+					serviceInstance.get().getEventListeners().clear();
+					
+					EventListener eventListener = map.get(result.getName());
+					eventListener.setCallback(query);
+					
+					serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
+					
+					updateSalesforceConnector(resource);
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
@@ -468,7 +486,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		}
 		
-		return fields;
+		return resource;
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

@@ -10,13 +10,21 @@ public class EventListener {
 	
 	private Boolean queryable;
 	
-	private Boolean searchable;
+	private Boolean createable;
+	
+	private Boolean updateable;
+	
+	private Boolean deleteable;
+	
+	private Boolean replicateable;
 	
 	private Boolean create;
 	
 	private Boolean update;
 	
 	private Boolean delete;
+	
+	private String callback;
 	
 	public EventListener() {
 		
@@ -54,12 +62,36 @@ public class EventListener {
 		this.queryable = queryable;
 	}
 
-	public Boolean getSearchable() {
-		return searchable;
+	public Boolean getCreateable() {
+		return createable;
 	}
 
-	public void setSearchable(Boolean searchable) {
-		this.searchable = searchable;
+	public void setCreateable(Boolean createable) {
+		this.createable = createable;
+	}
+
+	public Boolean getUpdateable() {
+		return updateable;
+	}
+
+	public void setUpdateable(Boolean updateable) {
+		this.updateable = updateable;
+	}
+
+	public Boolean getDeleteable() {
+		return deleteable;
+	}
+
+	public void setDeleteable(Boolean deleteable) {
+		this.deleteable = deleteable;
+	}
+
+	public Boolean getReplicateable() {
+		return replicateable;
+	}
+
+	public void setReplicateable(Boolean replicateable) {
+		this.replicateable = replicateable;
 	}
 
 	public Boolean getCreate() {
@@ -84,5 +116,13 @@ public class EventListener {
 
 	public void setDelete(Boolean delete) {
 		this.delete = delete;
+	}
+
+	public String getCallback() {
+		return callback;
+	}
+
+	public void setCallback(String callback) {
+		this.callback = callback;
 	}
 }

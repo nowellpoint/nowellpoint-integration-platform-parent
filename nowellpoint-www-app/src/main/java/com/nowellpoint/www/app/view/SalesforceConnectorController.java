@@ -35,7 +35,6 @@ import com.nowellpoint.www.app.model.EnvironmentVariable;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
-import com.nowellpoint.www.app.model.sforce.Field;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import org.slf4j.Logger;
@@ -614,15 +613,11 @@ public class SalesforceConnectorController extends AbstractController {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
 		
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(salesforceConnector));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
 		Map<String, Object> model = getModel();
 		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance);
 		model.put("errorMessage", errorMessage);
 		
 		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
@@ -643,10 +638,9 @@ public class SalesforceConnectorController extends AbstractController {
 		String environment = request.params(":environment");
 		String sobject = request.params(":sobject");
 		
-		String query = "Select %s From " + sobject;
 		String errorMessage = null;
 		
-		List<Field> fields = null;
+		SalesforceConnector salesforceConnector = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
@@ -666,17 +660,19 @@ public class SalesforceConnectorController extends AbstractController {
 		response.status(httpResponse.getStatusCode());
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			fields = httpResponse.getEntityList(Field.class);
-			query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
+			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 		} else {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
+		
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
 		Map<String, Object> model = getModel();
-		model.put("query", query);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance);
 		model.put("errorMessage", errorMessage);
 		
-		return new ModelAndView(model, "secure/fragments/query-text.html");
+		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
 	}
 	
 	/**
@@ -851,6 +847,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		
 		String[] sobjects = request.queryParamsValues("sobject");
+		String[] callbacks = request.queryParamsValues("callback");
 		
 		List<String> create = new ArrayList<String>();
 		List<String> update = new ArrayList<String>();
@@ -877,7 +874,8 @@ public class SalesforceConnectorController extends AbstractController {
 				node.addObject().put("name", sobjects[i])
 					.put("create", create.contains(sobjects[i]))
 					.put("update", update.contains(sobjects[i]))
-					.put("delete", delete.contains(sobjects[i]));
+					.put("delete", delete.contains(sobjects[i]))
+					.put("callback", callbacks[i]);
 			}
 			
 			System.out.println(node.toString());
@@ -900,18 +898,9 @@ public class SalesforceConnectorController extends AbstractController {
 				.body(node)
     			.execute();
 		
-		System.out.println(httpResponse.getStatusCode());
-		System.out.println(httpResponse.getURL());
-	
 		SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 		
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(salesforceConnector));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		model.put("salesforceConnector", salesforceConnector);
 		model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
 		
 		return new ModelAndView(model, "secure/fragments/success-message.html");

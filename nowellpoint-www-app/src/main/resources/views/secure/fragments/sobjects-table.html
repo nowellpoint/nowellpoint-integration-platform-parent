@@ -1,27 +1,53 @@
 <table id="sobjects" class="table table-hover">
     <thead>
         <th class="col-xs-5">${labels["name"]}</th>
-        <th class="col-xs-1">Create</th>
-        <th class="col-xs-1">Update</th>
-        <th class="col-xs-1">Delete</th>
+        <th class="col-xs-1 text-center">${labels["create"]}</th>
+        <th class="col-xs-1 text-center">${labels["update"]}</th>
+        <th class="col-xs-1 text-center">${labels["delete"]}</th>
+        <th class="col-xs-4 text-center">${labels["query"]}</th>
     </thead>
     <tbody>
         <#if serviceInstance.eventListeners?has_content>
-            <#list serviceInstance.eventListeners as sobject>
-                <#if sobject.triggerable >
+            <#list serviceInstance.eventListeners?sort_by( "name") as sobject>
+                <#if sobject.triggerable && sobject.queryable>
                     <tr>
                         <td>
                             <a href="#" class="get-query" data-id="${sobject.name}">${sobject.label}</a>
                             <input type="hidden" id="sobject" name="sobject" value="${sobject.name}" />
+                            <input type="hidden" id="callback" name="callback" value="${(sobject.callback)!}" />
+                        </td>
+                        <td class="text-center">
+                            <#if sobject.createable>
+                                <#if sobject.create>
+                                    <input type="checkbox" id="create" name="create" value="${sobject.name}" checked>
+                                </#if>
+                                <#if ! sobject.create>
+                                    <input type="checkbox" id="create" name="create" value="${sobject.name}">
+                                </#if>
+                            </#if>
+                        </td>
+                        <td class="text-center">
+                            <#if sobject.updateable>
+                                <#if sobject.update>
+                                    <input type="checkbox" id="update" name="update" value="${sobject.name}" checked>
+                                </#if>
+                                <#if ! sobject.update>
+                                    <input type="checkbox" id="update" name="update" value="${sobject.name}">
+                                </#if>
+                            </#if>
+                        </td>
+                        <td class="text-center">
+                            <#if sobject.deleteable && sobject.replicateable>
+                                <#if sobject.delete>
+                                    <input type="checkbox" id="delete" name="delete" value="${sobject.name}" checked>
+                                </#if>
+                                <#if ! sobject.delete>
+                                    <input type="checkbox" id="delete" name="delete" value="${sobject.name}">
+                                </#if>
+                            </#if>
                         </td>
                         <td>
-                            <input type="checkbox" id="create" name="create" value="${sobject.name}">
-                        </td>
-                        <td>
-                            <input type="checkbox" id="update" name="update" value="${sobject.name}">
-                        </td>
-                        <td>
-                            <input type="checkbox" id="delete" name="delete" value="${sobject.name}">
+                            ${(sobject.callback)!}
                         </td>
                     </tr>
                 </#if>

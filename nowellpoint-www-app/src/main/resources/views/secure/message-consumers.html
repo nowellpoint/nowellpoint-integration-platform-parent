@@ -19,11 +19,10 @@
                             <div class="dashhead-titles">
                                 <h6 class="dashhead-subtitle">${labels["default.environment"]}</h6>
                                 <h3 class="dashhead-title">${(serviceInstance.defaultEnvironment)!}</h3>
-                                <a href="#" id="get-sobjects" name="get-sobjects"><span class="icon icon-download fa-2x"></span></a>
                             </div>
                             <div class="dashhead-toolbar">
                                 <div class="dashhead-toolbar-item">
-
+                                    <a href="#" id="get-sobjects" name="get-sobjects" title="${labels['download.sobjects']}"><span class="icon icon-download fa-2x"></span></a>
                                 </div>
                                 <span class="dashhead-toolbar-divider hidden-xs"></span>
                                 <div class="dashhead-toolbar-item">
@@ -33,16 +32,17 @@
                         </div>
 
                         <br>
-                        <div class="col-lg-4 col-md-4 col-sm-4">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
                             <#include "fragments/sobjects-table.html" />
                         </div>
-                        <div class="col-lg-8 col-md-8 col-sm-8">
+                        <!--
+                        <div class="col-lg-6 col-md-6 col-sm-6">
                             <#include "fragments/query-text.html" />
                             <div class="pull-right">
                                 <a id="test-query" name="testQuery" class="btn btn-success" role="button">${labels["test.query"]}</a>
                             </div>
                         </div>
-
+-->
                     </form>
 
                 </div>
@@ -89,7 +89,7 @@
                     url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields/" + id,
                     type: "GET",
                     complete: function(data) {
-                        $("#query-text").html(data.responseText);
+                        $("#sobjects").html(data.responseText);
                     }
                 });
 
