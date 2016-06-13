@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -431,9 +430,11 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO describeSobject(String subject, String id, String key, String environmentName, String sobject) {
+	public Field[] describeSobject(String subject, String id, String key, String environmentName, String sobject) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
+		
+		Field[] fields = null;
 
 		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -456,21 +457,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					DescribeSObjectResult result = connection.describeSObject(sobject);
 					
-					List<Field> fields = Arrays.asList(result.getFields());
-					
-					String query = "Select %s From " + sobject;
-					query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
-					
-					Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
-					
-					serviceInstance.get().getEventListeners().clear();
-					
-					EventListener eventListener = map.get(result.getName());
-					eventListener.setCallback(query);
-					
-					serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
-					
-					updateSalesforceConnector(resource);
+					fields = result.getFields();
 					
 				} catch (ConnectionException e) {
 					if (e instanceof LoginFault) {
@@ -486,7 +473,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		}
 		
-		return resource;
+		return fields;
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

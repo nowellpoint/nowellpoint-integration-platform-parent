@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -35,6 +34,7 @@ import com.nowellpoint.www.app.model.EnvironmentVariable;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.model.sforce.Field;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import org.slf4j.Logger;
@@ -633,10 +633,68 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getFields(Request request, Response response) {
 		Token token = getToken(request);
 		
+		Account account = getAccount(request);
+		
 		String id = request.params(":id");
 		String key = request.params(":key");
 		String environment = request.params(":environment");
 		String sobject = request.params(":sobject");
+		
+		String query = "Select %s From " + sobject;
+		String errorMessage = null;
+		
+		List<Field> fields = null;
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("sobjects")
+				.path(environment)
+				.path("fields")
+				.path(sobject)
+    			.execute();
+	
+		response.status(httpResponse.getStatusCode());
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			fields = httpResponse.getEntityList(Field.class);
+			query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
+		} else {
+			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
+		}
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("fields", fields);
+		model.put("query", query);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance);
+		model.put("errorMessage", errorMessage);
+		
+		return new ModelAndView(model, "secure/query-edit.html");
+	}
+	
+	private ModelAndView getQuery(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String environment = request.params(":environment");
+		String sobject = request.params(":sobject");
+		
+		System.out.println(sobject);
 		
 		String errorMessage = null;
 		
@@ -666,13 +724,23 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+		
+		String query = serviceInstance
+				.getEventListeners()
+				.stream()
+				.filter(p -> sobject.equals(p.getName()))
+				.findFirst()
+				.get()
+				.getCallback();
     	
 		Map<String, Object> model = getModel();
+		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
 		model.put("errorMessage", errorMessage);
+		model.put("query", query);
 		
-		return new ModelAndView(model, "secure/fragments/sobjects-table.html");
+		return new ModelAndView(model, "secure/query-edit.html");
 	}
 	
 	/**

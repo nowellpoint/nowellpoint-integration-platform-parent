@@ -54,6 +54,7 @@ import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
+import com.sforce.soap.partner.Field;
 
 import redis.clients.jedis.Jedis;
 
@@ -365,7 +366,7 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = null;
+		Field[] resource = null;
 		try {
 			resource = salesforceConnectorService.describeSobject(subject, id, key, environment, sobject);
 		} catch (IllegalArgumentException e) {

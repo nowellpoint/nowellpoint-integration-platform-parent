@@ -4,7 +4,7 @@
         <th class="col-xs-1 text-center">${labels["create"]}</th>
         <th class="col-xs-1 text-center">${labels["update"]}</th>
         <th class="col-xs-1 text-center">${labels["delete"]}</th>
-        <th class="col-xs-4 text-center">${labels["query"]}</th>
+        <th class="col-xs-1 text-center">${labels["query"]}</th>
     </thead>
     <tbody>
         <#if serviceInstance.eventListeners?has_content>
@@ -12,7 +12,7 @@
                 <#if sobject.triggerable && sobject.queryable>
                     <tr>
                         <td>
-                            <a href="#" class="get-query" data-id="${sobject.name}">${sobject.label}</a>
+                            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields/${sobject.name}">${sobject.label}</a>
                             <input type="hidden" id="sobject" name="sobject" value="${sobject.name}" />
                             <input type="hidden" id="callback" name="callback" value="${(sobject.callback)!}" />
                         </td>
@@ -46,8 +46,10 @@
                                 </#if>
                             </#if>
                         </td>
-                        <td>
-                            ${(sobject.callback)!}
+                        <td class="text-center">
+                            <#if sobject.callback?has_content>
+                                <a href="" class="open-query-dialog" id="query-dialog" data-toggle="modal" data-target="#query-modal" aria-hidden="true" data-message="${(sobject.callback)!}"><span class="icon icon-ccw fa-1x"></span></a>
+                            </#if>
                         </td>
                     </tr>
                 </#if>
