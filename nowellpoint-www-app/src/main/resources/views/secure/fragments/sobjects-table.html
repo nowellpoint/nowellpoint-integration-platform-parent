@@ -12,7 +12,7 @@
                 <#if sobject.triggerable && sobject.queryable>
                     <tr>
                         <td>
-                            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields/${sobject.name}">${sobject.label}</a>
+                            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners/${(serviceInstance.defaultEnvironment)!}/fields/${sobject.name}">${sobject.label}</a>
                             <input type="hidden" id="sobject" name="sobject" value="${sobject.name}" />
                             <input type="hidden" id="callback" name="callback" value="${(sobject.callback)!}" />
                         </td>

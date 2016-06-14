@@ -45,8 +45,11 @@ import com.sforce.soap.partner.DescribeGlobalSObjectResult;
 import com.sforce.soap.partner.DescribeSObjectResult;
 import com.sforce.soap.partner.Field;
 import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.QueryResult;
 import com.sforce.soap.partner.fault.InvalidSObjectFault;
 import com.sforce.soap.partner.fault.LoginFault;
+import com.sforce.soap.partner.fault.ApiQueryFault;
+import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 
@@ -474,6 +477,74 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		
 		return fields;
+	}
+	
+	public SObject[] query(String subject, String id, String key, String environmentName, String queryString) {
+		if (subject == null) {
+			throw new IllegalArgumentException("Missing parameter: subject");
+		}
+		
+		if (id == null) {
+			throw new IllegalArgumentException("Missing parameter: id");
+		}
+		
+		if (key == null) {
+			throw new IllegalArgumentException("Missing parameter: id");
+		}
+		
+		if (environmentName == null) {
+			throw new IllegalArgumentException("Missing parameter: environmentName");
+		}
+		
+		if (queryString == null) {
+			throw new IllegalArgumentException("Missing parameter: queryString");
+		}
+		
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		SObject[] sobjects = null;
+
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+
+			if (environment.isPresent()) {
+				
+				try {
+
+					PartnerConnection connection = login(environment.get());
+
+					QueryResult result = connection.query(queryString);
+
+					sobjects = result.getRecords();
+
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else if (e instanceof ApiQueryFault) {
+						ApiQueryFault fault = (ApiQueryFault) e;
+						System.out.println(fault.getExceptionMessage());
+						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				}
+			}
+		}
+		
+		return sobjects;
+		
 	}
 	
 	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {

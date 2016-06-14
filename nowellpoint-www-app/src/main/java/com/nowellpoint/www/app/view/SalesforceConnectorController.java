@@ -4,6 +4,8 @@ import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -77,7 +80,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment/fields/:sobject", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/listeners/:environment/fields/:sobject", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
         
@@ -95,7 +98,9 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/variables/:environment", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));        
         
-        get("/app/connectors/salesforce/:id/service/:key/message-consumers", (request, response) -> getMessageConsumer(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> getEventListeners(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/connectors/salesforce/:id/service/:key/listeners/:environment/query", (request, response) -> testQuery(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> saveEventListeners(request, response), new FreeMarkerEngine(cfg));
         
@@ -120,7 +125,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView getMessageConsumer(Request request, Response response) {
+	private ModelAndView getEventListeners(Request request, Response response) {
 		Token token = getToken(request);
 		
 		Account account = getAccount(request);
@@ -137,7 +142,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
 			
-		return new ModelAndView(model, "secure/message-consumers.html");
+		return new ModelAndView(model, "secure/event-listeners.html");
 	}
 	
 	/**
@@ -640,7 +645,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String environment = request.params(":environment");
 		String sobject = request.params(":sobject");
 		
-		String query = "Select %s From " + sobject;
 		String errorMessage = null;
 		
 		List<Field> fields = null;
@@ -664,7 +668,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			fields = httpResponse.getEntityList(Field.class);
-			query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
 		} else {
 			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
@@ -672,6 +675,19 @@ public class SalesforceConnectorController extends AbstractController {
 		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+		
+		String query = serviceInstance
+				.getEventListeners()
+				.stream()
+				.filter(p -> sobject.equals(p.getName()))
+				.findFirst()
+				.get()
+				.getCallback();
+		
+		if (query == null || query.trim().length() == 0) {
+			query = "Select %s From " + sobject;
+			query = String.format(query, fields.stream().map(e -> e.getName()).collect(Collectors.joining(", ")));
+		}
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
@@ -684,63 +700,47 @@ public class SalesforceConnectorController extends AbstractController {
 		return new ModelAndView(model, "secure/query-edit.html");
 	}
 	
-	private ModelAndView getQuery(Request request, Response response) {
+	private ModelAndView testQuery(Request request, Response response) {
 		Token token = getToken(request);
-		
-		Account account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
 		String environment = request.params(":environment");
 		String sobject = request.params(":sobject");
+		String queryString = request.queryParams("callback");
 		
-		System.out.println(sobject);
-		
-		String errorMessage = null;
-		
-		SalesforceConnector salesforceConnector = null;
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-				.path(id)
-				.path("service")
-				.path(key)
-				.path("sobjects")
-				.path(environment)
-				.path("fields")
-				.path(sobject)
-    			.execute();
-	
-		response.status(httpResponse.getStatusCode());
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-		} else {
-			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = RestResource.get(API_ENDPOINT)
+					.accept(MediaType.APPLICATION_JSON)
+					.header("x-api-key", API_KEY)
+					.bearerAuthorization(token.getAccessToken())
+					.path("connectors")
+					.path("salesforce")
+					.path(id)
+					.path("service")
+					.path(key)
+					.path("sobjects")
+					.path(environment)
+					.path("query")
+					.queryParameter("q", URLEncoder.encode(queryString.concat(" Limit 1"), "UTF-8"))
+					.execute();
+			
+		} catch (HttpRequestException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-		
-		String query = serviceInstance
-				.getEventListeners()
-				.stream()
-				.filter(p -> sobject.equals(p.getName()))
-				.findFirst()
-				.get()
-				.getCallback();
-    	
 		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance);
-		model.put("errorMessage", errorMessage);
-		model.put("query", query);
 		
-		return new ModelAndView(model, "secure/query-edit.html");
+		if (httpResponse.getStatusCode() == Status.OK) {
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "testSuccess"));
+			return new ModelAndView(model, "secure/fragments/success-message.html");
+		} else {
+			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
+			return new ModelAndView(model, "secure/fragments/error-message.html");
+		}
 	}
 	
 	/**

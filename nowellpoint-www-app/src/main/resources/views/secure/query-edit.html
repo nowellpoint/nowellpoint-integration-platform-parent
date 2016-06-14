@@ -7,7 +7,6 @@
         <div class="container-fluid">
             <br>
             <div class="row">
-                <div id="status-message"></div>
                 <div class="col-lg-2 col-md-2 col-sm-2">
                     <#include "salesforce-service-nav.html" />
                 </div>
@@ -54,17 +53,22 @@
                             <br>
 
                             <div class="hr-divider">
-                                
+
                             </div>
 
                             <br>
 
                             <div class="col-lg-10 col-md-10 col-sm-10">
                                 <div class="form-group">
-                                    <textarea class="form-control" rows="10" id="callback">${(query)!}</textarea>
+                                    <textarea class="form-control" rows="10" id="callback" name="callback">${(query)!}</textarea>
                                 </div>
-                                <div class="pull-right">
-                                    <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/message-consumers" name="cancel" id="cancel" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                <div id="status-message"></div>
+                                <div class="form-group">
+                                    <div class="pull-right">
+                                        <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners" name="cancel" id="cancel" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                        <a href="#" name="test-query" id="test-query" class="btn btn-default" role="button">${labels["test.query"]}</a>
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -77,6 +81,23 @@
         <#include "spinner.html" />
 
         <script>
+            $('#test-query').click(function(e) {
+                var params = $("#form").serialize();
+                console.log(params);
+                $.ajax({
+                    dataType: "html",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners/${(serviceInstance.defaultEnvironment)!}/query",
+                    type: "GET",
+                    data: params,
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+            });
+
+
             $('#form').submit(function(e) {
                 var params = $("#form").serialize();
                 console.log(params);

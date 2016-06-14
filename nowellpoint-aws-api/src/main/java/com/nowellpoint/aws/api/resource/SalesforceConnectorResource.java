@@ -24,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -55,6 +56,7 @@ import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
 import com.sforce.soap.partner.Field;
+import com.sforce.soap.partner.sobject.SObject;
 
 import redis.clients.jedis.Jedis;
 
@@ -318,13 +320,13 @@ public class SalesforceConnectorResource {
 	public Response testConnection(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			@PathParam(value="environment") String environment) {
+			@PathParam(value="environment") String environmentName) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.testConnection(subject, id, key, environment);
+			resource = salesforceConnectorService.testConnection(subject, id, key, environmentName);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -340,13 +342,35 @@ public class SalesforceConnectorResource {
 	public Response getSobjects(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			@PathParam(value="environment") String environment) {
+			@PathParam(value="environment") String environmentName) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.describeGlobal(subject, id, key, environment);
+			resource = salesforceConnectorService.describeGlobal(subject, id, key, environmentName);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/sobjects/{environment}/query")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response query(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@PathParam(value="environment") String environmentName,
+			@QueryParam(value="q") String queryString) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SObject[] resource = null;
+		try {
+			resource = salesforceConnectorService.query(subject, id, key, environmentName, queryString);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -361,14 +385,14 @@ public class SalesforceConnectorResource {
 	public Response describeSObjects (
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			@PathParam(value="environment") String environment,
+			@PathParam(value="environment") String environmentName,
 			@PathParam(value="sobject") String sobject) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		Field[] resource = null;
 		try {
-			resource = salesforceConnectorService.describeSobject(subject, id, key, environment, sobject);
+			resource = salesforceConnectorService.describeSobject(subject, id, key, environmentName, sobject);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
