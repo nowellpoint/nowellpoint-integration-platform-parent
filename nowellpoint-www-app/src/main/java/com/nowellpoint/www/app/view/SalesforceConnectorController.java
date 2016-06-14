@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -693,6 +694,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("account", account);
 		model.put("fields", fields);
 		model.put("query", query);
+		model.put("sobject", sobject);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
 		model.put("errorMessage", errorMessage);
@@ -726,11 +728,9 @@ public class SalesforceConnectorController extends AbstractController {
 					.queryParameter("q", URLEncoder.encode(queryString.concat(" Limit 1"), "UTF-8"))
 					.execute();
 			
-		} catch (HttpRequestException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		} catch (HttpRequestException | UnsupportedEncodingException e) {
+			throw new InternalServerErrorException(e);
+		} 
 		
 		Map<String, Object> model = getModel();
 		
