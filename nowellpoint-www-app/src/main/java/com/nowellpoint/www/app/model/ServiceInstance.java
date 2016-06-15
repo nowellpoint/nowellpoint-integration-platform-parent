@@ -44,6 +44,8 @@ public class ServiceInstance {
 	private Long activeEnvironments;
 	
 	private List<EventListener> eventListeners;
+	
+	private S3Bucket s3Bucket;
 
 	private String configurationPage;
 	
@@ -196,6 +198,14 @@ public class ServiceInstance {
 
 	public void setEventListeners(List<EventListener> eventListeners) {
 		this.eventListeners = eventListeners;
+	}
+
+	public S3Bucket getS3Bucket() {
+		return s3Bucket;
+	}
+
+	public void setS3Bucket(S3Bucket s3Bucket) {
+		this.s3Bucket = s3Bucket;
 	}
 
 	@JsonIgnore

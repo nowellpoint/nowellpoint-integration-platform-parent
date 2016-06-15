@@ -9,18 +9,18 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,9 +40,6 @@ import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.model.sforce.Field;
 import com.nowellpoint.www.app.util.MessageProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
@@ -83,8 +80,6 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/listeners/:environment/fields/:sobject", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/:id/service/:key/configuration", (request, response) -> saveConfiguration(request, response), new FreeMarkerEngine(cfg));
-        
         get("/app/connectors/salesforce/:id/service/:key/details", (request, response) -> getService(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
@@ -106,6 +101,10 @@ public class SalesforceConnectorController extends AbstractController {
         post("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> saveEventListeners(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/test-connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/connectors/salesforce/:id/service/:key/targets", (request, response) -> getTargets(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/connectors/salesforce/:id/service/:key/targets", (request, response) -> saveTargets(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -144,6 +143,82 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("serviceInstance", serviceInstance);
 			
 		return new ModelAndView(model, "secure/event-listeners.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private ModelAndView getTargets(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		
+		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("serviceInstance", serviceInstance);
+		model.put("s3Bucket", serviceInstance.getS3Bucket());
+			
+		return new ModelAndView(model, "secure/targets.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private ModelAndView saveTargets(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String s3bucket = request.queryParams("s3bucket");
+		String awsAccessKey = request.queryParams("awsAccessKey");
+		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
+		
+		ObjectNode node = new ObjectMapper().createObjectNode()
+				.put("bucketName", s3bucket)
+				.put("awsAccessKey", awsAccessKey)
+				.put("awsSecretAccessKey", awsSecretAccessKey);
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("s3bucket")
+				.body(node)
+				.execute();
+		
+		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		
+		Map<String, Object> model = getModel();
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
+			return new ModelAndView(model, "secure/fragments/success-message.html");
+		} else {
+			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
+			return new ModelAndView(model, "secure/fragments/e-message.html");
+		}
 	}
 	
 	/**
@@ -708,7 +783,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		String environment = request.params(":environment");
-		String sobject = request.params(":sobject");
 		String queryString = request.queryParams("callback");
 		
 		HttpResponse httpResponse = null;
@@ -976,59 +1050,6 @@ public class SalesforceConnectorController extends AbstractController {
 	
 	/**
 	 * 
-	 * @param request
-	 * @param respose
-	 * @return
-	 */
-	
-	private ModelAndView saveConfiguration(Request request, Response respose) {
-		Token token = getToken(request);
-		
-		Account account = getAccount(request);
-		
-		String errorMessage = null;
-		
-		Set<String> sobjects = new HashSet<String>();
-		Arrays.asList(request.queryMap("sobject").values()).stream().forEach(p -> {
-			sobjects.add(p);
-		});
-		
-		Map<String,Object> configParams = new HashMap<String,Object>();
-		configParams.put("sobjects", sobjects);
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-				.path(request.params(":id"))
-				.path("service")
-				.path(request.params(":key"))
-				.body(configParams)
-    			.execute();
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			//model.put("yaml", httpResponse.getHeaders().get("Location"));
-		} else {
-			errorMessage = httpResponse.getEntity(JsonNode.class).get("message").asText();
-			
-		}
-		
-		ServiceInstance serviceInstance = getServiceInstance(token.getAccessToken(), request.params(":id"), request.params(":key"));
-				
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("serviceInstance", serviceInstance);
-		model.put("sobjects", sobjects);
-		model.put("errorMessage", errorMessage);
-		
-		return new ModelAndView(model, String.format("secure/%s", serviceInstance.getConfigurationPage()));
-	}
-	
-	/**
-	 * 
 	 * @param accessToken
 	 * @param id
 	 * @return
@@ -1077,23 +1098,5 @@ public class SalesforceConnectorController extends AbstractController {
 		providers = providers.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
 		
 		return providers;
-	}
-	
-	private ServiceInstance getServiceInstance(String accessToken, String id, String key) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", API_KEY)
-				.bearerAuthorization(accessToken)
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("service")
-    			.path(key)
-    			.execute();
-		
-    	ServiceInstance serviceInstance = httpResponse.getEntity(ServiceInstance.class);
-    	
-    	return serviceInstance;
-
 	}
 }

@@ -8,7 +8,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -50,6 +49,7 @@ import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.model.S3Bucket;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
@@ -311,7 +311,28 @@ public class SalesforceConnectorResource {
 		
 		return Response.ok(resource)
 				.build(); 
+	}
+	
+	@POST
+	@Path("salesforce/{id}/service/{key}/s3bucket")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveTargets(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			S3Bucket s3bucket) {
 		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.addS3Bucket(subject, id, key, s3bucket);
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
 	}
 	
 	@GET
@@ -398,25 +419,6 @@ public class SalesforceConnectorResource {
 		}
 		
 		return Response.ok(resource)
-				.build(); 
-	}
-	
-	@POST
-	@Path("salesforce/{id}/service/{key}/configuration")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addServiceConfiguration(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key,
-			Map<String,Object> configParams) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		salesforceConnectorService.addServiceConfiguration(subject, id, key, configParams);
-		
-		salesforceService.buildPackage(key);
-		
-		return Response.ok()
 				.build(); 
 	}
 	

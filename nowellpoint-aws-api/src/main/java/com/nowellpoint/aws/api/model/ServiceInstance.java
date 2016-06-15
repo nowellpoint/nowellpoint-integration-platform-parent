@@ -49,6 +49,8 @@ public class ServiceInstance implements Serializable {
 	private Long activeEnvironments;
 	
 	private Set<EventListener> eventListeners;
+	
+	private S3Bucket s3bucket;
 
 	private String configurationPage;
 	
@@ -199,6 +201,14 @@ public class ServiceInstance implements Serializable {
 
 	public void setEventListeners(Set<EventListener> eventListeners) {
 		this.eventListeners = eventListeners;
+	}
+
+	public S3Bucket getS3bucket() {
+		return s3bucket;
+	}
+
+	public void setS3bucket(S3Bucket s3bucket) {
+		this.s3bucket = s3bucket;
 	}
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {

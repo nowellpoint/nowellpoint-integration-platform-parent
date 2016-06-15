@@ -1,12 +1,7 @@
 package com.nowellpoint.aws.api.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,15 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
@@ -37,6 +24,7 @@ import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.EventListener;
+import com.nowellpoint.aws.api.model.S3Bucket;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.sforce.soap.partner.Connector;
@@ -46,9 +34,9 @@ import com.sforce.soap.partner.DescribeSObjectResult;
 import com.sforce.soap.partner.Field;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.QueryResult;
+import com.sforce.soap.partner.fault.ApiQueryFault;
 import com.sforce.soap.partner.fault.InvalidSObjectFault;
 import com.sforce.soap.partner.fault.LoginFault;
-import com.sforce.soap.partner.fault.ApiQueryFault;
 import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
@@ -307,6 +295,25 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
+	public SalesforceConnectorDTO addS3Bucket(String subject, String id, String key, S3Bucket s3Bucket) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+		
+		if (serviceInstance.isPresent()) {
+			
+			serviceInstance.get().setS3bucket(s3Bucket);
+			
+			updateSalesforceConnector(resource);
+		}
+		
+		return resource;
+	}
+	
 	public SalesforceConnectorDTO testConnection(String subject, String id, String key, String environmentName) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
@@ -534,7 +541,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
 					} else if (e instanceof ApiQueryFault) {
 						ApiQueryFault fault = (ApiQueryFault) e;
-						System.out.println(fault.getExceptionMessage());
 						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
 					} else {
 						throw new InternalServerErrorException(e.getMessage());
@@ -545,47 +551,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return sobjects;
 		
-	}
-	
-	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {
-		SalesforceConnectorDTO salesforceConnector = findSalesforceConnector(subject, id);
-		
-		Optional<ServiceInstance> serviceInstance = salesforceConnector.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
-		
-		Map<String,Object> configFile = new HashMap<String,Object>();
-		configFile.put("id", salesforceConnector.getIdentity().getId());
-		configFile.put("organizationId", salesforceConnector.getOrganization().getId());
-		configFile.put("instanceName", salesforceConnector.getOrganization().getInstanceName());
-		configFile.put("url.sobjects", salesforceConnector.getIdentity().getUrls().getSobjects());
-		configFile.put("url.metadata", salesforceConnector.getIdentity().getUrls().getMetadata());
-		configFile.put("key", serviceInstance.get().getKey());
-		configFile.put("providerType", serviceInstance.get().getProviderType());
-		configFile.putAll(configParams);
-		
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		try {
-					
-			StringWriter sw = new StringWriter();
-			
-			YamlWriter writer = new YamlWriter(sw);
-			writer.write(configFile);
-			writer.close();
-			
-			byte[] bytes = sw.toString().getBytes(StandardCharsets.UTF_8);
-			
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-	    	objectMetadata.setContentLength(bytes.length);
-	    	objectMetadata.setContentType(MediaType.TEXT_PLAIN);
-			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-configuration-files", key, new ByteArrayInputStream(bytes), objectMetadata);
-	    	
-	    	s3Client.putObject(putObjectRequest);	
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
 	}
 	
 	private PartnerConnection login(Environment environment) throws IllegalArgumentException, ConnectionException {
