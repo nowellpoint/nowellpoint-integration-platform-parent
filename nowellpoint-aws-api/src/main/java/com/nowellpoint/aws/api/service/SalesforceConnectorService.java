@@ -24,7 +24,7 @@ import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.EventListener;
-import com.nowellpoint.aws.api.model.S3Bucket;
+import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.sforce.soap.partner.Connector;
@@ -157,7 +157,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		if (map.containsKey(key)) {
 			ServiceInstance original = map.get(key);
-			original.setDefaultEnvironment(serviceInstance.getDefaultEnvironment());
+			original.setSourceEnvironment(serviceInstance.getSourceEnvironment());
 			original.setName(serviceInstance.getName());
 			map.put(key, original);
 		}
@@ -295,7 +295,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addS3Bucket(String subject, String id, String key, S3Bucket s3Bucket) {
+	public SalesforceConnectorDTO addTargets(String subject, String id, String key, Targets targets) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
@@ -306,7 +306,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		if (serviceInstance.isPresent()) {
 			
-			serviceInstance.get().setS3bucket(s3Bucket);
+			serviceInstance.get().setTargets(targets);
 			
 			updateSalesforceConnector(resource);
 		}
@@ -362,7 +362,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key, String environmentName) {
+	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 
@@ -376,7 +376,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			Optional<Environment> environment = serviceInstance.get()
 					.getEnvironments()
 					.stream()
-					.filter(p -> p.getName().equals(environmentName))
+					.filter(p -> p.getName().equals(serviceInstance.get().getSourceEnvironment()))
 					.findFirst();
 			
 			if (environment.isPresent()) {
@@ -440,7 +440,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public Field[] describeSobject(String subject, String id, String key, String environmentName, String sobject) {
+	public Field[] describeSobject(String subject, String id, String key, String sobject) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
@@ -456,7 +456,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			Optional<Environment> environment = serviceInstance.get()
 					.getEnvironments()
 					.stream()
-					.filter(p -> p.getName().equals(environmentName))
+					.filter(p -> p.getName().equals(serviceInstance.get().getSourceEnvironment()))
 					.findFirst();
 			
 			if (environment.isPresent()) {
@@ -486,7 +486,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return fields;
 	}
 	
-	public SObject[] query(String subject, String id, String key, String environmentName, String queryString) {
+	public SObject[] query(String subject, String id, String key, String queryString) {
 		if (subject == null) {
 			throw new IllegalArgumentException("Missing parameter: subject");
 		}
@@ -497,10 +497,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		if (key == null) {
 			throw new IllegalArgumentException("Missing parameter: id");
-		}
-		
-		if (environmentName == null) {
-			throw new IllegalArgumentException("Missing parameter: environmentName");
 		}
 		
 		if (queryString == null) {
@@ -522,7 +518,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			Optional<Environment> environment = serviceInstance.get()
 					.getEnvironments()
 					.stream()
-					.filter(p -> p.getName().equals(environmentName))
+					.filter(p -> p.getName().equals(serviceInstance.get().getSourceEnvironment()))
 					.findFirst();
 
 			if (environment.isPresent()) {

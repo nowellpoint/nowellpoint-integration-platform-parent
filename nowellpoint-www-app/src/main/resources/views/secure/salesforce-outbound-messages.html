@@ -60,21 +60,27 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="defaultEnvironment">${labels["default.environment"]}</label>
+                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="sourceEnvironment">${labels["source.environment"]}</label>
                                     <div class="col-sm-3 col-md-3 col-lg-3">
-                                        <select id="defaultEnvironment" name="defaultEnvironment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
-                                            <option value="">--- ${labels["select.environment"]} ---</option>
-                                            <#list serviceInstance.environments as environment>
-                                                <#if environment.active>
-                                                    <#if environment.name==( serviceInstance.defaultEnvironment)! "">
-                                                        <option value="${environment.name}" selected>${environment.label}</option>
+                                        <#if ! serviceInstance.eventListeners?has_content>
+                                            <select id="sourceEnvironment" name="sourceEnvironment" class="form-control" value="${(serviceInstance.sourceEnvironment)!}" required="">
+                                                <option value="">--- ${labels["select.environment"]} ---</option>
+                                                <#list serviceInstance.environments as environment>
+                                                    <#if environment.active>
+                                                        <#if environment.name==( serviceInstance.sourceEnvironment)! "">
+                                                            <option value="${environment.name}" selected>${environment.label}</option>
+                                                        </#if>
+                                                        <#if environment.name !=( serviceInstance.sourceEnvironment)! "">
+                                                            <option value="${environment.name}">${environment.label}</option>
+                                                        </#if>
                                                     </#if>
-                                                    <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
-                                                        <option value="${environment.name}">${environment.label}</option>
-                                                    </#if>
-                                                </#if>
-                                            </#list>
-                                        </select>
+                                                </#list>
+                                            </select>
+                                        </#if>
+                                        <#if serviceInstance.eventListeners?has_content>
+                                            <input type="hidden" id="sourceEnvironment" name="sourceEnvironment" value="${(serviceInstance.sourceEnvironment)!}" />
+                                            <p class="form-control-static">${(serviceInstance.sourceEnvironment)!}</p>
+                                        </#if>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -150,12 +156,12 @@
 
                     e.preventDefault();
                 });
-                
+
                 $(document).on('click', 'a.removeEnvironmentVariable', function(e) {
                     $(this).closest('tr').fadeTo(400, 0, function() {
                         $(this).remove();
                     });
-                    
+
                     e.preventDefault();
                 });
 
@@ -199,7 +205,7 @@
                     $.ajax({
                         dataType: "html",
                         type: "GET",
-                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.defaultEnvironment!)}",
+                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.sourceEnvironment!)}",
                         complete: function(data) {
                             $('#environment-variables-table').html(data.responseText);
                         }

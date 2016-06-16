@@ -13,7 +13,7 @@
                     <tr>
                         <td>
                             <!--
-                            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners/${(serviceInstance.defaultEnvironment)!}/fields/${sobject.name}">${sobject.label}</a> -->
+                            <a href="${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners/${(serviceInstance.sourceEnvironment)!}/fields/${sobject.name}">${sobject.label}</a> -->
                             ${sobject.label}
                             <input type="hidden" id="sobject" name="sobject" value="${sobject.name}" />
                             <input type="hidden" id="callback" name="callback" value="${(sobject.callback)!}" />

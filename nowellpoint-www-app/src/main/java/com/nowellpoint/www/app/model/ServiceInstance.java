@@ -33,7 +33,7 @@ public class ServiceInstance {
 	
 	private String tag;
 	
-	private String defaultEnvironment;
+	private String sourceEnvironment;
 	
 	private String status;
 	
@@ -45,7 +45,7 @@ public class ServiceInstance {
 	
 	private List<EventListener> eventListeners;
 	
-	private S3Bucket s3Bucket;
+	private Targets targets;
 
 	private String configurationPage;
 	
@@ -141,12 +141,12 @@ public class ServiceInstance {
 		this.tag = tag;
 	}
 
-	public String getDefaultEnvironment() {
-		return defaultEnvironment;
+	public String getSourceEnvironment() {
+		return sourceEnvironment;
 	}
 
-	public void setDefaultEnvironment(String defaultEnvironment) {
-		this.defaultEnvironment = defaultEnvironment;
+	public void setSourceEnvironment(String sourceEnvironment) {
+		this.sourceEnvironment = sourceEnvironment;
 	}
 
 	public String getStatus() {
@@ -200,12 +200,12 @@ public class ServiceInstance {
 		this.eventListeners = eventListeners;
 	}
 
-	public S3Bucket getS3Bucket() {
-		return s3Bucket;
+	public Targets getTargets() {
+		return targets;
 	}
 
-	public void setS3Bucket(S3Bucket s3Bucket) {
-		this.s3Bucket = s3Bucket;
+	public void setTargets(Targets targets) {
+		this.targets = targets;
 	}
 
 	@JsonIgnore

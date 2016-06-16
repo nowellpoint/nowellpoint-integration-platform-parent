@@ -17,8 +17,8 @@
 
                         <div class="dashhead">
                             <div class="dashhead-titles">
-                                <h6 class="dashhead-subtitle">${labels["default.environment"]}</h6>
-                                <h3 class="dashhead-title">${(serviceInstance.defaultEnvironment)!}</h3>
+                                <h6 class="dashhead-subtitle">${labels["source.environment"]}</h6>
+                                <h3 class="dashhead-title">${(serviceInstance.sourceEnvironment)!}</h3>
                             </div>
                             <div class="dashhead-toolbar">
                                 <div class="dashhead-toolbar-item">
@@ -55,7 +55,7 @@
             $('#get-sobjects').click(function(e) {
                 $.ajax({
                     dataType: "html",
-                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects",
                     type: "GET",
                     complete: function(data) {
                         $("#sobjects").html(data.responseText);
@@ -86,7 +86,7 @@
                 var id = $(this).data('id');
                 $.ajax({
                     dataType: "html",
-                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.defaultEnvironment)!}/fields/" + id,
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.sourceEnvironment)!}/fields/" + id,
                     type: "GET",
                     complete: function(data) {
                         $("#sobjects").html(data.responseText);

@@ -76,7 +76,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         delete("/app/connectors/salesforce/:id/service/:key", (request, response) -> deleteService(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/sobjects/:environment", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/listeners/:environment/fields/:sobject", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
         
@@ -96,7 +96,7 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> getEventListeners(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/listeners/:environment/query", (request, response) -> testQuery(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/listeners/query", (request, response) -> testQuery(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> saveEventListeners(request, response), new FreeMarkerEngine(cfg));
         
@@ -168,7 +168,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("serviceInstance", serviceInstance);
-		model.put("s3Bucket", serviceInstance.getS3Bucket());
+		model.put("targets", serviceInstance.getTargets());
 			
 		return new ModelAndView(model, "secure/targets.html");
 	}
@@ -185,14 +185,16 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String s3bucket = request.queryParams("s3bucket");
+		String bucketName = request.queryParams("bucketName");
 		String awsAccessKey = request.queryParams("awsAccessKey");
 		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
 		
-		ObjectNode node = new ObjectMapper().createObjectNode()
-				.put("bucketName", s3bucket)
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode node = objectMapper.createObjectNode();
+		node.set("simpleStorageService", objectMapper.createObjectNode()
+				.put("bucketName", bucketName)
 				.put("awsAccessKey", awsAccessKey)
-				.put("awsSecretAccessKey", awsSecretAccessKey);
+				.put("awsSecretAccessKey", awsSecretAccessKey));
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -204,7 +206,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.path(id)
 				.path("service")
 				.path(key)
-				.path("s3bucket")
+				.path("targets")
 				.body(node)
 				.execute();
 		
@@ -234,11 +236,11 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		String name = request.queryParams("name");
-		String defaultEnvironment = request.queryParams("defaultEnvironment");
+		String sourceEnvironment = request.queryParams("sourceEnvironment");
 		
 		ObjectNode node = new ObjectMapper().createObjectNode()
 				.put("name", name)
-				.put("defaultEnvironment", defaultEnvironment);
+				.put("sourceEnvironment", sourceEnvironment);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -338,7 +340,7 @@ public class SalesforceConnectorController extends AbstractController {
 			
 			environment = serviceInstance.getEnvironments()
 					.stream()
-					.filter(p -> p.getName().equals(serviceInstance.getDefaultEnvironment()))
+					.filter(p -> p.getName().equals(serviceInstance.getSourceEnvironment()))
 					.findFirst()
 					.orElse(new Environment());
 			
@@ -668,7 +670,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String environment = request.params(":environment");
+		
 		String errorMessage = null;
 		
 		SalesforceConnector salesforceConnector = null;
@@ -683,7 +685,6 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("service")
 				.path(key)
 				.path("sobjects")
-				.path(environment)
     			.execute();
 	
 		response.status(httpResponse.getStatusCode());
@@ -718,7 +719,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String environment = request.params(":environment");
 		String sobject = request.params(":sobject");
 		
 		String errorMessage = null;
@@ -735,9 +735,8 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("service")
 				.path(key)
 				.path("sobjects")
-				.path(environment)
-				.path("fields")
 				.path(sobject)
+				.path("fields")
     			.execute();
 	
 		response.status(httpResponse.getStatusCode());
@@ -782,7 +781,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String environment = request.params(":environment");
+
 		String queryString = request.queryParams("callback");
 		
 		HttpResponse httpResponse = null;
@@ -796,8 +795,6 @@ public class SalesforceConnectorController extends AbstractController {
 					.path(id)
 					.path("service")
 					.path(key)
-					.path("sobjects")
-					.path(environment)
 					.path("query")
 					.queryParameter("q", URLEncoder.encode(queryString.concat(" Limit 1"), "UTF-8"))
 					.execute();
@@ -915,7 +912,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String defaultEnvironment = request.queryParams("defaultEnvironment");
+		String sourceEnvironment = request.queryParams("sourceEnvironment");
 		
 		Map<String, Object> model = getModel();
 		
@@ -953,7 +950,7 @@ public class SalesforceConnectorController extends AbstractController {
 					.path("service")
 					.path(key)
 					.path("variables")
-					.path(defaultEnvironment)
+					.path(sourceEnvironment)
 					.body(node)
 	    			.execute();
 		
@@ -966,7 +963,7 @@ public class SalesforceConnectorController extends AbstractController {
 				
 			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 				
-			Optional<Environment> environment = serviceInstance.getEnvironment(defaultEnvironment);
+			Optional<Environment> environment = serviceInstance.getEnvironment(sourceEnvironment);
 				
 			if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
 				environment.get().getEnvironmentVariables().add(new EnvironmentVariable());

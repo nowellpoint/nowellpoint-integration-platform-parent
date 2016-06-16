@@ -10,7 +10,7 @@ public class ServiceInstanceDTO implements Serializable {
 	
 	private String status;
 	
-	private String defaultEnvironment;
+	private String sourceEnvironment;
 
 	public ServiceInstanceDTO() {
 		
@@ -32,11 +32,11 @@ public class ServiceInstanceDTO implements Serializable {
 		this.status = status;
 	}
 
-	public String getDefaultEnvironment() {
-		return defaultEnvironment;
+	public String getSourceEnvironment() {
+		return sourceEnvironment;
 	}
 
-	public void setDefaultEnvironment(String defaultEnvironment) {
-		this.defaultEnvironment = defaultEnvironment;
+	public void setSourceEnvironment(String sourceEnvironment) {
+		this.sourceEnvironment = sourceEnvironment;
 	}
 }

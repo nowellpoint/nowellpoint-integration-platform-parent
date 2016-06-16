@@ -18,8 +18,8 @@
 
                         <div class="dashhead">
                             <div class="dashhead-titles">
-                                <h6 class="dashhead-subtitle">${labels["default.environment"]}</h6>
-                                <h3 class="dashhead-title">${(serviceInstance.defaultEnvironment)!}</h3>
+                                <h6 class="dashhead-subtitle">${labels["source.environment"]}</h6>
+                                <h3 class="dashhead-title">${(serviceInstance.sourceEnvironment)!}</h3>
                             </div>
                         </div>
 
@@ -91,7 +91,7 @@
                 console.log(params);
                 $.ajax({
                     dataType: "html",
-                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners/${(serviceInstance.defaultEnvironment)!}/query",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners/${(serviceInstance.sourceEnvironment)!}/query",
                     type: "GET",
                     data: params,
                     complete: function(data) {

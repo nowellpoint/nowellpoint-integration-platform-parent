@@ -38,7 +38,7 @@ public class ServiceInstance implements Serializable {
 	
 	private String tag;
 	
-	private String defaultEnvironment;
+	private String sourceEnvironment;
 	
 	private String status;
 	
@@ -50,7 +50,7 @@ public class ServiceInstance implements Serializable {
 	
 	private Set<EventListener> eventListeners;
 	
-	private S3Bucket s3bucket;
+	private Targets targets;
 
 	private String configurationPage;
 	
@@ -154,12 +154,12 @@ public class ServiceInstance implements Serializable {
 		this.configurationPage = configurationPage;
 	}
 	
-	public String getDefaultEnvironment() {
-		return defaultEnvironment;
+	public String getSourceEnvironment() {
+		return sourceEnvironment;
 	}
 
-	public void setDefaultEnvironment(String defaultEnvironment) {
-		this.defaultEnvironment = defaultEnvironment;
+	public void setSourceEnvironment(String sourceEnvironment) {
+		this.sourceEnvironment = sourceEnvironment;
 	}
 
 	public String getStatus() {
@@ -203,12 +203,12 @@ public class ServiceInstance implements Serializable {
 		this.eventListeners = eventListeners;
 	}
 
-	public S3Bucket getS3bucket() {
-		return s3bucket;
+	public Targets getTargets() {
+		return targets;
 	}
 
-	public void setS3bucket(S3Bucket s3bucket) {
-		this.s3bucket = s3bucket;
+	public void setTargets(Targets targets) {
+		this.targets = targets;
 	}
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {

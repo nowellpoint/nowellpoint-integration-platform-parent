@@ -14,7 +14,7 @@
                 <div class="col-lg-10 col-md-10 col-sm-10">
                     <div class="col-lg-10 col-md-10 col-sm-10">
                         <form class="form-vertical" id="environment-variables-form" role="form">
-                            <input type="hidden" name="defaultEnvironment" id="defaulEnvironment" value="${(serviceInstance.defaultEnvironment)!}" />
+                            <input type="hidden" name="sourceEnvironment" id="defaulEnvironment" value="${(serviceInstance.sourceEnvironment)!}" />
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <div class="flextable">
@@ -23,14 +23,14 @@
                                         </div>
                                         <div class="flextable-item">
                                             <div class="pull-right">
-                                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.defaultEnvironment)!}" required="">
+                                                <select id="environment" name="environment" class="form-control" value="${(serviceInstance.sourceEnvironment)!}" required="">
                                                     <option value="">--- ${labels["select.environment"]} ---</option>
                                                     <#list serviceInstance.environments?sort_by( "name") as environment>
                                                         <#if environment.active>
-                                                            <#if environment.name==( serviceInstance.defaultEnvironment)! "">
+                                                            <#if environment.name==( serviceInstance.sourceEnvironment)! "">
                                                                 <option value="${environment.name}" selected>${environment.label}</option>
                                                             </#if>
-                                                            <#if environment.name !=( serviceInstance.defaultEnvironment)! "">
+                                                            <#if environment.name !=( serviceInstance.sourceEnvironment)! "">
                                                                 <option value="${environment.name}">${environment.label}</option>
                                                             </#if>
                                                         </#if>
@@ -79,7 +79,7 @@
             });
 
             $("#environment").change(function() {
-                $("#defaultEnvironment").val(this.value);
+                $("#sourceEnvironment").val(this.value);
                 $.ajax({
                     dataType: "html",
                     type: "GET",
@@ -106,7 +106,7 @@
                 $.ajax({
                     dataType: "html",
                     type: "GET",
-                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.defaultEnvironment!)}",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.sourceEnvironment!)}",
                     complete: function(data) {
                         $('#environment-variables-table').html(data.responseText);
                     }

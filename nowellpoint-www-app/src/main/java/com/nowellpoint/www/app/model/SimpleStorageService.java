@@ -1,6 +1,6 @@
-package com.nowellpoint.aws.api.model;
+package com.nowellpoint.www.app.model;
 
-public class S3Bucket {
+public class SimpleStorageService {
 	
 	public String bucketName;
 	
@@ -8,7 +8,7 @@ public class S3Bucket {
 	
 	public String awsSecretAccessKey;
 	
-	public S3Bucket() {
+	public SimpleStorageService() {
 		
 	}
 
