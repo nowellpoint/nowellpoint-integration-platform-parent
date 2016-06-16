@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.api;
+
 
 import static org.junit.Assert.assertNotNull;
 
@@ -8,6 +8,8 @@ import java.net.URLEncoder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -15,19 +17,17 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
+import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
-import com.sforce.soap.partner.Connector;
-import com.sforce.soap.partner.PartnerConnection;
-import com.sforce.soap.partner.QueryResult;
-import com.sforce.soap.partner.sobject.SObject;
-import com.sforce.ws.ConnectionException;
-import com.sforce.ws.ConnectorConfig;
 
 public class TestSObjectToCSV {
 	
@@ -55,15 +55,40 @@ public class TestSObjectToCSV {
 			
 			Token token = response.getToken();
 			
+			Client client = new Client();
+			
 			GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
 					.setAccessToken(response.getToken().getAccessToken())
 					.setId(response.getToken().getId());
 			
-			Client client = new Client();
-			
 			Identity identity = client.getIdentity(getIdentityRequest);
 			
 			assertNotNull(identity);
+			
+			DescribeGlobalSobjectsRequest describeSobjectsRequest = new DescribeGlobalSobjectsRequest()
+					.setAccessToken(response.getToken().getAccessToken())
+					.setSobjectsUrl(identity.getUrls().getSobjects());
+			
+			DescribeGlobalSobjectsResult result = client.describeGlobal(describeSobjectsRequest);
+			
+//			try {
+//				System.out.println(new ObjectMapper().writeValueAsString(result));
+//			} catch (JsonProcessingException e) {
+//				e.printStackTrace();
+//			}
+			
+			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+					.setAccessToken(response.getToken().getAccessToken())
+					.setSobjectsUrl(identity.getUrls().getSobjects())
+					.setSobject("Account");
+			
+			DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+			
+			try {
+				System.out.println(new ObjectMapper().writeValueAsString(describeSobjectResult));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
 			
 			HttpResponse httpResponse = RestResource.get(identity.getUrls().getQuery())
 					.accept(MediaType.APPLICATION_JSON)
@@ -71,47 +96,14 @@ public class TestSObjectToCSV {
 	    			.queryParameter("q", URLEncoder.encode("Select Id, Name from Account","UTF-8"))
 	    			.execute();
 			
-			System.out.println(httpResponse.getAsString());
+			//System.out.println(httpResponse.getAsString());
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
-		} catch (HttpRequestException e) {
-			// TODO Auto-generated catch block
+		} catch (HttpRequestException | UnsupportedEncodingException e) {
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		
-		ConnectorConfig config = new ConnectorConfig();
-		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", "https://login.salesforce.com"));
-		config.setUsername(System.getenv("SALESFORCE_USERNAME"));
-		config.setPassword(System.getenv("SALESFORCE_PASSWORD").concat(System.getenv("SALESFORCE_SECURITY_TOKEN")));
-		
-		QueryResult queryResult = null;
-		
-		try {
-			PartnerConnection connection = Connector.newConnection(config);
-			queryResult = connection.query("Select Id, Name from Account");
-		} catch (ConnectionException e) {
-			e.printStackTrace();
-		}	
-		
-		
-		//try {
-			
-			SObject[] sobjects = queryResult.getRecords();
-			
-			System.out.println(sobjects[0].getField("Id"));
-			
-			//JAXBContext context = JAXBContext.newInstance( Record.class );
-			//Unmarshaller unmarshaller = context.createUnmarshaller();
-			//unmarshaller.unmarshal(sobjects[0].getField("Id"), Record.class );
-		//} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}
+		}
 	}
 }

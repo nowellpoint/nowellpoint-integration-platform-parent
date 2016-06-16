@@ -1,20 +1,20 @@
 package com.nowellpoint.client.sforce;
 
-public class DescribeSobjectsRequest {
+public class DescribeGlobalSobjectsRequest {
 	
 	private String sobjectsUrl;
 	
 	private String accessToken;
 	
-	public DescribeSobjectsRequest() {
+	public DescribeGlobalSobjectsRequest() {
 		
 	}
 
-	public String getSobjectUrl() {
+	public String getSobjectsUrl() {
 		return sobjectsUrl;
 	}
 
-	public DescribeSobjectsRequest setSobjectUrl(String sobjectsUrl) {
+	public DescribeGlobalSobjectsRequest setSobjectsUrl(String sobjectsUrl) {
 		this.sobjectsUrl = sobjectsUrl;
 		return this;
 	}
@@ -23,7 +23,7 @@ public class DescribeSobjectsRequest {
 		return accessToken;
 	}
 
-	public DescribeSobjectsRequest setAccessToken(String accessToken) {
+	public DescribeGlobalSobjectsRequest setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 		return this;
 	}

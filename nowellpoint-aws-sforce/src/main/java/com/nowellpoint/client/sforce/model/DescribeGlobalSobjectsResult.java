@@ -3,7 +3,10 @@ package com.nowellpoint.client.sforce.model;
 import java.io.Serializable;
 import java.util.List;
 
-public class DescribeSobjectsResult implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class DescribeGlobalSobjectsResult implements Serializable {
 
 	/**
 	 * 
@@ -17,7 +20,7 @@ public class DescribeSobjectsResult implements Serializable {
 	
 	private List<Sobject> sobjects;
 	
-	public DescribeSobjectsResult() {
+	public DescribeGlobalSobjectsResult() {
 		
 	}
 	
