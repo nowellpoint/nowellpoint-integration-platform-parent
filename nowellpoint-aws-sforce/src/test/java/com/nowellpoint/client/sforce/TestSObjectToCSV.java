@@ -1,15 +1,23 @@
+package com.nowellpoint.client.sforce;
 
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -65,17 +73,13 @@ public class TestSObjectToCSV {
 			
 			assertNotNull(identity);
 			
-			DescribeGlobalSobjectsRequest describeSobjectsRequest = new DescribeGlobalSobjectsRequest()
-					.setAccessToken(response.getToken().getAccessToken())
-					.setSobjectsUrl(identity.getUrls().getSobjects());
+//			DescribeGlobalSobjectsRequest describeSobjectsRequest = new DescribeGlobalSobjectsRequest()
+//					.setAccessToken(response.getToken().getAccessToken())
+//					.setSobjectsUrl(identity.getUrls().getSobjects());
+//			
+//			DescribeGlobalSobjectsResult result = client.describeGlobal(describeSobjectsRequest);
 			
-			DescribeGlobalSobjectsResult result = client.describeGlobal(describeSobjectsRequest);
-			
-//			try {
-//				System.out.println(new ObjectMapper().writeValueAsString(result));
-//			} catch (JsonProcessingException e) {
-//				e.printStackTrace();
-//			}
+			long startTime = System.currentTimeMillis();
 			
 			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
 					.setAccessToken(response.getToken().getAccessToken())
@@ -84,19 +88,25 @@ public class TestSObjectToCSV {
 			
 			DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 			
-			try {
-				System.out.println(new ObjectMapper().writeValueAsString(describeSobjectResult));
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
+			String queryString = "Select %s From Account Limit 1";
+			queryString = String.format(queryString, describeSobjectResult
+					.getFields()
+					.stream()
+					.map(e -> e.getName()).collect(Collectors.joining(",")));
+			
+			System.out.println(System.currentTimeMillis() - startTime);
+			
+			assertNotNull(describeSobjectResult.getFields());
 			
 			HttpResponse httpResponse = RestResource.get(identity.getUrls().getQuery())
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
-	    			.queryParameter("q", URLEncoder.encode("Select Id, Name from Account","UTF-8"))
+	    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
 	    			.execute();
 			
-			//System.out.println(httpResponse.getAsString());
+			System.out.println(System.currentTimeMillis() - startTime);
+			
+			parseJson(httpResponse.getAsString());
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
@@ -104,6 +114,32 @@ public class TestSObjectToCSV {
 			System.out.println(e.getErrorDescription());
 		} catch (HttpRequestException | UnsupportedEncodingException e) {
 			e.printStackTrace();
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void parseJson(String jsonString) throws JsonParseException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonFactory jsonFactory = new JsonFactory(); 
+		JsonParser parser = jsonFactory.createParser(jsonString);
+		JsonToken token = parser.nextToken();
+
+		while (true) {
+
+		    if (!JsonToken.START_OBJECT.equals(token)) {
+		        break;
+		    }
+		    if (token == null) {
+		        break;
+		    }
+
+		    ObjectNode node = mapper.readTree(parser);
+		    
+		    System.out.println("totalSize: " + node.get("totalSize").asInt());
+
 		}
 	}
 }
