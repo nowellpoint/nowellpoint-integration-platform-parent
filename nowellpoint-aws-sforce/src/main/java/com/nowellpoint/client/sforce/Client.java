@@ -2,7 +2,6 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -144,8 +143,6 @@ public class Client {
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(request.getAccessToken())
 				.execute();
-		
-		System.out.println(httpResponse.getURL());
 		
 		DescribeSobjectResult result = null;
 		

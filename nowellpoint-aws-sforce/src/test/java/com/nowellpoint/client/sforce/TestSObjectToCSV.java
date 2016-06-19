@@ -1,41 +1,36 @@
 package com.nowellpoint.client.sforce;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.sforce.Authenticators;
-import com.nowellpoint.client.sforce.Client;
-import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
-import com.nowellpoint.client.sforce.DescribeSobjectRequest;
-import com.nowellpoint.client.sforce.GetIdentityRequest;
-import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
-import com.nowellpoint.client.sforce.OauthException;
-import com.nowellpoint.client.sforce.OauthRequests;
-import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
-import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class TestSObjectToCSV {
 	
@@ -45,7 +40,7 @@ public class TestSObjectToCSV {
 	}
 	
 	@Test
-	public void testXmlQuery() {
+	public void testCreateCSV() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
@@ -106,40 +101,59 @@ public class TestSObjectToCSV {
 			
 			System.out.println(System.currentTimeMillis() - startTime);
 			
-			parseJson(httpResponse.getAsString());
+			QueryResult result = httpResponse.getEntity(QueryResult.class);
+			
+			assertNotNull(result.getDone());
+			assertNotNull(result.getTotalSize());
+			assertNotNull(result.getRecords().get(0).get("Id").asText());
+			assertEquals(result.getRecords().size(), 1);
+			
+			convertToCsv(result.getRecords());
+			
+			System.out.println(System.currentTimeMillis() - startTime);
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
-		} catch (HttpRequestException | UnsupportedEncodingException e) {
+		} catch (HttpRequestException | IOException e) {
 			e.printStackTrace();
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		}  
 	}
 	
-	private void parseJson(String jsonString) throws JsonParseException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonFactory jsonFactory = new JsonFactory(); 
-		JsonParser parser = jsonFactory.createParser(jsonString);
-		JsonToken token = parser.nextToken();
-
-		while (true) {
-
-		    if (!JsonToken.START_OBJECT.equals(token)) {
-		        break;
-		    }
-		    if (token == null) {
-		        break;
-		    }
-
-		    ObjectNode node = mapper.readTree(parser);
-		    
-		    System.out.println("totalSize: " + node.get("totalSize").asInt());
-
+	private void convertToCsv(ArrayNode records) throws IOException {
+		 CSVWriter writer = new CSVWriter(new FileWriter("test.csv"));
+		 
+		 Map<String,String> record = parseRecord(null, records.get(0));
+		 
+		 Set<String> columnNames = record.keySet();
+		 Collection<String> values = record.values();
+		 
+		 writer.writeNext(columnNames.toArray(new String[columnNames.size()]));
+		 writer.writeNext(values.toArray(new String[values.size()]));
+		 
+		 writer.close();
+	}
+	
+	private Map<String,String> parseRecord(String parent, JsonNode node) {
+		Map<String,String> columnNames = new HashMap<String,String>();
+		Iterator<Entry<String,JsonNode>> iterator = node.fields();
+		while (iterator.hasNext()) {
+			 Entry<String,JsonNode> entry = iterator.next();
+			 if (entry.getValue().isObject()) {
+				 columnNames.putAll(parseRecord(entry.getKey(), entry.getValue()));
+			 } else {
+				 if (parent != null) {
+					 columnNames.put(parent.concat(".").concat(entry.getKey()), parseValue(entry.getValue()));
+				 } else {
+					 columnNames.put(entry.getKey(), parseValue(entry.getValue()));
+				 }
+			 }
 		}
+		return columnNames;
+	}
+	
+	private String parseValue(JsonNode node) {
+		return node != null ? node.asText() : "";
 	}
 }
