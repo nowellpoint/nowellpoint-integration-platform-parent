@@ -4,9 +4,13 @@ package com.nowellpoint.client.sforce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +22,10 @@ import java.util.stream.Collectors;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.aws.http.HttpRequestException;
@@ -27,6 +35,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.OutboundEvent;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -68,32 +77,38 @@ public class TestSObjectToCSV {
 			
 			assertNotNull(identity);
 			
-//			DescribeGlobalSobjectsRequest describeSobjectsRequest = new DescribeGlobalSobjectsRequest()
-//					.setAccessToken(response.getToken().getAccessToken())
-//					.setSobjectsUrl(identity.getUrls().getSobjects());
-//			
-//			DescribeGlobalSobjectsResult result = client.describeGlobal(describeSobjectsRequest);
-			
 			long startTime = System.currentTimeMillis();
+			
+			OutboundEvent outboundEvent = getOutboundEvent(token.getAccessToken(), identity.getUrls().getPartner());
+			
+			assertNotNull(outboundEvent);
+			assertNotNull(outboundEvent.getId());
+			assertNotNull(outboundEvent.getObject());
+			assertNotNull(outboundEvent.getObjectId());
+			assertNotNull(outboundEvent.getCreatedDate());
+			
+			System.out.println(System.currentTimeMillis() - startTime);
 			
 			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
 					.setAccessToken(response.getToken().getAccessToken())
 					.setSobjectsUrl(identity.getUrls().getSobjects())
-					.setSobject("Account");
+					.setSobject(outboundEvent.getObject());
 			
 			DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 			
-			String queryString = "Select %s From Account Limit 1";
+			String queryString = "Select %s From %s Where Id = '%s'";
 			queryString = String.format(queryString, describeSobjectResult
 					.getFields()
 					.stream()
-					.map(e -> e.getName()).collect(Collectors.joining(",")));
+					.map(e -> e.getName()).collect(Collectors.joining(",")), outboundEvent.getObject(), outboundEvent.getObjectId());
+			
+			System.out.println(queryString);
 			
 			System.out.println(System.currentTimeMillis() - startTime);
 			
 			assertNotNull(describeSobjectResult.getFields());
 			
-			HttpResponse httpResponse = RestResource.get(identity.getUrls().getQuery())
+			HttpResponse httpResponse = RestResource.get(identity.getUrls().getRest().concat("queryAll"))
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 	    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
@@ -112,13 +127,41 @@ public class TestSObjectToCSV {
 			
 			System.out.println(System.currentTimeMillis() - startTime);
 			
+			saveToBucket(outboundEvent, new File("test.csv"));
+			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
-		} catch (HttpRequestException | IOException e) {
+		} catch (HttpRequestException | IOException | ParseException e) {
 			e.printStackTrace();
-		}  
+		}
+	}
+	
+	private OutboundEvent getOutboundEvent(String sessionId, String partnerUrl) throws HttpRequestException, UnsupportedEncodingException, ParseException {
+		
+		String url = partnerUrl.substring(0, partnerUrl.lastIndexOf("/") + 1).concat("queryAll").replace("/Soap/u/", "/data/v");
+		
+		String queryString = "Select Event_Type__c,Id,Object__c,Object_Id__c,CreatedDate from Outbound_Event__c Where Id = 'a0D3A00000IOwlvUAD'";
+		
+		HttpResponse httpResponse = RestResource.get(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(sessionId)
+    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
+    			.execute();
+		
+		QueryResult result = httpResponse.getEntity(QueryResult.class);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		
+		OutboundEvent outboundEvent = new OutboundEvent();
+		outboundEvent.setId(result.getRecords().get(0).get("Id").asText());
+		outboundEvent.setEventType(result.getRecords().get(0).get("Event_Type__c").asText());
+		outboundEvent.setObject(result.getRecords().get(0).get("Object__c").asText());
+		outboundEvent.setObjectId(result.getRecords().get(0).get("Object_Id__c").asText());
+		outboundEvent.setCreatedDate(sdf.parse(result.getRecords().get(0).get("CreatedDate").asText()));
+		
+		return outboundEvent;
 	}
 	
 	private void convertToCsv(ArrayNode records) throws IOException {
@@ -155,5 +198,23 @@ public class TestSObjectToCSV {
 	
 	private String parseValue(JsonNode node) {
 		return node != null ? node.asText() : "";
+	}
+	
+	private void  saveToBucket(OutboundEvent outboundEvent, File file) {
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(file.length());
+		metadata.setSSEAlgorithm(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION); 
+		
+		String key = outboundEvent.getObject()
+				.concat("/")
+				.concat(outboundEvent.getObjectId())
+				.concat("/")
+				.concat(outboundEvent.getCreatedDate().toString());
+    	
+    	PutObjectRequest putObjectRequest = new PutObjectRequest("salesforce-outbound-messages", key, file).withMetadata(metadata);
+    	
+    	s3Client.putObject(putObjectRequest);
 	}
 }
