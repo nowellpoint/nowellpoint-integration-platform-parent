@@ -142,7 +142,7 @@ public class TestSObjectToCSV {
 		
 		String url = partnerUrl.substring(0, partnerUrl.lastIndexOf("/") + 1).concat("queryAll").replace("/Soap/u/", "/data/v");
 		
-		String queryString = "Select Event_Type__c,Id,Object__c,Object_Id__c,CreatedDate from Outbound_Event__c Where Id = 'a0D3A00000IOwlvUAD'";
+		String queryString = "Select Event_Type__c,Id,Object__c,Object_Id__c,CreatedDate from Outbound_Event__c Where Id = ''";
 		
 		HttpResponse httpResponse = RestResource.get(url)
 				.accept(MediaType.APPLICATION_JSON)

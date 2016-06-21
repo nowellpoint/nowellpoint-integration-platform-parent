@@ -29,4 +29,5 @@
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.0.4/mongodb-driver-3.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.0.4/bson-3.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.0.4/mongodb-driver-core-3.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar"/>
 </classpath>
