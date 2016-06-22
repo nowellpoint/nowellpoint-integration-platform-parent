@@ -38,9 +38,11 @@ public class OutboundMessageHandler {
 	
 	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 	
-	private long startTime = System.currentTimeMillis();
+	private long startTime;
 
 	public String handleEvent(DynamodbEvent event, Context context) {
+		
+		startTime = System.currentTimeMillis();
 		
 		LambdaLogger logger = context.getLogger();
 		

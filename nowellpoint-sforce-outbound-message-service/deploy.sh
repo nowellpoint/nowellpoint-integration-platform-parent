@@ -10,7 +10,7 @@ aws lambda update-function-configuration \
 --runtime java8 \
 --description "Salesforce: Outbound Message Consumer" \
 --timeout 15 \
---memory-size 512
+--memory-size 256
 
 aws lambda update-function-code \
 --function-name SalesforceOutboundMessageConsumer \
@@ -25,7 +25,7 @@ aws lambda update-function-configuration \
 --runtime java8 \
 --description "Salesforce: Outbound Message Handler" \
 --timeout 15 \
---memory-size 512
+--memory-size 256
 
 aws lambda update-function-code \
 --function-name SalesforceOutboundMessageHandler \
