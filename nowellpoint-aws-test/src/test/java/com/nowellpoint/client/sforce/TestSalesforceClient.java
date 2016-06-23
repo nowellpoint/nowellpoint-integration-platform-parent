@@ -59,7 +59,7 @@ public class TestSalesforceClient {
 					.bearerAuthorization(token.getAccessToken())
 	    			.path("sobjects")
 	    			.path("Opportunity")
-	    			.path("006300000130J3CAAU?_HttpMethod=PATCH")
+	    			.path("00630000002XCF6AAO?_HttpMethod=PATCH")
 	    			.body(opportunity)
 	    			.execute();
 			

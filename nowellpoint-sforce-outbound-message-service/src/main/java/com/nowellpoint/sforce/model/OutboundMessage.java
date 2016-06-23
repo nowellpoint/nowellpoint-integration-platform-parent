@@ -35,6 +35,12 @@ public class OutboundMessage {
 	@DynamoDBAttribute(attributeName="ReceivedDate")  
 	private Date receivedDate;
 	
+	@DynamoDBAttribute(attributeName="AcknowledgeDuration")  
+	private Long acknowledgeDuration;
+	
+	@DynamoDBAttribute(attributeName="ProcessDuration")  
+	private Long processDuration;
+	
 	@DynamoDBAttribute(attributeName="ProcessedDate")  
 	private Date processedDate;
 	
@@ -44,6 +50,10 @@ public class OutboundMessage {
 	@DynamoDBMarshalling(marshallerClass = NotificationMarshaller.class)
 	@DynamoDBAttribute(attributeName="Notifications")
 	private List<Notification> notifications;
+	
+	@DynamoDBMarshalling(marshallerClass = OutboundMessageResultMarshaller.class)
+	@DynamoDBAttribute(attributeName="Results")
+	private List<OutboundMessageResult> results;
 	
 	@DynamoDBAttribute(attributeName="ErrorMessage")
 	private String errorMessage;
@@ -114,6 +124,22 @@ public class OutboundMessage {
 		this.receivedDate = receivedDate;
 	}
 
+	public Long getAcknowledgeDuration() {
+		return acknowledgeDuration;
+	}
+
+	public void setAcknowledgeDuration(Long acknowledgeDuration) {
+		this.acknowledgeDuration = acknowledgeDuration;
+	}
+
+	public Long getProcessDuration() {
+		return processDuration;
+	}
+
+	public void setProcessDuration(Long processDuration) {
+		this.processDuration = processDuration;
+	}
+
 	public Date getProcessedDate() {
 		return processedDate;
 	}
@@ -137,6 +163,14 @@ public class OutboundMessage {
 	public void setNotifications(List<Notification> notifications) {
 		this.notifications = notifications;
 		this.messageCount = notifications.size();
+	}
+
+	public List<OutboundMessageResult> getResults() {
+		return results;
+	}
+
+	public void setResults(List<OutboundMessageResult> results) {
+		this.results = results;
 	}
 
 	public String getErrorMessage() {

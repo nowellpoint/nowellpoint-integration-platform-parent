@@ -53,6 +53,12 @@ public class OutboundMessageConsumer implements RequestStreamHandler {
 		 * 
 		 */
 		
+		Long startTime = System.currentTimeMillis();
+		
+		/**
+		 * 
+		 */
+		
 		logger = context.getLogger();
 		
 		/**
@@ -73,6 +79,9 @@ public class OutboundMessageConsumer implements RequestStreamHandler {
 		
 		try {
 			OutboundMessage outboundMessage = xmlToOutboundMessage(xml);
+			outboundMessage.setStatus("RECEIVED");
+			outboundMessage.setReceivedDate(Date.from(Instant.now()));
+			outboundMessage.setAcknowledgeDuration(System.currentTimeMillis() - startTime);
 			mapper.save(outboundMessage);	
 			response = getAckMessage(Boolean.TRUE);
 		} catch (ParserConfigurationException | SAXException | AmazonClientException e) {
@@ -86,7 +95,6 @@ public class OutboundMessageConsumer implements RequestStreamHandler {
 	private OutboundMessage xmlToOutboundMessage(String xml) throws ParserConfigurationException, SAXException, IOException {
 		
 		OutboundMessage outboundMessage = new OutboundMessage();
-		outboundMessage.setStatus("RECEIVED");
 		
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document document = builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
@@ -106,7 +114,6 @@ public class OutboundMessageConsumer implements RequestStreamHandler {
 				outboundMessage.setSessionId(element.getElementsByTagName("SessionId").item(0).getTextContent());
 				outboundMessage.setEnterpriseUrl(element.getElementsByTagName("EnterpriseUrl").item(0).getTextContent());
 				outboundMessage.setPartnerUrl(element.getElementsByTagName("PartnerUrl").item(0).getTextContent());
-				outboundMessage.setReceivedDate(Date.from(Instant.now()));
 				outboundMessage.setNotifications(addNotifications(element));
 			}
 		}
