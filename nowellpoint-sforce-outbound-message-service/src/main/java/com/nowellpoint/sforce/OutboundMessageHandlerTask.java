@@ -64,33 +64,35 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 		
 		OutboundMessageConfiguration configuration = mapper.load(OutboundMessageConfiguration.class, organizationId, notification.getSobject().getObject());
 		
-		if (configuration == null) {
+		if (configuration != null) {
+			
+			String query = String.format(configuration.getQueryString(), notification.getSobject().getObjectId());
+			
+			builder.addParameter("q", query);
+			
+			HttpGet get = new HttpGet(builder.build());
+			get.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + sessionId);
+			
+			HttpResponse response = client.execute(get);
+			
+			ObjectNode queryResult = new ObjectMapper().readValue(response.getEntity().getContent(), ObjectNode.class);
+			
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				if (queryResult.get("records").isArray()) {
+					File file = writeFile(notification.getSobject().getId(), queryResult.get("records"));
+					writeToBucket(notification.getSobject(), file);
+				}
+				result.setStatus("SUCCESS");
+			} else {
+				result.setStatus("ERROR");
+				result.setErrorMessage(result.toString());
+			}
+			
+		} else {
 			result.setStatus("ERROR");
 			result.setErrorMessage(String.format("Unregistered Organization Id: %s or Type: %s", organizationId, notification.getSobject().getObject()));
 		}
-		
-		String query = String.format(configuration.getQueryString(), notification.getSobject().getObjectId());
-					
-		builder.addParameter("q", query);
-		
-		HttpGet get = new HttpGet(builder.build());
-		get.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + sessionId);
-		
-		HttpResponse response = client.execute(get);
-		
-		ObjectNode queryResult = new ObjectMapper().readValue(response.getEntity().getContent(), ObjectNode.class);
-		
-		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-			if (queryResult.get("records").isArray()) {
-				File file = writeFile(notification.getSobject().getId(), queryResult.get("records"));
-				writeToBucket(notification.getSobject(), file);
-			}
-			result.setStatus("SUCCESS");
-		} else {
-			result.setStatus("ERROR");
-			result.setErrorMessage(result.toString());
-		}
-		
+
 		return result;
 	}
 	

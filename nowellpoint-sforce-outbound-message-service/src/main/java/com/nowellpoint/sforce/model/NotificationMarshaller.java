@@ -22,7 +22,7 @@ public class NotificationMarshaller implements DynamoDBMarshaller<List<Notificat
 	}
 
 	@Override
-	public List<Notification> unmarshall(Class<List<Notification>> notifications, String json) {
+	public List<Notification> unmarshall(Class<List<Notification>> type, String json) {
 		try {
 			return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, Notification.class));
 		} catch (IOException e) {

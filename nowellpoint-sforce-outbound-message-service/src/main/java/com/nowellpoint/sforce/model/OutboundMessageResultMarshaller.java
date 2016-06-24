@@ -24,7 +24,7 @@ public class OutboundMessageResultMarshaller implements DynamoDBMarshaller<List<
 	@Override
 	public List<OutboundMessageResult> unmarshall(Class<List<OutboundMessageResult>> type, String json) {
 		try {
-			return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+			return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, OutboundMessageResult.class));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

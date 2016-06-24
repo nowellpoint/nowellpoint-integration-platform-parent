@@ -67,6 +67,7 @@ public class OutboundMessageHandler {
 	private void process(OutboundMessage outboundMessage) throws ClientProtocolException, IOException, URISyntaxException, ExecutionException, InterruptedException {
 		
 		Set<Callable<OutboundMessageResult>> tasks = new LinkedHashSet<Callable<OutboundMessageResult>>();
+		
 		outboundMessage.getNotifications().stream().forEach(notification -> tasks.add(new OutboundMessageHandlerTask(
 				mapper, 
 				notification, 
