@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.apache.http.HttpHeaders;
@@ -16,7 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -25,25 +27,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.sforce.model.Notification;
-import com.nowellpoint.sforce.model.OutboundMessageConfiguration;
+import com.nowellpoint.sforce.model.OutboundMessageHandlerConfiguration;
 import com.nowellpoint.sforce.model.OutboundMessageResult;
+import com.nowellpoint.sforce.model.Query;
 import com.nowellpoint.sforce.model.Sobject;
 
 public class OutboundMessageHandlerTask implements Callable<OutboundMessageResult> {
 	
 	private static HttpClient client = HttpClientBuilder.create().build();
 	
-	private DynamoDBMapper mapper;
+	private OutboundMessageHandlerConfiguration configuration;
 	private Notification notification;
 	private String sessionId;
-	private String organizationId;
 	private String partnerUrl;
 	
-	public OutboundMessageHandlerTask(DynamoDBMapper mapper, Notification notification, String sessionId, String organizationId, String partnerUrl) {
-		this.mapper = mapper;
+	public OutboundMessageHandlerTask(OutboundMessageHandlerConfiguration configuration, Notification notification, String sessionId, String partnerUrl) {
+		this.configuration = configuration;
 		this.notification = notification;
 		this.sessionId = sessionId;
-		this.organizationId = organizationId;
 		this.partnerUrl = partnerUrl;
 	}
 
@@ -62,42 +63,45 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 		
 		URIBuilder builder = new URIBuilder(url);
 		
-		OutboundMessageConfiguration configuration = mapper.load(OutboundMessageConfiguration.class, organizationId, notification.getSobject().getObject());
+		Optional<Query> query = configuration.getQueries()
+				.stream()
+				.filter(q -> q.getType().equals(notification.getSobject().getObject()))
+				.findFirst();
 		
-		if (configuration != null) {
+		if (query.isPresent()) {
 			
-			String query = String.format(configuration.getQueryString(), notification.getSobject().getObjectId());
+			String queryString = String.format(query.get().getQueryString(), notification.getSobject().getObjectId());
 			
-			builder.addParameter("q", query);
-			
+			builder.addParameter("q", queryString);
+				
 			HttpGet get = new HttpGet(builder.build());
 			get.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + sessionId);
-			
+				
 			HttpResponse response = client.execute(get);
-			
+				
 			ObjectNode queryResult = new ObjectMapper().readValue(response.getEntity().getContent(), ObjectNode.class);
-			
+				
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				if (queryResult.get("records").isArray()) {
-					File file = writeFile(notification.getSobject().getId(), queryResult.get("records"));
-					writeToBucket(notification.getSobject(), file);
+					File file = writeFile(queryResult.get("records"));
+					writeToBucket(notification.getSobject(), file, configuration.getBucketName(), configuration.getAwsAccessKey(), configuration.getAwsSecretAccessKey());
 				}
 				result.setStatus("SUCCESS");
 			} else {
 				result.setStatus("ERROR");
 				result.setErrorMessage(result.toString());
 			}
-			
+				
 		} else {
 			result.setStatus("ERROR");
-			result.setErrorMessage(String.format("Unregistered Organization Id: %s or Type: %s", organizationId, notification.getSobject().getObject()));
+			result.setErrorMessage(String.format("Unregistered Type: %s", notification.getSobject().getObject()));
 		}
 
 		return result;
 	}
 	
-	private File writeFile(String id, JsonNode records) throws IOException {
-		File file = new File("/tmp/" + id + ".json");
+	private File writeFile(JsonNode records) throws IOException {
+		File file = new File("/tmp/" + UUID.randomUUID().toString());
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -108,8 +112,8 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 		return file;
 	}
 	
-	private void writeToBucket(Sobject sobject, File file) {
-		AmazonS3 s3Client = new AmazonS3Client();
+	private void writeToBucket(Sobject sobject, File file, String bucketName, String awsAccessKey, String awsSecretAccessKey) {
+		AmazonS3 s3Client = new AmazonS3Client(new BasicAWSCredentials(awsAccessKey, awsSecretAccessKey));
 		
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentLength(file.length());
@@ -123,7 +127,7 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 				.concat("/")
 				.concat(sdf.format(new Date()));
     	
-    	PutObjectRequest putObjectRequest = new PutObjectRequest("salesforce-outbound-messages", key, file).withMetadata(metadata);
+    	PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file).withMetadata(metadata);
     	
     	s3Client.putObject(putObjectRequest);
 	}

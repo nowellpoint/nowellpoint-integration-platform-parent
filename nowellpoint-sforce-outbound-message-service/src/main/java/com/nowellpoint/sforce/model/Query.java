@@ -1,15 +1,9 @@
 package com.nowellpoint.sforce.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-@DynamoDBTable(tableName="OutboundMessageConfigurations")
-public class OutboundMessageConfiguration {
-
-	@DynamoDBHashKey(attributeName="OrganizationId")  
-	private String organizationId;
+public class Query {
 	
 	@DynamoDBRangeKey(attributeName="Type")
 	private String type;
@@ -17,16 +11,8 @@ public class OutboundMessageConfiguration {
 	@DynamoDBAttribute(attributeName="QueryString")  
 	private String queryString;
 	
-	public OutboundMessageConfiguration() {
+	public Query() {
 		
-	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
 	}
 
 	public String getType() {

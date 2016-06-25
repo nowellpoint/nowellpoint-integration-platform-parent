@@ -23,6 +23,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.nowellpoint.sforce.model.OutboundMessage;
+import com.nowellpoint.sforce.model.OutboundMessageHandlerConfiguration;
 import com.nowellpoint.sforce.model.OutboundMessageResult;
 
 public class OutboundMessageHandler {
@@ -68,11 +69,16 @@ public class OutboundMessageHandler {
 		
 		Set<Callable<OutboundMessageResult>> tasks = new LinkedHashSet<Callable<OutboundMessageResult>>();
 		
+		OutboundMessageHandlerConfiguration configuration = mapper.load(OutboundMessageHandlerConfiguration.class, outboundMessage.getOrganizationId());
+		
+		if (configuration == null) {
+			throw new IOException(String.format("Missing OutboundMessageHandlerConfiguration for Organization Id: %s", outboundMessage.getOrganizationId()));
+		}
+		
 		outboundMessage.getNotifications().stream().forEach(notification -> tasks.add(new OutboundMessageHandlerTask(
-				mapper, 
+				configuration, 
 				notification, 
 				outboundMessage.getSessionId(), 
-				outboundMessage.getOrganizationId(), 
 				outboundMessage.getPartnerUrl())));
 		
 		ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
