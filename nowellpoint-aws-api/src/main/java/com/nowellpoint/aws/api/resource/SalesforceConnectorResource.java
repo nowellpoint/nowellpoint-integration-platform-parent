@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBException;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -212,7 +213,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/service")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response newService(
+	public Response addService(
 			@PathParam(value="id") String id,
 			@FormParam(value="serviceProviderId") String serviceProviderId) {
 		
@@ -292,6 +293,29 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
+	@Path("salesforce/{id}/service/{key}/deployment/{environment}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deploy(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@PathParam(value="environment") String environmentName) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.deploy(subject, id, key, environmentName);
+		} catch (JAXBException | IOException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+		
+	}
+	
+	@POST
 	@Path("salesforce/{id}/service/{key}/listeners")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -336,7 +360,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/service/{key}/test-connection/{environment}")
+	@Path("salesforce/{id}/service/{key}/connection/{environment}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response testConnection(
 			@PathParam(value="id") String id,

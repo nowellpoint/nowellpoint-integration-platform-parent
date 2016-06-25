@@ -100,11 +100,13 @@ public class SalesforceConnectorController extends AbstractController {
         
         post("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> saveEventListeners(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/test-connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/targets", (request, response) -> getTargets(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/targets", (request, response) -> saveTargets(request, response), new FreeMarkerEngine(cfg));
+        
+        post("/app/connectors/salesforce/:id/service/:key/deployment/:environment", (request, response) -> deploy(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -886,7 +888,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.path(id)
 				.path("service")
 				.path(key)
-				.path("test-connection")
+				.path("connection")
 				.path(environment)
     			.execute();
 	
@@ -977,6 +979,39 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("errorMessage", httpResponse.getEntity(JsonNode.class).get("message").asText());
 			return new ModelAndView(model, "secure/fragments/error-message.html");
 		}
+	}
+	
+	private ModelAndView deploy(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String environment = request.params(":environment");
+		
+		Account account = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key)
+				.path("deployment")
+				.path(environment)
+    			.execute();
+		
+		response.status(httpResponse.getStatusCode());
+		
+		System.out.println(httpResponse.getStatusCode());
+		System.out.println(httpResponse.getAsString());
+		
+		return new ModelAndView(model, "secure/fragments/success-message.html");
 	}
 	
 	private ModelAndView saveEventListeners(Request request, Response respose) {

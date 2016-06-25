@@ -1,9 +1,15 @@
 package com.nowellpoint.aws.api.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -11,10 +17,22 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
@@ -25,6 +43,8 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.Targets;
+import com.nowellpoint.aws.api.model.sforce.Type;
+import com.nowellpoint.aws.api.model.sforce.Package;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.sforce.soap.partner.Connector;
@@ -547,6 +567,115 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return sobjects;
 		
+	}
+	
+	public SalesforceConnectorDTO deploy(String subject, String id, String key, String environmentName) throws JAXBException, IOException {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+
+		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				String[][] artifacts = new String[][] {
+					{"Outbound_Event__c","CustomObject"},
+					{"Outbound_Event__c","Workflow"}
+				};
+				
+				List<Type> types = new ArrayList<Type>();
+				
+				for (int i = 0; i < artifacts.length; i++) {
+					Type type = new Type();
+					type.setMembers(artifacts[i][0]);
+					type.setName(artifacts[i][1]);
+					types.add(type);
+				}
+				
+				Package manifest = new Package();
+				manifest.setTypes(types);
+				manifest.setVersion(36.0);
+				
+				StringWriter sw = new StringWriter();
+				
+				JAXBContext context = JAXBContext.newInstance( Package.class );
+				Marshaller marshaller = context.createMarshaller();
+				marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
+				marshaller.marshal( manifest, sw);
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				
+				ZipOutputStream zip = new ZipOutputStream(baos);
+				
+				AmazonS3 s3Client = new AmazonS3Client();
+				
+				GetObjectRequest getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/Outbound_Event__c.object");
+		    	
+		    	S3Object objects = s3Client.getObject(getObjectRequest);
+		    	
+		    	getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/Outbound_Event__c.workflow");
+		    	
+		    	S3Object workflows = s3Client.getObject(getObjectRequest);
+		    	
+		    	getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/${sobject}_Event_Observer.trigger");
+		    	
+		    	S3Object trigger = s3Client.getObject(getObjectRequest);
+		    	
+		    	getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/${sobject}_Event_Observer.trigger-meta.xml");
+		    	
+		    	byte[] triggerMeta = IOUtils.toByteArray(s3Client.getObject(getObjectRequest).getObjectContent());
+		    	
+				zip.putNextEntry(new ZipEntry("package.xml"));
+				zip.write(sw.toString().getBytes());
+				zip.closeEntry();
+				zip.putNextEntry(new ZipEntry("objects/Outbound_Event__c.object"));
+				zip.write(IOUtils.toByteArray(objects.getObjectContent()));
+				zip.closeEntry();
+				zip.putNextEntry(new ZipEntry("workflows/Outbound_Event__c.workflow"));
+				zip.write(IOUtils.toByteArray(workflows.getObjectContent()));
+				zip.closeEntry();
+				
+				String source = IOUtils.toString(trigger.getObjectContent());
+				
+				serviceInstance.get().getEventListeners().stream().filter(p -> p.getCreate() || p.getUpdate() || p.getDelete()).forEach(s -> {
+			    	try {		    		
+						zip.putNextEntry(new ZipEntry(String.format("triggers/%s_Event_Observer.trigger", s.getName())));			
+						zip.write(source.replace("${sobject}", s.getName()).getBytes());
+						zip.closeEntry();
+					    zip.putNextEntry(new ZipEntry(String.format("triggers/%s_Event_Observer.trigger-meta.xml", s.getName())));		
+						zip.write(triggerMeta);
+						zip.closeEntry();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		    	});
+				
+				zip.finish();
+				zip.close();
+				
+				ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+				
+				ObjectMetadata objectMetadata = new ObjectMetadata();
+		    	objectMetadata.setContentLength(bais.available());
+		    	objectMetadata.setContentType("application/zip");
+			
+				PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", "deployments/" + serviceInstance.get().getKey().concat("/").concat(environment.get().getName()).concat("/deploy.zip"), bais, objectMetadata);
+				
+				s3Client.putObject(putObjectRequest);
+			}
+		}
+		
+		return resource;
 	}
 	
 	private PartnerConnection login(Environment environment) throws IllegalArgumentException, ConnectionException {

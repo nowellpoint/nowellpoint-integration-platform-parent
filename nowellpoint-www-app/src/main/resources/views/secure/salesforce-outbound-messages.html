@@ -147,10 +147,23 @@
                 $(document).on('click', '.test-connection', function(e) {
                     var id = $(this).data('id');
                     $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/test-connection/".concat(id),
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/connection/".concat(id),
                         type: "GET",
                         complete: function(data) {
                             $("#environments-table").html(data.responseText);
+                        }
+                    });
+
+                    e.preventDefault();
+                });
+                
+                $(document).on('click', '.deploy', function(e) {
+                    var id = $(this).data('id');
+                    $.ajax({
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/deployment/".concat(id),
+                        type: "POST",
+                        complete: function(data) {
+                            $("#status-message").html(data.responseText);
                         }
                     });
 
