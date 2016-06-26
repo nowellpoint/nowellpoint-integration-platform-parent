@@ -70,7 +70,7 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 		
 		if (query.isPresent()) {
 			
-			String queryString = String.format(query.get().getQueryString(), notification.getSobject().getObjectId());
+			String queryString = String.format(query.get().getQueryString().concat(" Where Id = '%s'"), notification.getSobject().getObjectId());
 			
 			builder.addParameter("q", queryString);
 				

@@ -1,4 +1,4 @@
-package com.nowellpoint.sforce.model;
+package com.nowellpoint.aws.api.model.dynamodb;
 
 import java.util.Date;
 import java.util.List;

@@ -2,11 +2,11 @@ package com.nowellpoint.aws.api.model;
 
 public class SimpleStorageService {
 	
-	public String bucketName;
+	private String bucketName;
 	
-	public String awsAccessKey;
+	private String awsAccessKey;
 	
-	public String awsSecretAccessKey;
+	private String awsSecretAccessKey;
 	
 	public SimpleStorageService() {
 		

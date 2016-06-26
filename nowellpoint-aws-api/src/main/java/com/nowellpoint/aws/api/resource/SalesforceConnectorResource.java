@@ -32,7 +32,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBException;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -306,7 +305,7 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.deploy(subject, id, key, environmentName);
-		} catch (JAXBException | IOException e) {
+		} catch (Exception e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
@@ -329,7 +328,7 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = null;
 		try {
 			resource = salesforceConnectorService.addEventListeners(subject, id, key, eventListeners);
-		} catch (UnsupportedOperationException | IllegalArgumentException e) {
+		} catch (Exception e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
