@@ -39,6 +39,9 @@ public class OutboundMessageHandlerConfiguration {
 	@DynamoDBAttribute(attributeName="DeployedBy")  
 	private String deployedBy;
 	
+	@DynamoDBAttribute(attributeName="IntegrationUser")  
+	private String integrationUser;
+	
 	public OutboundMessageHandlerConfiguration() {
 		
 	}
@@ -113,5 +116,13 @@ public class OutboundMessageHandlerConfiguration {
 
 	public void setDeployedBy(String deployedBy) {
 		this.deployedBy = deployedBy;
+	}
+
+	public String getIntegrationUser() {
+		return integrationUser;
+	}
+
+	public void setIntegrationUser(String integrationUser) {
+		this.integrationUser = integrationUser;
 	}
 }

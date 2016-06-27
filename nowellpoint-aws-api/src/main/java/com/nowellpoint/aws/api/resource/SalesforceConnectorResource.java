@@ -306,6 +306,7 @@ public class SalesforceConnectorResource {
 		try {
 			resource = salesforceConnectorService.deploy(subject, id, key, environmentName);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new BadRequestException(e.getMessage());
 		}
 		

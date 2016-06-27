@@ -23,10 +23,19 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.model.dynamodb.OutboundMessageHandlerConfiguration;
 import com.nowellpoint.aws.api.model.sforce.Package;
 import com.nowellpoint.aws.api.model.sforce.Type;
+import com.sforce.soap.metadata.AsyncResult;
+import com.sforce.soap.metadata.DeployDetails;
+import com.sforce.soap.metadata.DeployMessage;
+import com.sforce.soap.metadata.DeployOptions;
+import com.sforce.soap.metadata.DeployResult;
+import com.sforce.soap.metadata.MetadataConnection;
+import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
 
 public class OutboundMessageService {
 	
-	public void deploy(final OutboundMessageHandlerConfiguration configuration) throws JAXBException, IOException {
+	public String buildPackage(final OutboundMessageHandlerConfiguration configuration) throws JAXBException, IOException {
 		
 		String[][] artifacts = new String[][] {
 			{"Outbound_Event__c","CustomObject"},
@@ -65,7 +74,8 @@ public class OutboundMessageService {
 	    	
 	    getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/Outbound_Event__c.workflow");
 	    	
-	    S3Object workflows = s3Client.getObject(getObjectRequest);
+	    String workflows = IOUtils.toString(s3Client.getObject(getObjectRequest).getObjectContent());
+    	workflows = workflows.replace("#integrationUser#", configuration.getIntegrationUser());
 	    	
 	    getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/${sobject}_Event_Observer.trigger");
 	    	
@@ -82,7 +92,7 @@ public class OutboundMessageService {
 		zip.write(IOUtils.toByteArray(objects.getObjectContent()));
 		zip.closeEntry();
 		zip.putNextEntry(new ZipEntry("workflows/Outbound_Event__c.workflow"));
-		zip.write(IOUtils.toByteArray(workflows.getObjectContent()));
+		zip.write(workflows.getBytes());
 		zip.closeEntry();
 			
 		String source = IOUtils.toString(trigger.getObjectContent());
@@ -117,5 +127,66 @@ public class OutboundMessageService {
 		PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", key, bais, objectMetadata);
 			
 		s3Client.putObject(putObjectRequest);
+		
+		return key;
 	}
+	
+	public void deployPackage(final PartnerConnection partnerConnection, final String key) throws IOException, ConnectionException, InterruptedException {
+		
+		MetadataConnection metadataConnection = createMetadataConnection(partnerConnection);
+		
+		System.out.println(metadataConnection.getSessionHeader().getSessionId());
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest("aws-microservices", key);
+		
+		AmazonS3 s3Client = new AmazonS3Client();
+		
+		S3Object zipFile = s3Client.getObject(getObjectRequest);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		IOUtils.copy(zipFile.getObjectContent(), baos);
+		
+		baos.close();
+        
+        DeployOptions deployOptions = new DeployOptions();
+		deployOptions.setSinglePackage(true);
+		deployOptions.setPerformRetrieve(false);
+		deployOptions.setRollbackOnError(true);
+		
+		AsyncResult asyncResult = metadataConnection.deploy(baos.toByteArray(), deployOptions);
+		
+		String asyncResultId = asyncResult.getId();
+		
+		System.out.println(asyncResultId);
+			
+		DeployResult deployResult = null;
+		
+		do {
+			Thread.sleep(3000);
+
+			deployResult = metadataConnection.checkDeployStatus(asyncResultId, true);
+			
+			System.out.println("Status is: " + deployResult.getStatus());
+			System.out.println(deployResult.getNumberComponentErrors());
+			System.out.println(deployResult.getNumberComponentsDeployed());
+			System.out.println(deployResult.getNumberComponentsTotal());
+			
+			DeployDetails deployDetails = deployResult.getDetails();
+			for (DeployMessage message : deployDetails.getComponentFailures()) {
+				System.out.println(message.getProblemType() + ": " + message.getProblem() + " " + message.getLineNumber());
+			}
+		} while (!deployResult.isDone());
+		
+		if (!deployResult.isSuccess() && deployResult.getErrorStatusCode() != null) {
+			System.out.println(deployResult.getErrorStatusCode() + " msg: " + deployResult.getErrorMessage());
+		}
+	}
+	
+	private static MetadataConnection createMetadataConnection(final PartnerConnection connection) throws ConnectionException {
+        final ConnectorConfig config = new ConnectorConfig();
+        config.setServiceEndpoint(connection.getConfig().getServiceEndpoint().replace("/u/", "/m/"));
+        config.setSessionId(connection.getConfig().getSessionId());
+        return new MetadataConnection(config);
+    }
 }

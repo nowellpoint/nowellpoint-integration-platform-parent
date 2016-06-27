@@ -619,10 +619,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				configuration.setQueries(queries);
 				configuration.setDeploymentDate(new Date());
 				configuration.setDeployedBy(subject);
+				configuration.setIntegrationUser(connection.getConfig().getUsername());
 				
 				mapper.save(configuration);
 				
-				outboundMessageService.deploy(configuration);
+				String packageKey = outboundMessageService.buildPackage(configuration);
+				
+				outboundMessageService.deployPackage(connection, packageKey);
+				
+				
+				//https://na11.salesforce.com/services/Soap/u/36.0/00DG0000000kGBr
+				//https://na45.salesforce.com/services/Soap/m/36.0/00D300000000lnE
+				
+				//outboundMessageService.deployPackage(loginResult, inputStream);
 			}
 		}
 		
