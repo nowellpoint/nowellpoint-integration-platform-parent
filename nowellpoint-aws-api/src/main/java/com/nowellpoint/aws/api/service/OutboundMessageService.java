@@ -50,6 +50,13 @@ public class OutboundMessageService {
 			type.setName(artifacts[i][1]);
 			types.add(type);
 		}
+		
+		configuration.getQueries().forEach(query -> {
+			Type type = new Type();
+			type.setMembers(String.format("%s_Event_Observer", query.getType()));
+			type.setName("ApexTrigger");
+			types.add(type);
+		});
 			
 		Package manifest = new Package();
 		manifest.setTypes(types);
@@ -174,7 +181,7 @@ public class OutboundMessageService {
 			
 			DeployDetails deployDetails = deployResult.getDetails();
 			for (DeployMessage message : deployDetails.getComponentFailures()) {
-				System.out.println(message.getProblemType() + ": " + message.getProblem() + " " + message.getLineNumber());
+				System.out.println(message.getProblemType() + ": " + message.getProblem() + " " + message.getLineNumber() + " " + message.getFileName());
 			}
 		} while (!deployResult.isDone());
 		
