@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.sforce.model.Notification;
 import com.nowellpoint.sforce.model.OutboundMessageHandlerConfiguration;
 import com.nowellpoint.sforce.model.OutboundMessageResult;
-import com.nowellpoint.sforce.model.Query;
+import com.nowellpoint.sforce.model.Callback;
 import com.nowellpoint.sforce.model.Sobject;
 
 public class OutboundMessageHandlerTask implements Callable<OutboundMessageResult> {
@@ -63,14 +63,14 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 		
 		URIBuilder builder = new URIBuilder(url);
 		
-		Optional<Query> query = configuration.getQueries()
+		Optional<Callback> callback = configuration.getCallbacks()
 				.stream()
-				.filter(q -> q.getType().equals(notification.getSobject().getObject()))
+				.filter(c -> c.getType().equals(notification.getSobject().getObject()))
 				.findFirst();
 		
-		if (query.isPresent()) {
+		if (callback.isPresent()) {
 			
-			String queryString = String.format(query.get().getQueryString().concat(" Where Id = '%s'"), notification.getSobject().getObjectId());
+			String queryString = String.format(callback.get().getQueryString().concat(" Where Id = '%s'"), notification.getSobject().getObjectId());
 			
 			builder.addParameter("q", queryString);
 				

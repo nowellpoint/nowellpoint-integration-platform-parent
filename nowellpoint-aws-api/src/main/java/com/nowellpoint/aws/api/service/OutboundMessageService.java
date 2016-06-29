@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -51,7 +52,7 @@ public class OutboundMessageService {
 			types.add(type);
 		}
 		
-		configuration.getQueries().forEach(query -> {
+		configuration.getCallbacks().forEach(query -> {
 			Type type = new Type();
 			type.setMembers(String.format("%s_Event_Observer", query.getType()));
 			type.setName("ApexTrigger");
@@ -104,12 +105,23 @@ public class OutboundMessageService {
 			
 		String source = IOUtils.toString(trigger.getObjectContent());
 			
-		configuration.getQueries().forEach(query -> {
+		configuration.getCallbacks().forEach(callback -> {
+			List<String> events = new ArrayList<String>();
+			if (callback.getCreate()) {
+				events.add("after insert");
+			}
+			if (callback.getUpdate()) {
+				events.add("after update");
+			}
+			if (callback.getDelete()) {
+				events.add("after delete");
+			}
+			
 		    try {		    		
-				zip.putNextEntry(new ZipEntry(String.format("triggers/%s_Event_Observer.trigger", query.getType())));			
-				zip.write(source.replace("${sobject}", query.getType()).getBytes());
+				zip.putNextEntry(new ZipEntry(String.format("triggers/%s_Event_Observer.trigger", callback.getType())));			
+				zip.write(source.replace("${events}", events.stream().collect(Collectors.joining(", "))).replace("${sobject}", callback.getType()).getBytes());
 				zip.closeEntry();
-				zip.putNextEntry(new ZipEntry(String.format("triggers/%s_Event_Observer.trigger-meta.xml", query.getType())));		
+				zip.putNextEntry(new ZipEntry(String.format("triggers/%s_Event_Observer.trigger-meta.xml", callback.getType())));		
 				zip.write(triggerMeta);
 				zip.closeEntry();
 			} catch (Exception e) {

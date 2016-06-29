@@ -7,43 +7,47 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 
-import com.nowellpoint.aws.api.model.dynamodb.Query;
+import com.nowellpoint.aws.api.model.EventListener;
+import com.nowellpoint.aws.api.model.dynamodb.Callback;
 import com.sforce.soap.partner.DescribeSObjectResult;
 import com.sforce.soap.partner.Field;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.InvalidSObjectFault;
 import com.sforce.ws.ConnectionException;
 
-public class BuildDefaultQuery implements Callable<Query> {
+public class BuildDefaultCallback implements Callable<Callback> {
 	
 	private final PartnerConnection connection;
-	private final String sobject;
+	private final EventListener eventListener;
 	
-	public BuildDefaultQuery(final PartnerConnection connection, final String sobject) {
+	public BuildDefaultCallback(final PartnerConnection connection, final EventListener eventListener) {
 		this.connection = connection;
-		this.sobject = sobject;
+		this.eventListener = eventListener;
 	}
 
 	@Override
-	public Query call() throws Exception {
+	public Callback call() throws Exception {
 		
-		Query query = new Query();
+		Callback callback = new Callback();
+		callback.setType(eventListener.getName());
+		callback.setCreate(eventListener.getCreate());
+		callback.setUpdate(eventListener.getUpdate());
+		callback.setDelete(eventListener.getDelete());
 
 		try {
 			
-			DescribeSObjectResult result = connection.describeSObject(sobject);
+			DescribeSObjectResult result = connection.describeSObject(eventListener.getName());
 			
 			Field[] fields = result.getFields();
 			
-			String queryString = "Select %s From ".concat(sobject);
+			String queryString = "Select %s From ".concat(eventListener.getName());
 			
 			queryString = String.format(queryString, Arrays.asList(fields)
 					.stream()
 					.map(field -> field.getName())
 					.collect(Collectors.joining(", ")));
 			
-			query.setType(sobject);
-			query.setQueryString(queryString);
+			callback.setQueryString(queryString);
 
 		} catch (ConnectionException e) {
 			if (e instanceof InvalidSObjectFault) {
@@ -54,6 +58,6 @@ public class BuildDefaultQuery implements Callable<Query> {
 			}
 		}
 		
-		return query;
+		return callback;
 	}
 }

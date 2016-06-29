@@ -3,7 +3,7 @@ package com.nowellpoint.sforce.model;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 
-public class Query {
+public class Callback {
 	
 	@DynamoDBRangeKey(attributeName="Type")
 	private String type;
@@ -11,7 +11,7 @@ public class Query {
 	@DynamoDBAttribute(attributeName="QueryString")  
 	private String queryString;
 	
-	public Query() {
+	public Callback() {
 		
 	}
 

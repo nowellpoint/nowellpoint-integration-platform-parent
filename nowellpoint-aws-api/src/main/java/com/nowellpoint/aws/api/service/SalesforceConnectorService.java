@@ -41,8 +41,8 @@ import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.OutboundMessageHandlerConfiguration;
-import com.nowellpoint.aws.api.model.dynamodb.Query;
-import com.nowellpoint.aws.api.tasks.BuildDefaultQuery;
+import com.nowellpoint.aws.api.model.dynamodb.Callback;
+import com.nowellpoint.aws.api.tasks.BuildDefaultCallback;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.DescribeGlobalResult;
 import com.sforce.soap.partner.DescribeGlobalSObjectResult;
@@ -590,22 +590,22 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				
 				PartnerConnection connection = login(environment.get());
 				
-				List<BuildDefaultQuery> tasks = serviceInstance.get()
+				List<BuildDefaultCallback> tasks = serviceInstance.get()
 						.getEventListeners()
 						.stream()
 						.filter(p -> p.getCreate() || p.getUpdate() || p.getDelete())
-						.map(p -> new BuildDefaultQuery(connection, p.getName()))
+						.map(p -> new BuildDefaultCallback(connection, p))
 						.collect(Collectors.toCollection(ArrayList::new));
 				
 				ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
 				
-				List<Future<Query>> futures = executor.invokeAll(tasks);
+				List<Future<Callback>> futures = executor.invokeAll(tasks);
 				executor.shutdown();
 				executor.awaitTermination(30, TimeUnit.SECONDS);
 				
-				List<Query> queries = new ArrayList<Query>();
+				List<Callback> queries = new ArrayList<Callback>();
 				
-				for (Future<Query> future : futures) {
+				for (Future<Callback> future : futures) {
 					queries.add(future.get());
 				}
 				

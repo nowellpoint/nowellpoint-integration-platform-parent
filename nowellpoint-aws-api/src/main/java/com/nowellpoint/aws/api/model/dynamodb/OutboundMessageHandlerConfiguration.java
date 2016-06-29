@@ -14,9 +14,9 @@ public class OutboundMessageHandlerConfiguration {
 	@DynamoDBHashKey(attributeName="OrganizationId")  
 	private String organizationId;
 	
-	@DynamoDBMarshalling(marshallerClass = QueryMarshaller.class)
-	@DynamoDBAttribute(attributeName="Queries")  
-	private List<Query> queries;
+	@DynamoDBMarshalling(marshallerClass = CallbackMarshaller.class)
+	@DynamoDBAttribute(attributeName="Callbacks")  
+	private List<Callback> callbacks;
 	
 	@DynamoDBAttribute(attributeName="ServiceInstanceKey")
 	private String serviceInstanceKey;
@@ -54,12 +54,12 @@ public class OutboundMessageHandlerConfiguration {
 		this.organizationId = organizationId;
 	}
 
-	public List<Query> getQueries() {
-		return queries;
+	public List<Callback> getCallbacks() {
+		return callbacks;
 	}
 
-	public void setQueries(List<Query> queries) {
-		this.queries = queries;
+	public void setQueries(List<Callback> callbacks) {
+		this.callbacks = callbacks;
 	}
 
 	public String getServiceInstanceKey() {
