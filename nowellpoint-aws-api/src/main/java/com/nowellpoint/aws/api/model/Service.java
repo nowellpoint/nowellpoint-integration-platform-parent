@@ -18,6 +18,8 @@ public class Service implements Serializable {
 	
 	private Boolean isActive;
 	
+	private Integer quantity;
+	
 	private String unitOfMeasure;
 	
 	private String type;
@@ -36,7 +38,7 @@ public class Service implements Serializable {
 	
 	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 	
-	private Set<String> configurationParams;
+	private Set<Plan> plans;
 	
 	public Service() {
 		
@@ -48,6 +50,14 @@ public class Service implements Serializable {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
 	}
 
 	public String getCurrencyIsoCode() {
@@ -121,14 +131,6 @@ public class Service implements Serializable {
 	public void setSandboxCount(Integer sandboxCount) {
 		this.sandboxCount = sandboxCount;
 	}
-
-	public Set<String> getConfigurationParams() {
-		return configurationParams;
-	}
-
-	public void setConfigurationParams(Set<String> configurationParams) {
-		this.configurationParams = configurationParams;
-	}
 	
 	public Set<EnvironmentVariable> getEnvironmentVariables() {
 		return environmentVariables;
@@ -144,5 +146,13 @@ public class Service implements Serializable {
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
 		this.environmentVariableValues = environmentVariableValues;
+	}
+
+	public Set<Plan> getPlans() {
+		return plans;
+	}
+
+	public void setPlans(Set<Plan> plans) {
+		this.plans = plans;
 	}
 }

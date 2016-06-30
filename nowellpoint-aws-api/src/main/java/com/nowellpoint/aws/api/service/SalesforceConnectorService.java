@@ -126,7 +126,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setServiceName(serviceProvider.getService().getName());
 		serviceInstance.setPrice(serviceProvider.getService().getPrice());
 		serviceInstance.setProviderType(serviceProvider.getType());
-		serviceInstance.setUom(serviceProvider.getService().getUnitOfMeasure());
+		serviceInstance.setUnitOfMeasure(serviceProvider.getService().getUnitOfMeasure());
 		serviceInstance.setEnvironmentVariableValues(serviceProvider.getService().getEnvironmentVariableValues());
 		
 		Set<Environment> environments = new HashSet<Environment>();

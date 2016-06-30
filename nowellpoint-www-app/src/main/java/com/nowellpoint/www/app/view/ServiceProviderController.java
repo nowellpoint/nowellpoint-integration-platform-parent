@@ -87,11 +87,11 @@ public class ServiceProviderController extends AbstractController {
 	
 	private ModelAndView getServiceProvider(Request request, Response response) throws IOException {
 		
-		String id = request.params(":id");
-		
 		Token token = getToken(request);
 		
 		Account account = getAccount(request);
+		
+		String id = request.params(":id");
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("x-api-key", API_KEY)

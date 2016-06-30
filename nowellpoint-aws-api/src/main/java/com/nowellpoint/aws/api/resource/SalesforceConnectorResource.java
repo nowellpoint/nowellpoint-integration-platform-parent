@@ -216,6 +216,8 @@ public class SalesforceConnectorResource {
 			@PathParam(value="id") String id,
 			@FormParam(value="serviceProviderId") String serviceProviderId) {
 		
+		System.out.println("adding service " + serviceProviderId);
+		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);

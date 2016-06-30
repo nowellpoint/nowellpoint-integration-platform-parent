@@ -30,7 +30,7 @@ public class ServiceInstance implements Serializable {
 	
 	private String currencyIsoCode;
 	
-	private String uom;
+	private String unitOfMeasure;
 	
 	private String serviceType;
 	
@@ -114,12 +114,12 @@ public class ServiceInstance implements Serializable {
 		this.currencyIsoCode = currencyIsoCode;
 	}
 
-	public String getUom() {
-		return uom;
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
 	}
 
-	public void setUom(String uom) {
-		this.uom = uom;
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	public String getServiceType() {

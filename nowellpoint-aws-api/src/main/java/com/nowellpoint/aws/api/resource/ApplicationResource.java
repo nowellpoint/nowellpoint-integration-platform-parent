@@ -133,7 +133,7 @@ public class ApplicationResource {
 		serviceInstance.setServiceName(provider.getService().getName());
 		serviceInstance.setPrice(provider.getService().getPrice());
 		serviceInstance.setProviderType(provider.getType());
-		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
+		serviceInstance.setUnitOfMeasure(provider.getService().getUnitOfMeasure());
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		

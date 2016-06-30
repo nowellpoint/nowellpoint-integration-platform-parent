@@ -1,6 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -12,6 +12,8 @@ public class Service {
 	private String currencyIsoCode;
 	
 	private Boolean isActive;
+	
+	private Integer quantity;
 	
 	private String unitOfMeasure;
 	
@@ -27,7 +29,7 @@ public class Service {
 	
 	private Integer sandboxCount;
 	
-	private Set<String> configurationParams;
+	private List<Plan> plans;
 	
 	public Service() {
 		
@@ -55,6 +57,14 @@ public class Service {
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
 	}
 
 	public String getUnitOfMeasure() {
@@ -113,11 +123,11 @@ public class Service {
 		this.sandboxCount = sandboxCount;
 	}
 
-	public Set<String> getConfigurationParams() {
-		return configurationParams;
+	public List<Plan> getPlans() {
+		return plans;
 	}
 
-	public void setConfigurationParams(Set<String> configurationParams) {
-		this.configurationParams = configurationParams;
+	public void setPlans(List<Plan> plans) {
+		this.plans = plans;
 	}
 }

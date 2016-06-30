@@ -638,10 +638,18 @@ public class SalesforceConnectorController extends AbstractController {
 		SalesforceConnector salesforceConnector = null;
 		String errorMessage = null;
 		
-		try {
-			providers = getServiceProviders(token.getAccessToken());
-		} catch (BadRequestException e) {
-			errorMessage = e.getMessage();
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("providers")
+				.queryParameter("localeSidKey", "en_US")
+				.queryParameter("languageLocaleKey", "en_US")
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			errorMessage = httpResponse.getAsString();
+		} else {
+			providers = httpResponse.getEntityList(ServiceProvider.class);
 		}
 		
 		try {
@@ -653,8 +661,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("serviceProviders", providers);
-		model.put("id", salesforceConnector.getId());
-		model.put("organizationName", salesforceConnector.getOrganization().getName());
+		model.put("salesforceConnector", salesforceConnector);
 		model.put("errorMessage", errorMessage);
     	
 		return new ModelAndView(model, "secure/service-catalog.html");
@@ -1112,23 +1119,23 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private List<ServiceProvider> getServiceProviders(String accessToken) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
-				.bearerAuthorization(accessToken)
-				.path("providers")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageLocaleKey", "en_US")
-				.execute();
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-			
-		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
-		
-		providers = providers.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
-		
-		return providers;
-	}
+//	private List<ServiceProvider> getServiceProviders(String accessToken) {
+//		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+//				.header("x-api-key", API_KEY)
+//				.bearerAuthorization(accessToken)
+//				.path("providers")
+//				.queryParameter("localeSidKey", "en_US")
+//				.queryParameter("languageLocaleKey", "en_US")
+//				.execute();
+//			
+//		if (httpResponse.getStatusCode() != Status.OK) {
+//			throw new NotFoundException(httpResponse.getAsString());
+//		}
+//			
+//		List<ServiceProvider> providers = httpResponse.getEntityList(ServiceProvider.class);
+//		
+//		providers = providers.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
+//		
+//		return providers;
+//	}
 }
