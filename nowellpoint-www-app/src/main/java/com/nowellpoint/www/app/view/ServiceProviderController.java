@@ -112,7 +112,7 @@ public class ServiceProviderController extends AbstractController {
 		model.put("account", account);
 		model.put("serviceProvider", provider);
 		
-		return new ModelAndView(model, "secure/".concat(provider.getService().getConfigurationPage()));
+		return new ModelAndView(model, "secure/salesforce-outbound-messages.html");
 	}
 	
 	private String deleteServiceProvider(Request request, Response response) throws IOException {

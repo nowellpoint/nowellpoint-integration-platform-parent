@@ -1,0 +1,60 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid">
+
+            <div id="status-message"></div>
+
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    
+                    <div class="row">
+
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="container">
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+
+                                </div>
+                                <div class="panel-body">
+                                    <dl class="dl-horizontal">
+
+                                        <dt>${labels["id"]}</dt>
+                                        <dd>${(serviceProvider.id)!}</dd>
+                                        <dt>${labels["name"]}</dt>
+                                        <dd>${(serviceProvider.type)!}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+
+
+
+                            <form>
+
+                                <input type="hidden" name="providerName" id="providerName" value="${serviceProvider.name}" />
+                                <input type="hidden" name="providerType" id="providerType" value="${serviceProvider.type}" />
+
+
+
+                            </form>
+
+                        </div>
+
+                        <!--  <form class="form-vertical" role="form" method="post" action="/app/connectors/salesforce/${(salesforceConnector.id)!}/service"> -->
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </@t.page>

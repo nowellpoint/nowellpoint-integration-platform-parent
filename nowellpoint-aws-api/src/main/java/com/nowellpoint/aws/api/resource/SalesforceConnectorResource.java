@@ -48,12 +48,10 @@ import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
-import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
 import com.sforce.soap.partner.Field;
 import com.sforce.soap.partner.sobject.SObject;
@@ -71,9 +69,6 @@ public class SalesforceConnectorResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
-	
-	@Inject
-	private ServiceProviderService serviceProviderService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -212,17 +207,11 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/service")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addService(
-			@PathParam(value="id") String id,
-			@FormParam(value="serviceProviderId") String serviceProviderId) {
-		
-		System.out.println("adding service " + serviceProviderId);
+	public Response addServiceInstance(@PathParam(value="id") String id, ServiceInstanceDTO serviceInstance) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addService(provider, subject, id);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addService(subject, id, serviceInstance);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
@@ -238,7 +227,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/service/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateService(
+	public Response updateServiceInstance(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
 			ServiceInstanceDTO serviceInstance) {
@@ -448,7 +437,7 @@ public class SalesforceConnectorResource {
 	@DELETE
 	@Path("salesforce/{id}/service/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeService(
+	public Response removeServiceInstance(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key) {
 		

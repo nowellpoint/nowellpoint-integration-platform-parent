@@ -38,7 +38,7 @@ import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
-import com.nowellpoint.aws.api.model.ServiceInstance;
+import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.OutboundMessageHandlerConfiguration;
 import com.nowellpoint.aws.api.model.dynamodb.Callback;
@@ -61,6 +61,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	@Inject
 	private OutboundMessageService outboundMessageService;
+	
+	@Inject
+	private ServiceProviderService serviceProviderService;
 	
 	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 	
@@ -113,21 +116,25 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addService(ServiceProviderDTO serviceProvider, String subject, String id) {
+	public SalesforceConnectorDTO addService(String subject, String id, ServiceInstanceDTO serviceInstance) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
 		
-		ServiceInstance serviceInstance = new ServiceInstance();
 		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
-		serviceInstance.setServiceType(serviceProvider.getService().getType());
-		serviceInstance.setConfigurationPage(serviceProvider.getService().getConfigurationPage());
-		serviceInstance.setCurrencyIsoCode(serviceProvider.getService().getCurrencyIsoCode());
-		serviceInstance.setProviderName(serviceProvider.getName());
+		//serviceInstance.setServiceType(serviceProvider.getService().getType());
+		//serviceInstance.setConfigurationPage(serviceProvider.getService().getConfigurationPage());
+		//serviceInstance.setCurrencyIsoCode(serviceProvider.getService().getCurrencyIsoCode());
+		//serviceInstance.setProviderName(serviceProvider.getName());
 		serviceInstance.setIsActive(Boolean.FALSE);
-		serviceInstance.setServiceName(serviceProvider.getService().getName());
-		serviceInstance.setPrice(serviceProvider.getService().getPrice());
-		serviceInstance.setProviderType(serviceProvider.getType());
-		serviceInstance.setUnitOfMeasure(serviceProvider.getService().getUnitOfMeasure());
-		serviceInstance.setEnvironmentVariableValues(serviceProvider.getService().getEnvironmentVariableValues());
+		//serviceInstance.setServiceName(serviceProvider.getService().getName());
+		//serviceInstance.setPrice(serviceProvider.getService().getPrice());
+		//serviceInstance.setProviderType(serviceProvider.getType());
+		//serviceInstance.setUnitOfMeasure(serviceProvider.getService().getUnitOfMeasure());
+		//serviceInstance.setEnvironmentVariableValues(serviceProvider.getService().getEnvironmentVariableValues());
+		
+		ServiceProviderDTO serviceProvider = serviceProviderService.findByType(serviceInstance.getProviderType());
+		
+		Optional<Service> service = serviceProvider.getServices().stream().filter(s -> s.getType().equals(serviceInstance.getServiceType())).findFirst();
 		
 		Set<Environment> environments = new HashSet<Environment>();
 		
@@ -139,10 +146,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setName("PRODUCTION");
 		environment.setStatus("NOT STARTED");
 		environment.setTest(Boolean.FALSE);
-		environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
+		environment.setEnvironmentVariables(service.get().getEnvironmentVariables());
 		environments.add(environment);
 		
-		for (int i = 0; i < serviceProvider.getService().getSandboxCount(); i++) {
+		for (int i = 0; i < service.get().getSandboxCount(); i++) {
 			environment = new Environment();
 			environment.setActive(Boolean.FALSE);
 			environment.setIndex(i + 1);
@@ -150,7 +157,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			environment.setName("SANDBOX_" + (i + 1));
 			environment.setStatus("NOT STARTED");
 			environment.setTest(Boolean.FALSE);
-			environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
+			environment.setEnvironmentVariables(service.get().getEnvironmentVariables());
 			environments.add(environment);
 		}
 		
@@ -172,18 +179,18 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			resource.setServiceInstances(Collections.emptySet());
 		}
 		
-		Map<String,ServiceInstance> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
+		Map<String,ServiceInstanceDTO> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
 		
 		resource.getServiceInstances().clear();
 		
 		if (map.containsKey(key)) {
-			ServiceInstance original = map.get(key);
+			ServiceInstanceDTO original = map.get(key);
 			original.setSourceEnvironment(serviceInstance.getSourceEnvironment());
 			original.setName(serviceInstance.getName());
 			map.put(key, original);
 		}
 		
-		resource.setServiceInstances(new HashSet<ServiceInstance>(map.values()));
+		resource.setServiceInstances(new HashSet<ServiceInstanceDTO>(map.values()));
 
 		updateSalesforceConnector(resource);
 		
@@ -205,7 +212,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 		
 		if (serviceInstance.isPresent()) {
 			Map<Integer,Environment> map = serviceInstance.get().getEnvironments().stream().collect(Collectors.toMap(p -> p.getIndex(), (p) -> p));
@@ -255,7 +265,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		});
 		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 		
 		if (serviceInstance.isPresent()) {
 			Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
@@ -287,7 +300,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 		
 		if (serviceInstance.isPresent()) {
 			
@@ -320,7 +336,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst();
@@ -339,7 +355,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst();
@@ -387,7 +403,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst();
@@ -467,7 +483,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		Field[] fields = null;
 
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst();
@@ -529,7 +545,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		SObject[] sobjects = null;
 
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst();
@@ -574,7 +590,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst();

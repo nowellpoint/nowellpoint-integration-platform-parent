@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.ServiceProviderCodec;
@@ -31,7 +32,7 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 
 	private String languageLocaleKey;
 	
-	private Service service;
+	private Set<Service> services;
 
 	public ServiceProvider() {
 		
@@ -69,12 +70,12 @@ public class ServiceProvider extends AbstractDocument implements Serializable {
 		this.description = description;
 	}
 
-	public Service getService() {
-		return service;
+	public Set<Service> getServices() {
+		return services;
 	}
 
-	public void setService(Service service) {
-		this.service = service;
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 
 	public String getImage() {

@@ -68,19 +68,21 @@ public class SalesforceConnectorController extends AbstractController {
         
         delete("/app/connectors/salesforce/:id", (request, response) -> deleteSalesforceConnector(request, response));
         
+        get("/app/connectors/salesforce/:id/providers/:serviceProviderId", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
+        
         get("/app/connectors/salesforce/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/:id/service", (request, response) -> addService(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service", (request, response) -> addServiceInstance(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/:id/service/:key", (request, response) -> saveService(request, response), new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/service/:key", (request, response) -> saveServiceInstance(request, response), new FreeMarkerEngine(cfg));
         
-        delete("/app/connectors/salesforce/:id/service/:key", (request, response) -> deleteService(request, response), new FreeMarkerEngine(cfg));
+        delete("/app/connectors/salesforce/:id/service/:key", (request, response) -> deleteServiceInstance(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/sobjects", (request, response) -> getSobjects(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/listeners/:environment/fields/:sobject", (request, response) -> getFields(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/details", (request, response) -> getService(request, response), new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/service/:key/details", (request, response) -> getServiceInstance(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
         
@@ -232,7 +234,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView saveService(Request request, Response response) {
+	private ModelAndView saveServiceInstance(Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -270,7 +272,7 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 	}
 	
-	private ModelAndView deleteService(Request request, Response response) {
+	private ModelAndView deleteServiceInstance(Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -393,7 +395,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView getService(Request request, Response response) {
+	private ModelAndView getServiceInstance(Request request, Response response) {
 		Token token = getToken(request);
 		
 		Account account = getAccount(request);
@@ -420,11 +422,12 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView addService(Request request, Response response) {
+	private ModelAndView addServiceInstance(Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
-		String serviceProviderId = request.params(":serviceProviderId");
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("x-api-key", API_KEY)
@@ -435,7 +438,7 @@ public class SalesforceConnectorController extends AbstractController {
     			.path("salesforce")
 				.path(id)
 				.path("service")
-				.parameter("serviceProviderId", serviceProviderId)
+				.body(serviceInstance)
 				.execute();
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
@@ -665,6 +668,46 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("errorMessage", errorMessage);
     	
 		return new ModelAndView(model, "secure/service-catalog.html");
+	}
+	
+	private ModelAndView getServiceProvider(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String id = request.params(":id");
+		String serviceProviderId = request.params(":serviceProviderId");
+		
+		ServiceProvider provider = null;
+		SalesforceConnector salesforceConnector = null;
+		String errorMessage = null;
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("providers")
+				.path(serviceProviderId)
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			errorMessage = httpResponse.getAsString();
+		} else {
+			provider = httpResponse.getEntity(ServiceProvider.class);
+		}
+		
+		try {
+			salesforceConnector = getSalesforceConnector(token, id);
+		} catch (BadRequestException e) {
+			errorMessage = e.getMessage();
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("serviceProvider", provider);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("errorMessage", errorMessage);
+    	
+		return new ModelAndView(model, "secure/purchase-form.html");
 	}
 	
 	/**
@@ -995,8 +1038,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		String environment = request.params(":environment");
 		
-		Account account = getAccount(request);
-		
 		Map<String, Object> model = getModel();
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
@@ -1014,9 +1055,6 @@ public class SalesforceConnectorController extends AbstractController {
     			.execute();
 		
 		response.status(httpResponse.getStatusCode());
-		
-		System.out.println(httpResponse.getStatusCode());
-		System.out.println(httpResponse.getAsString());
 		
 		return new ModelAndView(model, "secure/fragments/success-message.html");
 	}

@@ -125,15 +125,15 @@ public class ApplicationResource {
 		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
 		
 		ServiceInstance serviceInstance = new ServiceInstance();
-		serviceInstance.setServiceType(provider.getService().getType());
-		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
-		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
+		//serviceInstance.setServiceType(provider.getService().getType());
+		//serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
+		//serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
 		serviceInstance.setProviderName(provider.getName());
-		serviceInstance.setIsActive(provider.getService().getIsActive());
-		serviceInstance.setServiceName(provider.getService().getName());
-		serviceInstance.setPrice(provider.getService().getPrice());
+		//serviceInstance.setIsActive(provider.getService().getIsActive());
+		//serviceInstance.setServiceName(provider.getService().getName());
+		//serviceInstance.setPrice(provider.getService().getPrice());
 		serviceInstance.setProviderType(provider.getType());
-		serviceInstance.setUnitOfMeasure(provider.getService().getUnitOfMeasure());
+		//serviceInstance.setUnitOfMeasure(provider.getService().getUnitOfMeasure());
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		

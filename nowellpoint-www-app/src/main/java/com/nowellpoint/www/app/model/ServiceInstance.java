@@ -21,12 +21,6 @@ public class ServiceInstance {
 	
 	private String providerName;
 	
-	private Double price;
-	
-	private String currencyIsoCode;
-	
-	private String unitOfMeasure;
-	
 	private String serviceType;
 	
 	private String serviceName;
@@ -48,6 +42,8 @@ public class ServiceInstance {
 	private Targets targets;
 
 	private String configurationPage;
+	
+	private Plan plan;
 	
 	public ServiceInstance() {
 
@@ -91,30 +87,6 @@ public class ServiceInstance {
 
 	public void setProviderName(String providerName) {
 		this.providerName = providerName;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
-
-	public String getCurrencyIsoCode() {
-		return currencyIsoCode;
-	}
-
-	public void setCurrencyIsoCode(String currencyIsoCode) {
-		this.currencyIsoCode = currencyIsoCode;
-	}
-
-	public String getUnitOfMeasure() {
-		return unitOfMeasure;
-	}
-
-	public void setUnitOfMeasure(String unitOfMeasure) {
-		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	public String getServiceType() {
@@ -206,6 +178,14 @@ public class ServiceInstance {
 
 	public void setTargets(Targets targets) {
 		this.targets = targets;
+	}
+
+	public Plan getPlan() {
+		return plan;
+	}
+
+	public void setPlan(Plan plan) {
+		this.plan = plan;
 	}
 
 	@JsonIgnore

@@ -5,6 +5,9 @@ import static com.mongodb.client.model.Filters.and;
 
 import java.util.Set;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
@@ -99,11 +102,39 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	 */
 	
 	public ServiceProviderDTO getServiceProvider(String id) {
+		
 		ServiceProviderDTO resource = get( ServiceProviderDTO.class, id );
+		
 		if ( resource == null ) {
 			resource = find(id);
 			set(resource.getId(), resource);
 		}
+		
 		return resource;
 	}	
+	
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	
+	public ServiceProviderDTO findByType(String type) {
+		
+		String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
+		
+		ServiceProvider document = MongoDBDatastore.getDatabase()
+				.getCollection( collectionName )
+				.withDocumentClass( ServiceProvider.class )
+				.find( eq ( "type", type ) )
+				.first();
+		
+		if ( document == null ) {
+			throw new WebApplicationException( String.format( "%s Id: %s does not exist or you do not have access to view", ServiceProvider.class.getSimpleName(), type ), Status.NOT_FOUND );
+		}
+		
+		ServiceProviderDTO resource = modelMapper.map( document, ServiceProviderDTO.class );
+		
+		return resource;		
+	}
 }

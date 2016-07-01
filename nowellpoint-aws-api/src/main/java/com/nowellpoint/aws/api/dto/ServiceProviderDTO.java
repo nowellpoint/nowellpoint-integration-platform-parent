@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.util.Set;
+
 import com.nowellpoint.aws.api.model.Service;
 
 public class ServiceProviderDTO extends AbstractDTO {
@@ -24,7 +26,7 @@ public class ServiceProviderDTO extends AbstractDTO {
 	
 	private String languageLocaleKey;
 	
-	private Service service;
+	private Set<Service> services;
 
 	public ServiceProviderDTO() {
 		
@@ -66,12 +68,12 @@ public class ServiceProviderDTO extends AbstractDTO {
 		this.description = description;
 	}
 	
-	public Service getService() {
-		return service;
+	public Set<Service> getServices() {
+		return services;
 	}
 
-	public void setService(Service service) {
-		this.service = service;
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 
 	public String getImage() {
