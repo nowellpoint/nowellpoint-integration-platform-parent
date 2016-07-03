@@ -182,7 +182,7 @@
                                         <tbody>
                                             <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
                                                 <tr id="${service.key}">
-                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name}</a></td>
+                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name!}</a></td>
                                                     <td>${service.serviceName!}</td>
                                                     <td>${service.tag!}</td>
                                                     <td class="text-center">

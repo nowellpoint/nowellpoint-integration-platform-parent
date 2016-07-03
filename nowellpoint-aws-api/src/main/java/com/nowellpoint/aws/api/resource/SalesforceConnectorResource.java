@@ -202,16 +202,20 @@ public class SalesforceConnectorResource {
 		return Response.noContent()
 				.build(); 
 	}
-	
+
 	@POST
-	@Path("salesforce/{id}/service")
+	@Path("salesforce/{id}/providers/{serviceProviderId}/service/{serviceType}/plan/{planName}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addServiceInstance(@PathParam(value="id") String id, ServiceInstanceDTO serviceInstance) {
+	public Response addServiceInstance(
+			@PathParam(value="id") String id, 
+			@PathParam(value="serviceProviderId") String serviceProviderId, 
+			@PathParam(value="serviceType") String serviceType, 
+			@PathParam(value="planName") String planName) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addService(subject, id, serviceInstance);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(subject, id, serviceProviderId, serviceType, planName);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
@@ -234,7 +238,7 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.updateService(subject, id, key, serviceInstance);
+		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance(subject, id, key, serviceInstance);
 		
 		return Response.ok()
 				.entity(resource)
@@ -443,7 +447,7 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.removeService(subject, id, key);
+		SalesforceConnectorDTO resource = salesforceConnectorService.removeServiceInstance(subject, id, key);
 		
 		return Response.ok()
 				.entity(resource)

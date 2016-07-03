@@ -148,7 +148,6 @@ public class ServiceInstance implements Serializable {
 
 	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
-		setActiveEnvironments(this.environments.stream().filter(environment -> environment.getActive()).count());
 	}
 
 	public void addEnvironment(String name, Boolean active) {
@@ -192,20 +191,20 @@ public class ServiceInstance implements Serializable {
 	}
 
 	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
-		environments.stream().forEach(environment -> {
-			if (environment.getEnvironmentVariables() == null) {
-				environment.setEnvironmentVariables(new HashSet<EnvironmentVariable>());
-			}
-			environment.getEnvironmentVariables().stream().forEach(variable -> {
-				if (environmentVariableValues.containsKey(variable.getVariable())) {
-					if (variable.getEnvironmentVariableValues() == null) {
-						
-					}
-					variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
-					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
-				}
-			});
-		});
+//		environments.stream().forEach(environment -> {
+//			if (environment.getEnvironmentVariables() == null) {
+//				environment.setEnvironmentVariables(new HashSet<EnvironmentVariable>());
+//			}
+//			environment.getEnvironmentVariables().stream().forEach(variable -> {
+//				if (environmentVariableValues.containsKey(variable.getVariable())) {
+//					if (variable.getEnvironmentVariableValues() == null) {
+//						
+//					}
+//					variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
+//					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
+//				}
+//			});
+//		});
 		this.environmentVariableValues = environmentVariableValues;
 	}
 }

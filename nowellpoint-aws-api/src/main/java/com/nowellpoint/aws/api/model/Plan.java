@@ -10,7 +10,7 @@ public class Plan implements Serializable {
 	
 	private static final long serialVersionUID = -7569793449815113870L;
 	
-	private String name;
+	private String planName;
 	
 	private String currencyIsoCode;
 	
@@ -18,7 +18,13 @@ public class Plan implements Serializable {
 	
 	private Double unitPrice;
 	
-	private String unitOfMeasure;
+	private String billingFrequency;
+	
+	private String billingFrequencyPer;
+	
+	private String billingFrequencyUnit;
+	
+	private String billingFrequencyQuantity;
 	
 	private Integer transactions;
 	
@@ -28,12 +34,12 @@ public class Plan implements Serializable {
 		
 	}
 
-	public String getName() {
-		return name;
+	public String getPlanName() {
+		return planName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setPlanName(String planName) {
+		this.planName = planName;
 	}
 
 	public String getCurrencyIsoCode() {
@@ -60,12 +66,36 @@ public class Plan implements Serializable {
 		this.unitPrice = unitPrice;
 	}
 
-	public String getUnitOfMeasure() {
-		return unitOfMeasure;
+	public String getBillingFrequency() {
+		return billingFrequency;
 	}
 
-	public void setUnitOfMeasure(String unitOfMeasure) {
-		this.unitOfMeasure = unitOfMeasure;
+	public void setBillingFrequency(String billingFrequency) {
+		this.billingFrequency = billingFrequency;
+	}
+
+	public String getBillingFrequencyPer() {
+		return billingFrequencyPer;
+	}
+
+	public void setBillingFrequencyPer(String billingFrequencyPer) {
+		this.billingFrequencyPer = billingFrequencyPer;
+	}
+
+	public String getBillingFrequencyUnit() {
+		return billingFrequencyUnit;
+	}
+
+	public void setBillingFrequencyUnit(String billingFrequencyUnit) {
+		this.billingFrequencyUnit = billingFrequencyUnit;
+	}
+
+	public String getBillingFrequencyQuantity() {
+		return billingFrequencyQuantity;
+	}
+
+	public void setBillingFrequencyQuantity(String billingFrequencyQuantity) {
+		this.billingFrequencyQuantity = billingFrequencyQuantity;
 	}
 
 	public Integer getTransactions() {

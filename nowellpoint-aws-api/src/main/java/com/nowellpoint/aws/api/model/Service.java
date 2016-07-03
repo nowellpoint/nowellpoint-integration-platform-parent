@@ -24,7 +24,7 @@ public class Service implements Serializable {
 	
 	private String type;
 	
-	private String name;
+	private String serviceName;
 	
 	private String description;
 	
@@ -92,12 +92,12 @@ public class Service implements Serializable {
 		this.type = type;
 	}
 
-	public String getName() {
-		return name;
+	public String getServiceName() {
+		return serviceName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 	}
 
 	public String getDescription() {

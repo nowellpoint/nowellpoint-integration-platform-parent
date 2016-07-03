@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.nowellpoint.client.sforce.model.Identity;
@@ -68,6 +69,9 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	}
 	
 	public void addServiceInstance(ServiceInstanceDTO serviceInstance) {
+		if (serviceInstances == null) {
+			serviceInstances = new HashSet<ServiceInstanceDTO>();
+		}
 		serviceInstances.add(serviceInstance);
 	}
 }
