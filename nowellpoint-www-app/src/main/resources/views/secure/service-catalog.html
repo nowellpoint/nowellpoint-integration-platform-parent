@@ -40,7 +40,7 @@
                                             <h3 class="panel-title">${labels["plans"]}</h3>
                                         </div>
                                         <div class="panel-body">
-                                            <#list service.plans?sort_by( "unitPrice") as plan>
+                                            <#list service.plans?sort_by( "unitPrice")?reverse as plan>
                                                 <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
                                                     <div class="panel price panel-white">
                                                         <div class="panel-heading arrow_box text-center">
@@ -54,7 +54,7 @@
                                                             <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["support"]} ${plan.support}</li>
                                                         </ul>
                                                         <div class="panel-footer">
-                                                            <a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.planName}">${labels["buy.now"]}</a>
+                                                            <a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}">${labels["add.plan"]}</a>
                                                         </div>
                                                     </div>
                                                 </div>

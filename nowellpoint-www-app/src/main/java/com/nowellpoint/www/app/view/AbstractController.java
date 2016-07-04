@@ -17,23 +17,26 @@ abstract class AbstractController {
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
 	protected static final String API_KEY = System.getenv("NCS_API_KEY");
 	
-	private ResourceBundleModel lables;
+	private ResourceBundleModel messages;
+	private ResourceBundleModel labels;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
-		this.lables = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
-		setupRoutes(configuration);
+		this.labels = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
+		this.messages = new ResourceBundleModel(ResourceBundle.getBundle("messages", configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
+		configureRoutes(configuration);
 	}
 	
-	public abstract void setupRoutes(Configuration configuration);
+	public abstract void configureRoutes(Configuration configuration);
 	
 	protected Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("labels", lables);
+		model.put("messages", messages);
+		model.put("labels", labels);
 		return model;
 	}
 	
 	protected String getValue(String key) {
-		return lables.getBundle().getString(key);
+		return labels.getBundle().getString(key);
 	}
 	
 	protected Token getToken(Request request) {

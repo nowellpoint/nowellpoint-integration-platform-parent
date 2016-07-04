@@ -27,7 +27,8 @@ public class AuthenticationController extends AbstractController {
 		super(AuthenticationController.class, cfg);
 	}
 	
-	public void setupRoutes(Configuration cfg) {
+	@Override
+	public void configureRoutes(Configuration cfg) {
 		post("/login", (request, response) -> login(request, response));
         
         get("/logout", (request, response) -> logout(request, response));

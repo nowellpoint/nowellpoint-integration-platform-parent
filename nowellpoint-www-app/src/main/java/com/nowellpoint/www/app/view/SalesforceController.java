@@ -34,7 +34,7 @@ public class SalesforceController extends AbstractController {
 		super(SalesforceController.class, cfg);
 	}
 	
-	public void setupRoutes(Configuration cfg) {
+	public void configureRoutes(Configuration cfg) {
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
         get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));

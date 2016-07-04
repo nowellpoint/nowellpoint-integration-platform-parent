@@ -117,7 +117,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addServiceInstance(String subject, String id, String serviceProviderId, String serviceType, String planName) {
+	public SalesforceConnectorDTO addServiceInstance(String subject, String id, String serviceProviderId, String serviceType, String code) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
@@ -131,7 +131,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		Plan plan = service.getPlans()
 				.stream()
-				.filter(p -> p.getPlanName().equals(planName))
+				.filter(p -> p.getCode().equals(code))
 				.findFirst()
 				.get();
 		

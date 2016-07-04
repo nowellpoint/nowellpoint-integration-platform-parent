@@ -4,6 +4,8 @@ public class Plan {
 
 	private String planName;
 	
+	private String code;
+	
 	private String currencyIsoCode;
 	
 	private String currencySymbol;
@@ -32,6 +34,14 @@ public class Plan {
 
 	public void setPlanName(String planName) {
 		this.planName = planName;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getCurrencyIsoCode() {

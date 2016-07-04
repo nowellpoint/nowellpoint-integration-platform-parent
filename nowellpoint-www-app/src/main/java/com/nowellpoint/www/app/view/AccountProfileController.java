@@ -37,7 +37,7 @@ public class AccountProfileController extends AbstractController {
 	 * 
 	 */
 	
-	public void setupRoutes(Configuration cfg) {
+	public void configureRoutes(Configuration cfg) {
 		get("/app/account-profile", (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(cfg));
 		
 		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(cfg));
@@ -45,6 +45,8 @@ public class AccountProfileController extends AbstractController {
 		post("/app/account-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
 		
 		delete("/app/account-profile/picture", (request, response) -> removeProfilePicture(request, response));
+		
+		get("/app/payment-methods", (request, response) -> getPaymentMethods(request, response), new FreeMarkerEngine(cfg));
 	}
 	
 	/**
@@ -170,7 +172,7 @@ public class AccountProfileController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private ModelAndView removeProfilePicture(Request request, Response response) throws IOException {
+	private ModelAndView removeProfilePicture(Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -192,5 +194,32 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", accountProfile);
 		
 		return new ModelAndView(model, "secure/account-profile.html");		
+	}
+	
+	private ModelAndView getPaymentMethods(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path("me")
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+			
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", accountProfile);
+			
+		return new ModelAndView(model, "secure/payment-methods.html");	
 	}
 }

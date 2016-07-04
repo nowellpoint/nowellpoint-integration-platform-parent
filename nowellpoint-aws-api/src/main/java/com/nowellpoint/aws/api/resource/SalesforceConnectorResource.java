@@ -204,18 +204,18 @@ public class SalesforceConnectorResource {
 	}
 
 	@POST
-	@Path("salesforce/{id}/providers/{serviceProviderId}/service/{serviceType}/plan/{planName}")
+	@Path("salesforce/{id}/providers/{serviceProviderId}/service/{serviceType}/plan/{code}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceInstance(
 			@PathParam(value="id") String id, 
 			@PathParam(value="serviceProviderId") String serviceProviderId, 
 			@PathParam(value="serviceType") String serviceType, 
-			@PathParam(value="planName") String planName) {
+			@PathParam(value="code") String code) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(subject, id, serviceProviderId, serviceType, planName);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(subject, id, serviceProviderId, serviceType, code);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)

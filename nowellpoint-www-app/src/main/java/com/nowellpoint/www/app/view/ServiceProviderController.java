@@ -32,7 +32,7 @@ public class ServiceProviderController extends AbstractController {
 		super(ServiceProviderController.class, cfg);
 	}
 	
-	public void setupRoutes(Configuration cfg) {
+	public void configureRoutes(Configuration cfg) {
 		get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/providers/:id", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));

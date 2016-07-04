@@ -57,7 +57,7 @@ public class SalesforceConnectorController extends AbstractController {
 		super(SalesforceConnectorController.class, cfg);
 	}
 	
-	public void setupRoutes(Configuration cfg) {
+	public void configureRoutes(Configuration cfg) {
 		get("/app/connectors/salesforce", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce", (request, response) -> createSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
@@ -70,13 +70,9 @@ public class SalesforceConnectorController extends AbstractController {
         
         delete("/app/connectors/salesforce/:id", (request, response) -> deleteSalesforceConnector(request, response));
         
-        get("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:planName", 
-        		(request, response) -> reviewPlan(request, response), 
-        		new FreeMarkerEngine(cfg));
+        get("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> reviewPlan(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:planName", 
-        		(request, response) -> addServiceInstance(request, response), 
-        		new FreeMarkerEngine(cfg));
+        post("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> addServiceInstance(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
@@ -431,53 +427,10 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView addServiceInstance(Request request, Response response) {
 		Token token = getToken(request);
 		
-		System.out.println("adding service");
-		
 		String id = request.params(":id");
 		String serviceProviderId = request.params(":serviceProviderId");
 		String serviceType = request.params(":serviceType");
-		String planName = request.params(":planName");
-		
-		//String planName = request.queryParams("planName");
-//		String billingFrequency = request.queryParams("billingFrequency");
-//		String billingFrequencyPer = request.queryParams("billingFrequencyPer");
-//		String billingFrequencyQuantity = request.queryParams("billingFrequencyQuantity");
-//		String billingFrequencyUnit = request.queryParams("billingFrequencyUnit");
-//		String currencyIsoCode = request.queryParams("currencyIsoCode");
-//		String currencySymbol = request.queryParams("currencySymbol");
-//		String support = request.queryParams("support");
-//		Integer transactions = Integer.valueOf(request.queryParams("transactions"));
-//		Double unitPrice = Double.valueOf(request.queryParams("unitPrice"));
-//		
-//		String serviceName = request.queryParams("serviceName");
-//		String providerName = request.queryParams("providerName");
-//		String providerType = request.queryParams("providerType");
-		//String serviceType = request.queryParams("serviceType");
-		
-//		Plan plan = new Plan();
-//		plan.setBillingFrequency(billingFrequency);
-//		plan.setBillingFrequencyPer(billingFrequencyPer);
-//		plan.setBillingFrequencyQuantity(billingFrequencyQuantity);
-//		plan.setBillingFrequencyUnit(billingFrequencyUnit);
-//		plan.setCurrencyIsoCode(currencyIsoCode);
-//		plan.setCurrencySymbol(currencySymbol);
-//		plan.setPlanName(planName);
-//		plan.setSupport(support);
-//		plan.setTransactions(transactions);
-//		plan.setUnitPrice(unitPrice);
-//		
-//		ServiceInstance serviceInstance = new ServiceInstance();
-//		serviceInstance.setServiceName(serviceName);
-//		serviceInstance.setProviderName(providerName);
-//		serviceInstance.setProviderType(providerType);
-//		serviceInstance.setServiceType(serviceType);
-//		serviceInstance.setPlan(plan);
-		
-	//	ObjectNode node = new ObjectMapper().createObjectNode()
-	//			.put("name", name)
-	//			.put("sourceEnvironment", sourceEnvironment); 
-		
-		//salesforce/{id}/providers/{serviceProviderId}/service/{serviceType}/plan/{planName}
+		String code = request.params(":code");
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("x-api-key", API_KEY)
@@ -492,7 +445,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("service")
 				.path(serviceType)
 				.path("plan")
-				.path(planName)
+				.path(code)
 				.execute();
 		
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
@@ -732,7 +685,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String serviceProviderId = request.params(":serviceProviderId");
 		String serviceType = request.params(":serviceType");
-		String planName = request.params(":planName");
+		String code = request.params(":code");
 		
 		ServiceProvider provider = null;
 		SalesforceConnector salesforceConnector = null;
@@ -765,7 +718,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Plan plan = service.getPlans()
 				.stream()
-				.filter(p -> p.getPlanName().equals(planName))
+				.filter(p -> p.getCode().equals(code))
 				.findFirst()
 				.get();
 		
@@ -777,7 +730,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("salesforceConnector", salesforceConnector);
 		model.put("errorMessage", errorMessage);
     	
-		return new ModelAndView(model, "secure/purchase-form.html");
+		return new ModelAndView(model, "secure/review-order.html");
 	}
 	
 	/**

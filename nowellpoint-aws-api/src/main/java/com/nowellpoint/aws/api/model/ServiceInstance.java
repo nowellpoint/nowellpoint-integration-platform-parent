@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

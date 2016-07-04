@@ -3,13 +3,13 @@
         <div class="navbar-header">
 
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
             <div class="navbar-brand navbar-brand-emphasized">
-                ${applicationTitle}
+                ${messages["application.title"]}
             </div>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -17,13 +17,13 @@
                 <li>
                     <a href="/app/start">
                         <span class="icon icon-star"></span>
-                        <span class="iconav-nav-label">${start}</span>
+                        <span class="iconav-nav-label">${messages["start"]}</span>
                     </a>
                 </li>
                 <li>
                     <a href="/app/dashboard">
                         <span class="icon icon-gauge"></span>
-                        <span class="iconav-nav-label">${dashboard}</span>
+                        <span class="iconav-nav-label">${messages["dashboard"]}</span>
                     </a>
                 </li>
 
@@ -31,7 +31,7 @@
 
                     <a href="/app/connectors/salesforce">
                         <span class="icon icon-database"></span>
-                        <span class="iconav-nav-label">${connectors}</span>
+                        <span class="iconav-nav-label">${messages["connectors"]}</span>
                     </a>
 
                 </li>
@@ -51,32 +51,38 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <#if account.groups.items?? >
+                <#if account.groups.items??>
                     <#list account.groups.items as group>
-                    <#if group.name=="System Administrator">
-                        <li>
-                            <a href="/app/administration">
-                            ${adminsitration}
+                        <#if group.name=="System Administrator">
+                            <li>
+                                <a href="/app/administration">
+                                    ${messages["adminsitration"]}
                         </a>
-                        </li>
-                    </#if>
-                </#list>
+                            </li>
+                        </#if>
+                    </#list>
                 </#if>
-                
-
-                <li>
-                    <a href="/app/account-profile">
-                                ${(account.fullName)!}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${(account.fullName)!} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/app/account-profile">
+                               ${messages["account.profile"]}
                             </a>
+                        </li>
+                        <li>
+                            <a href="/app/payment-methods">
+                                ${messages["payment.methods"]}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="/logout">
-                                ${logOut}
-                            </a>
+                        ${messages["log.out"]}
+                    </a>
                 </li>
-
             </ul>
-
         </div>
     </div>
 </nav>

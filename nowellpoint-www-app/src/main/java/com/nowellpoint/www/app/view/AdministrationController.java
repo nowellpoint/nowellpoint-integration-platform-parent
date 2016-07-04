@@ -31,7 +31,7 @@ public class AdministrationController extends AbstractController {
 		super(AdministrationController.class, cfg);
 	}
 	
-	public void setupRoutes(Configuration cfg) {
+	public void configureRoutes(Configuration cfg) {
 		get("/app/administration", (request, response) -> getAdministrationHome(request, response), new FreeMarkerEngine(cfg));	
 		
 		get("/app/administration/cache", (request, response) -> getCache(request, response), new FreeMarkerEngine(cfg));	

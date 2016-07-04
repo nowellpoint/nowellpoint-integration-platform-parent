@@ -33,12 +33,16 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class ApplicationController {
+public class ApplicationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ApplicationController.class);
 	
 	public ApplicationController(Configuration cfg) {
-		
+		super(ApplicationController.class, cfg);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration cfg) {
 		get("/app/application/provider/:id", (request, response) -> newApplication(request, response), new FreeMarkerEngine(cfg));
 		
 		get("/app/application/:id", (request, response) -> getApplication(request, response), new FreeMarkerEngine(cfg));
@@ -48,6 +52,7 @@ public class ApplicationController {
 		delete("/app/application/:id", (request, response) -> deleteApplication(request, response));
 		
 		post("/app/application", (request, response) -> saveApplication(request, response), new FreeMarkerEngine(cfg));
+		
 	}
 	
 	/**

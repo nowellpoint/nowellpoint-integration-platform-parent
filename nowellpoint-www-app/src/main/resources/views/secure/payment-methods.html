@@ -1,0 +1,52 @@
+<#import "template.html" as t>
+    <@t.page>
+        <#include "navbar.html" />
+
+        <div class="container">
+            <div class="row">
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h6 class="dashhead-subtitle">${messages["payment.methods"]}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+                <br>
+                <div id="status-message"></div>
+                <br>
+                <br>
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    <form>
+                        <div class="pull-right">
+                            <a href="#profileDialog" class="profile-dialog btn btn-lg btn-primary-outline" role="button" data-toggle="modal" data-title="${labels['edit.user.profile']}">${labels["edit"]}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function(e) {
+                $('#clickable').click(function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/app/account-profile/picture",
+                        success: function() {
+                            location.reload();
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </@t.page>
