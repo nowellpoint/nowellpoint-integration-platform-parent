@@ -46,7 +46,7 @@
                     <div class="col-md-9">
                         <dl class="dl-horizontal">
 
-                            <dt>${labels["id"]}</dt>
+                            <dt>${labels["identity.id"]}</dt>
                             <dd>${(salesforceConnector.identity.id)!}</dd>
 
                             <dt>${labels["name"]}</dt>
@@ -182,15 +182,15 @@
                                         <tbody>
                                             <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
                                                 <tr id="${service.key}">
-                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name!}</a></td>
+                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name!service.key}</a></td>
                                                     <td>${service.serviceName!}</td>
                                                     <td>${service.tag!}</td>
                                                     <td class="text-center">
                                                         <#if service.isActive>
-                                                            ${labels["yes"]}
+                                                            ${messages["yes"]}
                                                         </#if>
                                                         <#if ! service.isActive>
-                                                            ${labels["no"]}
+                                                            ${messages["no"]}
                                                         </#if>
                                                     </td>
                                                 </tr>

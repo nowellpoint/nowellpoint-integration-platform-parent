@@ -19,6 +19,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.model.AccountProfile;
+import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
@@ -176,5 +177,26 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	public AccountProfileDTO addCreditCard(String subject, String id, CreditCard creditCard) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+		resource.setSubject(subject);
+		resource.setCreditCard(creditCard);
+		
+		updateAccountProfile(resource);
+		
+		return resource;
+	}
+	
+	public AccountProfileDTO removeCreditCard(String subject, String id) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+		resource.setSubject(subject);
+		resource.setCreditCard(null);
+		
+		updateAccountProfile(resource);
+		
+		return resource;
+		
 	}
 }

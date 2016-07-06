@@ -3,6 +3,7 @@ package com.nowellpoint.aws.api.dto;
 import java.util.Date;
 
 import com.nowellpoint.aws.api.model.Address;
+import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 
 public class AccountProfileDTO extends AbstractDTO {
@@ -150,7 +151,12 @@ public class AccountProfileDTO extends AbstractDTO {
 	 */
 	
 	private Photos photos;
-
+	
+	/**
+	 * 
+	 */
+	
+	private CreditCard creditCard;
 	
 	public AccountProfileDTO() {
 		
@@ -338,5 +344,13 @@ public class AccountProfileDTO extends AbstractDTO {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}	
+	
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 }

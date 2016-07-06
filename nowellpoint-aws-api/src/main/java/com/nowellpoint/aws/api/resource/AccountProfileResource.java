@@ -36,6 +36,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.model.Address;
+import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
@@ -232,7 +233,7 @@ public class AccountProfileResource {
 	}
 	
 	@PUT
-	@Path("/{id}")
+	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response udpateAccountProfile(@PathParam("id") String id, AccountProfileDTO resource) {
@@ -244,6 +245,33 @@ public class AccountProfileResource {
 		accountProfileService.updateAccountProfile(resource);
 		
 		return Response.ok(resource).build();
+	}
+	
+	@POST
+	@Path("{id}/credit-card")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		AccountProfileDTO resource = accountProfileService.removeCreditCard(subject, id);
+		
+		return Response
+				.ok(resource)
+				.build();
+	}
+	
+	@DELETE
+	@Path("{id}/credit-card")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeCreditCard(@PathParam("id") String id) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		AccountProfileDTO resource = accountProfileService.removeCreditCard(subject, id);
+		
+		return Response
+				.ok(resource)
+				.build();
 	}
 	
 	@GET

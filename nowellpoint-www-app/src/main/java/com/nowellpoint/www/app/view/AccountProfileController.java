@@ -5,18 +5,22 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
+import com.nowellpoint.www.app.model.Address;
+import com.nowellpoint.www.app.model.CreditCard;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -47,6 +51,9 @@ public class AccountProfileController extends AbstractController {
 		delete("/app/account-profile/picture", (request, response) -> removeProfilePicture(request, response));
 		
 		get("/app/payment-methods", (request, response) -> getPaymentMethods(request, response), new FreeMarkerEngine(cfg));
+		
+		get("/app/payment-methods/credit-card", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(cfg));
+		
 	}
 	
 	/**
@@ -72,7 +79,7 @@ public class AccountProfileController extends AbstractController {
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 			
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
@@ -118,7 +125,7 @@ public class AccountProfileController extends AbstractController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo() + " : " + httpResponse.getHeaders().get("Location"));
 		
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode() && httpResponse.getStatusCode() != Status.CREATED.getStatusCode()) {
+		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
@@ -210,11 +217,81 @@ public class AccountProfileController extends AbstractController {
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 			
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+//		
+//		Address address = new Address();
+//		address.setCity("Raleigh");
+//		address.setCountry("United States");
+//		address.setCountryCode("US");
+//		address.setPostalCode("27601");
+//		address.setState("NC");
+//		address.setStreet("300 W. Hargett Street, Unit 415");
+//		
+//		CreditCard creditCard = new CreditCard();
+//		creditCard.setType("Visa");
+//		creditCard.setFirstName("John");
+//		creditCard.setLastName("Herson");
+//		creditCard.setAddress(address);
+//		creditCard.setNumber("4111111111111111");
+//		creditCard.setLastFour("1111");
+//		creditCard.setExpiration(Date.from(Instant.now()));
+//		
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+//		accountProfile.setCreditCard(creditCard);
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", accountProfile);
+			
+		return new ModelAndView(model, "secure/payment-methods.html");	
+	}
+	
+	private ModelAndView addCreditCard(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path("me")
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		accountProfile.setCreditCard(new CreditCard());
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", accountProfile);
+			
+		return new ModelAndView(model, "secure/payment-methods.html");	
+	}
+	
+	private ModelAndView removeCreditCard(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path("me")
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		accountProfile.setCreditCard(new CreditCard());
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);

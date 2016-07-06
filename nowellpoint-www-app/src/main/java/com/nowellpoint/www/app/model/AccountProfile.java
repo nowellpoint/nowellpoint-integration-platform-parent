@@ -136,6 +136,12 @@ public class AccountProfile extends Resource {
 	
 	private Photos photos;
 	
+	/**
+	 * 
+	 */
+	
+	private CreditCard creditCard;
+	
 	public AccountProfile() {
 		address = new Address();
 		photos = new Photos();
@@ -315,5 +321,13 @@ public class AccountProfile extends Resource {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 }

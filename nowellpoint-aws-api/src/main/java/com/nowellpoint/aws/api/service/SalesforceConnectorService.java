@@ -190,8 +190,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			resource.setServiceInstances(Collections.emptySet());
 		}
 		
-		serviceInstance.setActiveEnvironments(serviceInstance.getEnvironments().stream().filter(e -> e.getActive()).count());
-		
 		Map<String,ServiceInstanceDTO> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
 		
 		resource.getServiceInstances().clear();

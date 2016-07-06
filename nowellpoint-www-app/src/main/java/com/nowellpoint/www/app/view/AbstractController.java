@@ -36,7 +36,11 @@ abstract class AbstractController {
 	}
 	
 	protected String getValue(String key) {
-		return labels.getBundle().getString(key);
+		if (labels.getBundle().containsKey(key)) {
+			return labels.getBundle().getString(key);
+		} else {
+			return messages.getBundle().getString(key);
+		}
 	}
 	
 	protected Token getToken(Request request) {

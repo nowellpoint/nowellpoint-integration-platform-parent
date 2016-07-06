@@ -164,6 +164,12 @@ public class AccountProfile extends AbstractDocument {
 	
 	private String leadId;
 	
+	/**
+	 * 
+	 */
+	
+	private CreditCard creditCard;
+	
 	public AccountProfile() {
 
 	}
@@ -350,5 +356,13 @@ public class AccountProfile extends AbstractDocument {
 
 	public void setLeadId(String leadId) {
 		this.leadId = leadId;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 }

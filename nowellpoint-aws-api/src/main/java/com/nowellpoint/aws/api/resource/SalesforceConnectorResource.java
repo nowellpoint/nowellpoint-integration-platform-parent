@@ -217,12 +217,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(subject, id, serviceProviderId, serviceType, code);
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SalesforceConnectorResource.class)
-				.path("/{id}")
-				.build(resource.getId());
-		
-		return Response.created(uri)
+		return Response.ok()
 				.entity(resource)
 				.build(); 	
 	}
