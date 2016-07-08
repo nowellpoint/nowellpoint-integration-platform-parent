@@ -27,7 +27,7 @@
                                             <div class="pull-left">${labels["credit.card"]}: ${(accountProfile.creditCard.type)!} <#if accountProfile.creditCard??>(${(accountProfile.creditCard.lastFour)!})</#if></div>    
                                         </div>
                                         <div class="flextable-item">
-                                            <div class="pull-left">${labels["expiration.date"]}: ${(accountProfile.creditCard.expiration?string["MM/yyyy"])!}</div>
+                                            <div class="pull-left">${labels["expiration.date"]}: ${(accountProfile.creditCard.month)!}${(accountProfile.creditCard.year)!}</div>
                                         </div>
                                         <div class="flextable-item">
                                         <i class="indicator glyphicon glyphicon-chevron-down pull-right"></i>  
@@ -76,110 +76,111 @@
 
                 <div id="creditCard" class="hidden">
 
-                    <form class="form-vertical" role="form" method="post" action="/app/account-profile">
+                    <form id="form" name="form" class="form-vertical" role="form">
+                        
+                        <input type="hidden" name="accountProfileId" id="accountProfileId" value="${accountProfile.id}" />
+                        
                         <div class="row">
-
                             <div class="form-group col-md-2"></div>
                             <div class="form-group col-md-8">
-                            <div class="form-group col-md-12">
-                                <input type="checkbox" name="use-contact-info" id="use-contact-info" />
-                                <label class="control-label" for="use-contact-info">${labels["use.contact.info"]}</label>
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="firstName">${labels["first.name"]}</label>
-                                <input type="text" class="form-control" name="firstName" id="firstName" autofocus="" tabindex="1" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="street">${labels["street"]}</label>
-                                <input type="text" class="form-control" name="street" id="street" tabindex="6" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="lastName">${labels["last.name"]}</label>
-                                <input type="text" class="form-control" name="lastName" id="lastName" tabindex="2" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label input="control-label" for="city">${labels["city"]}</label>
-                                <input type="text" class="form-control" name="city" id="city" tabindex="7" />
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label class="control-label" for="number">${labels["number"]}</label>
-                                <input type="text" class="form-control" name="number" id="number" tabindex="3">
-                            </div>
-
-                            <div class="form-group col-md-1">
-                                <label class="control-label" for="expiration">${labels["month"]}</label>
-                                <div class="input-group">
-                                    <select class="form-control" name="month" id="month" style="width:auto;" tabindex="4">
-                                        <#assign x = 12 />
-                                        <#list 1..x as month>
-                                            <option value="${month?c}">${month?c}</option>
-                                        </#list>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-2">
-                                <label class="control-label" for="expiration">${labels["year"]}</label>
-                                <div class="input-group">
-                                    <select type="text" class="form-control" name="year" id="year" tabindex="5">
-                                        <#assign x = .now?string[ "yyyy"]?number + 19/>
-                                        <#list .now?string[ "yyyy"]?number..x as year>
-                                            <option value="${year?c}">${year?c}</option>
-                                        </#list>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="state">${labels["state"]}</label>
-                                <input type="text" class="form-control" name="state" id="state" tabindex="8" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-
-                            </div>
-
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
-                                <input type="text" class="form-control" name="postalCode" id="postalCode" tabindex="9" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="countryCode">${labels["country"]}*</label>
-                                <select id="countryCode" name="countryCode" class="form-control" tabindex="10" required>
-                                    <#list countryList as country>
-                                        <option value="${country.code}">${country.name}</option>
-                                    </#list>
-                                </select>
-                            </div>
-
-                        
-                        <div class="form-group">
-                            <#if errorMessage??>
-                                <div id="alert" class="alert alert-danger">
-                                    <a class="close" data-dismiss="alert">×</a>
-                                    <div class="text-center">${errorMessage}</div>
-                                </div>
-                            </#if>
-                        </div> 
                                 <div class="form-group col-md-12">
-                        <div class="pull-right">
-                            <a href="#creditCard" class="btn btn-default toggle" role="button" tabindex="11">${labels["cancel"]}</a>
-                            <button type="submit" name="save" id="save" class="btn btn-primary" tabindex="12">${labels["save"]}</button>
+                                    <input type="checkbox" name="use-contact-info" id="use-contact-info" />
+                                    <label class="control-label" for="use-contact-info">${labels["use.account.profile"]}</label>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="firstName">${labels["first.name"]}</label>
+                                    <input type="text" class="form-control" name="firstName" id="firstName" autofocus="" tabindex="1" />
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="street">${labels["street"]}</label>
+                                    <input type="text" class="form-control" name="street" id="street" tabindex="6" />
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="lastName">${labels["last.name"]}</label>
+                                    <input type="text" class="form-control" name="lastName" id="lastName" tabindex="2" />
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label input="control-label" for="city">${labels["city"]}</label>
+                                    <input type="text" class="form-control" name="city" id="city" tabindex="7" />
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="number">${labels["number"]}</label>
+                                    <input type="text" class="form-control" name="number" id="number" tabindex="3">
+                                </div>
+
+                                <div class="form-group col-md-1">
+                                    <label class="control-label" for="expiration">${labels["month"]}</label>
+                                    <div class="input-group">
+                                        <select class="form-control" name="month" id="month" style="width:auto;" tabindex="4">
+                                            <#assign x=12 />
+                                            <#list 1..x as month>
+                                                <option value="${month?c}">${month?c}</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label class="control-label" for="expiration">${labels["year"]}</label>
+                                    <div class="input-group">
+                                        <select type="text" class="form-control" name="year" id="year" tabindex="5">
+                                            <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                            <#list .now?string[ "yyyy"]?number..x as year>
+                                                <option value="${year?c}">${year?c}</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="state">${labels["state"]}</label>
+                                    <input type="text" class="form-control" name="state" id="state" tabindex="8" />
+                                </div>
+
+                                <div class="form-group col-md-6">
+
+                                </div>
+
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" tabindex="9" />
+                                </div>
+
+                                <div class="form-group col-md-6">
+
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                                    <select id="countryCode" name="countryCode" class="form-control" tabindex="10" required>
+                                        <#list countryList as country>
+                                            <option value="${country.code}">${country.name}</option>
+                                        </#list>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <#if errorMessage??>
+                                        <div id="alert" class="alert alert-danger">
+                                            <a class="close" data-dismiss="alert">×</a>
+                                            <div class="text-center">${errorMessage}</div>
+                                        </div>
+                                    </#if>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <div class="pull-right">
+                                        <a href="#creditCard" class="btn btn-default toggle" role="button" tabindex="11">${labels["cancel"]}</a>
+                                        <button type="submit" name="save" id="save" class="btn btn-primary" tabindex="12">${labels["save"]}</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        </div>
-                            </div>        
-                        </div>    
                         <div class="form-group col-md-2"></div>
                     </form>
                 </div>
@@ -271,11 +272,24 @@
                 </div>
             </div>
         </div>
-
-
+        
+        <script>
             
-            <script src="/js/account-profile.js"></script>
+            var accountProfile = {
+                id: "${accountProfile.id!}",
+                firstName: "${accountProfile.firstName!}",
+                lastName : "${accountProfile.lastName!}",
+                street : "${(accountProfile.address.street)!}",
+                city : "${(accountProfile.address.city)!}",
+                state : "${(accountProfile.address.state)!}",
+                postalCode : "${(accountProfile.address.postalCode)!}",
+                countryCode : "${(accountProfile.address.countryCode)!}"
+            }
             
+            jQuery.data( document.body, "accountProfile", accountProfile );
+            
+        </script>
 
+        <script src="/js/account-profile.js"></script>
 
     </@t.page>

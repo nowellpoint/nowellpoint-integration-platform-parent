@@ -1,50 +1,51 @@
+$(function () {
+	$('.toggle').click(function (event) {
+		event.preventDefault();
+		var target = $(this).attr('href');
+		$(target).toggleClass('hidden show');
+		$('#add-card').toggleClass('hidden show');
+		$('#firstName').val('');
+		$("#lastName").val('');
+		$("#street").val('');
+		$("#city").val('');
+		$("#state").val('');
+		$("#postalCode").val('');
+		$("#countryCode").val('');
+		$('#use-contact-info').prop('checked', false);
+	});
+});
 
-            $(function() {
-                $('.toggle').click(function(event) {
-                    event.preventDefault();
-                    var target = $(this).attr('href');
-                    $(target).toggleClass('hidden show');
-                    $('#add-card').toggleClass('hidden show');
-                    $('#firstName').val('');
-                    $("#lastName").val('');
-                    $("#street").val('');
-                    $("#city").val('');
-                    $("#state").val('');
-                    $("#postalCode").val('');
-                    $("#countryCode").val('');
-                    $('#use-contact-info').prop('checked', false);
-                });
-            });
+$("#use-contact-info").change(function () {
+	if (this.checked) {
+		var accountProfile = jQuery.data(document.body, "accountProfile");
+		$("#firstName").val(accountProfile.firstName);
+		$("#lastName").val(accountProfile.lastName);
+		$("#street").val(accountProfile.street);
+		$("#city").val(accountProfile.city);
+		$("#state").val(accountProfile.state);
+		$("#postalCode").val(accountProfile.postalCode);
+		$("#countryCode").val(accountProfile.countryCode);
+	} else {
+		$('#firstName').val('');
+		$("#lastName").val('');
+		$("#street").val('');
+		$("#city").val('');
+		$("#state").val('');
+		$("#postalCode").val('');
+		$("#countryCode").val('');
+	}
+});
 
-            $('#use-contact-info').change(function() {
-                if (this.checked) {
-                    $("#firstName").val('${accountProfile.firstName!}');
-                    $("#lastName").val('${accountProfile.lastName!}');
-                    $("#street").val('${(accountProfile.address.street)!}');
-                    $("#city").val('${(accountProfile.address.city)!}');
-                    $("#state").val('${(accountProfile.address.state)!}');
-                    $("#postalCode").val('${(accountProfile.address.postalCode)!}');
-                    $("#countryCode").val('${(accountProfile.address.countryCode)!}');
-                } else {
-                    $('#firstName').val('');
-                    $("#lastName").val('');
-                    $("#street").val('');
-                    $("#city").val('');
-                    $("#state").val('');
-                    $("#postalCode").val('');
-                    $("#countryCode").val('');
-                }
-            });
-
-            $(document).ready(function(e) {
-                $('#clickable').click(function(e) {
-                    e.preventDefault();
-                    $.ajax({
-                        type: "DELETE",
-                        url: "/app/account-profile/picture",
-                        success: function() {
-                            location.reload();
-                        }
-                    });
-                });
-            });
+$("#save").click(function (event) {    
+	event.preventDefault();
+	var params = $("#form").serialize();
+	$.ajax({
+		type : "POST",
+		dataType: "html",
+		data: params,
+		url : "/app/payment-methods",
+		success : function() {
+			location.reload();
+		}
+	});
+});

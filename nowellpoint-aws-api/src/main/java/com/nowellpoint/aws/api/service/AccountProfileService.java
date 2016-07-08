@@ -23,6 +23,8 @@ import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
@@ -183,6 +185,22 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
 		resource.setCreditCard(creditCard);
+		
+		HttpResponse httpResponse = RestResource.post("https://cheddargetter.com/xml/customers/new/productCode/NOWELLPOINT_SANDBOX")
+				.basicAuthorization("****", "****")
+				.parameter("code", resource.getCompany())
+				.parameter("firstName", resource.getFirstName())
+				.parameter("lastName", resource.getLastName())
+				.parameter("email", resource.getEmail())
+				.parameter("subscription[planCode]", "DEVELOPER")
+				.parameter("subscription[ccFirstName]", resource.getCreditCard().getFirstName())
+				.parameter("subscription[ccLastName]", resource.getCreditCard().getLastName())
+				.parameter("subscription[ccNumber]", resource.getCreditCard().getNumber())
+				.parameter("subscription[ccExpiration]", resource.getCreditCard().getMonth().concat("/").concat(resource.getCreditCard().getYear()))
+				.execute();
+		
+		System.out.println(httpResponse.getStatusCode());
+		System.out.println(httpResponse.getAsString());
 		
 		updateAccountProfile(resource);
 		

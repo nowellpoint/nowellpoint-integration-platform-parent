@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.model;
 
-import java.util.Date;
-
 public class CreditCard {
 	
 	/**
@@ -32,7 +30,13 @@ public class CreditCard {
 	 * 
 	 */
 	
-	private Date expiration;
+	private String month;
+	
+	/**
+	 * 
+	 */
+	
+	private String year;
 	
 	/**
 	 * 
@@ -82,12 +86,20 @@ public class CreditCard {
 		this.number = number;
 	}
 
-	public Date getExpiration() {
-		return expiration;
+	public String getMonth() {
+		return month;
 	}
 
-	public void setExpiration(Date expiration) {
-		this.expiration = expiration;
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
 	}
 
 	public String getLastFour() {

@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class CreditCard implements Serializable {
 	
@@ -39,7 +38,13 @@ public class CreditCard implements Serializable {
 	 * 
 	 */
 	
-	private Date expiration;
+	private String month;
+	
+	/**
+	 * 
+	 */
+	
+	private String year;
 	
 	/**
 	 * 
@@ -89,12 +94,20 @@ public class CreditCard implements Serializable {
 		this.number = number;
 	}
 
-	public Date getExpiration() {
-		return expiration;
+	public String getMonth() {
+		return month;
 	}
 
-	public void setExpiration(Date expiration) {
-		this.expiration = expiration;
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
 	}
 
 	public String getLastFour() {
