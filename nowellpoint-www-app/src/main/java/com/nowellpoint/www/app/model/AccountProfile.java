@@ -1,6 +1,8 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AccountProfile extends Resource {
 
@@ -140,11 +142,12 @@ public class AccountProfile extends Resource {
 	 * 
 	 */
 	
-	private CreditCard creditCard;
+	private List<CreditCard> creditCards;
 	
 	public AccountProfile() {
 		address = new Address();
 		photos = new Photos();
+		creditCards = new ArrayList<CreditCard>();
 	}
 
 	public String getUsername() {
@@ -323,11 +326,15 @@ public class AccountProfile extends Resource {
 		this.photos = photos;
 	}
 
-	public CreditCard getCreditCard() {
-		return creditCard;
+	public List<CreditCard> getCreditCards() {
+		return creditCards;
 	}
 
-	public void setCreditCard(CreditCard creditCard) {
-		this.creditCard = creditCard;
+	public void setCreditCards(List<CreditCard> creditCards) {
+		this.creditCards = creditCards;
+	}
+	
+	public void addCreditCard(CreditCard creditCard) {
+		this.getCreditCards().add(creditCard);
 	}
 }

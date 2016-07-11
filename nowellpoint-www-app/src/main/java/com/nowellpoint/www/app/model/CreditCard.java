@@ -6,19 +6,13 @@ public class CreditCard {
 	 * 
 	 */
 	
-	private String type;
+	private String cardType;
 	
 	/**
 	 * 
 	 */
 	
-	private String firstName;
-	
-	/**
-	 * 
-	 */
-	
-	private String lastName;
+	private String cardholderName;
 	
 	/**
 	 * 
@@ -30,13 +24,13 @@ public class CreditCard {
 	 * 
 	 */
 	
-	private String month;
+	private String expirationMonth;
 	
 	/**
 	 * 
 	 */
 	
-	private String year;
+	private String expirationYear;
 	
 	/**
 	 * 
@@ -48,34 +42,44 @@ public class CreditCard {
 	 * 
 	 */
 	
-	private Address address;
+	private String token;
+	
+	/**
+	 * 
+	 */
+	
+	private String imageUrl;
+	
+	/**
+	 * 
+	 */
+	
+	private Address billingAddress;
+	
+	/**
+	 * 
+	 */
+	
+	private Contact billingContact;
 
 	public CreditCard() {
 		
 	}
 
-	public String getType() {
-		return type;
+	public String getCardType() {
+		return cardType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getCardholderName() {
+		return cardholderName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setCardholderName(String cardholderName) {
+		this.cardholderName = cardholderName;
 	}
 
 	public String getNumber() {
@@ -86,20 +90,20 @@ public class CreditCard {
 		this.number = number;
 	}
 
-	public String getMonth() {
-		return month;
+	public String getExpirationMonth() {
+		return expirationMonth;
 	}
 
-	public void setMonth(String month) {
-		this.month = month;
+	public void setExpirationMonth(String expirationMonth) {
+		this.expirationMonth = expirationMonth;
 	}
 
-	public String getYear() {
-		return year;
+	public String getExpirationYear() {
+		return expirationYear;
 	}
 
-	public void setYear(String year) {
-		this.year = year;
+	public void setExpirationYear(String expirationYear) {
+		this.expirationYear = expirationYear;
 	}
 
 	public String getLastFour() {
@@ -110,11 +114,65 @@ public class CreditCard {
 		this.lastFour = lastFour;
 	}
 
-	public Address getAddress() {
-		return address;
+	public String getToken() {
+		return token;
 	}
 
-	public void setAddress(Address address) {
-		this.address = address;
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public Contact getBillingContact() {
+		return billingContact;
+	}
+
+	public void setBillingContact(Contact billingContact) {
+		this.billingContact = billingContact;
+	}
+	
+	public CreditCard withCardholderName(String cardholderName) {
+		setCardholderName(cardholderName);
+		return this;
+	}
+	
+	public CreditCard withNumber(String number) {
+		setNumber(number);
+		return this;
+	}
+	
+	public CreditCard withExpirationMonth(String expirationMonth) {
+		setExpirationMonth(expirationMonth);
+		return this;
+	}
+	
+	public CreditCard withExpirationYear(String expirationYear) {
+		setExpirationYear(expirationYear);
+		return this;
+	}
+	
+	public CreditCard withBillingAddress(Address address) {
+		setBillingAddress(address);
+		return this;
+	}
+	
+	public CreditCard withBillingContact(Contact billingContact) {
+		setBillingContact(billingContact);
+		return this;
 	}
 }

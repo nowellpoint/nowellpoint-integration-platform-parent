@@ -261,13 +261,26 @@ public class AccountProfileResource {
 				.build();
 	}
 	
-	@DELETE
-	@Path("{id}/credit-card")
+	@PUT
+	@Path("{id}/credit-card/{token}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeCreditCard(@PathParam("id") String id) {
+	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.removeCreditCard(subject, id);
+		AccountProfileDTO resource = accountProfileService.updateCreditCard(subject, id, token, creditCard);
+		
+		return Response
+				.ok(resource)
+				.build();
+	}
+	
+	@DELETE
+	@Path("{id}/credit-card/{token}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		AccountProfileDTO resource = accountProfileService.removeCreditCard(subject, id, token);
 		
 		return Response
 				.ok(resource)

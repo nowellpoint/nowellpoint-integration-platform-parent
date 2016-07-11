@@ -3,6 +3,7 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.put;
 
 import java.io.IOException;
 import java.util.Map;
@@ -10,8 +11,6 @@ import java.util.Map;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -19,6 +18,8 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
+import com.nowellpoint.www.app.model.Address;
+import com.nowellpoint.www.app.model.Contact;
 import com.nowellpoint.www.app.model.CreditCard;
 
 import freemarker.log.Logger;
@@ -47,9 +48,13 @@ public class AccountProfileController extends AbstractController {
 		
 		get("/app/payment-methods", (request, response) -> getPaymentMethods(request, response), new FreeMarkerEngine(configuration));
 		
-		post("/app/payment-methods", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
+		// credit card routes
 		
-		delete("/app/payment-methods", (request, response) -> removeCreditCard(request, response), new FreeMarkerEngine(configuration));
+		post("/app/account-profile/:id/payment-methods", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
+		
+		put("/app/account-profile/:id/payment-methods/:token", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
+		
+		delete("/app/account-profile/:id/payment-methods/:token", (request, response) -> removeCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
 		/////////////////////////////////
 
@@ -236,34 +241,32 @@ public class AccountProfileController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		String accountProfileId = request.queryParams("accountProfileId");
-		String firstName = request.queryParams("firstName");
-		String lastName = request.queryParams("lastName");
+		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
-		String month = request.queryParams("month");
-		String year = request.queryParams("year");
+		String expirationMonth = request.queryParams("expirationMonth");
+		String expirationYear = request.queryParams("expirationYear");
 		String city = request.queryParams("city");
 		String countryCode = request.queryParams("countryCode");
 		String postalCode = request.queryParams("postalCode");
 		String state = request.queryParams("state");
 		String street = request.queryParams("street");
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
 		
-		ObjectMapper objectMapper = new ObjectMapper();
-		
-		JsonNode node = objectMapper.createObjectNode()
-				.put("firstName", firstName)
-				.put("lastName", lastName)
-				.put("number", number)
-				.put("month", month)
-				.put("year", year)
-				.set("address",  objectMapper.createObjectNode()
-						.put("city", city)
-						.put("countryCode", countryCode)
-						.put("postalCode", postalCode)
-						.put("state", state)
-						.put("street", street));
-		
-		System.out.println(node);
+		CreditCard creditCard = new CreditCard()
+				.withBillingAddress(new Address()
+						.withCity(city)
+						.withCountryCode(countryCode)
+						.withPostalCode(postalCode)
+						.withState(state)
+						.withStreet(street))
+				.withBillingContact(new Contact()
+						.withFirstName(firstName)
+						.withLastName(lastName))
+				.withCardholderName(cardholderName)
+				.withExpirationMonth(expirationMonth)
+				.withExpirationYear(expirationYear)
+				.withNumber(number);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -271,26 +274,24 @@ public class AccountProfileController extends AbstractController {
 				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
-				.path(accountProfileId)
+				.path(request.params(":id"))
 				.path("credit-card")
-				.body(node)
+				.body(creditCard)
 				.execute();
 		
-		System.out.println(httpResponse.getURL());
-		System.out.println(httpResponse.getStatusCode());
+		Map<String, Object> model = getModel();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
 			
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-		accountProfile.setCreditCard(new CreditCard());
 			
-		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", accountProfile);
+		model.put("successMessage", this.getValue("add.success"));
 			
-		return new ModelAndView(model, "secure/payment-methods.html");	
+		return new ModelAndView(model, "secure/fragments/payment-methods-page.html");	
 	}
 	
 	private ModelAndView removeCreditCard(Request request, Response response) {
@@ -298,11 +299,14 @@ public class AccountProfileController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
 				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
-				.path("me")
+				.path(request.params(":id"))
+				.path("credit-card")
+				.path(request.params(":token"))
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
@@ -310,12 +314,11 @@ public class AccountProfileController extends AbstractController {
 		}
 			
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-		accountProfile.setCreditCard(new CreditCard());
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", accountProfile);
 			
-		return new ModelAndView(model, "secure/payment-methods.html");	
+		return new ModelAndView(model, "secure/fragments/payment-methods-page.html");	
 	}
 }

@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -168,7 +169,7 @@ public class AccountProfile extends AbstractDocument {
 	 * 
 	 */
 	
-	private CreditCard creditCard;
+	private Set<CreditCard> creditCards;
 	
 	public AccountProfile() {
 
@@ -358,11 +359,11 @@ public class AccountProfile extends AbstractDocument {
 		this.leadId = leadId;
 	}
 
-	public CreditCard getCreditCard() {
-		return creditCard;
+	public Set<CreditCard> getCreditCards() {
+		return creditCards;
 	}
 
-	public void setCreditCard(CreditCard creditCard) {
-		this.creditCard = creditCard;
+	public void setCreditCards(Set<CreditCard> creditCards) {
+		this.creditCards = creditCards;
 	}
 }

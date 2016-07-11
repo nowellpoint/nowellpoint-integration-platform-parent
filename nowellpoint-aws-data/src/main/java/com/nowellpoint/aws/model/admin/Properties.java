@@ -37,6 +37,10 @@ public class Properties {
 	public static final String REDIS_PORT = "redis.port";
 	public static final String DEFAULT_SUBJECT = "default.subject";
 	public static final String CACHE_DATA_ENCRYPTION_KEY = "cache.data.encryption.key";
+	public static final String BRAINTREE_ENVIRONMENT = "braintree.environment";
+	public static final String BRAINTREE_MERCHANT_ID = "braintree.merchant.id";
+	public static final String BRAINTREE_PUBLIC_KEY = "braintree.public.key";
+	public static final String BRAINTREE_PRIVATE_KEY = "braintree.private.key";
 	
 	public static String getProperty(String store, String key) {
 		return mapper.load(Property.class, store, key).getValue();

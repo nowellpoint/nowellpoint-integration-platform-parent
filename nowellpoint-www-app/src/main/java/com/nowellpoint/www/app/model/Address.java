@@ -125,4 +125,44 @@ public class Address implements Serializable {
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
+	
+	public Address withStreet(String street) {
+		setStreet(street);
+		return this;
+	}
+	
+	public Address withCity(String city) {
+		setCity(city);
+		return this;
+	}
+	
+	public Address withState(String state) {
+		setState(state);
+		return this;
+	}
+
+	public Address withPostalCode(String postalCode) {
+		setPostalCode(postalCode);
+		return this;
+	}
+	
+	public Address withCountryCode(String countryCode) {
+		setCountryCode(countryCode);
+		return this;
+	}
+
+	public Address withCountry(String country) {
+		setCountry(country);
+		return this;
+	}
+	
+	public Address withLatitude(String latitude) {
+		setLatitude(latitude);
+		return this;
+	}
+	
+	public Address withLongitude(String longitude) {
+		setLongitude(longitude);
+		return this;
+	}
 }
