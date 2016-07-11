@@ -12,11 +12,17 @@
                 </div>
                 <div class="hr-divider"></div>
                 <br>
-                
+
                 <div id="main">
                     <#include "fragments/payment-methods-page.html" />
                 </div>
-                
+
+                <div class="pull-right">
+                    <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new", id="add-card" class="btn btn-primary" role="button">${labels["add.card"]}</a>
+                </div>
+
+                <br>
+
             </div>
 
             <!-- Modal Dialog -->

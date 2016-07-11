@@ -50,6 +50,8 @@ public class AccountProfileController extends AbstractController {
 		
 		// credit card routes
 		
+		get("/app/account-profile/:id/payment-methods/new", (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
+		
 		post("/app/account-profile/:id/payment-methods", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
 		put("/app/account-profile/:id/payment-methods/:token", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
@@ -234,6 +236,32 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", accountProfile);
 			
 		return new ModelAndView(model, "secure/payment-methods.html");	
+	}
+	
+	private ModelAndView newCreditCard(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", accountProfile);
+		model.put("action", "new");
+			
+		return new ModelAndView(model, "secure/payment-method.html");	
 	}
 	
 	private ModelAndView addCreditCard(Request request, Response response) {

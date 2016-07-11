@@ -41,7 +41,6 @@ $("#use-contact-info").change(function () {
 
 $("#save").click(function (event) {    
 	event.preventDefault();
-    alert(accountProfile.basePath);
 	var params = $("#form").serialize();
     var accountProfile = jQuery.data(document.body, "accountProfile");
 	$.ajax({
