@@ -17,6 +17,8 @@ public class Account implements Serializable {
 	
 	private static final long serialVersionUID = 4359339056490011294L;
 	
+	private String id;
+	
 	@JsonProperty(value="href")
 	private String href;
 	
@@ -66,11 +68,20 @@ public class Account implements Serializable {
 		
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getHref() {
 		return href;
 	}
 
 	public void setHref(String href) {
+		setId(href.substring(href.lastIndexOf("/") + 1));
 		this.href = href;
 	}
 

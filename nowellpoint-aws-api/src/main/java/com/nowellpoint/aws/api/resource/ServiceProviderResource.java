@@ -62,7 +62,6 @@ public class ServiceProviderResource {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setSubject(subject);
-		resource.setEventSource(uriInfo.getBaseUri());
 		
 		serviceProviderService.createServiceProvider(resource);
 		

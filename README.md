@@ -1,8 +1,4 @@
-<a href="https://scan.coverity.com/projects/nowellpoint-nowellpoint-integration-platform-parent">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/8479/badge.svg"/>
-</a>
-
+[![Build Status](https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent.svg?branch=dev)](https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent)
 
 # nowellpoint-aws
 Nowellpoint Small Business Integration Platform

@@ -1,0 +1,70 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid">
+            <br>
+            <div class="row">
+                <div id="status-message"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <#include "salesforce-service-nav.html" />
+                </div>
+                <div class="col-lg-10 col-md-10 col-sm-10">
+
+                    <form class="form-horizontal" id="form" role="form">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="s3bucket">${labels["s3bucket"]}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <input type="text" class="form-control" name="bucketName" id="bucketName" autofocus="" value="${(targets.simpleStorageService.bucketName)!}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="awsAccessKey">${labels["aws.access.key"]}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <input type="text" class="form-control" name="awsAccessKey" id="awsAccessKey" value="${(targets.simpleStorageService.awsAccessKey)!}" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="awsSecretAccessKey">${labels["aws.secret.access.key"]}</label>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <input type="text" class="form-control" name="awsSecretAccessKey" id="awsSecretAccessKey" value="${(targets.simpleStorageService.awsSecretAccessKey)!}" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6 col-lg-6">
+                            <div class="pull-right">
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <#include "spinner.html" />
+
+        <script>
+            
+            $('#form').submit(function(e) {
+                    var params = $("#form").serialize();
+                    $.ajax({
+                        dataType: "html",
+                        type: "POST",
+                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/targets",
+                        data: params,
+                        complete: function(data) {
+                            $("#status-message").html(data.responseText);
+                        }
+                    });
+
+                    e.preventDefault();
+
+                });
+            
+        </script>
+
+    </@t.page>

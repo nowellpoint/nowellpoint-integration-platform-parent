@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -9,6 +10,7 @@ import javax.ws.rs.core.Response.Status;
 public class HealthCheckResource {
 	
 	@GET
+	@PermitAll
 	public Response checkHealth() {
 		return Response.status(Status.OK).build();
 	}

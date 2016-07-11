@@ -1,0 +1,44 @@
+<div class="content table-responsive">
+    <table id="environment-variables-table" class="table table-hover">
+        <thead>
+            <th class="col-xs-5">${labels["variable"]}</th>
+            <th class="col-xs-6">${labels["value"]}</th>
+            <th class="col-xs-1 text-center">${labels["remove"]}</th>
+        </thead>
+        <tbody>
+            <#list environment.environmentVariables as environmentVariable>
+                <tr>
+                    <td>
+                        <#if ! environmentVariable.locked>
+                            <input type="text" style='text-transform:uppercase' class="form-control" name="variable" id="variable" value="${(environmentVariable.variable)!}" />
+                        </#if>
+                        <#if environmentVariable.locked>
+                            <input type="hidden" name="variable" id="variable" value="${(environmentVariable.variable)!}" /> ${(environmentVariable.variable)!}
+                        </#if>
+                    </td>
+                    <td>
+                        <#if environmentVariable.environmentVariableValues?? && environmentVariable.environmentVariableValues?size !=0>
+                            <select id="value" name="value" class="form-control" value="${(environmentVariable.value)!}">
+                                <#list environmentVariable.environmentVariableValues?sort_by( "value") as environmentVariableValue>
+                                    <option value="${environmentVariableValue.name}">${environmentVariableValue.value}</option>
+                                </#list>
+                            </select>
+                        </#if>
+
+                        <#if ! environmentVariable.environmentVariableValues?? || environmentVariable.environmentVariableValues?size==0>
+                            <input type="text" class="form-control" name="value" id="value" value="${(environmentVariable.value)!}" />
+                        </#if>
+                    </td>
+                    <td class="text-center">
+                        <#if environmentVariable.locked>
+                            <span class="icon icon-lock fa-1x"></span>
+                        </#if>
+                        <#if ! environmentVariable.locked>
+                            <a id="remove" role="button" class="removeEnvironmentVariable"><span class="icon icon-cross fa-1x"></span></a>
+                        </#if>
+                    </td>
+                </tr>
+            </#list>
+        </tbody>
+    </table>
+</div>

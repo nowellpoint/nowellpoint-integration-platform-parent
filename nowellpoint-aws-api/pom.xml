@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly.swarm>1.0.0.Beta6</version.wildfly.swarm>
+		<version.wildfly.swarm>1.0.0.Final</version.wildfly.swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -39,41 +39,40 @@
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>jaxrs-weld</artifactId>
+			<version>1.0.0.Beta4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>jaxrs-multipart</artifactId>
+			<artifactId>ejb</artifactId>
 		</dependency>
-		<dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>ejb</artifactId>
-        </dependency>
-		
-<!--
-		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>swagger</artifactId>
-		</dependency>
--->
+		 <dependency>
+		 <groupId>org.wildfly.swarm</groupId>
+		 <artifactId>swagger</artifactId> 
+		</dependency> 
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-api</artifactId>
-			<version>1.0.RC9</version>
+			<version>1.0.RC9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-impl</artifactId>
-			<version>1.0.RC9</version>
+			<version>1.0.RC9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-httpclient</artifactId>
-			<version>1.0.RC9</version>
+			<version>1.0.RC9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-oauth</artifactId>
-			<version>1.0.RC9</version>
+			<version>1.0.RC9.2</version>
+		</dependency>
+		<dependency>
+		<groupId>com.braintreepayments.gateway</groupId>
+		<artifactId>braintree-java</artifactId>
+		<version>2.64.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.esotericsoftware.yamlbeans</groupId>

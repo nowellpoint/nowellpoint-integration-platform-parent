@@ -40,6 +40,7 @@ public class Main {
         		.addPackages(true, Package.getPackage("com.nowellpoint.aws.api"))
         		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebInfResource(new ClassLoaderAsset("META-INF/beans.xml", Main.class.getClassLoader()), "beans.xml")
+        		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties")
         		.addAllDependencies();
         
 //        SwaggerArchive archive = deployment.as(SwaggerArchive.class)

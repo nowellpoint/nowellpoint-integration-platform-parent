@@ -26,11 +26,11 @@ import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.model.ServiceInstance;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
-import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 
 @Path("/application")
 public class ApplicationResource {
@@ -125,15 +125,15 @@ public class ApplicationResource {
 		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
 		
 		ServiceInstance serviceInstance = new ServiceInstance();
-		serviceInstance.setServiceType(provider.getService().getType());
-		serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
-		serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
+		//serviceInstance.setServiceType(provider.getService().getType());
+		//serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
+		//serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
 		serviceInstance.setProviderName(provider.getName());
-		serviceInstance.setIsActive(provider.getService().getIsActive());
-		serviceInstance.setServiceName(provider.getService().getName());
-		serviceInstance.setPrice(provider.getService().getPrice());
+		//serviceInstance.setIsActive(provider.getService().getIsActive());
+		//serviceInstance.setServiceName(provider.getService().getName());
+		//serviceInstance.setPrice(provider.getService().getPrice());
 		serviceInstance.setProviderType(provider.getType());
-		serviceInstance.setUom(provider.getService().getUnitOfMeasure());
+		//serviceInstance.setUnitOfMeasure(provider.getService().getUnitOfMeasure());
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		

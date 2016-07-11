@@ -27,13 +27,13 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.Client;
-import com.nowellpoint.client.sforce.DescribeSobjectsRequest;
+import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.GetUserRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
-import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
@@ -91,7 +91,7 @@ public class SalesforceService extends AbstractCacheService {
 		}
 	}
 	
-	public DescribeSobjectsResult describe(String id) {
+	public DescribeGlobalSobjectsResult describe(String id) {
 		
 		LoginResult result = get(LoginResult.class, id);
 		
@@ -277,14 +277,14 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 */
 	
-	private DescribeSobjectsResult describe(String accessToken, String sobjectUrl) {
-		DescribeSobjectsRequest request = new DescribeSobjectsRequest()
+	private DescribeGlobalSobjectsResult describe(String accessToken, String sobjectUrl) {
+		DescribeGlobalSobjectsRequest request = new DescribeGlobalSobjectsRequest()
 				.setAccessToken(accessToken)
-				.setSobjectUrl(sobjectUrl);
+				.setSobjectsUrl(sobjectUrl);
 		
 		Client client = new Client();
 		
-		DescribeSobjectsResult result = client.describe(request);
+		DescribeGlobalSobjectsResult result = client.describeGlobal(request);
 		
 		return result;
 	}

@@ -2,7 +2,7 @@ package com.nowellpoint.aws.api.dto;
 
 import java.util.Set;
 
-import com.nowellpoint.aws.data.mongodb.EnvironmentVariableValue;
+import com.nowellpoint.aws.api.model.EnvironmentVariableValue;
 
 public class EnvironmentVariableDTO {
 	

@@ -13,6 +13,7 @@ public class Properties {
 	private static DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	public static final String LOGGLY_API_KEY = "loggly.api.key";
+	public static final String LOGGLY_API_ENDPOINT = "loggly.api.endpoint";
 	public static final String MONGO_CLIENT_URI = "mongo.client.uri";
 	public static final String SALESFORCE_CLIENT_ID = "salesforce.client.id";
 	public static final String SALESFORCE_CLIENT_SECRET = "salesforce.client.secret";
@@ -36,6 +37,10 @@ public class Properties {
 	public static final String REDIS_PORT = "redis.port";
 	public static final String DEFAULT_SUBJECT = "default.subject";
 	public static final String CACHE_DATA_ENCRYPTION_KEY = "cache.data.encryption.key";
+	public static final String BRAINTREE_ENVIRONMENT = "braintree.environment";
+	public static final String BRAINTREE_MERCHANT_ID = "braintree.merchant.id";
+	public static final String BRAINTREE_PUBLIC_KEY = "braintree.public.key";
+	public static final String BRAINTREE_PRIVATE_KEY = "braintree.private.key";
 	
 	public static String getProperty(String store, String key) {
 		return mapper.load(Property.class, store, key).getValue();
@@ -45,11 +50,11 @@ public class Properties {
 		return getProperty(store.name(), key);
 	}
 	
-	public static Map<String,String> getProperties(PropertyStore store) {
+	public static Map<String,Property> getProperties(PropertyStore store) {
 		return getProperties(store.name());
 	}
 	
-	public static Map<String,String> getProperties(String store) {
+	public static Map<String,Property> getProperties(String store) {
 		Property property = new Property();
 		property.setStore(store);
 		
@@ -58,7 +63,7 @@ public class Properties {
 		
 		List<Property> properties = mapper.query(Property.class, queryExpression);
 		
-		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p.getValue()));
+		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p));
 	}
 	
 	public static void setSystemProperties(PropertyStore store) {
@@ -67,7 +72,7 @@ public class Properties {
 	
 	public static void setSystemProperties(String store) {
 		getProperties(store).entrySet().forEach(property -> {
-        	System.setProperty(property.getKey(), property.getValue());
+        	System.setProperty(property.getValue().getKey(), property.getValue().getValue());
         });
 	}
 }

@@ -1,0 +1,100 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container-fluid">
+            <br>
+            <div class="row">
+                <div id="status-message"></div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <#include "salesforce-service-nav.html" />
+                </div>
+                <div class="col-lg-10 col-md-10 col-sm-10">
+
+                    <form id="form" name="form" class="form-horizontal" role="form">
+
+                        <div class="dashhead">
+                            <div class="dashhead-titles">
+                                <h6 class="dashhead-subtitle">${labels["source.environment"]}</h6>
+                                <h3 class="dashhead-title">${(serviceInstance.sourceEnvironment)!}</h3>
+                            </div>
+                            <div class="dashhead-toolbar">
+                                <div class="dashhead-toolbar-item">
+                                    <a href="#" id="get-sobjects" name="get-sobjects" title="${labels['download.sobjects']}"><span class="icon icon-download fa-2x"></span></a>
+                                </div>
+                                <span class="dashhead-toolbar-divider hidden-xs"></span>
+                                <div class="dashhead-toolbar-item">
+                                    <button type="submit" name="submit" id="submit" class="btn btn-lg btn-primary-outline">${labels["save"]}</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="hr-divider">
+
+                        </div>
+
+                        <br>
+
+                        <br>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <#include "fragments/sobjects-table.html" />
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <#include "spinner.html" />
+
+        <script>
+            $('#get-sobjects').click(function(e) {
+                $.ajax({
+                    dataType: "html",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects",
+                    type: "GET",
+                    complete: function(data) {
+                        $("#sobjects").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+            });
+
+            $('#form').submit(function(e) {
+                var params = $("#form").serialize();
+                console.log(params);
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/listeners",
+                    data: params,
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+
+            $(document).on('click', '.get-query', function(e) {
+                var id = $(this).data('id');
+                $.ajax({
+                    dataType: "html",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/sobjects/${(serviceInstance.sourceEnvironment)!}/fields/" + id,
+                    type: "GET",
+                    complete: function(data) {
+                        $("#sobjects").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+            });
+        </script>
+
+    </@t.page>

@@ -4,7 +4,7 @@ public enum EventAction {
 	SIGN_UP,
 	LEAD,
 	ACCOUNT,
-	IDENTITY,
+	ACCOUNT_PROFILE,
 	SHARE,
 	RESTRICT
 }

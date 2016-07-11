@@ -1,9 +1,12 @@
 package com.nowellpoint.aws.api.dto;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.nowellpoint.aws.data.mongodb.Address;
-import com.nowellpoint.aws.data.mongodb.Photos;
+import com.nowellpoint.aws.api.model.Address;
+import com.nowellpoint.aws.api.model.CreditCard;
+import com.nowellpoint.aws.api.model.Photos;
 
 public class AccountProfileDTO extends AbstractDTO {
 	
@@ -150,7 +153,12 @@ public class AccountProfileDTO extends AbstractDTO {
 	 */
 	
 	private Photos photos;
-
+	
+	/**
+	 * 
+	 */
+	
+	private Set<CreditCard> creditCards;
 	
 	public AccountProfileDTO() {
 		
@@ -338,5 +346,20 @@ public class AccountProfileDTO extends AbstractDTO {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}	
+	
+	public Set<CreditCard> getCreditCards() {
+		return creditCards;
+	}
+
+	public void setCreditCards(Set<CreditCard> creditCards) {
+		this.creditCards = creditCards;
+	}
+	
+	public void addCreditCard(CreditCard creditCard) {
+		if (this.getCreditCards() == null) {
+			this.creditCards = new HashSet<CreditCard>();
+		}
+		this.creditCards.add(creditCard);
 	}
 }

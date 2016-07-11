@@ -1,5 +1,7 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.List;
+
 public class ServiceProvider extends Resource {
 	
 	private String type;
@@ -8,7 +10,7 @@ public class ServiceProvider extends Resource {
 	
 	private String description;
 	
-	private Service service;
+	private List<Service> services;
 	
 	private String image;
 	
@@ -44,12 +46,12 @@ public class ServiceProvider extends Resource {
 		this.description = description;
 	}
 
-	public Service getService() {
-		return service;
+	public List<Service> getServices() {
+		return services;
 	}
 
-	public void setService(Service service) {
-		this.service = service;
+	public void setServices(List<Service> services) {
+		this.services = services;
 	}
 
 	public String getImage() {

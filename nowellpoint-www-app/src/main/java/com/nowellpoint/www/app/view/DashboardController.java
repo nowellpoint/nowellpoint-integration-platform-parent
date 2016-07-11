@@ -2,7 +2,6 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import freemarker.template.Configuration;
@@ -11,23 +10,28 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class DashboardController {
+public class DashboardController extends AbstractController {
 	
-	public DashboardController(Configuration cfg) {     
-        get("/app/start", (request, response) -> routeToStart(request, response), new FreeMarkerEngine(cfg));
-        
-        get("/app/dashboard", (request, response) -> routeToDashboard(request, response), new FreeMarkerEngine(cfg));
+	public DashboardController(Configuration configuration) {     
+		super(DashboardController.class, configuration);
 	}
 	
-	private static ModelAndView routeToStart(Request request, Response response) {
-    	Map<String,Object> model = new HashMap<String,Object>();
-    	model.put("account", request.attribute("account"));
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		get("/app/start", (request, response) -> showStartPage(request, response), new FreeMarkerEngine(configuration));
+        
+        get("/app/dashboard", (request, response) -> showDashboard(request, response), new FreeMarkerEngine(configuration));
+	}
+	
+	private ModelAndView showStartPage(Request request, Response response) {
+    	Map<String,Object> model = getModel();
+    	model.put("account", getAccount(request));
 		return new ModelAndView(model, "secure/start.html");
 	}
 	
-	private static ModelAndView routeToDashboard(Request request, Response response) {
-    	Map<String,Object> model = new HashMap<String,Object>();
-    	model.put("account", request.attribute("account"));
+	private ModelAndView showDashboard(Request request, Response response) {
+    	Map<String,Object> model = getModel();
+    	model.put("account", getAccount(request));
 		return new ModelAndView(model, "secure/dashboard.html");
 	}
 }

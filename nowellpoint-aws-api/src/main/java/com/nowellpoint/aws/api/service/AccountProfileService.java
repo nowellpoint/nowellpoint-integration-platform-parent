@@ -12,24 +12,40 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.jboss.logging.Logger;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.braintreegateway.Address;
+import com.braintreegateway.AddressRequest;
+import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.CreditCardRequest;
+import com.braintreegateway.Customer;
+import com.braintreegateway.CustomerRequest;
+import com.braintreegateway.Environment;
+import com.braintreegateway.Result;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
+import com.nowellpoint.aws.api.model.AccountProfile;
+import com.nowellpoint.aws.api.model.CreditCard;
+import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AccountProfile;
-import com.nowellpoint.aws.data.mongodb.Photos;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
 	
-	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
+	private static BraintreeGateway gateway = new BraintreeGateway(
+			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
+			System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
+			System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
+			System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
+	);
+	
+	static {
+		gateway.clientToken().generate();
+	}
 	
 	public AccountProfileService() {
 		super(AccountProfileDTO.class, AccountProfile.class);
@@ -48,8 +64,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setSubject(subject);
 		
 		updateAccountProfile(resource);
-		
-		LOGGER.info("Logged In: " + resource.getHref());
 	}
 	
 	/**
@@ -182,5 +196,101 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	public AccountProfileDTO addCreditCard(String subject, String id, CreditCard creditCard) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+		resource.setSubject(subject);
+						
+		Result<Customer> customerResult = null;
+		
+		CustomerRequest customerRequest = new CustomerRequest()
+				.company(resource.getCompany())
+				.email(resource.getEmail())
+				.firstName(resource.getFirstName())
+				.lastName(resource.getLastName())
+				.phone(resource.getPhone());
+		
+//		try {
+//			Customer customer = gateway.customer().find("");
+//			customerResult = gateway.customer().update(customer.getId(), customerRequest);
+//		} catch (com.braintreegateway.exceptions.NotFoundException e) {
+//			customerResult = gateway.customer().create(customerRequest);
+//		}
+		
+		customerResult = gateway.customer().create(customerRequest);
+		
+		AddressRequest addressRequest = new AddressRequest()
+				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
+				.firstName(creditCard.getBillingContact().getFirstName())
+				.lastName(creditCard.getBillingContact().getLastName())
+				.locality(creditCard.getBillingAddress().getCity())
+				.region(creditCard.getBillingAddress().getState())
+				.postalCode(creditCard.getBillingAddress().getPostalCode())
+				.streetAddress(creditCard.getBillingAddress().getStreet());
+		
+		Result<Address> addressResult = gateway.address().create(customerResult.getTarget().getId(), addressRequest);
+		
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.cardholderName(creditCard.getCardholderName())
+				.expirationMonth(creditCard.getExpirationMonth())
+				.expirationYear(creditCard.getExpirationYear())
+				.number(creditCard.getNumber())
+				.customerId(customerResult.getTarget().getId())
+				.billingAddressId(addressResult.getTarget().getId());
+		
+		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+		
+		creditCard.setNumber(null);
+		creditCard.setToken(creditCardResult.getTarget().getToken());
+		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
+		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
+		creditCard.setCardType(creditCardResult.getTarget().getCardType());
+		
+		resource.addCreditCard(creditCard);
+		
+		updateAccountProfile(resource);
+		
+		return resource;
+	}
+	
+	public AccountProfileDTO updateCreditCard(String subject, String id, String token, CreditCard creditCard) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+		resource.setSubject(subject);
+		
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.cardholderName(creditCard.getCardholderName())
+				.expirationMonth(creditCard.getExpirationMonth())
+				.expirationYear(creditCard.getExpirationYear())
+				.number(creditCard.getNumber());
+		
+		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
+		
+		creditCard.setNumber(null);
+		creditCard.setToken(creditCardResult.getTarget().getToken());
+		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
+		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
+		creditCard.setCardType(creditCardResult.getTarget().getCardType());
+		
+		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
+		
+		resource.addCreditCard(creditCard);
+		
+		updateAccountProfile(resource);
+		
+		return resource;
+	}
+	
+	public AccountProfileDTO removeCreditCard(String subject, String id, String token) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+		resource.setSubject(subject);
+		
+		gateway.creditCard().delete(token);
+		
+		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
+		
+		updateAccountProfile(resource);
+		
+		return resource;
 	}
 }

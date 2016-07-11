@@ -4,84 +4,69 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h2 class="dashhead-title">${labels["cloud.provider.services"]}</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hr-divider m-t m-b-md">
-
-            </div>
-
-            <br>
+        <div class="container-fluid">
+            
+            <div id="status-message"></div>
 
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
 
-                    <div id="statusMessage">
-
+                        <a href="/app/connectors/salesforce/${salesforceConnector.id}">
+                            <span class="icon icon-back fa-1x">${(salesforceConnector.organization.name)!}</span>
+                        </a>
                     </div>
-
-                    <div class="flextable">
-                        <div class="flextable-item">
-                            <a href="/app/connectors/salesforce/${id}"><span class="icon icon-back fa-2x">&nbsp;${organizationName}</span></a>
-                        </div>
-                    </div>
-
-                    <br>
 
                     <div class="row">
-                        <#list serviceProviders as serviceProvider>
-                            <div class="col-lg-3 col-md-3 col-sm-3 text-center">
-                                <div>
-                                    <img src="${serviceProvider.image}">
-                                    <h3>${serviceProvider.name}</h3>
-                                    <br>
-                                    <h1 class="statcard-number">${serviceProvider.service.currencyIsoCode} ${serviceProvider.service.price?string["0.00"]}</h1>
-                                    <br>
-                                    <br>
+
+                        <div class="container">
+
+                            <#list serviceProviders?sort_by( "name") as serviceProvider>
+
+                                <#list serviceProvider.services?sort_by( "serviceName") as service>
+
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
-                                            <h3 class="panel-title">${serviceProvider.service.name}</h3>
+                                            <h3 class="panel-title">${service.serviceName}</h3>
                                         </div>
                                         <div class="panel-body">
-                                            <p>${serviceProvider.service.description}</p>
-                                            <p><b>${labels["developed.by"]}:</b> ${serviceProvider.service.company}</p>
-                                            <br>
-                                            <form id="form" role="form" method="post">
-                                                <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${serviceProvider.id}" />
-                                                <button type="submit" class="btn btn-primary center" role="button">${labels["select"]}</button>
-                                            </form>
+                                            <p>${service.description}</p>
+                                            <p><b>${labels["developed.by"]}:</b> ${service.company}</p>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </#list>
+
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">${labels["plans"]}</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <#list service.plans?sort_by( "unitPrice")?reverse as plan>
+                                                <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                                                    <div class="panel price panel-white">
+                                                        <div class="panel-heading arrow_box text-center">
+                                                            <h3>${plan.planName}</h3>
+                                                        </div>
+                                                        <div class="panel-body text-center">
+                                                            <p class="lead" style="font-size:40px"><strong>${plan.currencySymbol}${plan.unitPrice?string["0.00"]} / ${plan.billingFrequencyPer}</strong></p>
+                                                        </div>
+                                                        <ul class="list-group list-group-flush text-center">
+                                                            <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["transactions"]} ${plan.transactions}</li>
+                                                            <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["support"]} ${plan.support}</li>
+                                                        </ul>
+                                                        <div class="panel-footer">
+                                                            <a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}">${labels["add.plan"]}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </#list>
+                                        </div>
+                                    </div>
+                                </#list>
+                            </#list>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <#include "spinner.html" />
-
-            <script>
-                $('#form').submit(function(e) {
-                    var data = $("#form").serialize()
-                    $.ajax({
-                        type: "POST",
-                        url: "/app/connectors/salesforce/${id}/service",
-                        data: data,
-                        complete: function(data) {
-                            $("#statusMessage").html(data.responseText);
-                        }
-                    });
-
-                    e.preventDefault();
-
-                });
-            </script>
-
+        </div>
+        
     </@t.page>

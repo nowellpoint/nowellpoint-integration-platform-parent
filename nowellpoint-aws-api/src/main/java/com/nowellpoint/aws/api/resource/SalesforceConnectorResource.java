@@ -8,7 +8,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -45,13 +45,16 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
+import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
+import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
-import com.nowellpoint.aws.api.service.ServiceProviderService;
 import com.nowellpoint.client.sforce.model.Token;
+import com.sforce.soap.partner.Field;
+import com.sforce.soap.partner.sobject.SObject;
 
 import redis.clients.jedis.Jedis;
 
@@ -66,9 +69,6 @@ public class SalesforceConnectorResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
-	
-	@Inject
-	private ServiceProviderService serviceProviderService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -202,27 +202,40 @@ public class SalesforceConnectorResource {
 		return Response.noContent()
 				.build(); 
 	}
-	
+
 	@POST
-	@Path("salesforce/{id}/service")
+	@Path("salesforce/{id}/providers/{serviceProviderId}/service/{serviceType}/plan/{code}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addService(
-			@PathParam(value="id") String id,
-			@FormParam(value="serviceProviderId") String serviceProviderId) {
+	public Response addServiceInstance(
+			@PathParam(value="id") String id, 
+			@PathParam(value="serviceProviderId") String serviceProviderId, 
+			@PathParam(value="serviceType") String serviceType, 
+			@PathParam(value="code") String code) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(subject, id, serviceProviderId, serviceType, code);
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addService(provider, subject, id);
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	@POST
+	@Path("salesforce/{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateServiceInstance(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			ServiceInstanceDTO serviceInstance) {
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SalesforceConnectorResource.class)
-				.path("/{id}")
-				.build(resource.getId());
+		String subject = securityContext.getUserPrincipal().getName();
 		
-		return Response.created(uri)
+		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance(subject, id, key, serviceInstance);
+		
+		return Response.ok()
 				.entity(resource)
 				.build(); 	
 	}
@@ -231,57 +244,34 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/service/{key}/environments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveEnvironments(
+	public Response addEnvironments(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			Set<EnvironmentDTO> resources) {
+			Set<EnvironmentDTO> environments) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, resources);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, environments);
 		
 		return Response.ok(resource)
 				.build(); 
 	}
-	
-	@POST
-	@Path("salesforce/{id}/service/{key}/variables")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveEnvironmentVariables(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key,
-			Set<EnvironmentVariableDTO> environmentVariables) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = null;
-		try {
-			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentVariables);
-		} catch (UnsupportedOperationException | IllegalArgumentException e) {
-			throw new BadRequestException(e.getMessage());
-		}
-		
-		return Response.ok(resource)
-				.build(); 
-		
-	}		
 	
 	@POST
 	@Path("salesforce/{id}/service/{key}/variables/{environment}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveEnvironmentVariables(
+	public Response addEnvironmentVariables(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			@PathParam(value="environment") String environment,
+			@PathParam(value="environment") String environmentName,
 			Set<EnvironmentVariableDTO> environmentVariables) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environment, environmentVariables);
+			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentName, environmentVariables);
 		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -292,34 +282,167 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/service/{key}")
+	@Path("salesforce/{id}/service/{key}/deployment/{environment}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addServiceConfiguration(
+	public Response deploy(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			Map<String,Object> configParams) {
+			@PathParam(value="environment") String environmentName) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		salesforceConnectorService.addServiceConfiguration(subject, id, key, configParams);
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.deploy(subject, id, key, environmentName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BadRequestException(e.getMessage());
+		}
 		
-		salesforceService.buildPackage(key);
+		return Response.ok(resource)
+				.build(); 
 		
-		return Response.ok()
+	}
+	
+	@POST
+	@Path("salesforce/{id}/service/{key}/listeners")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addEventListeners(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			Set<EventListenerDTO> eventListeners) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.addEventListeners(subject, id, key, eventListeners);
+		} catch (Exception e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+	}
+	
+	@POST
+	@Path("salesforce/{id}/service/{key}/targets")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addTargets(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			Targets targets) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.addTargets(subject, id, key, targets);
+		} catch (UnsupportedOperationException | IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/connection/{environment}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response testConnection(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@PathParam(value="environment") String environmentName) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.testConnection(subject, id, key, environmentName);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+		
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/sobjects")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSobjects(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = null;
+		try {
+			resource = salesforceConnectorService.describeGlobal(subject, id, key);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/query")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response query(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@QueryParam(value="q") String queryString) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SObject[] resource = null;
+		try {
+			resource = salesforceConnectorService.query(subject, id, key, queryString);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
+				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}/sobjects/{sobject}/fields")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response describeSObjects (
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			@PathParam(value="sobject") String sobject) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		Field[] resource = null;
+		try {
+			resource = salesforceConnectorService.describeSobject(subject, id, key, sobject);
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok(resource)
 				.build(); 
 	}
 	
 	@DELETE
 	@Path("salesforce/{id}/service/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteService(
+	public Response removeServiceInstance(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.removeService(subject, id, key);
+		SalesforceConnectorDTO resource = salesforceConnectorService.removeServiceInstance(subject, id, key);
 		
 		return Response.ok()
 				.entity(resource)

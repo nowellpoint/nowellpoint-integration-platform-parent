@@ -33,6 +33,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.IsoCountry;
 import com.nowellpoint.www.app.view.AccountProfileController;
+import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
@@ -148,7 +149,7 @@ public class Bootstrap implements SparkApplication {
         // login
         //
         
-        get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(cfg));
+        get("/login", (request, response) -> login(request, response), new FreeMarkerEngine(cfg));
                 
         //
         //
@@ -163,6 +164,7 @@ public class Bootstrap implements SparkApplication {
         // routes
         //
         
+        new AdministrationController(cfg);
         new DashboardController(cfg);
         new ServiceProviderController(cfg);
         new ApplicationController(cfg);
@@ -207,7 +209,7 @@ public class Bootstrap implements SparkApplication {
         });
         
         exception(BadRequestException.class, (exception, request, response) -> {
-        	response.status(401);
+        	response.status(400);
             response.body(exception.getMessage());
         });
         
@@ -270,7 +272,7 @@ public class Bootstrap implements SparkApplication {
 	 * @return
 	 */
 	
-	private static ModelAndView getLogin(Request request, Response response) {
+	private static ModelAndView login(Request request, Response response) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
 		model.put("messages", resourceBundleModel);
@@ -287,8 +289,6 @@ public class Bootstrap implements SparkApplication {
 	 */
 	
 	private static void verify(Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
-		
-		LOGGER.info("authenticated request received: " + request.requestMethod() + " - "+ request.uri());	
 		
     	Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	if (cookie.isPresent()) {
@@ -316,6 +316,7 @@ public class Bootstrap implements SparkApplication {
 					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.bearerAuthorization(accessToken)
 					.path("account")
+					.path("me")
 					.execute();
 			
 			int statusCode = httpResponse.getStatusCode();

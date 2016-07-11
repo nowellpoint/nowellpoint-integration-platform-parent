@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,9 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceInstance {
 	
-	private Parent parent;
-	
 	private String key;
+	
+	private String name;
 	
 	private String providerType;
 	
@@ -22,40 +21,40 @@ public class ServiceInstance {
 	
 	private String providerName;
 	
-	private Double price;
-	
-	private String currencyIsoCode;
-	
-	private String uom;
-	
 	private String serviceType;
 	
 	private String serviceName;
 	
 	private String tag;
 	
-	private String defaultEnvironment;
+	private String sourceEnvironment;
+	
+	private String status;
 	
 	private List<Environment> environments;
-	
-	private List<EnvironmentVariable> environmentVariables;
 	
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
 	
 	private Long activeEnvironments;
+	
+	private List<EventListener> eventListeners;
+	
+	private Targets targets;
 
 	private String configurationPage;
+	
+	private Plan plan;
 	
 	public ServiceInstance() {
 
 	}
 
-	public Parent getParent() {
-		return parent;
+	public String getName() {
+		return name;
 	}
 
-	public void setParent(Parent parent) {
-		this.parent = parent;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getKey() {
@@ -90,30 +89,6 @@ public class ServiceInstance {
 		this.providerName = providerName;
 	}
 
-	public Double getPrice() {
-		return price;
-	}
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
-
-	public String getCurrencyIsoCode() {
-		return currencyIsoCode;
-	}
-
-	public void setCurrencyIsoCode(String currencyIsoCode) {
-		this.currencyIsoCode = currencyIsoCode;
-	}
-
-	public String getUom() {
-		return uom;
-	}
-
-	public void setUom(String uom) {
-		this.uom = uom;
-	}
-
 	public String getServiceType() {
 		return serviceType;
 	}
@@ -138,12 +113,20 @@ public class ServiceInstance {
 		this.tag = tag;
 	}
 
-	public String getDefaultEnvironment() {
-		return defaultEnvironment;
+	public String getSourceEnvironment() {
+		return sourceEnvironment;
 	}
 
-	public void setDefaultEnvironment(String defaultEnvironment) {
-		this.defaultEnvironment = defaultEnvironment;
+	public void setSourceEnvironment(String sourceEnvironment) {
+		this.sourceEnvironment = sourceEnvironment;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getConfigurationPage() {
@@ -165,22 +148,6 @@ public class ServiceInstance {
 		this.environments = environments;
 	}
 	
-	public List<EnvironmentVariable> getEnvironmentVariables() {
-		if (environmentVariables == null) {
-			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
-		} else {
-			setEnvironmentVariables(environmentVariables
-					.stream()
-					.sorted((p1, p2) -> p1.getVariable().compareTo(p2.getVariable()))
-					.collect(Collectors.toList()));
-		}
-		return environmentVariables;
-	}
-
-	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
-	}
-	
 	public Map<String,List<EnvironmentVariableValue>> getEnvironmentVariableValues() {
 		return environmentVariableValues;
 	}
@@ -195,6 +162,30 @@ public class ServiceInstance {
 
 	public void setActiveEnvironments(Long activeEnvironments) {
 		this.activeEnvironments = activeEnvironments;
+	}
+
+	public List<EventListener> getEventListeners() {
+		return eventListeners;
+	}
+
+	public void setEventListeners(List<EventListener> eventListeners) {
+		this.eventListeners = eventListeners;
+	}
+
+	public Targets getTargets() {
+		return targets;
+	}
+
+	public void setTargets(Targets targets) {
+		this.targets = targets;
+	}
+
+	public Plan getPlan() {
+		return plan;
+	}
+
+	public void setPlan(Plan plan) {
+		this.plan = plan;
 	}
 
 	@JsonIgnore

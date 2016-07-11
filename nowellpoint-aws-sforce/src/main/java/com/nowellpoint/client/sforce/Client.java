@@ -2,11 +2,13 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
@@ -36,7 +38,14 @@ public class Client {
 	 */
 	
 	public Identity getIdentity(GetIdentityRequest request) {
-		HttpResponse httpResponse = RestResource.get(request.getId())
+		String id = null;
+		if (request.getId() == null) {
+			id = String.format("%s/id/%s/%s", request.getInstance(), request.getOrganizationId(), request.getUserId());
+		} else {
+			id = request.getId();
+		}
+		
+		HttpResponse httpResponse = RestResource.get(id)
 				.acceptCharset(StandardCharsets.UTF_8)
 				.bearerAuthorization(request.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
@@ -112,18 +121,35 @@ public class Client {
 	 * @return
 	 */
 	
-	public DescribeSobjectsResult describe(DescribeSobjectsRequest request) {
-		HttpResponse httpResponse = RestResource.get(request.getSobjectUrl())
+	public DescribeGlobalSobjectsResult describeGlobal(DescribeGlobalSobjectsRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl())
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(request.getAccessToken())
 				.execute();
 		
-		DescribeSobjectsResult result = null;
+		DescribeGlobalSobjectsResult result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			result = httpResponse.getEntity(DescribeSobjectsResult.class);
+			result = httpResponse.getEntity(DescribeGlobalSobjectsResult.class);
 		} else {
 			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+		}
+		
+		return result;
+	}
+	
+	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(request.getAccessToken())
+				.execute();
+		
+		DescribeSobjectResult result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			result = httpResponse.getEntity(DescribeSobjectResult.class);
+		} else {
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ObjectNode.class));
 		}
 		
 		return result;

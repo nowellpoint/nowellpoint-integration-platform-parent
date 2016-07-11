@@ -30,7 +30,7 @@ import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
-import com.nowellpoint.client.sforce.model.DescribeSobjectsResult;
+import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -51,8 +51,7 @@ public class SalesforceResource {
 	@GET
 	@Path("/oauth")
 	@PermitAll
-	public Response oauth(
-			@QueryParam(value="state") String state) {
+	public Response oauth(@QueryParam(value="state") String state) {
 		
 		String url = null;
 		try {
@@ -149,7 +148,7 @@ public class SalesforceResource {
 	public Response getSobjects(
 			@QueryParam(value="id") String id) {
 		
-		DescribeSobjectsResult result = salesforceService.describe(id);
+		DescribeGlobalSobjectsResult result = salesforceService.describe(id);
 		
 		return Response.ok(result.getSobjects())
 				.build();

@@ -1,5 +1,6 @@
 package com.nowellpoint.client.sforce.impl;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.client.sforce.model.Error;
 
 public class SalesforceException extends RuntimeException {
@@ -17,6 +18,13 @@ public class SalesforceException extends RuntimeException {
 		this.statusCode = statusCode;
 		this.error = error.getError();
 		this.errorDescription = error.getErrorDescription();
+	}
+	
+	public SalesforceException(int statusCode, ObjectNode node) {
+		super();
+		this.statusCode = statusCode;
+		this.error = node.get("errorCode").asText();
+		this.errorDescription = node.get("message").asText();
 	}
 
 	public int getStatusCode() {

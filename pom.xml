@@ -18,12 +18,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<aws.sdk.version>1.10.73</aws.sdk.version>
+		<aws.sdk.version>1.11.8</aws.sdk.version>
 		<jackson.version>2.7.0</jackson.version>
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>
-		<mongodb.driver.version>3.2.0</mongodb.driver.version>
-		<aws.dynamodb.encryption.version>0.0.5-SNAPSHOT</aws.dynamodb.encryption.version>
+		<mongodb.driver.version>3.0.4</mongodb.driver.version>
+		<aws.dynamodb.encryption.version>0.0.9-SNAPSHOT</aws.dynamodb.encryption.version>
 		<jedis.version>2.8.1</jedis.version>
 		<junit.version>4.12</junit.version>
 	</properties>
@@ -32,9 +32,8 @@
 		<module>nowellpoint-aws-core</module>	
 		<module>nowellpoint-aws-data</module>
 		<module>nowellpoint-aws-sforce</module>
-		<module>nowellpoint-aws-event</module>
-		<!-- <module>nowellpoint-aws-util</module>  -->
 		<module>nowellpoint-aws-admin</module>
+		<module>nowellpoint-sforce-outbound-message-service</module>
 		<module>nowellpoint-aws-api</module>
         <module>nowellpoint-www-app</module>
 		<module>nowellpoint-aws-test</module>

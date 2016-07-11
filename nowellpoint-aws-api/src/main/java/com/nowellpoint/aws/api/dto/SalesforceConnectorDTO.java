@@ -1,9 +1,8 @@
 package com.nowellpoint.aws.api.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.nowellpoint.aws.data.mongodb.ServiceInstance;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 
@@ -19,10 +18,10 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	
 	private String tag;
 	
-	private List<ServiceInstance> serviceInstances;
+	private Set<ServiceInstanceDTO> serviceInstances;
 	
 	public SalesforceConnectorDTO() {
-		serviceInstances = new ArrayList<ServiceInstance>();
+		
 	}
 	
 	public SalesforceConnectorDTO(String id) {
@@ -61,15 +60,18 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 		this.tag = tag;
 	}
 
-	public List<ServiceInstance> getServiceInstances() {
+	public Set<ServiceInstanceDTO> getServiceInstances() {
 		return serviceInstances;
 	}
 
-	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
+	public void setServiceInstances(Set<ServiceInstanceDTO> serviceInstances) {
 		this.serviceInstances = serviceInstances;
 	}
 	
-	public void addServiceInstance(ServiceInstance serviceInstance) {
+	public void addServiceInstance(ServiceInstanceDTO serviceInstance) {
+		if (serviceInstances == null) {
+			serviceInstances = new HashSet<ServiceInstanceDTO>();
+		}
 		serviceInstances.add(serviceInstance);
 	}
 }

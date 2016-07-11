@@ -1,0 +1,80 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+        <div class="container">
+            <div class="row">
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h6 class="dashhead-subtitle">${labels["review.order"]}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+                <br>
+                <div id="status-message"></div>
+                <br>
+
+                <dl class="dl-horizontal">
+                    <dt>${labels["connector"]}</dt>
+                    <dd><a href="${labels['base.path']}/${(salesforceConnector.id)!}">${(salesforceConnector.id)!}</a></dd>
+                    <dt>${labels["identity.id"]}</dt>
+                    <dd>${(salesforceConnector.identity.id)!}</dd>
+                    <dt>${labels["name"]}</dt>
+                    <dd>${(salesforceConnector.organization.name)!}</dd>
+                    <dt>${labels["organization.type"]}</dt>
+                    <dd>${(salesforceConnector.organization.organizationType)!}</dd>
+                    <dt>${labels["instance.name"]}</dt>
+                    <dd>${(salesforceConnector.organization.instanceName)!}</dd>
+                </dl>
+
+                <br>
+
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th class="col-lg-2 col-md-2 col-sm-2">${labels["service.provider"]}</th>
+                            <th class="col-lg-6 col-md-6 col-sm-6">${labels["service.description"]}</th>
+                            <th class="col-lg-2 col-md-2 col-sm-2">${labels["plan"]}</th>
+                            <th class="col-lg-2 col-md-2 col-sm-2">${labels["price"]}</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${(serviceProvider.type)!}</td>
+                                <td>${(service.description)!}</td>
+                                <td>${(plan.planName)!}</td>
+                                <td>${(plan.currencyIsoCode)!} ${(plan.unitPrice?string["0.00"])!} / ${(plan.billingFrequencyPer)!}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <form>
+                        <div class="pull-right">
+                            <a href="${labels['base.path']}/${salesforceConnector.id}/providers" id="cancel" name="cancel" role="button">${labels["cancel"]}</a>&nbsp;
+                            <button name="place-order" id="place-order" class="btn btn-primary">${labels["place.order"]}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <#include "spinner.html" />
+
+        <script>
+            $('#place-order').click(function(e) {
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}",
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+        </script>
+
+    </@t.page>

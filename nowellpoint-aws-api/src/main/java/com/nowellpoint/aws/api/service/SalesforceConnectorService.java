@@ -1,38 +1,72 @@
 package com.nowellpoint.aws.api.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
+import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.xml.bind.JAXBException;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.esotericsoftware.yamlbeans.YamlWriter;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
+import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.data.mongodb.Environment;
-import com.nowellpoint.aws.data.mongodb.EnvironmentVariable;
-import com.nowellpoint.aws.data.mongodb.SalesforceConnector;
-import com.nowellpoint.aws.data.mongodb.ServiceInstance;
+import com.nowellpoint.aws.api.model.Environment;
+import com.nowellpoint.aws.api.model.EnvironmentVariable;
+import com.nowellpoint.aws.api.model.EventListener;
+import com.nowellpoint.aws.api.model.Plan;
+import com.nowellpoint.aws.api.model.SalesforceConnector;
+import com.nowellpoint.aws.api.model.Service;
+import com.nowellpoint.aws.api.model.Targets;
+import com.nowellpoint.aws.api.model.dynamodb.OutboundMessageHandlerConfiguration;
+import com.nowellpoint.aws.api.model.dynamodb.Callback;
+import com.nowellpoint.aws.api.tasks.BuildDefaultCallback;
+import com.sforce.soap.partner.Connector;
+import com.sforce.soap.partner.DescribeGlobalResult;
+import com.sforce.soap.partner.DescribeGlobalSObjectResult;
+import com.sforce.soap.partner.DescribeSObjectResult;
+import com.sforce.soap.partner.Field;
+import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.QueryResult;
+import com.sforce.soap.partner.fault.ApiQueryFault;
+import com.sforce.soap.partner.fault.InvalidSObjectFault;
+import com.sforce.soap.partner.fault.LoginFault;
+import com.sforce.soap.partner.sobject.SObject;
+import com.sforce.ws.ConnectionException;
+import com.sforce.ws.ConnectorConfig;
 
 public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
+	
+	@Inject
+	private OutboundMessageService outboundMessageService;
+	
+	@Inject
+	private ServiceProviderService serviceProviderService;
+	
+	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
 	
 	public SalesforceConnectorService() {
 		super(SalesforceConnectorDTO.class, SalesforceConnector.class);
@@ -83,22 +117,34 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addService(ServiceProviderDTO serviceProvider, String subject, String id) {
+	public SalesforceConnectorDTO addServiceInstance(String subject, String id, String serviceProviderId, String serviceType, String code) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
 		
-		ServiceInstance serviceInstance = new ServiceInstance();
+		ServiceProviderDTO serviceProvider = serviceProviderService.find(serviceProviderId);
+		
+		Service service = serviceProvider.getServices()
+				.stream()
+				.filter(s -> s.getType().equals(serviceType))
+				.findFirst()
+				.get();
+		
+		Plan plan = service.getPlans()
+				.stream()
+				.filter(p -> p.getCode().equals(code))
+				.findFirst()
+				.get();
+		
+		ServiceInstanceDTO serviceInstance = new ServiceInstanceDTO();
 		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
-		serviceInstance.setServiceType(serviceProvider.getService().getType());
-		serviceInstance.setConfigurationPage(serviceProvider.getService().getConfigurationPage());
-		serviceInstance.setCurrencyIsoCode(serviceProvider.getService().getCurrencyIsoCode());
+		serviceInstance.setServiceType(service.getType());
+		serviceInstance.setConfigurationPage(service.getConfigurationPage());
 		serviceInstance.setProviderName(serviceProvider.getName());
-		serviceInstance.setIsActive(Boolean.FALSE);
-		serviceInstance.setServiceName(serviceProvider.getService().getName());
-		serviceInstance.setPrice(serviceProvider.getService().getPrice());
+		serviceInstance.setServiceName(service.getServiceName());
 		serviceInstance.setProviderType(serviceProvider.getType());
-		serviceInstance.setUom(serviceProvider.getService().getUnitOfMeasure());
-		serviceInstance.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
-		serviceInstance.setEnvironmentVariableValues(serviceProvider.getService().getEnvironmentVariableValues());
+		serviceInstance.setIsActive(Boolean.FALSE);
+		serviceInstance.setEnvironmentVariableValues(service.getEnvironmentVariableValues());
+		serviceInstance.setPlan(plan);
 		
 		Set<Environment> environments = new HashSet<Environment>();
 		
@@ -108,19 +154,25 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setLabel("Production");
 		environment.setLocked(Boolean.TRUE);
 		environment.setName("PRODUCTION");
+		environment.setStatus("NOT STARTED");
+		environment.setTest(Boolean.FALSE);
+		environment.setEnvironmentVariables(service.getEnvironmentVariables());
 		environments.add(environment);
 		
-		for (int i = 0; i < serviceProvider.getService().getSandboxCount(); i++) {
+		for (int i = 0; i < service.getSandboxCount(); i++) {
 			environment = new Environment();
 			environment.setActive(Boolean.FALSE);
 			environment.setIndex(i + 1);
 			environment.setLocked(Boolean.FALSE);
 			environment.setName("SANDBOX_" + (i + 1));
-			environment.setEnvironmentVariables(serviceProvider.getService().getEnvironmentVariables());
+			environment.setStatus("NOT STARTED");
+			environment.setTest(Boolean.FALSE);
+			environment.setEnvironmentVariables(service.getEnvironmentVariables());
 			environments.add(environment);
 		}
 		
 		serviceInstance.setEnvironments(environments);
+		serviceInstance.setActiveEnvironments(serviceInstance.getEnvironments().stream().filter(e -> e.getActive()).count());
 		
 		resource.setSubject(subject);
 		resource.addServiceInstance(serviceInstance);
@@ -130,7 +182,33 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO removeService(String subject, String id, String key) {
+	public SalesforceConnectorDTO updateServiceInstance(String subject, String id, String key, ServiceInstanceDTO serviceInstance) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		if (resource.getServiceInstances() == null) {
+			resource.setServiceInstances(Collections.emptySet());
+		}
+		
+		Map<String,ServiceInstanceDTO> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
+		
+		resource.getServiceInstances().clear();
+		
+		if (map.containsKey(key)) {
+			ServiceInstanceDTO original = map.get(key);
+			original.setSourceEnvironment(serviceInstance.getSourceEnvironment());
+			original.setName(serviceInstance.getName());
+			map.put(key, original);
+		}
+		
+		resource.setServiceInstances(new HashSet<ServiceInstanceDTO>(map.values()));
+
+		updateSalesforceConnector(resource);
+		
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO removeServiceInstance(String subject, String id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
@@ -145,7 +223,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 		
 		if (serviceInstance.isPresent()) {
 			Map<Integer,Environment> map = serviceInstance.get().getEnvironments().stream().collect(Collectors.toMap(p -> p.getIndex(), (p) -> p));
@@ -180,46 +261,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 	}
 	
-	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, Set<EnvironmentVariableDTO> environmentVariables) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
-		
-		Set<String> variables = new HashSet<String>();
-		environmentVariables.stream().forEach(variable -> {
-			if (variables.contains(variable.getVariable())) {
-				throw new UnsupportedOperationException("Duplicate variable names: " + variable.getVariable());
-			}
-			variables.add(variable.getVariable());
-			if (variable.getVariable().contains(" ")) {
-				throw new IllegalArgumentException("Environment variables must not contain spaces: " + variable.getVariable());
-			}
-		});
-		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
-		
-		if (serviceInstance.isPresent()) {
-			Map<String,EnvironmentVariable> map = serviceInstance.get().getEnvironmentVariables().stream().collect(Collectors.toMap(p -> p.getVariable(), (p) -> p));
-			serviceInstance.get().getEnvironmentVariables().clear();
-			environmentVariables.stream().forEach(e -> {
-				EnvironmentVariable environmentVariable = null;
-				if (map.containsKey(e.getVariable())) {
-					environmentVariable = map.get(e.getVariable());
-				} else {
-					environmentVariable = new EnvironmentVariable();
-					environmentVariable.setVariable(e.getVariable());
-					environmentVariable.setLocked(Boolean.FALSE);
-				}
-				environmentVariable.setValue(e.getValue());
-				environmentVariable.setEncrypted(e.getEncrypted());
-				serviceInstance.get().getEnvironmentVariables().add(environmentVariable);
-			});
-			
-			updateSalesforceConnector(resource);
-		}
-		
-		return resource;
-	}
-	
 	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariableDTO> environmentVariables) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
@@ -235,7 +276,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		});
 		
-		Optional<ServiceInstance> serviceInstance = resource.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 		
 		if (serviceInstance.isPresent()) {
 			Optional<Environment> environment = serviceInstance.get().getEnvironments().stream().filter(p -> p.getName().equals(environmentName)).findFirst();
@@ -263,44 +307,400 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public void addServiceConfiguration(String subject, String id, String key, Map<String, Object> configParams) {
-		SalesforceConnectorDTO salesforceConnector = findSalesforceConnector(subject, id);
+	public SalesforceConnectorDTO addEventListeners(String subject, String id, String key, Set<EventListenerDTO> eventListeners) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
 		
-		Optional<ServiceInstance> serviceInstance = salesforceConnector.getServiceInstances().stream().filter(p -> p.getKey().equals(key)).findFirst();
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
 		
-		Map<String,Object> configFile = new HashMap<String,Object>();
-		configFile.put("id", salesforceConnector.getIdentity().getId());
-		configFile.put("organizationId", salesforceConnector.getOrganization().getId());
-		configFile.put("instanceName", salesforceConnector.getOrganization().getInstanceName());
-		configFile.put("url.sobjects", salesforceConnector.getIdentity().getUrls().getSobjects());
-		configFile.put("url.metadata", salesforceConnector.getIdentity().getUrls().getMetadata());
-		configFile.put("key", serviceInstance.get().getKey());
-		configFile.put("providerType", serviceInstance.get().getProviderType());
-		configFile.putAll(configParams);
-		
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		try {
-					
-			StringWriter sw = new StringWriter();
+		if (serviceInstance.isPresent()) {
 			
-			YamlWriter writer = new YamlWriter(sw);
-			writer.write(configFile);
-			writer.close();
+			if (serviceInstance.get().getEventListeners() == null) {
+				serviceInstance.get().setEventListeners(Collections.emptySet());
+			}
 			
-			byte[] bytes = sw.toString().getBytes(StandardCharsets.UTF_8);
+			Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
 			
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-	    	objectMetadata.setContentLength(bytes.length);
-	    	objectMetadata.setContentType(MediaType.TEXT_PLAIN);
+			serviceInstance.get().getEventListeners().clear();
 			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-configuration-files", key, new ByteArrayInputStream(bytes), objectMetadata);
-	    	
-	    	s3Client.putObject(putObjectRequest);	
+			eventListeners.stream().forEach(p -> {
+				EventListener eventListener =  map.get(p.getName());
+				eventListener.setCreate(p.getCreate());
+				eventListener.setUpdate(p.getUpdate());
+				eventListener.setDelete(p.getDelete());
+				eventListener.setCallback(p.getCallback());
+				map.put(p.getName(), eventListener);
+			});
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+			serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
+			
+			updateSalesforceConnector(resource);
 		}
+		
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO addTargets(String subject, String id, String key, Targets targets) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+		
+		if (serviceInstance.isPresent()) {
+			
+			serviceInstance.get().setTargets(targets);
+			
+			updateSalesforceConnector(resource);
+		}
+		
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO testConnection(String subject, String id, String key, String environmentName) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				try {
+				
+					PartnerConnection connection = login(environment.get());
+					
+					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
+					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
+					environment.get().setTest(Boolean.TRUE);
+					environment.get().setTestMessage("Success!");
+					
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						environment.get().setTest(Boolean.FALSE);
+						environment.get().setTestMessage(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				} catch (IllegalArgumentException e) {
+					environment.get().setTest(Boolean.FALSE);
+					environment.get().setTestMessage("Missing connection enviroment variables");
+				} finally {
+					updateSalesforceConnector(resource);
+				}
+			}
+		}
+		
+		return resource;
+	}
+	
+	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(serviceInstance.get().getSourceEnvironment()))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				try {
+					
+					PartnerConnection connection = login(environment.get());
+					
+					DescribeGlobalResult result = connection.describeGlobal();
+					
+					DescribeGlobalSObjectResult[] sobjects = result.getSobjects();
+					
+					if (serviceInstance.get().getEventListeners() == null) {
+						serviceInstance.get().setEventListeners(new HashSet<EventListener>());
+					}
+					
+					Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
+					
+					serviceInstance.get().getEventListeners().clear();
+					
+					Arrays.asList(sobjects).stream().forEach(p -> {
+						
+						EventListener eventListener = new EventListener();
+						eventListener.setName(p.getName());
+						eventListener.setLabel(p.getLabel());
+						eventListener.setTriggerable(p.getTriggerable());
+						eventListener.setCreateable(p.getCreateable());
+						eventListener.setDeleteable(p.getDeletable());
+						eventListener.setUpdateable(p.getUpdateable());
+						eventListener.setReplicateable(p.getReplicateable());
+						eventListener.setQueryable(p.getQueryable());
+						
+						if (map.containsKey(p.getName())) {
+							eventListener.setCreate(map.get(p.getName()).getCreate());
+							eventListener.setDelete(map.get(p.getName()).getDelete());
+							eventListener.setUpdate(map.get(p.getName()).getUpdate());
+							eventListener.setCallback(map.get(p.getName()).getCallback());
+						} else {
+							eventListener.setCreate(Boolean.FALSE);
+							eventListener.setDelete(Boolean.FALSE);
+							eventListener.setUpdate(Boolean.FALSE);
+						}
+						
+						serviceInstance.get().getEventListeners().add(eventListener);
+						
+					});
+					
+					updateSalesforceConnector(resource);
+					
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				}
+			}
+		}
+		
+		return resource;
+	}
+	
+	public Field[] describeSobject(String subject, String id, String key, String sobject) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		Field[] fields = null;
+
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(serviceInstance.get().getSourceEnvironment()))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				try {
+					
+					PartnerConnection connection = login(environment.get());
+					
+					DescribeSObjectResult result = connection.describeSObject(sobject);
+					
+					fields = result.getFields();
+					
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else if (e instanceof InvalidSObjectFault) {
+						InvalidSObjectFault fault = (InvalidSObjectFault) e;
+						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				}
+			}
+		}
+		
+		return fields;
+	}
+	
+	public SObject[] query(String subject, String id, String key, String queryString) {
+		if (subject == null) {
+			throw new IllegalArgumentException("Missing parameter: subject");
+		}
+		
+		if (id == null) {
+			throw new IllegalArgumentException("Missing parameter: id");
+		}
+		
+		if (key == null) {
+			throw new IllegalArgumentException("Missing parameter: id");
+		}
+		
+		if (queryString == null) {
+			throw new IllegalArgumentException("Missing parameter: queryString");
+		}
+		
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		SObject[] sobjects = null;
+
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+
+			Optional<Environment> environment = serviceInstance.get()
+					.getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(serviceInstance.get().getSourceEnvironment()))
+					.findFirst();
+
+			if (environment.isPresent()) {
+				
+				try {
+
+					PartnerConnection connection = login(environment.get());
+
+					QueryResult result = connection.query(queryString);
+
+					sobjects = result.getRecords();
+
+				} catch (ConnectionException e) {
+					if (e instanceof LoginFault) {
+						LoginFault loginFault = (LoginFault) e;
+						throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+					} else if (e instanceof ApiQueryFault) {
+						ApiQueryFault fault = (ApiQueryFault) e;
+						throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
+					} else {
+						throw new InternalServerErrorException(e.getMessage());
+					}
+				}
+			}
+		}
+		
+		return sobjects;
+		
+	}
+	
+	public SalesforceConnectorDTO deploy(String subject, String id, String key, String environmentName) throws JAXBException, IOException, IllegalArgumentException, ConnectionException, InterruptedException, ExecutionException {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+
+		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst();
+
+		if (serviceInstance.isPresent()) {
+			
+			Optional<Environment> environment = serviceInstance.get().getEnvironments()
+					.stream()
+					.filter(p -> p.getName().equals(environmentName))
+					.findFirst();
+			
+			if (environment.isPresent()) {
+				
+				PartnerConnection connection = login(environment.get());
+				
+				List<BuildDefaultCallback> tasks = serviceInstance.get()
+						.getEventListeners()
+						.stream()
+						.filter(p -> p.getCreate() || p.getUpdate() || p.getDelete())
+						.map(p -> new BuildDefaultCallback(connection, p))
+						.collect(Collectors.toCollection(ArrayList::new));
+				
+				ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
+				
+				List<Future<Callback>> futures = executor.invokeAll(tasks);
+				executor.shutdown();
+				executor.awaitTermination(30, TimeUnit.SECONDS);
+				
+				List<Callback> queries = new ArrayList<Callback>();
+				
+				for (Future<Callback> future : futures) {
+					queries.add(future.get());
+				}
+				
+				OutboundMessageHandlerConfiguration configuration = new OutboundMessageHandlerConfiguration();
+				configuration.setOrganizationId(environment.get().getOrganization());
+				configuration.setAwsAccessKey(serviceInstance.get().getTargets().getSimpleStorageService().getAwsAccessKey());
+				configuration.setAwsSecretAccessKey(serviceInstance.get().getTargets().getSimpleStorageService().getAwsSecretAccessKey());
+				configuration.setBucketName(serviceInstance.get().getTargets().getSimpleStorageService().getBucketName());
+				configuration.setEnvironmentName(environment.get().getName());
+				configuration.setServiceInstanceKey(serviceInstance.get().getKey());
+				configuration.setQueries(queries);
+				configuration.setDeploymentDate(new Date());
+				configuration.setDeployedBy(subject);
+				configuration.setIntegrationUser(connection.getConfig().getUsername());
+				
+				mapper.save(configuration);
+				
+				String packageKey = outboundMessageService.buildPackage(configuration);
+				
+				outboundMessageService.deployPackage(connection, packageKey);
+				
+				
+				//https://na11.salesforce.com/services/Soap/u/36.0/00DG0000000kGBr
+				//https://na45.salesforce.com/services/Soap/m/36.0/00D300000000lnE
+				
+				//outboundMessageService.deployPackage(loginResult, inputStream);
+			}
+		}
+		
+		return resource;
+	}
+	
+	private PartnerConnection login(Environment environment) throws IllegalArgumentException, ConnectionException {
+		
+		String instance = null;
+		String username = null;
+		String password = null;
+		String securityToken = null;
+		
+		Iterator<EnvironmentVariable> variables = environment.getEnvironmentVariables().iterator();
+		
+		while (variables.hasNext()) {
+			EnvironmentVariable environmentVariable = variables.next();
+			if ("INSTANCE".equals(environmentVariable.getVariable())) {
+				instance = environmentVariable.getValue();
+			}
+			if ("USERNAME".equals(environmentVariable.getVariable())) {
+				username = environmentVariable.getValue();
+			}
+			if ("SECURITY_TOKEN".equals(environmentVariable.getVariable())) {
+				securityToken = environmentVariable.getValue();
+			}
+			if ("PASSWORD".equals(environmentVariable.getVariable())) {
+				password = environmentVariable.getValue();
+			}
+		}
+			
+		if (instance == null || username == null || securityToken == null || password == null) {
+			throw new IllegalArgumentException();
+		}
+			
+		ConnectorConfig config = new ConnectorConfig();
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+		config.setUsername(username);
+		config.setPassword(password.concat(securityToken));
+		
+		PartnerConnection connection = Connector.newConnection(config);
+			
+		return connection;
 	}
 }
