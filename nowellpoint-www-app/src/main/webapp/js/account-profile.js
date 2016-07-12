@@ -1,21 +1,3 @@
-$(function () {
-	$('.toggle').click(function (event) {
-		event.preventDefault();
-		var target = $(this).attr('href');
-		$(target).toggleClass('hidden show');
-		$('#add-card').toggleClass('hidden show');
-		$('#cardholderName').val('');
-        $("#firstName").val('');
-        $("#lastName").val('');
-		$("#street").val('');
-		$("#city").val('');
-		$("#state").val('');
-		$("#postalCode").val('');
-		$("#countryCode").val('');
-		$('#use-contact-info').prop('checked', false);
-	});
-});
-
 $("#use-contact-info").change(function () {
 	if (this.checked) {
 		var accountProfile = jQuery.data(document.body, "accountProfile");
@@ -39,20 +21,7 @@ $("#use-contact-info").change(function () {
 	}
 });
 
-$("#save").click(function (event) {    
-	event.preventDefault();
-	var params = $("#form").serialize();
-    var accountProfile = jQuery.data(document.body, "accountProfile");
-	$.ajax({
-		type : "POST",
-		dataType: "html",
-		data: params,
-		url: accountProfile.basePath + "/" + accountProfile.id + "/payment-methods",
-		complete: function(data) {
-            $("#main").html(data.responseText);
-        }
-	});
-});
+
 
 $('#confirm').click(function(e) {
     event.preventDefault();

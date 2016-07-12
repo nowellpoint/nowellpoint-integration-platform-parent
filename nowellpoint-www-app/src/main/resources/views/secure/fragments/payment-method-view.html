@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+
+        <#if successMessage??>
+            <div id="success" class="alert alert-success">
+                <a class="close" data-dismiss="alert">&times;</a>
+                <div class="text-center">${successMessage!}</div>
+            </div>
+        </#if>
+
+        <div class="col-md-12">
+            <dl class="dl-vertical">
+                <dt>${labels["card.type"]}</dt>
+                <dd><img src="${(creditCard.imageUrl)!}" /></dd>
+                <dt>${labels["name.on.card"]}</dt>
+                <dd>${creditCard.cardholderName}</dd>
+                <dt>${labels["number"]}</dt>
+                <dd>${(creditCard.lastFour)!}</dd>
+                <dt>${labels["expiration.date"]}</dt>
+                <dd>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</dd>
+            </dl>
+        </div>
+
+        <br>
+
+        <div class="col-md-12">
+            <dl class="dl-vertical">
+                <dt>${labels["billing.contact"]}</dt>
+                <dd>${(creditCard.billingContact.firstName)!} ${(creditCard.billingContact.lastName)!}</dd>
+                <br>
+                <dt>${labels["billing.address"]}</dt>
+                <dd>${(creditCard.billingAddress.street)!}</dd>
+                <dd>${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}</dd>
+                <dd>${(creditCard.billingAddress.country)!}</dd>
+            </dl>
+        </div>
+
+        <div class="col-md-12">
+            <div class="pull-right">
+                <a href="/app/payment-methods" class="btn btn-default" role="button">${labels["back"]}</a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<div class="col-md-3"></div>
+<br>
