@@ -13,12 +13,62 @@
                 <div class="hr-divider"></div>
                 <br>
 
-                <div id="main">
-                    <#include "fragments/payment-methods-page.html" />
+                <div id="status-message"></div>
+                <br>
+                <br>
+                <div class="panel-group" id="accordion">
+                    <#list accountProfile.creditCards as creditCard>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#cardDetails${creditCard?counter}">
+                                    <div class="flextable">
+                                        <div class="flextable-item">
+                                            <div class="pull-left">${labels["card.type"]}: <img src="${(creditCard.imageUrl)!}"/>&nbsp;${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</div>    
+                                        </div>
+                                        <div class="flextable-item">
+                                            <div class="pull-left">${labels["expiration.date"]}: ${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</div>
+                                        </div>
+                                        <div class="flextable-item">
+                                        <i class="indicator glyphicon glyphicon-chevron-down pull-right"></i>  
+                                        </div>    
+                                    </div>  
+                                </a>    
+                            </h4>
+                            </div>
+                            <div id="cardDetails${creditCard?counter}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <dl class="dl-vertical">
+                                            <dt>${labels["name.on.card"]}</dt>
+                                            <dd>${(creditCard.cardholderName)!}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <dl class="dl-vertical">
+                                            <dt>${labels["billing.contact"]}</dt>
+                                            <dd>${(creditCard.billingContact.firstName)!} ${(creditCard.billingContact.lastName)!}</dd>
+                                            <br>
+                                            <dt>${labels["billing.address"]}</dt>
+                                            <dd>${(creditCard.billingAddress.street)!}</dd>
+                                            <dd>${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}</dd>
+                                            <dd>${(creditCard.billingAddress.country)!}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <div class="pull-right">
+                                            <a href="#" class="btn btn-default confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}" data-title="${labels['remove.card']}" role="button">${labels["delete"]}</a>
+                                            <a href="#" class="btn btn-default" data-id="${creditCard.token}" role="button">${labels["edit"]}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </#list>
                 </div>
 
                 <div class="pull-right">
-                    <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new", id="add-card" class="btn btn-primary" role="button">${labels["add.card"]}</a>
+                    <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" , id="add-card" class="btn btn-primary" role="button">${labels["add.card"]}</a>
                 </div>
 
                 <br>

@@ -267,8 +267,6 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView addCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
-		
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
 		String expirationMonth = request.queryParams("expirationMonth");
@@ -309,17 +307,16 @@ public class AccountProfileController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
+		if (httpResponse.getStatusCode() == Status.OK) {
+			creditCard = httpResponse.getEntity(CreditCard.class);
+			
+			model.put("creditCard", creditCard);
+			model.put("successMessage", getValue("add.success"));
+		} else {
+			model.put("errorMessage", httpResponse.getAsString());
 		}
 			
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-			
-		model.put("account", account);
-		model.put("accountProfile", accountProfile);
-		model.put("successMessage", this.getValue("add.success"));
-			
-		return new ModelAndView(model, "secure/fragments/payment-methods-page.html");	
+		return new ModelAndView(model, "secure/fragments/payment-method-view.html");	
 	}
 	
 	private ModelAndView removeCreditCard(Request request, Response response) {

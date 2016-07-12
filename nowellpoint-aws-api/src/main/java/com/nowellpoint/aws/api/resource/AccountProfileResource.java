@@ -254,10 +254,10 @@ public class AccountProfileResource {
 	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.addCreditCard(subject, id, creditCard);
+		accountProfileService.addCreditCard(subject, id, creditCard);
 		
 		return Response
-				.ok(resource)
+				.ok(creditCard)
 				.build();
 	}
 	

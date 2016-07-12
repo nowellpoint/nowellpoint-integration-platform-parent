@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.enterprise.event.Observes;
 import javax.net.ssl.HttpsURLConnection;
@@ -24,11 +25,13 @@ import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
+import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
+import com.nowellpoint.aws.api.model.SystemReference;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -198,11 +201,9 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public AccountProfileDTO addCreditCard(String subject, String id, CreditCard creditCard) {
+	public void addCreditCard(String subject, String id, CreditCard creditCard) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
-						
-		Result<Customer> customerResult = null;
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.company(resource.getCompany())
@@ -211,14 +212,34 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				.lastName(resource.getLastName())
 				.phone(resource.getPhone());
 		
-//		try {
-//			Customer customer = gateway.customer().find("");
-//			customerResult = gateway.customer().update(customer.getId(), customerRequest);
-//		} catch (com.braintreegateway.exceptions.NotFoundException e) {
-//			customerResult = gateway.customer().create(customerRequest);
-//		}
+		Result<Customer> customerResult = null;
 		
-		customerResult = gateway.customer().create(customerRequest);
+		if (resource.getSystemReferences() != null) {
+			
+			Optional<SystemReference> optional = resource.getSystemReferences()
+					.stream()
+					.filter(s -> "BRAINTREE".equals(s.getSystem()))
+					.findFirst();
+			
+			if (optional.isPresent()) {
+				try {
+					Customer customer = gateway.customer().find(optional.get().getSystemReference());
+					customerResult = gateway.customer().update(customer.getId(), customerRequest);
+				} catch (NotFoundException ignore) {
+					
+				}
+			}
+		}
+		
+		if (customerResult == null) {
+			customerResult = gateway.customer().create(customerRequest);
+			
+			SystemReference systemReference = new SystemReference();
+			systemReference.setSystem("BRAINTREE");
+			systemReference.setSystemReference(customerResult.getTarget().getId());
+			
+			resource.addSystemReference(systemReference);
+		}
 		
 		AddressRequest addressRequest = new AddressRequest()
 				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
@@ -250,8 +271,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.addCreditCard(creditCard);
 		
 		updateAccountProfile(resource);
-		
-		return resource;
 	}
 	
 	public AccountProfileDTO updateCreditCard(String subject, String id, String token, CreditCard creditCard) {
@@ -265,6 +284,17 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				.number(creditCard.getNumber());
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
+		
+		AddressRequest addressRequest = new AddressRequest()
+				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
+				.firstName(creditCard.getBillingContact().getFirstName())
+				.lastName(creditCard.getBillingContact().getLastName())
+				.locality(creditCard.getBillingAddress().getCity())
+				.region(creditCard.getBillingAddress().getState())
+				.postalCode(creditCard.getBillingAddress().getPostalCode())
+				.streetAddress(creditCard.getBillingAddress().getStreet());
+		
+		gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
 		
 		creditCard.setNumber(null);
 		creditCard.setToken(creditCardResult.getTarget().getToken());
@@ -285,7 +315,11 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
 		
+		com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
+		
 		gateway.creditCard().delete(token);
+		
+		gateway.address().delete(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
 		
 		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 		

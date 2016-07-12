@@ -1,14 +1,6 @@
 package com.nowellpoint.www.app.model;
 
-import java.io.Serializable;
-
-public class Address implements Serializable {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 8625374697414134673L;
+public class Address {
 	
 	/**
 	 * 
@@ -57,6 +49,10 @@ public class Address implements Serializable {
 	 */
 
 	private String longitude;
+	
+	/**
+	 * 
+	 */
 
 	public Address() {
 		
@@ -125,7 +121,7 @@ public class Address implements Serializable {
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
-	
+
 	public Address withStreet(String street) {
 		setStreet(street);
 		return this;
