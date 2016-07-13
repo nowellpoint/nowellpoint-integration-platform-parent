@@ -107,7 +107,6 @@ public class ProjectResource {
 		
 		resource.setOwner(owner);
 		resource.setSubject(subject);
-		resource.setEventSource(uriInfo.getBaseUri());
 		
 		projectService.createProject(resource);
 		

@@ -171,6 +171,16 @@ public class AccountProfile extends AbstractDocument {
 	
 	private Set<CreditCard> creditCards;
 	
+	/**
+	 * 
+	 */
+	
+	private Set<SystemReference> systemReferences;
+	
+	/**
+	 * 
+	 */
+	
 	public AccountProfile() {
 
 	}
@@ -365,5 +375,13 @@ public class AccountProfile extends AbstractDocument {
 
 	public void setCreditCards(Set<CreditCard> creditCards) {
 		this.creditCards = creditCards;
+	}
+
+	public Set<SystemReference> getSystemReferences() {
+		return systemReferences;
+	}
+
+	public void setSystemReferences(Set<SystemReference> systemReferences) {
+		this.systemReferences = systemReferences;
 	}
 }

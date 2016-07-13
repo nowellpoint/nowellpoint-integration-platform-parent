@@ -1,6 +1,12 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.aws.data.mongodb.DateDeserializer;
+import com.nowellpoint.aws.data.mongodb.DateSerializer;
 
 public class CreditCard implements Serializable {
 	
@@ -69,6 +75,32 @@ public class CreditCard implements Serializable {
 	 */
 	
 	private Contact billingContact;
+	
+	/**
+	 * 
+	 */
+	
+	private Boolean primary;
+	
+	/**
+	 * 
+	 */
+	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	private Date addedOn;
+	
+	/**
+	 * 
+	 */
+	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	private Date updatedOn;
+	
+	/**
+	 * 
+	 */
 
 	public CreditCard() {
 		
@@ -152,5 +184,29 @@ public class CreditCard implements Serializable {
 
 	public void setBillingContact(Contact billingContact) {
 		this.billingContact = billingContact;
+	}
+
+	public Boolean getPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(Boolean primary) {
+		this.primary = primary;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 }

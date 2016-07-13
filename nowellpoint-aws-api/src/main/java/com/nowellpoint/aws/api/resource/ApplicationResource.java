@@ -139,7 +139,6 @@ public class ApplicationResource {
 		
 		resource.setOwner(owner);
 		resource.setSubject(subject);
-		resource.setEventSource(uriInfo.getBaseUri());
 		resource.setName(name);
 		resource.setServiceInstance(serviceInstance);
 		

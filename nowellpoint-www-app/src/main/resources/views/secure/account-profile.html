@@ -2,22 +2,21 @@
     <@t.page>
         <#include "navbar.html" />
 
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
-            <br>
-            <br>
-            <div class="flextable">
-                <div class="flextable-item flextable-primary">
-                    <h3 class="dashhead-title">${labels["user.profile"]}</h3>
+                <br>
+                <br>
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["user.profile"]}</h3>
+                    </div>
+                    <div class="flextable-item">
+                        <a href="#profileDialog" class="profile-dialog btn btn-primary" role="button" data-toggle="modal" data-title="${labels['edit.user.profile']}">${labels["edit.user.profile"]}</a>
+                    </div>
                 </div>
-                <div class="flextable-item">
-
-                    <a href="#profileDialog" class="profile-dialog btn btn-primary" role="button" data-toggle="modal" data-title="${labels['edit.user.profile']}">${labels["edit"]}</a>
-                </div>
+                <br>
+                <div class="hr-divider"></div>
             </div>
-            <br>
-            <div class="hr-divider"></div>
-            </div>    
             <div class="row">
                 <br>
                 <div id="status-message"></div>
@@ -97,11 +96,11 @@
 
                 <div class="flextable">
                     <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${messages["payment.methods"]}</h3>
+                        <h3 class="dashhead-title">${labels["payment.methods"]}</h3>
                     </div>
                     <div class="flextable-item">
 
-                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" , id="add-card" class="btn btn-primary" role="button">${labels["add.card"]}</a>
+                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" , id="add-card" class="btn btn-primary" role="button">${labels["add.payment.method"]}</a>
 
                     </div>
                 </div>
@@ -110,76 +109,56 @@
                 <div class="hr-divider"></div>
                 <br>
 
-
-
-                <div class="panel-group" id="accordion">
-                    <#list accountProfile.creditCards as creditCard>
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#cardDetails${creditCard?counter}">
-                                    <div class="flextable">
-                                        <div class="flextable-item">
-                                            <div class="pull-left">${labels["card.type"]}: <img src="${(creditCard.imageUrl)!}"/>&nbsp;${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</div>    
-                                        </div>
-                                        <div class="flextable-item">
-                                            <div class="pull-left">${labels["expiration.date"]}: ${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</div>
-                                        </div>
-                                        <div class="flextable-item">
-                                        <i class="indicator glyphicon glyphicon-chevron-down pull-right"></i>  
-                                        </div>    
-                                    </div>  
-                                </a>    
-                            </h4>
-                            </div>
-                            <div id="cardDetails${creditCard?counter}" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <div class="col-lg-6 col-md-6 col-sm-6">
-                                        <dl class="dl-vertical">
-                                            <dt>${labels["name.on.card"]}</dt>
-                                            <dd>${(creditCard.cardholderName)!}</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6">
-                                        <dl class="dl-vertical">
-                                            <dt>${labels["billing.contact"]}</dt>
-                                            <dd>${(creditCard.billingContact.firstName)!} ${(creditCard.billingContact.lastName)!}</dd>
-                                            <br>
-                                            <dt>${labels["billing.address"]}</dt>
-                                            <dd>${(creditCard.billingAddress.street)!}</dd>
-                                            <dd>${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}</dd>
-                                            <dd>${(creditCard.billingAddress.country)!}</dd>
-                                        </dl>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12">
-                                        <div class="pull-right">
-                                            <a href="#" class="btn btn-default confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}" data-title="${labels['remove.card']}" role="button">${labels["delete"]}</a>
-                                            <a href="#" class="btn btn-default" data-id="${creditCard.token}" role="button">${labels["edit"]}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </#list>
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>${labels["card.type"]}</th>
+                            <th class="text-center">${labels['primary']}</th>
+                            <th>${labels["name.on.card"]}</th>
+                            <th>${labels["expires.on"]}</th>
+                            <th>${labels["action"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list accountProfile.creditCards?sort_by( "cardType") as creditCard>
+                                <tr id="${creditCard.token}">
+                                    <td><img src="${(creditCard.imageUrl)!}" />&nbsp;${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</td>
+                                    <td class="text-center">
+                                        <#if creditCard.primary><span class="icon icon-check"></span></#if>
+                                    </td>
+                                    <td>${creditCard.cardholderName}</td>
+                                    <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
+                                    <td><a href="#" class="" title="${labels['edit']}" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span></a>
+                                        <#if ! creditCard.primary>
+                                            &nbsp;
+                                            <a href="" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span></a></#if>
+                                    </td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
         <#include "account-profile-edit.html"/>
+        <#include "confirm-dialog.html"/>
+        <#include "spinner.html"/>
 
         <script>
-            $(document).ready(function(e) {
-                $('#clickable').click(function(e) {
-                    e.preventDefault();
-                    $.ajax({
-                        type: "DELETE",
-                        url: "/app/account-profile/picture",
-                        success: function() {
-                            location.reload();
-                        }
-                    });
-                });
-            });
+            var accountProfile = {
+                basePath: "${labels['base.path']}",
+                id: "${accountProfile.id!}",
+                firstName: "${accountProfile.firstName!}",
+                lastName: "${accountProfile.lastName!}",
+                street: "${(accountProfile.address.street)!}",
+                city: "${(accountProfile.address.city)!}",
+                state: "${(accountProfile.address.state)!}",
+                postalCode: "${(accountProfile.address.postalCode)!}",
+                countryCode: "${(accountProfile.address.countryCode)!}"
+            }
+            jQuery.data(document.body, "accountProfile", accountProfile);
         </script>
+
+        <script src="/js/account-profile.js"></script>
 
     </@t.page>

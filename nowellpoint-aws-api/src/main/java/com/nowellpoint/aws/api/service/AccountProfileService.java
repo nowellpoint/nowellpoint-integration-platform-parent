@@ -262,18 +262,25 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
 		
-		creditCard.setNumber(null);
+		if (resource.getCreditCards() == null || resource.getCreditCards().size() == 0) {
+			creditCard.setPrimary(Boolean.TRUE);
+		} else {
+			creditCard.setPrimary(Boolean.FALSE);
+		}
+		
+		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
 		creditCard.setToken(creditCardResult.getTarget().getToken());
 		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
 		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
 		creditCard.setCardType(creditCardResult.getTarget().getCardType());
+		creditCard.setAddedOn(Date.from(Instant.now()));
 		
 		resource.addCreditCard(creditCard);
 		
 		updateAccountProfile(resource);
 	}
 	
-	public AccountProfileDTO updateCreditCard(String subject, String id, String token, CreditCard creditCard) {
+	public void updateCreditCard(String subject, String id, String token, CreditCard creditCard) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
 		
@@ -296,22 +303,21 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
 		
-		creditCard.setNumber(null);
+		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
 		creditCard.setToken(creditCardResult.getTarget().getToken());
 		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
 		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
 		creditCard.setCardType(creditCardResult.getTarget().getCardType());
+		creditCard.setUpdatedOn(Date.from(Instant.now()));
 		
 		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 		
 		resource.addCreditCard(creditCard);
 		
 		updateAccountProfile(resource);
-		
-		return resource;
 	}
 	
-	public AccountProfileDTO removeCreditCard(String subject, String id, String token) {
+	public void removeCreditCard(String subject, String id, String token) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
 		
@@ -324,7 +330,5 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 		
 		updateAccountProfile(resource);
-		
-		return resource;
 	}
 }

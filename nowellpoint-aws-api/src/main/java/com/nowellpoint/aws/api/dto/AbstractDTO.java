@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.validation.constraints.Null;
 
 import java.io.Serializable;
-import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -64,13 +63,6 @@ public abstract class AbstractDTO implements Serializable {
 	 */
 
 	private Date systemModifiedDate;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonIgnore
-	private URI eventSource;
 	
 	/**
 	 * 
@@ -138,14 +130,6 @@ public abstract class AbstractDTO implements Serializable {
 
 	public void setSystemModifiedDate(Date systemModifiedDate) {
 		this.systemModifiedDate = systemModifiedDate;
-	}
-
-	public URI getEventSource() {
-		return eventSource;
-	}
-
-	public void setEventSource(URI eventSource) {
-		this.eventSource = eventSource;
 	}
 
 	public String getSubject() {

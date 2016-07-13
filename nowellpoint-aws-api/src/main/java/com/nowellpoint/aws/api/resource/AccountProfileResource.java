@@ -220,7 +220,6 @@ public class AccountProfileResource {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setSubject(subject);
-		resource.setEventSource(uriInfo.getBaseUri());
 		
 		accountProfileService.createAccountProfile( resource );
 		
@@ -267,10 +266,10 @@ public class AccountProfileResource {
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.updateCreditCard(subject, id, token, creditCard);
+		accountProfileService.updateCreditCard(subject, id, token, creditCard);
 		
 		return Response
-				.ok(resource)
+				.ok(creditCard)
 				.build();
 	}
 	
@@ -280,10 +279,10 @@ public class AccountProfileResource {
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.removeCreditCard(subject, id, token);
+		accountProfileService.removeCreditCard(subject, id, token);
 		
 		return Response
-				.ok(resource)
+				.ok()
 				.build();
 	}
 	

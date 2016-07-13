@@ -56,7 +56,7 @@ public class AccountProfileController extends AbstractController {
 		
 		put("/app/account-profile/:id/payment-methods/:token", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		delete("/app/account-profile/:id/payment-methods/:token", (request, response) -> removeCreditCard(request, response), new FreeMarkerEngine(configuration));
+		delete("/app/account-profile/:id/payment-methods/:token", (request, response) -> removeCreditCard(request, response));
 		
 		/////////////////////////////////
 
@@ -267,6 +267,8 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView addCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
+		Account account = getAccount(request);
+		
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
 		String expirationMonth = request.queryParams("expirationMonth");
@@ -310,19 +312,18 @@ public class AccountProfileController extends AbstractController {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			creditCard = httpResponse.getEntity(CreditCard.class);
 			
+			model.put("account", account);
 			model.put("creditCard", creditCard);
 			model.put("successMessage", getValue("add.success"));
 		} else {
 			model.put("errorMessage", httpResponse.getAsString());
 		}
 			
-		return new ModelAndView(model, "secure/fragments/payment-method-view.html");	
+		return new ModelAndView(model, "secure/payment-method.html");	
 	}
 	
-	private ModelAndView removeCreditCard(Request request, Response response) {
+	private String removeCreditCard(Request request, Response response) {
 		Token token = getToken(request);
-		
-		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -335,15 +336,9 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
+			throw new BadRequestException(httpResponse.getAsString());
 		}
-			
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-			
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", accountProfile);
-			
-		return new ModelAndView(model, "secure/fragments/payment-methods-page.html");	
+		
+		return "";
 	}
 }

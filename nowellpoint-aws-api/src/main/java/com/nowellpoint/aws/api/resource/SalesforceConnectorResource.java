@@ -146,7 +146,6 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
 		resource.setOwner(owner);
 		resource.setSubject(subject);
-		resource.setEventSource(uriInfo.getBaseUri());
 		resource.getIdentity().getPhotos().setPicture(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getPicture()));
 		resource.getIdentity().getPhotos().setThumbnail(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getThumbnail()));
 		

@@ -6,39 +6,161 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${messages["payment.methods"]}</h6>
+                            <h6 class="dashhead-subtitle">${labels["payment.methods"]}</h6>
                         </div>
                     </div>
                 </div>
                 <div class="hr-divider"></div>
-                
+
                 <br>
-                
+
                 <div id="main">
-                    
+
                     <#if action=="new">
-                        <#include "fragments/payment-method-new.html" />    
+
+                        <form id="form" name="form" class="form-vertical" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/payment-methods">
+
+                            <div class="row">
+                                <div class="form-group col-md-2"></div>
+                                <div class="form-group col-md-8">
+                                    <div class="form-group col-md-12">
+                                        <input type="checkbox" name="use-contact-info" id="use-contact-info" tabindex="1" />
+                                        <label class="control-label" for="use-contact-info">${labels["use.account.profile"]}</label>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="cardholderName">${labels["name.on.card"]}</label>
+                                        <input type="text" class="form-control" name="cardholderName" id="cardholderName" autofocus="" tabindex="2" />
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="firstName">${labels["first.name"]}</label>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" tabindex="6" />
+                                    </div>
+
+                                    <div class="form-group col-md-3">
+                                        <label class="control-label" for="number">${labels["number"]}</label>
+                                        <input type="text" class="form-control" name="number" id="number" tabindex="3">
+                                    </div>
+
+                                    <div class="form-group col-md-1">
+                                        <label class="control-label" for="expirationMonth">${labels["month"]}</label>
+                                        <div class="input-group">
+                                            <select class="form-control" name="expirationMonth" id="expirationMonth" style="width:auto;" tabindex="4">
+                                                <#assign x=12 />
+                                                <#list 1..x as month>
+                                                    <option value="${month?c}">${month?c}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-md-2">
+                                        <label class="control-label" for="expirationYear">${labels["year"]}</label>
+                                        <div class="input-group">
+                                            <select type="text" class="form-control" name="expirationYear" id="expirationYear" tabindex="5">
+                                                <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                <#list .now?string[ "yyyy"]?number..x as year>
+                                                    <option value="${year?c}">${year?c}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="lastName">${labels["last.name"]}</label>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" tabindex="7" />
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="street">${labels["street"]}</label>
+                                        <input type="text" class="form-control" name="street" id="street" tabindex="8" />
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label input="control-label" for="city">${labels["city"]}</label>
+                                        <input type="text" class="form-control" name="city" id="city" tabindex="9" />
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="state">${labels["state"]}</label>
+                                        <input type="text" class="form-control" name="state" id="state" tabindex="10" />
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                                        <select id="countryCode" name="countryCode" class="form-control" tabindex="11" required>
+                                            <#list countryList as country>
+                                                <option value="${country.code}">${country.name}</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
+                                        <input type="text" class="form-control" name="postalCode" id="postalCode" tabindex="12" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <#if errorMessage??>
+                                            <div id="alert" class="alert alert-danger">
+                                                <a class="close" data-dismiss="alert">×</a>
+                                                <div class="text-center">${errorMessage}</div>
+                                            </div>
+                                        </#if>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <div class="pull-right">
+                                            <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="13">${labels["cancel"]}</a>
+                                            <button type="submit" name="save" id="save" class="btn btn-primary" tabindex="14">${labels["save"]}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2"></div>
+                        </form>
+                        <br>
+
                     </#if>
-                    
+
                     <#if ! action??>
-                        <#include "fragments/payment-method-view.html" />    
+                        <#include "fragments/payment-method-view.html" />
                     </#if>
-                
+
                 </div>
 
             </div>
 
         </div>
 
-        <#include "spinner.html" />
         <#include "confirm-dialog.html"/>
 
         <script>
             var accountProfile = {
                 basePath: "${labels['base.path']}",
-                id: "${accountProfile.id!}",
-                firstName: "${accountProfile.firstName!}",
-                lastName: "${accountProfile.lastName!}",
+                id: "${(accountProfile.id)!}",
+                firstName: "${(accountProfile.firstName)!}",
+                lastName: "${(accountProfile.lastName)!}",
                 street: "${(accountProfile.address.street)!}",
                 city: "${(accountProfile.address.city)!}",
                 state: "${(accountProfile.address.state)!}",
