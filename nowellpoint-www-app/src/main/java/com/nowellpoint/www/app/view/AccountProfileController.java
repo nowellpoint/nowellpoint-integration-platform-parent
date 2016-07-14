@@ -3,7 +3,6 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
-import static spark.Spark.put;
 
 import java.io.IOException;
 import java.util.Map;
@@ -46,15 +45,17 @@ public class AccountProfileController extends AbstractController {
 		
 		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
-		get("/app/payment-methods", (request, response) -> getPaymentMethods(request, response), new FreeMarkerEngine(configuration));
-		
 		// credit card routes
 		
-		get("/app/account-profile/:id/payment-methods/new", (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
+		get("/app/account-profile/:id/payment-methods/:token/view", (request, response) -> getCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
+		get("/app/account-profile/:id/payment-methods/add", (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
+		
+		get("/app/account-profile/:id/payment-methods/:token/edit", (request, response) -> editCreditCard(request, response), new FreeMarkerEngine(configuration));
+			
 		post("/app/account-profile/:id/payment-methods", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		put("/app/account-profile/:id/payment-methods/:token", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
+		post("/app/account-profile/:id/payment-methods/:token", (request, response) -> updateCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
 		delete("/app/account-profile/:id/payment-methods/:token", (request, response) -> removeCreditCard(request, response));
 		
@@ -110,7 +111,7 @@ public class AccountProfileController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	public ModelAndView updateAccountProfile(Request request, Response response) throws IOException {
+	private ModelAndView updateAccountProfile(Request request, Response response) throws IOException {
 		
 		Token token = getToken(request);
 		
@@ -213,7 +214,7 @@ public class AccountProfileController extends AbstractController {
 		return new ModelAndView(model, "secure/account-profile.html");		
 	}
 	
-	private ModelAndView getPaymentMethods(Request request, Response response) {
+	private ModelAndView getCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
 		Account account = getAccount(request);
@@ -222,20 +223,23 @@ public class AccountProfileController extends AbstractController {
 				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
-				.path("me")
+				.path(request.params(":id"))
+				.path("credit-card")
+				.path(request.params(":token"))
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
 		}
-
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-			
+		
+		CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
+		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("accountProfile", accountProfile);
+		model.put("creditCard", creditCard);
+		model.put("mode", "view");
 			
-		return new ModelAndView(model, "secure/payment-methods.html");	
+		return new ModelAndView(model, "secure/payment-method.html");	
 	}
 	
 	private ModelAndView newCreditCard(Request request, Response response) {
@@ -248,6 +252,7 @@ public class AccountProfileController extends AbstractController {
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
 				.path(request.params(":id"))
+				.path("credit-card")
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
@@ -258,8 +263,43 @@ public class AccountProfileController extends AbstractController {
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
+		model.put("creditCard", new CreditCard());
 		model.put("accountProfile", accountProfile);
-		model.put("action", "new");
+		model.put("action", String.format("/app/account-profile/%s/payment-methods/", request.params(":id")));
+		model.put("mode", "add");
+			
+		return new ModelAndView(model, "secure/payment-method.html");	
+	}
+	
+	private ModelAndView editCreditCard(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.path("credit-card")
+				.path(request.params(":token"))
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+		
+		CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
+		
+		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setId(request.params(":id"));
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", accountProfile);
+		model.put("creditCard", creditCard);
+		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
+		model.put("mode", "edit");
 			
 		return new ModelAndView(model, "secure/payment-method.html");	
 	}
@@ -314,7 +354,68 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("account", account);
 			model.put("creditCard", creditCard);
+			model.put("mode", "view");
 			model.put("successMessage", getValue("add.success"));
+		} else {
+			model.put("errorMessage", httpResponse.getAsString());
+		}
+			
+		return new ModelAndView(model, "secure/payment-method.html");	
+	}
+	
+	private ModelAndView updateCreditCard(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String cardholderName = request.queryParams("cardholderName");
+		String number = request.queryParams("number");
+		String expirationMonth = request.queryParams("expirationMonth");
+		String expirationYear = request.queryParams("expirationYear");
+		String city = request.queryParams("city");
+		String countryCode = request.queryParams("countryCode");
+		String postalCode = request.queryParams("postalCode");
+		String state = request.queryParams("state");
+		String street = request.queryParams("street");
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
+		
+		CreditCard creditCard = new CreditCard()
+				.withBillingAddress(new Address()
+						.withCity(city)
+						.withCountryCode(countryCode)
+						.withPostalCode(postalCode)
+						.withState(state)
+						.withStreet(street))
+				.withBillingContact(new Contact()
+						.withFirstName(firstName)
+						.withLastName(lastName))
+				.withCardholderName(cardholderName)
+				.withExpirationMonth(expirationMonth)
+				.withExpirationYear(expirationYear)
+				.withNumber(number);
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.path("credit-card")
+				.path(request.params(":token"))
+				.body(creditCard)
+				.execute();
+		
+		Map<String, Object> model = getModel();
+			
+		if (httpResponse.getStatusCode() == Status.OK) {
+			creditCard = httpResponse.getEntity(CreditCard.class);
+			
+			model.put("account", account);
+			model.put("creditCard", creditCard);
+			model.put("mode", "view");
+			model.put("successMessage", getValue("update.success"));
 		} else {
 			model.put("errorMessage", httpResponse.getAsString());
 		}

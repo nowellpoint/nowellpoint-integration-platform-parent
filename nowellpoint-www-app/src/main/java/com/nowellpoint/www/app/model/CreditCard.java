@@ -2,6 +2,9 @@ package com.nowellpoint.www.app.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 public class CreditCard {
 	
 	/**
@@ -74,6 +77,8 @@ public class CreditCard {
 	 * 
 	 */
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date addedOn;
 	
 	/**

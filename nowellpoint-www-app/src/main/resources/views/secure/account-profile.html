@@ -2,7 +2,7 @@
     <@t.page>
         <#include "navbar.html" />
 
-        <div class="container">
+        <div class="container-fluid container-fluid-spacious">
             <div class="row">
                 <br>
                 <br>
@@ -36,7 +36,7 @@
 
                 </div>
 
-                <div class="col-md-10">
+                <div class="col-md-6">
 
                     <dl class="dl-horizontal">
                         <dt>${labels["first.name"]}</dt>
@@ -83,6 +83,9 @@
                     </dl>
 
                 </div>
+                
+                <div class="col-md-4">
+                </div>    
 
             </div>
             <div class="row">
@@ -99,9 +102,7 @@
                         <h3 class="dashhead-title">${labels["payment.methods"]}</h3>
                     </div>
                     <div class="flextable-item">
-
-                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" , id="add-card" class="btn btn-primary" role="button">${labels["add.payment.method"]}</a>
-
+                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/add" id="add-card" class="btn btn-primary" role="button">${labels["add.payment.method"]}</a>
                     </div>
                 </div>
 
@@ -116,18 +117,20 @@
                             <th class="text-center">${labels['primary']}</th>
                             <th>${labels["name.on.card"]}</th>
                             <th>${labels["expires.on"]}</th>
+                            <th>${labels["added.on"]}</th>
                             <th>${labels["action"]}</th>
                         </thead>
                         <tbody>
                             <#list accountProfile.creditCards?sort_by( "cardType") as creditCard>
                                 <tr id="${creditCard.token}">
-                                    <td><img src="${(creditCard.imageUrl)!}" />&nbsp;${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</td>
+                                    <td><img src="${(creditCard.imageUrl)!}" height="24" width="36"/>&nbsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view">${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</a></td>
                                     <td class="text-center">
                                         <#if creditCard.primary><span class="icon icon-check"></span></#if>
                                     </td>
                                     <td>${creditCard.cardholderName}</td>
                                     <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
-                                    <td><a href="#" class="" title="${labels['edit']}" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span></a>
+                                    <td>${(creditCard.addedOn?date)!}</td>
+                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="" title="${labels['edit']}" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span></a>
                                         <#if ! creditCard.primary>
                                             &nbsp;
                                             <a href="" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span></a></#if>

@@ -201,6 +201,18 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
+	public CreditCard getCreditCard(String subject, String id, String token) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+		
+		Optional<CreditCard> creditCard = resource.getCreditCards()
+				.stream()
+				.filter(c -> token.equals(c.getToken()))
+				.findFirst();
+		
+		return creditCard.get();
+		
+	}
+	
 	public void addCreditCard(String subject, String id, CreditCard creditCard) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);

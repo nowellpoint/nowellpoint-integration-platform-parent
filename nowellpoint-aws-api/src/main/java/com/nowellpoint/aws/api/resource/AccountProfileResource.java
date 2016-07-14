@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -244,6 +245,23 @@ public class AccountProfileResource {
 		accountProfileService.updateAccountProfile(resource);
 		
 		return Response.ok(resource).build();
+	}
+	
+	@GET
+	@Path("{id}/credit-card/{token}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		CreditCard creditCard = accountProfileService.getCreditCard(subject, id, token);
+		
+		if (creditCard == null) {
+			throw new NotFoundException(String.format("Credit Card for token %s was not found",token));
+		}
+		
+		return Response
+				.ok(creditCard)
+				.build();
 	}
 	
 	@POST
