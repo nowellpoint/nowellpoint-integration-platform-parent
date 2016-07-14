@@ -74,16 +74,17 @@
 
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="lastName">${labels["last.name"]}</label>
-                                    <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" tabindex="7" />
+                                    <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" tabindex="8" />
                                 </div>
 
                                 <div class="form-group col-md-6">
-
+                                    <input type="checkbox" name="primary" id="primary" tabindex="7" />
+                                    <label class="control-label" for="lastName">${labels["make.primary"]}</label>
                                 </div>
 
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="street">${labels["street"]}</label>
-                                    <input type="text" class="form-control" name="street" id="street" value="${(creditCard.billingAddress.street)!}" tabindex="8" />
+                                    <input type="text" class="form-control" name="street" id="street" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
                                 </div>
 
                                 <div class="form-group col-md-6">
@@ -92,7 +93,7 @@
 
                                 <div class="form-group col-md-6">
                                     <label input="control-label" for="city">${labels["city"]}</label>
-                                    <input type="text" class="form-control" name="city" id="city" value="${(creditCard.billingAddress.city)!}" tabindex="9" />
+                                    <input type="text" class="form-control" name="city" id="city" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
                                 </div>
 
                                 <div class="form-group col-md-6">
@@ -101,7 +102,7 @@
 
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="state">${labels["state"]}</label>
-                                    <input type="text" class="form-control" name="state" id="state" value="${(creditCard.billingAddress.state)!}" tabindex="10" />
+                                    <input type="text" class="form-control" name="state" id="state" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
                                 </div>
 
                                 <div class="form-group col-md-6">
@@ -110,7 +111,7 @@
 
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="countryCode">${labels["country"]}*</label>
-                                    <select id="countryCode" name="countryCode" class="form-control" value="${(creditCard.billingAddress.countryCode)!}" tabindex="11" required>
+                                    <select id="countryCode" name="countryCode" class="form-control" value="${(creditCard.billingAddress.countryCode)!}" tabindex="12" required>
                                         <#list countryList as country>
                                             <option value="${country.code}">${country.name}</option>
                                         </#list>
@@ -123,7 +124,7 @@
 
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
-                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(creditCard.billingAddress.postalCode)!}" tabindex="12" />
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(creditCard.billingAddress.postalCode)!}" tabindex="13" />
                                 </div>
 
                                 <div class="form-group">
@@ -136,8 +137,8 @@
                                 </div>
                                 <div class="form-group col-md-12">
                                     <div class="pull-right">
-                                        <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="13">${labels["cancel"]}</a>
-                                        <button type="submit" name="save" id="save" class="btn btn-primary" tabindex="14">${labels["save"]}</button>
+                                        <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
+                                        <button type="submit" name="save" id="save" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
                                     </div>
                                 </div>
                             </div>
@@ -201,7 +202,7 @@
                                         <dt>${labels["billing.address"]}</dt>
                                         <dd>${(creditCard.billingAddress.street)!}
                                             <br> ${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}
-                                            <br> ${(creditCard.billingAddress.countryCode)!}
+                                            <br> ${(creditCard.billingAddress.country)!}
                                         </dd>
                                     </dl>
                                 </div>

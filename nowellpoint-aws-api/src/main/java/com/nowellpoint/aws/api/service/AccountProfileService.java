@@ -287,6 +287,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		creditCard.setCardType(creditCardResult.getTarget().getCardType());
 		creditCard.setAddedOn(Date.from(Instant.now()));
 		
+		creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+		
 		resource.addCreditCard(creditCard);
 		
 		updateAccountProfile(resource);
@@ -313,14 +315,11 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				.postalCode(creditCard.getBillingAddress().getPostalCode())
 				.streetAddress(creditCard.getBillingAddress().getStreet());
 		
-		gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
+		Result<Address> addressResult = gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
 		
-		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
-		creditCard.setToken(creditCardResult.getTarget().getToken());
-		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
-		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
-		creditCard.setCardType(creditCardResult.getTarget().getCardType());
 		creditCard.setUpdatedOn(Date.from(Instant.now()));
+		
+		creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
 		
 		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 		

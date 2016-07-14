@@ -320,6 +320,9 @@ public class AccountProfileController extends AbstractController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
+		Boolean primary = request.queryParams("primary") != null 
+				? Boolean.valueOf(request.queryParams("primary")) 
+						: Boolean.FALSE;
 		
 		CreditCard creditCard = new CreditCard()
 				.withBillingAddress(new Address()
@@ -334,7 +337,8 @@ public class AccountProfileController extends AbstractController {
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
-				.withNumber(number);
+				.withNumber(number)
+				.withPrimary(primary);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -369,7 +373,6 @@ public class AccountProfileController extends AbstractController {
 		Account account = getAccount(request);
 		
 		String cardholderName = request.queryParams("cardholderName");
-		String number = request.queryParams("number");
 		String expirationMonth = request.queryParams("expirationMonth");
 		String expirationYear = request.queryParams("expirationYear");
 		String city = request.queryParams("city");
@@ -379,6 +382,9 @@ public class AccountProfileController extends AbstractController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
+		Boolean primary = request.queryParams("primary") != null 
+				? Boolean.valueOf(request.queryParams("primary")) 
+						: Boolean.FALSE;
 		
 		CreditCard creditCard = new CreditCard()
 				.withBillingAddress(new Address()
@@ -393,7 +399,7 @@ public class AccountProfileController extends AbstractController {
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
-				.withNumber(number);
+				.withPrimary(primary);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)

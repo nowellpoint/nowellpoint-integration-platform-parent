@@ -175,6 +175,30 @@ public class CreditCard {
 		this.billingContact = billingContact;
 	}
 	
+	public Boolean getPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(Boolean primary) {
+		this.primary = primary;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
+	}
+	
 	public CreditCard withCardholderName(String cardholderName) {
 		setCardholderName(cardholderName);
 		return this;
@@ -205,27 +229,8 @@ public class CreditCard {
 		return this;
 	}
 
-	public Boolean getPrimary() {
-		return primary;
-	}
-
-	public void setPrimary(Boolean primary) {
-		this.primary = primary;
-	}
-
-	public Date getAddedOn() {
-		return addedOn;
-	}
-
-	public void setAddedOn(Date addedOn) {
-		this.addedOn = addedOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
+	public CreditCard withPrimary(Boolean primary) {
+		setPrimary(primary);
+		return this;
 	}
 }
