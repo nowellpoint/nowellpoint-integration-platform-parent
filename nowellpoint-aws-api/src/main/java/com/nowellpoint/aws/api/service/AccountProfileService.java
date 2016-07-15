@@ -276,6 +276,12 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		if (resource.getCreditCards() == null || resource.getCreditCards().size() == 0) {
 			creditCard.setPrimary(Boolean.TRUE);
+		} else if (creditCard.getPrimary()) {
+			resource.getCreditCards().stream().forEach(c -> {
+				if (c.getPrimary()) {
+					c.setPrimary(Boolean.FALSE);
+				}
+			});			
 		} else {
 			creditCard.setPrimary(Boolean.FALSE);
 		}
@@ -316,6 +322,14 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				.streetAddress(creditCard.getBillingAddress().getStreet());
 		
 		Result<Address> addressResult = gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
+		
+		if (creditCard.getPrimary()) {
+			resource.getCreditCards().stream().forEach(c -> {
+				if (c.getPrimary()) {
+					c.setPrimary(Boolean.FALSE);
+				}
+			});			
+		}
 		
 		creditCard.setUpdatedOn(Date.from(Instant.now()));
 		

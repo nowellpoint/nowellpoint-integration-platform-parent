@@ -252,7 +252,6 @@ public class AccountProfileController extends AbstractController {
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
 				.path(request.params(":id"))
-				.path("credit-card")
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
@@ -265,7 +264,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("account", account);
 		model.put("creditCard", new CreditCard());
 		model.put("accountProfile", accountProfile);
-		model.put("action", String.format("/app/account-profile/%s/payment-methods/", request.params(":id")));
+		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 		model.put("mode", "add");
 			
 		return new ModelAndView(model, "secure/payment-method.html");	
@@ -305,6 +304,8 @@ public class AccountProfileController extends AbstractController {
 	}
 	
 	private ModelAndView addCreditCard(Request request, Response response) {
+		
+		System.out.println("add");
 		Token token = getToken(request);
 		
 		Account account = getAccount(request);

@@ -20,130 +20,128 @@
 
                         <form id="form" name="form" class="form-vertical" role="form" method="post" action="${action}">
 
-                        <div class="row">
-                            <div class="form-group col-md-2"></div>
-                            <div class="form-group col-md-8">
-                                <div class="form-group col-md-12">
-                                    <input type="checkbox" name="use-contact-info" id="use-contact-info" tabindex="1" />
-                                    <label class="control-label" for="use-contact-info">${labels["use.account.profile"]}</label>
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="cardholderName">${labels["name.on.card"]}</label>
-                                    <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" autofocus="" tabindex="2" />
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="firstName">${labels["first.name"]}</label>
-                                    <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" tabindex="6" />
-                                </div>
-
-                                <div class="form-group col-md-3">
-                                    <label class="control-label" for="number">${labels["number"]}</label>
-                                    <#if mode=="add">
-                                        <input type="text" class="form-control" name="number" id="number" tabindex="3">
-                                    </#if>
-                                    <#if mode=="edit">
-                                        <p class="form-control-static">${(creditCard.number)!}</p>
-                                    </#if>
-                                </div>
-
-                                <div class="form-group col-md-1">
-                                    <label class="control-label" for="expirationMonth">${labels["month"]}</label>
-                                    <div class="input-group">
-                                        <select class="form-control" name="expirationMonth" id="expirationMonth" style="width:auto;" value="${(creditCard.expirationMonth)!}" tabindex="4">
-                                            <#assign x=12 />
-                                            <#list 1..x as month>
-                                                <option value="${month?c}">${month?c}</option>
-                                            </#list>
-                                        </select>
+                            <div class="row">
+                                <div class="form-group col-md-2"></div>
+                                <div class="form-group col-md-8">
+                                    <div class="form-group col-md-12">
+                                        <input type="checkbox" name="use-contact-info" id="use-contact-info" tabindex="1" />
+                                        <label class="control-label" for="use-contact-info">${labels["use.account.profile"]}</label>
                                     </div>
-                                </div>
 
-                                <div class="form-group col-md-2">
-                                    <label class="control-label" for="expirationYear">${labels["year"]}</label>
-                                    <div class="input-group">
-                                        <select type="text" class="form-control" name="expirationYear" id="expirationYear" value="${(creditCard.expirationYear)!}" tabindex="5">
-                                            <#assign x=.now?string[ "yyyy"]?number + 19/>
-                                            <#list .now?string[ "yyyy"]?number..x as year>
-                                                <option value="${year?c}">${year?c}</option>
-                                            </#list>
-                                        </select>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="cardholderName">${labels["name.on.card"]}</label>
+                                        <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" autofocus="" tabindex="2" />
                                     </div>
-                                </div>
 
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="lastName">${labels["last.name"]}</label>
-                                    <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" tabindex="8" />
-                                </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="firstName">${labels["first.name"]}</label>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" tabindex="6" />
+                                    </div>
 
-                                <div class="form-group col-md-6">
-                                    <input type="checkbox" name="primary" id="primary" tabindex="7" />
-                                    <label class="control-label" for="lastName">${labels["make.primary"]}</label>
-                                </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="control-label" for="number">${labels["number"]}</label>
+                                        <#if mode=="add">
+                                            <input type="text" class="form-control" name="number" id="number" tabindex="3">
+                                        </#if>
+                                        <#if mode=="edit">
+                                            <p class="form-control-static">${(creditCard.number)!}</p>
+                                        </#if>
+                                    </div>
 
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="street">${labels["street"]}</label>
-                                    <input type="text" class="form-control" name="street" id="street" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
-                                </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="control-label" for="expirationMonth">${labels["month"]}</label>
+                                        <div class="input-group">
+                                            <select class="form-control" name="expirationMonth" id="expirationMonth" style="width:auto;" value="${(creditCard.expirationMonth)!}" tabindex="4">
+                                                <#assign x=12 />
+                                                <#list 1..x as month>
+                                                    <option value="${month?c}">${month?c}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                                <div class="form-group col-md-6">
+                                    <div class="form-group col-md-2">
+                                        <label class="control-label" for="expirationYear">${labels["year"]}</label>
+                                        <div class="input-group">
+                                            <select type="text" class="form-control" name="expirationYear" id="expirationYear" value="${(creditCard.expirationYear)!}" tabindex="5">
+                                                <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                <#list .now?string[ "yyyy"]?number..x as year>
+                                                    <option value="${year?c}">${year?c}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                                </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="lastName">${labels["last.name"]}</label>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" tabindex="8" />
+                                    </div>
 
-                                <div class="form-group col-md-6">
-                                    <label input="control-label" for="city">${labels["city"]}</label>
-                                    <input type="text" class="form-control" name="city" id="city" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
-                                </div>
-
-                                <div class="form-group col-md-6">
-
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="state">${labels["state"]}</label>
-                                    <input type="text" class="form-control" name="state" id="state" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
-                                </div>
-
-                                <div class="form-group col-md-6">
-
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="countryCode">${labels["country"]}*</label>
-                                    <select id="countryCode" name="countryCode" class="form-control" value="${(creditCard.billingAddress.countryCode)!}" tabindex="12" required>
-                                        <#list countryList as country>
-                                            <option value="${country.code}">${country.name}</option>
-                                        </#list>
-                                    </select>
-                                </div>
-
-                                <div class="form-group col-md-6">
-
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
-                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(creditCard.billingAddress.postalCode)!}" tabindex="13" />
-                                </div>
-
-                                <div class="form-group">
-                                    <#if errorMessage??>
-                                        <div id="alert" class="alert alert-danger">
-                                            <a class="close" data-dismiss="alert">×</a>
-                                            <div class="text-center">${errorMessage}</div>
+                                    <#if mode=="add" || ! creditCard.primary>
+                                        <div class="form-group col-md-6">
+                                            <input type="checkbox" name="primary" id="primary" tabindex="7" />
+                                            <label class="control-label" for="primary">${labels["make.primary"]}</label>
                                         </div>
                                     </#if>
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <div class="pull-right">
-                                        <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
-                                        <button type="submit" name="save" id="save" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+
+                                    <#if mode=="edit" && creditCard.primary>
+                                        <div class="form-group col-md-6"></div>
+                                    </#if>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="street">${labels["street"]}</label>
+                                        <input type="text" class="form-control" name="street" id="street" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
+                                    </div>
+
+                                    <div class="form-group col-md-6"></div>
+
+                                    <div class="form-group col-md-6">
+                                        <label input="control-label" for="city">${labels["city"]}</label>
+                                        <input type="text" class="form-control" name="city" id="city" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
+                                    </div>
+
+                                    <div class="form-group col-md-6"></div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="state">${labels["state"]}</label>
+                                        <input type="text" class="form-control" name="state" id="state" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
+                                    </div>
+
+                                    <div class="form-group col-md-6"></div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                                        <select id="countryCode" name="countryCode" class="form-control" value="${(creditCard.billingAddress.countryCode)!}" tabindex="12" required>
+                                            <#list countryList as country>
+                                                <option value="${country.code}">${country.name}</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-6"></div>
+
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
+                                        <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(creditCard.billingAddress.postalCode)!}" tabindex="13" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <#if errorMessage??>
+                                            <div id="alert" class="alert alert-danger">
+                                                <a class="close" data-dismiss="alert">×</a>
+                                                <div class="text-center">${errorMessage}</div>
+                                            </div>
+                                        </#if>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <div class="pull-right">
+                                            <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
+                                            <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group col-md-2"></div>
+                            <div class="form-group col-md-2"></div>
                         </form>
                         <br>
 
@@ -191,7 +189,7 @@
                                         <dd>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</dd>
                                         <hr>
                                         <dt>${labels["primary"]}</dt>
-                                        <dd>${(creditCard.primaray?then(labels["yes"], labels["no"]))!}</dd>
+                                        <dd>${(creditCard.primary?then(labels["yes"], labels["no"]))!}</dd>
                                         <hr>
                                         <dt>${labels["added.on"]}</dt>
                                         <dd>${(creditCard.addedOn?date)!}</dd>
