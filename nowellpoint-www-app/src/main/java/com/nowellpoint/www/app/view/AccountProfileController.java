@@ -43,7 +43,14 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	public void configureRoutes(Configuration configuration) {
+		
+		//
+		// account profile routes
+		//
+		
 		get("/app/account-profile", (request, response) -> getMyAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		
+		get("/app/account-profile/:id/disable", (request, response) -> disableAccountProfile(request, response));
 		
 		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
@@ -103,6 +110,52 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", accountProfile);
 			
 		return new ModelAndView(model, "secure/account-profile.html");			
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	
+	private String disableAccountProfile(Request request, Response response) throws IOException {
+		Token token = getToken(request);
+		
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
+		}
+		
+		httpResponse = RestResource.delete(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+    			.path("oauth")
+    			.path("token")
+    			.execute();
+    	
+    	int statusCode = httpResponse.getStatusCode();
+    	
+    	if (statusCode != Status.NO_CONTENT) {
+    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
+    	}
+    	
+    	response.removeCookie("com.nowellpoint.oauth.token"); 
+    	
+    	request.session().invalidate();
+    	
+    	response.redirect("/");
+		
+		return "";
 	}
 	
 	/**
@@ -292,7 +345,8 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new NotFoundException(error.getMessage());
 		}
 		
 		CreditCard creditCard = httpResponse.getEntity(CreditCard.class);

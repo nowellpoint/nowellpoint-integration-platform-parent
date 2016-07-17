@@ -194,11 +194,9 @@ public class IdentityProviderService extends AbstractCacheService {
 	 * @param href
 	 */
 	
-	public void disableAccount(String id) {
+	public void disableAccount(String href) {
 		Account account = new Account();
 		account.setStatus("DISABLED");
-		
-		String href = String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id);
 		
 		HttpResponse httpResponse = RestResource.post(href)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -209,11 +207,11 @@ public class IdentityProviderService extends AbstractCacheService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() != 200) {
-			LOGGER.error(httpResponse.getAsString());
+			throw new ServiceException(httpResponse.getAsString());
 		}
 		
 		if (hexists(href, Account.class.getName())) {
-			hset(account.getHref(), Account.class.getName(), account);
+			hdel(href, Account.class.getName());
 		}
 	}
 	

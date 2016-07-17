@@ -249,6 +249,24 @@ public class AccountProfileResource {
 		return Response.ok(resource).build();
 	}
 	
+	@DELETE
+	@Path("{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response disableAccountProfile(@PathParam("id") String id) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( id, subject );
+		
+		try {
+			identityProviderService.disableAccount(resource.getHref());
+		} catch (ServiceException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok().build();
+	}
+	
 	@GET
 	@Path("{id}/credit-card/{token}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -328,14 +346,14 @@ public class AccountProfileResource {
 	}
 	
 	@DELETE
-	@Path("/photo")
+	@Path("{id}/photo")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response removeProfilePicture() {
+	public Response removeProfilePicture(@PathParam("id") String id) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
+		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
