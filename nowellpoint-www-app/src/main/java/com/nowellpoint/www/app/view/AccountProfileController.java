@@ -5,6 +5,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
@@ -20,6 +21,7 @@ import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.Address;
 import com.nowellpoint.www.app.model.Contact;
 import com.nowellpoint.www.app.model.CreditCard;
+import com.nowellpoint.www.app.model.ExceptionResponse;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -41,7 +43,7 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	public void configureRoutes(Configuration configuration) {
-		get("/app/account-profile", (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get("/app/account-profile", (request, response) -> getMyAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
 		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
@@ -75,7 +77,7 @@ public class AccountProfileController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private ModelAndView getAccountProfile(Request request, Response response) throws IOException {
+	private ModelAndView getMyAccountProfile(Request request, Response response) throws IOException {
 		
 		Token token = getToken(request);
 		
@@ -202,8 +204,6 @@ public class AccountProfileController extends AbstractController {
         		.path("account-profile")
         		.path("photo")
         		.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
 		
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
@@ -236,6 +236,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("creditCard", creditCard);
 		model.put("mode", "view");
 			
@@ -259,10 +260,16 @@ public class AccountProfileController extends AbstractController {
 		}
 			
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		
+		CreditCard creditCard = new CreditCard();
+		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
+		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
+		creditCard.setBillingAddress(new Address());
+		creditCard.setBillingContact(new Contact());
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("creditCard", new CreditCard());
+		model.put("creditCard", creditCard);
 		model.put("accountProfile", accountProfile);
 		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 		model.put("mode", "add");
@@ -290,8 +297,14 @@ public class AccountProfileController extends AbstractController {
 		
 		CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
 		
-		AccountProfile accountProfile = new AccountProfile();
-		accountProfile.setId(request.params(":id"));
+		httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.execute();
+		
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
@@ -304,8 +317,6 @@ public class AccountProfileController extends AbstractController {
 	}
 	
 	private ModelAndView addCreditCard(Request request, Response response) {
-		
-		System.out.println("add");
 		Token token = getToken(request);
 		
 		Account account = getAccount(request);
@@ -321,9 +332,7 @@ public class AccountProfileController extends AbstractController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
-		Boolean primary = request.queryParams("primary") != null 
-				? Boolean.valueOf(request.queryParams("primary")) 
-						: Boolean.FALSE;
+		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCard creditCard = new CreditCard()
 				.withBillingAddress(new Address()
@@ -353,16 +362,22 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 		
 		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
 			
 		if (httpResponse.getStatusCode() == Status.OK) {
 			creditCard = httpResponse.getEntity(CreditCard.class);
 			
-			model.put("account", account);
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
 			model.put("successMessage", getValue("add.success"));
 		} else {
-			model.put("errorMessage", httpResponse.getAsString());
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			model.put("creditCard", creditCard);
+			model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
+			model.put("mode", "add");
+			model.put("errorMessage", error.getMessage());
 		}
 			
 		return new ModelAndView(model, "secure/payment-method.html");	
@@ -383,9 +398,7 @@ public class AccountProfileController extends AbstractController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
-		Boolean primary = request.queryParams("primary") != null 
-				? Boolean.valueOf(request.queryParams("primary")) 
-						: Boolean.FALSE;
+		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCard creditCard = new CreditCard()
 				.withBillingAddress(new Address()
@@ -402,7 +415,7 @@ public class AccountProfileController extends AbstractController {
 				.withExpirationYear(expirationYear)
 				.withPrimary(primary);
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header("x-api-key", API_KEY)
@@ -415,16 +428,22 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 		
 		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
 			
 		if (httpResponse.getStatusCode() == Status.OK) {
 			creditCard = httpResponse.getEntity(CreditCard.class);
 			
-			model.put("account", account);
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
 			model.put("successMessage", getValue("update.success"));
 		} else {
-			model.put("errorMessage", httpResponse.getAsString());
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			model.put("creditCard", creditCard);
+			model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
+			model.put("mode", "edit");
+			model.put("errorMessage", error.getMessage());
 		}
 			
 		return new ModelAndView(model, "secure/payment-method.html");	
@@ -444,7 +463,8 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new BadRequestException(httpResponse.getAsString());
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
 		}
 		
 		return "";

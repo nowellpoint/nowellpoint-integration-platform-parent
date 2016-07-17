@@ -85,6 +85,8 @@ public class CreditCard {
 	 * 
 	 */
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date updatedOn;
 	
 	/**

@@ -9,6 +9,7 @@ $("#use-contact-info").change(function () {
         $("#state").val(accountProfile.state);
         $("#postalCode").val(accountProfile.postalCode);
         $("#countryCode").val(accountProfile.countryCode);
+        $("#number").focus();
     } else {
         $('#cardholderName').val('');
         $("#firstName").val('');
@@ -18,24 +19,32 @@ $("#use-contact-info").change(function () {
         $("#state").val('');
         $("#postalCode").val('');
         $("#countryCode").val('');
+        $("#cardholderName").focus();
     }
 });
 
 
 
 $('#confirm').click(function (e) {
-    event.preventDefault();
-    var id = $('#confirmDialog').data('id');
-    var row = $('#'.concat(id));
+    e.preventDefault();
+    var token = $('#confirmDialog').data('id');
+    var row = $('#'.concat(token));
     var accountProfile = jQuery.data(document.body, "accountProfile");
     $.ajax({
         type: "DELETE",
-        url: accountProfile.basePath + "/" + accountProfile.id + "/payment-methods/" + id,
+        url: accountProfile.basePath + "/" + accountProfile.id + "/payment-methods/" + token,
         success: function () {
-            row.remove();
+            $(location).attr("href", accountProfile.basePath);
         }
     });
     $('#confirmDialog').modal('hide');
+});
+
+
+
+$('#profileDialog').on('show.bs.modal', function(e) {
+    $title = $('.profile-dialog').data('title');
+    $(this).find('.modal-title').text($title);
 });
 
 

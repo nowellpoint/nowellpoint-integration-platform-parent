@@ -77,11 +77,6 @@
                 $(this).find('.modal-title').text($title);
             });
 
-            $('#profileDialog').on('show.bs.modal', function(e) {
-                $title = $('.profile-dialog').data('title');
-                $(this).find('.modal-title').text($title);
-            });
-
             $('.confirm-delete').on('click', function(e) {
                 e.preventDefault();
 

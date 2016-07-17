@@ -149,6 +149,11 @@ public class AccountProfile extends Resource {
 		photos = new Photos();
 		creditCards = new ArrayList<CreditCard>();
 	}
+	
+	public AccountProfile(String id) {
+		this();
+		this.setId(id);
+	}
 
 	public String getUsername() {
 		return username;

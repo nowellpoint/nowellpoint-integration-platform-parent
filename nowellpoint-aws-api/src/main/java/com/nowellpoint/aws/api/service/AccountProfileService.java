@@ -9,9 +9,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
+
+import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -30,6 +33,7 @@ import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.api.model.CreditCard;
+import com.nowellpoint.aws.api.model.IsoCountry;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.model.SystemReference;
 import com.nowellpoint.aws.data.MongoDBDatastore;
@@ -38,6 +42,11 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.tools.TokenParser;
 
 public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
+	
+	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
+	
+	@Inject
+	private IsoCountryService isoCountryService;
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
@@ -82,6 +91,10 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		
+		IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
+		
+		resource.getAddress().setCountry(isoCountry.getDescription());
+		
 		Photos photos = new Photos();
 		photos.setProfilePicture("/images/person-generic.jpg");
 		
@@ -114,12 +127,21 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
+		if (original.getAddress().getCountryCode() != resource.getAddress().getCountryCode()) {
+			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
+			resource.getAddress().setCountry(isoCountry.getDescription());
+		}
+		
 		if (resource.getLastLoginDate() == null) {
 			resource.setLastLoginDate(original.getLastLoginDate());
 		}
 		
 		if (resource.getPhotos() == null) {
 			resource.setPhotos(original.getPhotos());
+		}
+		
+		if (resource.getCreditCards() == null) {
+			resource.setCreditCards(original.getCreditCards());
 		}
 		
 		replace(resource);
@@ -237,8 +259,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				try {
 					Customer customer = gateway.customer().find(optional.get().getSystemReference());
 					customerResult = gateway.customer().update(customer.getId(), customerRequest);
-				} catch (NotFoundException ignore) {
-					
+				} catch (NotFoundException e) {
+					LOGGER.warn(e.getMessage());
 				}
 			}
 		}
@@ -274,30 +296,38 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
 		
-		if (resource.getCreditCards() == null || resource.getCreditCards().size() == 0) {
-			creditCard.setPrimary(Boolean.TRUE);
-		} else if (creditCard.getPrimary()) {
-			resource.getCreditCards().stream().forEach(c -> {
-				if (c.getPrimary()) {
-					c.setPrimary(Boolean.FALSE);
-				}
-			});			
+		if (creditCardResult.isSuccess()) {
+			
+			if (resource.getCreditCards() == null || resource.getCreditCards().size() == 0) {
+				creditCard.setPrimary(Boolean.TRUE);
+			} else if (creditCard.getPrimary()) {
+				resource.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
+					if (c.getPrimary()) {
+						c.setPrimary(Boolean.FALSE);
+					}
+				});			
+			} else {
+				creditCard.setPrimary(Boolean.FALSE);
+			}
+			
+			creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
+			creditCard.setToken(creditCardResult.getTarget().getToken());
+			creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
+			creditCard.setLastFour(creditCardResult.getTarget().getLast4());
+			creditCard.setCardType(creditCardResult.getTarget().getCardType());
+			creditCard.setAddedOn(Date.from(Instant.now()));
+			creditCard.setUpdatedOn(Date.from(Instant.now()));
+			
+			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+			
+			resource.addCreditCard(creditCard);
+			
+			updateAccountProfile(resource);
+			
 		} else {
-			creditCard.setPrimary(Boolean.FALSE);
+			LOGGER.error(creditCardResult.getMessage());
+			throw new ServiceException(creditCardResult.getMessage());
 		}
-		
-		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
-		creditCard.setToken(creditCardResult.getTarget().getToken());
-		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
-		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
-		creditCard.setCardType(creditCardResult.getTarget().getCardType());
-		creditCard.setAddedOn(Date.from(Instant.now()));
-		
-		creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
-		
-		resource.addCreditCard(creditCard);
-		
-		updateAccountProfile(resource);
 	}
 	
 	public void updateCreditCard(String subject, String id, String token, CreditCard creditCard) {
@@ -312,34 +342,52 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
 		
-		AddressRequest addressRequest = new AddressRequest()
-				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
-				.firstName(creditCard.getBillingContact().getFirstName())
-				.lastName(creditCard.getBillingContact().getLastName())
-				.locality(creditCard.getBillingAddress().getCity())
-				.region(creditCard.getBillingAddress().getState())
-				.postalCode(creditCard.getBillingAddress().getPostalCode())
-				.streetAddress(creditCard.getBillingAddress().getStreet());
-		
-		Result<Address> addressResult = gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
-		
-		if (creditCard.getPrimary()) {
-			resource.getCreditCards().stream().forEach(c -> {
-				if (c.getPrimary()) {
-					c.setPrimary(Boolean.FALSE);
-				}
-			});			
+		if (creditCardResult.isSuccess()) {
+			
+			AddressRequest addressRequest = new AddressRequest()
+					.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
+					.firstName(creditCard.getBillingContact().getFirstName())
+					.lastName(creditCard.getBillingContact().getLastName())
+					.locality(creditCard.getBillingAddress().getCity())
+					.region(creditCard.getBillingAddress().getState())
+					.postalCode(creditCard.getBillingAddress().getPostalCode())
+					.streetAddress(creditCard.getBillingAddress().getStreet());
+			
+			Result<Address> addressResult = gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
+			
+			if (creditCard.getPrimary()) {
+				resource.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
+					if (c.getPrimary()) {
+						c.setPrimary(Boolean.FALSE);
+					}
+				});			
+			}
+			
+			CreditCard original = resource.getCreditCards()
+					.stream()
+					.filter(c -> token.equals(c.getToken()))
+					.findFirst()
+					.get();
+			
+			creditCard.setAddedOn(original.getAddedOn());
+			creditCard.setNumber(original.getNumber());
+			creditCard.setLastFour(original.getLastFour());
+			creditCard.setCardType(original.getCardType());
+			creditCard.setImageUrl(original.getImageUrl());
+			creditCard.setToken(original.getToken());
+			creditCard.setUpdatedOn(Date.from(Instant.now()));
+			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+			
+			resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
+			
+			resource.addCreditCard(creditCard);
+			
+			updateAccountProfile(resource);
+			
+		} else {
+			LOGGER.error(creditCardResult.getMessage());
+			throw new ServiceException(creditCardResult.getMessage());
 		}
-		
-		creditCard.setUpdatedOn(Date.from(Instant.now()));
-		
-		creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
-		
-		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
-		
-		resource.addCreditCard(creditCard);
-		
-		updateAccountProfile(resource);
 	}
 	
 	public void removeCreditCard(String subject, String id, String token) {
@@ -348,12 +396,17 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
 		
-		gateway.creditCard().delete(token);
+		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().delete(token);
 		
-		gateway.address().delete(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
-		
-		resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
-		
-		updateAccountProfile(resource);
+		if (creditCardResult.isSuccess()) {
+			gateway.address().delete(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
+			
+			resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
+			
+			updateAccountProfile(resource);
+		} else {
+			LOGGER.error(creditCardResult.getMessage());
+			throw new ServiceException(creditCardResult.getMessage());
+		}
 	}
 }

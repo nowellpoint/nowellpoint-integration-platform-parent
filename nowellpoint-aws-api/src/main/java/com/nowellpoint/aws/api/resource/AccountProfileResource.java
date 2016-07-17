@@ -5,6 +5,7 @@ import java.net.URI;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -41,6 +42,7 @@ import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
+import com.nowellpoint.aws.api.service.ServiceException;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.idp.model.Account;
 
@@ -271,7 +273,11 @@ public class AccountProfileResource {
 	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		accountProfileService.addCreditCard(subject, id, creditCard);
+		try {
+			accountProfileService.addCreditCard(subject, id, creditCard);
+		} catch (ServiceException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		return Response
 				.ok(creditCard)
@@ -284,7 +290,11 @@ public class AccountProfileResource {
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		accountProfileService.updateCreditCard(subject, id, token, creditCard);
+		try {
+			accountProfileService.updateCreditCard(subject, id, token, creditCard);
+		} catch (ServiceException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		return Response
 				.ok(creditCard)
@@ -297,7 +307,11 @@ public class AccountProfileResource {
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		accountProfileService.removeCreditCard(subject, id, token);
+		try {
+			accountProfileService.removeCreditCard(subject, id, token);
+		} catch (ServiceException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		return Response
 				.ok()

@@ -6,19 +6,26 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["payment.methods"]}</h6>
+                            <h6 class="dashhead-subtitle">${labels["payment.method"]}</h6>
                         </div>
                     </div>
                 </div>
                 <div class="hr-divider"></div>
 
                 <br>
-
-                <div id="main">
+                
+                <div class="form-group">
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+                </div>
 
                     <#if mode=="add" || mode=="edit">
 
-                        <form id="form" name="form" class="form-vertical" role="form" method="post" action="${action}">
+                        <form id="payment-method-form" name="payment-method-form" class="form-vertical" method="post" action="${action}">
 
                             <div class="row">
                                 <div class="form-group col-md-2"></div>
@@ -39,11 +46,12 @@
                                     </div>
 
                                     <div class="form-group col-md-3">
-                                        <label class="control-label" for="number">${labels["number"]}</label>
                                         <#if mode=="add">
+                                            <label class="control-label" for="number">${labels["number"]}</label>
                                             <input type="text" class="form-control" name="number" id="number" tabindex="3">
                                         </#if>
                                         <#if mode=="edit">
+                                            <label class="control-label">${labels["number"]}</label>
                                             <p class="form-control-static">${(creditCard.number)!}</p>
                                         </#if>
                                     </div>
@@ -51,10 +59,15 @@
                                     <div class="form-group col-md-1">
                                         <label class="control-label" for="expirationMonth">${labels["month"]}</label>
                                         <div class="input-group">
-                                            <select class="form-control" name="expirationMonth" id="expirationMonth" style="width:auto;" value="${(creditCard.expirationMonth)!}" tabindex="4">
+                                            <select class="form-control" name="expirationMonth" id="expirationMonth" style="width:auto;" tabindex="4">
                                                 <#assign x=12 />
                                                 <#list 1..x as month>
-                                                    <option value="${month?c}">${month?c}</option>
+                                                    <#if creditCard.expirationMonth?eval ==month>
+                                                        <option value="${month?c}" selected="selected">${month?c}</option>
+                                                    </#if>
+                                                    <#if creditCard.expirationMonth?eval !=month>
+                                                        <option value="${month?c}">${month?c}</option>
+                                                    </#if>
                                                 </#list>
                                             </select>
                                         </div>
@@ -63,10 +76,15 @@
                                     <div class="form-group col-md-2">
                                         <label class="control-label" for="expirationYear">${labels["year"]}</label>
                                         <div class="input-group">
-                                            <select type="text" class="form-control" name="expirationYear" id="expirationYear" value="${(creditCard.expirationYear)!}" tabindex="5">
+                                            <select class="form-control" name="expirationYear" id="expirationYear" tabindex="5">
                                                 <#assign x=.now?string[ "yyyy"]?number + 19/>
                                                 <#list .now?string[ "yyyy"]?number..x as year>
-                                                    <option value="${year?c}">${year?c}</option>
+                                                    <#if creditCard.expirationYear?eval ==year>
+                                                        <option value="${year?c}" selected="selected">${year?c}</option>
+                                                    </#if>
+                                                    <#if creditCard.expirationYear?eval !=year>
+                                                        <option value="${year?c}">${year?c}</option>
+                                                    </#if>
                                                 </#list>
                                             </select>
                                         </div>
@@ -86,6 +104,7 @@
 
                                     <#if mode=="edit" && creditCard.primary>
                                         <div class="form-group col-md-6"></div>
+                                        <input type="hidden" name="primary" id="primary" value="${(creditCard.primary?c)}" />
                                     </#if>
 
                                     <div class="form-group col-md-6">
@@ -96,7 +115,7 @@
                                     <div class="form-group col-md-6"></div>
 
                                     <div class="form-group col-md-6">
-                                        <label input="control-label" for="city">${labels["city"]}</label>
+                                        <label class="control-label" for="city">${labels["city"]}</label>
                                         <input type="text" class="form-control" name="city" id="city" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
                                     </div>
 
@@ -111,9 +130,20 @@
 
                                     <div class="form-group col-md-6">
                                         <label class="control-label" for="countryCode">${labels["country"]}*</label>
-                                        <select id="countryCode" name="countryCode" class="form-control" value="${(creditCard.billingAddress.countryCode)!}" tabindex="12" required>
+                                        <select id="countryCode" name="countryCode" class="form-control" tabindex="12" required>
+                                            <option value="">${labels["select.one"]}</option>
                                             <#list countryList as country>
-                                                <option value="${country.code}">${country.name}</option>
+                                                <#if creditCard.billingAddress.countryCode??>
+                                                    <#if country.code==creditCard.billingAddress.countryCode>
+                                                        <option value="${country.code}" selected="selected">${country.name}</option>
+                                                    </#if>
+                                                    <#if country.code !=creditCard.billingAddress.countryCode>
+                                                        <option value="${country.code}">${country.name}</option>
+                                                    </#if>
+                                                </#if>
+                                                <#if ! creditCard.billingAddress.countryCode??>
+                                                    <option value="${country.code}">${country.name}</option>
+                                                </#if>
                                             </#list>
                                         </select>
                                     </div>
@@ -125,14 +155,6 @@
                                         <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(creditCard.billingAddress.postalCode)!}" tabindex="13" />
                                     </div>
 
-                                    <div class="form-group">
-                                        <#if errorMessage??>
-                                            <div id="alert" class="alert alert-danger">
-                                                <a class="close" data-dismiss="alert">×</a>
-                                                <div class="text-center">${errorMessage}</div>
-                                            </div>
-                                        </#if>
-                                    </div>
                                     <div class="form-group col-md-12">
                                         <div class="pull-right">
                                             <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
@@ -143,22 +165,8 @@
                             </div>
                             <div class="form-group col-md-2"></div>
                         </form>
+                        
                         <br>
-
-                        <script>
-                            var accountProfile = {
-                                basePath: "${labels['base.path']}",
-                                id: "${(accountProfile.id)!}",
-                                firstName: "${(accountProfile.firstName)!}",
-                                lastName: "${(accountProfile.lastName)!}",
-                                street: "${(accountProfile.address.street)!}",
-                                city: "${(accountProfile.address.city)!}",
-                                state: "${(accountProfile.address.state)!}",
-                                postalCode: "${(accountProfile.address.postalCode)!}",
-                                countryCode: "${(accountProfile.address.countryCode)!}"
-                            }
-                            jQuery.data(document.body, "accountProfile", accountProfile);
-                        </script>
 
                     </#if>
 
@@ -175,33 +183,36 @@
                                 </#if>
 
                                 <div class="col-md-12">
-                                    <dl class="dl-horizontal">
+                                    <dl class="dl-vertical">
                                         <dt>${labels["name.on.card"]}</dt>
-                                        <dd>${creditCard.cardholderName}</dd>
+                                        <dd>${creditCard.cardholderName}&emsp;</dd>
                                         <hr>
                                         <dt>${labels["card.type"]}</dt>
-                                        <dd><img src="${(creditCard.imageUrl)!}" height="24" width="36" /></dd>
+                                        <dd><img src="${(creditCard.imageUrl)!}" height="24" width="36" />&emsp;</dd>
                                         <hr>
                                         <dt>${labels["number"]}</dt>
-                                        <dd>${(creditCard.number)!}</dd>
+                                        <dd>${(creditCard.number)!}&emsp;</dd>
                                         <hr>
                                         <dt>${labels["expiration.date"]}</dt>
-                                        <dd>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</dd>
+                                        <dd>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}&emsp;</dd>
                                         <hr>
                                         <dt>${labels["primary"]}</dt>
-                                        <dd>${(creditCard.primary?then(labels["yes"], labels["no"]))!}</dd>
-                                        <hr>
-                                        <dt>${labels["added.on"]}</dt>
-                                        <dd>${(creditCard.addedOn?date)!}</dd>
+                                        <dd>${(creditCard.primary?then(labels["yes"], labels["no"]))!}&emsp;</dd>
                                         <hr>
                                         <dt>${labels["billing.contact"]}</dt>
-                                        <dd>${(creditCard.billingContact.firstName)!} ${(creditCard.billingContact.lastName)!}</dd>
+                                        <dd>${(creditCard.billingContact.firstName)!} ${(creditCard.billingContact.lastName)!}&emsp;</dd>
                                         <hr>
                                         <dt>${labels["billing.address"]}</dt>
                                         <dd>${(creditCard.billingAddress.street)!}
                                             <br> ${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}
-                                            <br> ${(creditCard.billingAddress.country)!}
+                                            <br> ${(creditCard.billingAddress.country)!}&emsp;
                                         </dd>
+                                        <hr>
+                                        <dt>${labels["added.on"]}</dt>
+                                        <dd>${(creditCard.addedOn?date?string.iso)!}</dd>
+                                        <hr>
+                                        <dt>${labels["updated.on"]}</dt>
+                                        <dd>${(creditCard.updatedOn?date?string.iso)!}</dd>
                                     </dl>
                                 </div>
 
@@ -210,6 +221,9 @@
                                 <div class="col-md-12">
                                     <div class="pull-right">
                                         <a href="/app/account-profile" class="btn btn-default" role="button">${labels["back"]}</a>
+                                        <a href="/app/account-profile/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                                        <#if ! creditCard.primary>
+                                            <a href="#" class="confirm-delete btn btn-danger" role="button" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}">${labels["delete"]}</a></#if>
                                     </div>
                                 </div>
 
@@ -218,14 +232,30 @@
                         <div class="col-md-3"></div>
                         <br>
                     </#if>
-
-                </div>
-
             </div>
 
         </div>
 
         <#include "confirm-dialog.html"/>
+        <#include "spinner.html"/>
+        
+        <script>
+            
+            var accountProfile = {
+                basePath: "${labels['base.path']}",
+                id: "${(accountProfile.id)!}",
+                firstName: "${(accountProfile.firstName)!}",
+                lastName: "${(accountProfile.lastName)!}",
+                street: "${(accountProfile.address.street)!}",
+                city: "${(accountProfile.address.city)!}",
+                state: "${(accountProfile.address.state)!}",
+                postalCode: "${(accountProfile.address.postalCode)!}",
+                countryCode: "${(accountProfile.address.countryCode)!}"
+            }
+            
+            jQuery.data(document.body, "accountProfile", accountProfile);
+            
+        </script>
 
         <script src="/js/account-profile.js"></script>
 
