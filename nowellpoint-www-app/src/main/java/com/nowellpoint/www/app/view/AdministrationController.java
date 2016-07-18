@@ -3,6 +3,7 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import javax.ws.rs.NotAuthorizedException;
 
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
@@ -45,6 +47,8 @@ public class AdministrationController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
+		
+		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
@@ -53,13 +57,24 @@ public class AdministrationController extends AbstractController {
 	}
 	
 	private ModelAndView getCache(Request request, Response response) {
+		Token token = getToken(request);
 		
 		Account account = getAccount(request);
 		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("cache")
+				.execute();
 		
+		ObjectNode info = httpResponse.getEntity(ObjectNode.class);
+		
+		String[] tokens = info.get("info").asText().split("\\s+");
+		Arrays.asList(tokens).stream().forEach(t -> System.out.println(t));
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
+		model.put("info", info.get("info").asText());
 		
 		return new ModelAndView(model, "secure/cache.html");
 		
