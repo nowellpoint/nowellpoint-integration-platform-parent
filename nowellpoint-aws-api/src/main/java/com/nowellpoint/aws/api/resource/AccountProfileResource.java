@@ -302,6 +302,52 @@ public class AccountProfileResource {
 				.build();
 	}
 	
+	@POST
+	@Path("{id}/credit-card/{token}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addCreditCard(@PathParam("id") String id, @PathParam("token") String token, 
+			@FormParam("cardholderName") String cardholderName,
+			@FormParam("expirationMonth") String expirationMonth,
+			@FormParam("expirationYear") String expirationYear,
+			@FormParam("street") String street,
+			@FormParam("primary") Boolean primary) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		CreditCard creditCard = accountProfileService.getCreditCard(subject, id, token); 
+		
+		if (cardholderName != null) {
+			creditCard.setCardholderName(cardholderName);
+		}
+		
+		if (expirationMonth != null) {
+			creditCard.setExpirationMonth(expirationMonth);
+		}
+		
+		if (expirationYear != null) {
+			creditCard.setExpirationYear(expirationYear);
+		}
+		
+		if (street != null) {
+			creditCard.getBillingAddress().setStreet(street);
+		}
+		
+		if (primary != null) {
+			creditCard.setPrimary(primary);
+		}
+		
+		try {
+			accountProfileService.updateCreditCard(subject, id, token, creditCard);
+		} catch (ServiceException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response
+				.ok(creditCard)
+				.build();
+	}
+	
 	@PUT
 	@Path("{id}/credit-card/{token}")
 	@Produces(MediaType.APPLICATION_JSON)
