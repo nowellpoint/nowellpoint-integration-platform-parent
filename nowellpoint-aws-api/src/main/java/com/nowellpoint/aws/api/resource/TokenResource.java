@@ -12,14 +12,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.aws.api.dto.AuthenticationErrorDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.AuthorizationHeader;
-import com.stormpath.sdk.resource.ResourceException;
 
 @Path("/oauth")
 public class TokenResource {
@@ -49,16 +46,7 @@ public class TokenResource {
 			throw new BadRequestException("Invalid Request - Missing email and/or password");
 		}
 		
-		Token token = null;
-		
-		try {
-			token = identityProviderService.authenticate(params[0], params[1]);
-		} catch (ResourceException e) {
-			AuthenticationErrorDTO error = new AuthenticationErrorDTO(e.getCode(), e.getDeveloperMessage());
-			return Response.status(Status.BAD_REQUEST)
-					.entity(error)
-					.build();
-		}
+		Token token = identityProviderService.authenticate(params[0], params[1]);
 		
 		params = null;
 			

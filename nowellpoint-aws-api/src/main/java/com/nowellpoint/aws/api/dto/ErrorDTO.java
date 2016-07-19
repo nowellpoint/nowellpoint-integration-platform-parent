@@ -1,16 +1,16 @@
 package com.nowellpoint.aws.api.dto;
 
-public class AuthenticationErrorDTO {
+public class ErrorDTO {
 	
 	public Integer code;
 	
 	public String message;
 	
-	public AuthenticationErrorDTO() {
+	public ErrorDTO() {
 		
 	}
 	
-	public AuthenticationErrorDTO(Integer code, String message) {
+	public ErrorDTO(Integer code, String message) {
 		setCode(code);
 		setMessage(message);
 	}
