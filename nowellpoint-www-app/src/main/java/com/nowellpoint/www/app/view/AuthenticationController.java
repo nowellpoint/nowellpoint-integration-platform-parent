@@ -11,6 +11,7 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -54,7 +55,14 @@ public class AuthenticationController extends AbstractController {
     	int statusCode = httpResponse.getStatusCode();
     			
     	if (statusCode != 200) {
-    		throw new NotAuthorizedException(getValue("login.error"), Status.NOT_AUTHORIZED);
+    		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
+    		if (error.get("code").asInt() == 7100) {
+    			throw new NotAuthorizedException(getValue("login.error"), Status.NOT_AUTHORIZED);
+    		} else if (error.get("code").asInt() == 7101) {
+    			throw new NotAuthorizedException(getValue("disabled.account"), Status.NOT_AUTHORIZED);
+    		} else {
+    			throw new NotAuthorizedException(error.get("message").asText(), Status.NOT_AUTHORIZED);
+    		}
     	}
     			
     	Token token = httpResponse.getEntity(Token.class);

@@ -324,6 +324,7 @@ public class AccountProfileResource {
 	
 	@PUT
 	@Path("{id}/credit-card/{token}")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		String subject = securityContext.getUserPrincipal().getName();
