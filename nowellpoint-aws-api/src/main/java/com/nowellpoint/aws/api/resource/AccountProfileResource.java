@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
@@ -304,41 +305,14 @@ public class AccountProfileResource {
 	
 	@POST
 	@Path("{id}/credit-card/{token}")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCreditCard(@PathParam("id") String id, @PathParam("token") String token, 
-			@FormParam("cardholderName") String cardholderName,
-			@FormParam("expirationMonth") String expirationMonth,
-			@FormParam("expirationYear") String expirationYear,
-			@FormParam("street") String street,
-			@FormParam("primary") Boolean primary) {
-		
+	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, MultivaluedMap<String, String> parameters) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		CreditCard creditCard = accountProfileService.getCreditCard(subject, id, token); 
-		
-		if (cardholderName != null) {
-			creditCard.setCardholderName(cardholderName);
-		}
-		
-		if (expirationMonth != null) {
-			creditCard.setExpirationMonth(expirationMonth);
-		}
-		
-		if (expirationYear != null) {
-			creditCard.setExpirationYear(expirationYear);
-		}
-		
-		if (street != null) {
-			creditCard.getBillingAddress().setStreet(street);
-		}
-		
-		if (primary != null) {
-			creditCard.setPrimary(primary);
-		}
-		
+		CreditCard creditCard = null;
 		try {
-			accountProfileService.updateCreditCard(subject, id, token, creditCard);
+			creditCard = accountProfileService.updateCreditCard(subject, id, token, parameters);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -367,7 +341,6 @@ public class AccountProfileResource {
 	
 	@DELETE
 	@Path("{id}/credit-card/{token}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		String subject = securityContext.getUserPrincipal().getName();
 		

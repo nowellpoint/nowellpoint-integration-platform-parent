@@ -12,6 +12,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
@@ -388,6 +389,31 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			LOGGER.error(creditCardResult.getMessage());
 			throw new ServiceException(creditCardResult.getMessage());
 		}
+	}
+	
+	public CreditCard updateCreditCard(String subject, String id, String token, MultivaluedMap<String,String> parameters) {
+		
+		CreditCard creditCard = getCreditCard(subject, id, token);
+		
+		if (parameters.containsKey("cardholderName")) {
+			creditCard.setCardholderName(parameters.getFirst("cardholderName"));
+		}
+		
+		if (parameters.containsKey("expirationMonth")) {
+			creditCard.setExpirationMonth(parameters.getFirst("expirationMonth"));
+		}
+		
+		if (parameters.containsKey("expirationYear")) {
+			creditCard.setExpirationYear(parameters.getFirst("expirationYear"));
+		}
+		
+		if (parameters.containsKey("primary")) {
+			creditCard.setPrimary(Boolean.valueOf(parameters.getFirst("primary")));
+		}
+		
+		updateCreditCard(subject, id, token, creditCard);
+		
+		return creditCard;
 	}
 	
 	public void removeCreditCard(String subject, String id, String token) {

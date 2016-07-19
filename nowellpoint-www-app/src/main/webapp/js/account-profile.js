@@ -48,6 +48,17 @@ $('#profileDialog').on('show.bs.modal', function(e) {
 });
 
 
+$('.make-primary').click(function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: $(this).attr("href"),
+        success: function () {
+            $(location).attr("href", accountProfile.basePath);
+        }
+    });
+});
+
 
 $(document).ready(function (e) {
     $('#clickable').click(function (e) {

@@ -5,12 +5,14 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -61,7 +63,9 @@ public class AccountProfileController extends AbstractController {
 		get("/app/account-profile/:id/payment-methods/add", (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
 		get("/app/account-profile/:id/payment-methods/:token/edit", (request, response) -> editCreditCard(request, response), new FreeMarkerEngine(configuration));
-			
+		
+		post("/app/account-profile/:id/payment-methods/:token/primary", (request, response) -> setPrimaryCreditCard(request, response));
+		
 		post("/app/account-profile/:id/payment-methods", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
 		post("/app/account-profile/:id/payment-methods/:token", (request, response) -> updateCreditCard(request, response), new FreeMarkerEngine(configuration));
@@ -503,11 +507,34 @@ public class AccountProfileController extends AbstractController {
 		return new ModelAndView(model, "secure/payment-method.html");	
 	}
 	
+	private String setPrimaryCreditCard(Request request, Response response) throws HttpRequestException, UnsupportedEncodingException {
+		
+		Token token = getToken(request);
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.path("credit-card")
+				.path(request.params(":token"))
+				.parameter("primary", "true")
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
+		}
+		
+		return "";
+	}
+	
 	private String removeCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
 				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")

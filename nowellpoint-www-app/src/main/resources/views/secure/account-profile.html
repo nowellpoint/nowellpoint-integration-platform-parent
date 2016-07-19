@@ -127,10 +127,12 @@
                                     <td>${creditCard.cardholderName}</td>
                                     <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
                                     <td>${(creditCard.addedOn?date?string.iso)!}</td>
-                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit">&nbsp;${labels["edit"]}</span></a>
+                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span>${labels["edit"]}</a>
                                         <#if ! creditCard.primary>
+                                             &emsp;
+                                            <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a>
                                             &emsp;
-                                            <a href="" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash">&nbsp;${labels["delete"]}</span></a></#if>
+                                            <a href="" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
                                     </td>
                                 </tr>
                             </#list>
