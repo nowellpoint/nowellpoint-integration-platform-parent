@@ -19,20 +19,36 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 
 import freemarker.template.Configuration;
+import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import spark.template.freemarker.FreeMarkerEngine;
 
 public class AuthenticationController extends AbstractController {
 	
-	public AuthenticationController(Configuration cfg) {
-		super(AuthenticationController.class, cfg);
+	public AuthenticationController(Configuration configuration) {
+		super(AuthenticationController.class, configuration);
 	}
 	
 	@Override
-	public void configureRoutes(Configuration cfg) {
+	public void configureRoutes(Configuration configuration) {
+        
+        get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(configuration));
+		
 		post("/login", (request, response) -> login(request, response));
         
         get("/logout", (request, response) -> logout(request, response));
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private ModelAndView getLogin(Request request, Response response) {
+		return new ModelAndView(getModel(), "login.html");
 	}
 	
 	/**

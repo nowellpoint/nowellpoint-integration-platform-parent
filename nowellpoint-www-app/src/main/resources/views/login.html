@@ -39,23 +39,23 @@
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
 
-                    <h3><div class="text-center">${messages["welcome.back"]}</div></h3>
+                    <h3><div class="text-center">${labels["welcome.back"]}</div></h3>
                     <br>
 
                     <form class="form-vertical" role="form" method="post" action="/login">
 
                         <div class="form-group">
-                            <label class="control-label" for="username">${email}</label>
+                            <label class="control-label" for="username">${labels["email"]}</label>
                             <input type="text" class="form-control" name="username" id="username" required="" autofocus="" />
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="password">${password}</label>
+                            <label class="control-label" for="password">${labels["password"]}</label>
                             <input type="password" class="form-control" name="password" id="password" required="" autocomplete="off" />
                         </div>
 
                         <div class="form-group">
                             <div class="pull-right">
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${logIn}</button>
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["login"]}</button>
                             </div>
                         </div>
                     </form>
@@ -69,7 +69,7 @@
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
                     <div class="panel panel-default">
-                        <div class="panel-body text-center">${newToNowellpoint} <a href="/signup">${signUp}</a></div>
+                        <div class="panel-body text-center">${labels["new.to.nowellpoint"]}<a href="/signup">&nbsp;${labels["sign.up"]}</a></div>
                     </div>
                 </div>
                 <div class="col-md-4"></div>
@@ -79,7 +79,7 @@
                 <br>
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <div class="text-center"><a href="/contact">${contact}</a></div>
+                    <div class="text-center"><a href="/contact">${labels["contact.us"]}</a></div>
                 </div>
                 <div class="col-md-4"></div>
 

@@ -50,8 +50,8 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/xnio/xnio-nio/3.3.4.Final/xnio-nio-3.3.4.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/annotation/jboss-annotations-api_1.2_spec/1.0.0.Final/jboss-annotations-api_1.2_spec-1.0.0.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/spec/javax/ws/rs/jboss-jaxrs-api_2.0_spec/1.0.0.Final/jboss-jaxrs-api_2.0_spec-1.0.0.Final.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.5.4/jackson-core-2.5.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.5.4/jackson-annotations-2.5.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.4.4/jackson-databind-2.4.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/2.5.4/jackson-jaxrs-json-provider-2.5.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/jaxrs/jackson-jaxrs-base/2.5.4/jackson-jaxrs-base-2.5.4.jar"/>
@@ -126,7 +126,11 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.resourceserver/1.0.0/org.apache.oltu.oauth2.resourceserver-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.64.0/braintree-java-2.64.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/esotericsoftware/yamlbeans/yamlbeans/1.09/yamlbeans-1.09.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sendgrid/sendgrid-java/3.0.4/sendgrid-java-3.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sendgrid/java-http-client/2.3.2/java-http-client-2.3.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mockito/mockito-core/1.10.19/mockito-core-1.10.19.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/objenesis/objenesis/2.1/objenesis-2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/5.2.2.Final/hibernate-validator-5.2.2.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/classmate/1.1.0/classmate-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>

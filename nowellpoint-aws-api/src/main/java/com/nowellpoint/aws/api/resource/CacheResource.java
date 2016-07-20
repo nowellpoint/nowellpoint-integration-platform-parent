@@ -1,7 +1,5 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.data.CacheManager;
 
 @Path("cache")
@@ -37,7 +31,7 @@ public class CacheResource {
 			if (t.startsWith("#")) {
 
 			} else {
-				String[] field = t.split(":");
+				//String[] field = t.split(":");
 
 			}
 		});

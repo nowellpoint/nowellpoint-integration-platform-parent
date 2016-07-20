@@ -146,12 +146,6 @@ public class Bootstrap implements SparkApplication {
         get("/services", (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
         
         //
-        // login
-        //
-        
-        get("/login", (request, response) -> login(request, response), new FreeMarkerEngine(cfg));
-                
-        //
         //
         //
         
@@ -263,20 +257,6 @@ public class Bootstrap implements SparkApplication {
 	private static ModelAndView getServices(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
 		return new ModelAndView(model, "services.html");
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView login(Request request, Response response) {
-		Map<String, Object> model = new HashMap<String, Object>();
-		ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
-		model.put("messages", resourceBundleModel);
-		return new ModelAndView(model, "login.html");
 	}
 	
 	/**
