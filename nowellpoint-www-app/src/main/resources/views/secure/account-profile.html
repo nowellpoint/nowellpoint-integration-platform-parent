@@ -52,18 +52,16 @@
                         <hr>
                         <dt>${labels["division"]}</dt>
                         <dd>${accountProfile.division!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["department"]}</dt>
-                        <dd>${accountProfile.department!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["created.on"]}</dt>
-                        <dd>${accountProfile.createdDate?date?string.iso!}</dd>
+                        
                     </dl>
                 </div>
 
                 <div class="col-md-3">
 
                     <dl class="dl-vertical">
+                        <dt>${labels["department"]}</dt>
+                        <dd>${accountProfile.department!}&emsp;</dd>
+                        <hr>
                         <dt>${labels["mobile.phone"]}</dt>
                         <dd>${accountProfile.mobilePhone!}&emsp;</dd>
                         <hr>
@@ -75,24 +73,44 @@
                         <hr>
                         <dt>${labels["fax"]}</dt>
                         <dd>${accountProfile.fax!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["address"]}</dt>
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+
+                </div>  
+
+            </div>
+            
+            <br>
+            <br>
+            
+            <div class="row">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["address"]}</h3>
+                    </div>
+                    <div class="flextable-item">
+                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/add" id="add-card" class="btn btn-primary" role="button">${labels["edit.address"]}</a>
+                    </div>
+                </div>
+                
+                <br>    
+                <div class="hr-divider"></div>
+                <br>    
+                
+       <div class="col-md-12">
+                    <dl class="dl-vertical">
                         <dd>${accountProfile.address.street!}
                             <br> ${accountProfile.address.city!}, ${accountProfile.address.state!} ${accountProfile.address.postalCode!}
                             <br> ${accountProfile.address.country!}&emsp;
                         </dd>
-                        <hr>
-                        <dt>${labels["last.modified.on"]}</dt>
-                        <dd>${accountProfile.lastModifiedDate?date?string.iso!}</dd>
-                    </dl>
+                    </dl>    
+                    
                 </div>
-
-                <div class="col-md-4">
-
-                </div>
-
-            </div>
-
+                
+            </div>     
+            
             <br>
             <br>
 
@@ -150,13 +168,27 @@
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["account.settings"]}</h3>
                     </div>
+                    <div class="flextable-item">
+                        <a href="${labels['base.path']}/${accountProfile.id}/disable" class="btn btn-danger" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+                    </div>
                 </div>
                 <br>
                 <div class="hr-divider"></div>
+                
                 <br>
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <a href="${labels['base.path']}/${accountProfile.id}/disable" class="btn btn-danger" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+                
+                <div class="col-md-6">
+                    <dl class="dl-vertical">
+                    <dt>${labels["created.on"]}</dt>
+                        <dd>${accountProfile.createdDate?date?string.iso!}</dd>
+                </dl>
                 </div>
+                <div class="col-md-6">
+                    <dl class="dl-vertical">
+                    <dt>${labels["last.modified.on"]}</dt>
+                        <dd>${accountProfile.lastModifiedDate?date?string.iso!}</dd>
+                </dl> 
+                </div>       
             </div>
 
         </div>

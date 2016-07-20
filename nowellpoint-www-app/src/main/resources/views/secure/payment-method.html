@@ -11,7 +11,9 @@
                     </div>
                 </div>
                 <div class="hr-divider"></div>
-
+            </div>
+            <div class="row">
+            
                 <br>
                 
                 <div class="form-group">
@@ -22,6 +24,7 @@
                         </div>
                     </#if>
                 </div>
+                <br>
 
                     <#if mode=="add" || mode=="edit">
 
@@ -172,7 +175,11 @@
 
                     <#if mode=="view">
                         <div class="row">
-                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+                            
+                            <br>
+                            
+                            <div class="col-md-3"></div>
+                        
                             <div class="col-md-6">
 
                                 <#if successMessage??>
@@ -182,13 +189,13 @@
                                     </div>
                                 </#if>
 
-                                <div class="col-md-12">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                     <dl class="dl-vertical">
                                         <dt>${labels["name.on.card"]}</dt>
                                         <dd>${creditCard.cardholderName}&emsp;</dd>
                                         <hr>
                                         <dt>${labels["card.type"]}</dt>
-                                        <dd><img src="${(creditCard.imageUrl)!}" height="24" width="36" />&emsp;</dd>
+                                        <dd><img src="${(creditCard.imageUrl)!}" height="18" width="30" />&emsp;</dd>
                                         <hr>
                                         <dt>${labels["number"]}</dt>
                                         <dd>${(creditCard.number)!}&emsp;</dd>
@@ -196,6 +203,14 @@
                                         <dt>${labels["expiration.date"]}</dt>
                                         <dd>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}&emsp;</dd>
                                         <hr>
+                                        <dt>${labels["added.on"]}</dt>
+                                        <dd>${(creditCard.addedOn?date?string.iso)!}</dd>
+                                    </dl>
+                                </div>
+                                
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    
+                                    <dl class="dl-vertical">
                                         <dt>${labels["primary"]}</dt>
                                         <dd>${(creditCard.primary?then(labels["yes"], labels["no"]))!}&emsp;</dd>
                                         <hr>
@@ -206,15 +221,16 @@
                                         <dd>${(creditCard.billingAddress.street)!}
                                             <br> ${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}
                                             <br> ${(creditCard.billingAddress.country)!}&emsp;
-                                        </dd>
-                                        <hr>
-                                        <dt>${labels["added.on"]}</dt>
-                                        <dd>${(creditCard.addedOn?date?string.iso)!}</dd>
-                                        <hr>
+                                            <br>
+                                            <br>
+                                            <br>
+                                         </dd>    
+                                        <hr>    
                                         <dt>${labels["updated.on"]}</dt>
-                                        <dd>${(creditCard.updatedOn?date?string.iso)!}</dd>
-                                    </dl>
-                                </div>
+                                        <dd>${(creditCard.updatedOn?date?string.iso)!}</dd>    
+                                    </dl>    
+                                    
+                                </div>     
 
                                 <br>
 
@@ -228,11 +244,9 @@
                                 </div>
 
                             </div>
+                            <div class="col-md-3"></div>
                         </div>
-                        <div class="col-md-3"></div>
-                        <br>
                     </#if>
-            </div>
 
         </div>
 
