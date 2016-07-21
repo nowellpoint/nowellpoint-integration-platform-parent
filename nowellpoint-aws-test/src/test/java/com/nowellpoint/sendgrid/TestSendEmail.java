@@ -1,5 +1,7 @@
 package com.nowellpoint.sendgrid;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
@@ -7,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -65,24 +68,23 @@ public class TestSendEmail {
         
         EmailVerificationToken emailVerificationToken = account.getEmailVerificationToken();
         
-        System.out.println(apiKey.getId());
-        System.out.println(apiKey.getSecret());
-        
         HttpResponse httpResponse = RestResource.post(emailVerificationToken.getHref())
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.contentType(MediaType.APPLICATION_JSON)
 				.execute();
         
-        System.out.println(httpResponse.getStatusCode());
-        System.out.println(httpResponse.getAsString());
+        assertEquals(httpResponse.getStatusCode(), 202);
         
         httpResponse = RestResource.get(account.getHref())
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.accept(MediaType.APPLICATION_JSON)
 				.execute();
         
-        System.out.println(httpResponse.getStatusCode());
-        System.out.println(httpResponse.getAsString());
+        assertEquals(httpResponse.getStatusCode(), 200);
+        
+        ObjectNode result = httpResponse.getEntity(ObjectNode.class);
+        
+        assertEquals(result.get("status").asText(), "ENABLED");
         
         account.delete();
 		
