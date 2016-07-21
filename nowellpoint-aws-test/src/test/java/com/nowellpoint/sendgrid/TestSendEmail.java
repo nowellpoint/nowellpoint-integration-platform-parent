@@ -2,9 +2,13 @@ package com.nowellpoint.sendgrid;
 
 import java.io.IOException;
 
+import javax.ws.rs.core.MediaType;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -60,6 +64,25 @@ public class TestSendEmail {
         account = application.createAccount(account);
         
         EmailVerificationToken emailVerificationToken = account.getEmailVerificationToken();
+        
+        System.out.println(apiKey.getId());
+        System.out.println(apiKey.getSecret());
+        
+        HttpResponse httpResponse = RestResource.post(emailVerificationToken.getHref())
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.contentType(MediaType.APPLICATION_JSON)
+				.execute();
+        
+        System.out.println(httpResponse.getStatusCode());
+        System.out.println(httpResponse.getAsString());
+        
+        httpResponse = RestResource.get(account.getHref())
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.accept(MediaType.APPLICATION_JSON)
+				.execute();
+        
+        System.out.println(httpResponse.getStatusCode());
+        System.out.println(httpResponse.getAsString());
         
         account.delete();
 		
