@@ -96,7 +96,7 @@ public class AccountSetupTask implements Callable<Account> {
 		from.setName("Nowellpoint Support");
 	    
 	    Email to = new Email();
-	    to.setEmail(account.getEmail());
+	    to.setEmail(account.getUsername());
 	    to.setName(account.getFullName());
 	    
 	    Content content = new Content();

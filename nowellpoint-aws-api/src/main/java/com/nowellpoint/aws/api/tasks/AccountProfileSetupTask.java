@@ -13,7 +13,7 @@ import com.mongodb.MongoException;
 import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 
-public class AccountProfileSetupTask implements Callable<String> {
+public class AccountProfileSetupTask implements Callable<AccountProfile> {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileSetupTask.class);
 	
@@ -24,7 +24,7 @@ public class AccountProfileSetupTask implements Callable<String> {
 	}
 
 	@Override
-	public String call() throws Exception {
+	public AccountProfile call() throws Exception {
 		
 		String collectionName = AccountProfile.class.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
 		
@@ -34,6 +34,7 @@ public class AccountProfileSetupTask implements Callable<String> {
 				.first() );
 		
 		if (queryResult.isPresent()) {
+			accountProfile.setId(queryResult.get().getId());
 			accountProfile.setCreatedById(queryResult.get().getCreatedById());
 			accountProfile.setCreatedDate(queryResult.get().getCreatedDate());
 			accountProfile.setLastModifiedDate(Date.from(Instant.now()));
@@ -57,6 +58,6 @@ public class AccountProfileSetupTask implements Callable<String> {
 			}
 		}
 		
-		return accountProfile.getId().toString();
+		return accountProfile;
 	}
 }
