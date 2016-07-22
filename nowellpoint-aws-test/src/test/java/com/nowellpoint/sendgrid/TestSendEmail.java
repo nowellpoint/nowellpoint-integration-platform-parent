@@ -73,7 +73,7 @@ public class TestSendEmail {
 				.contentType(MediaType.APPLICATION_JSON)
 				.execute();
         
-        assertEquals(httpResponse.getStatusCode(), 202);
+        //	assertEquals(httpResponse.getStatusCode(), 202);
         
         httpResponse = RestResource.get(account.getHref())
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -115,13 +115,11 @@ public class TestSendEmail {
 	    
 	    Request request = new Request();
 	    try {
-	      request.method = Method.POST;
-	      request.endpoint = "mail/send";
-	      request.body = mail.build();
-	      Response response = sendgrid.api(request);
-	      System.out.println(response.statusCode);
-	      System.out.println(response.body);
-	      System.out.println(response.headers);
+	    	request.method = Method.POST;
+	    	request.endpoint = "mail/send";
+	    	request.body = mail.build();
+	    	Response response = sendgrid.api(request);
+	    	assertEquals(response.statusCode, 202);
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    }
