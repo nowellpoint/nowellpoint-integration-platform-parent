@@ -40,6 +40,7 @@ import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.stormpath.sdk.account.AccountStatus;
 
 @Path("/signup")
 public class SignUpService {
@@ -80,6 +81,15 @@ public class SignUpService {
 		account.setPassword(password);
 		account.setStatus("UNVERIFIED");
 		
+		/**
+		 * ccount.setGivenName("Joe")
+                .setSurname("Quickstart_Stormtrooper")
+                .setUsername("tk421")  
+                .setEmail("tk421@stormpath.com")
+                .setPassword("Changeme1")
+                .setStatus(AccountStatus.UNVERIFIED);
+		 */
+		
 		AccountProfile accountProfile = new AccountProfile();
 		accountProfile.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
 		accountProfile.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
@@ -96,10 +106,11 @@ public class SignUpService {
 		
 		Set<Callable<String>> tasks = new LinkedHashSet<Callable<String>>();
 		tasks.add(new SubmitLeadTask(lead));
-		tasks.add(new AccountSetupTask(account));
 		tasks.add(new AccountProfileSetupTask(accountProfile));
 		
 		ExecutorService executor = Executors.newFixedThreadPool(3);
+		
+		Future<Account> accountTask = executor.submit(new AccountSetupTask(account));
 		
 		try {
 			List<Future<String>> futures = executor.invokeAll(tasks);
@@ -107,8 +118,11 @@ public class SignUpService {
 			executor.awaitTermination(30, TimeUnit.SECONDS);
 			
 			accountProfile.setLeadId(futures.get(0).get());
-			accountProfile.setHref(futures.get(1).get());
-			accountProfile.setId(new ObjectId(futures.get(2).get()));
+			System.out.println("1");
+			accountProfile.setHref(accountTask.get().getHref());
+			System.out.println("2");
+			accountProfile.setId(new ObjectId(futures.get(1).get()));
+			System.out.println("3");
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
