@@ -1,5 +1,8 @@
 package com.nowellpoint.aws.api.resource;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import javax.annotation.security.PermitAll;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -19,6 +22,7 @@ import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.AuthorizationHeader;
 
 @Path("/oauth")
+@Api(value = "/time", description = "Get the time", tags = "time")
 public class TokenResource {
 	
 	@Inject
@@ -35,6 +39,7 @@ public class TokenResource {
 	
 	@POST
 	@Path("/token")
+	@ApiOperation(value = "Get the current time", notes = "Returns the time as a string", response = String.class)
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
 	public Response authenticate() {

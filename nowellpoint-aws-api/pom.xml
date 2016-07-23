@@ -38,8 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>jaxrs-weld</artifactId>
-			<version>1.0.0.Beta4</version>
+			<artifactId>jaxrs-cdi</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
@@ -48,6 +47,10 @@
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>swagger</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>jaxrs-multipart</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>

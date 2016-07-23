@@ -21,19 +21,7 @@
                 <br>
                 <div id="status-message"></div>
                 <br>
-                <div class="col-md-2">
-                    <div>
-                        <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
-                    </div>
-                    <br>
-                    <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
-                        <div class="text-center">
-                            <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
-                            </a>
-                        </div>
-                    </#if>
-
-                </div>
+                
 
                 <div class="col-md-3">
 
@@ -75,8 +63,22 @@
                         <dd>${accountProfile.fax!}&emsp;</dd>
                     </dl>
                 </div>
+                
+                <div class="col-md-2">
+                    <div>
+                        <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
+                    </div>
+                    <br>
+                    <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
+                        <div class="text-center">
+                            <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
+                            </a>
+                        </div>
+                    </#if>
 
-                <div class="col-md-6">
+                </div>
+
+                <div class="col-md-4">
 
                 </div>  
 
