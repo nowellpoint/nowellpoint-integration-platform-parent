@@ -111,10 +111,10 @@ public class SignUpService {
 		
 		accountProfile.setAddress(address);
 		
-		ExecutorService executor = Executors.newFixedThreadPool(3);
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		
 		Future<Account> accountSetupTask = executor.submit(new AccountSetupTask(account));
-		Future<AccountProfileDTO> accountProfileTask = executor.submit(new AccountProfileSetupTask(accountProfile));
+		//Future<AccountProfileDTO> accountProfileTask = executor.submit(new AccountProfileSetupTask(accountProfile));
 		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(lead));
 		
 		executor.shutdown();
@@ -135,17 +135,26 @@ public class SignUpService {
 			
 			//accountProfile.setLeadId(submitLeadTask.get().getId());
 			accountProfile.setHref(accountSetupTask.get().getHref());
+			accountProfile.setSubject(accountSetupTask.get().getHref());
 			System.out.println("1");
 			//accountProfile.setId(accountProfileTask.get().getId());
 			System.out.println("2");
 			accountProfile.setEmailVerificationToken(emailVerificationToken.toString());
 			System.out.println("3");
-			emailService.sendEmailVerification(accountProfileTask.get());
+			emailService.sendEmailVerification(accountProfile);
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
-		accountProfileService.updateAccountProfile(accountProfile);
+		AccountProfileDTO original = accountProfileService.findAccountProfileBySubject(accountProfile.getSubject());
+		
+		if (original != null) {
+			accountProfile.setId(original.getId());
+			accountProfileService.updateAccountProfile(accountProfile);
+		} else {
+			accountProfileService.createAccountProfile(accountProfile);
+		}
+		
 		
 		//MongoDBDatastore.replaceOne(accountProfile);	
 		
