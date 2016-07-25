@@ -22,7 +22,7 @@ import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.AuthorizationHeader;
 
 @Path("/oauth")
-@Api(value = "/time", description = "Get the time", tags = "time")
+@Api(value = "/time", tags = "time")
 public class TokenResource {
 	
 	@Inject

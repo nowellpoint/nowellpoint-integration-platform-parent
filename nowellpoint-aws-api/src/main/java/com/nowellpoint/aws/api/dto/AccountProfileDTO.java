@@ -147,6 +147,12 @@ public class AccountProfileDTO extends AbstractDTO {
 	 * 
 	 */
 	
+	private String emailVerificationToken;
+	
+	/**
+	 * 
+	 */
+	
 	private String picture;
 	
 	/**
@@ -341,6 +347,14 @@ public class AccountProfileDTO extends AbstractDTO {
 
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	public String getEmailVerificationToken() {
+		return emailVerificationToken;
+	}
+
+	public void setEmailVerificationToken(String emailVerificationToken) {
+		this.emailVerificationToken = emailVerificationToken;
 	}
 
 	public String getPicture() {

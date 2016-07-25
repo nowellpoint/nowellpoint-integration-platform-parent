@@ -58,11 +58,11 @@ public class ContactService {
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		
-		Future<String> leadService = executor.submit(new SubmitLeadTask(lead));
+		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(lead));
 		executor.shutdown();
 		try {
 			executor.awaitTermination(30, TimeUnit.SECONDS);
-			lead.setId(leadService.get());
+			lead = submitLeadTask.get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}

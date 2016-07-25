@@ -17,7 +17,7 @@ import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Token;
 
-public class SubmitLeadTask implements Callable<String> {
+public class SubmitLeadTask implements Callable<Lead> {
 	
 	private static final Logger LOGGER = Logger.getLogger(SubmitLeadTask.class);
 	
@@ -28,7 +28,7 @@ public class SubmitLeadTask implements Callable<String> {
 	}
 
 	@Override
-	public String call() throws Exception {
+	public Lead call() throws Exception {
 
 		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
@@ -58,8 +58,10 @@ public class SubmitLeadTask implements Callable<String> {
 			throw new Exception(error.getErrorDescription());
 		}
 		
-		String leadId = httpResponse.getAsString();	
+		String leadId = httpResponse.getAsString();
 		
-		return leadId;
+		lead.setId(leadId);
+		
+		return lead;
 	}
 }

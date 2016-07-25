@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -36,7 +37,7 @@ public class TestRestApi {
 		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
 	}
 
-	@Test
+	//@Test
 	public void testAuthentication() {
 		
 		System.out.println("testAuthentication");
@@ -101,7 +102,7 @@ public class TestRestApi {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void testAccount() {
 		
 		System.out.println("testAccount");
@@ -171,7 +172,7 @@ public class TestRestApi {
 		}		
 	}
 	
-	@Test
+	//@Test
 	public void testContact() {
 		
 		System.out.println("testContact");
@@ -235,14 +236,19 @@ public class TestRestApi {
 		}	
 	}	
 	
-	//@Test
+	@Test
 	public void testSignUp() {
 		
 		System.out.println("testSignUp");
 		
-		HttpResponse httpResponse = null;
+		String password = null;
 		try {
-			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+			password = URLEncoder.encode("!t2U1&JUTJvY", "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		HttpResponse httpResponse = RestResource.post(NCS_API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("signup")
@@ -251,15 +257,19 @@ public class TestRestApi {
 					.parameter("lastName", "Smith")
 					.parameter("email", "jherson@aim.com")
 					.parameter("countryCode", "US")
-					.parameter("password", URLEncoder.encode("!t2U1&JUTJvY", "UTF-8"))
+					.parameter("password", password)
 					.execute();
-			
-			assertEquals(httpResponse.getStatusCode(), 200);
-			
-			System.out.println(httpResponse.getAsString());
-			
-		} catch (HttpRequestException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}	
+		
+		assertEquals(httpResponse.getStatusCode(), 200);
+		
+		ObjectNode node = httpResponse.getEntity(ObjectNode.class);
+		
+		System.out.println(node.toString());
+		
+		httpResponse = RestResource.get(node.get("emailVerificationToken").asText())
+				.execute();
+		
+		System.out.println(httpResponse.getAsString());
+					
 	}	
 }

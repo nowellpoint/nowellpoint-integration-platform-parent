@@ -1,26 +1,18 @@
 package com.nowellpoint.aws.api.tasks;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.sendgrid.Content;
-import com.sendgrid.Email;
-import com.sendgrid.Mail;
-import com.sendgrid.Method;
-import com.sendgrid.Personalization;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
 
 public class AccountSetupTask implements Callable<Account> {
 	
@@ -61,16 +53,14 @@ public class AccountSetupTask implements Callable<Account> {
 					.basicAuthorization(apiKeyId, apiKeySecret)
 					.body(account)
 					.execute();
-			
-			LOGGER.info("Create Account Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-			
+						
 			if (httpResponse.getStatusCode() != Status.CREATED) {
-				throw new Exception(httpResponse.getAsString());
+				ObjectNode node = httpResponse.getEntity(ObjectNode.class);
+				LOGGER.error(node.toString());
+				throw new Exception(node.toString());
 			}
 			
 			account = httpResponse.getEntity(Account.class);
-			
-			System.out.println("Account: " + account.getEmailVerificationToken().getHref());
 			
 		} else {
 			
@@ -81,56 +71,19 @@ public class AccountSetupTask implements Callable<Account> {
 					.basicAuthorization(apiKeyId, apiKeySecret)
 					.body(account)
 					.execute();
-				
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-			
+							
 			if (httpResponse.getStatusCode() != Status.OK) {
-				throw new Exception(httpResponse.getAsString());
+				ObjectNode node = httpResponse.getEntity(ObjectNode.class);
+				LOGGER.error(node.toString());
+				throw new Exception(node.toString());
 			}
 			
 			account = httpResponse.getEntity(Account.class);
+			
+			if (account.getEmailVerificationToken() == null) {
+				System.out.println("no email verification token");
+			}
 		}
-		
-		Email from = new Email();
-		from.setEmail("administrator@nowellpoint.com");
-		from.setName("Nowellpoint Support");
-	    
-	    Email to = new Email();
-	    to.setEmail(account.getUsername());
-	    to.setName(account.getFullName());
-	    
-	    Content content = new Content();
-	    content.setType("text/html");
-	    content.setValue("<html><body>some text here</body></html>");
-	    
-	    LOGGER.info("token href: " + account.getEmailVerificationToken().getHref());
-	    LOGGER.info(account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1));
-	    
-	    String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
-	    
-	    Personalization personalization = new Personalization();
-	    personalization.addTo(to);
-	    personalization.addSubstitution("%name%", "John Herson");
-	    personalization.addSubstitution("%emailVerificationToken%", String.format("http://localhost/rest/email-verification-tokens/%s", emailVerificationToken));
-	    
-	    Mail mail = new Mail();
-	    mail.setFrom(from);
-	    mail.addContent(content);
-	    mail.setTemplateId("3e2b0449-2ff8-40cb-86eb-32cad32886de");
-	    mail.addPersonalization(personalization);
-
-	    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
-	    
-	    Request request = new Request();
-	    try {
-	    	request.method = Method.POST;
-	    	request.endpoint = "mail/send";
-	    	request.body = mail.build();
-	    	Response response = sendgrid.api(request);
-	    	LOGGER.info(response.statusCode);
-	    } catch (IOException e) {
-	    	LOGGER.error(e);
-	    }
 		
 		return account;
 	}

@@ -201,6 +201,21 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		return resource;		
 	}
 	
+	public AccountProfileDTO findAccountProfileByUsername(String username) {
+		Optional<AccountProfile> queryResult = Optional.ofNullable( MongoDBDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
+				.withDocumentClass( AccountProfile.class )
+				.find( eq( "username", username ) )
+				.first() );
+		
+		AccountProfileDTO resource = null;
+		
+		if (queryResult.isPresent()) {
+			resource = modelMapper.map( queryResult.get(), AccountProfileDTO.class );
+		}
+		
+		return resource;
+	}
+	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
 		
 		AmazonS3 s3Client = new AmazonS3Client();

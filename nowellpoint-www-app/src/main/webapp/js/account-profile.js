@@ -59,6 +59,18 @@ $('.make-primary').click(function (e) {
     });
 });
 
+$(function () {
+    var accountProfile = jQuery.data(document.body, "accountProfile");
+	$('.toggle').click(function (event) {
+		event.preventDefault();
+		var target = $(this).attr('href');
+		$(target).toggleClass('hidden show');
+        $("#show-user-profile").toggleClass('hidden show');
+        $("#cancel-edit-user-profile").toggleClass('hidden show');
+	});
+});
+
+
 
 $(document).ready(function (e) {
     $('#clickable').click(function (e) {

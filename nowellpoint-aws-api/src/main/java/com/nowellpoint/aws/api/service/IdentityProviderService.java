@@ -195,6 +195,7 @@ public class IdentityProviderService extends AbstractCacheService {
 	 */
 	
 	public void disableAccount(String href) {
+		System.out.println("disable account: " + href);
 		Account account = new Account();
 		account.setStatus("DISABLED");
 		
