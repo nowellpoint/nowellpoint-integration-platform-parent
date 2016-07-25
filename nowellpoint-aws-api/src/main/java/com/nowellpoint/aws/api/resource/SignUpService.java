@@ -41,6 +41,7 @@ import com.nowellpoint.aws.api.model.Address;
 import com.nowellpoint.aws.api.model.sforce.Lead;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.EmailService;
+import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.tasks.AccountProfileSetupTask;
 import com.nowellpoint.aws.api.tasks.AccountSetupTask;
 import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
@@ -48,6 +49,7 @@ import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @Path("/signup")
@@ -57,6 +59,9 @@ public class SignUpService {
 	
 	@Inject
 	private EmailService emailService;
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 	
 	@Inject
 	private AccountProfileService accountProfileService;
@@ -81,14 +86,17 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
     	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password) {
 		
-		Lead lead = new Lead();
-		lead.setLeadSource(leadSource);
-		lead.setFirstName(firstName);
-		lead.setLastName(lastName);
-		lead.setEmail(email);
-		lead.setCountryCode(countryCode);
+		Account account = identityProviderService.findAccountByUsername(email);
 		
-		Account account = new Account();
+		if (account == null) {
+			account = new Account();
+		} else if ("ENABLED".equals(account.getStatus())) {
+			ErrorDTO error = new ErrorDTO(1000, "Account for email is already enabled");
+			ResponseBuilder builder = Response.status(Status.CONFLICT);
+			builder.entity(error);
+			throw new WebApplicationException(builder.build());
+		}
+		
 		account.setGivenName(firstName);
 		account.setMiddleName(null);
 		account.setSurname(lastName);
@@ -96,6 +104,13 @@ public class SignUpService {
 		account.setUsername(email);
 		account.setPassword(password);
 		account.setStatus("UNVERIFIED");
+		
+		Lead lead = new Lead();
+		lead.setLeadSource(leadSource);
+		lead.setFirstName(firstName);
+		lead.setLastName(lastName);
+		lead.setEmail(email);
+		lead.setCountryCode(countryCode);
 		
 		AccountProfileDTO accountProfile = new AccountProfileDTO();
 		accountProfile.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
@@ -141,7 +156,7 @@ public class SignUpService {
 			System.out.println("2");
 			accountProfile.setEmailVerificationToken(emailVerificationToken.toString());
 			System.out.println("3");
-			emailService.sendEmailVerification(accountProfile);
+			
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
@@ -155,6 +170,7 @@ public class SignUpService {
 			accountProfileService.createAccountProfile(accountProfile);
 		}
 		
+		emailService.sendEmailVerification(accountProfile);
 		
 		//MongoDBDatastore.replaceOne(accountProfile);	
 		

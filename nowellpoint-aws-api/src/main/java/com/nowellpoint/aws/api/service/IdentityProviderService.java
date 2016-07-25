@@ -14,6 +14,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.idp.model.Groups;
+import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
@@ -195,7 +196,6 @@ public class IdentityProviderService extends AbstractCacheService {
 	 */
 	
 	public void disableAccount(String href) {
-		System.out.println("disable account: " + href);
 		Account account = new Account();
 		account.setStatus("DISABLED");
 		
@@ -288,6 +288,34 @@ public class IdentityProviderService extends AbstractCacheService {
 				.authenticate(request);
 		
 		return result.getJwt();
+	}
+	
+	/**
+	 * 
+	 * @param username
+	 * @return the Account associated with the @param username
+	 */
+	
+	public Account findAccountByUsername(String username) {
+		
+		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.accept(MediaType.APPLICATION_JSON)
+				.path("directories")
+				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
+				.path("accounts")
+				.path("?username=".concat(username))
+				.execute();
+		
+		Account account = null;
+		
+		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
+		
+		if (searchResult.getSize() == 1) {
+			account = searchResult.getItems().get(0);
+		}
+		
+		return account;
 	}
 	
 	/**
