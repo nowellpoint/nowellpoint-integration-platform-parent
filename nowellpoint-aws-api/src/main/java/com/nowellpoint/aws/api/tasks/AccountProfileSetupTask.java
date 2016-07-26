@@ -7,70 +7,49 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import org.jboss.logging.Logger;
-
-import com.mongodb.MongoException;
-import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.model.AccountProfile;
-import com.nowellpoint.aws.api.service.AccountProfileService;
+import com.nowellpoint.aws.api.model.Address;
 import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.annotation.Document;
 
-public class AccountProfileSetupTask implements Callable<AccountProfileDTO> {
+public class AccountProfileSetupTask implements Callable<AccountProfile> {
 	
-	private static final Logger LOGGER = Logger.getLogger(AccountProfileSetupTask.class);
+	private AccountProfileSetupRequest accountProfileSetupRequest;
 	
-	private AccountProfileService accountProfileService = new AccountProfileService();
-	
-	private AccountProfileDTO accountProfile;
-	
-	public AccountProfileSetupTask(AccountProfileDTO accountProfile) {
-		this.accountProfile = accountProfile;
+	public AccountProfileSetupTask(AccountProfileSetupRequest accountProfileSetupRequest) {
+		this.accountProfileSetupRequest = accountProfileSetupRequest;
 	}
 
 	@Override
-	public AccountProfileDTO call() throws Exception {
+	public AccountProfile call() throws Exception {
 		
-		AccountProfileDTO original = accountProfileService.findAccountProfileByUsername(accountProfile.getUsername());
+		AccountProfile accountProfile = Optional.ofNullable( MongoDBDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
+				.withDocumentClass( AccountProfile.class )
+				.find( eq ( "username", accountProfileSetupRequest.getUsername() ) )
+				.first() )
+				.orElse(new AccountProfile());
 		
-		if (original != null) {
-			accountProfile.setId(original.getId());
-			accountProfileService.updateAccountProfile(accountProfile);
+		accountProfile.setLastModifiedById(accountProfileSetupRequest.getHref());
+		accountProfile.setLastModifiedDate(Date.from(Instant.now()));
+		accountProfile.setFirstName(accountProfileSetupRequest.getFirstName());
+		accountProfile.setLastName(accountProfileSetupRequest.getLastName());
+		accountProfile.setEmail(accountProfileSetupRequest.getEmail());
+		accountProfile.setUsername(accountProfileSetupRequest.getUsername());
+		accountProfile.setIsActive(accountProfileSetupRequest.getIsActive());
+		
+		Address address = accountProfile.getAddress() != null ? accountProfile.getAddress() : new Address();
+		address.setCountryCode(accountProfileSetupRequest.getCountryCode());
+		
+		accountProfile.setAddress(address);
+		
+		if (accountProfile.getId() != null) {			
+			MongoDBDatastore.replaceOne( accountProfile );
 		} else {
-			accountProfileService.createAccountProfile(accountProfile);
+			accountProfile.setCreatedById(accountProfile.getLastModifiedById());
+			accountProfile.setCreatedDate(accountProfile.getLastModifiedDate());
+			MongoDBDatastore.insertOne( accountProfile );
 		}
 		
-//		String collectionName = AccountProfile.class.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
-//		
-//		Optional<AccountProfile> queryResult = Optional.ofNullable( MongoDBDatastore.getDatabase().getCollection( collectionName )
-//				.withDocumentClass( AccountProfile.class )
-//				.find( eq( "username", accountProfile.getUsername() ) )
-//				.first() );
-//		
-//		if (queryResult.isPresent()) {
-//			accountProfile.setId(queryResult.get().getId());
-//			accountProfile.setCreatedById(queryResult.get().getCreatedById());
-//			accountProfile.setCreatedDate(queryResult.get().getCreatedDate());
-//			accountProfile.setLastModifiedDate(Date.from(Instant.now()));
-//			
-//			try {
-//				MongoDBDatastore.replaceOne( accountProfile );
-//			} catch (MongoException e) {
-//				LOGGER.error( "Update Document exception", e.getCause());
-//				throw new Exception(e.getMessage());
-//			}
-//		} else {	
-//			Date now = Date.from(Instant.now());
-//			accountProfile.setCreatedDate(now);
-//			accountProfile.setLastModifiedDate(now);
-//			
-//			try {
-//				MongoDBDatastore.insertOne( accountProfile );
-//			} catch (MongoException e) {
-//				LOGGER.error( "Create Document exception", e.getCause());
-//				throw new Exception(e.getMessage());
-//			}
-//		}
-		System.out.println(accountProfile.getId());
 		return accountProfile;
 	}
 }

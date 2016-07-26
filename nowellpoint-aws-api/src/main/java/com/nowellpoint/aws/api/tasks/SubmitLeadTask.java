@@ -21,14 +21,24 @@ public class SubmitLeadTask implements Callable<Lead> {
 	
 	private static final Logger LOGGER = Logger.getLogger(SubmitLeadTask.class);
 	
-	private Lead lead;
+	public SubmitLeadRequest submitLeadRequest;
 	
-	public SubmitLeadTask(Lead lead) {
-		this.lead = lead;
+	public SubmitLeadTask(SubmitLeadRequest submitLeadRequest) {
+		this.submitLeadRequest = submitLeadRequest;
 	}
 
 	@Override
 	public Lead call() throws Exception {
+		
+		Lead lead = new Lead();
+		lead.setLeadSource(submitLeadRequest.getLeadSource());
+		lead.setFirstName(submitLeadRequest.getFirstName());
+		lead.setLastName(submitLeadRequest.getLastName());
+		lead.setEmail(submitLeadRequest.getEmail());
+		lead.setPhone(submitLeadRequest.getPhone());
+		lead.setCompany(submitLeadRequest.getCompany());
+		lead.setDescription(submitLeadRequest.getDescription());
+		lead.setCountryCode(submitLeadRequest.getCountryCode());
 
 		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))

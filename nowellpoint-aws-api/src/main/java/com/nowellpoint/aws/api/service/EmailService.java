@@ -24,7 +24,7 @@ public class EmailService {
 	
 	private static final SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
 	
-	public void sendEmailVerification(AccountProfileDTO account) {
+	public void sendEmailVerification(AccountProfile account) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {

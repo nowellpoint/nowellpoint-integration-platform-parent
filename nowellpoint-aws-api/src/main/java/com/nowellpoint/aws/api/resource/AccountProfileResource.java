@@ -361,6 +361,10 @@ public class AccountProfileResource {
     public Response getAccountProfileBySubject(@QueryParam("subject") String subject) {		
 		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
 		
+		if (resource == null) {
+			throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
+		}
+		
 		return Response.ok(resource)
 				.build();
 	}

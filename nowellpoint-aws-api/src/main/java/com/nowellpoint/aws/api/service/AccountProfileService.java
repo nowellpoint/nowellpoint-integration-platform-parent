@@ -189,7 +189,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 					.first();
 			
 			if ( accountProfile == null ) {
-				throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
+				return null;
 			}
 
 			resource = modelMapper.map( accountProfile, AccountProfileDTO.class );

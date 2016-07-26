@@ -270,6 +270,22 @@ public class TestRestApi {
 				.execute();
 		
 		System.out.println(httpResponse.getAsString());
+		
+		httpResponse = RestResource.post(NCS_API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path("signup")
+				.parameter("leadSource", "Sign Up")
+				.parameter("firstName", "Sandra")
+				.parameter("lastName", "Smith")
+				.parameter("email", "jherson@aim.com")
+				.parameter("countryCode", "US")
+				.parameter("password", password)
+				.execute();
+		
+		assertEquals(httpResponse.getStatusCode(), 409);
+		
+		System.out.println(httpResponse.getAsString());
 					
 	}	
 }

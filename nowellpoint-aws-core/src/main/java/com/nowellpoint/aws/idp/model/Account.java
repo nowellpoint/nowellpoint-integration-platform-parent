@@ -81,7 +81,9 @@ public class Account implements Serializable {
 	}
 
 	public void setHref(String href) {
-		setId(href.substring(href.lastIndexOf("/") + 1));
+		if (href != null) {
+			setId(href.substring(href.lastIndexOf("/") + 1));
+		}
 		this.href = href;
 	}
 

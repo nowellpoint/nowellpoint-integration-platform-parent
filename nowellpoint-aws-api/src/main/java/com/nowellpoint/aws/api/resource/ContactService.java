@@ -25,6 +25,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.aws.api.model.sforce.Lead;
+import com.nowellpoint.aws.api.tasks.SubmitLeadRequest;
 import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
 
 @Path("/contact")
@@ -46,20 +47,22 @@ public class ContactService {
     		@FormParam("company") String company,
     		@FormParam("description") String description) {
 		
-		Lead lead = new Lead();
-		lead.setLeadSource(leadSource);
-		lead.setFirstName(firstName);
-		lead.setLastName(lastName);
-		lead.setEmail(email);
-		lead.setPhone(phone);
-		lead.setCompany(company);
-		lead.setDescription(description);
-		lead.setCountryCode("US");
+		SubmitLeadRequest submitLeadRequest = new SubmitLeadRequest()
+				.withCountryCode("US")
+				.withDescription(description)
+				.withCompany(company)
+				.withPhone(phone)
+				.withEmail(email)
+				.withFirstName(firstName)
+				.withLastName(lastName)
+				.withLeadSource(leadSource);
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		
-		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(lead));
+		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(submitLeadRequest));
 		executor.shutdown();
+		
+		Lead lead = null;
 		try {
 			executor.awaitTermination(30, TimeUnit.SECONDS);
 			lead = submitLeadTask.get();

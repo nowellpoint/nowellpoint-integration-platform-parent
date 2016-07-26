@@ -1,6 +1,8 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.net.URI;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -23,9 +25,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
@@ -37,19 +39,20 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ErrorDTO;
 import com.nowellpoint.aws.api.model.AccountProfile;
-import com.nowellpoint.aws.api.model.Address;
 import com.nowellpoint.aws.api.model.sforce.Lead;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.EmailService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
+import com.nowellpoint.aws.api.tasks.AccountProfileSetupRequest;
 import com.nowellpoint.aws.api.tasks.AccountProfileSetupTask;
+import com.nowellpoint.aws.api.tasks.AccountSetupRequest;
 import com.nowellpoint.aws.api.tasks.AccountSetupTask;
+import com.nowellpoint.aws.api.tasks.SubmitLeadRequest;
 import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
-import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
 
 @Path("/signup")
@@ -88,49 +91,43 @@ public class SignUpService {
 		
 		Account account = identityProviderService.findAccountByUsername(email);
 		
-		if (account == null) {
-			account = new Account();
-		} else if ("ENABLED".equals(account.getStatus())) {
+		if (account != null && "ENABLED".equals(account.getStatus())) {
 			ErrorDTO error = new ErrorDTO(1000, "Account for email is already enabled");
 			ResponseBuilder builder = Response.status(Status.CONFLICT);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
 		
-		account.setGivenName(firstName);
-		account.setMiddleName(null);
-		account.setSurname(lastName);
-		account.setEmail("administrator@nowellpoint.com");
-		account.setUsername(email);
-		account.setPassword(password);
-		account.setStatus("UNVERIFIED");
+		AccountSetupRequest accountSetupRequest = new AccountSetupRequest()
+				.withEmail("administrator@nowellpoint.com")
+				.withGivenName(firstName)
+				.withHref(account != null ? account.getHref() : null)
+				.withSurname(lastName)
+				.withMiddleName(null)
+				.withPassword(password)
+				.withUsername(email);
 		
-		Lead lead = new Lead();
-		lead.setLeadSource(leadSource);
-		lead.setFirstName(firstName);
-		lead.setLastName(lastName);
-		lead.setEmail(email);
-		lead.setCountryCode(countryCode);
+		AccountProfileSetupRequest accountProfileSetupRequest = new AccountProfileSetupRequest()
+				.withEmail(email)
+				.withFirstName(firstName)
+				.withIsActive(Boolean.TRUE)
+				.withLastName(lastName)
+				.withUsername(email)
+				.withHref(System.getProperty(Properties.DEFAULT_SUBJECT))
+				.withCountryCode(countryCode);
 		
-		AccountProfileDTO accountProfile = new AccountProfileDTO();
-		accountProfile.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-		accountProfile.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-		accountProfile.setFirstName(firstName);
-		accountProfile.setLastName(lastName);
-		accountProfile.setEmail(email);
-		accountProfile.setUsername(email);
-		accountProfile.setIsActive(Boolean.TRUE);
+		SubmitLeadRequest submitLeadRequest = new SubmitLeadRequest()
+				.withCountryCode(countryCode)
+				.withEmail(email)
+				.withFirstName(firstName)
+				.withLastName(lastName)
+				.withLeadSource(leadSource);
 		
-		Address address = new Address();
-		address.setCountryCode(countryCode);
+		ExecutorService executor = Executors.newFixedThreadPool(3);
 		
-		accountProfile.setAddress(address);
-		
-		ExecutorService executor = Executors.newFixedThreadPool(2);
-		
-		Future<Account> accountSetupTask = executor.submit(new AccountSetupTask(account));
-		//Future<AccountProfileDTO> accountProfileTask = executor.submit(new AccountProfileSetupTask(accountProfile));
-		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(lead));
+		Future<Account> accountSetupTask = executor.submit(new AccountSetupTask(accountSetupRequest));
+		Future<AccountProfile> accountProfileSetupTask = executor.submit(new AccountProfileSetupTask(accountProfileSetupRequest));
+		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(submitLeadRequest));
 		
 		executor.shutdown();
 		
@@ -140,6 +137,8 @@ public class SignUpService {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
+		AccountProfile accountProfile = null; 
+		
 		try {
 			
 			URI emailVerificationToken = UriBuilder.fromUri(uriInfo.getBaseUri())
@@ -148,39 +147,29 @@ public class SignUpService {
 					.path("{token}")
 					.build(accountSetupTask.get().getEmailVerificationToken().getHref().substring(accountSetupTask.get().getEmailVerificationToken().getHref().lastIndexOf("/") + 1));
 			
-			//accountProfile.setLeadId(submitLeadTask.get().getId());
+			accountProfile = accountProfileSetupTask.get();
+			accountProfile.setCreatedById(accountSetupTask.get().getHref());
+			accountProfile.setLastModifiedById(accountSetupTask.get().getHref());
+			accountProfile.setLastModifiedDate(Date.from(Instant.now()));
+			accountProfile.setLeadId(submitLeadTask.get().getId());
 			accountProfile.setHref(accountSetupTask.get().getHref());
-			accountProfile.setSubject(accountSetupTask.get().getHref());
-			System.out.println("1");
-			//accountProfile.setId(accountProfileTask.get().getId());
-			System.out.println("2");
 			accountProfile.setEmailVerificationToken(emailVerificationToken.toString());
-			System.out.println("3");
 			
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
-		AccountProfileDTO original = accountProfileService.findAccountProfileBySubject(accountProfile.getSubject());
-		
-		if (original != null) {
-			accountProfile.setId(original.getId());
-			accountProfileService.updateAccountProfile(accountProfile);
-		} else {
-			accountProfileService.createAccountProfile(accountProfile);
-		}
+		MongoDBDatastore.replaceOne( accountProfile );
 		
 		emailService.sendEmailVerification(accountProfile);
 		
-		//MongoDBDatastore.replaceOne(accountProfile);	
-		
 		Map<String,String> response = new HashMap<String,String>();
 		response.put("id", accountProfile.getId().toString());
-		//response.put("leadId", accountProfile.getLeadId());
+		response.put("leadId", accountProfile.getLeadId());
 		response.put("href", accountProfile.getHref());
 		response.put("emailVerificationToken", accountProfile.getEmailVerificationToken());
 		
-		return Response.ok(accountProfile).build();
+		return Response.ok( response ).build();
 	}
 	
 	@PermitAll

@@ -11,17 +11,16 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
-import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class AccountSetupTask implements Callable<Account> {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountSetupTask.class);
 	
-	private Account account;
+	private AccountSetupRequest accountSetupRequest;
 	
-	public AccountSetupTask(Account account) {
-		this.account = account;
+	public AccountSetupTask(AccountSetupRequest accountSetupRequest) {
+		this.accountSetupRequest = accountSetupRequest;
 	}
 
 	@Override
@@ -32,20 +31,18 @@ public class AccountSetupTask implements Callable<Account> {
 		String apiKeyId = System.getProperty(Properties.STORMPATH_API_KEY_ID);
 		String apiKeySecret = System.getProperty(Properties.STORMPATH_API_KEY_SECRET);
 		
-		HttpResponse httpResponse = RestResource.get(apiEndpoint)
-				.basicAuthorization(apiKeyId, apiKeySecret)
-				.accept(MediaType.APPLICATION_JSON)
-				.path("directories")
-				.path(directoryId)
-				.path("accounts")
-				.path("?username=".concat(account.getUsername()))
-				.execute();
-			
-		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
+		Account account = new Account();
+		account.setGivenName(accountSetupRequest.getGivenName());
+		account.setMiddleName(accountSetupRequest.getMiddleName());
+		account.setSurname(accountSetupRequest.getSurname());
+		account.setEmail(accountSetupRequest.getEmail());
+		account.setUsername(accountSetupRequest.getUsername());
+		account.setPassword(accountSetupRequest.getPassword());
+		account.setStatus("UNVERIFIED");
 		
-		if (searchResult.getSize() == 0) {
+		if (accountSetupRequest.getHref() == null) {
 			
-			httpResponse = RestResource.post(apiEndpoint)
+			HttpResponse httpResponse = RestResource.post(apiEndpoint)
 					.contentType(MediaType.APPLICATION_JSON)
 					.path("directories")
 					.path(directoryId)
@@ -64,9 +61,7 @@ public class AccountSetupTask implements Callable<Account> {
 			
 		} else {
 			
-			String href = searchResult.getItems().get(0).getHref();
-			
-			httpResponse = RestResource.post(href)
+			HttpResponse httpResponse = RestResource.post(accountSetupRequest.getHref())
 					.contentType(MediaType.APPLICATION_JSON)
 					.basicAuthorization(apiKeyId, apiKeySecret)
 					.body(account)
@@ -79,10 +74,6 @@ public class AccountSetupTask implements Callable<Account> {
 			}
 			
 			account = httpResponse.getEntity(Account.class);
-			
-			if (account.getEmailVerificationToken() == null) {
-				System.out.println("no email verification token");
-			}
 		}
 		
 		return account;
