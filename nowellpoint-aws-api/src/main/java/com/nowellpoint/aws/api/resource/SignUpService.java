@@ -160,7 +160,7 @@ public class SignUpService {
 		URI emailVerificationUrl = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)
 				.path("verify-email")
-				.queryParam("token", "{token}")
+				.queryParam("emailVerificationToken", "{emailVerificationToken}")
 				.build(emailVerificationToken);
 		
 		LOGGER.info(emailVerificationUrl);
@@ -170,7 +170,7 @@ public class SignUpService {
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)
 				.path("verify-email")
-				.path("{token}")
+				.path("{emailVerificationToken}")
 				.build(emailVerificationToken);
 		
 		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
@@ -190,9 +190,9 @@ public class SignUpService {
 	@GET
 	@Path("verify-email")
 	@Produces(MediaType.TEXT_HTML)
-	public Response verifyEmail(@QueryParam("token") String token) {
+	public Response verifyEmail(@QueryParam("emailVerificationToken") String emailVerificationToken) {
 		
-		String href = identityProviderService.verifyEmail(token);
+		String href = identityProviderService.verifyEmail(emailVerificationToken);
 		
 		String username = identityProviderService.getAccountByHref(href).getUsername();
 		
@@ -213,11 +213,11 @@ public class SignUpService {
 	
 	@PermitAll
 	@POST
-	@Path("verify-email/{token}")
+	@Path("verify-email/{emailVerificationToken}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response emailVerification(@PathParam("token") String token) {
+	public Response emailVerification(@PathParam("emailVerificationToken") String emailVerificationToken) {
 		
-		String href = identityProviderService.verifyEmail(token);
+		String href = identityProviderService.verifyEmail(emailVerificationToken);
 		
 		String username = identityProviderService.getAccountByHref(href).getUsername();
 		

@@ -2,9 +2,9 @@ package com.nowellpoint.aws.api.dto;
 
 public class ErrorDTO {
 	
-	public Integer code;
+	private Integer code;
 	
-	public String message;
+	private String message;
 	
 	public ErrorDTO() {
 		

@@ -236,7 +236,7 @@ public class TestRestApi {
 		}	
 	}	
 	
-	@Test
+	//@Test
 	public void testSignUp() {
 		
 		System.out.println("testSignUp");
@@ -288,4 +288,40 @@ public class TestRestApi {
 		System.out.println(httpResponse.getAsString());
 					
 	}	
+	
+	@Test
+	public void testInvalidEmailVerificationToken() {
+		
+		System.out.println("testInvalidEmailVerificationToken");
+		
+		String password = null;
+		try {
+			password = URLEncoder.encode("!t2U1&JUTJvY", "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		HttpResponse httpResponse = RestResource.post(NCS_API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.path("signup")
+					.parameter("leadSource", "Sign Up")
+					.parameter("firstName", "Sandra")
+					.parameter("lastName", "Smith")
+					.parameter("email", "jherson@aim.com")
+					.parameter("countryCode", "US")
+					.parameter("password", password)
+					.execute();
+		
+		assertEquals(httpResponse.getStatusCode(), 200);
+		
+		ObjectNode node = httpResponse.getEntity(ObjectNode.class);
+		
+		System.out.println(node.toString());
+		
+		httpResponse = RestResource.post(node.get("emailVerificationToken").asText().concat("1"))
+				.execute();
+		
+		System.out.println(httpResponse.getAsString());
+	}
 }

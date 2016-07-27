@@ -5,15 +5,15 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.aws.api.dto.ErrorDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.idp.model.Groups;
@@ -354,18 +354,20 @@ public class IdentityProviderService extends AbstractCacheService {
 		});
 	}
 	
-	public String verifyEmail(String token) {		
+	public String verifyEmail(String emailVerificationToken) {	
+		
 		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.basicAuthorization(System.getProperty(Properties.STORMPATH_API_KEY_ID), System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.path("accounts")
 				.path("emailVerificationTokens")
-				.path(token)
+				.path(emailVerificationToken)
 				.execute();
 		
 		ObjectNode response = httpResponse.getEntity(ObjectNode.class);
 
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			LOGGER.error(response.toString());
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ErrorDTO error = new ErrorDTO(response.get("code").asInt(), response.get("developerMessage").asText());
+			throw new ServiceException(error); 
 		}
 		
 		return response.get("href").asText();
