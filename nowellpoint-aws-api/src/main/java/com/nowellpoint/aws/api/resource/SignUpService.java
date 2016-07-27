@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,6 +22,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -35,7 +37,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ErrorDTO;
 import com.nowellpoint.aws.api.model.AccountProfile;
@@ -50,8 +51,6 @@ import com.nowellpoint.aws.api.tasks.AccountSetupTask;
 import com.nowellpoint.aws.api.tasks.SubmitLeadRequest;
 import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
 import com.nowellpoint.aws.data.MongoDBDatastore;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -64,10 +63,10 @@ public class SignUpService {
 	private EmailService emailService;
 	
 	@Inject
-	private IdentityProviderService identityProviderService;
+	private AccountProfileService accountProfileService;
 	
 	@Inject
-	private AccountProfileService accountProfileService;
+	private IdentityProviderService identityProviderService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -141,85 +140,116 @@ public class SignUpService {
 		
 		try {
 			
-			URI emailVerificationToken = UriBuilder.fromUri(uriInfo.getBaseUri())
-					.path(SignUpService.class)
-					.path("verify-email")
-					.path("{token}")
-					.build(accountSetupTask.get().getEmailVerificationToken().getHref().substring(accountSetupTask.get().getEmailVerificationToken().getHref().lastIndexOf("/") + 1));
+			account = accountSetupTask.get();
 			
 			accountProfile = accountProfileSetupTask.get();
-			accountProfile.setCreatedById(accountSetupTask.get().getHref());
-			accountProfile.setLastModifiedById(accountSetupTask.get().getHref());
+			accountProfile.setCreatedById(account.getHref());
+			accountProfile.setLastModifiedById(account.getHref());
 			accountProfile.setLastModifiedDate(Date.from(Instant.now()));
 			accountProfile.setLeadId(submitLeadTask.get().getId());
-			accountProfile.setHref(accountSetupTask.get().getHref());
-			accountProfile.setEmailVerificationToken(emailVerificationToken.toString());
+			accountProfile.setHref(account.getHref());
+			
+			MongoDBDatastore.replaceOne( accountProfile );
 			
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
-		MongoDBDatastore.replaceOne( accountProfile );
+		String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
 		
-		emailService.sendEmailVerification(accountProfile);
+		URI emailVerificationUrl = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(SignUpService.class)
+				.path("verify-email")
+				.queryParam("token", "{token}")
+				.build(emailVerificationToken);
 		
-		Map<String,String> response = new HashMap<String,String>();
-		response.put("id", accountProfile.getId().toString());
-		response.put("leadId", accountProfile.getLeadId());
-		response.put("href", accountProfile.getHref());
-		response.put("emailVerificationToken", accountProfile.getEmailVerificationToken());
+		LOGGER.info(emailVerificationUrl);
 		
-		return Response.ok( response ).build();
+		emailService.sendEmailVerificationMessage(account, emailVerificationUrl.toString());
+		
+		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(SignUpService.class)
+				.path("verify-email")
+				.path("{token}")
+				.build(emailVerificationToken);
+		
+		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(AccountProfileResource.class)
+				.path("/{id}")
+				.build(accountProfile.getId().toString());
+		
+		Map<String,Object> response = new HashMap<String,Object>();
+		response.put("href", resourceUri);
+		response.put("emailVerificationToken", emailVerificationTokenUri);
+		
+		return Response.ok(response)
+				.build();
 	}
 	
 	@PermitAll
 	@GET
-	@Path("verify-email/{token}")
+	@Path("verify-email")
 	@Produces(MediaType.TEXT_HTML)
-	public Response verifyEmail(@PathParam("token") String token) {
+	public Response verifyEmail(@QueryParam("token") String token) {
 		
-		String apiEndpoint = System.getProperty(Properties.STORMPATH_API_ENDPOINT);
-		String apiKeyId = System.getProperty(Properties.STORMPATH_API_KEY_ID);
-		String apiKeySecret = System.getProperty(Properties.STORMPATH_API_KEY_SECRET);
+		String href = identityProviderService.verifyEmail(token);
 		
-		HttpResponse httpResponse = RestResource.post(apiEndpoint)
-				.basicAuthorization(apiKeyId, apiKeySecret)
-				.path("accounts")
-				.path("emailVerificationTokens")
-				.path(token)
-				.execute();
+		String username = identityProviderService.getAccountByHref(href).getUsername();
 		
-		ObjectNode response = httpResponse.getEntity(ObjectNode.class);
-
-		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
-			LOGGER.error(response.toString());
-			ErrorDTO error = new ErrorDTO(response.get("code").asInt(), response.get("developerMessage").asText());
-			ResponseBuilder builder = Response.status(httpResponse.getStatusCode());
-			builder.entity(error);
-			return builder.build();
-		}
+		Account account = new Account();
+		account.setHref(href);
+		account.setUsername(username);
+		account.setEmail(username);
 		
-		AccountProfileDTO accountProfile = accountProfileService.findAccountProfileBySubject(response.get("href").asText());
+		identityProviderService.updateAccount(account);
 		
-		httpResponse = RestResource.get(response.get("href").asText())
-				.basicAuthorization(apiKeyId, apiKeySecret)
-				.accept(MediaType.APPLICATION_JSON)
-				.execute();
+		emailService.sendWelcomeMessage(account);
 		
-		Account account = httpResponse.getEntity(Account.class);
-		account.setEmail(account.getUsername());
-		
-		httpResponse = RestResource.post(account.getHref())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.basicAuthorization(apiKeyId, apiKeySecret)
-				.body(account)
-				.execute();
-		
-		emailService.sendWelcome(accountProfile);
-		
-		String html = "<html>Success</html>";
+		String html = "<html>Your account was successfully verified and is ready for use.</html>";
 		
 		return Response.ok(html).build();
+		
+	}
+	
+	@PermitAll
+	@POST
+	@Path("verify-email/{token}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response emailVerification(@PathParam("token") String token) {
+		
+		String href = identityProviderService.verifyEmail(token);
+		
+		String username = identityProviderService.getAccountByHref(href).getUsername();
+		
+		Account account = new Account();
+		account.setHref(href);
+		account.setUsername(username);
+		account.setEmail(username);
+		
+		identityProviderService.updateAccount(account);
+		
+		emailService.sendWelcomeMessage(account);
+		
+		Optional<AccountProfileDTO> query = Optional.ofNullable(accountProfileService.findAccountProfileBySubject(href));
+		
+		if (! query.isPresent()) {
+			ErrorDTO error = new ErrorDTO(1001, String.format("AccountProfile for href: %s was not found", href));
+			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			builder.entity(error);
+			throw new WebApplicationException(builder.build());
+		}
+		
+		AccountProfileDTO resource = query.get();
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(AccountProfileResource.class)
+				.path("/{id}")
+				.build(resource.getId());
+		
+		Map<String,Object> response = new HashMap<String,Object>();
+		response.put("href", uri);
+		
+		return Response.ok(response)
+				.build();
 	}
 }

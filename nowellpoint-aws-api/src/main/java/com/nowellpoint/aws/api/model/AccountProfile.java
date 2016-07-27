@@ -152,12 +152,6 @@ public class AccountProfile extends AbstractDocument {
 	 */
 
 	private String href;
-	
-	/**
-	 * 
-	 */
-	
-	private String emailVerificationToken;
 
 	/**
 	 * 
@@ -357,14 +351,6 @@ public class AccountProfile extends AbstractDocument {
 
 	public void setHref(String href) {
 		this.href = href;
-	}
-
-	public String getEmailVerificationToken() {
-		return emailVerificationToken;
-	}
-
-	public void setEmailVerificationToken(String emailVerificationToken) {
-		this.emailVerificationToken = emailVerificationToken;
 	}
 
 	public Photos getPhotos() {

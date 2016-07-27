@@ -266,7 +266,7 @@ public class TestRestApi {
 		
 		System.out.println(node.toString());
 		
-		httpResponse = RestResource.get(node.get("emailVerificationToken").asText())
+		httpResponse = RestResource.post(node.get("emailVerificationToken").asText())
 				.execute();
 		
 		System.out.println(httpResponse.getAsString());

@@ -7,8 +7,7 @@ import java.util.concurrent.Executors;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.api.dto.AccountProfileDTO;
-import com.nowellpoint.aws.api.model.AccountProfile;
+import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -24,7 +23,7 @@ public class EmailService {
 	
 	private static final SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
 	
-	public void sendEmailVerification(AccountProfile account) {
+	public void sendEmailVerificationMessage(Account account, String emailVerificationUrl) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -34,7 +33,7 @@ public class EmailService {
 			    
 			    Email to = new Email();
 			    to.setEmail(account.getUsername());
-			    to.setName(account.getName());
+			    to.setName(account.getFullName());
 			    
 			    Content content = new Content();
 			    content.setType("text/html");
@@ -42,8 +41,8 @@ public class EmailService {
 			    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", account.getName());
-			    personalization.addSubstitution("%emailVerificationToken%", account.getEmailVerificationToken());
+			    personalization.addSubstitution("%name%", account.getFullName());
+			    personalization.addSubstitution("%emailVerificationToken%", emailVerificationUrl);
 			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);
@@ -57,7 +56,7 @@ public class EmailService {
 			    	request.endpoint = "mail/send";
 			    	request.body = mail.build();
 			    	Response response = sendgrid.api(request);
-			    	LOGGER.info(response.statusCode);
+			    	LOGGER.info("sendEmailVerificationMessage: " + response.statusCode + " " + response.body);
 			    } catch (IOException e) {
 			    	LOGGER.error(e);
 			    }
@@ -65,7 +64,7 @@ public class EmailService {
 		});
 	}
 	
-	public void sendWelcome(AccountProfileDTO account) {
+	public void sendWelcomeMessage(Account account) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -75,7 +74,7 @@ public class EmailService {
 			    
 			    Email to = new Email();
 			    to.setEmail(account.getUsername());
-			    to.setName(account.getName());
+			    to.setName(account.getFullName());
 			    
 			    Content content = new Content();
 			    content.setType("text/html");
@@ -83,7 +82,7 @@ public class EmailService {
 			    	    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", account.getName());
+			    personalization.addSubstitution("%name%", account.getFullName());
 			    personalization.addSubstitution("%username%", account.getUsername());
 			    
 			    Mail mail = new Mail();
@@ -98,7 +97,7 @@ public class EmailService {
 			    	request.endpoint = "mail/send";
 			    	request.body = mail.build();
 			    	Response response = sendgrid.api(request);
-			    	LOGGER.info(response.statusCode);
+			    	LOGGER.info("sendWelcomeMessage: " + response.statusCode + " " + response.body);
 			    } catch (IOException e) {
 			    	LOGGER.error(e);
 			    }

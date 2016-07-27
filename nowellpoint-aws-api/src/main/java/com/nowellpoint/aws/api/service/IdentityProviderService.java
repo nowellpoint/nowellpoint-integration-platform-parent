@@ -5,8 +5,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -136,6 +139,25 @@ public class IdentityProviderService extends AbstractCacheService {
 		return account;
 	}
 	
+	public Account getAccountByHref(String href) {
+		
+		Account account = null;
+		
+		HttpResponse httpResponse = RestResource.get(href)
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() == 200) {
+			account = httpResponse.getEntity(Account.class);
+		} else {
+			LOGGER.error(httpResponse.getAsString());
+		}
+		
+		return account;
+	}
+	
 	/**
 	 * 
 	 * @param resource
@@ -170,6 +192,7 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	public Account updateAccount(Account account) {	
 		HttpResponse httpResponse = RestResource.post(account.getHref())
+				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.body(account)
@@ -329,5 +352,22 @@ public class IdentityProviderService extends AbstractCacheService {
 			AccessToken accessToken = client.getResource(token.getStormpathAccessTokenHref(), AccessToken.class);
 			accessToken.delete();
 		});
+	}
+	
+	public String verifyEmail(String token) {		
+		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.basicAuthorization(System.getProperty(Properties.STORMPATH_API_KEY_ID), System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.path("accounts")
+				.path("emailVerificationTokens")
+				.path(token)
+				.execute();
+		
+		ObjectNode response = httpResponse.getEntity(ObjectNode.class);
+
+		if (httpResponse.getStatusCode() != Status.OK.getStatusCode()) {
+			LOGGER.error(response.toString());
+		}
+		
+		return response.get("href").asText();
 	}
 }
