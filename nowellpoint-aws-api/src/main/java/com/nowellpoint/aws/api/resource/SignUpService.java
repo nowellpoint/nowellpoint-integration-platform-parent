@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -157,15 +158,7 @@ public class SignUpService {
 		
 		String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
 		
-		URI emailVerificationUrl = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SignUpService.class)
-				.path("verify-email")
-				.queryParam("emailVerificationToken", "{emailVerificationToken}")
-				.build(emailVerificationToken);
-		
-		LOGGER.info(emailVerificationUrl);
-		
-		emailService.sendEmailVerificationMessage(account, emailVerificationUrl.toString());
+		emailService.sendEmailVerificationMessage(account, emailVerificationToken);
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)
@@ -186,30 +179,55 @@ public class SignUpService {
 				.build();
 	}
 	
-	@PermitAll
-	@GET
-	@Path("verify-email")
-	@Produces(MediaType.TEXT_HTML)
-	public Response verifyEmail(@QueryParam("emailVerificationToken") String emailVerificationToken) {
-		
-		String href = identityProviderService.verifyEmail(emailVerificationToken);
-		
-		String username = identityProviderService.getAccountByHref(href).getUsername();
-		
-		Account account = new Account();
-		account.setHref(href);
-		account.setUsername(username);
-		account.setEmail(username);
-		
-		identityProviderService.updateAccount(account);
-		
-		emailService.sendWelcomeMessage(account);
-		
-		String html = "<html>Your account was successfully verified and is ready for use.</html>";
-		
-		return Response.ok(html).build();
-		
-	}
+//	@PermitAll
+//	@GET
+//	@Path("verify-email")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response verifyEmail(@QueryParam("emailVerificationToken") String emailVerificationToken) {
+//		
+//		URI uri = null;
+//		
+//		try {
+//			uri = new URI(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT));
+//		} catch (URISyntaxException e) {
+//			ErrorDTO error = new ErrorDTO(500, e.getMessage());
+//			ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+//			builder.entity(error);
+//			throw new WebApplicationException(builder.build());
+//		}
+//		
+//		Map<String,Object> response = new HashMap<String,Object>();
+//		
+//		String href = null;
+//		
+//		try {
+//			href = identityProviderService.verifyEmail(emailVerificationToken);
+//		} catch (Exception e) {
+//			
+//			response.put("status", "error");
+//			
+//			return Response.temporaryRedirect(uri)
+//					.entity(response)
+//					.build();
+//		}
+//		
+//		String username = identityProviderService.getAccountByHref(href).getUsername();
+//		
+//		Account account = new Account();
+//		account.setHref(href);
+//		account.setUsername(username);
+//		account.setEmail(username);
+//		
+//		identityProviderService.updateAccount(account);
+//		
+//		emailService.sendWelcomeMessage(account);
+//		
+//		response.put("status", "success");
+//		
+//		return Response.seeOther(uri)
+//				.entity(response)
+//				.build();
+//	}
 	
 	@PermitAll
 	@POST

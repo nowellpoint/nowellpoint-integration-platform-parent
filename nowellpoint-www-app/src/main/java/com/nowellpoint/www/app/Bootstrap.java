@@ -45,6 +45,7 @@ import com.nowellpoint.www.app.view.SalesforceController;
 import com.nowellpoint.www.app.view.ServiceProviderController;
 import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
+import com.nowellpoint.www.app.view.VerifyEmailController;
 
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
@@ -158,6 +159,7 @@ public class Bootstrap implements SparkApplication {
         // routes
         //
         
+        new VerifyEmailController(cfg);
         new AdministrationController(cfg);
         new DashboardController(cfg);
         new ServiceProviderController(cfg);

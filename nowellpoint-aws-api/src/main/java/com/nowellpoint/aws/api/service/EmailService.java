@@ -3,7 +3,10 @@ package com.nowellpoint.aws.api.service;
 import com.sendgrid.SendGrid;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.Executors;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.logging.Logger;
 
@@ -23,7 +26,7 @@ public class EmailService {
 	
 	private static final SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
 	
-	public void sendEmailVerificationMessage(Account account, String emailVerificationUrl) {
+	public void sendEmailVerificationMessage(Account account, String emailVerificationToken) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -39,10 +42,16 @@ public class EmailService {
 			    content.setType("text/html");
 			    content.setValue("<html><body>some text here</body></html>");
 			    
+			    URI emailVerificationUrl = UriBuilder.fromUri(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT))
+						.queryParam("emailVerificationToken", "{emailVerificationToken}")
+						.build(emailVerificationToken);
+				
+				LOGGER.info(emailVerificationUrl);
+			    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
 			    personalization.addSubstitution("%name%", account.getFullName());
-			    personalization.addSubstitution("%emailVerificationToken%", emailVerificationUrl);
+			    personalization.addSubstitution("%emailVerificationToken%", emailVerificationUrl.toString());
 			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);

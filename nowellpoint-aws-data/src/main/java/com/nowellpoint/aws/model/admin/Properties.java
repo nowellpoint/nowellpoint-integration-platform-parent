@@ -41,6 +41,7 @@ public class Properties {
 	public static final String BRAINTREE_MERCHANT_ID = "braintree.merchant.id";
 	public static final String BRAINTREE_PUBLIC_KEY = "braintree.public.key";
 	public static final String BRAINTREE_PRIVATE_KEY = "braintree.private.key";
+	public static final String VERIFY_EMAIL_REDIRECT = "verify.email.redirect";
 	
 	public static String getProperty(String store, String key) {
 		return mapper.load(Property.class, store, key).getValue();
