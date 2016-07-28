@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.service;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +20,7 @@ import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.idp.model.Groups;
 import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.tools.TokenParser;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
@@ -33,6 +35,10 @@ import com.stormpath.sdk.oauth.OauthGrantAuthenticationResult;
 import com.stormpath.sdk.oauth.PasswordGrantRequest;
 import com.stormpath.sdk.oauth.RefreshGrantRequest;
 import com.stormpath.sdk.resource.ResourceException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 
 public class IdentityProviderService extends AbstractCacheService {
 	
@@ -349,8 +355,21 @@ public class IdentityProviderService extends AbstractCacheService {
 	public void revoke(String bearerToken) {		
 		Optional.ofNullable(get(Token.class, bearerToken)).ifPresent(token -> {
 			del(bearerToken);
-			AccessToken accessToken = client.getResource(token.getStormpathAccessTokenHref(), AccessToken.class);
-			accessToken.delete();
+			
+			Jws<Claims> claims = Jwts.parser()
+					.setSigningKey(Base64.getUrlEncoder().encodeToString(apiKey.getSecret().getBytes()))
+					.parseClaimsJws(bearerToken); 
+			
+			HttpResponse httpResponse = RestResource.delete(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+					.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+					.path("accessTokens")
+					.path(claims.getBody().getId())
+					.execute();
+			
+			if (httpResponse.getStatusCode() != Status.OK) {
+				ObjectNode response = httpResponse.getEntity(ObjectNode.class);
+				LOGGER.warn(response.toString()); 
+			}
 		});
 	}
 	

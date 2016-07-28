@@ -1,12 +1,11 @@
 package com.nowellpoint.aws.api;
 
+import java.io.File;
 import java.util.Optional;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
-//import org.wildfly.swarm.swagger.SwaggerArchive;
 
 import org.wildfly.swarm.logging.LoggingFraction;
 import org.wildfly.swarm.swagger.SwaggerArchive;
@@ -39,16 +38,15 @@ public class Main {
         // create the JAX-RS deployment archive
         // 
         
-        JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class)
+        JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class, "nowellpoint-api.war")
         		.addPackages(true, Package.getPackage("com.nowellpoint.aws.api"))
-        		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
-        		.addAsWebInfResource(new ClassLoaderAsset("META-INF/beans.xml", Main.class.getClassLoader()), "beans.xml")
-        		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties");
+        		.addAsWebInfResource(new File("src/main/resources/WEB-INF/web.xml"), "web.xml")
+        		.addAsWebInfResource(new File("src/main/resources/META-INF/beans.xml"), "beans.xml")
+        		.addAsWebResource(new File("src/main/resources/ValidationMessages.properties"));
         
         SwaggerArchive archive = deployment.as(SwaggerArchive.class)
         		.setVersion("1.0")
         		.setTitle("Nowellpoint Cloud Services API")
-        		.setContextRoot("/")
         		.setResourcePackages("com.nowellpoint.aws.api.resource");
         
         deployment.addAllDependencies();

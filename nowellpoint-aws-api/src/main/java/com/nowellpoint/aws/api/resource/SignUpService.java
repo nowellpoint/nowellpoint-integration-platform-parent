@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.resource;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,12 +17,10 @@ import javax.inject.Inject;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -36,7 +33,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ErrorDTO;
@@ -57,8 +53,6 @@ import com.nowellpoint.aws.model.admin.Properties;
 
 @Path("/signup")
 public class SignUpService {
-	
-	private static final Logger LOGGER = Logger.getLogger(SignUpService.class);
 	
 	@Inject
 	private EmailService emailService;
@@ -179,61 +173,11 @@ public class SignUpService {
 				.build();
 	}
 	
-//	@PermitAll
-//	@GET
-//	@Path("verify-email")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response verifyEmail(@QueryParam("emailVerificationToken") String emailVerificationToken) {
-//		
-//		URI uri = null;
-//		
-//		try {
-//			uri = new URI(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT));
-//		} catch (URISyntaxException e) {
-//			ErrorDTO error = new ErrorDTO(500, e.getMessage());
-//			ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-//			builder.entity(error);
-//			throw new WebApplicationException(builder.build());
-//		}
-//		
-//		Map<String,Object> response = new HashMap<String,Object>();
-//		
-//		String href = null;
-//		
-//		try {
-//			href = identityProviderService.verifyEmail(emailVerificationToken);
-//		} catch (Exception e) {
-//			
-//			response.put("status", "error");
-//			
-//			return Response.temporaryRedirect(uri)
-//					.entity(response)
-//					.build();
-//		}
-//		
-//		String username = identityProviderService.getAccountByHref(href).getUsername();
-//		
-//		Account account = new Account();
-//		account.setHref(href);
-//		account.setUsername(username);
-//		account.setEmail(username);
-//		
-//		identityProviderService.updateAccount(account);
-//		
-//		emailService.sendWelcomeMessage(account);
-//		
-//		response.put("status", "success");
-//		
-//		return Response.seeOther(uri)
-//				.entity(response)
-//				.build();
-//	}
-	
 	@PermitAll
 	@POST
 	@Path("verify-email/{emailVerificationToken}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response emailVerification(@PathParam("emailVerificationToken") String emailVerificationToken) {
+	public Response verifyEmail(@PathParam("emailVerificationToken") String emailVerificationToken) {
 		
 		String href = identityProviderService.verifyEmail(emailVerificationToken);
 		

@@ -48,12 +48,12 @@
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>swagger</artifactId>
 		</dependency>
-		<!-- 
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>jaxrs-multipart</artifactId>
+			<artifactId>logging</artifactId>
 		</dependency>
-		 -->
+		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-api</artifactId>
@@ -155,24 +155,30 @@
 				</executions>
 			</plugin>
 			<plugin>
-	<groupId>com.sebastian-daschner</groupId>
-	<artifactId>jaxrs-analyzer-maven-plugin</artifactId>
-	<version>0.9</version>
-	<executions>
-		<execution>
-			<goals>
-				<goal>analyze-jaxrs</goal>
-			</goals>
-			<configuration>
-				<!-- Available backends, defaults to plaintext -->
-				<!-- <backend>plaintext</backend> -->
-				<backend>asciidoc</backend>
-                <!-- Domain of the deployed project, defaults to example.com -->
-                <deployedDomain>nowellpoint.com</deployedDomain>
-			</configuration>
-		</execution>
-	</executions>
-</plugin>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<apiSources>
+						<apiSource>
+							<locations>com.nowellpoint.aws.api.resource</locations>
+							<info>
+								<title>Swagger Maven Plugin Sample</title>
+								<version>v1</version>
+							</info>
+							<swaggerDirectory>target</swaggerDirectory>
+						</apiSource>
+					</apiSources>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

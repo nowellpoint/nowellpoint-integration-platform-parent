@@ -127,7 +127,7 @@ public abstract class AbstractCacheService {
 	 * @return
 	 */
 	
-	public <T> T hget(Class<T> type, String key, String field) {
+	protected <T> T hget(Class<T> type, String key, String field) {
 		if (! Optional.ofNullable(type).isPresent()) {
 			throw new IllegalArgumentException("missing type parameter");
 		}
