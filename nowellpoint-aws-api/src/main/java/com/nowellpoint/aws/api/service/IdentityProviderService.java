@@ -20,7 +20,6 @@ import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.idp.model.Groups;
 import com.nowellpoint.aws.idp.model.SearchResult;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.tools.TokenParser;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
