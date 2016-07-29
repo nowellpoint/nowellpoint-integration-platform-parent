@@ -75,11 +75,40 @@ public class AccountProfileResource {
 				.build();
 	}
 	
-	@PUT
+	@GET
+	@Path("{id}/address")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAccountProfileAddress(@PathParam("id") String id) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		Address address = accountProfileService.getAccountProfileAddress(subject, id);
+		
+		return Response.ok(address)
+				.build();
+	}
+	
+	@POST
+	@Path("{id}/address")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateAccountProfileAddress(@PathParam("id") String id, Address address) {
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		accountProfileService.updateAccountProfileAddress(subject, id, address);
+		
+		return Response.ok(address)
+				.build();
+	}
+	
+	@POST
+	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response udpateAccountProfile(
-			@FormParam("id") @NotEmpty String id,
+			@PathParam("id") String id,
 			@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty String lastName,
     		@FormParam("company") String company,
@@ -90,12 +119,7 @@ public class AccountProfileResource {
     		@FormParam("fax") String fax,
     		@FormParam("mobilePhone") String mobilePhone,
     		@FormParam("phone") String phone,
-    		@FormParam("extension") String extension,
-    		@FormParam("street") String street,
-    		@FormParam("city") String city,
-    		@FormParam("state") String state,
-    		@FormParam("postalCode") String postalCode,
-    		@FormParam("countryCode") @NotEmpty String countryCode) {
+    		@FormParam("extension") String extension) {
 				
 		String subject = securityContext.getUserPrincipal().getName();
 				
@@ -137,29 +161,11 @@ public class AccountProfileResource {
 		resource.setExtension(extension);
 		resource.setSubject(subject);
 		
-		Address address = new Address();
-		address.setStreet(street);
-		address.setCity(city);
-		address.setState(state);
-		address.setPostalCode(postalCode);
-		address.setCountryCode(countryCode);
-		
-		resource.setAddress(address);
-		
 		accountProfileService.updateAccountProfile(resource);
 		
 		return Response.ok(resource)
 				.build();
 	}
-	
-	/**
-	 * @api {get} /identity/:id/picture Get Profile Picture
-	 * @apiName getPicture
-	 * @apiVersion 1.0.0
-	 * @apiGroup Identity
-	 * 
-	 * @apiParam {String} id The Identity's unique id
-	 */
 	
 	@GET
 	@Path("/{id}/picture")

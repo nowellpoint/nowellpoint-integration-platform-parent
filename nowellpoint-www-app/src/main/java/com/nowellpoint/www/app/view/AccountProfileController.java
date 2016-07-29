@@ -52,9 +52,19 @@ public class AccountProfileController extends AbstractController {
 		
 		get("/app/account-profile", (request, response) -> getMyAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
+		get("/app/account-profile/:id", (request, response) -> editAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		
 		get("/app/account-profile/:id/disable", (request, response) -> disableAccountProfile(request, response));
 		
-		post("/app/account-profile", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		post("/app/account-profile/:id", (request, response) -> updateAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		
+		//
+		// account address routes
+		//
+		
+		get("/app/account-profile/:id/address", (request, response) -> editAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
+		
+		post("/app/account-profile/:id/address", (request, response) -> updateAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
 		
 		// credit card routes
 		
@@ -88,7 +98,7 @@ public class AccountProfileController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private ModelAndView getMyAccountProfile(Request request, Response response) throws IOException {
+	private ModelAndView getMyAccountProfile(Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -114,6 +124,63 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", accountProfile);
 			
 		return new ModelAndView(model, "secure/account-profile.html");			
+	}
+	
+	private ModelAndView editAccountProfile(Request request, Response response) {
+		
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", accountProfile);
+			
+		return new ModelAndView(model, "secure/account-profile-edit.html");			
+	}
+	
+	private ModelAndView editAccountProfileAddress(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.path("address")
+				.execute();
+			
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		Address address = httpResponse.getEntity(Address.class);
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		model.put("address", address);
+			
+		return new ModelAndView(model, "secure/account-profile-address-edit.html");		
 	}
 	
 	/**
@@ -170,7 +237,7 @@ public class AccountProfileController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private ModelAndView updateAccountProfile(Request request, Response response) throws IOException {
+	private ModelAndView updateAccountProfile(Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -184,26 +251,39 @@ public class AccountProfileController extends AbstractController {
 			body.append("&").append(param).append("=").append(request.queryParams(param));
     	});
 
-		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-    			.acceptCharset("UTF-8")
 				.path("account-profile")
+				.path(request.params(":id"))
 				.body(body.toString())
 				.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo() + " : " + httpResponse.getHeaders().get("Location"));
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("accountProfile", accountProfile);
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+			
+			model.put("accountProfile", accountProfile);
+			model.put("mode", "view");
+			model.put("successMessage", getValue("update.profile.success"));
+		} else {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			//model.put("accountProfile", accountProfile);
+			//model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
+			model.put("mode", "edit");
+			model.put("errorMessage", error.getMessage());
+		}
 		
 		return new ModelAndView(model, "secure/account-profile.html");		
 	}
@@ -213,7 +293,65 @@ public class AccountProfileController extends AbstractController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws IOException
+	 */
+	
+	private ModelAndView updateAccountProfileAddress(Request request, Response response) {
+		
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		Address address = new Address()
+				.withCity(request.queryParams("city"))
+				.withCountryCode(request.queryParams("countryCode"))
+				.withPostalCode(request.queryParams("postalCode"))
+				.withState(request.queryParams("state"))
+				.withStreet(request.queryParams("street"));
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.header("x-api-key", API_KEY)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_JSON)
+    			.acceptCharset("UTF-8")
+				.path("account-profile")
+				.path(request.params(":id"))
+				.path("address")
+				.body(address)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			address = httpResponse.getEntity(Address.class);
+			
+			model.put("address", address);
+			model.put("mode", "view");
+			model.put("successMessage", getValue("update.address.success"));
+		} else {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			model.put("address", address);
+			//model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
+			model.put("mode", "edit");
+			model.put("errorMessage", error.getMessage());
+		}
+		
+		return new ModelAndView(model, "secure/account-profile-address-edit.html");		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String setSalesforceProfilePicture(Request request, Response response) throws IOException {

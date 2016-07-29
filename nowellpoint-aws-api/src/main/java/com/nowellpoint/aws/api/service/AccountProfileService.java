@@ -21,7 +21,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.braintreegateway.Address;
+import com.nowellpoint.aws.api.model.Address;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCardRequest;
@@ -128,9 +128,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		
-		if (original.getAddress().getCountryCode() != resource.getAddress().getCountryCode()) {
-			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
-			resource.getAddress().setCountry(isoCountry.getDescription());
+		if (resource.getAddress() == null) {
+			resource.setAddress(original.getAddress());
 		}
 		
 		if (resource.getLastLoginDate() == null) {
@@ -151,6 +150,44 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		hset( resource.getSubject(), AccountProfileDTO.class.getName(), resource );
 		
 		return resource;
+	}
+	
+	/**
+	 * 
+	 * @param subject
+	 * @param id
+	 * @param address
+	 * @return
+	 */
+	
+	public Address updateAccountProfileAddress(String subject, String id, Address address) {
+		AccountProfileDTO resource = findAccountProfile( id, subject );
+		
+		if (address.getCountryCode() != resource.getAddress().getCountryCode()) {
+			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
+			resource.getAddress().setCountry(isoCountry.getDescription());
+		}
+		
+		resource.setAddress(address);
+		
+		replace(resource);
+
+		hset( id, subject, resource );
+		hset( subject, AccountProfileDTO.class.getName(), resource );
+		
+		return address;
+	}
+	
+	/**
+	 * 
+	 * @param subject
+	 * @param id
+	 * @return
+	 */
+	
+	public Address getAccountProfileAddress(String subject, String id) {
+		AccountProfileDTO resource = findAccountProfile( id, subject );
+		return resource.getAddress();
 	}
 	
 	/**
@@ -300,7 +337,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				.postalCode(creditCard.getBillingAddress().getPostalCode())
 				.streetAddress(creditCard.getBillingAddress().getStreet());
 		
-		Result<Address> addressResult = gateway.address().create(customerResult.getTarget().getId(), addressRequest);
+		Result<com.braintreegateway.Address> addressResult = gateway.address().create(customerResult.getTarget().getId(), addressRequest);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -369,7 +406,10 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 					.postalCode(creditCard.getBillingAddress().getPostalCode())
 					.streetAddress(creditCard.getBillingAddress().getStreet());
 			
-			Result<Address> addressResult = gateway.address().update(creditCardResult.getTarget().getCustomerId(), creditCardResult.getTarget().getBillingAddress().getId(), addressRequest);
+			Result<com.braintreegateway.Address> addressResult = gateway.address().update(
+					creditCardResult.getTarget().getCustomerId(), 
+					creditCardResult.getTarget().getBillingAddress().getId(), 
+					addressRequest);
 			
 			if (creditCard.getPrimary()) {
 				resource.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {

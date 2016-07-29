@@ -61,12 +61,10 @@ $('.make-primary').click(function (e) {
 
 $(function () {
     var accountProfile = jQuery.data(document.body, "accountProfile");
-	$('.toggle').click(function (event) {
+	$('.toggle-user-profile').click(function (event) {
 		event.preventDefault();
-		var target = $(this).attr('href');
-		$(target).toggleClass('hidden show');
-        $("#show-user-profile").toggleClass('hidden show');
-        $("#cancel-edit-user-profile").toggleClass('hidden show');
+        $(".show-user-profile").toggleClass('hidden show');
+        $(".edit-user-profile").toggleClass('hidden show');
 	});
 });
 
