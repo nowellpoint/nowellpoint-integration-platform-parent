@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,6 @@ public class SalesforceController extends AbstractController {
 	private String oauth(Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-    			.header("x-api-key", API_KEY)
     			.path("salesforce")
     			.path("oauth")
     			.queryParameter("state", request.queryParams("id"))
@@ -98,8 +98,7 @@ public class SalesforceController extends AbstractController {
 		Account account = getAccount(request);
     	
     	HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", API_KEY)
+				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
     			.path("salesforce")
     			.path("connector")

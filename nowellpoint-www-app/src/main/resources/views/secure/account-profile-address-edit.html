@@ -33,10 +33,10 @@
                 <br>
 
                 <form class="form" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/address">
-                   
+
                     <div class="row">
-<div class="col-md-4"></div>
-                                <div class="col-md-4">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
                             <div class="form-group col-md-12">
                                 <label class="control-label" for="street">${labels["street"]}</label>
                                 <input type="text" class="form-control" name="street" id="street" value="${address.street!}" />
@@ -59,7 +59,7 @@
 
                             <div class="form-group col-md-12">
                                 <label class="control-label" for="countryCode">${labels["country"]}*</label>
-                                <select id="countryCode" name="countryCode" class="form-control" value="${address.countryCode!}" required>
+                                <select id="countryCode" name="countryCode" class="form-control" required>
                                     <#list countryList as country>
                                         <#if country.code==address.countryCode>
                                             <option value="${country.code}" selected="selected">${country.name}</option>
@@ -77,7 +77,7 @@
                                     <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                                 </div>
                             </div>
-                        
+
                         </div>
                     </div>
                     <div class="col-md-4"></div>

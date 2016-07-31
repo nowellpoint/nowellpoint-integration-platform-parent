@@ -5,13 +5,21 @@
         <div class="container-fluid container-fluid-spacious">
             <div class="row">
                 <br>
+                
+                <#if successMessage??>
+                        <div id="success" class="alert alert-success">
+                            <a class="close" data-dismiss="alert">&times;</a>
+                            <div class="text-center">${successMessage!}</div>
+                        </div>
+                    </#if>
+                
                 <br>
                 <div class="flextable">
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["user.profile"]}</h3>
                     </div>
                     <div class="flextable-item">
-                        <a id="edit-user-profile" href="${labels['base.path']}/${accountProfile.id}" class="btn btn-primary" role="button">${labels["edit.user.profile"]}</a>
+                        <a id="edit-user-profile" href="${labels['base.path']}/${accountProfile.id}/edit" class="btn btn-primary" role="button">${labels["edit.user.profile"]}</a>
                     </div>
                 </div>
                 <br>
@@ -103,8 +111,8 @@
                 <div class="col-md-12">
                     <dl class="dl-vertical">
                         <dd>${accountProfile.address.street!}
-                            <br> ${accountProfile.address.city!}, ${accountProfile.address.state!} ${accountProfile.address.postalCode!}
-                            <br> ${accountProfile.address.country!}&emsp;
+                            <br>${accountProfile.address.city!}, ${accountProfile.address.state!} ${accountProfile.address.postalCode!}
+                            <br>${accountProfile.address.country!}&emsp;
                         </dd>
                     </dl>
 

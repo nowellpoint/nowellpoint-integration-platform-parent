@@ -1,5 +1,9 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.halt;
+
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -10,17 +14,20 @@ import com.nowellpoint.aws.idp.model.Token;
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.Template;
+import spark.ModelAndView;
 import spark.Request;
 
 abstract class AbstractController {
 	
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
-	protected static final String API_KEY = System.getenv("NCS_API_KEY");
 	
 	private ResourceBundleModel messages;
 	private ResourceBundleModel labels;
+	private Configuration configuration;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
+		this.configuration = configuration;
 		this.labels = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
 		this.messages = new ResourceBundleModel(ResourceBundle.getBundle("messages", configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
 		configureRoutes(configuration);
@@ -53,16 +60,16 @@ abstract class AbstractController {
 		return account;
 	}
 	
-	protected String getBodyFromQueryParams(Request request) {
-		StringBuilder sb = new StringBuilder();
-		request.queryParams().stream().forEach(p-> {
-			if (! request.queryParams(p).isEmpty()) {
-				sb.append(p);
-				sb.append("=");
-				sb.append(request.queryParams(p));
-				sb.append("&");
-			}
-		});
-		return sb.toString();
+	protected String buildTemplate(ModelAndView modelAndView) {
+		Writer output = new StringWriter();
+		try {
+			Template template = configuration.getTemplate(modelAndView.getViewName());
+			template.process(modelAndView.getModel(), output);
+			output.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+			halt();
+		}
+		return output.toString();
 	}
 }

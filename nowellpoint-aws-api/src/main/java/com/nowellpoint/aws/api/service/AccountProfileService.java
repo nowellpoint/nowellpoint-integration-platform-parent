@@ -164,8 +164,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		AccountProfileDTO resource = findAccountProfile( id, subject );
 		
 		if (address.getCountryCode() != resource.getAddress().getCountryCode()) {
-			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
-			resource.getAddress().setCountry(isoCountry.getDescription());
+			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
+			address.setCountry(isoCountry.getDescription());
 		}
 		
 		resource.setAddress(address);

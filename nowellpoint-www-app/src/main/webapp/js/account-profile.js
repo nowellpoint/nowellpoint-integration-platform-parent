@@ -34,17 +34,10 @@ $('#confirm').click(function (e) {
         type: "DELETE",
         url: accountProfile.basePath + "/" + accountProfile.id + "/payment-methods/" + token,
         success: function () {
-            $(location).attr("href", accountProfile.basePath);
+            $(location).attr("href", accountProfile.basePath + "/" + accountProfile.id);
         }
     });
     $('#confirmDialog').modal('hide');
-});
-
-
-
-$('#profileDialog').on('show.bs.modal', function(e) {
-    $title = $('.profile-dialog').data('title');
-    $(this).find('.modal-title').text($title);
 });
 
 
@@ -54,7 +47,7 @@ $('.make-primary').click(function (e) {
         type: "POST",
         url: $(this).attr("href"),
         success: function () {
-            $(location).attr("href", accountProfile.basePath);
+            $(location).attr("href", accountProfile.basePath + "/" + accountProfile.id);
         }
     });
 });

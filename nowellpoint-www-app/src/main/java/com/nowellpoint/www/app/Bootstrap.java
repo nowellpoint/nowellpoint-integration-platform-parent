@@ -6,8 +6,6 @@ import static spark.Spark.get;
 import static spark.Spark.halt;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +17,6 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -47,10 +44,7 @@ import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.VerifyEmailController;
 
-import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapperBuilder;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
 import spark.ModelAndView;
@@ -178,34 +172,13 @@ public class Bootstrap implements SparkApplication {
         // exception handlers
         //
         
-        exception(NotAuthorizedException.class, (exception, request, response) -> {
-        	
-        	ResourceBundleModel resourceBundleModel = new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.US), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()); 
-        	
-        	Map<String, Object> model = new HashMap<String, Object>();
-        	model.put("errorMessage", exception.getMessage());
-    		model.put("messages", resourceBundleModel);
-        	
-        	Template template;
-			try {
-				template = cfg.getTemplate("login.html");
-				Writer output = new StringWriter();
-				template.process(model, output);
-				response.body(output.toString());
-				output.flush();
-			} catch (Exception e) {
-				e.printStackTrace();
-				halt();
-			}  	
+        exception(BadRequestException.class, (exception, request, response) -> {
+            response.status(400);
+            response.body(exception.getMessage());
         });
         
         exception(NotFoundException.class, (exception, request, response) -> {
             response.status(404);
-            response.body(exception.getMessage());
-        });
-        
-        exception(BadRequestException.class, (exception, request, response) -> {
-        	response.status(400);
             response.body(exception.getMessage());
         });
         
@@ -279,6 +252,7 @@ public class Bootstrap implements SparkApplication {
     		request.attribute("token", token);
     		request.attribute("account", account);
     	} else {
+    		response.cookie("/", "redirectUrl", request.pathInfo(), 72000, Boolean.TRUE);
     		response.redirect("/login");
     		halt();
     	}

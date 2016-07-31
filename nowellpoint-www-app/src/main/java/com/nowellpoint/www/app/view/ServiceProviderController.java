@@ -55,7 +55,6 @@ public class ServiceProviderController extends AbstractController {
 		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.queryParameter("localeSidKey", "en_US")
@@ -94,7 +93,6 @@ public class ServiceProviderController extends AbstractController {
 		String id = request.params(":id");
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.path(id)
@@ -122,7 +120,6 @@ public class ServiceProviderController extends AbstractController {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.path(id)

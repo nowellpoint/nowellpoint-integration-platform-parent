@@ -365,7 +365,7 @@ public class IdentityProviderService extends AbstractCacheService {
 					.path(claims.getBody().getId())
 					.execute();
 			
-			if (httpResponse.getStatusCode() != Status.OK) {
+			if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
 				ObjectNode response = httpResponse.getEntity(ObjectNode.class);
 				LOGGER.warn(response.toString()); 
 			}

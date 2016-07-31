@@ -1,9 +1,14 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.exception;
 import static spark.Spark.get;
+import static spark.Spark.halt;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -19,6 +24,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 
 import freemarker.template.Configuration;
+import freemarker.template.Template;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -33,11 +39,13 @@ public class AuthenticationController extends AbstractController {
 	@Override
 	public void configureRoutes(Configuration configuration) {
         
-        get("/login", (request, response) -> getLogin(request, response), new FreeMarkerEngine(configuration));
+        get("/login", (request, response) -> showLogin(request, response), new FreeMarkerEngine(configuration));
 		
 		post("/login", (request, response) -> login(request, response));
         
         get("/logout", (request, response) -> logout(request, response));
+        
+        exception(NotAuthorizedException.class, (exception, request, response) -> handleNotAuthorizedException(exception, request, response, configuration));
 	}
 	
 	/**
@@ -47,7 +55,7 @@ public class AuthenticationController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView getLogin(Request request, Response response) {
+	private ModelAndView showLogin(Request request, Response response) {
 		return new ModelAndView(getModel(), "login.html");
 	}
 	
@@ -62,7 +70,6 @@ public class AuthenticationController extends AbstractController {
     	
     	HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
     			.accept(MediaType.APPLICATION_JSON)
-    			.header("x-api-key", API_KEY)
     			.path("oauth")
     			.path("token")
     			.basicAuthorization(request.queryParams("username"), request.queryParams("password"))
@@ -90,8 +97,13 @@ public class AuthenticationController extends AbstractController {
     	} catch (IOException e) {
     		throw new InternalServerErrorException(e);
     	}
-    		
-    	response.redirect("/app/start");
+    	
+    	if (request.cookie("redirectUrl") != null) {
+    		response.redirect(request.cookie("redirectUrl"));
+    		response.removeCookie("redirectUrl");
+    	} else {
+    		response.redirect("/app/start");
+    	}
     		
     	return "";
 	}
@@ -118,7 +130,6 @@ public class AuthenticationController extends AbstractController {
         	}
     		
     		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-					.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 	    			.path("oauth")
 	    			.path("token")
@@ -138,5 +149,22 @@ public class AuthenticationController extends AbstractController {
     	response.redirect("/");
     	
     	return "";
+	}
+	
+	private void handleNotAuthorizedException(Exception exception, Request request, Response response, Configuration configuration) {
+		Map<String, Object> model = getModel();
+    	model.put("errorMessage", exception.getMessage());
+    	
+		Template template;
+		try {
+			template = configuration.getTemplate("login.html");
+			Writer output = new StringWriter();
+			template.process(model, output);
+			response.body(output.toString());
+			output.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+			halt();
+		}  
 	}
 }

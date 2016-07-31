@@ -51,7 +51,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <#if account.groups.items??>
+                <#if (account.groups.items)??>
                     <#list account.groups.items as group>
                         <#if group.name=="System Administrator">
                             <li>

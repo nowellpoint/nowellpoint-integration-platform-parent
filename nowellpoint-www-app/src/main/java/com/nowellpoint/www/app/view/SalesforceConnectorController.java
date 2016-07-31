@@ -205,7 +205,6 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -251,7 +250,6 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -279,7 +277,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path("connectors")
@@ -431,7 +428,6 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -527,7 +523,6 @@ public class SalesforceConnectorController extends AbstractController {
 		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -559,7 +554,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -584,7 +578,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.header("Content-Type", "application/x-www-form-urlencoded")
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -615,7 +608,6 @@ public class SalesforceConnectorController extends AbstractController {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -644,7 +636,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String message = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.queryParameter("localeSidKey", "en_US")
@@ -693,7 +684,6 @@ public class SalesforceConnectorController extends AbstractController {
 		ServiceProvider provider = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("providers")
 				.path(serviceProviderId)
@@ -748,7 +738,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -798,7 +787,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -859,7 +847,6 @@ public class SalesforceConnectorController extends AbstractController {
 		try {
 			httpResponse = RestResource.get(API_ENDPOINT)
 					.accept(MediaType.APPLICATION_JSON)
-					.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 					.path("connectors")
 					.path("salesforce")
@@ -917,7 +904,6 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -950,7 +936,6 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -1013,7 +998,6 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
-					.header("x-api-key", API_KEY)
 					.bearerAuthorization(token.getAccessToken())
 					.path("connectors")
 	    			.path("salesforce")
@@ -1062,7 +1046,6 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -1125,7 +1108,6 @@ public class SalesforceConnectorController extends AbstractController {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -1154,7 +1136,6 @@ public class SalesforceConnectorController extends AbstractController {
 	private SalesforceConnector getSalesforceConnector(Token token, String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")

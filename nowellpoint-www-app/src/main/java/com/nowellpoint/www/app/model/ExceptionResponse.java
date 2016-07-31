@@ -1,5 +1,8 @@
 package com.nowellpoint.www.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExceptionResponse {
 	
 	private String message;

@@ -342,4 +342,64 @@ public class AccountProfile extends Resource {
 	public void addCreditCard(CreditCard creditCard) {
 		this.getCreditCards().add(creditCard);
 	}
+	
+	public AccountProfile withId(String id) {
+		setId(id);
+		return this;
+	}
+	
+	public AccountProfile withLastName(String lastName) {
+		setLastName(lastName);
+		return this;
+	}
+	
+	public AccountProfile withFirstName(String firstName) {
+		setFirstName(firstName);
+		return this;
+	}
+	
+	public AccountProfile withCompany(String company) {
+		setCompany(company);
+		return this;
+	}
+	
+	public AccountProfile withDivision(String division) {
+		setDivision(division);
+		return this;
+	}
+	
+	public AccountProfile withDepartment(String department) {
+		setDepartment(department);
+		return this;
+	}
+	
+	public AccountProfile withTitle(String title) {
+		setTitle(title);
+		return this;
+	}
+	
+	public AccountProfile withEmail(String email) {
+		setEmail(email);
+		return this;
+	}
+	
+	public AccountProfile withPhone(String phone) {
+		setPhone(phone);
+		return this;
+	}
+	
+	public AccountProfile withExtension(String extension) {
+		setExtension(extension);
+		return this;
+	}
+	
+	public AccountProfile withFax(String fax) {
+		setFax(fax);
+		return this;
+	}
+	
+	public AccountProfile withMobilePhone(String mobilePhone) {
+		setMobilePhone(mobilePhone);
+		return this;
+	}
 }

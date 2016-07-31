@@ -46,7 +46,6 @@ public class VerifyEmailController extends AbstractController {
 	private ModelAndView getVerifyEmail(Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
     	
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.path("signup")
 				.path("verify-email")
 				.path(request.queryParams("emailVerificationToken"))

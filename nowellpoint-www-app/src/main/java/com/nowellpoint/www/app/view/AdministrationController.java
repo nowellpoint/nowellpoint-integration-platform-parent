@@ -62,7 +62,6 @@ public class AdministrationController extends AbstractController {
 		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
 				.execute();
@@ -84,7 +83,6 @@ public class AdministrationController extends AbstractController {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
 				.execute();
@@ -105,7 +103,6 @@ public class AdministrationController extends AbstractController {
 		Account account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("x-api-key", API_KEY)
 				.bearerAuthorization(token.getAccessToken())
 				.path("properties")
 				.execute();
