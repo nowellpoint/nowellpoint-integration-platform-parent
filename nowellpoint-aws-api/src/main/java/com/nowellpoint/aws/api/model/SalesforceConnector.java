@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.model;
 
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.SalesforceConnectionCodec;
@@ -28,6 +29,8 @@ public class SalesforceConnector extends AbstractDocument {
 	private Organization organization;
 	
 	private String tag;
+	
+	private Set<Environment> environments;
 	
 	private List<ServiceInstance> serviceInstances;
 	
@@ -65,6 +68,14 @@ public class SalesforceConnector extends AbstractDocument {
 
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	public Set<Environment> getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(Set<Environment> environments) {
+		this.environments = environments;
 	}
 
 	public List<ServiceInstance> getServiceInstances() {

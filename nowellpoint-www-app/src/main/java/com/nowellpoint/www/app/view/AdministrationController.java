@@ -61,19 +61,19 @@ public class AdministrationController extends AbstractController {
 		
 		Account account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("cache")
-				.execute();
-		
-		ObjectNode info = httpResponse.getEntity(ObjectNode.class);
-		
-		String[] tokens = info.get("info").asText().split("\\s+");
-		Arrays.asList(tokens).stream().forEach(t -> System.out.println(t));
+//		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+//				.bearerAuthorization(token.getAccessToken())
+//				.path("cache")
+//				.execute();
+//		
+//		ObjectNode info = httpResponse.getEntity(ObjectNode.class);
+//		
+//		String[] tokens = info.get("info").asText().split("\\s+");
+//		Arrays.asList(tokens).stream().forEach(t -> System.out.println(t));
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("info", info.get("info").asText());
+		//model.put("info", info.get("info").asText());
 		
 		return new ModelAndView(model, "secure/cache.html");
 		
