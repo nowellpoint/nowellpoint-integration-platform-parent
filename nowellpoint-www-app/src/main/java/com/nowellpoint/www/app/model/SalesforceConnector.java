@@ -23,8 +23,6 @@ public class SalesforceConnector extends Resource {
 	
 	private List<Environment> environments;
 	
-	private List<EventListener> eventListeners;
-	
 	public SalesforceConnector() {
 		
 	}
@@ -81,17 +79,6 @@ public class SalesforceConnector extends Resource {
 
 	public void setEnvironments(List<Environment> environments) {
 		this.environments = environments;
-	}
-
-	public List<EventListener> getEventListeners() {
-		if (eventListeners == null) {
-			setEventListeners(new ArrayList<EventListener>());
-		}
-		return eventListeners;
-	}
-
-	public void setEventListeners(List<EventListener> eventListeners) {
-		this.eventListeners = eventListeners;
 	}
 
 	@JsonIgnore
