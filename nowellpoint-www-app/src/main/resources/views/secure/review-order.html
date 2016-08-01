@@ -14,7 +14,16 @@
                 </div>
                 <div class="hr-divider"></div>
                 <br>
-                <div id="status-message"></div>
+                
+                <div class="form-group">
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+                </div>
+                
                 <br>
 
                 <dl class="dl-horizontal">

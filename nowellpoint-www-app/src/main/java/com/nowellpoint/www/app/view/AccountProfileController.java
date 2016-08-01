@@ -2,13 +2,10 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.delete;
 import static spark.Spark.get;
-import static spark.Spark.halt;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -30,7 +27,6 @@ import com.nowellpoint.www.app.model.ExceptionResponse;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;

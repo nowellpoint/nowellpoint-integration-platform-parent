@@ -4,69 +4,77 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid">
-            
-            <div id="status-message"></div>
-
+        <div class="container-fluid container-fluid-spacious">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <div class="row">
-
-                        <a href="/app/connectors/salesforce/${salesforceConnector.id}">
-                            <span class="icon icon-back fa-1x">${(salesforceConnector.organization.name)!}</span>
-                        </a>
+                <br>
+                <div id="status-message"></div>
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">
+                            ${(salesforceConnector.organization.name)!}
+                        </h3>
+                                
                     </div>
-
-                    <div class="row">
-
-                        <div class="container">
-
-                            <#list serviceProviders?sort_by( "name") as serviceProvider>
-
-                                <#list serviceProvider.services?sort_by( "serviceName") as service>
-
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">${service.serviceName}</h3>
-                                        </div>
-                                        <div class="panel-body">
-                                            <p>${service.description}</p>
-                                            <p><b>${labels["developed.by"]}:</b> ${service.company}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">${labels["plans"]}</h3>
-                                        </div>
-                                        <div class="panel-body">
-                                            <#list service.plans?sort_by( "unitPrice")?reverse as plan>
-                                                <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                                                    <div class="panel price panel-white">
-                                                        <div class="panel-heading arrow_box text-center">
-                                                            <h3>${plan.planName}</h3>
-                                                        </div>
-                                                        <div class="panel-body text-center">
-                                                            <p class="lead" style="font-size:40px"><strong>${plan.currencySymbol}${plan.unitPrice?string["0.00"]} / ${plan.billingFrequencyPer}</strong></p>
-                                                        </div>
-                                                        <ul class="list-group list-group-flush text-center">
-                                                            <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["transactions"]} ${plan.transactions}</li>
-                                                            <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["support"]} ${plan.support}</li>
-                                                        </ul>
-                                                        <div class="panel-footer">
-                                                            <a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}">${labels["add.plan"]}</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </#list>
-                                        </div>
-                                    </div>
-                                </#list>
-                            </#list>
-                        </div>
-                    </div>
+                    <div class="flextable-item">
+                        <a id="cancel" href="${labels['base.path']}/${salesforceConnector.id}" class="btn btn-lg btn-primary-outline" role="button">${labels["cancel"]}</a>
+                     </div>
+                   
                 </div>
+                <br>
+                <div class="hr-divider"></div>
+            </div>
+            <div class="row">
+                <br>
+                <br>
+
+                <div class="container">
+
+                    <#list serviceProviders?sort_by( "name") as serviceProvider>
+
+                        <#list serviceProvider.services?sort_by( "serviceName") as service>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">${service.serviceName}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <p>${service.description}</p>
+                                    <p><b>${labels["developed.by"]}:</b> ${service.company}</p>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">${labels["plans"]}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <#list service.plans?sort_by( "unitPrice")?reverse as plan>
+                                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                                            <div class="panel price panel-white">
+                                                <div class="panel-heading arrow_box text-center">
+                                                    <h3>${plan.planName}</h3>
+                                                </div>
+                                                <div class="panel-body text-center">
+                                                    <p class="lead" style="font-size:40px"><strong>${plan.currencySymbol}${plan.unitPrice?string["0.00"]} / ${plan.billingFrequencyPer}</strong></p>
+                                                </div>
+                                                <ul class="list-group list-group-flush text-center">
+                                                    <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["transactions"]} ${plan.transactions}</li>
+                                                    <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["support"]} ${plan.support}</li>
+                                                </ul>
+                                                <div class="panel-footer">
+                                                    <a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}">${labels["add.plan"]}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </#list>
+                                </div>
+                            </div>
+                        </#list>
+                    </#list>
+                </div>
+
+
             </div>
         </div>
-        
+
     </@t.page>

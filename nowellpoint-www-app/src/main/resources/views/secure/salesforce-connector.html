@@ -4,203 +4,262 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${labels["salesforce.connector"]}</h6>
-                        <h2 class="dashhead-title">${(salesforceConnector.organization.name)!}</h2>
+        <div class="container-fluid container-fluid-spacious">
+            <div class="row">
+                <br>
+
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div class="text-center">${successMessage!}</div>
                     </div>
-                    <div class="dashhead-toolbar">
-                        <p class="pull-right">
-                            <a href="${labels['base.path']}/${salesforceConnector.id}/providers" class="btn btn-lg btn-primary-outline" role="button">${labels["add.service"]}</a>
-                        </p>
+                </#if>
+
+                <br>
+
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["salesforce.connector"]}</h3>
+                    </div>
+                    <div class="flextable-item">
+                        <a id="edit-salesforce-connector" href="${labels['base.path']}/${salesforceConnector.id!}/edit" class="btn btn-primary" role="button">${labels["edit.salesforce.connector"]}</a>
                     </div>
                 </div>
+
+                <br>
+                <div class="hr-divider"></div>
             </div>
 
+            <div class="row">
+
+                <br>
+                <br>
+
+                <div class="col-md-3">
+
+                    <h6 class="dashhead-subtitle">${labels["identity"]}</h6>
+                    <br>
+
+                    <dl class="dl-vertical">
+                        <dt>${labels["identity.id"]}</dt>
+                        <dd>${(salesforceConnector.identity.id)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["name"]}</dt>
+                        <dd>${(salesforceConnector.identity.displayName)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["username"]}</dt>
+                        <dd>${(salesforceConnector.identity.username)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["email"]}</dt>
+                        <dd>${(salesforceConnector.identity.email)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["street"]}</dt>
+                        <dd>${(salesforceConnector.identity.addrStreet)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["city"]}</dt>
+                        <dd>${(salesforceConnector.identity.addrCity)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["country"]}</dt>
+                        <dd>${(salesforceConnector.identity.addrCountry)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["state"]}</dt>
+                        <dd>${(salesforceConnector.identity.addrState)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["zip.postal.code"]}</dt>
+                        <dd>${(salesforceConnector.identity.addrZip)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["mobile.phone"]}</dt>
+                        <dd>${(salesforceConnector.identity.mobilePhone)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["language"]}</dt>
+                        <dd>${(salesforceConnector.identity.language)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["locale"]}</dt>
+                        <dd>${(salesforceConnector.identity.locale)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["user.type"]}</dt>
+                        <dd>${(salesforceConnector.identity.userType)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["user.id"]}</dt>
+                        <dd>${(salesforceConnector.identity.userId)!}&emsp;</dd>
+                        <hr>
+
+                    </dl>
+                </div>
+
+                <div class="col-md-3">
+
+                    <h6 class="dashhead-subtitle">${labels["organization"]}</h6>
+                    <br>
+
+                    <dl class="dl-vertical">
+
+                        <dt>${labels["name"]}</dt>
+                        <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["phone"]}</dt>
+                        <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["primary.contact"]}</dt>
+                        <dd>${(salesforceConnector.organization.primaryContact)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["organization.type"]}</dt>
+                        <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["division"]}</dt>
+                        <dd>${(salesforceConnector.organization.division)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["instance.name"]}</dt>
+                        <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["fiscal.year.start.month"]}</dt>
+                        <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["default.locale.sid.key"]}</dt>
+                        <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["language.locale.key"]}</dt>
+                        <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["organization.id"]}</dt>
+                        <dd>${(salesforceConnector.organization.id)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["tag"]}</dt>
+                        <dd>${(salesforceConnector.tag)!}&emsp;</dd>
+                        <hr>
+
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+
+                </div>
+
+            </div>
+            
             <br>
-
-            <div class="hr-divider">
-                
-            </div>
-
             <br>
 
             <div class="row">
                 
-                <#if successMessage??>
-                    <#include "fragments/success-message.html" />
-                </#if>
+                
+                
+                <div class="col-md-3">
                     
-                <div class="col-sm-2">
-                    <#include "sidebar.html" />
+                    <h6 class="dashhead-subtitle">${labels["instance.urls"]}</h6>
+                    <br>
+
+
+                    <dl class="dl-vertical">
+
+                        <dt>${labels["metadata"]}</dt>
+                        <dd>${(salesforceConnector.identity.urls.metadata)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["partner"]}</dt>
+                        <dd>${(salesforceConnector.identity.urls.partner)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["rest"]}</dt>
+                        <dd>${(salesforceConnector.identity.urls.rest)!}&emsp;</dd>
+                        <hr>
+
+                    </dl>
+
+                </div>
+                <div class="col-md-3">
+                    
+                    <h6 class="dashhead-subtitle">&emsp;</h6>
+                    <br>
+
+                    <dl class="dl-vertical">
+                        <dt>${labels["sobjects"]}</dt>
+                        <dd>${(salesforceConnector.identity.urls.sobjects)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["profile"]}</dt>
+                        <dd>${(salesforceConnector.identity.urls.profile)!}&emsp;</dd>
+                        <hr>
+
+                        <dt>${labels["query"]}</dt>
+                        <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
+                        <hr>
+
+                    </dl>
+
                 </div>
 
-                <div class="col-sm-10">
+                <div class="col-md-6">
 
-                    <div class="col-md-2">
+                </div>
+            </div>
 
+
+
+            <br>
+            <br>
+
+            <div class="row">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["services"]}</h3>
                     </div>
-
-                    <div class="col-md-9">
-                        <dl class="dl-horizontal">
-
-                            <dt>${labels["identity.id"]}</dt>
-                            <dd>${(salesforceConnector.identity.id)!}</dd>
-
-                            <dt>${labels["name"]}</dt>
-                            <dd>${(salesforceConnector.identity.displayName)!}</dd>
-
-                            <dt>${labels["username"]}</dt>
-                            <dd>${(salesforceConnector.identity.username)!}</dd>
-
-                            <dt>${labels["email"]}</dt>
-                            <dd>${(salesforceConnector.identity.email)!}</dd>
-
-                            <dt>${labels["street"]}</dt>
-                            <dd>${(salesforceConnector.identity.addrStreet)!}</dd>
-
-                            <dt>${labels["city"]}</dt>
-                            <dd>${(salesforceConnector.identity.addrCity)!}</dd>
-
-                            <dt>${labels["country"]}</dt>
-                            <dd>${(salesforceConnector.identity.addrCountry)!}</dd>
-
-                            <dt>${labels["state"]}</dt>
-                            <dd>${(salesforceConnector.identity.addrState)!}</dd>
-
-                            <dt>${labels["zip.postal.code"]}</dt>
-                            <dd>${(salesforceConnector.identity.addrZip)!}</dd>
-
-                            <dt>${labels["mobile.phone"]}</dt>
-                            <dd>${(salesforceConnector.identity.mobilePhone)!}</dd>
-
-                            <dt>${labels["language"]}</dt>
-                            <dd>${(salesforceConnector.identity.language)!}</dd>
-
-                            <dt>${labels["locale"]}</dt>
-                            <dd>${(salesforceConnector.identity.locale)!}</dd>
-
-                            <dt>${labels["user.type"]}</dt>
-                            <dd>${(salesforceConnector.identity.userType)!}</dd>
-
-                            <dt>${labels["user.id"]}</dt>
-                            <dd>${(salesforceConnector.identity.userId)!}</dd>
-
-                            <dt>${labels["tag"]}</dt>
-                            <dd>${(salesforceConnector.tag)!}</dd>
-
-                        </dl>
-
-                        <div class="hr-divider">
-
-                        </div>
-
-                        <br>
-
-                        <dl class="dl-horizontal">
-
-                            <dt>${labels["name"]}</dt>
-                            <dd>${(salesforceConnector.organization.name)!}</dd>
-
-                            <dt>${labels["phone"]}</dt>
-                            <dd>${(salesforceConnector.organization.phone)!}</dd>
-
-                            <dt>${labels["primary.contact"]}</dt>
-                            <dd>${(salesforceConnector.organization.primaryContact)!}</dd>
-
-                            <dt>${labels["organization.type"]}</dt>
-                            <dd>${(salesforceConnector.organization.organizationType)!}</dd>
-
-                            <dt>${labels["division"]}</dt>
-                            <dd>${(salesforceConnector.organization.division)!}</dd>
-
-                            <dt>${labels["instance.name"]}</dt>
-                            <dd>${(salesforceConnector.organization.instanceName)!}</dd>
-
-                            <dt>${labels["fiscal.year.start.month"]}</dt>
-                            <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}</dd>
-
-                            <dt>${labels["default.locale.sid.key"]}</dt>
-                            <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}</dd>
-
-                            <dt>${labels["language.locale.key"]}</dt>
-                            <dd>${(salesforceConnector.organization.languageLocaleKey)!}</dd>
-
-                            <dt>${labels["organization.id"]}</dt>
-                            <dd>${(salesforceConnector.organization.id)!}</dd>
-
-                        </dl>
-
-                        <div class="hr-divider">
-
-                        </div>
-
-                        <br>
-
-                        <dl class="dl-horizontal">
-
-                            <dt>${labels["metadata"]}</dt>
-                            <dd>${(salesforceConnector.identity.urls.metadata)!}</dd>
-
-                            <dt>${labels["partner"]}</dt>
-                            <dd>${(salesforceConnector.identity.urls.partner)!}</dd>
-
-                            <dt>${labels["rest"]}</dt>
-                            <dd>${(salesforceConnector.identity.urls.rest)!}</dd>
-
-                            <dt>${labels["sobjects"]}</dt>
-                            <dd>${(salesforceConnector.identity.urls.sobjects)!}</dd>
-
-                            <dt>${labels["profile"]}</dt>
-                            <dd>${(salesforceConnector.identity.urls.profile)!}</dd>
-
-                            <dt>${labels["query"]}</dt>
-                            <dd>${(salesforceConnector.identity.urls.query)!}</dd>
-
-                        </dl>
-
+                    <div class="flextable-item">
+                        <a href="${labels['base.path']}/${salesforceConnector.id}/providers" id="add-service" class="btn btn-primary" role="button">${labels["add.service"]}</a>
                     </div>
-                    
-                    <div class="col-md-1">
-                        <a href="${labels['base.path']}/${salesforceConnector.id!}/edit"><span class="icon icon-edit fa-2x"></span></a>
-                    </div>
-
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">${labels["services"]}</div>
-                            <div class="panel-body">
-                                <div class="content table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <th class="col-xs-2">${labels["name"]}</th>
-                                            <th class="col-xs-3">${labels["service.name"]}</th>
-                                            <th class="col-xs-6">${labels["tag"]}</th>
-                                            <th class="col-xs-1 text-center">${labels["active"]}</th>
-                                        </thead>
-                                        <tbody>
-                                            <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
-                                                <tr id="${service.key}">
-                                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name!service.key}</a></td>
-                                                    <td>${service.serviceName!}</td>
-                                                    <td>${service.tag!}</td>
-                                                    <td class="text-center">
-                                                        <#if service.isActive>
-                                                            ${messages["yes"]}
-                                                        </#if>
-                                                        <#if ! service.isActive>
-                                                            ${messages["no"]}
-                                                        </#if>
-                                                    </td>
-                                                </tr>
-                                            </#list>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <br>
+                <div class="hr-divider"></div>
+                <br>
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th class="col-xs-2">${labels["name"]}</th>
+                            <th class="col-xs-3">${labels["service.name"]}</th>
+                            <th class="col-xs-6">${labels["tag"]}</th>
+                            <th class="col-xs-1 text-center">${labels["active"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
+                                <tr id="${service.key}">
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name!service.key}</a></td>
+                                    <td>${service.serviceName!}</td>
+                                    <td>${service.tag!}</td>
+                                    <td class="text-center">
+                                        <#if service.isActive>
+                                            ${messages["yes"]}
+                                        </#if>
+                                        <#if ! service.isActive>
+                                            ${messages["no"]}
+                                        </#if>
+                                    </td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

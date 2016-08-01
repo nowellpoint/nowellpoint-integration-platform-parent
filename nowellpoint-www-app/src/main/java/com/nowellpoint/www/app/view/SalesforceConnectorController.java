@@ -35,6 +35,7 @@ import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.EnvironmentVariable;
+import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.Plan;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.Service;
@@ -58,6 +59,9 @@ public class SalesforceConnectorController extends AbstractController {
 	}
 	
 	public void configureRoutes(Configuration cfg) {
+		
+		// salesforce connector routes
+		
 		get("/app/connectors/salesforce", (request, response) -> getSalesforceConnectors(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce", (request, response) -> createSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
@@ -69,6 +73,8 @@ public class SalesforceConnectorController extends AbstractController {
         post("/app/connectors/salesforce/:id", (request, response) -> updateSalesforceConnector(request, response), new FreeMarkerEngine(cfg));
         
         delete("/app/connectors/salesforce/:id", (request, response) -> deleteSalesforceConnector(request, response));
+        
+        //
         
         get("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> reviewPlan(request, response), new FreeMarkerEngine(cfg));
         
@@ -425,8 +431,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String serviceType = request.params(":serviceType");
 		String code = request.params(":code");
 		
-		Map<String, Object> model = getModel();
-		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -441,15 +445,34 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("plan")
 				.path(code)
 				.execute();
+		
+		Map<String, Object> model = getModel();
 				
 		if (httpResponse.getStatusCode() == Status.OK) {
-			System.out.println("success");
 			model.put("successMessage", getValue("saved.plan"));
 			return new ModelAndView(model, "secure/fragments/success-message.html");
 		} else {
 			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
 			return new ModelAndView(model, "secure/fragments/error-message.html");
 		}
+		
+		
+//		if (httpResponse.getStatusCode() != Status.OK) {
+//			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+//			
+//			Map<String, Object> model = getModel();
+//			model.put("errorMessage", error.getMessage());
+//			
+//			String output = buildTemplate(new ModelAndView(model, "secure/review-order.html"));
+//			
+//			throw new BadRequestException(output);	
+//		}
+//		
+//		response.cookie("successMessage", getValue("update.profile.success"), 3);
+//		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
+//		
+//		return "";	
+		
 	}
 	
 	/**
