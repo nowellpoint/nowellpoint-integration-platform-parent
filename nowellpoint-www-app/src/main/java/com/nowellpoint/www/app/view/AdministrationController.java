@@ -3,7 +3,6 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import javax.ws.rs.NotAuthorizedException;
 
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
@@ -40,7 +38,7 @@ public class AdministrationController extends AbstractController {
 		
 		get("/app/administration/properties", (request, response) -> getProperties(request, response), new FreeMarkerEngine(cfg));	
 		
-		delete("/app/administration/cache", (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
+		get("/app/administration/cache/purge", (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
 	}
 	
 	private ModelAndView getAdministrationHome(Request request, Response response) {

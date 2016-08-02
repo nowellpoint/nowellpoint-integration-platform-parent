@@ -70,6 +70,13 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
 	}
+	
+	public void addEnvironment(Environment environment) {
+		if (environments == null) {
+			environments = new HashSet<Environment>();
+		}
+		environments.add(environment);
+	}
 
 	public Set<ServiceInstanceDTO> getServiceInstances() {
 		return serviceInstances;

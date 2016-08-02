@@ -82,6 +82,51 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	}
 
 	public SalesforceConnectorDTO createSalesforceConnector(SalesforceConnectorDTO resource) {
+		
+		/**
+		 * environmentVariables" : [
+                {
+                    "variable" : "SECURITY_TOKEN", 
+                    "value" : null, 
+                    "locked" : true, 
+                    "encrypted" : true, 
+                    "environmentVariableValues" : null
+                }, 
+                {
+                    "variable" : "PASSWORD", 
+                    "value" : null, 
+                    "locked" : true, 
+                    "encrypted" : true, 
+                    "environmentVariableValues" : null
+                }, 
+                {
+                    "variable" : "INSTANCE", 
+                    "value" : null, 
+                    "locked" : true, 
+                    "encrypted" : false, 
+                    "environmentVariableValues" : null
+                }, 
+                {
+                    "variable" : "USERNAME", 
+                    "value" : null, 
+                    "locked" : true, 
+                    "encrypted" : false, 
+                    "environmentVariableValues" : null
+                }
+            ]
+		 */
+		
+		Environment environment = new Environment();
+		environment.setActive(Boolean.TRUE);
+		environment.setIndex(0);
+		environment.setLabel("Production");
+		environment.setLocked(Boolean.TRUE);
+		environment.setName("PRODUCTION");
+		environment.setTest(Boolean.FALSE);
+		environment.setEnvironmentVariables(null);
+		
+		resource.addEnvironment(environment);
+		
 		create( resource );
 		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
@@ -145,34 +190,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setIsActive(Boolean.FALSE);
 		serviceInstance.setEnvironmentVariableValues(service.getEnvironmentVariableValues());
 		serviceInstance.setPlan(plan);
-		
-		Set<Environment> environments = new HashSet<Environment>();
-		
-		Environment environment = new Environment();
-		environment.setActive(Boolean.TRUE);
-		environment.setIndex(0);
-		environment.setLabel("Production");
-		environment.setLocked(Boolean.TRUE);
-		environment.setName("PRODUCTION");
-		environment.setStatus("NOT STARTED");
-		environment.setTest(Boolean.FALSE);
-		environment.setEnvironmentVariables(service.getEnvironmentVariables());
-		environments.add(environment);
-		
-		for (int i = 0; i < service.getSandboxCount(); i++) {
-			environment = new Environment();
-			environment.setActive(Boolean.FALSE);
-			environment.setIndex(i + 1);
-			environment.setLocked(Boolean.FALSE);
-			environment.setName("SANDBOX_" + (i + 1));
-			environment.setStatus("NOT STARTED");
-			environment.setTest(Boolean.FALSE);
-			environment.setEnvironmentVariables(service.getEnvironmentVariables());
-			environments.add(environment);
-		}
-		
-		serviceInstance.setEnvironments(environments);
-		serviceInstance.setActiveEnvironments(serviceInstance.getEnvironments().stream().filter(e -> e.getActive()).count());
 		
 		resource.setSubject(subject);
 		resource.addServiceInstance(serviceInstance);

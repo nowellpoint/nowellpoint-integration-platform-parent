@@ -18,8 +18,6 @@ public class Environment {
 	
 	private String endpoint;
 	
-	private String status;
-	
 	private Boolean test;
 	
 	private String testMessage;
@@ -90,14 +88,6 @@ public class Environment {
 
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public Boolean getTest() {
