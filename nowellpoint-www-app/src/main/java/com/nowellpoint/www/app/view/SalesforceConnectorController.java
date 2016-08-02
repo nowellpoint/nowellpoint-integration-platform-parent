@@ -74,6 +74,12 @@ public class SalesforceConnectorController extends AbstractController {
         
         delete("/app/connectors/salesforce/:id", (request, response) -> deleteSalesforceConnector(request, response));
         
+        // salesforce connector environment routes
+        
+        get("/app/connectors/salesforce/:id/environments/add", (request, response) -> addEnvironment(request, response), new FreeMarkerEngine(cfg));
+        
+        get("/app/connectors/salesforce/:id/environments/:environmentName/edit", (request, response) -> editEnvironment(request, response), new FreeMarkerEngine(cfg));
+        
         //
         
         get("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> reviewPlan(request, response), new FreeMarkerEngine(cfg));
@@ -98,11 +104,11 @@ public class SalesforceConnectorController extends AbstractController {
         
         post("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> saveEnvironments(request, response), new FreeMarkerEngine(cfg));
         
-        post("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
+       // post("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
+       // get("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/:id/service/:key/variables/:environment", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));        
+      //  get("/app/connectors/salesforce/:id/service/:key/variables/:environment", (request, response) -> getEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));        
         
         get("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> getEventListeners(request, response), new FreeMarkerEngine(cfg));
         
@@ -117,6 +123,43 @@ public class SalesforceConnectorController extends AbstractController {
         post("/app/connectors/salesforce/:id/service/:key/targets", (request, response) -> saveTargets(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/deployment/:environment", (request, response) -> deploy(request, response), new FreeMarkerEngine(cfg));
+	}
+	
+	private ModelAndView addEnvironment(Request request, Response response) {	
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		
+		Environment environment = new Environment();
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("environment", environment);
+		
+		return new ModelAndView(model, "secure/environment.html");
+	}
+	
+	private ModelAndView editEnvironment(Request request, Response response) {	
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String environmentName = request.params(":environmentName");
+		
+		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		
+		Environment environment = salesforceConnector.getEnvironments()
+				.stream()
+				.filter(p -> p.getName().equals(environmentName))
+				.findFirst()
+				.orElse(new Environment());
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("environment", environment);
+		
+		return new ModelAndView(model, "secure/environment.html");
 	}
 	
 	/**
@@ -310,57 +353,57 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView getEnvironmentVariables(Request request, Response response) {		
-		Token token = getToken(request);
-		Account account = getAccount(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		String environmentName = request.params(":environment");
-		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
-		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-		
-		Environment environment = null;
-		
-		Map<String, Object> model = getModel();
-		
-		if (environmentName != null) {
-			
-			environment = serviceInstance.getEnvironments()
-					.stream()
-					.filter(p -> p.getName().equals(environmentName))
-					.findFirst()
-					.orElse(new Environment());
-			
-			if (environment.getEnvironmentVariables().size() == 0) {
-				environment.getEnvironmentVariables().add(new EnvironmentVariable());
-			}
-			
-			model.put("environment", environment);
-			
-			return new ModelAndView(model, "secure/fragments/environment-variables-table.html");
-		} else {
-			
-			environment = serviceInstance.getEnvironments()
-					.stream()
-					.filter(p -> p.getName().equals(serviceInstance.getSourceEnvironment()))
-					.findFirst()
-					.orElse(new Environment());
-			
-			if (environment.getEnvironmentVariables().size() == 0) {
-				environment.getEnvironmentVariables().add(new EnvironmentVariable());
-			}
-			
-			model.put("account", account);
-			model.put("salesforceConnector", salesforceConnector);
-			model.put("serviceInstance", serviceInstance);
-			model.put("environment", environment);
-			
-			return new ModelAndView(model, "secure/environment-variables.html");
-		}	
-	}
+//	private ModelAndView getEnvironmentVariables(Request request, Response response) {		
+//		Token token = getToken(request);
+//		Account account = getAccount(request);
+//		
+//		String id = request.params(":id");
+//		String key = request.params(":key");
+//		String environmentName = request.params(":environment");
+//		
+//		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+//		
+//		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+//		
+//		Environment environment = null;
+//		
+//		Map<String, Object> model = getModel();
+//		
+//		if (environmentName != null) {
+//			
+//			environment = serviceInstance.getEnvironments()
+//					.stream()
+//					.filter(p -> p.getName().equals(environmentName))
+//					.findFirst()
+//					.orElse(new Environment());
+//			
+//			if (environment.getEnvironmentVariables().size() == 0) {
+//				environment.getEnvironmentVariables().add(new EnvironmentVariable());
+//			}
+//			
+//			model.put("environment", environment);
+//			
+//			return new ModelAndView(model, "secure/fragments/environment-variables-table.html");
+//		} else {
+//			
+//			environment = serviceInstance.getEnvironments()
+//					.stream()
+//					.filter(p -> p.getName().equals(serviceInstance.getSourceEnvironment()))
+//					.findFirst()
+//					.orElse(new Environment());
+//			
+//			if (environment.getEnvironmentVariables().size() == 0) {
+//				environment.getEnvironmentVariables().add(new EnvironmentVariable());
+//			}
+//			
+//			model.put("account", account);
+//			model.put("salesforceConnector", salesforceConnector);
+//			model.put("serviceInstance", serviceInstance);
+//			model.put("environment", environment);
+//			
+//			return new ModelAndView(model, "secure/environment-variables.html");
+//		}	
+//	}
 	
 	/**
 	 * 
@@ -986,76 +1029,76 @@ public class SalesforceConnectorController extends AbstractController {
 		return new ModelAndView(model, "secure/fragments/environment-list.html");
 	}
 	
-	private ModelAndView saveEnvironmentVariables(Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		String sourceEnvironment = request.queryParams("sourceEnvironment");
-		
-		Map<String, Object> model = getModel();
-		
-		String[] variables = request.queryParamsValues("variable");
-		String[] values = request.queryParamsValues("value");
-		
-		ArrayNode node = new ObjectMapper().createArrayNode();
-
-		if (variables != null) {
-			for (int i = 0; i < variables.length; i++) {
-				if (variables != null && ! variables[i].trim().isEmpty()) {
-					node.addObject()
-						.put("value", values[i])
-						.put("variable", variables[i])
-						.put("encrypted", request.queryMap().get("encrypted" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
-				}
-			}
-		} else {
-			model.put("message", MessageProvider.getMessage(Locale.US, "nothingToSave"));
-			return new ModelAndView(model, "secure/fragments/error-message.html");
-		}
-
-		SalesforceConnector salesforceConnector = null;
-
-		String successMessage = null;
-
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.path("connectors")
-	    			.path("salesforce")
-					.path(id)
-					.path("service")
-					.path(key)
-					.path("variables")
-					.path(sourceEnvironment)
-					.body(node)
-	    			.execute();
-		
-		response.status(httpResponse.getStatusCode());
-		
-		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
-			successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
-				
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-				
-			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-				
-			Optional<Environment> environment = serviceInstance.getEnvironment(sourceEnvironment);
-				
-			if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
-				environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
-			}
-				
-			model.put("successMessage", successMessage);
-			model.put("serviceInstance", serviceInstance);
-			model.put("environment", environment.get());
-			return new ModelAndView(model, "secure/fragments/success-message.html");
-		} else {
-			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			return new ModelAndView(model, "secure/fragments/error-message.html");
-		}
-	}
+//	private ModelAndView saveEnvironmentVariables(Request request, Response response) {
+//		Token token = getToken(request);
+//		
+//		String id = request.params(":id");
+//		String key = request.params(":key");
+//		String sourceEnvironment = request.queryParams("sourceEnvironment");
+//		
+//		Map<String, Object> model = getModel();
+//		
+//		String[] variables = request.queryParamsValues("variable");
+//		String[] values = request.queryParamsValues("value");
+//		
+//		ArrayNode node = new ObjectMapper().createArrayNode();
+//
+//		if (variables != null) {
+//			for (int i = 0; i < variables.length; i++) {
+//				if (variables != null && ! variables[i].trim().isEmpty()) {
+//					node.addObject()
+//						.put("value", values[i])
+//						.put("variable", variables[i])
+//						.put("encrypted", request.queryMap().get("encrypted" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
+//				}
+//			}
+//		} else {
+//			model.put("message", MessageProvider.getMessage(Locale.US, "nothingToSave"));
+//			return new ModelAndView(model, "secure/fragments/error-message.html");
+//		}
+//
+//		SalesforceConnector salesforceConnector = null;
+//
+//		String successMessage = null;
+//
+//		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+//					.contentType(MediaType.APPLICATION_JSON)
+//					.accept(MediaType.APPLICATION_JSON)
+//					.bearerAuthorization(token.getAccessToken())
+//					.path("connectors")
+//	    			.path("salesforce")
+//					.path(id)
+//					.path("service")
+//					.path(key)
+//					.path("variables")
+//					.path(sourceEnvironment)
+//					.body(node)
+//	    			.execute();
+//		
+//		response.status(httpResponse.getStatusCode());
+//		
+//		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
+//			successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
+//				
+//			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+//				
+//			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+//				
+//			Optional<Environment> environment = serviceInstance.getEnvironment(sourceEnvironment);
+//				
+//			if (environment.isPresent() && environment.get().getEnvironmentVariables().size() == 0) {
+//				environment.get().getEnvironmentVariables().add(new EnvironmentVariable());
+//			}
+//				
+//			model.put("successMessage", successMessage);
+//			model.put("serviceInstance", serviceInstance);
+//			model.put("environment", environment.get());
+//			return new ModelAndView(model, "secure/fragments/success-message.html");
+//		} else {
+//			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
+//			return new ModelAndView(model, "secure/fragments/error-message.html");
+//		}
+//	}
 	
 	private ModelAndView deploy(Request request, Response response) {
 		Token token = getToken(request);

@@ -1,11 +1,8 @@
 package com.nowellpoint.aws.api.dto;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 
-import com.nowellpoint.aws.api.model.Environment;
-import com.nowellpoint.aws.api.model.EnvironmentVariableValue;
 import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.Plan;
 import com.nowellpoint.aws.api.model.Targets;
@@ -33,12 +30,6 @@ public class ServiceInstanceDTO implements Serializable {
 	private String sourceEnvironment;
 	
 	private String status;
-	
-	private Set<Environment> environments;
-	
-	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
-	
-	private Long activeEnvironments;
 	
 	private Set<EventListener> eventListeners;
 	
@@ -130,30 +121,6 @@ public class ServiceInstanceDTO implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Set<Environment> getEnvironments() {
-		return environments;
-	}
-
-	public void setEnvironments(Set<Environment> environments) {
-		this.environments = environments;
-	}
-
-	public Map<String, Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
-		return environmentVariableValues;
-	}
-
-	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
-		this.environmentVariableValues = environmentVariableValues;
-	}
-
-	public Long getActiveEnvironments() {
-		return activeEnvironments;
-	}
-
-	public void setActiveEnvironments(Long activeEnvironments) {
-		this.activeEnvironments = activeEnvironments;
 	}
 
 	public Set<EventListener> getEventListeners() {

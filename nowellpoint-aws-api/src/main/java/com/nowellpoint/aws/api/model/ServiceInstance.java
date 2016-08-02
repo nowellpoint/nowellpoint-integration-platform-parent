@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -34,12 +33,6 @@ public class ServiceInstance implements Serializable {
 	private String sourceEnvironment;
 	
 	private String status;
-	
-	private Set<Environment> environments;
-	
-	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
-	
-	private Long activeEnvironments;
 	
 	private Set<EventListener> eventListeners;
 	
@@ -141,30 +134,6 @@ public class ServiceInstance implements Serializable {
 		this.status = status;
 	}
 
-	public Set<Environment> getEnvironments() {
-		return environments;
-	}
-
-	public void setEnvironments(Set<Environment> environments) {
-		this.environments = environments;
-	}
-
-	public void addEnvironment(String name, Boolean active) {
-		environments.add(new Environment(name, active));
-	}
-	
-	public Map<String,Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
-		return environmentVariableValues;
-	}
-	
-	public Long getActiveEnvironments() {
-		return activeEnvironments;
-	}
-
-	public void setActiveEnvironments(Long activeEnvironments) {
-		this.activeEnvironments = activeEnvironments;
-	}
-
 	public Set<EventListener> getEventListeners() {
 		return eventListeners;
 	}
@@ -187,23 +156,5 @@ public class ServiceInstance implements Serializable {
 
 	public void setPlan(Plan plan) {
 		this.plan = plan;
-	}
-
-	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
-//		environments.stream().forEach(environment -> {
-//			if (environment.getEnvironmentVariables() == null) {
-//				environment.setEnvironmentVariables(new HashSet<EnvironmentVariable>());
-//			}
-//			environment.getEnvironmentVariables().stream().forEach(variable -> {
-//				if (environmentVariableValues.containsKey(variable.getVariable())) {
-//					if (variable.getEnvironmentVariableValues() == null) {
-//						
-//					}
-//					variable.setEnvironmentVariableValues(new HashSet<EnvironmentVariableValue>());
-//					variable.getEnvironmentVariableValues().addAll(environmentVariableValues.get(variable.getVariable()));
-//				}
-//			});
-//		});
-		this.environmentVariableValues = environmentVariableValues;
 	}
 }

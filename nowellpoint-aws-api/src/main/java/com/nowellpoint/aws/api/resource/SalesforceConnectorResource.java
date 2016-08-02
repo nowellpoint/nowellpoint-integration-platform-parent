@@ -250,7 +250,7 @@ public class SalesforceConnectorResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addEnvironments(subject, id, key, environments);
+		SalesforceConnectorDTO resource = null; //salesforceConnectorService.addEnvironments(subject, id, key, environments);
 		
 		return Response.ok(resource)
 				.build(); 
@@ -270,7 +270,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentName, environmentVariables);
+			//resource = salesforceConnectorService.addEnvironmentVariables(subject, id, key, environmentName, environmentVariables);
 		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -293,7 +293,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.deploy(subject, id, key, environmentName);
+			//resource = salesforceConnectorService.deploy(subject, id, key, environmentName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BadRequestException(e.getMessage());
@@ -360,7 +360,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.testConnection(subject, id, key, environmentName);
+			//resource = salesforceConnectorService.testConnection(subject, id, key, environmentName);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -381,7 +381,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.describeGlobal(subject, id, key);
+			//resource = salesforceConnectorService.describeGlobal(subject, id, key);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -402,7 +402,7 @@ public class SalesforceConnectorResource {
 		
 		SObject[] resource = null;
 		try {
-			resource = salesforceConnectorService.query(subject, id, key, queryString);
+			//resource = salesforceConnectorService.query(subject, id, key, queryString);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -423,7 +423,7 @@ public class SalesforceConnectorResource {
 		
 		Field[] resource = null;
 		try {
-			resource = salesforceConnectorService.describeSobject(subject, id, key, sobject);
+			//resource = salesforceConnectorService.describeSobject(subject, id, key, sobject);
 		} catch (IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
