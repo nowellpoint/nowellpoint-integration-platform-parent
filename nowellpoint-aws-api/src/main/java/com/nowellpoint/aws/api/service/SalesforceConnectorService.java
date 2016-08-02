@@ -1,35 +1,18 @@
 package com.nowellpoint.aws.api.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.xml.bind.JAXBException;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.nowellpoint.aws.api.dto.EnvironmentDTO;
-import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
@@ -41,20 +24,8 @@ import com.nowellpoint.aws.api.model.Plan;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
-import com.nowellpoint.aws.api.model.dynamodb.OutboundMessageHandlerConfiguration;
-import com.nowellpoint.aws.api.model.dynamodb.Callback;
-import com.nowellpoint.aws.api.tasks.BuildDefaultCallback;
 import com.sforce.soap.partner.Connector;
-import com.sforce.soap.partner.DescribeGlobalResult;
-import com.sforce.soap.partner.DescribeGlobalSObjectResult;
-import com.sforce.soap.partner.DescribeSObjectResult;
-import com.sforce.soap.partner.Field;
 import com.sforce.soap.partner.PartnerConnection;
-import com.sforce.soap.partner.QueryResult;
-import com.sforce.soap.partner.fault.ApiQueryFault;
-import com.sforce.soap.partner.fault.InvalidSObjectFault;
-import com.sforce.soap.partner.fault.LoginFault;
-import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 
@@ -115,17 +86,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
                 }
             ]
 		 */
-		
-		Environment environment = new Environment();
-		environment.setActive(Boolean.TRUE);
-		environment.setIndex(0);
-		environment.setLabel("Production");
-		environment.setLocked(Boolean.TRUE);
-		environment.setName("PRODUCTION");
-		environment.setTest(Boolean.FALSE);
-		environment.setEnvironmentVariables(null);
-		
-		resource.addEnvironment(environment);
 		
 		create( resource );
 		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );

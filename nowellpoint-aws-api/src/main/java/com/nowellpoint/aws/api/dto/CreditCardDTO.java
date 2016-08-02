@@ -1,9 +1,12 @@
-package com.nowellpoint.www.app.model;
+package com.nowellpoint.aws.api.dto;
 
 import java.util.Date;
 
-public class CreditCard {
-	
+import com.nowellpoint.aws.api.model.Address;
+import com.nowellpoint.aws.api.model.Contact;
+
+public class CreditCardDTO {
+
 	/**
 	 * 
 	 */
@@ -69,7 +72,7 @@ public class CreditCard {
 	 */
 	
 	private Boolean primary;
-
+	
 	/**
 	 * 
 	 */
@@ -85,8 +88,8 @@ public class CreditCard {
 	/**
 	 * 
 	 */
-	
-	public CreditCard() {
+
+	public CreditCardDTO() {
 		
 	}
 
@@ -97,7 +100,7 @@ public class CreditCard {
 	public void setCardType(String cardType) {
 		this.cardType = cardType;
 	}
-
+	
 	public String getCardholderName() {
 		return cardholderName;
 	}
@@ -130,14 +133,6 @@ public class CreditCard {
 		this.expirationYear = expirationYear;
 	}
 
-	public String getLastFour() {
-		return lastFour;
-	}
-
-	public void setLastFour(String lastFour) {
-		this.lastFour = lastFour;
-	}
-
 	public String getToken() {
 		return token;
 	}
@@ -152,6 +147,14 @@ public class CreditCard {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public String getLastFour() {
+		return lastFour;
+	}
+
+	public void setLastFour(String lastFour) {
+		this.lastFour = lastFour;
 	}
 
 	public Address getBillingAddress() {
@@ -169,7 +172,7 @@ public class CreditCard {
 	public void setBillingContact(Contact billingContact) {
 		this.billingContact = billingContact;
 	}
-	
+
 	public Boolean getPrimary() {
 		return primary;
 	}
@@ -192,40 +195,5 @@ public class CreditCard {
 
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
-	}
-	
-	public CreditCard withCardholderName(String cardholderName) {
-		setCardholderName(cardholderName);
-		return this;
-	}
-	
-	public CreditCard withNumber(String number) {
-		setNumber(number);
-		return this;
-	}
-	
-	public CreditCard withExpirationMonth(String expirationMonth) {
-		setExpirationMonth(expirationMonth);
-		return this;
-	}
-	
-	public CreditCard withExpirationYear(String expirationYear) {
-		setExpirationYear(expirationYear);
-		return this;
-	}
-	
-	public CreditCard withBillingAddress(Address address) {
-		setBillingAddress(address);
-		return this;
-	}
-	
-	public CreditCard withBillingContact(Contact billingContact) {
-		setBillingContact(billingContact);
-		return this;
-	}
-
-	public CreditCard withPrimary(Boolean primary) {
-		setPrimary(primary);
-		return this;
 	}
 }

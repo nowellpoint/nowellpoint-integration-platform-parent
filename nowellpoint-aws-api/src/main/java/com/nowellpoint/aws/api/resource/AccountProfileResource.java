@@ -38,8 +38,8 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
+import com.nowellpoint.aws.api.dto.CreditCardDTO;
 import com.nowellpoint.aws.api.model.Address;
-import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
@@ -280,14 +280,14 @@ public class AccountProfileResource {
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		CreditCard creditCard = accountProfileService.getCreditCard(subject, id, token);
+		CreditCardDTO resource = accountProfileService.getCreditCard(subject, id, token);
 		
-		if (creditCard == null) {
-			throw new NotFoundException(String.format("Credit Card for token %s was not found",token));
+		if (resource == null) {
+			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
 		}
 		
 		return Response
-				.ok(creditCard)
+				.ok(resource)
 				.build();
 	}
 	
@@ -295,17 +295,17 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
+	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		try {
-			accountProfileService.addCreditCard(subject, id, creditCard);
+			accountProfileService.addCreditCard(subject, id, resource);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
 		return Response
-				.ok(creditCard)
+				.ok(resource)
 				.build();
 	}
 	
@@ -316,15 +316,15 @@ public class AccountProfileResource {
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, MultivaluedMap<String, String> parameters) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		CreditCard creditCard = null;
+		CreditCardDTO resource = null;
 		try {
-			creditCard = accountProfileService.updateCreditCard(subject, id, token, parameters);
+			resource = accountProfileService.updateCreditCard(subject, id, token, parameters);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
 		return Response
-				.ok(creditCard)
+				.ok(resource)
 				.build();
 	}
 	
@@ -332,17 +332,17 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
+	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO resource) {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		try {
-			accountProfileService.updateCreditCard(subject, id, token, creditCard);
+			accountProfileService.updateCreditCard(subject, id, token, resource);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
 		return Response
-				.ok(creditCard)
+				.ok(resource)
 				.build();
 	}
 	

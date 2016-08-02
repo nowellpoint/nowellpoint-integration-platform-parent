@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.nowellpoint.aws.api.model.Address;
-import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.model.SystemReference;
 
@@ -165,7 +164,7 @@ public class AccountProfileDTO extends AbstractDTO {
 	 * 
 	 */
 	
-	private Set<CreditCard> creditCards;
+	private Set<CreditCardDTO> creditCards;
 	
 	/**
 	 * 
@@ -373,11 +372,11 @@ public class AccountProfileDTO extends AbstractDTO {
 		this.photos = photos;
 	}	
 	
-	public Set<CreditCard> getCreditCards() {
+	public Set<CreditCardDTO> getCreditCards() {
 		return creditCards;
 	}
 
-	public void setCreditCards(Set<CreditCard> creditCards) {
+	public void setCreditCards(Set<CreditCardDTO> creditCards) {
 		this.creditCards = creditCards;
 	}
 	
@@ -389,9 +388,9 @@ public class AccountProfileDTO extends AbstractDTO {
 		this.systemReferences = systemReferences;
 	}
 
-	public void addCreditCard(CreditCard creditCard) {
+	public void addCreditCard(CreditCardDTO creditCard) {
 		if (this.getCreditCards() == null) {
-			this.creditCards = new HashSet<CreditCard>();
+			this.creditCards = new HashSet<CreditCardDTO>();
 		}
 		this.creditCards.add(creditCard);
 	}

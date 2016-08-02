@@ -31,9 +31,9 @@ import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
+import com.nowellpoint.aws.api.dto.CreditCardDTO;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.model.AccountProfile;
-import com.nowellpoint.aws.api.model.CreditCard;
 import com.nowellpoint.aws.api.model.IsoCountry;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.model.SystemReference;
@@ -276,10 +276,10 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public CreditCard getCreditCard(String subject, String id, String token) {
+	public CreditCardDTO getCreditCard(String subject, String id, String token) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		
-		Optional<CreditCard> creditCard = resource.getCreditCards()
+		Optional<CreditCardDTO> creditCard = resource.getCreditCards()
 				.stream()
 				.filter(c -> token.equals(c.getToken()))
 				.findFirst();
@@ -288,7 +288,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 	}
 	
-	public void addCreditCard(String subject, String id, CreditCard creditCard) {
+	public void addCreditCard(String subject, String id, CreditCardDTO creditCard) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
 		
@@ -383,7 +383,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public void updateCreditCard(String subject, String id, String token, CreditCard creditCard) {
+	public void updateCreditCard(String subject, String id, String token, CreditCardDTO creditCard) {
 		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
 		resource.setSubject(subject);
 		
@@ -419,7 +419,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 				});			
 			}
 			
-			CreditCard original = resource.getCreditCards()
+			CreditCardDTO original = resource.getCreditCards()
 					.stream()
 					.filter(c -> token.equals(c.getToken()))
 					.findFirst()
@@ -446,9 +446,9 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public CreditCard updateCreditCard(String subject, String id, String token, MultivaluedMap<String,String> parameters) {
+	public CreditCardDTO updateCreditCard(String subject, String id, String token, MultivaluedMap<String,String> parameters) {
 		
-		CreditCard creditCard = getCreditCard(subject, id, token);
+		CreditCardDTO creditCard = getCreditCard(subject, id, token);
 		
 		if (parameters.containsKey("cardholderName")) {
 			creditCard.setCardholderName(parameters.getFirst("cardholderName"));

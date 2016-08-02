@@ -1,8 +1,13 @@
 package com.nowellpoint.aws.api.model;
 
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 public class Environment {
+	
+	private String key;
+	
+	private OffsetDateTime addedOn;
 	
 	private Integer index;
 	
@@ -34,6 +39,22 @@ public class Environment {
 		setActive(active);
 	}
 	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public OffsetDateTime getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(OffsetDateTime addedOn) {
+		this.addedOn = addedOn;
+	}
+
 	public Integer getIndex() {
 		return index;
 	}

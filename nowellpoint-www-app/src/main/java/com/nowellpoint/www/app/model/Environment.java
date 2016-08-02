@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app.model;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,10 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @JsonInclude(Include.NON_EMPTY)
 public class Environment {
+	
+	private String key;
+	
+	private OffsetDateTime addedOn;
 	
 	private Integer index;
 	
@@ -41,6 +46,22 @@ public class Environment {
 	public Environment() {
 		setLocked(Boolean.FALSE);
 		setActive(Boolean.FALSE);
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public OffsetDateTime getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(OffsetDateTime addedOn) {
+		this.addedOn = addedOn;
 	}
 
 	public Integer getIndex() {

@@ -1,6 +1,12 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.time.OffsetDateTime;
+
 public class EnvironmentDTO {
+	
+	private String key;
+	
+	private OffsetDateTime addedOn;
 	
 	private Integer index;
 	
@@ -22,6 +28,22 @@ public class EnvironmentDTO {
 
 	}
 	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public OffsetDateTime getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(OffsetDateTime addedOn) {
+		this.addedOn = addedOn;
+	}
+
 	public Integer getIndex() {
 		return index;
 	}

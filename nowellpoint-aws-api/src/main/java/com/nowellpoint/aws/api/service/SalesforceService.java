@@ -7,6 +7,7 @@ import javax.ws.rs.InternalServerErrorException;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
+import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
@@ -126,6 +127,16 @@ public class SalesforceService extends AbstractCacheService {
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
+		
+		Environment environment = new Environment();
+		environment.setActive(Boolean.TRUE);
+		environment.setIndex(0);
+		environment.setLabel("Production");
+		environment.setLocked(Boolean.TRUE);
+		environment.setName("PRODUCTION");
+		environment.setTest(Boolean.FALSE);
+		
+		resource.addEnvironment(environment);
 		
 		return resource;
 	}
