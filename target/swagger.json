@@ -1,0 +1,29 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "v1",
+    "title" : "Swagger Maven Plugin Sample"
+  },
+  "tags" : [ {
+    "name" : "time"
+  } ],
+  "paths" : {
+    "/oauth/token" : {
+      "post" : {
+        "tags" : [ "time" ],
+        "summary" : "Get the current time",
+        "description" : "Returns the time as a string",
+        "operationId" : "authenticate",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

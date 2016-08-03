@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nowellpoint</groupId>
-	<artifactId>aws</artifactId>
+	<artifactId>aws-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<name>Nowellpoint Integration Platform Parent</name>
 
 	<parent>
@@ -23,7 +22,7 @@
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>
 		<mongodb.driver.version>3.0.4</mongodb.driver.version>
-		<aws.dynamodb.encryption.version>0.0.9-SNAPSHOT</aws.dynamodb.encryption.version>
+		<aws.dynamodb.encryption.version>1.11.0</aws.dynamodb.encryption.version>
 		<jedis.version>2.8.1</jedis.version>
 		<junit.version>4.12</junit.version>
 	</properties>
