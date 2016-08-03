@@ -1,13 +1,17 @@
 package com.nowellpoint.aws.api.service;
 
+import java.sql.Date;
+import java.time.Instant;
+import java.util.UUID;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
@@ -128,13 +132,16 @@ public class SalesforceService extends AbstractCacheService {
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		
-		Environment environment = new Environment();
+		EnvironmentDTO environment = new EnvironmentDTO();
+		environment.setKey(UUID.randomUUID().toString());
 		environment.setActive(Boolean.TRUE);
-		environment.setIndex(0);
 		environment.setLabel("Production");
 		environment.setLocked(Boolean.TRUE);
 		environment.setName("PRODUCTION");
 		environment.setTest(Boolean.FALSE);
+		environment.setAddedOn(Date.from(Instant.now()));
+		environment.setUpdatedOn(Date.from(Instant.now()));
+		environment.setAuthEndpoint("https://login.salesforce.com");
 		
 		resource.addEnvironment(environment);
 		

@@ -1,7 +1,7 @@
 package com.nowellpoint.www.app.model;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +17,9 @@ public class Environment {
 	
 	private String key;
 	
-	private OffsetDateTime addedOn;
+	private Date addedOn;
 	
-	private Integer index;
+	private Date updatedOn;
 	
 	private String name;
 	
@@ -29,7 +29,15 @@ public class Environment {
 	
 	private String organization;
 	
-	private String endpoint;
+	private String serviceEndpoint;
+	
+	private String authEndpoint;
+	
+	private String username;
+	
+	private String password;
+	
+	private String securityToken;
 	
 	private Boolean test;
 	
@@ -56,20 +64,20 @@ public class Environment {
 		this.key = key;
 	}
 
-	public OffsetDateTime getAddedOn() {
+	public Date getAddedOn() {
 		return addedOn;
 	}
 
-	public void setAddedOn(OffsetDateTime addedOn) {
+	public void setAddedOn(Date addedOn) {
 		this.addedOn = addedOn;
 	}
 
-	public Integer getIndex() {
-		return index;
+	public Date getUpdatedOn() {
+		return updatedOn;
 	}
 
-	public void setIndex(Integer index) {
-		this.index = index;
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public String getName() {
@@ -104,12 +112,44 @@ public class Environment {
 		this.organization = organization;
 	}
 
-	public String getEndpoint() {
-		return endpoint;
+	public String getServiceEndpoint() {
+		return serviceEndpoint;
 	}
 
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
+	public void setServiceEndpoint(String serviceEndpoint) {
+		this.serviceEndpoint = serviceEndpoint;
+	}
+
+	public String getAuthEndpoint() {
+		return authEndpoint;
+	}
+
+	public void setAuthEndpoint(String authEndpoint) {
+		this.authEndpoint = authEndpoint;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getSecurityToken() {
+		return securityToken;
+	}
+
+	public void setSecurityToken(String securityToken) {
+		this.securityToken = securityToken;
 	}
 
 	public Boolean getTest() {
@@ -161,5 +201,40 @@ public class Environment {
 
 	public void setEnvironmentVariableValues(Map<String, List<EnvironmentVariableValue>> environmentVariableValues) {
 		this.environmentVariableValues = environmentVariableValues;
+	}
+	
+	public Environment withName(String name) {
+		setName(name);
+		return this;
+	}
+	
+	public Environment withLabel(String label) {
+		setLabel(label);
+		return this;
+	}
+	
+	public Environment withActive(Boolean active) {
+		setActive(active);
+		return this;
+	}
+	
+	public Environment withAuthEndpoint(String authEndpoint) {
+		setAuthEndpoint(authEndpoint);
+		return this;
+	}
+	
+	public Environment withUsername(String username) {
+		setUsername(username);
+		return this;
+	}
+	
+	public Environment withPassword(String password) {
+		setPassword(password);
+		return this;
+	}
+	
+	public Environment withSecurityToken(String securityToken) {
+		setSecurityToken(securityToken);
+		return this;
 	}
 }

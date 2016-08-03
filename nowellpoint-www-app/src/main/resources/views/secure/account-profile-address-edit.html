@@ -37,27 +37,27 @@
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4">
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <label class="control-label" for="street">${labels["street"]}</label>
                                 <input type="text" class="form-control" name="street" id="street" value="${address.street!}" />
                             </div>
 
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <label class="control-label" for="city">${labels["city"]}</label>
                                 <input type="text" class="form-control" name="city" id="city" value="${address.city!}" />
                             </div>
 
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <label class="control-label" for="state">${labels["state"]}</label>
                                 <input type="text" class="form-control" name="state" id="state" value="${address.state!}" />
                             </div>
 
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
                                 <input type="text" class="form-control" name="postalCode" id="postalCode" value="${address.postalCode!}" />
                             </div>
 
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <label class="control-label" for="countryCode">${labels["country"]}*</label>
                                 <select id="countryCode" name="countryCode" class="form-control" required>
                                     <#list countryList as country>
@@ -71,7 +71,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <div class="pull-right">
                                     <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
                                     <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>

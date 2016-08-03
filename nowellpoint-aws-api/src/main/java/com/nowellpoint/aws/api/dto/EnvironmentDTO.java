@@ -1,14 +1,14 @@
 package com.nowellpoint.aws.api.dto;
 
-import java.time.OffsetDateTime;
+import java.util.Date;
 
 public class EnvironmentDTO {
 	
 	private String key;
 	
-	private OffsetDateTime addedOn;
+	private Date addedOn;
 	
-	private Integer index;
+	private Date updatedOn;
 	
 	private String name;
 	
@@ -16,9 +16,19 @@ public class EnvironmentDTO {
 	
 	private Boolean active;
 	
+	private String serviceEndpoint;
+	
+	private String authEndpoint;
+	
+	private String username;
+	
+	private String password;
+	
+	private String securityToken;
+	
 	private String organization;
 	
-	private String endpoint;
+	private Boolean locked;
 	
 	private Boolean test;
 	
@@ -36,20 +46,20 @@ public class EnvironmentDTO {
 		this.key = key;
 	}
 
-	public OffsetDateTime getAddedOn() {
+	public Date getAddedOn() {
 		return addedOn;
 	}
 
-	public void setAddedOn(OffsetDateTime addedOn) {
+	public void setAddedOn(Date addedOn) {
 		this.addedOn = addedOn;
 	}
 
-	public Integer getIndex() {
-		return index;
+	public Date getUpdatedOn() {
+		return updatedOn;
 	}
 
-	public void setIndex(Integer index) {
-		this.index = index;
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 	
 	public String getName() {
@@ -83,15 +93,55 @@ public class EnvironmentDTO {
 	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
 	
+	public String getServiceEndpoint() {
+		return serviceEndpoint;
+	}
+
+	public void setServiceEndpoint(String serviceEndpoint) {
+		this.serviceEndpoint = serviceEndpoint;
+	}
+
+	public String getAuthEndpoint() {
+		return authEndpoint;
+	}
+
+	public void setAuthEndpoint(String authEndpoint) {
+		this.authEndpoint = authEndpoint;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getSecurityToken() {
+		return securityToken;
+	}
+
+	public void setSecurityToken(String securityToken) {
+		this.securityToken = securityToken;
+	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
 	public Boolean getTest() {
 		return test;
 	}

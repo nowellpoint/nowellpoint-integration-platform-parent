@@ -26,6 +26,10 @@ public class SalesforceConnector extends Resource {
 	public SalesforceConnector() {
 		
 	}
+	
+	public SalesforceConnector(String id) {
+		setId(id);
+	}
 
 	public Identity getIdentity() {
 		return identity;

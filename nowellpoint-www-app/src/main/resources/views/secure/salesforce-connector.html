@@ -252,9 +252,9 @@
                             <th class="col-xs-1 text-right">${labels["action"]}</th>
                         </thead>
                         <tbody>
-                            <#list salesforceConnector.environments?sort_by( "index") as environment>
+                            <#list salesforceConnector.environments?sort_by( "addedOn") as environment>
                                 <tr id="${(environment.name)!}">
-                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.name)!}/edit">${(environment.name)!}</a></td>
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit">${(environment.name)!}</a></td>
                                     <td>${(environment.label)!}</td>
                                     <td>${(environment.endpoint)!}</td>
                                     <td>

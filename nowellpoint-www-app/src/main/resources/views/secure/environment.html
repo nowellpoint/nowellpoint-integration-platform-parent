@@ -23,42 +23,72 @@
                     </div>
                 </#if>
 
-                <form id="enviroment-form" name="enviroment-form" class="form-vertical" method="post" action="">
+                <form id="enviroment-form" name="enviroment-form" method="post" action="${action}">
 
                     <div class="row">
-                        <div class="form-group col-md-2"></div>
-                        <div class="form-group col-md-8">
-                            <div class="form-group col-md-6">
+                        <div class="form-group col-md-4"></div>
+                        <div class="form-group col-md-4">
+                            <div class="form-group">
                                 <label class="control-label" for="environmentName">${labels["environment.name"]}</label>
-                                <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.name)!}" autofocus="" tabindex="1" />
+                                <#if environment.locked>
+                                    <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.name)!}" disabled tabindex="1" />
+                                </#if>
+                                <#if ! environment.locked>
+                                    <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.name)!}" required autofocus="" tabindex="1" />
+                                </#if>
                             </div>
 
-                            <div class="form-group col-md-6">
+                            <div class="form-group">
                                 <label class="control-label" for="label">${labels["label"]}</label>
-                                <input type="text" class="form-control" name="label" id="label" value="${(environment.label)!}" autofocus="" tabindex="2" />
+                                <input type="text" class="form-control" name="label" id="label" value="${(environment.label)!}" required tabindex="2" />
                             </div>
 
-                            <div class="form-group col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" for="authEndpoint">${labels["auth.endpoint"]}</label>
+                                <#if environment.locked>
+                                    <input type="text" class="form-control" name="authEndpoint" id="authEndpoint" value="${(environment.authEndpoint)!}" disabled tabindex="3" />
+                                </#if>
+
+                                <#if ! environment.locked>
+                                    <select id="authEndpoint" name="authEndpoint" class="form-control" required tabindex="3">
+                                        <#if environment.authEndpoint=="https://login.salesforce.com">
+                                            <option value="https://login.salesforce.com" selected>https://login.salesforce.com</option>
+                                            <option value="https://test.salesforce.com">https://test.salesforce.com</option>
+                                        </#if>
+                                        <#if environment.authEndpoint !="https://login.salesforce.com">
+                                            <option value="https://login.salesforce.com">https://login.salesforce.com</option>
+                                            <option value="https://test.salesforce.com" selected>https://test.salesforce.com</option>
+                                        </#if>
+                                    </select>
+                                </#if>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" for="username">${labels["username"]}</label>
+                                <input type="text" class="form-control" name="username" id="username" value="${(environment.username)!}" required tabindex="4" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" for="password">${labels["password"]}</label>
+                                <input type="password" class="form-control" name="password" id="password" value="${(environment.password)!}" required tabindex="5" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label" for="securityToken">${labels["security.token"]}</label>
+                                <input type="password" class="form-control" name="securityToken" id="securityToken" value="${(environment.securityToken)!}" required tabindex="6" />
+                            </div>
+
+                            <div class="form-group">
                                 <label class="control-label" for="organization">${labels["organization"]}</label>
-                                <input type="text" class="form-control" name="organization" id="organization" value="${(environment.organization)!}" autofocus="" tabindex="3" />
+                                <input type="text" class="form-control" name="organization" id="organization" value="${(environment.organization)!}" disabled tabindex="7" />
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="endpoint">${labels["service.endpoint"]}</label>
-                                <input type="text" class="form-control" name="endpoint" id="endpoint" value="${(environment.endpoint)!}" autofocus="" tabindex="4" />
+                            <div class="form-group">
+                                <label class="control-label" for="serviceEndpoint">${labels["service.endpoint"]}</label>
+                                <input type="text" class="form-control" name="serviceEndpoint" id="serviceEndpoint" value="${(environment.serviceEndpoint)!}" disabled tabindex="8" />
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="active">${labels["active"]}</label>&emsp;
-                                <#if environment.active>
-                                    <input type="checkbox" name="active" id="active" tabindex="5" checked />
-                                </#if>
-                                <#if ! environment.active>
-                                    <input type="checkbox" name="active" id="active" tabindex="5" />
-                                </#if>
-                            </div>
-
-                            <div class="form-group col-md-12">
+                            <div class="form-group">
                                 <div class="pull-right">
                                     <a href="${labels['base.path']}/${salesforceConnector.id}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
                                     <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
@@ -67,26 +97,8 @@
 
                         </div>
 
-                        <div class="form-group col-md-2"></div>
+                        <div class="form-group col-md-4"></div>
                     </div>
-
-
-                    <!--
-	
-
-	
-
-	
-
-	
-	private Boolean test;
-	
-	private String testMessage;
-
--->
-
-
-
 
                 </form>
 

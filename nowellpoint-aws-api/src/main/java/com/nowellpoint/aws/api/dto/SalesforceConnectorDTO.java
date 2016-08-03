@@ -3,7 +3,6 @@ package com.nowellpoint.aws.api.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nowellpoint.aws.api.model.Environment;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 
@@ -19,7 +18,7 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	
 	private String tag;
 	
-	private Set<Environment> environments;
+	private Set<EnvironmentDTO> environments;
 	
 	private Set<ServiceInstanceDTO> serviceInstances;
 	
@@ -63,17 +62,17 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 		this.tag = tag;
 	}
 
-	public Set<Environment> getEnvironments() {
+	public Set<EnvironmentDTO> getEnvironments() {
 		return environments;
 	}
 
-	public void setEnvironments(Set<Environment> environments) {
+	public void setEnvironments(Set<EnvironmentDTO> environments) {
 		this.environments = environments;
 	}
 	
-	public void addEnvironment(Environment environment) {
+	public void addEnvironment(EnvironmentDTO environment) {
 		if (environments == null) {
-			environments = new HashSet<Environment>();
+			environments = new HashSet<EnvironmentDTO>();
 		}
 		environments.add(environment);
 	}

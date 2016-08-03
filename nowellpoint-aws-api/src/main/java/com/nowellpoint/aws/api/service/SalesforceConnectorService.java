@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.service;
 
+import java.sql.Date;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +15,7 @@ import javax.inject.Inject;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
@@ -52,41 +55,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resources;
 	}
 
-	public SalesforceConnectorDTO createSalesforceConnector(SalesforceConnectorDTO resource) {
-		
-		/**
-		 * environmentVariables" : [
-                {
-                    "variable" : "SECURITY_TOKEN", 
-                    "value" : null, 
-                    "locked" : true, 
-                    "encrypted" : true, 
-                    "environmentVariableValues" : null
-                }, 
-                {
-                    "variable" : "PASSWORD", 
-                    "value" : null, 
-                    "locked" : true, 
-                    "encrypted" : true, 
-                    "environmentVariableValues" : null
-                }, 
-                {
-                    "variable" : "INSTANCE", 
-                    "value" : null, 
-                    "locked" : true, 
-                    "encrypted" : false, 
-                    "environmentVariableValues" : null
-                }, 
-                {
-                    "variable" : "USERNAME", 
-                    "value" : null, 
-                    "locked" : true, 
-                    "encrypted" : false, 
-                    "environmentVariableValues" : null
-                }
-            ]
-		 */
-		
+	public SalesforceConnectorDTO createSalesforceConnector(SalesforceConnectorDTO resource) {	
 		create( resource );
 		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
@@ -121,6 +90,38 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		return resource;
 	}
+	
+	public EnvironmentDTO getEnvironment(String subject, String id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		
+		EnvironmentDTO environment = resource.getEnvironments()
+				.stream()
+				.filter(p -> p.getKey().equals(key))
+				.findFirst()
+				.get();
+		
+		return environment;
+	}
+	
+	public EnvironmentDTO addEnvironment(String subject, String id, EnvironmentDTO environment) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		environment.setKey(UUID.randomUUID().toString());
+		environment.setActive(Boolean.FALSE);
+		environment.setLocked(Boolean.FALSE);
+		environment.setTest(Boolean.FALSE);
+		environment.setAddedOn(Date.from(Instant.now()));
+		environment.setUpdatedOn(Date.from(Instant.now()));
+		
+		resource.addEnvironment(environment);
+		
+		updateSalesforceConnector(resource);
+		
+		return environment;
+	}
+	
+	// *************************
 	
 	public SalesforceConnectorDTO addServiceInstance(String subject, String id, String serviceProviderId, String serviceType, String code) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
