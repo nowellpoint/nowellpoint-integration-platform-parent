@@ -31,22 +31,19 @@
                             <div class="form-group">
                                 <label class="control-label" for="environmentName">${labels["environment.name"]}</label>
                                 <#if environment.locked>
-                                    <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.name)!}" disabled tabindex="1" />
+                                    <input type="text" class="form-control" value="${(environment.environmentName)!}" disabled tabindex="1" />
+                                    <input type="hidden" name="environmentName" id="environmentName" value="${(environment.environmentName)!}" />
                                 </#if>
                                 <#if ! environment.locked>
-                                    <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.name)!}" required autofocus="" tabindex="1" />
+                                    <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.environmentName)!}" required autofocus="" tabindex="1" />
                                 </#if>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label" for="label">${labels["label"]}</label>
-                                <input type="text" class="form-control" name="label" id="label" value="${(environment.label)!}" required tabindex="2" />
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label" for="authEndpoint">${labels["auth.endpoint"]}</label>
                                 <#if environment.locked>
-                                    <input type="text" class="form-control" name="authEndpoint" id="authEndpoint" value="${(environment.authEndpoint)!}" disabled tabindex="3" />
+                                    <input type="text" class="form-control" value="${(environment.authEndpoint)!}" disabled tabindex="3" />
+                                    <input type="hidden" name="authEndpoint" id="authEndpoint" value="${(environment.authEndpoint)!}" />
                                 </#if>
 
                                 <#if ! environment.locked>
@@ -79,8 +76,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label" for="organization">${labels["organization"]}</label>
-                                <input type="text" class="form-control" name="organization" id="organization" value="${(environment.organization)!}" disabled tabindex="7" />
+                                <label class="control-label" for="organization">${labels["organization.name"]}</label>
+                                <input type="text" class="form-control" name="organization" id="organization" value="${(environment.organizationName)!}" disabled tabindex="7" />
                             </div>
 
                             <div class="form-group">

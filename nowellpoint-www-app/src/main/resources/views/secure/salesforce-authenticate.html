@@ -22,11 +22,8 @@
             <br>
 
             <div class="row">
-                <div class="col-sm-3">
-                    <#include "sidebar.html" />
-                </div>
 
-                <div class="col-lg-9 col-md-9 col-sm-9">
+                <div class="container">
 
                     <div id="statusMessage">
 
@@ -95,7 +92,7 @@
                             <dt>${labels["language"]}</dt>
                             <dd>${(salesforceConnector.identity.language)!}</dd>
 
-                            <dt>${labels["locale"]}</dt>
+                            <dt>${labels["locale.key"]}</dt>
                             <dd>${(salesforceConnector.identity.locale)!}</dd>
 
                             <dt>${labels["user.type"]}</dt>
@@ -114,8 +111,8 @@
 
                         <dl class="dl-horizontal">
 
-                            <dt>${labels["name"]}</dt>
-                            <dd>${(salesforceConnector.organization.name)!}</dd>
+                            <dt>${labels["organization.name"]}</dt>
+                            <dd>${(salesforceConnector.organization.organizationName)!}</dd>
 
                             <dt>${labels["phone"]}</dt>
                             <dd>${(salesforceConnector.organization.phone)!}</dd>

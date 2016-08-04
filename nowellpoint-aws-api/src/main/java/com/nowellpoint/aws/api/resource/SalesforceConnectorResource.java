@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.BadRequestException;
@@ -24,7 +23,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -38,14 +36,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
-import com.nowellpoint.aws.api.dto.EnvironmentVariableDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
@@ -53,9 +47,8 @@ import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.SalesforceService;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.Token;
-import com.sforce.soap.partner.Field;
-import com.sforce.soap.partner.sobject.SObject;
 
 import redis.clients.jedis.Jedis;
 
@@ -98,39 +91,6 @@ public class SalesforceConnectorResource {
 		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
 		
 		return Response.ok(resource).build();
-	}
-	
-	@PermitAll
-	@GET
-	@Path("salesforce/profilephoto/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getProfilePhoto(@PathParam(value="id") String id) {
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		GetObjectRequest getObjectRequest = new GetObjectRequest("nowellpoint-profile-photos", id);
-    	
-    	S3Object image = s3Client.getObject(getObjectRequest);
-    	
-    	String contentType = image.getObjectMetadata().getContentType();
-    	
-    	byte[] bytes = null;
-    	try {
-    		bytes = IOUtils.toByteArray(image.getObjectContent());    		
-		} catch (IOException e) {
-			throw new WebApplicationException( e.getMessage(), Status.INTERNAL_SERVER_ERROR );
-		} finally {
-			try {
-				image.close();
-			} catch (IOException ignore) {
-
-			}
-		}
-    	
-    	return Response.ok().entity(bytes)
-    			.header("Content-Disposition", "inline; filename=\"" + id + "\"")
-    			.header("Content-Length", bytes.length)
-    			.header("Content-Type", contentType)
-    			.build();
 	}
 	
 	@POST
@@ -222,6 +182,7 @@ public class SalesforceConnectorResource {
 
 	@POST
 	@Path("salesforce/{id}/environment")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO environment) {
 		String subject = securityContext.getUserPrincipal().getName();
@@ -230,6 +191,32 @@ public class SalesforceConnectorResource {
 		
 		return Response.ok()
 				.entity(resource)
+				.build(); 
+	}
+	
+	@POST
+	@Path("salesforce/{id}/environment/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(subject, id, key, environment);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+	}
+	
+	@DELETE
+	@Path("salesforce/{id}/environment/{key}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		salesforceConnectorService.removeEnvironment(subject, id, key);
+		
+		return Response.ok()
 				.build(); 
 	}
 	
@@ -513,16 +500,13 @@ public class SalesforceConnectorResource {
 	    	objectMetadata.setContentLength(connection.getContentLength());
 	    	objectMetadata.setContentType(contentType);
 	    	
-	    	String key = UUID.randomUUID().toString();
+	    	String key = UUID.randomUUID().toString().replace("-", "");
 			
 	    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", key, connection.getInputStream(), objectMetadata);
 	    	
 	    	s3Client.putObject(putObjectRequest);
 	    	
-	    	URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-					.path(SalesforceConnectorResource.class)
-					.path("salesforce")
-					.path("profilephoto")
+	    	URI uri = UriBuilder.fromUri(System.getProperty(Properties.CLOUDFRONT_HOSTNAME))
 					.path("{id}")
 					.build(key);
 			

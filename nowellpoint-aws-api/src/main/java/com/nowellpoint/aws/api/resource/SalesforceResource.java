@@ -130,12 +130,12 @@ public class SalesforceResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response login(
-			@FormParam(value="instance") @NotEmpty String instance,
+			@FormParam(value="authEndpoint") @NotEmpty String authEndpoint,
 			@FormParam(value="username") @NotEmpty String username,
 			@FormParam(value="password") @NotEmpty String password,
 			@FormParam(value="securityToken") @NotEmpty String securityToken) {
 		
-		LoginResult result = salesforceService.login(instance, username, password, securityToken);
+		LoginResult result = salesforceService.login(authEndpoint, username, password, securityToken);
 		
 		return Response.ok(result)
 				.build();

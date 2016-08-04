@@ -1,9 +1,7 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.io.IOException;
 import java.net.URI;
 
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
@@ -22,21 +20,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.CreditCardDTO;
 import com.nowellpoint.aws.api.model.Address;
@@ -166,50 +160,6 @@ public class AccountProfileResource {
 		return Response.ok(resource)
 				.build();
 	}
-	
-	@GET
-	@Path("/{id}/picture")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@PermitAll
-	public Response getPicture(@PathParam(value="id") String id) {
-		
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		GetObjectRequest getObjectRequest = new GetObjectRequest("aws-microservices", id);
-    	
-    	S3Object image = s3Client.getObject(getObjectRequest);
-    	
-    	String contentType = image.getObjectMetadata().getContentType();
-    	
-    	byte[] bytes = null;
-    	try {
-    		bytes = IOUtils.toByteArray(image.getObjectContent());    		
-		} catch (IOException e) {
-			throw new WebApplicationException( e.getMessage(), Status.INTERNAL_SERVER_ERROR );
-		} finally {
-			try {
-				image.close();
-			} catch (IOException ignore) {
-
-			}
-		}
-    	
-    	return Response.ok().entity(bytes)
-    			.header("Content-Disposition", "inline; filename=\"" + id + "\"")
-    			.header("Content-Length", bytes.length)
-    			.header("Content-Type", contentType)
-    			.build();
-	}
-	
-	/**
-	 * @api {get} /identity/:id Get Identity
-	 * @apiName getIdentity
-	 * @apiVersion 1.0.0
-	 * @apiGroup Identity
-	 * @apiHeader {String} authorization Authorization with the value of Bearer access_token from authenticate
-	 * 
-	 * @apiParam {String} id The Identity's unique id
-	 */
 	
 	@GET
 	@Path("/{id}")
@@ -387,7 +337,7 @@ public class AccountProfileResource {
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
-		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("aws-microservices", resource.getId());
+		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("nowellpoint-profile-pictures", resource.getId());
 		
 		s3Client.deleteObject(deleteObjectRequest);
 		

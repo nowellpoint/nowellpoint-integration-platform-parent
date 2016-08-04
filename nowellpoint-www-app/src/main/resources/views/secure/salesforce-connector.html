@@ -246,17 +246,15 @@
                     <table id="environments-table" class="table table-hover">
                         <thead>
                             <th class="col-xs-2">${labels["name"]}</th>
-                            <th class="col-xs-2">${labels["label"]}</th>
                             <th class="col-xs-3">${labels["service.endpoint"]}</th>
                             <th class="col-xs-3">${labels["status.message"]}</th>
-                            <th class="col-xs-1 text-right">${labels["action"]}</th>
+                            <th class="col-xs-1">${labels["action"]}</th>
                         </thead>
                         <tbody>
                             <#list salesforceConnector.environments?sort_by( "addedOn") as environment>
-                                <tr id="${(environment.name)!}">
-                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit">${(environment.name)!}</a></td>
-                                    <td>${(environment.label)!}</td>
-                                    <td>${(environment.endpoint)!}</td>
+                                <tr id="${(environment.environmentName)!}">
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit">${(environment.environmentName)!}</a></td>
+                                    <td>${(environment.serviceEndpoint)!}</td>
                                     <td>
                                         <#if environment.test??>
                                             <#if environment.test>
@@ -268,18 +266,21 @@
                                         </#if>
                                         ${(environment.testMessage)!}
                                     </td>
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" class="test-connection" data-id="${(environment.environmentName)!}">${labels["test.connection"]}</a></td>
+                                    <!--
                                     <td class="text-right">
                                         <div class="dropdown">
                                             <button class="btn btn-default dropdown-toggle" type="button" id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenu">
-                                                <li><a href="" class="test-connection" data-id="${(environment.name)!}">${labels["test.connection"]}</a></li>
-                                                <li><a href="" data-toggle="modal" data-target="#environment-variables-modal" aria-hidden="true" data-id="${(environment.name)!}">${labels["environment.variables"]}</a></li>
-                                                <li><a href="" class="deploy" data-id="${(environment.name)!}">${labels["deploy"]}</a></li>
+                                                <li><a href="" class="test-connection" data-id="${(environment.environmentName)!}">${labels["test.connection"]}</a></li>
+                                                <li><a href="" data-toggle="modal" data-target="#environment-variables-modal" aria-hidden="true" data-id="${(environment.environmentName)!}">${labels["environment.variables"]}</a></li>
+                                                <li><a href="" class="deploy" data-id="${(environment.environmentName)!}">${labels["deploy"]}</a></li>
                                             </ul>
                                         </div>
                                     </td>
+-->
                                 </tr>
                             </#list>
                         </tbody>

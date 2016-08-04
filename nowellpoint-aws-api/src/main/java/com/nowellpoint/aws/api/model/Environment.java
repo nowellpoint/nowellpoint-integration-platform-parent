@@ -20,15 +20,13 @@ public class Environment {
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date updatedOn;
 	
-	private String name;
-	
-	private String label;
+	private String environmentName;
 	
 	private Boolean active;
 	
 	private Boolean locked;
 	
-	private String organization;
+	private String organizationName;
 	
 	private String serviceEndpoint;
 	
@@ -52,7 +50,7 @@ public class Environment {
 	
 	public Environment(String name, Boolean active) {
 		super();
-		setName(name);
+		setEnvironmentName(name);
 		setActive(active);
 	}
 	
@@ -79,21 +77,13 @@ public class Environment {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	
-	public String getName() {
-		return name;
+
+	public String getEnvironmentName() {
+		return environmentName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
 	}
 
 	public Boolean getActive() {
@@ -112,12 +102,12 @@ public class Environment {
 		this.locked = locked;
 	}
 
-	public String getOrganization() {
-		return organization;
+	public String getOrganizationName() {
+		return organizationName;
 	}
 
-	public void setOrganization(String organization) {
-		this.organization = organization;
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
 	}
 
 	public String getServiceEndpoint() {

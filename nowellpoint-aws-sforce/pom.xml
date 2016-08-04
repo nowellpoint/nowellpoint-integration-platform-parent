@@ -8,7 +8,7 @@
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
-		<artifactId>aws</artifactId>
+		<artifactId>aws-parent</artifactId>
 		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 

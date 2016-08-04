@@ -80,6 +80,12 @@ public class SalesforceConnectorController extends AbstractController {
         
         post("/app/connectors/salesforce/:id/environments", (request, response) -> addEnvironment(request, response));
         
+        post("/app/connectors/salesforce/:id/environments/:key", (request, response) -> updateEnvironment(request, response));
+        
+        delete("/app/connectors/salesforce/:id/environments/:key", (request, response) -> removeEnvironment(request, response));
+        
+        get("/app/connectors/salesforce/:id/environments/:key/test", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
+        
         //
         
         get("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> reviewPlan(request, response), new FreeMarkerEngine(cfg));
@@ -203,7 +209,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String active = request.queryParams("active");
 		String authEndpoint = request.queryParams("authEndpoint");
-		String label = request.queryParams("label");
 		String name = request.queryParams("environmentName");
 		String password = request.queryParams("password");
 		String username = request.queryParams("username");
@@ -212,8 +217,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Environment environment = new Environment()
 				.withActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
-				.withLabel(label)
-				.withName(name)
+				.withEnvironmentName(name)
 				.withPassword(password)
 				.withUsername(username)
 				.withSecurityToken(securityToken);
@@ -247,6 +251,92 @@ public class SalesforceConnectorController extends AbstractController {
 		response.redirect(String.format("/app/connectors/salesforce/%s", id));
 		
 		return "";		
+	}
+	
+	private String updateEnvironment(Request request, Response response) {
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String active = request.queryParams("active");
+		String authEndpoint = request.queryParams("authEndpoint");
+		String environmentName = request.queryParams("environmentName");
+		String password = request.queryParams("password");
+		String username = request.queryParams("username");
+		String securityToken = request.queryParams("securityToken");
+		
+		Environment environment = new Environment()
+				.withActive(Boolean.valueOf(active))
+				.withAuthEndpoint(authEndpoint)
+				.withEnvironmentName(environmentName)
+				.withPassword(password)
+				.withUsername(username)
+				.withSecurityToken(securityToken);
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.path("environment")
+    			.path(key)
+    			.body(environment)
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			Map<String, Object> model = getModel();
+			model.put("account", account);
+			model.put("salesforceConnector", new SalesforceConnector(id));
+			model.put("environment", environment);
+			model.put("errorMessage", error.getMessage());
+			
+			String output = buildTemplate(new ModelAndView(model, "secure/environment-edit.html"));
+			
+			throw new BadRequestException(output);
+		}
+		
+		response.cookie("successMessage", getValue("update.environment.success"), 3);
+		response.redirect(String.format("/app/connectors/salesforce/%s", id));
+		
+		return "";		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String removeEnvironment(Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.path("environment")
+    			.path(key)
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
+		}
+		
+		response.cookie("successMessage", getValue("remove.environment.success"), 3);
+		
+		return "";
 	}
 	
 	/**
@@ -1084,20 +1174,23 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String environment = request.params(":environment");
+		String authEndpoint = request.queryParams("authEndpoint");
+		String username = request.queryParams("username");
+		String password = request.queryParams("password");
+		String securityToken = request.queryParams("securityToken");
 		
 		Map<String, Object> model = getModel();
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
     			.path("salesforce")
-				.path(id)
-				.path("service")
-				.path(key)
-				.path("connection")
-				.path(environment)
+    			.path("login")
+				.parameter("authEndpoint", authEndpoint)
+				.parameter("username", username)
+				.parameter("password", password)
+				.parameter("securityToken", securityToken)
     			.execute();
 	
 		response.status(httpResponse.getStatusCode());

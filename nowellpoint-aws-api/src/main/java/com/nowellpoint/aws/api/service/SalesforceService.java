@@ -41,16 +41,16 @@ public class SalesforceService extends AbstractCacheService {
 
 	}
 	
-	public LoginResult login(String instance, String username, String password, String securityToken) {
+	public LoginResult login(String authEndpoint, String username, String password, String securityToken) {
 		ConnectorConfig config = new ConnectorConfig();
-		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", authEndpoint));
 		config.setUsername(username);
 		config.setPassword(password.concat(securityToken));
 		
 		try {
 			PartnerConnection connection = com.sforce.soap.partner.Connector.newConnection(config);
 			
-			String id = String.format("%s/id/%s/%s", instance, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
+			String id = String.format("%s/id/%s/%s", authEndpoint, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
 			
 			LoginResult result = new LoginResult()
 					.withId(id)
@@ -135,12 +135,14 @@ public class SalesforceService extends AbstractCacheService {
 		EnvironmentDTO environment = new EnvironmentDTO();
 		environment.setKey(UUID.randomUUID().toString());
 		environment.setActive(Boolean.TRUE);
-		environment.setLabel("Production");
+		environment.setEnvironmentName("Production");
 		environment.setLocked(Boolean.TRUE);
-		environment.setName("PRODUCTION");
 		environment.setTest(Boolean.FALSE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
+		environment.setUsername(identity.getUsername());
+		environment.setOrganizationName(organization.getName());
+		environment.setServiceEndpoint(identity.getUrls().getPartner());
 		environment.setAuthEndpoint("https://login.salesforce.com");
 		
 		resource.addEnvironment(environment);

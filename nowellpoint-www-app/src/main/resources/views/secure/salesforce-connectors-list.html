@@ -39,20 +39,20 @@
                         <table class="table table-hover">
                             <thead>
                                 <th></th>
-                                <th>${labels["organization"]}</th>
+                                <th>${labels["organization.name"]}</th>
+                                <th>${labels["organization.type"]}</th>
                                 <th>${labels["instance.name"]}</th>
-                                <th>${labels["display.name"]}</th>
-                                <th>${labels["username"]}</th>
+                                <th>${labels["identity.name"]}</th>
                                 <th>${labels["action"]}</th>
                             </thead>
                             <tbody>
                                 <#list salesforceConnectorsList?sort_by("createdDate") as salesforceConnector>
                                     <tr id="${salesforceConnector.id}">
-                                        <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
+                                        <td><img src="${salesforceConnector.identity.photos.thumbnail}" height="24" width="36" class="img-circle img-responsive center-block"></td>
                                         <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                        <td>${salesforceConnector.organization.organizationType}</td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
-                                        <td>${salesforceConnector.identity.username}</td>
                                         <td>
                                             <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.instanceName}" data-title="${deleteMessage}">
                                                 <span class="icon icon-trash"></span>

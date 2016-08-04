@@ -21,13 +21,11 @@ public class Environment {
 	
 	private Date updatedOn;
 	
-	private String name;
-	
-	private String label;
+	private String environmentName;
 	
 	private Boolean active;
 	
-	private String organization;
+	private String organizationName;
 	
 	private String serviceEndpoint;
 	
@@ -80,20 +78,12 @@ public class Environment {
 		this.updatedOn = updatedOn;
 	}
 
-	public String getName() {
-		return name;
+	public String getEnvironmentName() {
+		return environmentName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
 	}
 
 	public Boolean getActive() {
@@ -104,12 +94,12 @@ public class Environment {
 		this.active = active;
 	}
 
-	public String getOrganization() {
-		return organization;
+	public String getOrganizationName() {
+		return organizationName;
 	}
 
-	public void setOrganization(String organization) {
-		this.organization = organization;
+	public void setOrganization(String organizationName) {
+		this.organizationName = organizationName;
 	}
 
 	public String getServiceEndpoint() {
@@ -203,13 +193,8 @@ public class Environment {
 		this.environmentVariableValues = environmentVariableValues;
 	}
 	
-	public Environment withName(String name) {
-		setName(name);
-		return this;
-	}
-	
-	public Environment withLabel(String label) {
-		setLabel(label);
+	public Environment withEnvironmentName(String environmentName) {
+		setEnvironmentName(environmentName);
 		return this;
 	}
 	

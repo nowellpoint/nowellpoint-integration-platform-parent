@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint AWS Core</name>
+	 <name>Nowellpoint AWS Core</name>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
-		<artifactId>aws</artifactId>
+		<artifactId>aws-parent</artifactId>
 		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 
@@ -67,5 +67,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	<version>0.0.4-SNAPSHOT</version>
+
 </project>

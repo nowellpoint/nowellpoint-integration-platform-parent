@@ -107,7 +107,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
 		resource.setSubject(subject);
 		
-		environment.setKey(UUID.randomUUID().toString());
+		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
 		environment.setActive(Boolean.FALSE);
 		environment.setLocked(Boolean.FALSE);
 		environment.setTest(Boolean.FALSE);
@@ -120,6 +120,40 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return environment;
 	}
+	
+	public EnvironmentDTO updateEnvironment(String subject, String id, String key, EnvironmentDTO environment) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		EnvironmentDTO original = resource.getEnvironments()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst()
+				.get();
+		
+		environment.setKey(key);
+		environment.setAddedOn(original.getAddedOn());
+		environment.setUpdatedOn(Date.from(Instant.now()));
+		environment.setLocked(original.getLocked());
+		environment.setTest(original.getTest());
+		environment.setTestMessage(original.getTestMessage());
+		
+		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+		resource.addEnvironment(environment);
+		
+		updateSalesforceConnector(resource);
+		
+		return environment;
+	} 
+	
+	public void removeEnvironment(String subject, String id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+		resource.setSubject(subject);
+		
+		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+		
+		updateSalesforceConnector(resource);
+	} 
 	
 	// *************************
 	
