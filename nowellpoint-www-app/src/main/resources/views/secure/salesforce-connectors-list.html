@@ -1,7 +1,7 @@
 <#import "template.html" as t>
-    
+
     <@t.page>
-        
+
         <#include "navbar.html" />
 
         <div class="container-fluid container-fluid-spacious">
@@ -28,7 +28,7 @@
 
             <div class="row">
                 <div class="col-sm-2">
-                    
+
                     <#include "sidebar.html"/>
 
                 </div>
@@ -46,16 +46,16 @@
                                 <th>${labels["action"]}</th>
                             </thead>
                             <tbody>
-                                <#list salesforceConnectorsList?sort_by("createdDate") as salesforceConnector>
-                                    <tr id="${salesforceConnector.id}">
+                                <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+                                    <tr id="${labels['base.path']}/${salesforceConnector.id}">
                                         <td><img src="${salesforceConnector.identity.photos.thumbnail}" height="24" width="36" class="img-circle img-responsive center-block"></td>
                                         <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
                                         <td>${salesforceConnector.organization.organizationType}</td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
                                         <td>
-                                            <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.instanceName}" data-title="${deleteMessage}">
-                                                <span class="icon icon-trash"></span>
+                                            <a href="#" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-id="${labels['base.path']}/${salesforceConnector.id}" data-message="${salesforceConnector.organization.instanceName}" data-title="${labels['delete.message']}">
+                                                <span class="icon icon-trash"></span>${labels["delete"]}
                                             </a>
                                         </td>
                                     </tr>
@@ -70,19 +70,6 @@
         <#include "confirm-dialog.html"/>
         <#include "spinner.html" />
 
-        <script>
-            $('#confirm').click(function(e) {
-                var id = $('#confirmDialog').data('id');
-                var row = $('#'.concat(id));
-                $.ajax({
-                    url: "${labels['base.path']}" + id,
-                    type: 'DELETE',
-                    success: function() {
-                        row.remove();
-                    }
-                });
-                $('#confirmDialog').modal('hide');
-            });
-        </script>
+        <script src="/js/salesforce-connector.js"></script>
 
     </@t.page>

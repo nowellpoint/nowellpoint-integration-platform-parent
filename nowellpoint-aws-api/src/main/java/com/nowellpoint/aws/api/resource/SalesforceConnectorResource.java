@@ -104,7 +104,7 @@ public class SalesforceConnectorResource {
 		
 		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
 		
-		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
+		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token);
 		resource.setOwner(owner);
 		resource.setSubject(subject);
 		resource.getIdentity().getPhotos().setPicture(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getPicture()));
@@ -144,21 +144,21 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
-		
+		System.out.println("1");
 		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
-		
+		System.out.println("2");
 		AmazonS3 s3Client = new AmazonS3Client();
-		
+		System.out.println("3");
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getThumbnail().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
-		
+		System.out.println("4");
 		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
-		
+		System.out.println("5");
 		s3Client.deleteObjects(deleteObjectsRequest);
-		
+		System.out.println("6");
 		salesforceConnectorService.deleteSalesforceConnector(id, subject);
-		
+		System.out.println("7");
 		return Response.noContent()
 				.build(); 
 	}

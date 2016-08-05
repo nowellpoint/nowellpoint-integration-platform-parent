@@ -9,7 +9,7 @@
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">${labels["salesforce.connector"]}</h6>
-                        <h2 class="dashhead-title">${(salesforceConnector.organization.name)!}</h2>
+                        <h2 class="dashhead-title">${(salesforceConnector.organization.organizationName)!}</h2>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                             <dt>${labels["mobile.phone"]}</dt>
                             <dd>${(salesforceConnector.identity.mobilePhone)!}</dd>
 
-                            <dt>${labels["language"]}</dt>
+                            <dt>${labels["language.key"]}</dt>
                             <dd>${(salesforceConnector.identity.language)!}</dd>
 
                             <dt>${labels["locale.key"]}</dt>

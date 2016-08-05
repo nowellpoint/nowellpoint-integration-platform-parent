@@ -108,8 +108,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.setSubject(subject);
 		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
-		environment.setActive(Boolean.FALSE);
-		environment.setLocked(Boolean.FALSE);
+		environment.setIsActive(Boolean.FALSE);
+		environment.setIsReadOnly(Boolean.FALSE);
 		environment.setTest(Boolean.FALSE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
@@ -131,14 +131,16 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				.findFirst()
 				.get();
 		
+		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+		
 		environment.setKey(key);
 		environment.setAddedOn(original.getAddedOn());
 		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setLocked(original.getLocked());
+		environment.setIsReadOnly(original.getIsReadOnly());
+		environment.setIsSandbox(original.getIsSandbox());
 		environment.setTest(original.getTest());
 		environment.setTestMessage(original.getTestMessage());
 		
-		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		resource.addEnvironment(environment);
 		
 		updateSalesforceConnector(resource);

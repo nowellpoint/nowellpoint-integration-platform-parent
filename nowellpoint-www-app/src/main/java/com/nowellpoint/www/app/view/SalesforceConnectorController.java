@@ -215,7 +215,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String securityToken = request.queryParams("securityToken");
 		
 		Environment environment = new Environment()
-				.withActive(Boolean.valueOf(active))
+				.withIsActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
 				.withEnvironmentName(name)
 				.withPassword(password)
@@ -268,7 +268,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String securityToken = request.queryParams("securityToken");
 		
 		Environment environment = new Environment()
-				.withActive(Boolean.valueOf(active))
+				.withIsActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
 				.withEnvironmentName(environmentName)
 				.withPassword(password)

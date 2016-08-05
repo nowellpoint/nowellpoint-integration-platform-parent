@@ -23,7 +23,7 @@ public class Environment {
 	
 	private String environmentName;
 	
-	private Boolean active;
+	private Boolean isActive;
 	
 	private String organizationName;
 	
@@ -37,12 +37,14 @@ public class Environment {
 	
 	private String securityToken;
 	
+	private Boolean isSandbox;
+	
 	private Boolean test;
 	
 	private String testMessage;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
-	private Boolean locked;
+	private Boolean isReadOnly;
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private List<EnvironmentVariable> environmentVariables;
@@ -50,8 +52,8 @@ public class Environment {
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
 	
 	public Environment() {
-		setLocked(Boolean.FALSE);
-		setActive(Boolean.FALSE);
+		setIsReadOnly(Boolean.FALSE);
+		setIsActive(Boolean.FALSE);
 	}
 
 	public String getKey() {
@@ -86,19 +88,19 @@ public class Environment {
 		this.environmentName = environmentName;
 	}
 
-	public Boolean getActive() {
-		return active;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getOrganizationName() {
 		return organizationName;
 	}
 
-	public void setOrganization(String organizationName) {
+	public void setOrganizationName(String organizationName) {
 		this.organizationName = organizationName;
 	}
 
@@ -142,6 +144,14 @@ public class Environment {
 		this.securityToken = securityToken;
 	}
 
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}
+
 	public Boolean getTest() {
 		return test;
 	}
@@ -158,14 +168,14 @@ public class Environment {
 		this.testMessage = testMessage;
 	}
 	
-	public Boolean getLocked() {
-		return locked;
+	public Boolean getIsReadOnly() {
+		return isReadOnly;
 	}
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
+	public void setIsReadOnly(Boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
 	}
-	
+
 	public List<EnvironmentVariable> getEnvironmentVariables() {
 		if (environmentVariables == null) {
 			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
@@ -198,8 +208,8 @@ public class Environment {
 		return this;
 	}
 	
-	public Environment withActive(Boolean active) {
-		setActive(active);
+	public Environment withIsActive(Boolean active) {
+		setIsActive(active);
 		return this;
 	}
 	

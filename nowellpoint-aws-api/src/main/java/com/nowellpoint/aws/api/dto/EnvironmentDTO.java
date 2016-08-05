@@ -12,7 +12,7 @@ public class EnvironmentDTO {
 	
 	private String environmentName;
 	
-	private Boolean active;
+	private Boolean isActive;
 	
 	private String serviceEndpoint;
 	
@@ -24,9 +24,11 @@ public class EnvironmentDTO {
 	
 	private String securityToken;
 	
+	private Boolean isSandbox;
+	
 	private String organizationName;
 	
-	private Boolean locked;
+	private Boolean isReadOnly;
 	
 	private Boolean test;
 	
@@ -68,12 +70,12 @@ public class EnvironmentDTO {
 		this.environmentName = environmentName;
 	}
 
-	public Boolean getActive() {
-		return active;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getOrganizationName() {
@@ -124,12 +126,20 @@ public class EnvironmentDTO {
 		this.securityToken = securityToken;
 	}
 
-	public Boolean getLocked() {
-		return locked;
+	public Boolean getIsSandbox() {
+		return isSandbox;
 	}
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}
+
+	public Boolean getIsReadOnly() {
+		return isReadOnly;
+	}
+
+	public void setIsReadOnly(Boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
 	}
 
 	public Boolean getTest() {

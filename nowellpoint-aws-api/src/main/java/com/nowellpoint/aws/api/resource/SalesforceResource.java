@@ -107,7 +107,7 @@ public class SalesforceResource {
 		
 		putToken(subject, token.getId(), token);
 		
-		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token.getAccessToken(), token.getId());
+		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token);
 		
 		return Response.ok(resource).build();
 	}

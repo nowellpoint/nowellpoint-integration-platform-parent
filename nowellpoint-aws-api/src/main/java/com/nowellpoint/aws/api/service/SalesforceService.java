@@ -26,6 +26,7 @@ import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
@@ -103,8 +104,7 @@ public class SalesforceService extends AbstractCacheService {
 	 */
 	
 	public OauthAuthenticationResponse authenticate(String code) {		
-		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST
-				.builder()
+		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 				.setCallbackUri(System.getProperty(Properties.SALESFORCE_REDIRECT_URI))
@@ -117,32 +117,33 @@ public class SalesforceService extends AbstractCacheService {
 		return response;
 	}
 	
-	public SalesforceConnectorDTO getSalesforceInstance(String accessToken, String id) {
+	public SalesforceConnectorDTO getSalesforceInstance(Token token) {
 		GetIdentityRequest request = new GetIdentityRequest()
-				.setAccessToken(accessToken)
-				.setId(id);
+				.setAccessToken(token.getAccessToken())
+				.setId(token.getId());
 		
 		Client client = new Client();
 		
 		Identity identity = client.getIdentity(request);
 		
-		Organization organization = getOrganization(accessToken, identity.getOrganizationId(), identity.getUrls().getSobjects());
+		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
 		
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		
 		EnvironmentDTO environment = new EnvironmentDTO();
-		environment.setKey(UUID.randomUUID().toString());
-		environment.setActive(Boolean.TRUE);
+		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
+		environment.setIsActive(Boolean.TRUE);
 		environment.setEnvironmentName("Production");
-		environment.setLocked(Boolean.TRUE);
+		environment.setIsReadOnly(Boolean.TRUE);
+		environment.setIsSandbox(Boolean.FALSE);
 		environment.setTest(Boolean.FALSE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
 		environment.setUsername(identity.getUsername());
 		environment.setOrganizationName(organization.getName());
-		environment.setServiceEndpoint(identity.getUrls().getPartner());
+		environment.setServiceEndpoint(token.getInstanceUrl());
 		environment.setAuthEndpoint("https://login.salesforce.com");
 		
 		resource.addEnvironment(environment);

@@ -22,9 +22,9 @@ public class Environment {
 	
 	private String environmentName;
 	
-	private Boolean active;
+	private Boolean isActive;
 	
-	private Boolean locked;
+	private Boolean isReadOnly;
 	
 	private String organizationName;
 	
@@ -37,6 +37,12 @@ public class Environment {
 	private String password;
 	
 	private String securityToken;
+	
+	private Boolean isSandbox;
+	
+	private String accessToken;
+	
+	private String refreshToken;
 	
 	private Boolean test;
 	
@@ -51,7 +57,7 @@ public class Environment {
 	public Environment(String name, Boolean active) {
 		super();
 		setEnvironmentName(name);
-		setActive(active);
+		setIsActive(active);
 	}
 	
 	public String getKey() {
@@ -86,20 +92,20 @@ public class Environment {
 		this.environmentName = environmentName;
 	}
 
-	public Boolean getActive() {
-		return active;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public Boolean getLocked() {
-		return locked;
+	public Boolean getIsReadOnly() {
+		return isReadOnly;
 	}
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
+	public void setIsReadOnly(Boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
 	}
 
 	public String getOrganizationName() {
@@ -148,6 +154,30 @@ public class Environment {
 
 	public void setSecurityToken(String securityToken) {
 		this.securityToken = securityToken;
+	}
+
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	public Boolean getTest() {
