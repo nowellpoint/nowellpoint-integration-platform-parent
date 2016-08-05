@@ -47,14 +47,15 @@
                             </thead>
                             <tbody>
                                 <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
-                                    <tr id="${labels['base.path']}/${salesforceConnector.id}">
+                                    <tr id="${salesforceConnector.id}">
                                         <td><img src="${salesforceConnector.identity.photos.thumbnail}" height="24" width="36" class="img-circle img-responsive center-block"></td>
                                         <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
                                         <td>${salesforceConnector.organization.organizationType}</td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
                                         <td>
-                                            <a href="#" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-id="${labels['base.path']}/${salesforceConnector.id}" data-message="${salesforceConnector.organization.instanceName}" data-title="${labels['delete.message']}">
+                                            <a href="#" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}" 
+                                               data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.name} (${salesforceConnector.organization.instanceName})" data-title="${labels['delete.message']}">
                                                 <span class="icon icon-trash"></span>${labels["delete"]}
                                             </a>
                                         </td>

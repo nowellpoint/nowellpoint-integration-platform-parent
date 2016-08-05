@@ -3,8 +3,6 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.get;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -16,10 +14,9 @@ import org.slf4j.LoggerFactory;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Account;
-import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.SalesforceConnector;
-import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
@@ -27,20 +24,20 @@ import spark.Request;
 import spark.Response;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class SalesforceController extends AbstractController {
+public class SalesforceOauthController extends AbstractController {
 	
-	private final static Logger LOG = LoggerFactory.getLogger(SalesforceController.class.getName());
+	private final static Logger LOG = LoggerFactory.getLogger(SalesforceOauthController.class.getName());
 	
-	public SalesforceController(Configuration cfg) {
-		super(SalesforceController.class, cfg);
+	public SalesforceOauthController(Configuration configuration) {
+		super(SalesforceOauthController.class, configuration);
 	}
 	
 	public void configureRoutes(Configuration cfg) {
 		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
         
-        get("/app/salesforce/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce/oauth/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
         
-        get("/app/connectors/salesforce/detail", (request, response) -> getSalesforceConnectorDetails(request, response), new FreeMarkerEngine(cfg));
+        get("/app/salesforce/oauth/token", (request, response) -> getSalesforceToken(request, response));
 	}
 	
 	/**
@@ -92,36 +89,46 @@ public class SalesforceController extends AbstractController {
 	 * @return
 	 */
 	
-	private ModelAndView getSalesforceConnectorDetails(Request request, Response response) {
-		Token token = getToken(request);
-		
-		Account account = getAccount(request);
+	private String getSalesforceToken(Request request, Response response) {
     	
     	HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken(request).getAccessToken())
     			.path("salesforce")
-    			.path("connector")
+    			.path("oauth")
+    			.path("token")
     			.queryParameter("code", request.queryParams("code"))
     			.execute();
     	
-    	SalesforceConnector salesforceConnector = null;
-    	String successMessage = null;
-    	String errorMessage = null;
+    	Token token = null;
     	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);	
-    		successMessage = MessageProvider.getMessage(Locale.US, "saveSuccess");
-    	} else {
-    		errorMessage = httpResponse.getAsString();
-    	}	
+    	if (httpResponse.getStatusCode() != Status.OK) {
+    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
+    	}
     	
-    	Map<String, Object> model = getModel();
-    	model.put("account", account);
-    	model.put("salesforceConnector", salesforceConnector);
-    	model.put("successMessage", successMessage);
-    	model.put("errorMessage", errorMessage);
+    	token = httpResponse.getEntity(Token.class);
     	
-    	return new ModelAndView(model, "secure/salesforce-authenticate.html");
+    	httpResponse = RestResource.post(API_ENDPOINT)
+				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.bearerAuthorization(getToken(request).getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.parameter("id", token.getId())
+    			.parameter("instanceUrl", token.getInstanceUrl())
+    			.parameter("accessToken", token.getAccessToken())
+    			.parameter("refreshToken", token.getRefreshToken())
+    			.execute();
+    	
+    	if (httpResponse.getStatusCode() != Status.CREATED) {
+    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			throw new BadRequestException(error.getMessage());
+    	}
+    	
+    	SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+    	
+    	response.redirect(String.format("/app/connectors/salesforce/%s", salesforceConnector.getId()));
+    	
+    	return "";
 	}
 }

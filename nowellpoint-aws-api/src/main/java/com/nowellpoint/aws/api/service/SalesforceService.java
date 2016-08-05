@@ -1,17 +1,11 @@
 package com.nowellpoint.aws.api.service;
 
-import java.sql.Date;
-import java.time.Instant;
-import java.util.UUID;
-
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.api.dto.EnvironmentDTO;
-import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
@@ -26,7 +20,6 @@ import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
-import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
@@ -115,40 +108,6 @@ public class SalesforceService extends AbstractCacheService {
 				.authenticate(request);
 			
 		return response;
-	}
-	
-	public SalesforceConnectorDTO getSalesforceInstance(Token token) {
-		GetIdentityRequest request = new GetIdentityRequest()
-				.setAccessToken(token.getAccessToken())
-				.setId(token.getId());
-		
-		Client client = new Client();
-		
-		Identity identity = client.getIdentity(request);
-		
-		Organization organization = getOrganization(token.getAccessToken(), identity.getOrganizationId(), identity.getUrls().getSobjects());
-		
-		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
-		resource.setOrganization(organization);
-		resource.setIdentity(identity);
-		
-		EnvironmentDTO environment = new EnvironmentDTO();
-		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
-		environment.setIsActive(Boolean.TRUE);
-		environment.setEnvironmentName("Production");
-		environment.setIsReadOnly(Boolean.TRUE);
-		environment.setIsSandbox(Boolean.FALSE);
-		environment.setTest(Boolean.FALSE);
-		environment.setAddedOn(Date.from(Instant.now()));
-		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setUsername(identity.getUsername());
-		environment.setOrganizationName(organization.getName());
-		environment.setServiceEndpoint(token.getInstanceUrl());
-		environment.setAuthEndpoint("https://login.salesforce.com");
-		
-		resource.addEnvironment(environment);
-		
-		return resource;
 	}
 	
 	/**

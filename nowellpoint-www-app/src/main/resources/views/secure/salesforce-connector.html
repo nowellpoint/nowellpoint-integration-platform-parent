@@ -331,5 +331,34 @@
                     </table>
                 </div>
             </div>
+            
+            <br>
+            <br>
+
+            <div class="row">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["settings"]}</h3>
+                    </div>
+                </div>
+                <br>
+                <div class="hr-divider"></div>
+
+                <br>
+
+                <div class="col-md-6">
+                    <dl class="dl-vertical">
+                        <dt>${messages["created.on"]}</dt>
+                        <dd>${salesforceConnector.createdDate?date?string.iso!}</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-vertical">
+                        <dt>${messages["last.modified.on"]}</dt>
+                        <dd>${salesforceConnector.lastModifiedDate?date?string.iso!}</dd>
+                    </dl>
+                </div>
+            </div>
+            
         </div>
     </@t.page>

@@ -1,8 +1,5 @@
 package com.nowellpoint.aws.api.resource;
 
-import static com.nowellpoint.aws.data.CacheManager.deserialize;
-import static com.nowellpoint.aws.data.CacheManager.getCache;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -32,34 +29,25 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.model.Targets;
-import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
-import com.nowellpoint.aws.api.service.SalesforceService;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.Token;
 
-import redis.clients.jedis.Jedis;
-
 @Path("connectors")
 public class SalesforceConnectorResource {
-	
-	@Inject
-	private AccountProfileService accountProfileService;
-	
-	@Inject
-	private SalesforceService salesforceService;
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
@@ -82,35 +70,24 @@ public class SalesforceConnectorResource {
 				.build();
     }
 	
-	@GET
-	@Path("salesforce/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceConnector(@PathParam(value="id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
-		
-		return Response.ok(resource).build();
-	}
-	
 	@POST
 	@Path("salesforce")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createSalesforceConnector(@FormParam(value="id") String id) {
+	public Response createSalesforceConnector(@FormParam("id") @NotEmpty(message = "Missing Token Id") String id,
+			@FormParam("instanceUrl") @NotEmpty(message = "Missing Instance Url") String instanceUrl,
+			@FormParam("accessToken") @NotEmpty(message = "Missing Access Token") String accessToken,
+			@FormParam("refreshToken") @NotEmpty(message = "Missing RefreshToken") String refreshToken) {
+		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		Token token = getToken(subject, id);
+		Token token = new Token();
+		token.setId(id);
+		token.setInstanceUrl(instanceUrl);
+		token.setAccessToken(accessToken);
+		token.setRefreshToken(refreshToken);
 		
-		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
-		
-		SalesforceConnectorDTO resource = salesforceService.getSalesforceInstance(token);
-		resource.setOwner(owner);
-		resource.setSubject(subject);
-		resource.getIdentity().getPhotos().setPicture(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getPicture()));
-		resource.getIdentity().getPhotos().setThumbnail(putImage(token.getAccessToken(), resource.getIdentity().getPhotos().getThumbnail()));
-		
-		salesforceConnectorService.createSalesforceConnector(resource);
+		SalesforceConnectorDTO resource = salesforceConnectorService.createSalesforceConnector(subject, token);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceResource.class)
@@ -120,6 +97,17 @@ public class SalesforceConnectorResource {
 		return Response.created(uri)
 				.entity(resource)
 				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSalesforceConnector(@PathParam(value="id") String id) {
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+		
+		return Response.ok(resource).build();
 	}
 	
 	@POST
@@ -144,21 +132,21 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
 		String subject = securityContext.getUserPrincipal().getName();
-		System.out.println("1");
+		
 		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
-		System.out.println("2");
+
 		AmazonS3 s3Client = new AmazonS3Client();
-		System.out.println("3");
+
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getThumbnail().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
-		System.out.println("4");
+
 		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
-		System.out.println("5");
+
 		s3Client.deleteObjects(deleteObjectsRequest);
-		System.out.println("6");
+
 		salesforceConnectorService.deleteSalesforceConnector(id, subject);
-		System.out.println("7");
+
 		return Response.noContent()
 				.build(); 
 	}
@@ -467,23 +455,6 @@ public class SalesforceConnectorResource {
 				.entity(resource)
 				.build(); 
 		
-	}
-	
-	private Token getToken(String subject, String userId) {
-		Jedis jedis = getCache();
-		byte[] bytes = null;
-		try {
-			bytes = jedis.hget(subject.getBytes(), Token.class.getName().concat( userId ).getBytes());
-		} finally {
-			jedis.close();
-		}
-		
-		Token token = null;
-		if (bytes != null) {
-			token = deserialize(bytes, Token.class);
-		}
-		
-		return token;
 	}
 	
 	private String putImage(String accessToken, String imageUrl) {

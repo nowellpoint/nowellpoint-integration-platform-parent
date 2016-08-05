@@ -27,6 +27,12 @@ import com.nowellpoint.aws.api.model.Plan;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
+import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.GetIdentityRequest;
+import com.nowellpoint.client.sforce.GetOrganizationRequest;
+import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Token;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.ws.ConnectionException;
@@ -54,11 +60,48 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		return resources;
 	}
-
-	public SalesforceConnectorDTO createSalesforceConnector(SalesforceConnectorDTO resource) {	
+	
+	public SalesforceConnectorDTO createSalesforceConnector(String subject, Token token) {
+		Client client = new Client();
+		
+		GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+				.setAccessToken(token.getAccessToken())
+				.setId(token.getId());
+		
+		Identity identity = client.getIdentity(getIdentityRequest);
+		
+		GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
+				.setAccessToken(token.getAccessToken())
+				.setOrganizationId(identity.getOrganizationId())
+				.setSobjectUrl(identity.getUrls().getSobjects());
+		
+		Organization organization = client.getOrganization(getOrganizationRequest);
+		
+		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
+		resource.setSubject(subject);
+		resource.setOrganization(organization);
+		resource.setIdentity(identity);
+		
+		EnvironmentDTO environment = new EnvironmentDTO();
+		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
+		environment.setIsActive(Boolean.TRUE);
+		environment.setEnvironmentName("Production");
+		environment.setIsReadOnly(Boolean.TRUE);
+		environment.setIsSandbox(Boolean.FALSE);
+		environment.setTest(Boolean.FALSE);
+		environment.setAddedOn(Date.from(Instant.now()));
+		environment.setUpdatedOn(Date.from(Instant.now()));
+		environment.setUsername(identity.getUsername());
+		environment.setOrganizationName(organization.getName());
+		environment.setServiceEndpoint(token.getInstanceUrl());
+		environment.setAuthEndpoint("https://login.salesforce.com");
+		
+		resource.addEnvironment(environment);
+		
 		create( resource );
-		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId()), resource );
+		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
 		hset( resource.getId(), resource.getSubject(), resource );
+		
 		return resource;
 	}
 	
