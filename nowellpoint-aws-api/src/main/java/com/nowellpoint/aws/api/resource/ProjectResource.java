@@ -101,12 +101,10 @@ public class ProjectResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(ProjectDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
 		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(resource.getOwner().getHref());	
 		
 		resource.setOwner(owner);
-		resource.setSubject(subject);
 		
 		projectService.createProject(resource);
 		

@@ -122,7 +122,7 @@ public class ApplicationResource {
 		
 		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
 		
-		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(subject, connectorId);
+		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(connectorId);
 		
 		ServiceInstance serviceInstance = new ServiceInstance();
 		//serviceInstance.setServiceType(provider.getService().getType());
@@ -138,7 +138,6 @@ public class ApplicationResource {
 		ApplicationDTO resource = new ApplicationDTO();
 		
 		resource.setOwner(owner);
-		resource.setSubject(subject);
 		resource.setName(name);
 		resource.setServiceInstance(serviceInstance);
 		
@@ -196,7 +195,6 @@ public class ApplicationResource {
 		
 		ApplicationDTO resource = applicationService.getApplication(id, subject);
 		resource.setId(id);
-		resource.setSubject(subject);
 		resource.setName(name);
 		
 		applicationService.updateApplication(resource);

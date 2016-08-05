@@ -9,7 +9,6 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
@@ -63,13 +62,6 @@ public abstract class AbstractDTO implements Serializable {
 	 */
 
 	private Date systemModifiedDate;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonIgnore
-	private String subject;
 	
 	
 	public AbstractDTO() {
@@ -130,13 +122,5 @@ public abstract class AbstractDTO implements Serializable {
 
 	public void setSystemModifiedDate(Date systemModifiedDate) {
 		this.systemModifiedDate = systemModifiedDate;
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
 	}
 }

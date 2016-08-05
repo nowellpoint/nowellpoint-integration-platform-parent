@@ -42,7 +42,7 @@ public class CreateProperties {
 				return;
 			}
 			
-			List<Property> propertyBatch = new ArrayList<Property>();
+			List<Property> propertyList = new ArrayList<Property>();
 			
 			properties.keySet().stream().forEach(key -> {
 
@@ -53,10 +53,10 @@ public class CreateProperties {
 				property.setLastModifiedBy("5hAh1uolQo18Nk4T8aVxci");
 				property.setLastModifiedDate(Date.from(Instant.now()));
 				
-				propertyBatch.add(property);
+				propertyList.add(property);
 			});
 			
-			mapper.batchSave(propertyBatch);
+			mapper.batchSave(propertyList);
 		});
 	}
 

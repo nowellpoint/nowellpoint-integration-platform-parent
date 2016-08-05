@@ -23,6 +23,7 @@ import com.nowellpoint.aws.api.dto.AbstractDTO;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.api.model.User;
+import com.nowellpoint.aws.api.util.UserContext;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
@@ -128,6 +129,10 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 		});
 	}
 	
+	protected String getSubject() {
+		return UserContext.getUserPrincipal().getName();
+	}
+	
 	/**
 	 * 
 	 * @param id
@@ -186,9 +191,11 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected R create(R resource) {
+		String subject = getSubject();
+		
 		AbstractDocument document = modelMapper.map( resource, documentType );		
-		document.setCreatedById(resource.getSubject());
-		document.setLastModifiedById(resource.getSubject());
+		document.setCreatedById(subject);
+		document.setLastModifiedById(subject);
 		
 		try {
 			MongoDBDatastore.insertOne( document );
@@ -211,8 +218,10 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected R replace(R resource) {
+		String subject = getSubject();
+		
 		AbstractDocument document = modelMapper.map( resource, documentType );
-		document.setLastModifiedById(resource.getSubject());
+		document.setLastModifiedById(subject);
 		
 		try {
 			MongoDBDatastore.replaceOne( document );

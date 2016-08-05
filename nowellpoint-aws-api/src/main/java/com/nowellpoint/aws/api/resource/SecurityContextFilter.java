@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
 import com.nowellpoint.aws.api.service.IdentityProviderService;
+import com.nowellpoint.aws.api.util.UserContext;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.tools.TokenParser;
@@ -75,6 +76,8 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 			UserPrincipal user = new UserPrincipal(subject);
 				
 			requestContext.setSecurityContext(new UserPrincipalSecurityContext(user));
+			
+			UserContext.setUserPrincipal(user);
 			
 			if (method.isAnnotationPresent(RolesAllowed.class)) {
 				

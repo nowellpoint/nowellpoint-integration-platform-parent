@@ -74,7 +74,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		AccountProfileDTO resource = findAccountProfileBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
-		resource.setSubject(subject);
 		
 		updateAccountProfile(resource);
 	}
@@ -88,7 +87,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 */
 	
 	public AccountProfileDTO createAccountProfile(AccountProfileDTO resource) {
-		resource.setHref(resource.getSubject());
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		
@@ -103,8 +101,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		create(resource);
 		
-		hset( resource.getId(), resource.getSubject(), resource );
-		hset( resource.getSubject(), AccountProfileDTO.class.getName(), resource );
+		hset( resource.getId(), getSubject(), resource );
+		hset( getSubject(), AccountProfileDTO.class.getName(), resource );
 		
 		return resource;
 	}
@@ -118,7 +116,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 */
 	
 	public AccountProfileDTO updateAccountProfile(AccountProfileDTO resource) {
-		AccountProfileDTO original = findAccountProfile( resource.getId(), resource.getSubject() );
+		AccountProfileDTO original = findAccountProfile( resource.getId() );
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
@@ -146,8 +144,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		replace(resource);
 
-		hset( resource.getId(), resource.getSubject(), resource );
-		hset( resource.getSubject(), AccountProfileDTO.class.getName(), resource );
+		hset( resource.getId(), getSubject(), resource );
+		hset( getSubject(), AccountProfileDTO.class.getName(), resource );
 		
 		return resource;
 	}
@@ -160,8 +158,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return
 	 */
 	
-	public Address updateAccountProfileAddress(String subject, String id, Address address) {
-		AccountProfileDTO resource = findAccountProfile( id, subject );
+	public Address updateAccountProfileAddress(String id, Address address) {
+		AccountProfileDTO resource = findAccountProfile( id );
 		
 		if (address.getCountryCode() != resource.getAddress().getCountryCode()) {
 			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
@@ -172,8 +170,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		replace(resource);
 
-		hset( id, subject, resource );
-		hset( subject, AccountProfileDTO.class.getName(), resource );
+		hset( id, getSubject(), resource );
+		hset( getSubject(), AccountProfileDTO.class.getName(), resource );
 		
 		return address;
 	}
@@ -185,8 +183,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return
 	 */
 	
-	public Address getAccountProfileAddress(String subject, String id) {
-		AccountProfileDTO resource = findAccountProfile( id, subject );
+	public Address getAccountProfileAddress(String id) {
+		AccountProfileDTO resource = findAccountProfile( id );
 		return resource.getAddress();
 	}
 	
@@ -196,13 +194,13 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return Identity resource for id
 	 */
 	
-	public AccountProfileDTO findAccountProfile(String id, String subject) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+	public AccountProfileDTO findAccountProfile(String id) {		
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
 		
 		if ( resource == null ) {
 			resource = find(id);
-			hset( resource.getId(), subject, resource );
-			hset( subject, AccountProfileDTO.class.getName(), resource );
+			hset( resource.getId(), getSubject(), resource );
+			hset( getSubject(), AccountProfileDTO.class.getName(), resource );
 		}
 		
 		return resource;
@@ -276,8 +274,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public CreditCardDTO getCreditCard(String subject, String id, String token) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
+	public CreditCardDTO getCreditCard(String id, String token) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
 		
 		Optional<CreditCardDTO> creditCard = resource.getCreditCards()
 				.stream()
@@ -288,9 +286,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 	}
 	
-	public void addCreditCard(String subject, String id, CreditCardDTO creditCard) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
-		resource.setSubject(subject);
+	public void addCreditCard(String id, CreditCardDTO creditCard) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.company(resource.getCompany())
@@ -383,9 +380,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public void updateCreditCard(String subject, String id, String token, CreditCardDTO creditCard) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
-		resource.setSubject(subject);
+	public void updateCreditCard(String id, String token, CreditCardDTO creditCard) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -446,9 +442,9 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public CreditCardDTO updateCreditCard(String subject, String id, String token, MultivaluedMap<String,String> parameters) {
+	public CreditCardDTO updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
 		
-		CreditCardDTO creditCard = getCreditCard(subject, id, token);
+		CreditCardDTO creditCard = getCreditCard(id, token);
 		
 		if (parameters.containsKey("cardholderName")) {
 			creditCard.setCardholderName(parameters.getFirst("cardholderName"));
@@ -466,14 +462,13 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			creditCard.setPrimary(Boolean.valueOf(parameters.getFirst("primary")));
 		}
 		
-		updateCreditCard(subject, id, token, creditCard);
+		updateCreditCard(id, token, creditCard);
 		
 		return creditCard;
 	}
 	
-	public void removeCreditCard(String subject, String id, String token) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, subject );
-		resource.setSubject(subject);
+	public void removeCreditCard(String id, String token) {
+		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
 		
 		com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
 		

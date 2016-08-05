@@ -79,15 +79,13 @@ public class SalesforceConnectorResource {
 			@FormParam("accessToken") @NotEmpty(message = "Missing Access Token") String accessToken,
 			@FormParam("refreshToken") @NotEmpty(message = "Missing RefreshToken") String refreshToken) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
 		Token token = new Token();
 		token.setId(id);
 		token.setInstanceUrl(instanceUrl);
 		token.setAccessToken(accessToken);
 		token.setRefreshToken(refreshToken);
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.createSalesforceConnector(subject, token);
+		SalesforceConnectorDTO resource = salesforceConnectorService.createSalesforceConnector(token);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceResource.class)
@@ -102,10 +100,8 @@ public class SalesforceConnectorResource {
 	@GET
 	@Path("salesforce/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceConnector(@PathParam(value="id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
 		
 		return Response.ok(resource).build();
 	}
@@ -114,11 +110,8 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
 		resource.setTag(tag);
 		
 		salesforceConnectorService.updateSalesforceConnector(resource);
@@ -130,10 +123,8 @@ public class SalesforceConnectorResource {
 	
 	@DELETE
 	@Path("salesforce/{id}")
-	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(subject, id);
+	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {		
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
 
 		AmazonS3 s3Client = new AmazonS3Client();
 
@@ -145,7 +136,7 @@ public class SalesforceConnectorResource {
 
 		s3Client.deleteObjects(deleteObjectsRequest);
 
-		salesforceConnectorService.deleteSalesforceConnector(id, subject);
+		salesforceConnectorService.deleteSalesforceConnector(id);
 
 		return Response.noContent()
 				.build(); 
@@ -154,10 +145,9 @@ public class SalesforceConnectorResource {
 	@GET
 	@Path("salesforce/{id}/environment/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
-		String subject = securityContext.getUserPrincipal().getName();
+	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		EnvironmentDTO resource = salesforceConnectorService.getEnvironment(subject, id, key);
+		EnvironmentDTO resource = salesforceConnectorService.getEnvironment(id, key);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
@@ -173,9 +163,8 @@ public class SalesforceConnectorResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO environment) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		EnvironmentDTO resource = salesforceConnectorService.addEnvironment(subject, id, environment);
+		EnvironmentDTO resource = salesforceConnectorService.addEnvironment(id, environment);
 		
 		return Response.ok()
 				.entity(resource)
@@ -187,9 +176,8 @@ public class SalesforceConnectorResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(subject, id, key, environment);
+		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(id, key, environment);
 		
 		return Response.ok()
 				.entity(resource)
@@ -200,9 +188,8 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		salesforceConnectorService.removeEnvironment(subject, id, key);
+		salesforceConnectorService.removeEnvironment(id, key);
 		
 		return Response.ok()
 				.build(); 
@@ -220,9 +207,7 @@ public class SalesforceConnectorResource {
 			@PathParam(value="serviceType") String serviceType, 
 			@PathParam(value="code") String code) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(subject, id, serviceProviderId, serviceType, code);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(id, serviceProviderId, serviceType, code);
 		
 		return Response.ok()
 				.entity(resource)
@@ -238,9 +223,7 @@ public class SalesforceConnectorResource {
 			@PathParam(value="key") String key,
 			ServiceInstanceDTO serviceInstance) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance(subject, id, key, serviceInstance);
+		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance(id, key, serviceInstance);
 		
 		return Response.ok()
 				.entity(resource)
@@ -321,11 +304,9 @@ public class SalesforceConnectorResource {
 			@PathParam(value="key") String key,
 			Set<EventListenerDTO> eventListeners) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addEventListeners(subject, id, key, eventListeners);
+			resource = salesforceConnectorService.addEventListeners(id, key, eventListeners);
 		} catch (Exception e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -338,16 +319,11 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/service/{key}/targets")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addTargets(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key,
-			Targets targets) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
+	public Response addTargets(@PathParam(value="id") String id, @PathParam(value="key") String key, Targets targets) {
+				
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addTargets(subject, id, key, targets);
+			resource = salesforceConnectorService.addTargets(id, key, targets);
 		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -443,13 +419,9 @@ public class SalesforceConnectorResource {
 	@DELETE
 	@Path("salesforce/{id}/service/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeServiceInstance(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key) {
+	public Response removeServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		SalesforceConnectorDTO resource = salesforceConnectorService.removeServiceInstance(subject, id, key);
+		SalesforceConnectorDTO resource = salesforceConnectorService.removeServiceInstance(id, key);
 		
 		return Response.ok()
 				.entity(resource)

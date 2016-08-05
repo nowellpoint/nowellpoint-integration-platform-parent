@@ -58,8 +58,8 @@ public class ProjectService extends AbstractDocumentService<ProjectDTO, Project>
 	public ProjectDTO createProject(ProjectDTO resource) {
 		create(resource);
 		
-		hset( resource.getSubject(), ProjectDTO.class.getName().concat( resource.getId()), resource );
-		hset( resource.getId(), resource.getSubject(), resource );
+		hset( getSubject(), ProjectDTO.class.getName().concat( resource.getId()), resource );
+		hset( resource.getId(), getSubject(), resource );
 		
 		return resource;
 	}

@@ -75,9 +75,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfileAddress(@PathParam("id") String id) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		Address address = accountProfileService.getAccountProfileAddress(subject, id);
+		Address address = accountProfileService.getAccountProfileAddress(id);
 		
 		return Response.ok(address)
 				.build();
@@ -89,9 +87,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateAccountProfileAddress(@PathParam("id") String id, Address address) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		accountProfileService.updateAccountProfileAddress(subject, id, address);
+		accountProfileService.updateAccountProfileAddress(id, address);
 		
 		return Response.ok(address)
 				.build();
@@ -153,7 +149,6 @@ public class AccountProfileResource {
 		resource.setMobilePhone(mobilePhone);
 		resource.setPhone(phone);
 		resource.setExtension(extension);
-		resource.setSubject(subject);
 		
 		accountProfileService.updateAccountProfile(resource);
 		
@@ -165,9 +160,8 @@ public class AccountProfileResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( id, subject );
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( id );
 		
 		return Response.ok(resource)
 				.build();
@@ -177,9 +171,6 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createAccountProfile(AccountProfileDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		resource.setSubject(subject);
 		
 		accountProfileService.createAccountProfile( resource );
 		
@@ -196,10 +187,8 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response udpateAccountProfile(@PathParam("id") String id, AccountProfileDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
 		resource.setId(id);
-		resource.setSubject(subject);
 		
 		accountProfileService.updateAccountProfile(resource);
 		
@@ -211,9 +200,8 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response disableAccountProfile(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( id, subject );
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( id );
 		
 		try {
 			identityProviderService.disableAccount(resource.getHref());
@@ -228,9 +216,8 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		CreditCardDTO resource = accountProfileService.getCreditCard(subject, id, token);
+		CreditCardDTO resource = accountProfileService.getCreditCard(id, token);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
@@ -246,10 +233,9 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
 		try {
-			accountProfileService.addCreditCard(subject, id, resource);
+			accountProfileService.addCreditCard(id, resource);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -264,11 +250,10 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, MultivaluedMap<String, String> parameters) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
 		CreditCardDTO resource = null;
 		try {
-			resource = accountProfileService.updateCreditCard(subject, id, token, parameters);
+			resource = accountProfileService.updateCreditCard(id, token, parameters);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -283,10 +268,9 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
 		try {
-			accountProfileService.updateCreditCard(subject, id, token, resource);
+			accountProfileService.updateCreditCard(id, token, resource);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -299,10 +283,9 @@ public class AccountProfileResource {
 	@DELETE
 	@Path("{id}/credit-card/{token}")
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
 		try {
-			accountProfileService.removeCreditCard(subject, id, token);
+			accountProfileService.removeCreditCard(id, token);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -331,9 +314,7 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture(@PathParam("id") String id) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile(id, subject);
+		AccountProfileDTO resource = accountProfileService.findAccountProfile(id);
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
@@ -344,7 +325,6 @@ public class AccountProfileResource {
 		Photos photos = new Photos();
 		photos.setProfilePicture("/images/person-generic.jpg");
 		
-		resource.setSubject(subject);
 		resource.setPhotos(photos);
 		
 		accountProfileService.updateAccountProfile(resource);

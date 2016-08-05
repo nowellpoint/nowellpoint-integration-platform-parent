@@ -45,8 +45,8 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		
 		create(resource);
 
-		hset( resource.getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), resource.getSubject(), resource );
+		hset( getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), getSubject(), resource );
 		
 		return resource;
 	}
@@ -60,14 +60,14 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 */
 	
 	public ApplicationDTO updateApplication(ApplicationDTO resource) {
-		ApplicationDTO original = getApplication( resource.getId(), resource.getSubject() );
+		ApplicationDTO original = getApplication( resource.getId(), getSubject() );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
 		replace(resource);
 		
-		hset( resource.getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), resource.getSubject(), resource );
+		hset( getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
+		hset( resource.getId(), getSubject(), resource );
 
 		return resource;
 	}

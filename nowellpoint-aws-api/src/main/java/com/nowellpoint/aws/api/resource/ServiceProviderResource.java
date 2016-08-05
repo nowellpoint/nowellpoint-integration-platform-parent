@@ -59,9 +59,6 @@ public class ServiceProviderResource {
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createServiceProvider(ServiceProviderDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		resource.setSubject(subject);
 		
 		serviceProviderService.createServiceProvider(resource);
 		
@@ -88,9 +85,7 @@ public class ServiceProviderResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		resource.setSubject(subject);
+
 		resource.setId(id);
 		
 		serviceProviderService.updateServiceProvider(resource);

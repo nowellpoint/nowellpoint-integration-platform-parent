@@ -2,9 +2,11 @@ package com.nowellpoint.aws.api.service;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +29,7 @@ import com.nowellpoint.aws.api.model.Plan;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
+import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
@@ -61,7 +64,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resources;
 	}
 	
-	public SalesforceConnectorDTO createSalesforceConnector(String subject, Token token) {
+	public SalesforceConnectorDTO createSalesforceConnector(Token token) {
+		
 		Client client = new Client();
 		
 		GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
@@ -78,7 +82,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
-		resource.setSubject(subject);
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		
@@ -99,43 +102,65 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.addEnvironment(environment);
 		
 		create( resource );
-		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
-		hset( resource.getId(), resource.getSubject(), resource );
+		hset( getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
+		hset( resource.getId(), getSubject(), resource );
+		
+		List<UserProperty> properties = new ArrayList<UserProperty>();
+		
+		UserProperty accessTokenProperty = new UserProperty();
+		accessTokenProperty.setSubject(getSubject());
+		accessTokenProperty.setKey("AccessToken");
+		accessTokenProperty.setValue(token.getAccessToken());
+		accessTokenProperty.setLastModifiedBy(getSubject());
+		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		
+		properties.add(accessTokenProperty);
+		
+		UserProperty refreshTokenProperty = new UserProperty();
+		refreshTokenProperty.setSubject(getSubject());
+		refreshTokenProperty.setKey("RefreshToken");
+		refreshTokenProperty.setValue(token.getRefreshToken());
+		refreshTokenProperty.setLastModifiedBy(getSubject());
+		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		
+		properties.add(refreshTokenProperty);
+		
+		mapper.batchSave(properties);
 		
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO updateSalesforceConnector(SalesforceConnectorDTO resource) {
-		SalesforceConnectorDTO original = findSalesforceConnector(resource.getSubject(), resource.getId());
+	public SalesforceConnectorDTO updateSalesforceConnector(SalesforceConnectorDTO resource) {		
+		SalesforceConnectorDTO original = findSalesforceConnector(resource.getId());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
 		replace( resource );
 		
-		hset( resource.getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
-		hset( resource.getId(), resource.getSubject(), resource );
+		hset( getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
+		hset( resource.getId(), getSubject(), resource );
 		
 		return resource;
 	}
 	
-	public void deleteSalesforceConnector(String id, String subject) {
+	public void deleteSalesforceConnector(String id) {
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO(id);
 		delete(resource);
-		hdel( subject, SalesforceConnectorDTO.class.getName().concat(id) );
-		hdel( id, subject );
+		hdel( getSubject(), SalesforceConnectorDTO.class.getName().concat(id) );
+		hdel( id, getSubject() );
 	}
 	
-	public SalesforceConnectorDTO findSalesforceConnector(String subject, String id) {
-		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id, subject );
+	public SalesforceConnectorDTO findSalesforceConnector(String id) {		
+		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id, getSubject() );
 		if ( resource == null ) {		
 			resource = find(id);
-			hset( id, subject, resource );
+			hset( id, getSubject(), resource );
 		}
 		return resource;
 	}
 	
-	public EnvironmentDTO getEnvironment(String subject, String id, String key) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
+	public EnvironmentDTO getEnvironment(String id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
 				.stream()
@@ -146,9 +171,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	}
 	
-	public EnvironmentDTO addEnvironment(String subject, String id, EnvironmentDTO environment) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public EnvironmentDTO addEnvironment(String id, EnvironmentDTO environment) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
 		environment.setIsActive(Boolean.FALSE);
@@ -164,9 +188,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	}
 	
-	public EnvironmentDTO updateEnvironment(String subject, String id, String key, EnvironmentDTO environment) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public EnvironmentDTO updateEnvironment(String id, String key, EnvironmentDTO environment) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO original = resource.getEnvironments()
 				.stream()
@@ -191,9 +214,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	} 
 	
-	public void removeEnvironment(String subject, String id, String key) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public void removeEnvironment(String id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
@@ -202,9 +224,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	// *************************
 	
-	public SalesforceConnectorDTO addServiceInstance(String subject, String id, String serviceProviderId, String serviceType, String code) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public SalesforceConnectorDTO addServiceInstance(String id, String serviceProviderId, String serviceType, String code) {		
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		ServiceProviderDTO serviceProvider = serviceProviderService.find(serviceProviderId);
 		
@@ -230,7 +251,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setIsActive(Boolean.FALSE);
 		serviceInstance.setPlan(plan);
 		
-		resource.setSubject(subject);
 		resource.addServiceInstance(serviceInstance);
 		
 		updateSalesforceConnector(resource);
@@ -238,9 +258,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO updateServiceInstance(String subject, String id, String key, ServiceInstanceDTO serviceInstance) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public SalesforceConnectorDTO updateServiceInstance(String id, String key, ServiceInstanceDTO serviceInstance) {		
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
@@ -264,9 +283,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO removeServiceInstance(String subject, String id, String key) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public SalesforceConnectorDTO removeServiceInstance(String id, String key) {		
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));
 
@@ -363,9 +381,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //		return resource;
 //	}
 	
-	public SalesforceConnectorDTO addEventListeners(String subject, String id, String key, Set<EventListenerDTO> eventListeners) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public SalesforceConnectorDTO addEventListeners(String id, String key, Set<EventListenerDTO> eventListeners) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -399,9 +416,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addTargets(String subject, String id, String key, Targets targets) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-		resource.setSubject(subject);
+	public SalesforceConnectorDTO addTargets(String id, String key, Targets targets) {		
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
 				.stream()
