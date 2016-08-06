@@ -30,6 +30,7 @@ import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
+import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
@@ -49,7 +50,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	@Inject
 	private ServiceProviderService serviceProviderService;
 	
-	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
+	private static DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	public SalesforceConnectorService() {
 		super(SalesforceConnectorDTO.class, SalesforceConnector.class);
@@ -108,8 +109,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
 		UserProperty accessTokenProperty = new UserProperty();
-		accessTokenProperty.setSubject(getSubject());
-		accessTokenProperty.setKey("AccessToken");
+		accessTokenProperty.setSubject(resource.getId());
+		accessTokenProperty.setKey("access.token");
 		accessTokenProperty.setValue(token.getAccessToken());
 		accessTokenProperty.setLastModifiedBy(getSubject());
 		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
@@ -117,8 +118,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		properties.add(accessTokenProperty);
 		
 		UserProperty refreshTokenProperty = new UserProperty();
-		refreshTokenProperty.setSubject(getSubject());
-		refreshTokenProperty.setKey("RefreshToken");
+		refreshTokenProperty.setSubject(resource.getId());
+		refreshTokenProperty.setKey("refresh.token");
 		refreshTokenProperty.setValue(token.getRefreshToken());
 		refreshTokenProperty.setLastModifiedBy(getSubject());
 		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
