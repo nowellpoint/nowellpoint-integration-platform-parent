@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
 public class Environment {
 	
@@ -25,11 +27,15 @@ public class Environment {
 	
 	private Boolean isActive;
 	
+	private String organizationId;
+	
 	private String organizationName;
 	
 	private String serviceEndpoint;
 	
 	private String authEndpoint;
+	
+	private String apiVersion;
 	
 	private String username;
 	
@@ -39,7 +45,7 @@ public class Environment {
 	
 	private Boolean isSandbox;
 	
-	private Boolean test;
+	private Boolean isValid;
 	
 	private String testMessage;
 	
@@ -96,6 +102,14 @@ public class Environment {
 		this.isActive = isActive;
 	}
 
+	public String getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
+	}
+
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -118,6 +132,14 @@ public class Environment {
 
 	public void setAuthEndpoint(String authEndpoint) {
 		this.authEndpoint = authEndpoint;
+	}
+
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
 	}
 
 	public String getUsername() {
@@ -152,12 +174,12 @@ public class Environment {
 		this.isSandbox = isSandbox;
 	}
 
-	public Boolean getTest() {
-		return test;
+	public Boolean getIsValid() {
+		return isValid;
 	}
 
-	public void setTest(Boolean test) {
-		this.test = test;
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
 	}
 
 	public String getTestMessage() {

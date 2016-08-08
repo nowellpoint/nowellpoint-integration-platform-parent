@@ -234,8 +234,8 @@
 
                                 <div class="col-md-12">
                                     <div class="pull-right">
-                                        <a href="/app/account-profile" class="btn btn-default" role="button">${labels["back"]}</a>
-                                        <a href="/app/account-profile/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                                        <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-default" role="button">${labels["back"]}</a>
+                                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-default" role="button">${labels["edit"]}</a>
                                         <#if ! creditCard.primary>
                                             <a href="#" class="confirm-delete btn btn-danger" role="button" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}">${labels["delete"]}</a></#if>
                                     </div>

@@ -20,6 +20,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.aws.api.dto.idp.Token;
 import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.AuthorizationHeader;
+import com.nowellpoint.aws.api.util.UserContext;
 
 @Path("/oauth")
 @Api(value = "/time", tags = "time")
@@ -54,6 +55,8 @@ public class TokenResource {
 		Token token = identityProviderService.authenticate(params[0], params[1]);
 		
 		params = null;
+		
+		UserContext.setUserContext(token.getAccessToken());
 			
 		loggedInEvent.fire(token);
 		

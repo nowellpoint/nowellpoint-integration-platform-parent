@@ -1,15 +1,9 @@
 package com.nowellpoint.aws.api.resource;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,30 +14,21 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
-import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.Token;
 
 @Path("connectors")
@@ -110,7 +95,8 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {		
+	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {	
+		
 		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
 		resource.setTag(tag);
 		
@@ -124,17 +110,6 @@ public class SalesforceConnectorResource {
 	@DELETE
 	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
-
-		AmazonS3 s3Client = new AmazonS3Client();
-
-		List<KeyVersion> keys = new ArrayList<KeyVersion>();
-		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
-		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getThumbnail().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
-
-		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
-
-		s3Client.deleteObjects(deleteObjectsRequest);
 
 		salesforceConnectorService.deleteSalesforceConnector(id);
 
@@ -427,36 +402,5 @@ public class SalesforceConnectorResource {
 				.entity(resource)
 				.build(); 
 		
-	}
-	
-	private String putImage(String accessToken, String imageUrl) {
-		
-		AmazonS3 s3Client = new AmazonS3Client();
-		
-		try {
-			URL url = new URL( imageUrl + "?oauth_token=" + accessToken );
-			
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-			String contentType = connection.getHeaderField("Content-Type");
-			
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-	    	objectMetadata.setContentLength(connection.getContentLength());
-	    	objectMetadata.setContentType(contentType);
-	    	
-	    	String key = UUID.randomUUID().toString().replace("-", "");
-			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", key, connection.getInputStream(), objectMetadata);
-	    	
-	    	s3Client.putObject(putObjectRequest);
-	    	
-	    	URI uri = UriBuilder.fromUri(System.getProperty(Properties.CLOUDFRONT_HOSTNAME))
-					.path("{id}")
-					.build(key);
-			
-			return uri.toString();
-			
-		} catch (IOException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
 	}
 }

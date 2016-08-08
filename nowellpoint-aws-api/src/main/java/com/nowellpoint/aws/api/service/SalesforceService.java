@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.api.service;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 
@@ -37,7 +36,7 @@ public class SalesforceService extends AbstractCacheService {
 	
 	public LoginResult login(String authEndpoint, String username, String password, String securityToken) {
 		ConnectorConfig config = new ConnectorConfig();
-		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", authEndpoint));
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/37.0", authEndpoint));
 		config.setUsername(username);
 		config.setPassword(password.concat(securityToken));
 		
@@ -52,19 +51,17 @@ public class SalesforceService extends AbstractCacheService {
 					.withDisplayName(connection.getUserInfo().getUserFullName())
 					.withOrganizationId(connection.getUserInfo().getOrganizationId())
 					.withOrganziationName(connection.getUserInfo().getOrganizationName())
-					.withServiceEndpoint(connection.getConfig().getServiceEndpoint())
+					.withServiceEndpoint(connection.getConfig().getServiceEndpoint().substring(0, connection.getConfig().getServiceEndpoint().indexOf("/services")))
 					.withSessionId(connection.getConfig().getSessionId())
 					.withUserId(connection.getUserInfo().getUserId())
 					.withUserName(connection.getUserInfo().getUserName());
-			
-			set(id, result);
 			
 			return result;
 			
 		} catch (ConnectionException e) {
 			if (e instanceof LoginFault) {
 				LoginFault loginFault = (LoginFault) e;
-				throw new BadRequestException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+				throw new ServiceException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
 			} else {
 				throw new InternalServerErrorException(e.getMessage());
 			}

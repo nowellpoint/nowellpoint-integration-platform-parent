@@ -1,11 +1,13 @@
 package com.nowellpoint.aws.api.service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,33 +16,39 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.api.model.Environment;
-import com.nowellpoint.aws.api.model.EnvironmentVariable;
 import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.Plan;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
+import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
-import com.sforce.soap.partner.Connector;
-import com.sforce.soap.partner.PartnerConnection;
-import com.sforce.ws.ConnectionException;
-import com.sforce.ws.ConnectorConfig;
 
 public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
 	
@@ -50,7 +58,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	@Inject
 	private ServiceProviderService serviceProviderService;
 	
-	private static DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
+	@Inject
+	private SalesforceService salesforceService;
+	
+	private static final AmazonS3 s3Client = new AmazonS3Client();
+	
+	private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
+	
+	private static final String API_VERSION = "37.0";
 	
 	public SalesforceConnectorService() {
 		super(SalesforceConnectorDTO.class, SalesforceConnector.class);
@@ -73,7 +88,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				.setAccessToken(token.getAccessToken())
 				.setId(token.getId());
 		
-		Identity identity = client.getIdentity(getIdentityRequest);
+		Identity identity = client.getIdentity( getIdentityRequest );
+		identity.getPhotos().setPicture( putImage( token.getAccessToken(), identity.getPhotos().getPicture() ) );
+		identity.getPhotos().setThumbnail( putImage( token.getAccessToken(), identity.getPhotos().getThumbnail() ) );
 		
 		GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
 				.setAccessToken(token.getAccessToken())
@@ -82,9 +99,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
+		AccountProfileDTO owner = new AccountProfileDTO();
+		owner.setHref(getSubject());
+		
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
+		resource.setOwner(owner);
 		
 		EnvironmentDTO environment = new EnvironmentDTO();
 		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
@@ -92,13 +113,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setEnvironmentName("Production");
 		environment.setIsReadOnly(Boolean.TRUE);
 		environment.setIsSandbox(Boolean.FALSE);
-		environment.setTest(Boolean.FALSE);
+		environment.setIsValid(Boolean.TRUE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
 		environment.setUsername(identity.getUsername());
 		environment.setOrganizationName(organization.getName());
 		environment.setServiceEndpoint(token.getInstanceUrl());
 		environment.setAuthEndpoint("https://login.salesforce.com");
+		environment.setApiVersion(API_VERSION);
 		
 		resource.addEnvironment(environment);
 		
@@ -126,7 +148,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		properties.add(refreshTokenProperty);
 		
-		mapper.batchSave(properties);
+		dynamoDBMapper.batchSave(properties);
 		
 		return resource;
 	}
@@ -145,10 +167,58 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	}
 	
 	public void deleteSalesforceConnector(String id) {
-		SalesforceConnectorDTO resource = new SalesforceConnectorDTO(id);
+		SalesforceConnectorDTO resource = findSalesforceConnector( id );
+		
 		delete(resource);
+		
 		hdel( getSubject(), SalesforceConnectorDTO.class.getName().concat(id) );
 		hdel( id, getSubject() );
+
+		List<KeyVersion> keys = new ArrayList<KeyVersion>();
+		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
+		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getThumbnail().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
+
+		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
+
+		s3Client.deleteObjects(deleteObjectsRequest);
+		
+		List<UserProperty> properties = new ArrayList<UserProperty>();
+		
+		UserProperty accessTokenProperty = new UserProperty();
+		accessTokenProperty.setSubject(resource.getId());
+		accessTokenProperty.setKey("access.token");
+		
+		properties.add(accessTokenProperty);
+		
+		UserProperty refreshTokenProperty = new UserProperty();
+		refreshTokenProperty.setSubject(resource.getId());
+		refreshTokenProperty.setKey("refresh.token");
+		
+		properties.add(refreshTokenProperty);
+		
+		resource.getEnvironments().stream().forEach(e -> {
+			
+			UserProperty passwordProperty = new UserProperty();
+			passwordProperty.setSubject(e.getKey());
+			passwordProperty.setKey("password");
+			passwordProperty.setValue(e.getPassword());
+			passwordProperty.setLastModifiedBy(getSubject());
+			passwordProperty.setLastModifiedDate(Date.from(Instant.now()));
+			
+			properties.add(passwordProperty);
+			
+			UserProperty securityTokenProperty = new UserProperty();
+			securityTokenProperty.setSubject(e.getKey());
+			securityTokenProperty.setKey("security.token");
+			securityTokenProperty.setValue(e.getSecurityToken());
+			securityTokenProperty.setLastModifiedBy(getSubject());
+			securityTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+			
+			properties.add(securityTokenProperty);
+			
+		});
+		
+		dynamoDBMapper.batchDelete(properties);
 	}
 	
 	public SalesforceConnectorDTO findSalesforceConnector(String id) {		
@@ -172,15 +242,33 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	}
 	
-	public EnvironmentDTO addEnvironment(String id, EnvironmentDTO environment) {
+	public EnvironmentDTO addEnvironment(String id, EnvironmentDTO environment) throws ServiceException {
+		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
+		if (resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
+			throw new ServiceException(String.format("Unable to add new environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
+		}
+		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
-		environment.setIsActive(Boolean.FALSE);
+		environment.setIsActive(Boolean.TRUE);
 		environment.setIsReadOnly(Boolean.FALSE);
-		environment.setTest(Boolean.FALSE);
+		environment.setIsValid(Boolean.TRUE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
+		environment.setApiVersion(API_VERSION);
+		environment.setIsSandbox(Boolean.TRUE);
+		environment.setOrganizationId(loginResult.getOrganizationId());
+		environment.setOrganizationName(loginResult.getOrganizationName());
+		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+		
+		List<UserProperty> properties = getEnvironmentUserProperties(environment);
+		
+		dynamoDBMapper.batchSave(properties);
+		
+		environment.setPassword(null);
+		environment.setSecurityToken(null);
 		
 		resource.addEnvironment(environment);
 		
@@ -190,6 +278,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	}
 	
 	public EnvironmentDTO updateEnvironment(String id, String key, EnvironmentDTO environment) {
+		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO original = resource.getEnvironments()
@@ -205,8 +295,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setUpdatedOn(Date.from(Instant.now()));
 		environment.setIsReadOnly(original.getIsReadOnly());
 		environment.setIsSandbox(original.getIsSandbox());
-		environment.setTest(original.getTest());
+		environment.setIsValid(original.getIsValid());
+		environment.setApiVersion(original.getApiVersion());
 		environment.setTestMessage(original.getTestMessage());
+		environment.setOrganizationId(loginResult.getOrganizationId());
+		environment.setOrganizationName(loginResult.getOrganizationName());
+		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+		
+		List<UserProperty> properties = getEnvironmentUserProperties(environment);
+		
+		dynamoDBMapper.batchSave(properties);
+		
+		environment.setPassword(null);
+		environment.setSecurityToken(null);
 		
 		resource.addEnvironment(environment);
 		
@@ -218,12 +319,20 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	public void removeEnvironment(String id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
+		EnvironmentDTO environment = resource.getEnvironments()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst()
+				.get();
+		
+		List<UserProperty> properties = getEnvironmentUserProperties(environment);
+		
+		dynamoDBMapper.batchDelete(properties);
+		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
 		updateSalesforceConnector(resource);
 	} 
-	
-	// *************************
 	
 	public SalesforceConnectorDTO addServiceInstance(String id, String serviceProviderId, String serviceType, String code) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -732,42 +841,56 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //		return resource;
 //	}
 	
-	private PartnerConnection login(Environment environment) throws IllegalArgumentException, ConnectionException {
+	private String putImage(String accessToken, String imageUrl) {
 		
-		String instance = null;
-		String username = null;
-		String password = null;
-		String securityToken = null;
-		
-		Iterator<EnvironmentVariable> variables = environment.getEnvironmentVariables().iterator();
-		
-		while (variables.hasNext()) {
-			EnvironmentVariable environmentVariable = variables.next();
-			if ("INSTANCE".equals(environmentVariable.getVariable())) {
-				instance = environmentVariable.getValue();
-			}
-			if ("USERNAME".equals(environmentVariable.getVariable())) {
-				username = environmentVariable.getValue();
-			}
-			if ("SECURITY_TOKEN".equals(environmentVariable.getVariable())) {
-				securityToken = environmentVariable.getValue();
-			}
-			if ("PASSWORD".equals(environmentVariable.getVariable())) {
-				password = environmentVariable.getValue();
-			}
+		try {
+			URL url = new URL( imageUrl + "?oauth_token=" + accessToken );
+			
+			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			String contentType = connection.getHeaderField("Content-Type");
+			
+			ObjectMetadata objectMetadata = new ObjectMetadata();
+	    	objectMetadata.setContentLength(connection.getContentLength());
+	    	objectMetadata.setContentType(contentType);
+	    	
+	    	String key = UUID.randomUUID().toString().replace("-", "");
+			
+	    	PutObjectRequest putObjectRequest = new PutObjectRequest("nowellpoint-profile-photos", key, connection.getInputStream(), objectMetadata);
+	    	
+	    	s3Client.putObject(putObjectRequest);
+	    	
+	    	URI uri = UriBuilder.fromUri(System.getProperty(Properties.CLOUDFRONT_HOSTNAME))
+					.path("{id}")
+					.build(key);
+			
+			return uri.toString();
+			
+		} catch (IOException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
-			
-		if (instance == null || username == null || securityToken == null || password == null) {
-			throw new IllegalArgumentException();
-		}
-			
-		ConnectorConfig config = new ConnectorConfig();
-		config.setAuthEndpoint(String.format("%s/services/Soap/u/36.0", instance));
-		config.setUsername(username);
-		config.setPassword(password.concat(securityToken));
+	}
+	
+	private List<UserProperty> getEnvironmentUserProperties(EnvironmentDTO environment) {
+		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
-		PartnerConnection connection = Connector.newConnection(config);
-			
-		return connection;
+		UserProperty accessTokenProperty = new UserProperty();
+		accessTokenProperty.setSubject(environment.getKey());
+		accessTokenProperty.setKey("password");
+		accessTokenProperty.setValue(environment.getPassword());
+		accessTokenProperty.setLastModifiedBy(getSubject());
+		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		
+		properties.add(accessTokenProperty);
+		
+		UserProperty refreshTokenProperty = new UserProperty();
+		refreshTokenProperty.setSubject(environment.getKey());
+		refreshTokenProperty.setKey("security.token");
+		refreshTokenProperty.setValue(environment.getSecurityToken());
+		refreshTokenProperty.setLastModifiedBy(getSubject());
+		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		
+		properties.add(refreshTokenProperty);
+		
+		return properties;
 	}
 }

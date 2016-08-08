@@ -2,7 +2,6 @@ package com.nowellpoint.aws.api.resource;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -15,9 +14,10 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
@@ -25,14 +25,13 @@ import com.nowellpoint.aws.api.service.IdentityProviderService;
 import com.nowellpoint.aws.api.util.UserContext;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Group;
-import com.nowellpoint.aws.tools.TokenParser;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 
 @Provider
-public class SecurityContextFilter implements ContainerRequestFilter {
+public class SecurityContextFilter implements ContainerRequestFilter, ContainerResponseFilter {
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -59,10 +58,9 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 			
 			String bearerToken = authorization.get().replaceFirst("Bearer", "").trim();
 				
-			String subject = null;
-			
 			try {
-				subject = TokenParser.parseToken(bearerToken);
+				UserContext.setUserContext(bearerToken);
+				requestContext.setSecurityContext(UserContext.getSecurityContext());
 			} catch (MalformedJwtException e) {
 				throw new NotAuthorizedException("Invalid token. Bearer token is invalid");
 			} catch (SignatureException e) {
@@ -72,12 +70,8 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 			} catch (IllegalArgumentException e) {	
 				throw new NotAuthorizedException("Invalid authorization. Bearer token is missing");
 			}
-				
-			UserPrincipal user = new UserPrincipal(subject);
-				
-			requestContext.setSecurityContext(new UserPrincipalSecurityContext(user));
 			
-			UserContext.setUserPrincipal(user);
+			String subject = UserContext.getPrincipal().getName();
 			
 			if (method.isAnnotationPresent(RolesAllowed.class)) {
 				
@@ -113,47 +107,11 @@ public class SecurityContextFilter implements ContainerRequestFilter {
 			}
 		}
 	}
-	
-	class UserPrincipal implements Principal {
-		
-		private String name;
-		
-		public UserPrincipal(String subject) {
-			this.name = subject;
-		}
 
-		@Override
-		public String getName() {
-			return name;
-		}
-	}
-	
-	class UserPrincipalSecurityContext implements SecurityContext {
-		
-		private UserPrincipal userPrincipal;
-		
-		public UserPrincipalSecurityContext(UserPrincipal userPrincipal) {
-			this.userPrincipal = userPrincipal;
-		}
-
-		@Override
-		public String getAuthenticationScheme() {
-			return null;
-		}
-
-		@Override
-		public Principal getUserPrincipal() {
-			return userPrincipal;
-		}
-
-		@Override
-		public boolean isSecure() {
-			return false;
-		}
-
-		@Override
-		public boolean isUserInRole(String role) {
-			return false;
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+		if (UserContext.getSecurityContext() != null) {
+			UserContext.clear();
 		}
 	}
 }

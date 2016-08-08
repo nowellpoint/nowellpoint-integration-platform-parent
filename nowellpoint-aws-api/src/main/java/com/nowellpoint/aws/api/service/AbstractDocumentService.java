@@ -130,7 +130,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	}
 	
 	protected String getSubject() {
-		return UserContext.getUserPrincipal().getName();
+		return UserContext.getPrincipal().getName();
 	}
 	
 	/**

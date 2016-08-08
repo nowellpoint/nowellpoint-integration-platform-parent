@@ -3,11 +3,13 @@ package com.nowellpoint.aws.api.model;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.aws.data.mongodb.DateDeserializer;
 import com.nowellpoint.aws.data.mongodb.DateSerializer;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Environment {
 	
 	private String key;
@@ -26,17 +28,17 @@ public class Environment {
 	
 	private Boolean isReadOnly;
 	
+	private String organizationId;
+	
 	private String organizationName;
 	
 	private String serviceEndpoint;
 	
 	private String authEndpoint;
 	
+	private String apiVersion;
+	
 	private String username;
-	
-	private String password;
-	
-	private String securityToken;
 	
 	private Boolean isSandbox;
 	
@@ -44,7 +46,7 @@ public class Environment {
 	
 	private String refreshToken;
 	
-	private Boolean test;
+	private Boolean isValid;
 	
 	private String testMessage;
 	
@@ -108,6 +110,14 @@ public class Environment {
 		this.isReadOnly = isReadOnly;
 	}
 
+	public String getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
+	}
+
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -132,28 +142,20 @@ public class Environment {
 		this.authEndpoint = authEndpoint;
 	}
 
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
+	}
+
 	public String getUsername() {
 		return username;
 	}
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getSecurityToken() {
-		return securityToken;
-	}
-
-	public void setSecurityToken(String securityToken) {
-		this.securityToken = securityToken;
 	}
 
 	public Boolean getIsSandbox() {
@@ -180,12 +182,12 @@ public class Environment {
 		this.refreshToken = refreshToken;
 	}
 
-	public Boolean getTest() {
-		return test;
+	public Boolean getIsValid() {
+		return isValid;
 	}
 
-	public void setTest(Boolean test) {
-		this.test = test;
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
 	}
 
 	public String getTestMessage() {

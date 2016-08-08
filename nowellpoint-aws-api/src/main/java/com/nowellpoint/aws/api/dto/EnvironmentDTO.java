@@ -18,6 +18,8 @@ public class EnvironmentDTO {
 	
 	private String authEndpoint;
 	
+	private String apiVersion;
+	
 	private String username;
 	
 	private String password;
@@ -26,11 +28,13 @@ public class EnvironmentDTO {
 	
 	private Boolean isSandbox;
 	
+	private String organizationId;
+	
 	private String organizationName;
 	
 	private Boolean isReadOnly;
 	
-	private Boolean test;
+	private Boolean isValid;
 	
 	private String testMessage;
 	
@@ -78,6 +82,14 @@ public class EnvironmentDTO {
 		this.isActive = isActive;
 	}
 
+	public String getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
+	}
+
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -100,6 +112,14 @@ public class EnvironmentDTO {
 
 	public void setAuthEndpoint(String authEndpoint) {
 		this.authEndpoint = authEndpoint;
+	}
+
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
 	}
 
 	public String getUsername() {
@@ -142,12 +162,12 @@ public class EnvironmentDTO {
 		this.isReadOnly = isReadOnly;
 	}
 
-	public Boolean getTest() {
-		return test;
+	public Boolean getIsValid() {
+		return isValid;
 	}
 
-	public void setTest(Boolean test) {
-		this.test = test;
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
 	}
 
 	public String getTestMessage() {

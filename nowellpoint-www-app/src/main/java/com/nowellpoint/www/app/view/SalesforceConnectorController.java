@@ -76,6 +76,8 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/environments/add", (request, response) -> newEnvironment(request, response), new FreeMarkerEngine(cfg));
         
+        get("/app/connectors/salesforce/:id/environments/:key/view", (request, response) -> getEnvironment(request, response), new FreeMarkerEngine(cfg));
+        
         get("/app/connectors/salesforce/:id/environments/:key/edit", (request, response) -> editEnvironment(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/environments", (request, response) -> addEnvironment(request, response));
@@ -151,7 +153,52 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("salesforceConnector", salesforceConnector);
+		model.put("mode", "add");
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
+		model.put("environment", environment);
+		
+		return new ModelAndView(model, "secure/environment.html");
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private ModelAndView getEnvironment(Request request, Response response) {	
+		Token token = getToken(request);
+		
+		Account account = getAccount(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.path("environment")
+    			.path(key)
+    			.execute();
+		
+		Environment environment = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			environment = httpResponse.getEntity(Environment.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("salesforceConnector", new SalesforceConnector(id));
+		model.put("mode", "view");
 		model.put("environment", environment);
 		
 		return new ModelAndView(model, "secure/environment.html");
@@ -195,6 +242,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("salesforceConnector", new SalesforceConnector(id));
+		model.put("mode", "edit");
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
 		model.put("environment", environment);
 		
@@ -232,17 +280,19 @@ public class SalesforceConnectorController extends AbstractController {
     			.path("environment")
     			.body(environment)
 				.execute();
-		
+
 		if (httpResponse.getStatusCode() != Status.OK) {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
 			Map<String, Object> model = getModel();
 			model.put("account", account);
 			model.put("salesforceConnector", new SalesforceConnector(id));
+			model.put("mode", "add");
+			model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
 			model.put("environment", environment);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = buildTemplate(new ModelAndView(model, "secure/environment-edit.html"));
+			String output = buildTemplate(new ModelAndView(model, "secure/environment.html"));
 			
 			throw new BadRequestException(output);
 		}
@@ -293,6 +343,8 @@ public class SalesforceConnectorController extends AbstractController {
 			Map<String, Object> model = getModel();
 			model.put("account", account);
 			model.put("salesforceConnector", new SalesforceConnector(id));
+			model.put("mode", "edit");
+			model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
 			model.put("environment", environment);
 			model.put("errorMessage", error.getMessage());
 			

@@ -17,13 +17,13 @@ public class ServiceException extends RuntimeException {
 	private Integer code;
 	
 	public ServiceException(String message) {
-		super();
+		super(message);
+		error = new ErrorDTO(null, message);
 	}
 	
 	public ServiceException(Integer code, String message) {
-		super();
-		this.message = message;
-		this.code = code;
+		super(message);
+		error = new ErrorDTO(code, message);
 	}
 	
 	public ServiceException(ErrorDTO error) {
