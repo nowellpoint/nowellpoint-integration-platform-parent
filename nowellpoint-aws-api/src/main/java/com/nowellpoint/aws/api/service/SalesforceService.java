@@ -54,7 +54,8 @@ public class SalesforceService extends AbstractCacheService {
 					.withServiceEndpoint(connection.getConfig().getServiceEndpoint().substring(0, connection.getConfig().getServiceEndpoint().indexOf("/services")))
 					.withSessionId(connection.getConfig().getSessionId())
 					.withUserId(connection.getUserInfo().getUserId())
-					.withUserName(connection.getUserInfo().getUserName());
+					.withUserName(connection.getUserInfo().getUserName())
+					.withServerTimestamp(connection.getServerTimestamp().getTimestamp().getTimeInMillis());
 			
 			return result;
 			

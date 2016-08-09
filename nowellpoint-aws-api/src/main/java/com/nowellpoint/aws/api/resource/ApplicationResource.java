@@ -24,6 +24,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
 import com.nowellpoint.aws.api.model.ServiceInstance;
@@ -122,7 +123,7 @@ public class ApplicationResource {
 		
 		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
 		
-		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(connectorId);
+		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
 		
 		ServiceInstance serviceInstance = new ServiceInstance();
 		//serviceInstance.setServiceType(provider.getService().getType());

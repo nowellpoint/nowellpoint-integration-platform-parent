@@ -52,16 +52,6 @@ $('.make-primary').click(function (e) {
     });
 });
 
-$(function () {
-    var accountProfile = jQuery.data(document.body, "accountProfile");
-	$('.toggle-user-profile').click(function (event) {
-		event.preventDefault();
-        $(".show-user-profile").toggleClass('hidden show');
-        $(".edit-user-profile").toggleClass('hidden show');
-	});
-});
-
-
 
 $(document).ready(function (e) {
     $('#clickable').click(function (e) {

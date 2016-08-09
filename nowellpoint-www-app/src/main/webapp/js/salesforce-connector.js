@@ -14,7 +14,6 @@ $('#confirm').click(function (e) {
 
 
 $('#confirm-remove-environment').on('click', function (e) {
-    console.log('here');
     var id = $(this).data('id');
     var message = $(this).data('message');
     var title = $(this).data('title');
@@ -26,6 +25,7 @@ $('#confirm-remove-environment').on('click', function (e) {
     $('#confirm-remove-environment-dialog').data('id', id).modal('show');
 
 });
+
 
 $('#confirm-remove-environment-button').click(function (e) {
     var id = $('#confirm-remove-environment-dialog').data('id');

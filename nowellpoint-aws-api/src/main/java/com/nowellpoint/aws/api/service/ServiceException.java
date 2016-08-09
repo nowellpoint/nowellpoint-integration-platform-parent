@@ -27,7 +27,7 @@ public class ServiceException extends RuntimeException {
 	}
 	
 	public ServiceException(ErrorDTO error) {
-		super();
+		super(error.getMessage());
 		this.error = error;
 	}
 

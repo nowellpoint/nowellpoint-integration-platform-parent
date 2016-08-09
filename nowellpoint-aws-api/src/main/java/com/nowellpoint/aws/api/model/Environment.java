@@ -38,6 +38,8 @@ public class Environment {
 	
 	private String apiVersion;
 	
+	private String userId;
+	
 	private String username;
 	
 	private Boolean isSandbox;
@@ -148,6 +150,14 @@ public class Environment {
 
 	public void setApiVersion(String apiVersion) {
 		this.apiVersion = apiVersion;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getUsername() {

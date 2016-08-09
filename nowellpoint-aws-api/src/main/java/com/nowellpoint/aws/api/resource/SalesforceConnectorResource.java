@@ -11,11 +11,13 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
@@ -25,6 +27,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
+import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.model.Targets;
@@ -86,7 +89,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector( new Id(id) );
 		
 		return Response.ok(resource).build();
 	}
@@ -97,10 +100,10 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {	
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector(id);
+		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector( new Id(id) );
 		resource.setTag(tag);
 		
-		salesforceConnectorService.updateSalesforceConnector(resource);
+		salesforceConnectorService.updateSalesforceConnector(new Id(id), resource);
 		
 		return Response.ok()
 				.entity(resource)
@@ -111,7 +114,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {		
 
-		salesforceConnectorService.deleteSalesforceConnector(id);
+		salesforceConnectorService.deleteSalesforceConnector(new Id(id));
 
 		return Response.noContent()
 				.build(); 
@@ -122,7 +125,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		EnvironmentDTO resource = salesforceConnectorService.getEnvironment(id, key);
+		EnvironmentDTO resource = salesforceConnectorService.getEnvironment(new Id(id), key);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
@@ -139,20 +142,20 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO environment) {
 		
-		EnvironmentDTO resource = salesforceConnectorService.addEnvironment(id, environment);
+		EnvironmentDTO resource = salesforceConnectorService.addEnvironment(new Id(id), environment);
 		
 		return Response.ok()
 				.entity(resource)
 				.build(); 
 	}
 	
-	@POST
+	@PUT
 	@Path("salesforce/{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
 		
-		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(id, key, environment);
+		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(new Id(id), key, environment);
 		
 		return Response.ok()
 				.entity(resource)
@@ -164,9 +167,22 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		salesforceConnectorService.removeEnvironment(id, key);
+		salesforceConnectorService.removeEnvironment(new Id(id), key);
 		
 		return Response.ok()
+				.build(); 
+	}
+	
+	@POST
+	@Path("salesforce/{id}/environment/{key}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
+		
+		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(new Id(id), key, parameters);
+		
+		return Response.ok()
+				.entity(resource)
 				.build(); 
 	}
 	
@@ -182,7 +198,7 @@ public class SalesforceConnectorResource {
 			@PathParam(value="serviceType") String serviceType, 
 			@PathParam(value="code") String code) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance(id, serviceProviderId, serviceType, code);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), serviceProviderId, serviceType, code);
 		
 		return Response.ok()
 				.entity(resource)
@@ -198,7 +214,7 @@ public class SalesforceConnectorResource {
 			@PathParam(value="key") String key,
 			ServiceInstanceDTO serviceInstance) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance(id, key, serviceInstance);
+		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance( new Id(id), key, serviceInstance);
 		
 		return Response.ok()
 				.entity(resource)
@@ -281,7 +297,7 @@ public class SalesforceConnectorResource {
 		
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addEventListeners(id, key, eventListeners);
+			resource = salesforceConnectorService.addEventListeners( new Id(id), key, eventListeners);
 		} catch (Exception e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -298,7 +314,7 @@ public class SalesforceConnectorResource {
 				
 		SalesforceConnectorDTO resource = null;
 		try {
-			resource = salesforceConnectorService.addTargets(id, key, targets);
+			resource = salesforceConnectorService.addTargets( new Id(id), key, targets);
 		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -396,7 +412,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.removeServiceInstance(id, key);
+		SalesforceConnectorDTO resource = salesforceConnectorService.removeServiceInstance( new Id(id), key);
 		
 		return Response.ok()
 				.entity(resource)

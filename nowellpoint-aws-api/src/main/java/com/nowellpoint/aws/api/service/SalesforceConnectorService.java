@@ -19,9 +19,11 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
@@ -31,6 +33,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.EventListenerDTO;
+import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
@@ -41,6 +44,7 @@ import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
@@ -153,8 +157,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO updateSalesforceConnector(SalesforceConnectorDTO resource) {		
-		SalesforceConnectorDTO original = findSalesforceConnector(resource.getId());
+	public SalesforceConnectorDTO updateSalesforceConnector(Id id, SalesforceConnectorDTO resource) {		
+		SalesforceConnectorDTO original = findSalesforceConnector(id);
+		resource.setId(original.getId());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
@@ -166,13 +171,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-	public void deleteSalesforceConnector(String id) {
+	public void deleteSalesforceConnector(Id id) {
 		SalesforceConnectorDTO resource = findSalesforceConnector( id );
 		
 		delete(resource);
 		
-		hdel( getSubject(), SalesforceConnectorDTO.class.getName().concat(id) );
-		hdel( id, getSubject() );
+		hdel( getSubject(), SalesforceConnectorDTO.class.getName().concat(id.getValue()) );
+		hdel( id.getValue(), getSubject() );
 
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
@@ -221,16 +226,16 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		dynamoDBMapper.batchDelete(properties);
 	}
 	
-	public SalesforceConnectorDTO findSalesforceConnector(String id) {		
-		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id, getSubject() );
+	public SalesforceConnectorDTO findSalesforceConnector(Id id) {		
+		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id.getValue(), getSubject() );
 		if ( resource == null ) {		
-			resource = find(id);
-			hset( id, getSubject(), resource );
+			resource = find(id.getValue());
+			hset( id.getValue(), getSubject(), resource );
 		}
 		return resource;
 	}
 	
-	public EnvironmentDTO getEnvironment(String id, String key) {
+	public EnvironmentDTO getEnvironment(Id id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
@@ -242,7 +247,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	}
 	
-	public EnvironmentDTO addEnvironment(String id, EnvironmentDTO environment) throws ServiceException {
+	public EnvironmentDTO addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -259,6 +264,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setUpdatedOn(Date.from(Instant.now()));
 		environment.setApiVersion(API_VERSION);
 		environment.setIsSandbox(Boolean.TRUE);
+		environment.setUserId(loginResult.getUserId());
 		environment.setOrganizationId(loginResult.getOrganizationId());
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
@@ -272,15 +278,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		resource.addEnvironment(environment);
 		
-		updateSalesforceConnector(resource);
+		updateSalesforceConnector(id, resource);
 		
 		return environment;
 	}
 	
-	public EnvironmentDTO updateEnvironment(String id, String key, EnvironmentDTO environment) {
-		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
-		
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+	public EnvironmentDTO updateEnvironment(Id id, String key, EnvironmentDTO environment) {
+		SalesforceConnectorDTO resource = findSalesforceConnector( id );
 		
 		EnvironmentDTO original = resource.getEnvironments()
 				.stream()
@@ -298,9 +302,26 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setIsValid(original.getIsValid());
 		environment.setApiVersion(original.getApiVersion());
 		environment.setTestMessage(original.getTestMessage());
-		environment.setOrganizationId(loginResult.getOrganizationId());
-		environment.setOrganizationName(loginResult.getOrganizationName());
-		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+		
+		if (environment.getIsActive()) {
+			LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+			
+			if (! loginResult.getOrganizationId().equals(original.getOrganizationId()) 
+					&& resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
+				
+				throw new ServiceException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
+			}
+			
+			environment.setUserId(loginResult.getUserId());
+			environment.setOrganizationId(loginResult.getOrganizationId());
+			environment.setOrganizationName(loginResult.getOrganizationName());
+			environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+		} else {
+			environment.setUserId(original.getUserId());
+			environment.setOrganizationId(original.getOrganizationId());
+			environment.setOrganizationName(original.getOrganizationName());
+			environment.setServiceEndpoint(original.getServiceEndpoint());
+		}
 		
 		List<UserProperty> properties = getEnvironmentUserProperties(environment);
 		
@@ -311,12 +332,69 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		resource.addEnvironment(environment);
 		
-		updateSalesforceConnector(resource);
+		updateSalesforceConnector(id, resource);
 		
 		return environment;
 	} 
 	
-	public void removeEnvironment(String id, String key) {
+	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
+		
+		EnvironmentDTO environment = getEnvironment(id, key);
+		
+		if (parameters.containsKey("test")) {
+			if (Boolean.valueOf(parameters.getFirst("test"))) {
+				try {
+					UserProperty userProperty = new UserProperty();
+					userProperty.setSubject(environment.getKey());
+					
+					DynamoDBQueryExpression<UserProperty> queryExpression = new DynamoDBQueryExpression<UserProperty>()
+							.withHashKeyValues(userProperty);
+					
+					Map<String, UserProperty> properties = dynamoDBMapper.query(UserProperty.class, queryExpression).stream().collect(Collectors.toMap(UserProperty::getKey, p -> p));
+					
+					System.out.println(properties.get("password").getValue());
+					System.out.println(properties.get("security.token").getValue());
+					
+					LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), properties.get("password").getValue(), properties.get("security.token").getValue());
+					environment.setIsValid(Boolean.TRUE);
+					environment.setTestMessage("Success: " + loginResult.getServerTimestamp().toString());
+				} catch (Exception e) {
+					environment.setIsValid(Boolean.FALSE);
+					environment.setTestMessage(e.getMessage());
+				}
+			}
+		} else {
+			if (parameters.containsKey("isActive")) {
+				environment.setIsActive(Boolean.valueOf(parameters.getFirst("isActive")));
+			}
+			
+			if (parameters.containsKey("apiVersion")) {
+				environment.setApiVersion(parameters.getFirst("apiVersion"));
+			}
+			
+			if (parameters.containsKey("authEndpoint")) {
+				environment.setAuthEndpoint(parameters.getFirst("authEndpoint"));
+			}
+			
+			if (parameters.containsKey("password")) {
+				environment.setPassword(parameters.getFirst("password"));
+			}
+			
+			if (parameters.containsKey("username")) {
+				environment.setUsername(parameters.getFirst("username"));
+			}
+			
+			if (parameters.containsKey("securityToken")) {
+				environment.setSecurityToken(parameters.getFirst("securityToken"));
+			}
+		}
+		
+		updateEnvironment(id, key, environment);
+		
+		return environment;
+	}
+	
+	public void removeEnvironment(Id id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
@@ -331,10 +409,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
-		updateSalesforceConnector(resource);
+		updateSalesforceConnector(id, resource);
 	} 
 	
-	public SalesforceConnectorDTO addServiceInstance(String id, String serviceProviderId, String serviceType, String code) {		
+	public SalesforceConnectorDTO addServiceInstance(Id id, String serviceProviderId, String serviceType, String code) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		ServiceProviderDTO serviceProvider = serviceProviderService.find(serviceProviderId);
@@ -363,12 +441,12 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		resource.addServiceInstance(serviceInstance);
 		
-		updateSalesforceConnector(resource);
+		updateSalesforceConnector(id, resource);
 		
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO updateServiceInstance(String id, String key, ServiceInstanceDTO serviceInstance) {		
+	public SalesforceConnectorDTO updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
@@ -388,17 +466,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		resource.setServiceInstances(new HashSet<ServiceInstanceDTO>(map.values()));
 
-		updateSalesforceConnector(resource);
+		updateSalesforceConnector(id, resource);
 		
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO removeServiceInstance(String id, String key) {		
+	public SalesforceConnectorDTO removeServiceInstance(Id id, String key) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));
 
-		updateSalesforceConnector(resource);
+		updateSalesforceConnector(id, resource);
 		
 		return resource;
 	}
@@ -491,7 +569,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //		return resource;
 //	}
 	
-	public SalesforceConnectorDTO addEventListeners(String id, String key, Set<EventListenerDTO> eventListeners) {
+	public SalesforceConnectorDTO addEventListeners(Id id, String key, Set<EventListenerDTO> eventListeners) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
@@ -520,13 +598,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			
 			serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
 			
-			updateSalesforceConnector(resource);
+			updateSalesforceConnector(id, resource);
 		}
 		
 		return resource;
 	}
 	
-	public SalesforceConnectorDTO addTargets(String id, String key, Targets targets) {		
+	public SalesforceConnectorDTO addTargets(Id id, String key, Targets targets) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
@@ -538,7 +616,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			
 			serviceInstance.get().setTargets(targets);
 			
-			updateSalesforceConnector(resource);
+			updateSalesforceConnector(id, resource);
 		}
 		
 		return resource;

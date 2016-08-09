@@ -27,6 +27,8 @@ public class LoginResult implements Serializable {
 	private String authEndpoint;
 	
 	private String serviceEndpoint;
+	
+	private Long serverTimestamp;
 
 	public LoginResult() {
 		
@@ -104,6 +106,14 @@ public class LoginResult implements Serializable {
 		this.serviceEndpoint = serviceEndpoint;
 	}
 	
+	public Long getServerTimestamp() {
+		return serverTimestamp;
+	}
+
+	public void setServerTimestamp(Long serverTimestamp) {
+		this.serverTimestamp = serverTimestamp;
+	}
+
 	public LoginResult withId(String id) {
 		setId(id);
 		return this;
@@ -146,6 +156,11 @@ public class LoginResult implements Serializable {
 	
 	public LoginResult withServiceEndpoint(String serviceEndpoint) {
 		setServiceEndpoint(serviceEndpoint);
+		return this;
+	}
+	
+	public LoginResult withServerTimestamp(Long serverTimestamp) {
+		setServerTimestamp(serverTimestamp);
 		return this;
 	}
 }

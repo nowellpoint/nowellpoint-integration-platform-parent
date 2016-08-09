@@ -88,11 +88,13 @@ public class SalesforceConnectorController extends AbstractController {
         
         get("/app/connectors/salesforce/:id/environments/:key/test", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
         
-        //
+        // plan routes
         
         get("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> reviewPlan(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/providers/:serviceProviderId/service/:serviceType/plan/:code", (request, response) -> addServiceInstance(request, response), new FreeMarkerEngine(cfg));
+        
+        //
         
         get("/app/connectors/salesforce/:id/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
         
@@ -109,8 +111,6 @@ public class SalesforceConnectorController extends AbstractController {
         get("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> getEnvironments(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/variables/add", (request, response) -> addEnvironmentVariable(request, response), new FreeMarkerEngine(cfg));
-        
-        post("/app/connectors/salesforce/:id/service/:key/environments", (request, response) -> saveEnvironments(request, response), new FreeMarkerEngine(cfg));
         
        // post("/app/connectors/salesforce/:id/service/:key/variables", (request, response) -> saveEnvironmentVariables(request, response), new FreeMarkerEngine(cfg));
         
@@ -325,7 +325,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
@@ -387,8 +387,9 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", getValue("remove.environment.success"), 3);
+		response.header("Location", String.format("/app/connectors/salesforce/%s", id));
 		
-		return "";
+		return String.format("/app/connectors/salesforce/%s", id);
 	}
 	
 	/**
@@ -1168,68 +1169,11 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param request
-	 * @param respose
-	 * @return
-	 */
-	
-	private ModelAndView saveEnvironments(Request request, Response respose) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		String[] indexes = request.queryParamsValues("index");
-		String[] names = request.queryParamsValues("name");
-		String[] label = request.queryParamsValues("label");
-		
-		ArrayNode node = new ObjectMapper().createArrayNode();
-
-		for (int i = 0; i < names.length; i++) {
-			if (names != null && ! names[i].trim().isEmpty()) {
-				node.addObject()
-					.put("index", Integer.valueOf(indexes[i]))
-					.put("name", names[i])
-					.put("label", label[i])
-					.put("active", request.queryMap().get("active" + i).hasValue() ? Boolean.TRUE : Boolean.FALSE);
-			}
-		}
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-				.path(id)
-				.path("service")
-				.path(key)
-				.path("environments")
-				.body(node)
-    			.execute();
-		
-		Map<String, Object> model = getModel();
-		
-		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
-			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-			return new ModelAndView(model, "secure/fragments/success-message.html");
-		} else {
-			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			return new ModelAndView(model, "secure/fragments/error-message.html");
-		}
-	}
-	
 	private ModelAndView testConnection(Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		String authEndpoint = request.queryParams("authEndpoint");
-		String username = request.queryParams("username");
-		String password = request.queryParams("password");
-		String securityToken = request.queryParams("securityToken");
 		
 		Map<String, Object> model = getModel();
 		
@@ -1237,24 +1181,24 @@ public class SalesforceConnectorController extends AbstractController {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
     			.path("salesforce")
-    			.path("login")
-				.parameter("authEndpoint", authEndpoint)
-				.parameter("username", username)
-				.parameter("password", password)
-				.parameter("securityToken", securityToken)
+				.path(id)
+				.path("environment")
+    			.path(key)
+				.parameter("test", Boolean.TRUE.toString())
     			.execute();
 	
 		response.status(httpResponse.getStatusCode());
 		
-		SalesforceConnector salesforceConnector = null;
+		System.out.println(httpResponse.getStatusCode());
+		
+		Environment environment = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-			
-			ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-			
-			model.put("serviceInstance", serviceInstance);
+			environment = httpResponse.getEntity(Environment.class);
+			model.put("environment", environment);
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "testSuccess"));
 		} else {
 			System.out.println(httpResponse.getAsString());
 		}
