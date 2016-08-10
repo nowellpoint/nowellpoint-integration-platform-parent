@@ -260,6 +260,7 @@
                                         <#if ! environment.isValid>
                                             <span class="icon icon-squared-cross fa-1x"></span>
                                         </#if>
+                                        &emsp;${(environment.testMessage)!}
                                     </td>
                                     <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
                                         <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" class="test-connection" data-id="${(environment.environmentName)!}"><span class="icon icon-flash"></span>${labels["test.connection"]}</a>

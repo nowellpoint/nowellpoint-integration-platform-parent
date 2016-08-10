@@ -44,7 +44,6 @@ import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
@@ -339,10 +338,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
-		EnvironmentDTO environment = getEnvironment(id, key);
+		SalesforceConnectorDTO resource = findSalesforceConnector( id );
+		
+		EnvironmentDTO environment = resource.getEnvironments()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst()
+				.get();
 		
 		if (parameters.containsKey("test")) {
 			if (Boolean.valueOf(parameters.getFirst("test"))) {
+				
+				resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+				
 				try {
 					UserProperty userProperty = new UserProperty();
 					userProperty.setSubject(environment.getKey());
@@ -352,18 +360,28 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					Map<String, UserProperty> properties = dynamoDBMapper.query(UserProperty.class, queryExpression).stream().collect(Collectors.toMap(UserProperty::getKey, p -> p));
 					
-					System.out.println(properties.get("password").getValue());
-					System.out.println(properties.get("security.token").getValue());
+					String authEndpoint = parameters.containsKey("authEndpoint") ? parameters.getFirst("authEndpoint") : environment.getAuthEndpoint();
+					String username = parameters.containsKey("username") ? parameters.getFirst("username") : environment.getUsername();
+					String password = parameters.containsKey("password") ? parameters.getFirst("password") : properties.get("password").getValue();
+					String securityToken = parameters.containsKey("securityToken") ? parameters.getFirst("securityToken") : properties.get("security.token").getValue();
 					
-					LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), properties.get("password").getValue(), properties.get("security.token").getValue());
+					LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);					
 					environment.setIsValid(Boolean.TRUE);
 					environment.setTestMessage("Success: " + loginResult.getServerTimestamp().toString());
+				} catch (ServiceException e) {
+					environment.setIsValid(Boolean.FALSE);
+					environment.setTestMessage(e.getError().getMessage());
 				} catch (Exception e) {
 					environment.setIsValid(Boolean.FALSE);
 					environment.setTestMessage(e.getMessage());
 				}
+				
+				resource.addEnvironment(environment);
+				
+				updateSalesforceConnector( id, resource );
 			}
 		} else {
+			
 			if (parameters.containsKey("isActive")) {
 				environment.setIsActive(Boolean.valueOf(parameters.getFirst("isActive")));
 			}
@@ -387,9 +405,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			if (parameters.containsKey("securityToken")) {
 				environment.setSecurityToken(parameters.getFirst("securityToken"));
 			}
+			
+			updateEnvironment(id, key, environment);
 		}
-		
-		updateEnvironment(id, key, environment);
 		
 		return environment;
 	}

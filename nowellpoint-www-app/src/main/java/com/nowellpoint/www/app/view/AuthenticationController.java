@@ -141,6 +141,7 @@ public class AuthenticationController extends AbstractController {
 	    		throw new BadRequestException(httpResponse.getAsString());
 	    	}
         	
+	    	response.removeCookie("redirectUrl");
         	response.removeCookie("com.nowellpoint.oauth.token"); 
     	}
     	

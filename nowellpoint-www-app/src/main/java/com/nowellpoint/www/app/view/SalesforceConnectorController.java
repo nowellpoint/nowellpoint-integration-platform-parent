@@ -21,6 +21,8 @@ import javax.ws.rs.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static j2html.TagCreator.span;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -123,8 +125,6 @@ public class SalesforceConnectorController extends AbstractController {
         get("/app/connectors/salesforce/:id/service/:key/listeners/query", (request, response) -> testQuery(request, response), new FreeMarkerEngine(cfg));
         
         post("/app/connectors/salesforce/:id/service/:key/listeners", (request, response) -> saveEventListeners(request, response), new FreeMarkerEngine(cfg));
-        
-        get("/app/connectors/salesforce/:id/service/:key/connection/:environment", (request, response) -> testConnection(request, response), new FreeMarkerEngine(cfg));
         
         get("/app/connectors/salesforce/:id/service/:key/targets", (request, response) -> getTargets(request, response), new FreeMarkerEngine(cfg));
         
@@ -1172,10 +1172,10 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView testConnection(Request request, Response response) {
 		Token token = getToken(request);
 		
+		Account account = getAccount(request);
+		
 		String id = request.params(":id");
 		String key = request.params(":key");
-		
-		Map<String, Object> model = getModel();
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -1188,22 +1188,30 @@ public class SalesforceConnectorController extends AbstractController {
     			.path(key)
 				.parameter("test", Boolean.TRUE.toString())
     			.execute();
-	
-		response.status(httpResponse.getStatusCode());
 		
-		System.out.println(httpResponse.getStatusCode());
-		
-		Environment environment = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			environment = httpResponse.getEntity(Environment.class);
-			model.put("environment", environment);
-			model.put("successMessage", MessageProvider.getMessage(Locale.US, "testSuccess"));
-		} else {
-			System.out.println(httpResponse.getAsString());
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		return new ModelAndView(model, "secure/fragments/environment-list.html");
+		Environment environment = httpResponse.getEntity(Environment.class);
+	
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("salesforceConnector", new SalesforceConnector(id));
+		model.put("mode", "view");
+		model.put("environment", environment);
+		
+		if (environment.getIsValid()) {
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "testSuccess"));
+		} else {
+			model.put("errorMessage", environment.getTestMessage());
+		}
+		
+		if (request.pathInfo().contains("environment")) {
+			return new ModelAndView(model, "secure/environment.html");
+		} else {
+			return new ModelAndView(model, "secure/environment.html");
+		}
 	}
 	
 //	private ModelAndView saveEnvironmentVariables(Request request, Response response) {

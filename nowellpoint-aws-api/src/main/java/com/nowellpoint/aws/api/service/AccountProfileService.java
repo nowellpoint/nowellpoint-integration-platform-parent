@@ -37,6 +37,7 @@ import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.api.model.IsoCountry;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.model.SystemReference;
+import com.nowellpoint.aws.api.util.UserContext;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -75,7 +76,12 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		AccountProfileDTO resource = findAccountProfileBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		updateAccountProfile(resource);
+		UserContext.setUserContext(token.getAccessToken());
+		
+		replace(resource);
+
+		hset( resource.getId(), subject, resource );
+		hset( subject, AccountProfileDTO.class.getName(), resource );
 	}
 	
 	/**

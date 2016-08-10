@@ -141,13 +141,6 @@
 
                         <div class="col-md-6">
 
-                            <#if successMessage??>
-                                <div id="success" class="alert alert-success">
-                                    <a class="close" data-dismiss="alert">&times;</a>
-                                    <div class="text-center">${successMessage!}</div>
-                                </div>
-                            </#if>
-
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                                 <dl class="dl-vertical">
                                     <dt>${labels["environment.name"]}</dt>
@@ -190,13 +183,13 @@
 
                             <br>
 
-                            <div class="col-md-12">
+                            <div class="form-group col-md-12">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}" class="btn btn-default" role="button">${messages["back"]}</a>
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" class="btn btn-default" role="button">${labels["test.connection"]}</a>
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit" class="btn btn-default" role="button">${messages["edit"]}</a>
+                                    <a href="${labels['base.path']}/${salesforceConnector.id}" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
+                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
+                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
                                     <#if environment.isSandbox>
-                                        <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
+                                        <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                                     </#if>
                                 </div>
                             </div>

@@ -165,8 +165,7 @@
 							<locations>com.nowellpoint.aws.api.resource</locations>
 							<info>
 								<title>The Nowellpoint API</title>
-								<description>API for all interactions with the Nowellpoint
-									integration platform</description>
+								<description>API for all interactions with the Nowellpoint integration platform</description>
 								<version>v1.0</version>
 							</info>
 							<swaggerDirectory>target</swaggerDirectory>
