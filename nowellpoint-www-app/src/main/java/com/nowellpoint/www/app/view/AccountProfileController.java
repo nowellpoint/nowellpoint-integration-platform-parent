@@ -50,23 +50,23 @@ public class AccountProfileController extends AbstractController {
 		// account profile routes
 		//
 		
-		get("/app/account-profile", (request, response) -> getMyAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Routes.ACCOUNT_PROFILE_ME, (request, response) -> getMyAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
-		get("/app/account-profile/:id", (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Routes.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
-		get("/app/account-profile/:id/edit", (request, response) -> editAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Routes.ACCOUNT_PROFILE_EDIT, (request, response) -> editAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
-		get("/app/account-profile/:id/disable", (request, response) -> disableAccountProfile(request, response));
+		get(Path.Routes.ACCOUNT_PROFILE_DISABLE, (request, response) -> disableAccountProfile(request, response));
 		
-		post("/app/account-profile/:id", (request, response) -> updateAccountProfile(request, response));
+		post(Path.Routes.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(request, response));
 		
 		//
 		// account address routes
 		//
 		
-		get("/app/account-profile/:id/address", (request, response) -> editAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Routes.ACCOUNT_PROFILE_ADDRESS, (request, response) -> editAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
 		
-		post("/app/account-profile/:id/address", (request, response) -> updateAccountProfileAddress(request, response));
+		post(Path.Routes.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(request, response));
 		
 		// credit card routes
 		

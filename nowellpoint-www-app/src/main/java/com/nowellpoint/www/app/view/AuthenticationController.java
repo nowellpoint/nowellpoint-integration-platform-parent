@@ -39,11 +39,11 @@ public class AuthenticationController extends AbstractController {
 	@Override
 	public void configureRoutes(Configuration configuration) {
         
-        get("/login", (request, response) -> showLogin(request, response), new FreeMarkerEngine(configuration));
+        get(Path.Routes.LOGIN, (request, response) -> showLogin(request, response), new FreeMarkerEngine(configuration));
 		
-		post("/login", (request, response) -> login(request, response));
+		post(Path.Routes.LOGIN, (request, response) -> login(request, response));
         
-        get("/logout", (request, response) -> logout(request, response));
+        get(Path.Routes.LOGOUT, (request, response) -> logout(request, response));
         
         exception(NotAuthorizedException.class, (exception, request, response) -> handleNotAuthorizedException(exception, request, response, configuration));
 	}

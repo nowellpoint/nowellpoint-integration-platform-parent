@@ -53,14 +53,14 @@ import spark.Response;
 import spark.servlet.SparkApplication;
 import spark.template.freemarker.FreeMarkerEngine;
 
-public class Bootstrap implements SparkApplication {
+public class Application implements SparkApplication {
 	
-	private static final Logger LOGGER = Logger.getLogger(Bootstrap.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
 	
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
-    	new Bootstrap().init();
+    	new Application().init();
     }
 
 	@Override
