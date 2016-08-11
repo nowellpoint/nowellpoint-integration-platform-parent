@@ -31,7 +31,7 @@
                 </#if>
                 <br>
 
-                <#if mode=="add" || mode=="edit">
+                <#if mode=="new" || mode=="edit">
 
                     <form id="payment-method-form" name="payment-method-form" class="form-vertical" method="post" action="${action}">
 
@@ -54,7 +54,7 @@
                                 </div>
 
                                 <div class="form-group col-md-3">
-                                    <#if mode=="add">
+                                    <#if mode=="new">
                                         <label class="control-label" for="number">${labels["number"]}</label>
                                         <input type="text" class="form-control" name="number" id="number" tabindex="3">
                                     </#if>
@@ -103,7 +103,7 @@
                                     <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" tabindex="8" />
                                 </div>
 
-                                <#if mode=="add" || ! creditCard.primary>
+                                <#if mode=="new" || ! creditCard.primary>
                                     <div class="form-group col-md-6">
                                         <input type="checkbox" name="primary" id="primary" tabindex="7" />
                                         <label class="control-label" for="primary">${labels["make.primary"]}</label>
@@ -165,7 +165,7 @@
 
                                 <div class="form-group col-md-12">
                                     <div class="pull-right">
-                                        <a href="${labels['base.path']}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
+                                        <a href="${labels['base.path']}/${(accountProfile.id)!}" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
                                     </div>
                                 </div>

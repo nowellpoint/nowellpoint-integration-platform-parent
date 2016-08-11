@@ -17,7 +17,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.Address;
@@ -50,81 +49,44 @@ public class AccountProfileController extends AbstractController {
 		// account profile routes
 		//
 		
-		get(Path.Routes.ACCOUNT_PROFILE_ME, (request, response) -> getMyAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
-		get(Path.Routes.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), (request, response) -> editAccountProfile(request, response), new FreeMarkerEngine(configuration));
 		
-		get(Path.Routes.ACCOUNT_PROFILE_EDIT, (request, response) -> editAccountProfile(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE.concat("/disable"), (request, response) -> disableAccountProfile(request, response));
 		
-		get(Path.Routes.ACCOUNT_PROFILE_DISABLE, (request, response) -> disableAccountProfile(request, response));
-		
-		post(Path.Routes.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(request, response));
+		post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(request, response));
 		
 		//
 		// account address routes
 		//
 		
-		get(Path.Routes.ACCOUNT_PROFILE_ADDRESS, (request, response) -> editAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> editAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
 		
-		post(Path.Routes.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(request, response));
+		post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(request, response));
 		
 		// credit card routes
 		
-		get("/app/account-profile/:id/payment-methods/:token/view", (request, response) -> getCreditCard(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> getCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		get("/app/account-profile/:id/payment-methods/add", (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		get("/app/account-profile/:id/payment-methods/:token/edit", (request, response) -> editCreditCard(request, response), new FreeMarkerEngine(configuration));
+		get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> editCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		post("/app/account-profile/:id/payment-methods/:token/primary", (request, response) -> setPrimaryCreditCard(request, response));
+		post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> setPrimaryCreditCard(request, response));
 		
-		post("/app/account-profile/:id/payment-methods", (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
+		post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		post("/app/account-profile/:id/payment-methods/:token", (request, response) -> updateCreditCard(request, response), new FreeMarkerEngine(configuration));
+		post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> updateCreditCard(request, response), new FreeMarkerEngine(configuration));
 		
-		delete("/app/account-profile/:id/payment-methods/:token", (request, response) -> removeCreditCard(request, response));
+		delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> removeCreditCard(request, response));
 				
 		/////////////////////////////////
 
-		post("/app/account-profile/picture/salesforce", (request, response) -> setSalesforceProfilePicture(request, response));
+		post(Path.Route.ACCOUNT_PROFILE.concat("/picture/salesforce"), (request, response) -> setSalesforceProfilePicture(request, response));
 		
-		delete("/app/account-profile/picture", (request, response) -> removeProfilePicture(request, response));
+		delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), (request, response) -> removeProfilePicture(request, response));
 		
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private ModelAndView getMyAccountProfile(Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		Account account = getAccount(request);
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path("me")
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-			
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-			
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", accountProfile);
-			
-		return new ModelAndView(model, "secure/account-profile.html");			
 	}
 	
 	/**
@@ -136,27 +98,11 @@ public class AccountProfileController extends AbstractController {
 	
 	private ModelAndView getAccountProfile(Request request, Response response) {
 		
-		Token token = getToken(request);
-		
-		Account account = getAccount(request);
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-			
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		AccountProfile account = getAccount(request);
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("accountProfile", accountProfile);
+		model.put("accountProfile", account);
 		model.put("successMessage", request.cookie("successMessage"));
 			
 		return new ModelAndView(model, "secure/account-profile.html");			
@@ -173,7 +119,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -199,7 +145,7 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView editAccountProfileAddress(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -280,7 +226,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		AccountProfile accountProfile = new AccountProfile()
 				.withId(request.params(":id"))
@@ -347,7 +293,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		Address address = new Address()
 				.withCity(request.queryParams("city"))
@@ -399,7 +345,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
     			.bearerAuthorization(token.getAccessToken())
@@ -431,7 +377,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
     			.bearerAuthorization(token.getAccessToken())
@@ -451,7 +397,7 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView getCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -479,7 +425,7 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView newCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -504,7 +450,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("creditCard", creditCard);
 		model.put("accountProfile", accountProfile);
 		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
-		model.put("mode", "add");
+		model.put("mode", "new");
 			
 		return new ModelAndView(model, "secure/payment-method.html");	
 	}
@@ -512,7 +458,7 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView editCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -550,7 +496,7 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView addCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
@@ -616,7 +562,7 @@ public class AccountProfileController extends AbstractController {
 	private ModelAndView updateCreditCard(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String cardholderName = request.queryParams("cardholderName");
 		String expirationMonth = request.queryParams("expirationMonth");

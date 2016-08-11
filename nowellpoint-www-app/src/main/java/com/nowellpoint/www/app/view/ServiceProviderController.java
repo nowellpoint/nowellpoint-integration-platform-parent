@@ -13,8 +13,8 @@ import javax.ws.rs.core.Response.Status;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.ServiceProvider;
 
 import freemarker.log.Logger;
@@ -52,7 +52,7 @@ public class ServiceProviderController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -88,7 +88,7 @@ public class ServiceProviderController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		

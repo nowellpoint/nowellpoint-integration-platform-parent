@@ -8,7 +8,7 @@
     <filter-class>spark.servlet.SparkFilter</filter-class>
     <init-param>
       <param-name>applicationClass</param-name>
-      <param-value>com.nowellpoint.www.app.Bootstrap</param-value>
+      <param-value>com.nowellpoint.www.app.Application</param-value>
     </init-param>
   </filter>
   <filter-mapping>

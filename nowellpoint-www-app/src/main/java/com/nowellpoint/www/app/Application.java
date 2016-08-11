@@ -4,6 +4,7 @@ import static spark.Spark.before;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
+import static spark.Spark.post;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -26,8 +28,8 @@ import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.IsoCountry;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
@@ -36,6 +38,7 @@ import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.NotificationController;
+import com.nowellpoint.www.app.view.Path;
 import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
@@ -149,6 +152,14 @@ public class Application implements SparkApplication {
         	return "";
         });
         
+        AuthenticationController authenticationController = new AuthenticationController(cfg);
+        
+        // setup routes
+        
+        get(Path.Route.LOGIN, authenticationController.showLoginPage);
+        post(Path.Route.LOGIN, authenticationController.login);
+        get(Path.Route.LOGOUT, authenticationController.logout);
+        
         //
         // routes
         //
@@ -161,7 +172,6 @@ public class Application implements SparkApplication {
         new AccountProfileController(cfg);
         new SignUpController(cfg);
         new ContactController(cfg);
-        new AuthenticationController(cfg);
         new ProjectController(cfg);
         new SalesforceOauthController(cfg);
         new SalesforceConnectorController(cfg);
@@ -171,6 +181,10 @@ public class Application implements SparkApplication {
         //
         // exception handlers
         //
+        
+        exception(NotAuthorizedException.class, (exception, request, response) -> {
+        	authenticationController.handleNotAuthorizedException(exception, request, response, cfg);
+        });
         
         exception(BadRequestException.class, (exception, request, response) -> {
             response.status(400);
@@ -248,7 +262,7 @@ public class Application implements SparkApplication {
     	Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	if (cookie.isPresent()) {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
-    		Account account = objectMapper.readValue(getAccount(token.getAccessToken()), Account.class);
+    		AccountProfile account = getAccount(token.getAccessToken());
     		request.attribute("token", token);
     		request.attribute("account", account);
     	} else {
@@ -264,29 +278,22 @@ public class Application implements SparkApplication {
 	 * @return
 	 */
 	
-	private static String getAccount(String accessToken) {
+	private static AccountProfile getAccount(String accessToken) {
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(accessToken)
+				.path("account-profile")
+				.path("me")
+				.execute();
 		
-		try {
-			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-					.accept(MediaType.APPLICATION_JSON)
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.bearerAuthorization(accessToken)
-					.path("account")
-					.path("me")
-					.execute();
-			
-			int statusCode = httpResponse.getStatusCode();
-	    	
-	    	LOGGER.info("Status Code: " + statusCode + " Method: GET : " + httpResponse.getURL());
-	    	
-	    	if (statusCode != 200) {
-	    		throw new BadRequestException(httpResponse.getAsString());
-	    	}
-	    	
-	    	return httpResponse.getAsString();
-	    	 	    	
-		} catch (HttpRequestException e) {
-			throw new InternalServerErrorException(e);
-		}
+		int statusCode = httpResponse.getStatusCode();
+    	
+    	LOGGER.info("Status Code: " + statusCode + " Method: GET : " + httpResponse.getURL());
+    	
+    	if (statusCode != 200) {
+    		throw new BadRequestException(httpResponse.getAsString());
+    	}
+    	
+    	return httpResponse.getEntity(AccountProfile.class);
 	}
 }

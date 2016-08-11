@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.delete;
 import static spark.Spark.get;
 
 import java.util.List;
@@ -13,8 +12,8 @@ import org.jboss.logging.Logger;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.Property;
 
 import freemarker.template.Configuration;
@@ -32,18 +31,18 @@ public class AdministrationController extends AbstractController {
 	}
 	
 	public void configureRoutes(Configuration cfg) {
-		get("/app/administration", (request, response) -> getAdministrationHome(request, response), new FreeMarkerEngine(cfg));	
+		get(Path.Route.ADMINISTRATION, (request, response) -> getAdministrationHome(request, response), new FreeMarkerEngine(cfg));	
 		
-		get("/app/administration/cache", (request, response) -> getCache(request, response), new FreeMarkerEngine(cfg));	
+		get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> getCache(request, response), new FreeMarkerEngine(cfg));	
 		
-		get("/app/administration/properties", (request, response) -> getProperties(request, response), new FreeMarkerEngine(cfg));	
+		get(Path.Route.ADMINISTRATION.concat("/properties"), (request, response) -> getProperties(request, response), new FreeMarkerEngine(cfg));	
 		
-		get("/app/administration/cache/purge", (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
+		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
 	}
 	
 	private ModelAndView getAdministrationHome(Request request, Response response) {
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		
 		
@@ -57,7 +56,7 @@ public class AdministrationController extends AbstractController {
 	private ModelAndView getCache(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 //		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 //				.bearerAuthorization(token.getAccessToken())
@@ -87,7 +86,7 @@ public class AdministrationController extends AbstractController {
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
@@ -98,7 +97,7 @@ public class AdministrationController extends AbstractController {
 	private ModelAndView getProperties(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())

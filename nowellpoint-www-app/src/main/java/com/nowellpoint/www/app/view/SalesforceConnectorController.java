@@ -32,8 +32,8 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.Plan;
@@ -141,7 +141,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 */
 	
 	private ModelAndView newEnvironment(Request request, Response response) {	
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		
@@ -170,7 +170,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getEnvironment(Request request, Response response) {	
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -214,7 +214,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView editEnvironment(Request request, Response response) {	
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -252,7 +252,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private String addEnvironment(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String active = request.queryParams("active");
@@ -306,7 +306,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private String updateEnvironment(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -413,7 +413,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getEventListeners(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -440,7 +440,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getTargets(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -585,7 +585,7 @@ public class SalesforceConnectorController extends AbstractController {
 	
 //	private ModelAndView getEnvironmentVariables(Request request, Response response) {		
 //		Token token = getToken(request);
-//		Account account = getAccount(request);
+//		AccountProfile account = getAccount(request);
 //		
 //		String id = request.params(":id");
 //		String key = request.params(":key");
@@ -645,7 +645,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getEnvironments(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -672,7 +672,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getServiceInstance(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -758,7 +758,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getSalesforceConnector(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
     	
 		SalesforceConnector salesforceConnector = null;
 		String message = null;
@@ -788,7 +788,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView editSalesforceConnector(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
     	
 		SalesforceConnector salesforceConnector = null;
 		String message = null;
@@ -817,7 +817,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getSalesforceConnectors(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -926,7 +926,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getServiceProviders(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		List<ServiceProvider> providers = Collections.emptyList();
 		SalesforceConnector salesforceConnector = null;
@@ -970,7 +970,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView reviewPlan(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String serviceProviderId = request.params(":serviceProviderId");
@@ -1072,7 +1072,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView getFields(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -1172,7 +1172,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private ModelAndView testConnection(Request request, Response response) {
 		Token token = getToken(request);
 		
-		Account account = getAccount(request);
+		AccountProfile account = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");

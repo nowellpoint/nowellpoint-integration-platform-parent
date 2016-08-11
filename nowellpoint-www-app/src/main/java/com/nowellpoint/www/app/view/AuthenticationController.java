@@ -1,13 +1,7 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.exception;
-import static spark.Spark.get;
-import static spark.Spark.halt;
-import static spark.Spark.post;
-
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,11 +18,9 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 
 import freemarker.template.Configuration;
-import freemarker.template.Template;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
 public class AuthenticationController extends AbstractController {
 	
@@ -39,35 +31,22 @@ public class AuthenticationController extends AbstractController {
 	@Override
 	public void configureRoutes(Configuration configuration) {
         
-        get(Path.Routes.LOGIN, (request, response) -> showLogin(request, response), new FreeMarkerEngine(configuration));
-		
-		post(Path.Routes.LOGIN, (request, response) -> login(request, response));
-        
-        get(Path.Routes.LOGOUT, (request, response) -> logout(request, response));
-        
-        exception(NotAuthorizedException.class, (exception, request, response) -> handleNotAuthorizedException(exception, request, response, configuration));
 	}
 	
 	/**
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
 	 */
 	
-	private ModelAndView showLogin(Request request, Response response) {
-		return new ModelAndView(getModel(), "login.html");
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private String login(Request request, Response response) {
-    	
+	public Route showLoginPage = (Request request, Response response) -> {
+        Map<String, Object> model = new HashMap<>();
+        return render(request, model, Path.Template.LOGIN);
+    };
+    
+    /**
+     * 
+     */
+    
+    public Route login = (Request request, Response response) -> {
     	HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
     			.accept(MediaType.APPLICATION_JSON)
     			.path("oauth")
@@ -106,16 +85,13 @@ public class AuthenticationController extends AbstractController {
     	}
     		
     	return "";
-	}
+    };
+    
+    /**
+     * 
+     */
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private String logout(Request request, Response response) {
+    public Route logout = (Request request, Response response) -> {
 		
 		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	
@@ -150,22 +126,22 @@ public class AuthenticationController extends AbstractController {
     	response.redirect("/");
     	
     	return "";
-	}
+	};
 	
-	private void handleNotAuthorizedException(Exception exception, Request request, Response response, Configuration configuration) {
-		Map<String, Object> model = getModel();
+	/**
+	 * 
+	 * @param exception
+	 * @param request
+	 * @param response
+	 * @param configuration
+	 */
+	
+	public void handleNotAuthorizedException(Exception exception, Request request, Response response, Configuration configuration) {
+		Map<String, Object> model = new HashMap<>();
     	model.put("errorMessage", exception.getMessage());
     	
-		Template template;
-		try {
-			template = configuration.getTemplate("login.html");
-			Writer output = new StringWriter();
-			template.process(model, output);
-			response.body(output.toString());
-			output.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-			halt();
-		}  
+    	String output = render(request, model, Path.Template.LOGIN);
+    	
+    	response.body(output);
 	}
 }
