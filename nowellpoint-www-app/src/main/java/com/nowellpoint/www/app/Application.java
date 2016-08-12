@@ -155,12 +155,19 @@ public class Application implements SparkApplication {
         
         AuthenticationController authenticationController = new AuthenticationController(cfg);
         AccountProfileController accountProfileController = new AccountProfileController(cfg);
+        VerifyEmailController verifyEmailController = new VerifyEmailController(cfg);
+        DashboardController dashboardController = new DashboardController(cfg);
         
         // setup routes
         
         get(Path.Route.LOGIN, authenticationController.showLoginPage);
         post(Path.Route.LOGIN, authenticationController.login);
         get(Path.Route.LOGOUT, authenticationController.logout);
+        
+        get(Path.Route.VERIFY_EMAIL, verifyEmailController.verifyEmail);
+        
+        get(Path.Route.START, dashboardController.showStartPage);
+        get(Path.Route.DASHBOARD, dashboardController.showDashboard);
         
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
@@ -181,9 +188,7 @@ public class Application implements SparkApplication {
         // routes
         //
         
-        new VerifyEmailController(cfg);
         new AdministrationController(cfg);
-        new DashboardController(cfg);
         new ServiceProviderController(cfg);
         new ApplicationController(cfg);
         new SignUpController(cfg);

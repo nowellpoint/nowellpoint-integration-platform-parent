@@ -51,7 +51,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <#if account.hasFullAccess>
+                <#if ! account.hasFullAccess?? && account.hasFullAccess>
                     <li>
                         <a href="/app/administration">
                                     ${messages["adminsitration"]}
