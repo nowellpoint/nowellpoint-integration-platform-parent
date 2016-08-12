@@ -1,8 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,22 +13,24 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Application;
 
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
-public class NotificationController {
+public class NotificationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(NotificationController.class);
 	
 	public NotificationController(Configuration cfg) {
-		
-		get("/app/notifications", (request, response) -> getNotifications(request, response), new FreeMarkerEngine(cfg));
+		super(NotificationController.class, cfg);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
 		
 	}
 	
-	private static ModelAndView getNotifications(Request request, Response response) throws IOException {
+	public Route showNotifications = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");
 		
@@ -51,6 +50,6 @@ public class NotificationController {
 		model.put("account", request.attribute("account"));
 		model.put("applicationList", applications);
 		
-		return new ModelAndView(model, "secure/notification-list.html");
-	}
+		return render(request, model, Path.Template.NOTIFICATIONS);
+	};
 }

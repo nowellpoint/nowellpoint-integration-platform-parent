@@ -157,6 +157,11 @@ public class Application implements SparkApplication {
         AccountProfileController accountProfileController = new AccountProfileController(cfg);
         VerifyEmailController verifyEmailController = new VerifyEmailController(cfg);
         DashboardController dashboardController = new DashboardController(cfg);
+        AdministrationController administrationController = new AdministrationController(cfg);
+        SignUpController signUpController = new SignUpController(cfg);
+        NotificationController notificationController = new NotificationController(cfg);
+        SetupController setupController = new SetupController(cfg);
+        SalesforceOauthController salesforceOauthController = new SalesforceOauthController(cfg);
         
         // setup routes
         
@@ -164,10 +169,26 @@ public class Application implements SparkApplication {
         post(Path.Route.LOGIN, authenticationController.login);
         get(Path.Route.LOGOUT, authenticationController.logout);
         
+        get(Path.Route.SIGN_UP, signUpController.showSignUp);
+		post(Path.Route.SIGN_UP, signUpController.signUp);
+        
         get(Path.Route.VERIFY_EMAIL, verifyEmailController.verifyEmail);
         
         get(Path.Route.START, dashboardController.showStartPage);
         get(Path.Route.DASHBOARD, dashboardController.showDashboard);
+        
+        get(Path.Route.NOTIFICATIONS, notificationController.showNotifications);
+        
+        get(Path.Route.SETUP, setupController.showSetup);
+        
+        get(Path.Route.SALESFORCE_OAUTH, salesforceOauthController.oauth);
+        get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), salesforceOauthController.callback);
+        get(Path.Route.SALESFORCE_OAUTH.concat("token"), salesforceOauthController.getSalesforceToken);
+        
+        get(Path.Route.ADMINISTRATION, administrationController.showAdministrationHome);	
+        get(Path.Route.ADMINISTRATION.concat("/cache"), administrationController.showManageCache);	
+        get(Path.Route.ADMINISTRATION.concat("/properties"), administrationController.showManageProperties);	
+		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
         
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
@@ -188,16 +209,11 @@ public class Application implements SparkApplication {
         // routes
         //
         
-        new AdministrationController(cfg);
         new ServiceProviderController(cfg);
         new ApplicationController(cfg);
-        new SignUpController(cfg);
         new ContactController(cfg);
         new ProjectController(cfg);
-        new SalesforceOauthController(cfg);
         new SalesforceConnectorController(cfg);
-        new SetupController(cfg);
-        new NotificationController(cfg);
         
         //
         // exception handlers

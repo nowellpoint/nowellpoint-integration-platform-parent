@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +15,9 @@ import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.Property;
 
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
 public class AdministrationController extends AbstractController {
 	
@@ -31,52 +28,33 @@ public class AdministrationController extends AbstractController {
 	}
 	
 	public void configureRoutes(Configuration cfg) {
-		get(Path.Route.ADMINISTRATION, (request, response) -> getAdministrationHome(request, response), new FreeMarkerEngine(cfg));	
 		
-		get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> getCache(request, response), new FreeMarkerEngine(cfg));	
-		
-		get(Path.Route.ADMINISTRATION.concat("/properties"), (request, response) -> getProperties(request, response), new FreeMarkerEngine(cfg));	
-		
-		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(request, response), new FreeMarkerEngine(cfg));	
+	
 	}
 	
-	private ModelAndView getAdministrationHome(Request request, Response response) {
+	public Route showAdministrationHome = (Request request, Response response) -> {
 		
 		AccountProfile account = getAccount(request);
-		
-		
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
-		return new ModelAndView(model, "secure/administration-home.html");
+		return render(request, model, Path.Template.ADMINISTRATION_HOME);
 		
-	}
+	};
 	
-	private ModelAndView getCache(Request request, Response response) {
-		Token token = getToken(request);
+	public Route showManageCache = (Request request, Response response) -> {
 		
 		AccountProfile account = getAccount(request);
 		
-//		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-//				.bearerAuthorization(token.getAccessToken())
-//				.path("cache")
-//				.execute();
-//		
-//		ObjectNode info = httpResponse.getEntity(ObjectNode.class);
-//		
-//		String[] tokens = info.get("info").asText().split("\\s+");
-//		Arrays.asList(tokens).stream().forEach(t -> System.out.println(t));
-		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		//model.put("info", info.get("info").asText());
 		
-		return new ModelAndView(model, "secure/cache.html");
+		return render(request, model, Path.Template.CACHE_MANAGER);
 		
-	}
+	};
 	
-	private ModelAndView purgeCache(Request request, Response response) {
+	public Route purgeCache = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
@@ -90,11 +68,10 @@ public class AdministrationController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
-		return new ModelAndView(model, "secure/cache.html");
-		
-	}
+		return render(request, model, Path.Template.CACHE_MANAGER);
+	};
 	
-	private ModelAndView getProperties(Request request, Response response) {
+	public Route showManageProperties = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -116,6 +93,6 @@ public class AdministrationController extends AbstractController {
 		model.put("account", account);
 		model.put("propertyList", properties);
 		
-		return new ModelAndView(model, "secure/properties-list.html");
-	}
+		return render(request, model, Path.Template.PROPERTY_MANAGER);
+	};
 }

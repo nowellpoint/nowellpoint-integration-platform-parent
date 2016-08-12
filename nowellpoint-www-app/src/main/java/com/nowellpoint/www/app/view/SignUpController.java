@@ -1,9 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
@@ -17,10 +13,9 @@ import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
 public class SignUpController extends AbstractController {
 	
@@ -32,18 +27,16 @@ public class SignUpController extends AbstractController {
 
 	@Override
 	public void configureRoutes(Configuration configuration) {
-		get("/signup", (request, response) -> showSignUpPage(request, response), new FreeMarkerEngine(configuration));
 		
-		post("/signup", (request, response) -> signUp(request, response), new FreeMarkerEngine(configuration));
 		
 	}
 	
-	private ModelAndView showSignUpPage(Request request, Response response) {
-		Map<String, Object> attributes = new HashMap<String, Object>();
-    	return new ModelAndView(attributes, "signup.html");    
-	}
+	public Route showSignUp = (Request request, Response response) -> {
+		Map<String, Object> model = new HashMap<String, Object>();
+		return render(request, model, Path.Template.SIGN_UP);
+	};
 	
-	private ModelAndView signUp(Request request, Response response) throws UnsupportedEncodingException {
+	public Route signUp = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<String, Object>();
     	
     	if (request.queryParams("password").equals(request.queryParams("confirmPassword"))) {
@@ -84,6 +77,6 @@ public class SignUpController extends AbstractController {
     		model.put("errorMessage", MessageProvider.getMessage(Locale.US, "passwordMismatch"));
     	}
     	
-    	return new ModelAndView(model, "signup.html");
-	}
+    	return render(request, model, Path.Template.SIGN_UP);
+	};
 }

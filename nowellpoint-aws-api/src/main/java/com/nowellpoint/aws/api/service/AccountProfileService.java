@@ -73,10 +73,12 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	public void loggedInEvent(@Observes Token token) {
 		String subject = TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), token.getAccessToken());
 		
+		UserContext.setUserContext(token.getAccessToken());
+		
 		AccountProfileDTO resource = findAccountProfileBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		UserContext.setUserContext(token.getAccessToken());
+		System.out.println(resource.getHasFullAccess());
 		
 		replace(resource);
 

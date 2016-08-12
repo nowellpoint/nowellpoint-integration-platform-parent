@@ -1,8 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
-import java.io.IOException;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -19,10 +16,9 @@ import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
 public class SalesforceOauthController extends AbstractController {
 	
@@ -33,11 +29,7 @@ public class SalesforceOauthController extends AbstractController {
 	}
 	
 	public void configureRoutes(Configuration cfg) {
-		get("/app/salesforce/oauth", (request, response) -> oauth(request, response));
-        
-        get("/app/salesforce/oauth/callback", (request, response) -> callback(request, response), new FreeMarkerEngine(cfg));
-        
-        get("/app/salesforce/oauth/token", (request, response) -> getSalesforceToken(request, response));
+		
 	}
 	
 	/**
@@ -48,7 +40,7 @@ public class SalesforceOauthController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private String oauth(Request request, Response response) {
+	public Route oauth = (Request request, Response response) -> {
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
     			.path("salesforce")
@@ -61,7 +53,7 @@ public class SalesforceOauthController extends AbstractController {
 		response.redirect(httpResponse.getHeaders().get("Location").get(0));		
 		
 		return "";
-	}
+	};
 	
 	/**
 	 * 
@@ -71,7 +63,7 @@ public class SalesforceOauthController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private ModelAndView callback(Request request, Response response) {
+	public Route callback = (Request request, Response response) -> {
     	
     	Optional<String> code = Optional.ofNullable(request.queryParams("code"));
     	
@@ -79,8 +71,8 @@ public class SalesforceOauthController extends AbstractController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
-		return new ModelAndView(getModel(), "secure/salesforce-callback.html");	
-    }
+    	return render(request, getModel(), Path.Template.SALESFORCE_OAUTH);
+    };
 	
 	/**
 	 * 
@@ -89,7 +81,7 @@ public class SalesforceOauthController extends AbstractController {
 	 * @return
 	 */
 	
-	private String getSalesforceToken(Request request, Response response) {
+    public Route getSalesforceToken = (Request request, Response response) -> {
     	
     	HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
@@ -130,5 +122,5 @@ public class SalesforceOauthController extends AbstractController {
     	response.redirect(String.format("/app/connectors/salesforce/%s", salesforceConnector.getId()));
     	
     	return "";
-	}
+	};
 }
