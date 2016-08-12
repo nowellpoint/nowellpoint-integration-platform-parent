@@ -176,6 +176,8 @@ public class AccountProfileDTO extends AbstractDTO {
 	 * 
 	 */
 	
+	private Boolean hasFullAccess;
+	
 	public AccountProfileDTO() {
 		
 	}
@@ -400,5 +402,13 @@ public class AccountProfileDTO extends AbstractDTO {
 			this.systemReferences = new HashSet<SystemReference>();
 		}
 		this.systemReferences.add(systemReference);
+	}
+
+	public Boolean getHasFullAccess() {
+		return hasFullAccess;
+	}
+
+	public void setHasFullAccess(Boolean hasFullAccess) {
+		this.hasFullAccess = hasFullAccess;
 	}
 }

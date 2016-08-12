@@ -1,18 +1,11 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.delete;
-import static spark.Spark.get;
-import static spark.Spark.post;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -30,7 +23,6 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class AccountProfileController extends AbstractController {
 	
@@ -46,41 +38,11 @@ public class AccountProfileController extends AbstractController {
 	
 	public void configureRoutes(Configuration configuration) {
 		
-		//
-		// account profile routes
-		//
-		
-		post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(request, response));
-		
-		//
-		// account address routes
-		//
-		
-		post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(request, response));
-		
-		// credit card routes
-		
-		get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> getCreditCard(request, response), new FreeMarkerEngine(configuration));
-		
-		get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), (request, response) -> newCreditCard(request, response), new FreeMarkerEngine(configuration));
-		
-		get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> editCreditCard(request, response), new FreeMarkerEngine(configuration));
-		
-		post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> setPrimaryCreditCard(request, response));
-		
-		post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> addCreditCard(request, response), new FreeMarkerEngine(configuration));
-		
-		post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> updateCreditCard(request, response), new FreeMarkerEngine(configuration));
-		
-		delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> removeCreditCard(request, response));
-				
-		/////////////////////////////////
-
-		post(Path.Route.ACCOUNT_PROFILE.concat("/picture/salesforce"), (request, response) -> setSalesforceProfilePicture(request, response));
-		
-		delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), (request, response) -> removeProfilePicture(request, response));
-		
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public Route getAccountProfile = (Request request, Response response) -> {
 		AccountProfile account = getAccount(request);
@@ -93,6 +55,10 @@ public class AccountProfileController extends AbstractController {
 		return render(request, model, Path.Template.ACCOUNT_PROFILE);
 	};
 	
+	/**
+	 * 
+	 */
+	
 	public Route editAccountProfile = (Request request, Response response) -> {		
 		AccountProfile account = getAccount(request);
 			
@@ -102,6 +68,10 @@ public class AccountProfileController extends AbstractController {
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);		
 	};
+	
+	/**
+	 * 
+	 */
 	
 	public Route editAccountProfileAddress = (Request request, Response response) -> {		
 		Token token = getToken(request);
@@ -128,6 +98,10 @@ public class AccountProfileController extends AbstractController {
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);		
 	};
+	
+	/**
+	 * 
+	 */
 	
 	public Route disableAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
@@ -167,58 +141,9 @@ public class AccountProfileController extends AbstractController {
 	
 	/**
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
 	 */
 	
-//	private String disableAccountProfile(Request request, Response response) throws IOException {
-//		Token token = getToken(request);
-//		
-//		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-//				.bearerAuthorization(token.getAccessToken())
-//				.path("account-profile")
-//				.path(request.params(":id"))
-//				.execute();
-//			
-//		if (httpResponse.getStatusCode() != Status.OK) {
-//			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-//			throw new BadRequestException(error.getMessage());
-//		}
-//		
-//		httpResponse = RestResource.delete(API_ENDPOINT)
-//				.bearerAuthorization(token.getAccessToken())
-//    			.path("oauth")
-//    			.path("token")
-//    			.execute();
-//    	
-//    	int statusCode = httpResponse.getStatusCode();
-//    	
-//    	if (statusCode != Status.NO_CONTENT) {
-//    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-//			throw new BadRequestException(error.getMessage());
-//    	}
-//    	
-//    	response.removeCookie("com.nowellpoint.oauth.token"); 
-//    	
-//    	request.session().invalidate();
-//    	
-//    	response.redirect("/");
-//		
-//		return "";
-//	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private String updateAccountProfile(Request request, Response response) {
-		
+	public Route updateAccountProfile = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -275,17 +200,13 @@ public class AccountProfileController extends AbstractController {
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
-	}
+	};
 	
 	/**
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
 	 */
 	
-	private String updateAccountProfileAddress(Request request, Response response) {
-		
+	public Route updateAccountProfileAddress = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -327,49 +248,13 @@ public class AccountProfileController extends AbstractController {
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";		
-	}
+	};
 	
 	/**
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
 	 */
 	
-	private String setSalesforceProfilePicture(Request request, Response response) throws IOException {
-		
-		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-    			.bearerAuthorization(token.getAccessToken())
-    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        		.acceptCharset("UTF-8")
-        		.path("account-profile")
-        		.path("photo")
-        		.path("salesforce")
-        		.body("photoUrl=".concat(request.queryParams("photoUrl")))
-        		.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " Location: " + httpResponse.getHeaders().get("Location"));
-		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		
-		return "";	
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private ModelAndView removeProfilePicture(Request request, Response response) {
-		
+	public Route removeProfilePicture = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -377,6 +262,7 @@ public class AccountProfileController extends AbstractController {
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
     			.bearerAuthorization(token.getAccessToken())
         		.path("account-profile")
+        		.path(request.params(":id"))
         		.path("photo")
         		.execute();
 		
@@ -386,10 +272,14 @@ public class AccountProfileController extends AbstractController {
 		model.put("account", account);
 		model.put("accountProfile", accountProfile);
 		
-		return new ModelAndView(model, "secure/account-profile.html");		
-	}
+		return render(request, model, Path.Template.ACCOUNT_PROFILE);
+	};
 	
-	private ModelAndView getCreditCard(Request request, Response response) {
+	/**
+	 * 
+	 */
+	
+	public Route getCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -413,11 +303,15 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("creditCard", creditCard);
 		model.put("mode", "view");
-			
-		return new ModelAndView(model, "secure/payment-method.html");	
-	}
+		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+	};
 	
-	private ModelAndView newCreditCard(Request request, Response response) {
+	/**
+	 * 
+	 */
+	
+	public Route newCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -446,11 +340,15 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", accountProfile);
 		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 		model.put("mode", "new");
-			
-		return new ModelAndView(model, "secure/payment-method.html");	
-	}
+		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+	};
 	
-	private ModelAndView editCreditCard(Request request, Response response) {
+	/**
+	 * 
+	 */
+	
+	public Route editCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -484,11 +382,15 @@ public class AccountProfileController extends AbstractController {
 		model.put("creditCard", creditCard);
 		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
 		model.put("mode", "edit");
-			
-		return new ModelAndView(model, "secure/payment-method.html");	
-	}
+		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+	};
 	
-	private ModelAndView addCreditCard(Request request, Response response) {
+	/**
+	 * 
+	 */
+	
+	public Route addCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -550,11 +452,15 @@ public class AccountProfileController extends AbstractController {
 			model.put("mode", "add");
 			model.put("errorMessage", error.getMessage());
 		}
-			
-		return new ModelAndView(model, "secure/payment-method.html");	
-	}
+		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+	};
 	
-	private ModelAndView updateCreditCard(Request request, Response response) {
+	/**
+	 * 
+	 */
+	
+	public Route updateCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -616,20 +522,14 @@ public class AccountProfileController extends AbstractController {
 			model.put("errorMessage", error.getMessage());
 		}
 			
-		return new ModelAndView(model, "secure/payment-method.html");	
-	}
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+	};
 	
 	/**
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws HttpRequestException
-	 * @throws UnsupportedEncodingException
 	 */
 	
-	private String setPrimaryCreditCard(Request request, Response response) throws HttpRequestException, UnsupportedEncodingException {
-		
+	public Route setPrimaryCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
@@ -648,19 +548,16 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), getValue("primary.credit.card.set"), "successMessage", 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue("primary.credit.card.set"), 3, Boolean.FALSE);
 		
 		return "";
-	}
+	};
 	
 	/**
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
 	 */
 	
-	private String removeCreditCard(Request request, Response response) {
+	public Route removeCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
@@ -676,8 +573,8 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), getValue("remove.credit.card.success"), "successMessage", 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue("remove.credit.card.success"), 3, Boolean.FALSE);
 		
 		return "";
-	}
+	};
 }

@@ -144,6 +144,12 @@ public class AccountProfile extends Resource {
 	
 	private List<CreditCard> creditCards;
 	
+	/**
+	 * 
+	 */
+	
+	private Boolean hasFullAccess;
+	
 	public AccountProfile() {
 		address = new Address();
 		photos = new Photos();
@@ -341,6 +347,14 @@ public class AccountProfile extends Resource {
 	
 	public void addCreditCard(CreditCard creditCard) {
 		this.getCreditCards().add(creditCard);
+	}
+	
+	public Boolean getHasFullAccess() {
+		return hasFullAccess;
+	}
+
+	public void setHasFullAccess(Boolean hasFullAccess) {
+		this.hasFullAccess = hasFullAccess;
 	}
 	
 	public AccountProfile withId(String id) {

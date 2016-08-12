@@ -1,6 +1,7 @@
 package com.nowellpoint.www.app;
 
 import static spark.Spark.before;
+import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
@@ -162,9 +163,19 @@ public class Application implements SparkApplication {
         get(Path.Route.LOGOUT, authenticationController.logout);
         
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
+        post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/disable"), accountProfileController.disableAccountProfile);
+        delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), accountProfileController.removeProfilePicture);
         get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAccountProfileAddress);
+        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.updateAccountProfileAddress);
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), accountProfileController.getCreditCard);
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), accountProfileController.newCreditCard);
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), accountProfileController.editCreditCard);
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, accountProfileController.addCreditCard);
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.updateCreditCard);
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), accountProfileController.setPrimaryCreditCard);
+        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
         //
         // routes

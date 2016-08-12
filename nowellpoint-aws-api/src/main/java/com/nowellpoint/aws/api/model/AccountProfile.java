@@ -181,8 +181,10 @@ public class AccountProfile extends AbstractDocument {
 	 * 
 	 */
 	
+	private Boolean hasFullAccess;
+	
 	public AccountProfile() {
-
+		setHasFullAccess(Boolean.FALSE);
 	}
 
 	public String getUsername() {
@@ -383,5 +385,13 @@ public class AccountProfile extends AbstractDocument {
 
 	public void setSystemReferences(Set<SystemReference> systemReferences) {
 		this.systemReferences = systemReferences;
+	}
+
+	public Boolean getHasFullAccess() {
+		return hasFullAccess;
+	}
+
+	public void setHasFullAccess(Boolean hasFullAccess) {
+		this.hasFullAccess = hasFullAccess;
 	}
 }

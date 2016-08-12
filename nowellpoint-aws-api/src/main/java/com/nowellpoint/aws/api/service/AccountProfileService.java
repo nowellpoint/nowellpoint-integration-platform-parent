@@ -131,6 +131,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setIsActive(original.getIsActive());
 		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
+		resource.setHasFullAccess(original.getHasFullAccess());
 		
 		if (resource.getAddress() == null) {
 			resource.setAddress(original.getAddress());
