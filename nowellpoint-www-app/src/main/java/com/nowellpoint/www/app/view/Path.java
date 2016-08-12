@@ -19,5 +19,8 @@ public class Path {
 
 	public static class Template {
 		public static final String LOGIN = "login.html";
+		public static final String ACCOUNT_PROFILE = "secure/account-profile.html";
+		public static final String ACCOUNT_PROFILE_EDIT = "secure/account-profile-edit.html";
+		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = "secure/account-profile-address-edit.html";
 	}
 }

@@ -77,10 +77,10 @@ abstract class AbstractController {
 		return output.toString();
 	}
 	
-	public String render(Request request, Map<String,Object> model, String template) {
+	public String render(Request request, Map<String,Object> model, String templateName) {
 		AccountProfile accountProfile = request.attribute("account");
 		Locale locale = null;
-		if (accountProfile.getLocaleSidKey() != null) {
+		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
 			locale = new Locale(accountProfile.getLocaleSidKey());
 		} else {
 			locale = configuration.getLocale();
@@ -88,7 +88,6 @@ abstract class AbstractController {
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("accountProfile", accountProfile);
-       // model.put("WebPath", Path.Web.class); // Access application URLs from templates
-        return new FreeMarkerEngine(configuration).render(new ModelAndView(model, template));
+        return new FreeMarkerEngine(configuration).render(new ModelAndView(model, templateName));
     }
 }

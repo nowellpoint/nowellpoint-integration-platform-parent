@@ -153,12 +153,18 @@ public class Application implements SparkApplication {
         });
         
         AuthenticationController authenticationController = new AuthenticationController(cfg);
+        AccountProfileController accountProfileController = new AccountProfileController(cfg);
         
         // setup routes
         
         get(Path.Route.LOGIN, authenticationController.showLoginPage);
         post(Path.Route.LOGIN, authenticationController.login);
         get(Path.Route.LOGOUT, authenticationController.logout);
+        
+        get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
+        get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
+        get(Path.Route.ACCOUNT_PROFILE.concat("/disable"), accountProfileController.disableAccountProfile);
+        get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAccountProfileAddress);
         
         //
         // routes
@@ -169,7 +175,6 @@ public class Application implements SparkApplication {
         new DashboardController(cfg);
         new ServiceProviderController(cfg);
         new ApplicationController(cfg);
-        new AccountProfileController(cfg);
         new SignUpController(cfg);
         new ContactController(cfg);
         new ProjectController(cfg);
@@ -182,9 +187,7 @@ public class Application implements SparkApplication {
         // exception handlers
         //
         
-        exception(NotAuthorizedException.class, (exception, request, response) -> {
-        	authenticationController.handleNotAuthorizedException(exception, request, response, cfg);
-        });
+        exception(NotAuthorizedException.class, authenticationController.handleNotAuthorizedException);
         
         exception(BadRequestException.class, (exception, request, response) -> {
             response.status(400);

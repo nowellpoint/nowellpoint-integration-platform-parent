@@ -29,6 +29,7 @@ import freemarker.template.Configuration;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 import spark.template.freemarker.FreeMarkerEngine;
 
 public class AccountProfileController extends AbstractController {
@@ -49,19 +50,11 @@ public class AccountProfileController extends AbstractController {
 		// account profile routes
 		//
 		
-		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(request, response), new FreeMarkerEngine(configuration));
-		
-		get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), (request, response) -> editAccountProfile(request, response), new FreeMarkerEngine(configuration));
-		
-		get(Path.Route.ACCOUNT_PROFILE.concat("/disable"), (request, response) -> disableAccountProfile(request, response));
-		
 		post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(request, response));
 		
 		//
 		// account address routes
 		//
-		
-		get(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> editAccountProfileAddress(request, response), new FreeMarkerEngine(configuration));
 		
 		post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(request, response));
 		
@@ -89,60 +82,28 @@ public class AccountProfileController extends AbstractController {
 		
 	}
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private ModelAndView getAccountProfile(Request request, Response response) {
+	public Route getAccountProfile = (Request request, Response response) -> {
+		AccountProfile account = getAccount(request);
 		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", account);
+		model.put("successMessage", request.cookie("successMessage"));
+		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE);
+	};
+	
+	public Route editAccountProfile = (Request request, Response response) -> {		
 		AccountProfile account = getAccount(request);
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", account);
-		model.put("successMessage", request.cookie("successMessage"));
 			
-		return new ModelAndView(model, "secure/account-profile.html");			
-	}
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);		
+	};
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private ModelAndView editAccountProfile(Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-			
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-			
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", accountProfile);
-			
-		return new ModelAndView(model, "secure/account-profile-edit.html");			
-	}
-	
-	private ModelAndView editAccountProfileAddress(Request request, Response response) {
+	public Route editAccountProfileAddress = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -153,8 +114,6 @@ public class AccountProfileController extends AbstractController {
 				.path(request.params(":id"))
 				.path("address")
 				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 			
 		if (httpResponse.getStatusCode() != Status.OK) {
 			throw new NotFoundException(httpResponse.getAsString());
@@ -167,18 +126,10 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("address", address);
 			
-		return new ModelAndView(model, "secure/account-profile-address-edit.html");		
-	}
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);		
+	};
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private String disableAccountProfile(Request request, Response response) throws IOException {
+	public Route disableAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
@@ -211,8 +162,52 @@ public class AccountProfileController extends AbstractController {
     	
     	response.redirect("/");
 		
-		return "";
-	}
+		return "";	
+	};
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	
+//	private String disableAccountProfile(Request request, Response response) throws IOException {
+//		Token token = getToken(request);
+//		
+//		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+//				.bearerAuthorization(token.getAccessToken())
+//				.path("account-profile")
+//				.path(request.params(":id"))
+//				.execute();
+//			
+//		if (httpResponse.getStatusCode() != Status.OK) {
+//			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+//			throw new BadRequestException(error.getMessage());
+//		}
+//		
+//		httpResponse = RestResource.delete(API_ENDPOINT)
+//				.bearerAuthorization(token.getAccessToken())
+//    			.path("oauth")
+//    			.path("token")
+//    			.execute();
+//    	
+//    	int statusCode = httpResponse.getStatusCode();
+//    	
+//    	if (statusCode != Status.NO_CONTENT) {
+//    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+//			throw new BadRequestException(error.getMessage());
+//    	}
+//    	
+//    	response.removeCookie("com.nowellpoint.oauth.token"); 
+//    	
+//    	request.session().invalidate();
+//    	
+//    	response.redirect("/");
+//		
+//		return "";
+//	}
 	
 	/**
 	 * 

@@ -18,6 +18,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 
 import freemarker.template.Configuration;
+import spark.ExceptionHandler;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -130,18 +131,14 @@ public class AuthenticationController extends AbstractController {
 	
 	/**
 	 * 
-	 * @param exception
-	 * @param request
-	 * @param response
-	 * @param configuration
 	 */
 	
-	public void handleNotAuthorizedException(Exception exception, Request request, Response response, Configuration configuration) {
+	public ExceptionHandler handleNotAuthorizedException = (Exception exception, Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<>();
     	model.put("errorMessage", exception.getMessage());
     	
     	String output = render(request, model, Path.Template.LOGIN);
     	
     	response.body(output);
-	}
+	};
 }
