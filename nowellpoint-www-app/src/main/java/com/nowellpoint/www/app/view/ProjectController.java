@@ -1,10 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.delete;
-import static spark.Spark.get;
-import static spark.Spark.post;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,24 +19,20 @@ import com.nowellpoint.www.app.model.Project;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
-public class ProjectController {
+public class ProjectController extends AbstractController {
 	
 	private static final Logger logger = Logger.getLogger(ProjectController.class.getName());
 	
 	public ProjectController(Configuration cfg) {
-				
-		get("/app/projects", (request, response) -> getProjects(request, response), new FreeMarkerEngine(cfg));
-
-		get("/app/projects/:id", (request, response) -> getProject(request, response), new FreeMarkerEngine(cfg));
+		super(ProjectController.class, cfg);
+	}
+	
+	public void configureRoutes(Configuration cfg) {
 		
-		post("/app/projects", (request, response) -> saveProject(request, response), new FreeMarkerEngine(cfg));
-		
-		delete("/app/projects/:id", (request, response) -> deleteProject(request, response));
 	}
 	
 	/**
@@ -52,7 +43,7 @@ public class ProjectController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getProjects(Request request, Response response) throws IOException {
+	public Route getProjects = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");
 		
@@ -82,19 +73,10 @@ public class ProjectController {
 		model.put("project", project);
 		model.put("projectList", projects);
 		
-		return new ModelAndView(model, "secure/project-list.html");
-		
-	}
+		return render(request, model, Path.Template.PROJECT_LIST);
+	};
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private static ModelAndView getProject(Request request, Response response) throws IOException {
+	public Route getProject = (Request request, Response response) -> {
 		
 		String projectId = request.params(":id");
 		
@@ -119,18 +101,10 @@ public class ProjectController {
 		model.put("account", request.attribute("account"));
 		model.put("project", project);
 		
-		return new ModelAndView(model, "secure/project.html");	
-	}
+		return render(request, model, Path.Template.PROJECT);	
+	};
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private static ModelAndView saveProject(Request request, Response response) throws IOException {
+	public Route saveProject = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");
 		Account account = request.attribute("account");
@@ -182,18 +156,10 @@ public class ProjectController {
 		model.put("account", account);
 		model.put("project", project);
 		
-		return new ModelAndView(model, "secure/project.html");
-	}
+		return render(request, model, Path.Template.PROJECT);
+	};
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private static String deleteProject(Request request, Response response) throws IOException {
+	public Route deleteProject = (Request request, Response response) -> {
 		
 		String projectId = request.params(":id");
 		
@@ -213,5 +179,5 @@ public class ProjectController {
 		}
 		
 		return "";	
-	}
+	};
 }

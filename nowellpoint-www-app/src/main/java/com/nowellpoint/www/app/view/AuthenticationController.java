@@ -29,11 +29,6 @@ public class AuthenticationController extends AbstractController {
 		super(AuthenticationController.class, configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
-        
-	}
-	
 	/**
 	 * 
 	 */
@@ -60,9 +55,9 @@ public class AuthenticationController extends AbstractController {
     	if (statusCode != 200) {
     		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
     		if (error.get("code").asInt() == 7100) {
-    			throw new NotAuthorizedException(getValue("login.error"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(getValue(request, "login.error"), Status.NOT_AUTHORIZED);
     		} else if (error.get("code").asInt() == 7101) {
-    			throw new NotAuthorizedException(getValue("disabled.account"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(getValue(request, "disabled.account"), Status.NOT_AUTHORIZED);
     		} else {
     			throw new NotAuthorizedException(error.get("message").asText(), Status.NOT_AUTHORIZED);
     		}

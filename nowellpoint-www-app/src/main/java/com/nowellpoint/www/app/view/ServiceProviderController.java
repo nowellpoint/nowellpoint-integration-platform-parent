@@ -1,9 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.delete;
-import static spark.Spark.get;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +18,7 @@ import freemarker.template.Configuration;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
 public class ServiceProviderController extends AbstractController {
 	
@@ -33,22 +29,10 @@ public class ServiceProviderController extends AbstractController {
 	}
 	
 	public void configureRoutes(Configuration cfg) {
-		get("/app/providers", (request, response) -> getServiceProviders(request, response), new FreeMarkerEngine(cfg));
-        
-        get("/app/providers/:id", (request, response) -> getServiceProvider(request, response), new FreeMarkerEngine(cfg));
-        
-        delete("/app/providers/:id", (request, response) -> deleteServiceProvider(request, response));
+		
 	}
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private ModelAndView getServiceProviders(Request request, Response response) throws IOException {
+	public Route getServiceProviders = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
 		
@@ -73,18 +57,10 @@ public class ServiceProviderController extends AbstractController {
 		model.put("account", account);
 		model.put("serviceProviders", providers);
     	
-		return new ModelAndView(model, "secure/service-catalog.html");
-	}
+		return new ModelAndView(model, Path.Template.SERVICE_CATALOG);
+	};
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	private ModelAndView getServiceProvider(Request request, Response response) throws IOException {
+	public Route getServiceProvider = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
 		
@@ -110,10 +86,10 @@ public class ServiceProviderController extends AbstractController {
 		model.put("account", account);
 		model.put("serviceProvider", provider);
 		
-		return new ModelAndView(model, "secure/salesforce-outbound-messages.html");
-	}
+		return new ModelAndView(model, Path.Template.SALESFORCE_OUTBOUND_MESSAGE);
+	};
 	
-	private String deleteServiceProvider(Request request, Response response) throws IOException {
+	public Route deleteServiceProvider = (Request request, Response response) -> {
 		
 		String id = request.params("id"); 
 		
@@ -132,5 +108,5 @@ public class ServiceProviderController extends AbstractController {
 		}
 		
 		return "";
-	}
+	};
 }

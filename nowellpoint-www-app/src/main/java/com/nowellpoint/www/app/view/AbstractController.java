@@ -11,6 +11,8 @@ import java.util.ResourceBundle;
 
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
+import com.nowellpoint.www.app.service.AccountProfileService;
+import com.nowellpoint.www.app.service.GetMyAccountProfileRequest;
 
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
@@ -23,30 +25,24 @@ import spark.template.freemarker.FreeMarkerEngine;
 abstract class AbstractController {
 	
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
+	private final static AccountProfileService accountProfileService = new AccountProfileService();
 	
 	private Class<?> controllerClass;
-	private ResourceBundleModel messages;
-	private ResourceBundleModel labels;
 	private Configuration configuration;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
 		this.controllerClass = controllerClass;
 		this.configuration = configuration;
-		this.labels = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
-		this.messages = new ResourceBundleModel(ResourceBundle.getBundle("messages", configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
-		configureRoutes(configuration);
 	}
-	
-	public abstract void configureRoutes(Configuration configuration);
 	
 	protected Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("messages", messages);
-		model.put("labels", labels);
 		return model;
 	}
 	
-	protected String getValue(String key) {
+	protected String getValue(Request request, String key) {
+		ResourceBundleModel messages = new ResourceBundleModel(ResourceBundle.getBundle("messages", configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
+		ResourceBundleModel labels = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), configuration.getLocale()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
 		if (labels.getBundle().containsKey(key)) {
 			return labels.getBundle().getString(key);
 		} else {
@@ -60,7 +56,10 @@ abstract class AbstractController {
 	}
 	
 	protected AccountProfile getAccount(Request request) {
-		AccountProfile account = request.attribute("account");
+		AccountProfile account = accountProfileService
+				.getMyAccountProfile(new GetMyAccountProfileRequest()
+						.withAccessToken(getToken(request).getAccessToken()));
+		
 		return account;
 	}
 	
@@ -78,7 +77,7 @@ abstract class AbstractController {
 	}
 	
 	public String render(Request request, Map<String,Object> model, String templateName) {
-		AccountProfile accountProfile = request.attribute("account");
+		AccountProfile accountProfile = getAccount(request);
 		Locale locale = null;
 		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
 			locale = new Locale(accountProfile.getLocaleSidKey());
@@ -87,7 +86,7 @@ abstract class AbstractController {
 		}
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-        model.put("accountProfile", accountProfile);
+        model.put("account", accountProfile);
         return new FreeMarkerEngine(configuration).render(new ModelAndView(model, templateName));
     }
 }

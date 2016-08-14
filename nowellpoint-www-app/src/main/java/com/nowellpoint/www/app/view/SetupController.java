@@ -13,12 +13,6 @@ public class SetupController extends AbstractController {
 	public SetupController(Configuration cfg) {
 		super(SetupController.class, cfg);		
 	}
-
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public Route showSetup = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<String, Object>();

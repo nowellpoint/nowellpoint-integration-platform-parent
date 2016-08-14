@@ -24,12 +24,6 @@ public class SignUpController extends AbstractController {
 	public SignUpController(Configuration configuration) {
 		super(SignUpController.class, configuration);
 	}
-
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		
-		
-	}
 	
 	public Route showSignUp = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<String, Object>();

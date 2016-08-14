@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -27,16 +26,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.IsoCountry;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
-import com.nowellpoint.www.app.view.ContactController;
+import com.nowellpoint.www.app.view.ContactUsController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.Path;
@@ -58,8 +55,6 @@ import spark.servlet.SparkApplication;
 import spark.template.freemarker.FreeMarkerEngine;
 
 public class Application implements SparkApplication {
-	
-	private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
 	
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -162,12 +157,20 @@ public class Application implements SparkApplication {
         NotificationController notificationController = new NotificationController(cfg);
         SetupController setupController = new SetupController(cfg);
         SalesforceOauthController salesforceOauthController = new SalesforceOauthController(cfg);
+        ContactUsController contactUsController = new ContactUsController(cfg);
+        ApplicationController applicationController = new ApplicationController(cfg);
+        ProjectController projectController = new ProjectController(cfg);
+        ServiceProviderController serviceProviderController = new ServiceProviderController(cfg);
+        SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
         
         // setup routes
         
         get(Path.Route.LOGIN, authenticationController.showLoginPage);
         post(Path.Route.LOGIN, authenticationController.login);
         get(Path.Route.LOGOUT, authenticationController.logout);
+        
+        get(Path.Route.CONTACT_US, contactUsController.showContactUs);
+		post(Path.Route.CONTACT_US, contactUsController.contactUs);
         
         get(Path.Route.SIGN_UP, signUpController.showSignUp);
 		post(Path.Route.SIGN_UP, signUpController.signUp);
@@ -180,6 +183,21 @@ public class Application implements SparkApplication {
         get(Path.Route.NOTIFICATIONS, notificationController.showNotifications);
         
         get(Path.Route.SETUP, setupController.showSetup);
+        
+        get(Path.Route.APPLICATIONS.concat("/provider/:id"), applicationController.newApplication);
+		get(Path.Route.APPLICATIONS.concat("/:id"), applicationController.getApplication);
+		get(Path.Route.APPLICATIONS, applicationController.getApplications);
+		delete(Path.Route.APPLICATIONS.concat("/:id"), applicationController.deleteApplication);
+		post(Path.Route.APPLICATIONS, applicationController.saveApplication);
+		
+		get(Path.Route.PROJECTS, projectController.getProjects);
+		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
+		post(Path.Route.PROJECTS, projectController.saveProject);
+		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
+		
+		get(Path.Route.PROVIDERS, (request, response) -> serviceProviderController.getServiceProviders);
+        get(Path.Route.PROVIDERS.concat("/:id"), serviceProviderController.getServiceProvider);
+        delete(Path.Route.PROVIDERS.concat("/:id"), serviceProviderController.deleteServiceProvider);
         
         get(Path.Route.SALESFORCE_OAUTH, salesforceOauthController.oauth);
         get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), salesforceOauthController.callback);
@@ -205,15 +223,31 @@ public class Application implements SparkApplication {
         post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), accountProfileController.setPrimaryCreditCard);
         delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
-        //
-        // routes
-        //
-        
-        new ServiceProviderController(cfg);
-        new ApplicationController(cfg);
-        new ContactController(cfg);
-        new ProjectController(cfg);
-        new SalesforceConnectorController(cfg);
+        get(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.getSalesforceConnectors);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/add"), salesforceConnectorController.newEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/view"), salesforceConnectorController.getEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/edit"), salesforceConnectorController.editEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments"), salesforceConnectorController.addEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.updateEnvironment);
+        delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.removeEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.getEventListeners);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/targets"), salesforceConnectorController.getTargets);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/environments"), salesforceConnectorController.getEnvironments);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/details"), salesforceConnectorController.getServiceInstance);
+        delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.deleteSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/edit"), salesforceConnectorController.editSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/:environment/fields/:sobject"), salesforceConnectorController.getFields);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.getSalesforceConnector);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.updateSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers"), salesforceConnectorController.getServiceProviders);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType/plan/:code"), salesforceConnectorController.reviewPlan);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/sobjects"), salesforceConnectorController.getSobjects);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/deployment/:environment"), salesforceConnectorController.deploy);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.saveEventListeners);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/query"), salesforceConnectorController.testQuery);
+        post(Path.Route.CONNECTORS_SALESFORCE, (request, response) -> salesforceConnectorController.createSalesforceConnector);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType/plan/:code"), salesforceConnectorController.addServiceInstance);
         
         //
         // exception handlers
@@ -297,38 +331,11 @@ public class Application implements SparkApplication {
     	Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	if (cookie.isPresent()) {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
-    		AccountProfile account = getAccount(token.getAccessToken());
     		request.attribute("token", token);
-    		request.attribute("account", account);
     	} else {
     		response.cookie("/", "redirectUrl", request.pathInfo(), 72000, Boolean.TRUE);
     		response.redirect("/login");
     		halt();
     	}
-	}
-	
-	/**
-	 * 
-	 * @param accessToken
-	 * @return
-	 */
-	
-	private static AccountProfile getAccount(String accessToken) {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(accessToken)
-				.path("account-profile")
-				.path("me")
-				.execute();
-		
-		int statusCode = httpResponse.getStatusCode();
-    	
-    	LOGGER.info("Status Code: " + statusCode + " Method: GET : " + httpResponse.getURL());
-    	
-    	if (statusCode != 200) {
-    		throw new BadRequestException(httpResponse.getAsString());
-    	}
-    	
-    	return httpResponse.getEntity(AccountProfile.class);
 	}
 }

@@ -13,11 +13,6 @@ public class DashboardController extends AbstractController {
 		super(DashboardController.class, configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		
-	}
-	
 	public Route showStartPage = (Request request, Response response) -> {
     	Map<String,Object> model = getModel();
     	model.put("account", getAccount(request));

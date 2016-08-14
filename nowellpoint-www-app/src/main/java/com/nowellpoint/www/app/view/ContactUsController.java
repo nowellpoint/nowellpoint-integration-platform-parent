@@ -1,8 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -16,34 +13,26 @@ import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
-public class ContactController extends AbstractController {
+public class ContactUsController extends AbstractController {
 	
-	private static final Logger logger = Logger.getLogger(ContactController.class.getName());
+	private static final Logger logger = Logger.getLogger(ContactUsController.class.getName());
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
 	
-	public ContactController(Configuration cfg) {
-		super(ContactController.class, cfg);
-	}
-
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		get("/contact", (request, response) -> showContactPage(request, response), new FreeMarkerEngine(configuration));
-		
-		post("/contact", (request, response) -> saveContact(request, response), new FreeMarkerEngine(configuration));
+	public ContactUsController(Configuration cfg) {
+		super(ContactUsController.class, cfg);
 	}
 	
-	private ModelAndView showContactPage(Request request, Response response) {
+	public Route showContactUs = (Request request, Response response) -> {
 		Map<String, Object> model = new HashMap<String, Object>();
-		return new ModelAndView(model, "contact.html");
-	}
+		return render(request, model, Path.Template.CONTACT_US);
+	};
 	
-	private ModelAndView saveContact(Request request, Response response) {
+	public Route contactUs = (Request request, Response response) -> {
 		ObjectNode body = objectMapper.createObjectNode();
     	request.queryParams().stream().forEach(param -> {
     		body.put(param, request.queryParams(param));
@@ -68,6 +57,6 @@ public class ContactController extends AbstractController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "contactConfirm"));
-    	return new ModelAndView(model, "contact.html");
-	}
+    	return render(request, model, Path.Template.CONTACT_US);
+	};
 }

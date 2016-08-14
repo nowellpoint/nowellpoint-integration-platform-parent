@@ -1,10 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.delete;
-import static spark.Spark.get;
-import static spark.Spark.post;
-
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -28,10 +23,9 @@ import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceProvider;
 
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.template.freemarker.FreeMarkerEngine;
+import spark.Route;
 
 public class ApplicationController extends AbstractController {
 	
@@ -41,20 +35,6 @@ public class ApplicationController extends AbstractController {
 		super(ApplicationController.class, cfg);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration cfg) {
-		get("/app/application/provider/:id", (request, response) -> newApplication(request, response), new FreeMarkerEngine(cfg));
-		
-		get("/app/application/:id", (request, response) -> getApplication(request, response), new FreeMarkerEngine(cfg));
-		
-		get("/app/applications", (request, response) -> getApplications(request, response), new FreeMarkerEngine(cfg));
-		
-		delete("/app/application/:id", (request, response) -> deleteApplication(request, response));
-		
-		post("/app/application", (request, response) -> saveApplication(request, response), new FreeMarkerEngine(cfg));
-		
-	}
-	
 	/**
 	 * 
 	 * @param request
@@ -62,7 +42,7 @@ public class ApplicationController extends AbstractController {
 	 * @return
 	 */
 	
-	private static ModelAndView newApplication(Request request, Response response) {
+	public Route newApplication = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");
 		
@@ -102,8 +82,8 @@ public class ApplicationController extends AbstractController {
     	model.put("salesforceConnectorsList", salesforceConnectors);
 		model.put("application", new Application());
 		
-		return new ModelAndView(model, "secure/application.html");
-	}
+		return render(request, model, Path.Template.APPLICATION);
+	};
 	
 	/**
 	 * 
@@ -112,7 +92,7 @@ public class ApplicationController extends AbstractController {
 	 * @return
 	 */
 	
-	private static ModelAndView getApplication(Request request, Response response) {
+	public Route getApplication = (Request request, Response response) -> {
 		
 		String applicationId = request.params(":id");
 		
@@ -133,8 +113,8 @@ public class ApplicationController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("application", application);
 		
-		return new ModelAndView(model, "secure/application-edit.html");
-	}
+		return render(request, model, Path.Template.APPLICATION_EDIT);
+	};
 	
 	/**
 	 * 
@@ -144,7 +124,7 @@ public class ApplicationController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private static ModelAndView getApplications(Request request, Response response) {
+	public Route getApplications = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");
 		
@@ -164,9 +144,8 @@ public class ApplicationController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("applicationList", applications);
 		
-		return new ModelAndView(model, "secure/application-list.html");
-		
-	}
+		return render(request, model, Path.Template.APPLICATIONS_LIST);
+	};
 	
 	/**
 	 * 
@@ -175,7 +154,7 @@ public class ApplicationController extends AbstractController {
 	 * @return
 	 */
 	
-	private static ModelAndView saveApplication(Request request, Response response) {
+	public Route saveApplication = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");
 		
@@ -242,9 +221,8 @@ public class ApplicationController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("application", application);
 		
-		return new ModelAndView(model, "secure/" + application.getServiceInstance().getConfigurationPage());
-		
-	}
+		return render(request, model, "secure/" + application.getServiceInstance().getConfigurationPage());
+	};
 	
 	/**
 	 * 
@@ -254,7 +232,7 @@ public class ApplicationController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	private static String deleteApplication(Request request, Response response) {
+	public Route deleteApplication = (Request request, Response response) -> {
 		
 		String applicationId = request.params(":id");
 		
@@ -270,5 +248,5 @@ public class ApplicationController extends AbstractController {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		return "";	
-	}
+	};
 }

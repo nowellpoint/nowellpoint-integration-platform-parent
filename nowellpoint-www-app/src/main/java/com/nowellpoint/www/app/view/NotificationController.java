@@ -25,11 +25,6 @@ public class NotificationController extends AbstractController {
 		super(NotificationController.class, cfg);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		
-	}
-	
 	public Route showNotifications = (Request request, Response response) -> {
 		
 		Token token = request.attribute("token");

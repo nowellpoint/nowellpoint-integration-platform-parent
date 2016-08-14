@@ -196,7 +196,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", getValue("update.profile.success"), 3);
+		response.cookie("successMessage", getValue(request, "update.profile.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
@@ -244,7 +244,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", getValue("update.address.success"), 3);
+		response.cookie("successMessage", getValue(request, "update.address.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";		
@@ -443,7 +443,7 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", getValue("add.credit.card.success"));
+			model.put("successMessage", getValue(request, "add.credit.card.success"));
 		} else {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
@@ -512,7 +512,7 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", getValue("update.credit.card.success"));
+			model.put("successMessage", getValue(request, "update.credit.card.success"));
 		} else {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
@@ -548,7 +548,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue("primary.credit.card.set"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue(request, "primary.credit.card.set"), 3, Boolean.FALSE);
 		
 		return "";
 	};
@@ -573,7 +573,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue("remove.credit.card.success"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue(request, "remove.credit.card.success"), 3, Boolean.FALSE);
 		
 		return "";
 	};

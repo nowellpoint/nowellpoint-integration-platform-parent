@@ -16,13 +16,6 @@ public class VerifyEmailController extends AbstractController {
 	public VerifyEmailController(Configuration configuration) {
 		super(VerifyEmailController.class, configuration);
 	}
-
-	@Override
-	public void configureRoutes(Configuration configuration) {
-        
-        
-		
-	}
 	
 	public Route verifyEmail = (Request request, Response response) -> {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
