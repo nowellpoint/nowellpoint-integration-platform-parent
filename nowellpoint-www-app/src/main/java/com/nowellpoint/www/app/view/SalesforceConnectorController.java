@@ -982,25 +982,11 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		Environment environment = httpResponse.getEntity(Environment.class);
-	
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", new SalesforceConnector(id));
-		model.put("mode", "view");
-		model.put("environment", environment);
-		
 		if (environment.getIsValid()) {
-			model.put("successMessage", MessageProvider.getMessage(Locale.US, "testSuccess"));
+			environment.setTestMessage(getValue(request, "test.connection.success"));
 		} else {
-			model.put("errorMessage", environment.getTestMessage());
+			environment.setTestMessage(String.format("%s: %s", getValue(request, "test.connection.fail"), environment.getTestMessage()));
 		}
-		
-		//response.body(objectMapper.writeValueAsString(environment));
-		
-//		if (request.pathInfo().contains("environment")) {
-//			return render(request, model, Path.Template.ENVIRONMENT);
-//		} else {
-//			return render(request, model, Path.Template.ENVIRONMENT);
-//		}
 		
 		String json = objectMapper.writeValueAsString(environment);
 		

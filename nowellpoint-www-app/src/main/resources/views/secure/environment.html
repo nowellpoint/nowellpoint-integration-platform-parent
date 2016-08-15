@@ -30,8 +30,9 @@
                     </div>
                 </#if>
                 
-                <div id="divId">
-                        
+                <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div id="message" class="text-center"></div>
                     </div>
 
                 <#if mode=="add" || mode=="edit">
@@ -225,7 +226,7 @@
                         console.log(environment.isValid);
                         if (environment.isValid) {
                             $("#enviroment-form").hide();
-                            $('#divId').text(" successfully").show().delay(2000).fadeOut(400);
+                            $('#message').text(environment.testMessage).show().delay(2000).fadeOut(400);
                             $('#enviroment-form').show();
                         }
                         
