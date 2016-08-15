@@ -994,11 +994,19 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("errorMessage", environment.getTestMessage());
 		}
 		
-		if (request.pathInfo().contains("environment")) {
-			return render(request, model, Path.Template.ENVIRONMENT);
-		} else {
-			return render(request, model, Path.Template.ENVIRONMENT);
-		}
+		//response.body(objectMapper.writeValueAsString(environment));
+		
+//		if (request.pathInfo().contains("environment")) {
+//			return render(request, model, Path.Template.ENVIRONMENT);
+//		} else {
+//			return render(request, model, Path.Template.ENVIRONMENT);
+//		}
+		
+		String json = objectMapper.writeValueAsString(environment);
+		
+		System.out.println(json);
+		
+		return json;
 	};
 	
 //	private ModelAndView saveEnvironmentVariables(Request request, Response response) {

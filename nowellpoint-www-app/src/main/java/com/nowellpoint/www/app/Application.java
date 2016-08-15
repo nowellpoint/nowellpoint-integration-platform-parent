@@ -28,7 +28,10 @@ import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.IsoCountry;
+import com.nowellpoint.www.app.service.AccountProfileService;
+import com.nowellpoint.www.app.service.GetMyAccountProfileRequest;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.ApplicationController;
@@ -57,6 +60,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 public class Application implements SparkApplication {
 	
 	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private static final AccountProfileService accountProfileService = new AccountProfileService();
 
     public static void main(String[] args) throws Exception {
     	new Application().init();
@@ -117,36 +121,9 @@ public class Application implements SparkApplication {
 			}
         });
         
-        before("/", (request, response) -> {
-        	
-        });
-        
         //
         //
         //
-        
-        before("/app/*", (request, response) -> verify(request, response));
-        
-        //
-        // configure routes
-        //
-        
-        get("/", (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
-        
-        //
-        // search
-        //
-        
-        get("/services", (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
-        
-        //
-        //
-        //
-        
-        get("/healthcheck", (request, response) -> {
-        	response.status(200);
-        	return "";
-        });
         
         AuthenticationController authenticationController = new AuthenticationController(cfg);
         AccountProfileController accountProfileController = new AccountProfileController(cfg);
@@ -164,6 +141,14 @@ public class Application implements SparkApplication {
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
         
         // setup routes
+        
+        before("/app/*", (request, response) -> verify(request, response));
+        
+        get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
+        
+        get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
+        
+        get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
         get(Path.Route.LOGIN, authenticationController.showLoginPage);
         post(Path.Route.LOGIN, authenticationController.login);
@@ -230,7 +215,7 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments"), salesforceConnectorController.addEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.updateEnvironment);
         delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.removeEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.getEventListeners);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/targets"), salesforceConnectorController.getTargets);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/environments"), salesforceConnectorController.getEnvironments);
@@ -279,7 +264,6 @@ public class Application implements SparkApplication {
 	private static List<IsoCountry> loadCountries() {
 		try {
 			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
 					.path("iso-countries")
 					.execute();
 			
@@ -302,7 +286,7 @@ public class Application implements SparkApplication {
 	
 	private static ModelAndView getContextRoot(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
-    	return new ModelAndView(model, "index.html");
+    	return new ModelAndView(model, Path.Template.INDEX);
 	}
 	
 	/**
@@ -314,7 +298,19 @@ public class Application implements SparkApplication {
 	
 	private static ModelAndView getServices(Request request, Response response) {
     	Map<String,Object> model = new HashMap<String,Object>();
-		return new ModelAndView(model, "services.html");
+		return new ModelAndView(model, Path.Template.SERVICES);
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String healthCheck(Request request, Response response) {
+		response.status(200);
+    	return "";
 	}
 	
 	/**
@@ -332,9 +328,15 @@ public class Application implements SparkApplication {
     	if (cookie.isPresent()) {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
     		request.attribute("token", token);
+    		
+    		AccountProfile account = accountProfileService
+    				.getMyAccountProfile(new GetMyAccountProfileRequest()
+    						.withAccessToken(token.getAccessToken()));
+    		
+    		request.attribute("account", account);
     	} else {
-    		response.cookie("/", "redirectUrl", request.pathInfo(), 72000, Boolean.TRUE);
-    		response.redirect("/login");
+    		response.cookie("/", "com.nowellpoint.redirectUrl", request.pathInfo(), 72000, Boolean.TRUE);
+    		response.redirect(Path.Route.LOGIN);
     		halt();
     	}
 	}

@@ -9,10 +9,13 @@ public class Path {
 	 */
 	
 	public static class Route {
+		public static final String INDEX = "/";
 		public static final String LOGIN = "/login";
 		public static final String LOGOUT = "/logout"; 
 		public static final String SIGN_UP = "/signup";
 		public static final String CONTACT_US = "/contact";
+		public static final String SERVICES = "/services";
+		public static final String HEALTH_CHECK = "/healthcheck";
 		public static final String VERIFY_EMAIL = "/verify-email";
 		public static final String START = "/app/start";
 		public static final String DASHBOARD = "/app/dashboard";
@@ -30,9 +33,11 @@ public class Path {
 	}
 
 	public static class Template {
+		public static final String INDEX = "index.html";
 		public static final String LOGIN = "login.html";
 		public static final String SIGN_UP = "signup.html";
 		public static final String CONTACT_US = "contact.html";
+		public static final String SERVICES = "services.html";
 		public static final String VERIFY_EMAIL = "verify-email.html";
 		public static final String START = "secure/start.html";
 		public static final String DASHBOARD = "secure/dashboard.html";

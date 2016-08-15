@@ -73,11 +73,11 @@ public class AuthenticationController extends AbstractController {
     		throw new InternalServerErrorException(e);
     	}
     	
-    	if (request.cookie("redirectUrl") != null) {
-    		response.redirect(request.cookie("redirectUrl"));
-    		response.removeCookie("redirectUrl");
+    	if (request.cookie("com.nowellpoint.redirectUrl") != null) {
+    		response.redirect(request.cookie("com.nowellpoint.redirectUrl"));
+    		response.removeCookie("com.nowellpoint.redirectUrl");
     	} else {
-    		response.redirect("/app/start");
+    		response.redirect(Path.Route.START);
     	}
     		
     	return "";
@@ -113,13 +113,13 @@ public class AuthenticationController extends AbstractController {
 	    		throw new BadRequestException(httpResponse.getAsString());
 	    	}
         	
-	    	response.removeCookie("redirectUrl");
+	    	response.removeCookie("com.nowellpoint.redirectUrl");
         	response.removeCookie("com.nowellpoint.oauth.token"); 
     	}
     	
     	request.session().invalidate();
     	
-    	response.redirect("/");
+    	response.redirect(Path.Route.INDEX);
     	
     	return "";
 	};
@@ -134,6 +134,7 @@ public class AuthenticationController extends AbstractController {
     	
     	String output = render(request, model, Path.Template.LOGIN);
     	
+    	response.status(400);
     	response.body(output);
 	};
 }
