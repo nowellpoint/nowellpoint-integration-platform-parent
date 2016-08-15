@@ -203,7 +203,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("environment", environment);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = buildTemplate(new ModelAndView(model, "secure/environment.html"));
+			String output = render(request, model, Path.Template.ENVIRONMENT);
 			
 			throw new BadRequestException(output);
 		}
@@ -256,7 +256,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("environment", environment);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = buildTemplate(new ModelAndView(model, "secure/environment-edit.html"));
+			String output = render(request, model, Path.Template.ENVIRONMENT);
 			
 			throw new BadRequestException(output);
 		}

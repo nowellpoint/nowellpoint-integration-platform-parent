@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.AccountProfile;
 
+import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -62,11 +63,15 @@ abstract class AbstractController {
 		return token;
 	}
 	
-	protected String buildTemplate(ModelAndView modelAndView) {
+	protected String buildTemplate(Locale locale, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
 		try {
 			Template template = configuration.getTemplate(modelAndView.getViewName());
-			template.process(modelAndView.getModel(), output);
+			Environment environment = template.createProcessingEnvironment(modelAndView.getModel(), output);
+			environment.setLocale(java.util.Locale.ITALY);
+			//environment.setNumberFormat("0.####");
+			environment.process();
+			//template.process(modelAndView.getModel(), output);
 			output.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -92,6 +97,6 @@ abstract class AbstractController {
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("account", accountProfile);
-        return new FreeMarkerEngine(configuration).render(new ModelAndView(model, templateName));
+        return buildTemplate(locale, new ModelAndView(model, templateName));
     }
 }

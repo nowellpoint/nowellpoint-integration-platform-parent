@@ -19,7 +19,6 @@ import com.nowellpoint.www.app.model.ExceptionResponse;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -191,7 +190,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("accountProfile", accountProfile);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = buildTemplate(new ModelAndView(model, "secure/account-profile-edit.html"));
+			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);
 			
 			throw new BadRequestException(output);	
 		}
@@ -239,7 +238,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("address", address);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = buildTemplate(new ModelAndView(model, "secure/account-profile-address-edit.html"));
+			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);
 			
 			throw new BadRequestException(output);
 		}
