@@ -28,18 +28,6 @@ public class SalesforceOauthController extends AbstractController {
 		super(SalesforceOauthController.class, configuration);
 	}
 	
-	public void configureRoutes(Configuration cfg) {
-		
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
 	public Route oauth = (Request request, Response response) -> {
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)

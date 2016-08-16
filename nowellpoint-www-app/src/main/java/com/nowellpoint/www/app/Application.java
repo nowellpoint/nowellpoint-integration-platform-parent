@@ -186,7 +186,7 @@ public class Application implements SparkApplication {
         
         get(Path.Route.SALESFORCE_OAUTH, salesforceOauthController.oauth);
         get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), salesforceOauthController.callback);
-        get(Path.Route.SALESFORCE_OAUTH.concat("token"), salesforceOauthController.getSalesforceToken);
+        get(Path.Route.SALESFORCE_OAUTH.concat("/token"), salesforceOauthController.getSalesforceToken);
         
         get(Path.Route.ADMINISTRATION, administrationController.showAdministrationHome);	
         get(Path.Route.ADMINISTRATION.concat("/cache"), administrationController.showManageCache);	
@@ -231,7 +231,7 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/deployment/:environment"), salesforceConnectorController.deploy);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.saveEventListeners);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/query"), salesforceConnectorController.testQuery);
-        post(Path.Route.CONNECTORS_SALESFORCE, (request, response) -> salesforceConnectorController.createSalesforceConnector);
+        post(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.createSalesforceConnector);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType/plan/:code"), salesforceConnectorController.addServiceInstance);
         
         //
