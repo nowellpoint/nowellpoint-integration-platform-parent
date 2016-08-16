@@ -15,6 +15,8 @@
             <div class="row">
 
                 <br>
+                
+                <div id="message"></div>
 
                 <#if errorMessage??>
                     <div id="alert" class="alert alert-danger">
@@ -29,11 +31,6 @@
                         <div class="text-center">${successMessage!}</div>
                     </div>
                 </#if>
-                
-                <div id="success" class="alert alert-success">
-                        <a class="close" data-dismiss="alert">&times;</a>
-                        <div id="message" class="text-center"></div>
-                    </div>
 
                 <#if mode=="add" || mode=="edit">
 
@@ -192,9 +189,7 @@
                                 <div class="pull-right">
                                     <a href="${labels['base.path']}/${salesforceConnector.id}" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
                                     <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
-                                    <!--
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a> -->
-                                    <a href="#" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
+                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a> 
                                     <#if environment.isSandbox>
                                         <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                                     </#if>
@@ -220,20 +215,15 @@
                     data: $( "#enviroment-form" ).serialize(),
                     url: "${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test",
                     success: function (response) {
-                        console.log(response);
                         var environment = response;
-                        console.log(environment.key);
-                        console.log(environment.isValid);
                         if (environment.isValid) {
-                            $("#enviroment-form").hide();
-                            $('#message').text(environment.testMessage).show().delay(2000).fadeOut(400);
-                            $('#enviroment-form').show();
+                            $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + environment.testMessage + '</div></div>');
+                        } else {
+                            $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + environment.testMessage + '</div></div>');
                         }
-                        
                     }
                 });
             });
-
 
         </script>
 

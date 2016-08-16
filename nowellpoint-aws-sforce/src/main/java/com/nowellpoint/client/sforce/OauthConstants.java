@@ -207,6 +207,8 @@ public class OauthConstants {
 	public static final String OAUTH_TOKEN_PARAMETER = "oauth_token";
 
 	public static final String REFRESH_GRANT_TYPE = "refresh_token";
+	
+	public static final String REFRESH_TOKEN_PARAMETER = "refresh_token";
 
 	public static final String AUTHORIZATION_GRANT_TYPE = "authorization_code";
 

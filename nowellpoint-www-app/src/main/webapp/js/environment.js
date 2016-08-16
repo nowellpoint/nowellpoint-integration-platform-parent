@@ -1,7 +1,6 @@
 $('#confirm').click(function (e) {
     e.preventDefault();
     var href = $('#href').val();
-    console.log('href: ' + href)
     $.ajax({
         type: "DELETE",
         url: href,

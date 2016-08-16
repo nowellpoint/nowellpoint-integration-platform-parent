@@ -26,7 +26,6 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
-//import com.nowellpoint.www.app.model.AccountProfile;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.Plan;
@@ -35,6 +34,8 @@ import com.nowellpoint.www.app.model.Service;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.model.sforce.Field;
+import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
+import com.nowellpoint.www.app.service.SalesforceConnectorService;
 import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.template.Configuration;
@@ -45,32 +46,27 @@ import spark.Route;
 
 public class SalesforceConnectorController extends AbstractController {
 	
-	private final static Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
+	
+	private static final SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
 	
 	public SalesforceConnectorController(Configuration cfg) {
 		super(SalesforceConnectorController.class, cfg);
 		
-
-        
         //post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key"), (request, response) -> saveServiceInstance(request, response), new FreeMarkerEngine(cfg));
         
         //delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key"), (request, response) -> deleteServiceInstance(request, response), new FreeMarkerEngine(cfg));
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        //post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/targets"), (request, response) -> saveTargets(request, response), new FreeMarkerEngine(cfg));
-        
+
+        //post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/targets"), (request, response) -> saveTargets(request, response), new FreeMarkerEngine(cfg));        
         
 	}
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * newEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route newEnvironment = (Request request, Response response) -> {			
@@ -91,7 +87,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * getEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route getEnvironment = (Request request, Response response) -> {		
@@ -127,7 +127,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return render(request, model, Path.Template.ENVIRONMENT);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * editEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route editEnvironment = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
@@ -162,7 +170,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return render(request, model, Path.Template.ENVIRONMENT);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * addEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route addEnvironment = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
@@ -213,7 +229,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return "";		
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updateEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route updateEnvironment = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
@@ -262,13 +286,17 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", getValue(request, "update.environment.success"), 3);
-		response.redirect(String.format("/app/connectors/salesforce/%s", id));
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE.concat("/").concat(id));
 		
 		return "";		
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * removeEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route removeEnvironment = (Request request, Response response) -> {		
@@ -292,11 +320,19 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", getValue(request, "remove.environment.success"), 3);
-		response.header("Location", String.format("/app/connectors/salesforce/%s", id));
+		response.header("Location", Path.Route.CONNECTORS_SALESFORCE.concat("/").concat(id));
 		
-		return String.format("/app/connectors/salesforce/%s", id);
+		return "";
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getEventListeners
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getEventListeners = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -314,6 +350,14 @@ public class SalesforceConnectorController extends AbstractController {
 		return render(request, model, Path.Template.EVENT_LISTENERS);
 	};
 	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getTargets
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getTargets = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -331,13 +375,6 @@ public class SalesforceConnectorController extends AbstractController {
 			
 		return render(request, model, Path.Template.TARGETS);
 	};
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
 	
 //	private ModelAndView saveTargets(Request request, Response response) {
 //		Token token = getToken(request);
@@ -380,13 +417,6 @@ public class SalesforceConnectorController extends AbstractController {
 //			return new ModelAndView(model, "secure/fragments/e-message.html");
 //		}
 //	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
 	
 //	private ModelAndView saveServiceInstance(Request request, Response response) {
 //		Token token = getToken(request);
@@ -450,13 +480,6 @@ public class SalesforceConnectorController extends AbstractController {
 //		}
 //	}
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
 //	private ModelAndView getEnvironmentVariables(Request request, Response response) {		
 //		Token token = getToken(request);
 //		AccountProfile account = getAccount(request);
@@ -509,6 +532,14 @@ public class SalesforceConnectorController extends AbstractController {
 //		}	
 //	}
 	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getEnvironments
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getEnvironments = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -527,10 +558,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * getServiceInstance
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route getServiceInstance = (Request request, Response response) -> {
@@ -551,10 +583,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * addServiceInstance
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route addServiceInstance = (Request request, Response response) -> {
@@ -592,10 +625,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * getSalesforceConnector
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route getSalesforceConnector = (Request request, Response response) -> {
@@ -617,7 +651,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
     	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * editSalesforceConnector
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route editSalesforceConnector = (Request request, Response response) -> {
 		Token token = getToken(request);
     	
@@ -636,7 +678,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
     	return render(request, model, Path.Template.SALESFORCE_CONNECTOR_EDIT);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getSalesforceConnectors
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getSalesforceConnectors = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
@@ -662,7 +712,15 @@ public class SalesforceConnectorController extends AbstractController {
     	return render(request, model, Path.Template.SALESFORCE_CONNECTORS_LIST);
     	
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updateSalesforceConnector
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route updateSalesforceConnector = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
@@ -696,7 +754,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
     	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * createSalesforceConnector
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route createSalesforceConnector = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -720,7 +786,15 @@ public class SalesforceConnectorController extends AbstractController {
 			return render(request, model, "secure/fragments/error-message.html");
 		}
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * deleteSalesforceConnector
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route deleteSalesforceConnector = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -735,7 +809,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return "";
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getServiceProviders
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getServiceProviders = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -771,10 +853,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * reviewPlan
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route reviewPlan = (Request request, Response response) -> {
@@ -822,7 +905,15 @@ public class SalesforceConnectorController extends AbstractController {
     	
 		return render(request, model, Path.Template.REVIEW_ORDER);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getSobjects
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getSobjects = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -861,7 +952,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return render(request, model, "secure/fragments/sobjects-table.html");
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getFields
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route getFields = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
@@ -921,7 +1020,15 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return render(request, model, Path.Template.QUERY_EDIT);
 	};
-	
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * testQuery
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route testQuery = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
@@ -959,6 +1066,14 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 	};
 	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * testConnection
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route testConnection = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
@@ -982,17 +1097,14 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		Environment environment = httpResponse.getEntity(Environment.class);
+		
 		if (environment.getIsValid()) {
 			environment.setTestMessage(getValue(request, "test.connection.success"));
 		} else {
 			environment.setTestMessage(String.format("%s: %s", getValue(request, "test.connection.fail"), environment.getTestMessage()));
 		}
 		
-		String json = objectMapper.writeValueAsString(environment);
-		
-		System.out.println(json);
-		
-		return json;
+		return objectMapper.writeValueAsString(environment);
 	};
 	
 //	private ModelAndView saveEnvironmentVariables(Request request, Response response) {
@@ -1066,6 +1178,14 @@ public class SalesforceConnectorController extends AbstractController {
 //		}
 //	}
 	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * deploy
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route deploy = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
@@ -1093,6 +1213,14 @@ public class SalesforceConnectorController extends AbstractController {
 		return render(request, model, "secure/fragments/success-message.html");
 	};
 	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * saveEventListeners
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
 	public Route saveEventListeners = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
@@ -1159,31 +1287,19 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param accessToken
-	 * @param id
-	 * @return
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
-	
+
 	private SalesforceConnector getSalesforceConnector(Token token, String id) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.execute();
-		
-		SalesforceConnector salesforceConnector = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		GetSalesforceConnectorRequest request = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
     	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(request);
+		
     	return salesforceConnector;
 	}
 }

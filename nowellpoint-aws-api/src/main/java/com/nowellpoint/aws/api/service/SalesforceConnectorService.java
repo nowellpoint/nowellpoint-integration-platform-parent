@@ -45,9 +45,14 @@ import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
@@ -298,7 +303,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setUpdatedOn(Date.from(Instant.now()));
 		environment.setIsReadOnly(original.getIsReadOnly());
 		environment.setIsSandbox(original.getIsSandbox());
-		environment.setIsValid(original.getIsValid());
 		environment.setApiVersion(original.getApiVersion());
 		environment.setTestMessage(original.getTestMessage());
 		
@@ -315,11 +319,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			environment.setOrganizationId(loginResult.getOrganizationId());
 			environment.setOrganizationName(loginResult.getOrganizationName());
 			environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+			environment.setIsValid(Boolean.TRUE);
 		} else {
 			environment.setUserId(original.getUserId());
 			environment.setOrganizationId(original.getOrganizationId());
 			environment.setOrganizationName(original.getOrganizationName());
 			environment.setServiceEndpoint(original.getServiceEndpoint());
+			environment.setIsValid(Boolean.FALSE);
 		}
 		
 		List<UserProperty> properties = getEnvironmentUserProperties(environment);
@@ -360,14 +366,44 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					
 					Map<String, UserProperty> properties = dynamoDBMapper.query(UserProperty.class, queryExpression).stream().collect(Collectors.toMap(UserProperty::getKey, p -> p));
 					
-					String authEndpoint = parameters.containsKey("authEndpoint") ? parameters.getFirst("authEndpoint") : environment.getAuthEndpoint();
-					String username = parameters.containsKey("username") ? parameters.getFirst("username") : environment.getUsername();
-					String password = parameters.containsKey("password") ? parameters.getFirst("password") : properties.get("password").getValue();
-					String securityToken = parameters.containsKey("securityToken") ? parameters.getFirst("securityToken") : properties.get("security.token").getValue();
-					
-					LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);					
+					if (environment.getIsSandbox()) {
+						RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+								.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+								.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+								.setRefreshToken(parameters.getFirst("refresh.token"))
+								.build();
+						
+						OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+								.authenticate(request);
+						
+						Client client = new Client();
+						
+						GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+								.setAccessToken(response.getToken().getAccessToken())
+								.setId(response.getToken().getId());
+						
+						Identity identity = client.getIdentity(getIdentityRequest);
+						
+						environment.setUserId(identity.getUserId());
+						environment.setOrganizationId(identity.getOrganizationId());
+						//environment.setOrganizationName(identity.get);
+						//environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+						environment.setIsValid(Boolean.TRUE);
+						
+						
+					} else {
+						String authEndpoint = parameters.containsKey("authEndpoint") ? parameters.getFirst("authEndpoint") : environment.getAuthEndpoint();
+						String username = parameters.containsKey("username") ? parameters.getFirst("username") : environment.getUsername();
+						String password = parameters.containsKey("password") ? parameters.getFirst("password") : properties.get("password").getValue();
+						String securityToken = parameters.containsKey("securityToken") ? parameters.getFirst("securityToken") : properties.get("security.token").getValue();
+						
+						LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
+						environment.setUserId(loginResult.getUserId());
+						environment.setOrganizationId(loginResult.getOrganizationId());
+						environment.setOrganizationName(loginResult.getOrganizationName());
+						environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+					}
 					environment.setIsValid(Boolean.TRUE);
-					environment.setTestMessage("Success: " + loginResult.getServerTimestamp().toString());
 				} catch (ServiceException e) {
 					environment.setIsValid(Boolean.FALSE);
 					environment.setTestMessage(e.getError().getMessage());

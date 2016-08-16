@@ -50,8 +50,6 @@ public class Environment {
 	
 	private Boolean isValid;
 	
-	private String testMessage;
-	
 	private Set<EnvironmentVariable> environmentVariables;
 	
 	public Environment() {
@@ -198,14 +196,6 @@ public class Environment {
 
 	public void setIsValid(Boolean isValid) {
 		this.isValid = isValid;
-	}
-
-	public String getTestMessage() {
-		return testMessage;
-	}
-
-	public void setTestMessage(String testMessage) {
-		this.testMessage = testMessage;
 	}
 
 	public Set<EnvironmentVariable> getEnvironmentVariables() {

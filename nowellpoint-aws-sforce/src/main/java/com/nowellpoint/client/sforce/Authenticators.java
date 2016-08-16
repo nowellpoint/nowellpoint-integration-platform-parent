@@ -18,6 +18,7 @@ public class Authenticators {
 	
 	public static final AuthorizationGrantResponseFactory AUTHORIZATION_GRANT_AUTHENTICATOR = new AuthorizationGrantResponseFactory();
 	public static final UsernamePasswordGrantResponseFactory USERNAME_PASSWORD_GRANT_AUTHENTICATOR = new UsernamePasswordGrantResponseFactory();
+	public static final RefreshTokenGrantResponseFactory REFRESH_TOKEN_GRANT_AUTHENTICATOR = new RefreshTokenGrantResponseFactory();
 	
 	public static class AuthorizationGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
@@ -71,6 +72,33 @@ public class Authenticators {
 			
 			Identity identity = getIdentity(token.getId(), token.getAccessToken());
 			
+			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
+			return response;
+		}
+	}
+	
+	public static class RefreshTokenGrantResponseFactory {
+		public OauthAuthenticationResponse authenticate(RefreshTokenGrantRequest refreshTokenGrantRequest) {
+			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.REFRESH_GRANT_TYPE)
+					.parameter(OauthConstants.CLIENT_ID_PARAMETER, refreshTokenGrantRequest.getClientId())
+					.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, refreshTokenGrantRequest.getClientSecret())
+					.parameter(OauthConstants.REFRESH_TOKEN_PARAMETER, refreshTokenGrantRequest.getRefreshToken())
+					.execute();
+			
+			Token token = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+	    		token = httpResponse.getEntity(Token.class);
+			} else {
+				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+			}
+			
+			Identity identity = getIdentity(token.getId(), token.getAccessToken());
+	    	
 			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
 			return response;
 		}
