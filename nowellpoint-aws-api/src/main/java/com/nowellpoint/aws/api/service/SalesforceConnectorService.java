@@ -51,12 +51,22 @@ import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
+
+
+/**************************************************************************************************************************
+ * 
+ * 
+ * @author jherson
+ *
+ * 
+ *************************************************************************************************************************/
 
 public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
 	
@@ -74,10 +84,31 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	private static final String API_VERSION = "37.0";
+	private static final String PASSWORD = "password";
+	private static final String SECURITY_TOKEN = "security.token";
+	private static final String ACCESS_TOKEN = "access.token";
+	private static final String REFRESH_TOKEN = "refresh.token";
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * constructor
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorService() {
 		super(SalesforceConnectorDTO.class, SalesforceConnector.class);
 	}
+	
+	/**************************************************************************************************************************
+	 *
+	 * 
+	 * @param subject
+	 * @return all SalesforceConnectorDTO owned by @param subject
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public Set<SalesforceConnectorDTO> getAll(String subject) {
 		Set<SalesforceConnectorDTO> resources = hscan( subject, SalesforceConnectorDTO.class );		
@@ -87,6 +118,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		return resources;
 	}
+	
+	/**************************************************************************************************************************
+	 *
+	 * 
+	 * @param token
+	 * @return the created SalesforceConnectorDTO
+	 * 
+	 *
+	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorDTO createSalesforceConnector(Token token) {
 		
@@ -139,8 +179,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
 		UserProperty accessTokenProperty = new UserProperty();
-		accessTokenProperty.setSubject(resource.getId());
-		accessTokenProperty.setKey("access.token");
+		accessTokenProperty.setSubject(environment.getKey());
+		accessTokenProperty.setKey(ACCESS_TOKEN);
 		accessTokenProperty.setValue(token.getAccessToken());
 		accessTokenProperty.setLastModifiedBy(getSubject());
 		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
@@ -148,8 +188,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		properties.add(accessTokenProperty);
 		
 		UserProperty refreshTokenProperty = new UserProperty();
-		refreshTokenProperty.setSubject(resource.getId());
-		refreshTokenProperty.setKey("refresh.token");
+		refreshTokenProperty.setSubject(environment.getKey());
+		refreshTokenProperty.setKey(REFRESH_TOKEN);
 		refreshTokenProperty.setValue(token.getRefreshToken());
 		refreshTokenProperty.setLastModifiedBy(getSubject());
 		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
@@ -160,6 +200,16 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return resource;
 	}
+	
+	/**************************************************************************************************************************
+	 *
+	 * 
+	 * @param id
+	 * @param resource
+	 * @return the modified SalesforceConnectorDTO
+	 * 
+	 *
+	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorDTO updateSalesforceConnector(Id id, SalesforceConnectorDTO resource) {		
 		SalesforceConnectorDTO original = findSalesforceConnector(id);
@@ -174,6 +224,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return resource;
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public void deleteSalesforceConnector(Id id) {
 		SalesforceConnectorDTO resource = findSalesforceConnector( id );
@@ -193,42 +251,47 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
-		UserProperty accessTokenProperty = new UserProperty();
-		accessTokenProperty.setSubject(resource.getId());
-		accessTokenProperty.setKey("access.token");
-		
-		properties.add(accessTokenProperty);
-		
-		UserProperty refreshTokenProperty = new UserProperty();
-		refreshTokenProperty.setSubject(resource.getId());
-		refreshTokenProperty.setKey("refresh.token");
-		
-		properties.add(refreshTokenProperty);
-		
 		resource.getEnvironments().stream().forEach(e -> {
 			
-			UserProperty passwordProperty = new UserProperty();
-			passwordProperty.setSubject(e.getKey());
-			passwordProperty.setKey("password");
-			passwordProperty.setValue(e.getPassword());
-			passwordProperty.setLastModifiedBy(getSubject());
-			passwordProperty.setLastModifiedDate(Date.from(Instant.now()));
-			
-			properties.add(passwordProperty);
-			
-			UserProperty securityTokenProperty = new UserProperty();
-			securityTokenProperty.setSubject(e.getKey());
-			securityTokenProperty.setKey("security.token");
-			securityTokenProperty.setValue(e.getSecurityToken());
-			securityTokenProperty.setLastModifiedBy(getSubject());
-			securityTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
-			
-			properties.add(securityTokenProperty);
+			if (e.getIsSandbox()) {
+				UserProperty passwordProperty = new UserProperty();
+				passwordProperty.setSubject(e.getKey());
+				passwordProperty.setKey(PASSWORD);
+				
+				properties.add(passwordProperty);
+				
+				UserProperty securityTokenProperty = new UserProperty();
+				securityTokenProperty.setSubject(e.getKey());
+				securityTokenProperty.setKey(SECURITY_TOKEN);
+				
+				properties.add(securityTokenProperty);
+			} else {
+				UserProperty accessTokenProperty = new UserProperty();
+				accessTokenProperty.setSubject(resource.getId());
+				accessTokenProperty.setKey(ACCESS_TOKEN);
+				
+				properties.add(accessTokenProperty);
+				
+				UserProperty refreshTokenProperty = new UserProperty();
+				refreshTokenProperty.setSubject(resource.getId());
+				refreshTokenProperty.setKey(REFRESH_TOKEN);
+				
+				properties.add(refreshTokenProperty);
+			}
 			
 		});
 		
 		dynamoDBMapper.batchDelete(properties);
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorDTO findSalesforceConnector(Id id) {		
 		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id.getValue(), getSubject() );
@@ -238,6 +301,16 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		return resource;
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public EnvironmentDTO getEnvironment(Id id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -250,6 +323,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return environment;
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param environment
+	 * @return
+	 * @throws ServiceException
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public EnvironmentDTO addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
@@ -286,6 +370,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return environment;
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @param environment
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public EnvironmentDTO updateEnvironment(Id id, String key, EnvironmentDTO environment) {
 		SalesforceConnectorDTO resource = findSalesforceConnector( id );
@@ -342,6 +437,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	} 
 	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @param parameters
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
 	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
 		SalesforceConnectorDTO resource = findSalesforceConnector( id );
@@ -364,46 +470,59 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					DynamoDBQueryExpression<UserProperty> queryExpression = new DynamoDBQueryExpression<UserProperty>()
 							.withHashKeyValues(userProperty);
 					
-					Map<String, UserProperty> properties = dynamoDBMapper.query(UserProperty.class, queryExpression).stream().collect(Collectors.toMap(UserProperty::getKey, p -> p));
-					
+					Map<String, UserProperty> properties = dynamoDBMapper.query(UserProperty.class, queryExpression)
+							.stream()
+							.collect(Collectors.toMap(UserProperty::getKey, p -> p));
+
 					if (environment.getIsSandbox()) {
-						RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
-								.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-								.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-								.setRefreshToken(parameters.getFirst("refresh.token"))
-								.build();
 						
-						OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
-								.authenticate(request);
-						
-						Client client = new Client();
-						
-						GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
-								.setAccessToken(response.getToken().getAccessToken())
-								.setId(response.getToken().getId());
-						
-						Identity identity = client.getIdentity(getIdentityRequest);
-						
-						environment.setUserId(identity.getUserId());
-						environment.setOrganizationId(identity.getOrganizationId());
-						//environment.setOrganizationName(identity.get);
-						//environment.setServiceEndpoint(loginResult.getServiceEndpoint());
-						environment.setIsValid(Boolean.TRUE);
-						
-						
-					} else {
 						String authEndpoint = parameters.containsKey("authEndpoint") ? parameters.getFirst("authEndpoint") : environment.getAuthEndpoint();
 						String username = parameters.containsKey("username") ? parameters.getFirst("username") : environment.getUsername();
-						String password = parameters.containsKey("password") ? parameters.getFirst("password") : properties.get("password").getValue();
-						String securityToken = parameters.containsKey("securityToken") ? parameters.getFirst("securityToken") : properties.get("security.token").getValue();
+						String password = parameters.containsKey("password") ? parameters.getFirst("password") : properties.get(PASSWORD).getValue();
+						String securityToken = parameters.containsKey("securityToken") ? parameters.getFirst("securityToken") : properties.get(SECURITY_TOKEN).getValue();
 						
 						LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
 						environment.setUserId(loginResult.getUserId());
 						environment.setOrganizationId(loginResult.getOrganizationId());
 						environment.setOrganizationName(loginResult.getOrganizationName());
 						environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+						
+					} else {
+						
+						String refreshToken = properties.containsKey(REFRESH_TOKEN) ? properties.get(REFRESH_TOKEN).getValue() : null;
+
+						RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+								.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+								.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+								.setRefreshToken(refreshToken)
+								.build();
+						
+						OauthAuthenticationResponse authenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+								.authenticate(request);
+						
+						Token token = authenticationResponse.getToken();
+						Identity identity = authenticationResponse.getIdentity();
+						
+						Client client = new Client();
+
+						GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
+								.setAccessToken(token.getAccessToken())
+								.setOrganizationId(identity.getOrganizationId())
+								.setSobjectUrl(identity.getUrls().getSobjects());
+						
+						Organization organization = client.getOrganization(getOrganizationRequest);
+						
+						environment.setUserId(identity.getUserId());
+						environment.setOrganizationId(identity.getOrganizationId());
+						environment.setOrganizationName(organization.getName());
+						environment.setServiceEndpoint(token.getInstanceUrl());
+						environment.setIsValid(Boolean.TRUE);
+						
 					}
 					environment.setIsValid(Boolean.TRUE);
+				} catch (OauthException e) {
+					environment.setIsValid(Boolean.FALSE);
+					environment.setTestMessage(e.getErrorDescription());
 				} catch (ServiceException e) {
 					environment.setIsValid(Boolean.FALSE);
 					environment.setTestMessage(e.getError().getMessage());
@@ -417,6 +536,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				updateSalesforceConnector( id, resource );
 			}
 		} else {
+			
+			if (parameters.containsKey("isActive")) 
+				environment.setIsActive(Boolean.valueOf(parameters.getFirst("isActive")));
 			
 			if (parameters.containsKey("isActive")) {
 				environment.setIsActive(Boolean.valueOf(parameters.getFirst("isActive")));
@@ -448,6 +570,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return environment;
 	}
 	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
 	public void removeEnvironment(Id id, String key) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
@@ -465,6 +596,18 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		updateSalesforceConnector(id, resource);
 	} 
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param serviceProviderId
+	 * @param serviceType
+	 * @param code
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorDTO addServiceInstance(Id id, String serviceProviderId, String serviceType, String code) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -500,6 +643,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @param serviceInstance
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
 	public SalesforceConnectorDTO updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
@@ -524,6 +678,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return resource;
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @return
+	 * 
+	 * 
+	 **************************************************************************************************************************
+	 */
 	
 	public SalesforceConnectorDTO removeServiceInstance(Id id, String key) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -623,6 +788,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //		return resource;
 //	}
 	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @param eventListeners
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
 	public SalesforceConnectorDTO addEventListeners(Id id, String key, Set<EventListenerDTO> eventListeners) {
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
@@ -657,6 +833,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return resource;
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @param targets
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorDTO addTargets(Id id, String key, Targets targets) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -973,6 +1160,16 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //		return resource;
 //	}
 	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param accessToken
+	 * @param imageUrl
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
 	private String putImage(String accessToken, String imageUrl) {
 		
 		try {
@@ -1002,12 +1199,21 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 	}
 	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param environment
+	 * @return
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
 	private List<UserProperty> getEnvironmentUserProperties(EnvironmentDTO environment) {
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
 		UserProperty accessTokenProperty = new UserProperty();
 		accessTokenProperty.setSubject(environment.getKey());
-		accessTokenProperty.setKey("password");
+		accessTokenProperty.setKey(PASSWORD);
 		accessTokenProperty.setValue(environment.getPassword());
 		accessTokenProperty.setLastModifiedBy(getSubject());
 		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
@@ -1016,7 +1222,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		UserProperty refreshTokenProperty = new UserProperty();
 		refreshTokenProperty.setSubject(environment.getKey());
-		refreshTokenProperty.setKey("security.token");
+		refreshTokenProperty.setKey(SECURITY_TOKEN);
 		refreshTokenProperty.setValue(environment.getSecurityToken());
 		refreshTokenProperty.setLastModifiedBy(getSubject());
 		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));

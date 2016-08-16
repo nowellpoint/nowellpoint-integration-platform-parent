@@ -47,10 +47,10 @@ public class CreateProperties {
 			properties.keySet().stream().forEach(key -> {
 
 				Property property = new Property();
-				property.setStore(file.getName().replace("-configuration.properties", "").toUpperCase());
+				property.setSubject(file.getName().replace("-configuration.properties", "").toUpperCase());
 				property.setKey(((String) key).replaceAll("_", ".").toLowerCase());
 				property.setValue(properties.getProperty((String) key));
-				property.setLastModifiedBy("5hAh1uolQo18Nk4T8aVxci");
+				property.setLastModifiedBy("https://api.stormpath.com/v1/accounts/5hAh1uolQo18Nk4T8aVxci");
 				property.setLastModifiedDate(Date.from(Instant.now()));
 				
 				propertyList.add(property);

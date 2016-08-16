@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.service;
 
+import java.util.Optional;
+
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 
@@ -35,6 +37,11 @@ public class SalesforceService extends AbstractCacheService {
 	}
 	
 	public LoginResult login(String authEndpoint, String username, String password, String securityToken) {
+		Optional.of(authEndpoint).orElseThrow(() -> new IllegalArgumentException("missing authEndpoint"));
+		Optional.of(username).orElseThrow(() -> new IllegalArgumentException("missing username")); 
+		Optional.of(password).orElseThrow(() -> new IllegalArgumentException("missing password")); 
+		Optional.of(securityToken).orElseThrow(() -> new IllegalArgumentException("missing securityToken")); 
+		
 		ConnectorConfig config = new ConnectorConfig();
 		config.setAuthEndpoint(String.format("%s/services/Soap/u/37.0", authEndpoint));
 		config.setUsername(username);

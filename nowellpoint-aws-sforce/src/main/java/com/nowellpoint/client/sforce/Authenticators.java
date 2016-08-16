@@ -1,6 +1,7 @@
 package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -22,6 +23,12 @@ public class Authenticators {
 	
 	public static class AuthorizationGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(AuthorizationGrantRequest authorizationGrantRequest) {
+			
+			Optional.of(authorizationGrantRequest.getClientId()).orElseThrow(() -> new IllegalArgumentException("missing clientId"));
+			Optional.of(authorizationGrantRequest.getClientSecret()).orElseThrow(() -> new IllegalArgumentException("missing clientSecret"));
+			Optional.of(authorizationGrantRequest.getCode()).orElseThrow(() -> new IllegalArgumentException("missing auth code"));
+			Optional.of(authorizationGrantRequest.getCallbackUri()).orElseThrow(() -> new IllegalArgumentException("missing callback uri"));
+			
 			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
@@ -50,7 +57,13 @@ public class Authenticators {
 	
 	public static class UsernamePasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(UsernamePasswordGrantRequest usernamePasswordGrantRequest) {
-			 HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+			
+			Optional.of(usernamePasswordGrantRequest.getClientId()).orElseThrow(() -> new IllegalArgumentException("missing clientId"));
+			Optional.of(usernamePasswordGrantRequest.getClientSecret()).orElseThrow(() -> new IllegalArgumentException("missing clientSecret"));
+			Optional.of(usernamePasswordGrantRequest.getUsername()).orElseThrow(() -> new IllegalArgumentException("missing username"));
+			Optional.of(usernamePasswordGrantRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("missing password"));
+			
+			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.acceptCharset(StandardCharsets.UTF_8)
@@ -79,6 +92,11 @@ public class Authenticators {
 	
 	public static class RefreshTokenGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(RefreshTokenGrantRequest refreshTokenGrantRequest) {
+			
+			Optional.of(refreshTokenGrantRequest.getClientId()).orElseThrow(() -> new IllegalArgumentException("missing clientId"));
+			Optional.of(refreshTokenGrantRequest.getClientSecret()).orElseThrow(() -> new IllegalArgumentException("missing clientSecret"));
+			Optional.of(refreshTokenGrantRequest.getRefreshToken()).orElseThrow(() -> new IllegalArgumentException("missing refreshToken"));
+			
 			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)

@@ -56,9 +56,9 @@ public class Properties {
 		return getProperties(store.name());
 	}
 	
-	public static Map<String,Property> getProperties(String store) {
+	public static Map<String,Property> getProperties(String subject) {
 		Property property = new Property();
-		property.setStore(store);
+		property.setSubject(subject);
 		
 		DynamoDBQueryExpression<Property> queryExpression = new DynamoDBQueryExpression<Property>()
 				.withHashKeyValues(property);

@@ -67,13 +67,7 @@ public class TestSObjectToCSV {
 			
 			Token token = response.getToken();
 			
-			Client client = new Client();
-			
-			GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
-					.setAccessToken(response.getToken().getAccessToken())
-					.setId(response.getToken().getId());
-			
-			Identity identity = client.getIdentity(getIdentityRequest);
+			Identity identity = response.getIdentity();
 			
 			assertNotNull(identity);
 			
@@ -88,6 +82,8 @@ public class TestSObjectToCSV {
 			assertNotNull(outboundEvent.getCreatedDate());
 			
 			System.out.println(System.currentTimeMillis() - startTime);
+			
+			Client client = new Client();
 			
 			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
 					.setAccessToken(response.getToken().getAccessToken())

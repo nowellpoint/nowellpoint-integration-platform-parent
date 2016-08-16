@@ -152,7 +152,7 @@
                                 <tr id="${creditCard.token}">
                                     <td><img src="${(creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view">${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</a></td>
                                     <td class="text-center">
-                                        <#if creditCard.primary><span class="icon icon-check"></span></#if>
+                                        <#if creditCard.primary><span class="icon icon-check text-success"></span></#if>
                                     </td>
                                     <td>${creditCard.cardholderName}</td>
                                     <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>

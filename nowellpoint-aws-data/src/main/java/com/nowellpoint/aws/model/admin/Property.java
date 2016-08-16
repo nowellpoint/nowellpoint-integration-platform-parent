@@ -8,11 +8,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.DoNotEncrypt;
 
-@DynamoDBTable(tableName="Properties")
+@DynamoDBTable(tableName="ApplicationProperties")
 public class Property {
 
-	@DynamoDBHashKey(attributeName="Store")  
-	private String store;
+	@DynamoDBHashKey(attributeName="Subject")  
+	private String subject;
 	
 	@DynamoDBRangeKey(attributeName="Key")  
 	private String key;
@@ -38,12 +38,12 @@ public class Property {
 		this.key = key;
 	}
 
-	public String getStore() {
-		return store;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setStore(String store) {
-		this.store = store;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public String getValue() {
