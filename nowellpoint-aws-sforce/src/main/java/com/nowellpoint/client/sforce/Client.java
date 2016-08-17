@@ -7,12 +7,12 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
-import com.nowellpoint.client.sforce.model.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.User;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 
 public class Client {
 	

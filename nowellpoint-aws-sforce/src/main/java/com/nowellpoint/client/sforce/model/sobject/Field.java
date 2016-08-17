@@ -1,8 +1,9 @@
-package com.nowellpoint.client.sforce.model;
+package com.nowellpoint.client.sforce.model.sobject;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.client.sforce.model.PicklistValue;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {

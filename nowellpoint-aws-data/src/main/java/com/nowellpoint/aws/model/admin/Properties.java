@@ -25,6 +25,7 @@ public class Properties {
 	public static final String SALESFORCE_PASSWORD = "salesforce.password";
 	public static final String SALESFORCE_SECURITY_TOKEN = "salesforce.security.token";
 	public static final String SALESFORCE_REDIRECT_URI = "salesforce.redirect.uri";
+	public static final String SALESFORCE_API_VERSION = "salesforce.api.version";
 	public static final String STORMPATH_API_KEY_ID = "stormpath.api.key.id";
 	public static final String STORMPATH_API_KEY_SECRET = "stormpath.api.key.secret";
 	public static final String STORMPATH_API_ENDPOINT = "stormpath.api.endpoint";

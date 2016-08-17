@@ -33,11 +33,11 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.sforce.model.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.OutboundEvent;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -86,9 +86,9 @@ public class TestSObjectToCSV {
 			Client client = new Client();
 			
 			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-					.setAccessToken(response.getToken().getAccessToken())
-					.setSobjectsUrl(identity.getUrls().getSobjects())
-					.setSobject(outboundEvent.getObject());
+					.withAccessToken(response.getToken().getAccessToken())
+					.withSobjectsUrl(identity.getUrls().getSobjects())
+					.withSobject(outboundEvent.getObject());
 			
 			DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 			

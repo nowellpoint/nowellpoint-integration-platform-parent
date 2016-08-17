@@ -83,11 +83,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	
 	private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
-	private static final String API_VERSION = "37.0";
+	private static final String IS_ACTIVE = "isActive";
+	private static final String API_VERSION = "apiVersion";
+	private static final String AUTH_ENDPOINT = "authEndpoint";
+	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
-	private static final String SECURITY_TOKEN = "security.token";
-	private static final String ACCESS_TOKEN = "access.token";
-	private static final String REFRESH_TOKEN = "refresh.token";
+	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
+	private static final String ACCESS_TOKEN_PROPERTY = "access.token";
+	private static final String REFRESH_TOKEN_PROPERTY = "refresh.token";
+	private static final String SECURITY_TOKEN_PARAM = "securityToken";
 	
 	/**************************************************************************************************************************
 	 * 
@@ -168,7 +172,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setOrganizationName(organization.getName());
 		environment.setServiceEndpoint(token.getInstanceUrl());
 		environment.setAuthEndpoint("https://login.salesforce.com");
-		environment.setApiVersion(API_VERSION);
+		environment.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
 		
 		resource.addEnvironment(environment);
 		
@@ -180,7 +184,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		UserProperty accessTokenProperty = new UserProperty();
 		accessTokenProperty.setSubject(environment.getKey());
-		accessTokenProperty.setKey(ACCESS_TOKEN);
+		accessTokenProperty.setKey(ACCESS_TOKEN_PROPERTY);
 		accessTokenProperty.setValue(token.getAccessToken());
 		accessTokenProperty.setLastModifiedBy(getSubject());
 		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
@@ -189,7 +193,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		UserProperty refreshTokenProperty = new UserProperty();
 		refreshTokenProperty.setSubject(environment.getKey());
-		refreshTokenProperty.setKey(REFRESH_TOKEN);
+		refreshTokenProperty.setKey(REFRESH_TOKEN_PROPERTY);
 		refreshTokenProperty.setValue(token.getRefreshToken());
 		refreshTokenProperty.setLastModifiedBy(getSubject());
 		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
@@ -262,19 +266,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				
 				UserProperty securityTokenProperty = new UserProperty();
 				securityTokenProperty.setSubject(e.getKey());
-				securityTokenProperty.setKey(SECURITY_TOKEN);
+				securityTokenProperty.setKey(SECURITY_TOKEN_PROPERTY);
 				
 				properties.add(securityTokenProperty);
 			} else {
 				UserProperty accessTokenProperty = new UserProperty();
 				accessTokenProperty.setSubject(resource.getId());
-				accessTokenProperty.setKey(ACCESS_TOKEN);
+				accessTokenProperty.setKey(ACCESS_TOKEN_PROPERTY);
 				
 				properties.add(accessTokenProperty);
 				
 				UserProperty refreshTokenProperty = new UserProperty();
 				refreshTokenProperty.setSubject(resource.getId());
-				refreshTokenProperty.setKey(REFRESH_TOKEN);
+				refreshTokenProperty.setKey(REFRESH_TOKEN_PROPERTY);
 				
 				properties.add(refreshTokenProperty);
 			}
@@ -350,7 +354,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setIsValid(Boolean.TRUE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setApiVersion(API_VERSION);
+		environment.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
 		environment.setIsSandbox(Boolean.TRUE);
 		environment.setUserId(loginResult.getUserId());
 		environment.setOrganizationId(loginResult.getOrganizationId());
@@ -476,10 +480,10 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 
 					if (environment.getIsSandbox()) {
 						
-						String authEndpoint = parameters.containsKey("authEndpoint") ? parameters.getFirst("authEndpoint") : environment.getAuthEndpoint();
-						String username = parameters.containsKey("username") ? parameters.getFirst("username") : environment.getUsername();
-						String password = parameters.containsKey("password") ? parameters.getFirst("password") : properties.get(PASSWORD).getValue();
-						String securityToken = parameters.containsKey("securityToken") ? parameters.getFirst("securityToken") : properties.get(SECURITY_TOKEN).getValue();
+						String authEndpoint = parameters.containsKey(AUTH_ENDPOINT) ? parameters.getFirst(AUTH_ENDPOINT) : environment.getAuthEndpoint();
+						String username = parameters.containsKey(USERNAME) ? parameters.getFirst(USERNAME) : environment.getUsername();
+						String password = parameters.containsKey(PASSWORD) ? parameters.getFirst(PASSWORD) : properties.get(PASSWORD).getValue();
+						String securityToken = parameters.containsKey(SECURITY_TOKEN_PARAM) ? parameters.getFirst(SECURITY_TOKEN_PARAM) : properties.get(SECURITY_TOKEN_PROPERTY).getValue();
 						
 						LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
 						environment.setUserId(loginResult.getUserId());
@@ -489,7 +493,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 						
 					} else {
 						
-						String refreshToken = properties.containsKey(REFRESH_TOKEN) ? properties.get(REFRESH_TOKEN).getValue() : null;
+						String refreshToken = properties.containsKey(REFRESH_TOKEN_PROPERTY) ? properties.get(REFRESH_TOKEN_PROPERTY).getValue() : null;
 
 						RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
 								.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
@@ -537,31 +541,28 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		} else {
 			
-			if (parameters.containsKey("isActive")) 
-				environment.setIsActive(Boolean.valueOf(parameters.getFirst("isActive")));
-			
-			if (parameters.containsKey("isActive")) {
-				environment.setIsActive(Boolean.valueOf(parameters.getFirst("isActive")));
+			if (parameters.containsKey(IS_ACTIVE)) {
+				environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
 			}
 			
-			if (parameters.containsKey("apiVersion")) {
-				environment.setApiVersion(parameters.getFirst("apiVersion"));
+			if (parameters.containsKey(API_VERSION)) {
+				environment.setApiVersion(parameters.getFirst(API_VERSION));
 			}
 			
-			if (parameters.containsKey("authEndpoint")) {
-				environment.setAuthEndpoint(parameters.getFirst("authEndpoint"));
+			if (parameters.containsKey(AUTH_ENDPOINT)) {
+				environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
 			}
 			
-			if (parameters.containsKey("password")) {
-				environment.setPassword(parameters.getFirst("password"));
+			if (parameters.containsKey(PASSWORD)) {
+				environment.setPassword(parameters.getFirst(PASSWORD));
 			}
 			
-			if (parameters.containsKey("username")) {
-				environment.setUsername(parameters.getFirst("username"));
+			if (parameters.containsKey(USERNAME)) {
+				environment.setUsername(parameters.getFirst(USERNAME));
 			}
 			
-			if (parameters.containsKey("securityToken")) {
-				environment.setSecurityToken(parameters.getFirst("securityToken"));
+			if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
+				environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
 			}
 			
 			updateEnvironment(id, key, environment);
@@ -1222,7 +1223,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		UserProperty refreshTokenProperty = new UserProperty();
 		refreshTokenProperty.setSubject(environment.getKey());
-		refreshTokenProperty.setKey(SECURITY_TOKEN);
+		refreshTokenProperty.setKey(SECURITY_TOKEN_PROPERTY);
 		refreshTokenProperty.setValue(environment.getSecurityToken());
 		refreshTokenProperty.setLastModifiedBy(getSubject());
 		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));

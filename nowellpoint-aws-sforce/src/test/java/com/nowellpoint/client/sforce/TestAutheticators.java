@@ -2,11 +2,24 @@ package com.nowellpoint.client.sforce;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.aws.http.HttpRequestException;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 
 public class TestAutheticators {
 	
@@ -40,14 +53,29 @@ public class TestAutheticators {
 					.setAccessToken(response.getToken().getAccessToken())
 					.setSobjectsUrl(response.getIdentity().getUrls().getSobjects());
 			
-			DescribeGlobalSobjectsResult describeGlobalSobjectsResponse = client.describeGlobal(describeGlobalSobjectsRequest);
+			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 			
-			describeGlobalSobjectsResponse.getSobjects().stream().forEach(s -> System.out.println(s.getName()));
+			describeGlobalSobjectsResult.getSobjects().stream().limit(1).forEach(s -> {
+				
+				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+						.withAccessToken(response.getToken().getAccessToken())
+						.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
+						.withSobject("Profile");
+						
+				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+				
+				try {
+					System.out.println(new ObjectMapper().writeValueAsString(describeSobjectResult));
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
-		} 
+		}
 	}
 }

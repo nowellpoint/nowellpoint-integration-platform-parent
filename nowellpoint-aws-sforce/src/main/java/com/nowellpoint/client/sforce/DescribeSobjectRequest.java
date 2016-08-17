@@ -16,7 +16,7 @@ public class DescribeSobjectRequest {
 		return sobjectsUrl;
 	}
 
-	public DescribeSobjectRequest setSobjectsUrl(String sobjectsUrl) {
+	public DescribeSobjectRequest withSobjectsUrl(String sobjectsUrl) {
 		this.sobjectsUrl = sobjectsUrl;
 		return this;
 	}
@@ -25,7 +25,7 @@ public class DescribeSobjectRequest {
 		return accessToken;
 	}
 
-	public DescribeSobjectRequest setAccessToken(String accessToken) {
+	public DescribeSobjectRequest withAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 		return this;
 	}
@@ -34,7 +34,7 @@ public class DescribeSobjectRequest {
 		return sobject;
 	}
 
-	public DescribeSobjectRequest setSobject(String sobject) {
+	public DescribeSobjectRequest withSobject(String sobject) {
 		this.sobject = sobject;
 		return this;
 	}

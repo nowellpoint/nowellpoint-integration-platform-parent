@@ -1,4 +1,4 @@
-package com.nowellpoint.client.sforce.model;
+package com.nowellpoint.client.sforce.model.sobject;
 
 import java.io.Serializable;
 
@@ -37,6 +37,8 @@ public class Sobject implements Serializable {
 	
 	private Boolean mergeable;
 	
+	private Boolean mruEnabled;
+	
 	private String name;
 	
 	private Boolean queryable;
@@ -52,6 +54,8 @@ public class Sobject implements Serializable {
 	private Boolean undeletable;
 	
 	private Boolean updateable;
+	
+	private Urls urls;
 
 	public Sobject() {
 		
@@ -153,6 +157,14 @@ public class Sobject implements Serializable {
 		this.mergeable = mergeable;
 	}
 
+	public Boolean getMruEnabled() {
+		return mruEnabled;
+	}
+
+	public void setMruEnabled(Boolean mruEnabled) {
+		this.mruEnabled = mruEnabled;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -215,5 +227,13 @@ public class Sobject implements Serializable {
 
 	public void setUpdateable(Boolean updateable) {
 		this.updateable = updateable;
+	}
+
+	public Urls getUrls() {
+		return urls;
+	}
+
+	public void setUrls(Urls urls) {
+		this.urls = urls;
 	}
 }
