@@ -10,6 +10,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.www.app.util.MessageProvider;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;

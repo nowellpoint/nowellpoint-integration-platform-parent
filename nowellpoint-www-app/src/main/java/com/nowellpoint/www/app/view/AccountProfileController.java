@@ -16,6 +16,7 @@ import com.nowellpoint.www.app.model.Address;
 import com.nowellpoint.www.app.model.Contact;
 import com.nowellpoint.www.app.model.CreditCard;
 import com.nowellpoint.www.app.model.ExceptionResponse;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;

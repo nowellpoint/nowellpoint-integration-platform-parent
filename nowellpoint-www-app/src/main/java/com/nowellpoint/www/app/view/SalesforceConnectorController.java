@@ -37,6 +37,7 @@ import com.nowellpoint.www.app.model.sforce.Field;
 import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
 import com.nowellpoint.www.app.service.SalesforceConnectorService;
 import com.nowellpoint.www.app.util.MessageProvider;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.ModelAndView;
@@ -339,7 +340,11 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 		
@@ -364,7 +369,11 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 		
@@ -535,31 +544,6 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getEnvironments
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route getEnvironments = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
-    	
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance);
-		
-		return render(request, model, Path.Template.ENVIRONMENTS);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
 	 * getServiceInstance
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -571,7 +555,11 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
     	
-    	SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
     	
     	ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
     	
@@ -634,20 +622,18 @@ public class SalesforceConnectorController extends AbstractController {
 	
 	public Route getSalesforceConnector = (Request request, Response response) -> {
 		Token token = getToken(request);
-    	
-		SalesforceConnector salesforceConnector = null;
-		String message = null;
 		
-		try {
-			salesforceConnector = getSalesforceConnector(token, request.params(":id"));
-		} catch (BadRequestException e) {
-			message = e.getMessage();
-		}
+		String id = request.params(":id");
+		
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
     	model.put("successMessage", request.cookie("successMessage"));
-    	model.put("errorMessage", message);
 		
     	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
 	};
@@ -662,19 +648,17 @@ public class SalesforceConnectorController extends AbstractController {
 
 	public Route editSalesforceConnector = (Request request, Response response) -> {
 		Token token = getToken(request);
-    	
-		SalesforceConnector salesforceConnector = null;
-		String message = null;
 		
-		try {
-			salesforceConnector = getSalesforceConnector(token, request.params(":id"));
-		} catch (BadRequestException e) {
-			message = e.getMessage();
-		}
+		String id = request.params(":id");
+    	
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
-    	model.put("message", message);
 		
     	return render(request, model, Path.Template.SALESFORCE_CONNECTOR_EDIT);
 	};
@@ -758,38 +742,6 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * createSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route createSalesforceConnector = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.parameter("id", request.queryParams("id"))
-    			.execute();
-		
-		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());	
-		
-		Map<String, Object> model = getModel();
-		
-		if (httpResponse.getStatusCode() == Status.OK || httpResponse.getStatusCode() == Status.CREATED) {
-			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-			return render(request, model, "secure/fragments/success-message.html");
-		} else {
-			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			return render(request, model, "secure/fragments/error-message.html");
-		}
-	};
-
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
 	 * deleteSalesforceConnector
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -821,8 +773,9 @@ public class SalesforceConnectorController extends AbstractController {
 	public Route getServiceProviders = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
+		String id = request.params(":id");
+		
 		List<ServiceProvider> providers = Collections.emptyList();
-		SalesforceConnector salesforceConnector = null;
 		String message = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
@@ -838,11 +791,11 @@ public class SalesforceConnectorController extends AbstractController {
 			providers = httpResponse.getEntityList(ServiceProvider.class);
 		}
 		
-		try {
-			salesforceConnector = getSalesforceConnector(token, request.params(":id"));
-		} catch (BadRequestException e) {
-			message = e.getMessage();
-		}
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		Map<String, Object> model = getModel();
 		model.put("serviceProviders", providers);
@@ -855,20 +808,20 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * reviewPlan
+	 * reviewPlans
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route reviewPlan = (Request request, Response response) -> {
+	public Route reviewPlans = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String serviceProviderId = request.params(":serviceProviderId");
 		String serviceType = request.params(":serviceType");
-		String code = request.params(":code");
+		//String code = request.params(":code");
 		
-		SalesforceConnector salesforceConnector = null;
+		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
 		ServiceProvider provider = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
@@ -883,7 +836,7 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
-		salesforceConnector = getSalesforceConnector(token, id);
+		//salesforceConnector = getSalesforceConnector(token, id);
 		
 		Service service = provider.getServices()
 				.stream()
@@ -891,19 +844,19 @@ public class SalesforceConnectorController extends AbstractController {
 				.findFirst()
 				.get();
 		
-		Plan plan = service.getPlans()
-				.stream()
-				.filter(p -> p.getCode().equals(code))
-				.findFirst()
-				.get();
+//		Plan plan = service.getPlans()
+//				.stream()
+//				.filter(p -> p.getCode().equals(code))
+//				.findFirst()
+//				.get();
 		
 		Map<String, Object> model = getModel();
 		model.put("serviceProvider", provider);
 		model.put("service", service);
-		model.put("plan", plan);
+		//model.put("plan", plan);
 		model.put("salesforceConnector", salesforceConnector);
     	
-		return render(request, model, Path.Template.REVIEW_ORDER);
+		return render(request, model, Path.Template.REVIEW_SERVICE_PLANS);
 	};
 
 	/**
@@ -993,7 +946,11 @@ public class SalesforceConnectorController extends AbstractController {
 			message = httpResponse.getEntity(JsonNode.class).get("message").asText();
 		}
 		
-		SalesforceConnector salesforceConnector = getSalesforceConnector(token, id);
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+    	
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
 		
@@ -1285,21 +1242,4 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return render(request, model, "secure/fragments/success-message.html");
 	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	private SalesforceConnector getSalesforceConnector(Token token, String id) {
-		GetSalesforceConnectorRequest request = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
-    	
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(request);
-		
-    	return salesforceConnector;
-	}
 }

@@ -20,7 +20,6 @@ import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import spark.ModelAndView;
 import spark.Request;
-import spark.template.freemarker.FreeMarkerEngine;
 
 abstract class AbstractController {
 	
@@ -68,10 +67,9 @@ abstract class AbstractController {
 		try {
 			Template template = configuration.getTemplate(modelAndView.getViewName());
 			Environment environment = template.createProcessingEnvironment(modelAndView.getModel(), output);
-			environment.setLocale(java.util.Locale.ITALY);
+			environment.setLocale(locale);
 			//environment.setNumberFormat("0.####");
 			environment.process();
-			//template.process(modelAndView.getModel(), output);
 			output.flush();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.model.DescribeGlobalSobjectsResult;
 
 public class TestAutheticators {
 	
@@ -31,8 +32,17 @@ public class TestAutheticators {
 			
 			assertNotNull(response.getToken());
 			assertNotNull(response.getIdentity());
+			assertNotNull(response.getIdentity().getAddrCity());
 			
-			System.out.println(response.getIdentity().getAddrCity());
+			Client client = new Client();
+			
+			DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
+					.setAccessToken(response.getToken().getAccessToken())
+					.setSobjectsUrl(response.getIdentity().getUrls().getSobjects());
+			
+			DescribeGlobalSobjectsResult describeGlobalSobjectsResponse = client.describeGlobal(describeGlobalSobjectsRequest);
+			
+			describeGlobalSobjectsResponse.getSobjects().stream().forEach(s -> System.out.println(s.getName()));
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());

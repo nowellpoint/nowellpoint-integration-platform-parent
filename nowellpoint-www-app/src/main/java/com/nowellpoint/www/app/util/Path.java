@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.view;
+package com.nowellpoint.www.app.util;
 
 public class Path {
 	
@@ -48,7 +48,7 @@ public class Path {
 		public static final String PROJECT = "secure/project.html";
 		public static final String PROJECT_LIST = "secure/project-list.html";
 		public static final String SERVICE_CATALOG = "secure/service-catalog.html";
-		public static final String REVIEW_ORDER = "secure/review-order.html";
+		public static final String REVIEW_SERVICE_PLANS = "secure/review-service-plans.html";
 		public static final String QUERY_EDIT = "secure/query-edit.html";
 		public static final String SALESFORCE_OUTBOUND_MESSAGE = "secure/salesforce-outbound-messages.html";
 		public static final String ENVIRONMENT = "secure/environment.html";

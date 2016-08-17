@@ -1,7 +1,6 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 
 public class Service implements Serializable {
@@ -29,14 +28,8 @@ public class Service implements Serializable {
 	private String description;
 	
 	private String company;
-	
-	private Integer sandboxCount;
 
 	private String configurationPage;
-	
-	private Set<EnvironmentVariable> environmentVariables;
-	
-	private Map<String, Set<EnvironmentVariableValue>> environmentVariableValues;
 	
 	private Set<Plan> plans;
 	
@@ -122,30 +115,6 @@ public class Service implements Serializable {
 
 	public void setCompany(String company) {
 		this.company = company;
-	}
-
-	public Integer getSandboxCount() {
-		return sandboxCount;
-	}
-
-	public void setSandboxCount(Integer sandboxCount) {
-		this.sandboxCount = sandboxCount;
-	}
-	
-	public Set<EnvironmentVariable> getEnvironmentVariables() {
-		return environmentVariables;
-	}
-
-	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
-	}
-
-	public Map<String, Set<EnvironmentVariableValue>> getEnvironmentVariableValues() {
-		return environmentVariableValues;
-	}
-
-	public void setEnvironmentVariableValues(Map<String, Set<EnvironmentVariableValue>> environmentVariableValues) {
-		this.environmentVariableValues = environmentVariableValues;
 	}
 
 	public Set<Plan> getPlans() {

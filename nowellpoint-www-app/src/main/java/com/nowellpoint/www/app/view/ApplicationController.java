@@ -21,6 +21,7 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Application;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;

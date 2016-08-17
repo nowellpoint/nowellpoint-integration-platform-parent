@@ -8,7 +8,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/enterprise/cdi-api/1.2/cdi-api-1.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" sourcepath="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/jaxrs/1.0.2.Final/jaxrs-1.0.2.Final.jar"/>
@@ -113,7 +113,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/msc/jboss-msc/1.2.6.Final/jboss-msc-1.2.6.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/swagger/swagger-annotations/1.5.5/swagger-annotations-1.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/msc/1.0.2.Final/msc-1.0.2.Final.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.0.RC9.2/stormpath-sdk-api-1.0.RC9.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.0.RC9.2/stormpath-sdk-api-1.0.RC9.2.jar" sourcepath="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.0.RC9.2/stormpath-sdk-api-1.0.RC9.2-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.0.RC9.2/stormpath-sdk-impl-1.0.RC9.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.5.1/jjwt-0.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.1/joda-time-2.1.jar"/>
@@ -138,7 +138,7 @@
   <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/force/api/force-metadata-api/36.0.0/force-metadata-api-36.0.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/force/api/force-wsc/36.3.0/force-wsc-36.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/force/api/force-wsc/36.3.0/force-wsc-36.3.0.jar" sourcepath="M2_REPO/com/force/api/force-wsc/36.3.0/force-wsc-36.3.0-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/antlr/ST4/4.0.7/ST4-4.0.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/antlr/antlr-runtime/3.5/antlr-runtime-3.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/antlr/stringtemplate/3.2.1/stringtemplate-3.2.1.jar"/>
@@ -146,7 +146,7 @@
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0.jar" sourcepath="M2_REPO/com/force/api/force-partner-api/36.0.0/force-partner-api-36.0.0-sources.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-core"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.26/aws-java-sdk-s3-1.11.26.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.26/aws-java-sdk-kms-1.11.26.jar"/>

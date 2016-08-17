@@ -27,8 +27,6 @@ public class Service {
 	
 	private String company;
 	
-	private Integer sandboxCount;
-	
 	private List<Plan> plans;
 	
 	public Service() {
@@ -113,14 +111,6 @@ public class Service {
 
 	public void setCompany(String company) {
 		this.company = company;
-	}
-
-	public Integer getSandboxCount() {
-		return sandboxCount;
-	}
-
-	public void setSandboxCount(Integer sandboxCount) {
-		this.sandboxCount = sandboxCount;
 	}
 
 	public List<Plan> getPlans() {

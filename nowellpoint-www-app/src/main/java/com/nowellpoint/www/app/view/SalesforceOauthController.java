@@ -14,6 +14,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.SalesforceConnector;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -27,6 +28,14 @@ public class SalesforceOauthController extends AbstractController {
 	public SalesforceOauthController(Configuration configuration) {
 		super(SalesforceOauthController.class, configuration);
 	}
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * oauth
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
 	
 	public Route oauth = (Request request, Response response) -> {
 		
@@ -44,11 +53,11 @@ public class SalesforceOauthController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
+	 * callback
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route callback = (Request request, Response response) -> {
@@ -62,11 +71,12 @@ public class SalesforceOauthController extends AbstractController {
     	return render(request, getModel(), Path.Template.SALESFORCE_OAUTH);
     };
 	
-	/**
+    /**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * getSalesforceToken
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
     public Route getSalesforceToken = (Request request, Response response) -> {

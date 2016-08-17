@@ -5,6 +5,7 @@ import java.util.Map;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
