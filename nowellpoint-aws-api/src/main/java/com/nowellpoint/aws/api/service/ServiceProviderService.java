@@ -6,9 +6,6 @@ import static com.mongodb.client.model.Filters.and;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
-
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
@@ -51,14 +48,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	}
 	
 	public ServiceProviderDTO findByServiceKey(String key) {
-		
-		ServiceProviderDTO resource = null;
-		
-		Optional<ServiceProviderDTO> query = Optional.ofNullable(get(ServiceProviderDTO.class, key));
-		
-		if (query.isPresent()) {
-			resource = query.get();
-		} else {
+		return Optional.ofNullable(get(ServiceProviderDTO.class, key)).orElseGet(() -> {
 			
 			String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
 			
@@ -67,13 +57,17 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 					.withDocumentClass( ServiceProvider.class )
 					.find(eq ( "services.key", key ) )
 					.first();
-			
-			resource = modelMapper.map( document, ServiceProviderDTO.class );
-			
+					
+			if (document == null) {
+				return null;
+			}
+					
+			ServiceProviderDTO resource = modelMapper.map( document, ServiceProviderDTO.class );
+					
 			set( key, resource );
-		}
-		
-		return resource;
+					
+			return resource;
+		});	
 	}
 	
 	/**
@@ -138,30 +132,5 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 		}
 		
 		return resource;
-	}	
-	
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 */
-	
-	public ServiceProviderDTO findByType(String type) {
-		
-		String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
-		
-		ServiceProvider document = MongoDBDatastore.getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( ServiceProvider.class )
-				.find( eq ( "type", type ) )
-				.first();
-		
-		if ( document == null ) {
-			throw new WebApplicationException( String.format( "%s Id: %s does not exist or you do not have access to view", ServiceProvider.class.getSimpleName(), type ), Status.NOT_FOUND );
-		}
-		
-		ServiceProviderDTO resource = modelMapper.map( document, ServiceProviderDTO.class );
-		
-		return resource;		
 	}
 }

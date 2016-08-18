@@ -610,18 +610,18 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public SalesforceConnectorDTO addServiceInstance(Id id, String serviceProviderId, String serviceType) {		
+	public SalesforceConnectorDTO addServiceInstance(Id id, String key) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
-		if (resource.getServiceInstances().stream().filter(s -> s.getServiceType().equals(serviceType)).findFirst().isPresent()) {
-			throw new ServiceException(String.format("Unable to add new environment. Service has already been added: %s", serviceType));
-		}
+		resource.getServiceInstances().stream().filter(s -> key.equals(s.getKey())).findFirst().ifPresent( s-> {
+			throw new ServiceException(String.format("Unable to add new environment. Service has already been added with type: %s", s.getKey()));
+		});
 		
-		ServiceProviderDTO serviceProvider = serviceProviderService.find(serviceProviderId);
+		ServiceProviderDTO serviceProvider = serviceProviderService.findByServiceKey(key);
 		
 		Service service = serviceProvider.getServices()
 				.stream()
-				.filter(s -> s.getType().equals(serviceType))
+				.filter(s -> key.equals(s.getKey()))
 				.findFirst()
 				.get();
 		

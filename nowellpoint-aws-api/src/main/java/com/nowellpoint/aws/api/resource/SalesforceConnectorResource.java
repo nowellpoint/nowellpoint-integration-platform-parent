@@ -30,6 +30,7 @@ import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
+import com.nowellpoint.aws.api.model.ServiceProvider;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
@@ -192,10 +193,13 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceInstance(
 			@PathParam(value="id") String id, 
-			@FormParam(value="serviceProviderId") String serviceProviderId, 
-			@FormParam(value="serviceType") String serviceType) {
+			@FormParam(value="key") String key) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), serviceProviderId, serviceType);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), key);
+		
+		if ( resource == null ) {
+			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", ServiceProvider.class.getSimpleName(), key ) );
+		}
 		
 		return Response.ok()
 				.entity(resource)

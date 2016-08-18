@@ -583,8 +583,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
-		String serviceProviderId = request.params(":serviceProviderId");
-		String serviceType = request.params(":serviceType");
+		String key = request.params(":key");
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -594,8 +593,7 @@ public class SalesforceConnectorController extends AbstractController {
     			.path("salesforce")
 				.path(id)
 				.path("service")
-				.parameter("serviceProviderId", serviceProviderId)
-				.parameter("serviceType", serviceType)
+				.parameter("key", key)
 				.execute();
 		
 		if (httpResponse.getStatusCode() != Status.OK) {
