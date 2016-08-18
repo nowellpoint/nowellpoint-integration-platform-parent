@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Service {
 	
+	private String key;
+	
 	private Double price;
 	
 	private String currencyIsoCode;
@@ -33,6 +35,14 @@ public class Service {
 		
 	}
 	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
 	public Double getPrice() {
 		return price;
 	}

@@ -3,6 +3,7 @@ package com.nowellpoint.aws.api.service;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.and;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
@@ -47,6 +48,32 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 		}
 		
 		return resources;
+	}
+	
+	public ServiceProviderDTO findByServiceKey(String key) {
+		
+		ServiceProviderDTO resource = null;
+		
+		Optional<ServiceProviderDTO> query = Optional.ofNullable(get(ServiceProviderDTO.class, key));
+		
+		if (query.isPresent()) {
+			resource = query.get();
+		} else {
+			
+			String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
+			
+			ServiceProvider document = MongoDBDatastore.getDatabase()
+					.getCollection( collectionName )
+					.withDocumentClass( ServiceProvider.class )
+					.find(eq ( "services.key", key ) )
+					.first();
+			
+			resource = modelMapper.map( document, ServiceProviderDTO.class );
+			
+			set( key, resource );
+		}
+		
+		return resource;
 	}
 	
 	/**
