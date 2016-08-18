@@ -25,6 +25,7 @@ public class Path {
 		public static final String PROJECTS = "/app/projects";
 		public static final String PROVIDERS = "/app/providers";
 		public static final String CONNECTORS_SALESFORCE = "/app/connectors/salesforce";
+		//public static final String CONNECTORS_SALESFORCE = "/app/connectors/salesforce/:id";
 		public static final String SALESFORCE_OAUTH = "/app/salesforce/oauth";
 		public static final String ACCOUNT_PROFILE = "/app/account-profile/:id";
 		public static final String ACCOUNT_PROFILE_ADDRESS = "/app/account-profile/:id/address";

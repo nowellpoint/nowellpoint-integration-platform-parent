@@ -186,19 +186,16 @@ public class SalesforceConnectorResource {
 				.build(); 
 	}
 	
-	//***
-	
 	@POST
-	@Path("salesforce/{id}/providers/{serviceProviderId}/service/{serviceType}/plan/{code}")
+	@Path("salesforce/{id}/service")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceInstance(
 			@PathParam(value="id") String id, 
-			@PathParam(value="serviceProviderId") String serviceProviderId, 
-			@PathParam(value="serviceType") String serviceType, 
-			@PathParam(value="code") String code) {
+			@FormParam(value="serviceProviderId") String serviceProviderId, 
+			@FormParam(value="serviceType") String serviceType) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), serviceProviderId, serviceType, code);
+		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), serviceProviderId, serviceType);
 		
 		return Response.ok()
 				.entity(resource)

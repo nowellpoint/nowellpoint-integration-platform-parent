@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -584,7 +585,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String serviceProviderId = request.params(":serviceProviderId");
 		String serviceType = request.params(":serviceType");
-		String code = request.params(":code");
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -593,23 +593,43 @@ public class SalesforceConnectorController extends AbstractController {
 				.path("connectors")
     			.path("salesforce")
 				.path(id)
-				.path("providers")
-				.path(serviceProviderId)
 				.path("service")
-				.path(serviceType)
-				.path("plan")
-				.path(code)
+				.parameter("serviceProviderId", serviceProviderId)
+				.parameter("serviceType", serviceType)
 				.execute();
 		
-		Map<String, Object> model = getModel();
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			List<ServiceProvider> providers = Collections.emptyList();
+			
+			httpResponse = RestResource.get(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("providers")
+					.queryParameter("localeSidKey", "en_US")
+					.queryParameter("languageLocaleKey", "en_US")
+					.execute();
 				
-		if (httpResponse.getStatusCode() == Status.OK) {
-			model.put("successMessage", getValue(request, "saved.plan"));
-			return render(request, model, "secure/fragments/success-message.html");
-		} else {
-			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
-			return render(request, model, "secure/fragments/error-message.html");
+			if (httpResponse.getStatusCode() == Status.OK) {
+				providers = httpResponse.getEntityList(ServiceProvider.class);
+			} else {
+				throw new BadRequestException(httpResponse.getAsString());
+			}
+	    	
+			SalesforceConnector salesforceConnector = new SalesforceConnector(id);
+			
+			Map<String, Object> model = getModel();
+			model.put("serviceProviders", providers);
+			model.put("salesforceConnector", salesforceConnector);
+			model.put("errorMessage", error.getMessage());
+	    	
+			return render(request, model, Path.Template.SERVICE_CATALOG);
 		}
+		
+		response.cookie(String.format("/app/connectors/salesforce/%s", id), "successMessage", getValue(request, "saved.plan"), 3, Boolean.FALSE);
+		response.redirect(String.format("/app/connectors/salesforce/%s", id));
+		
+		return "";		
 	};
 	
 	/**
@@ -776,7 +796,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		
 		List<ServiceProvider> providers = Collections.emptyList();
-		String message = null;
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -785,22 +804,17 @@ public class SalesforceConnectorController extends AbstractController {
 				.queryParameter("languageLocaleKey", "en_US")
 				.execute();
 			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			message = httpResponse.getAsString();
-		} else {
+		if (httpResponse.getStatusCode() == Status.OK) {
 			providers = httpResponse.getEntityList(ServiceProvider.class);
+		} else {
+			throw new BadRequestException(httpResponse.getAsString());
 		}
-		
-		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
     	
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
+		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
 		
 		Map<String, Object> model = getModel();
 		model.put("serviceProviders", providers);
 		model.put("salesforceConnector", salesforceConnector);
-		model.put("message", message);
     	
 		return render(request, model, Path.Template.SERVICE_CATALOG);
 	};

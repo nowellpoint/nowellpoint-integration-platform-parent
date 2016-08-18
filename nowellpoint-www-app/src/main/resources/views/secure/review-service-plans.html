@@ -8,7 +8,13 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["review.service.plans"]}</h6>
+                            <h6 class="dashhead-subtitle"></h6>
+                            <h2 class="dashhead-title">${labels["review.service.plans"]}</h2>
+                        </div>
+                        <div class="dashhead-toolbar">
+                            <p class="pull-right">
+                                <a id="cancel" href="${labels['base.path']}/${salesforceConnector.id}" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -17,54 +23,54 @@
             <br>
 
             <div class="row">
-                <div class="form-group">
-                    <#if errorMessage??>
-                        <div id="alert" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">×</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
-                </div>
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
 
                 <br>
 
                 <#list service.plans?sort_by( "unitPrice")?reverse as plan>
-                    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                        <div class="panel price panel-white">
-                            <div class="panel-heading arrow_box text-center">
-                                <h3>${plan.planName}</h3>
-                            </div>
-                            <div class="panel-body text-center">
-                                <p class="lead" style="font-size:40px"><strong>${plan.currencySymbol}${plan.unitPrice?string["0.00"]} / ${plan.billingFrequencyPer}</strong></p>
-                            </div>
-                            <ul class="list-group list-group-flush text-center">
-                                <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["transactions"]} ${plan.transactions}</li>
-                                <li class="list-group-item"><i class="icon-ok text-success"></i>${labels["support"]} ${plan.support}</li>
+
+                    <div class="col-sm-3 col-md-3">
+                        <div class="panel">
+                            <h2 class="text-info">${plan.planName}</h2>
+                            <ul>
+                                <li>${labels["transactions"]} ${plan.transactions}</li>
+                                <li>${labels["support"]} ${plan.support}</li>
                             </ul>
-                            <div class="panel-footer">
-                                <a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}">${labels["add.plan"]}</a>
-                            </div>
+                            <p></p>
+                            <hr>
+                            <h3 class="text-center">${plan.currencySymbol}${plan.unitPrice?string["0.00"]} / ${plan.billingFrequencyPer}</h3>
+                            <hr>
+                            <p><a class="btn btn-lg btn-block btn-default" href="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}/plan/${plan.code}">${labels["add.plan"]}</a></p>
                         </div>
                     </div>
+
                 </#list>
             </div>
 
             <#include "spinner.html" />
 
-            <script>
-                $('#place-order').click(function(e) {
-                    $.ajax({
-                        dataType: "html",
-                        type: "POST",
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}",
-                        complete: function(data) {
-                            $("#status-message").html(data.responseText);
-                        }
-                    });
+        </div>
 
-                    e.preventDefault();
 
+        <script>
+            $('#place-order').click(function(e) {
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}",
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
                 });
-            </script>
+
+                e.preventDefault();
+
+            });
+        </script>
 
     </@t.page>

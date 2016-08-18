@@ -62,7 +62,7 @@ abstract class AbstractController {
 		return token;
 	}
 	
-	protected String buildTemplate(Locale locale, ModelAndView modelAndView) {
+	private String buildTemplate(Locale locale, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
 		try {
 			Template template = configuration.getTemplate(modelAndView.getViewName());

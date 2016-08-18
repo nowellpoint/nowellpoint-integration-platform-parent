@@ -219,9 +219,10 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments"), salesforceConnectorController.addEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.updateEnvironment);
         delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.removeEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);
-        
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);        
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers"), salesforceConnectorController.getServiceProviders);
+        
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.addServiceInstance);
         
         
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/details"), salesforceConnectorController.getServiceInstance);
@@ -234,7 +235,7 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.saveEventListeners);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/query"), salesforceConnectorController.testQuery);
         
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType/plan/:code"), salesforceConnectorController.addServiceInstance);
+        
         
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.reviewPlans);
         

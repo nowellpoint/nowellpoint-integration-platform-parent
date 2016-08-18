@@ -4,53 +4,69 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
+        <div class="container">
             <div class="row">
-                <br>
-                <div id="status-message"></div>
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">
-                            ${(salesforceConnector.organization.name)!}
-                        </h3>
-                    </div>
-                    <div class="flextable-item">
-                        <a id="cancel" href="${labels['base.path']}/${salesforceConnector.id}" class="btn btn-primary-outline" role="button">${labels["cancel"]}</a>
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h6 class="dashhead-subtitle"></h6>
+                            <h2 class="dashhead-title">${labels["service.catalog"]}</h2>
+                        </div>
+                        <div class="dashhead-toolbar">
+                            <p class="pull-right">
+                                <a id="cancel" href="${labels['base.path']}/${salesforceConnector.id}" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <br>
                 <div class="hr-divider"></div>
             </div>
+            <br>
+
             <div class="row">
-                <br>
-                <br>
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+            </div>
 
-                <div class="container">
+            <div class="row">
 
-                    <#list serviceProviders?sort_by( "name") as serviceProvider>
+                <#list serviceProviders?sort_by( "name") as serviceProvider>
 
-                        <h4 class="text-muted">${serviceProvider.name}</h4>
+                    <ul class="nav nav-stacked">
 
-                            <ul class="nav nav-stacked">
+                        <#list serviceProvider.services?sort_by( "serviceName") as service>
+                            <#if service.isActive>
 
-                                <#list serviceProvider.services?sort_by( "serviceName") as service>
+                                <li>
+                                    <form method="POST" action="${labels['base.path']}/${(salesforceConnector.id)!}/providers/${serviceProvider.id}/service/${service.type}">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <br>
+                                                <h4 class="text-primary">${service.serviceName}</h4>
+                                                <h4><small>${service.description}</small></h4>
+                                                <br>
+                                                <p class="pull-right">
+                                                    <button type="submit" id="add-plan" class="btn btn-primary">${labels["add.service"]}</button>
+                                                </p>
 
-                                    <li>
-                                        <a href="${labels['base.path']}/${salesforceConnector.id}/providers/${serviceProvider.id}/service/${service.type}">
-                                            <br>
-                                            <h4>${service.serviceName}</h4>
-                                            <hr>
-                                            <h4><small>${service.description}</small></h4>
-                                            <br>
-                                        </a>
-                                    </li>
+                                            </div>
 
-                                </#list>
-                            </ul>
+                                        </div>
+                                    </form>
+                                </li>
+                            </#if>
 
-                    </#list>
-                </div>
+                        </#list>
+                    </ul>
+
+                </#list>
             </div>
         </div>
+
+
 
     </@t.page>
