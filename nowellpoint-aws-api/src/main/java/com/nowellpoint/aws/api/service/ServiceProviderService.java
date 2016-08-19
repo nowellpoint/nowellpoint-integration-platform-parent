@@ -49,7 +49,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	
 	public ServiceProviderDTO findByServiceKey(String key) {
 		return Optional.ofNullable(get(ServiceProviderDTO.class, key)).orElseGet(() -> {
-			
+
 			String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
 			
 			ServiceProvider document = MongoDBDatastore.getDatabase()
@@ -59,9 +59,10 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 					.first();
 					
 			if (document == null) {
+				System.out.println("document is not found");
 				return null;
 			}
-					
+
 			ServiceProviderDTO resource = modelMapper.map( document, ServiceProviderDTO.class );
 					
 			set( key, resource );

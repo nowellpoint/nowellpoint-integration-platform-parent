@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 import com.nowellpoint.aws.api.model.EventListener;
@@ -12,6 +13,10 @@ public class ServiceInstanceDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String key;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 	
 	private String name;
 	
@@ -49,6 +54,22 @@ public class ServiceInstanceDTO implements Serializable {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public String getName() {

@@ -195,11 +195,26 @@ public class SalesforceConnectorResource {
 			@PathParam(value="id") String id, 
 			@FormParam(value="key") String key) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), key);
+		ServiceInstanceDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), key);
 		
 		if ( resource == null ) {
-			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", ServiceProvider.class.getSimpleName(), key ) );
+			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", "Service", key ) );
 		}
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	@GET
+	@Path("salesforce/{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getServiceInstance(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key) {
+		
+		ServiceInstanceDTO resource = salesforceConnectorService.getServiceInstance( new Id(id), key );
 		
 		return Response.ok()
 				.entity(resource)
@@ -215,7 +230,7 @@ public class SalesforceConnectorResource {
 			@PathParam(value="key") String key,
 			ServiceInstanceDTO serviceInstance) {
 		
-		SalesforceConnectorDTO resource = salesforceConnectorService.updateServiceInstance( new Id(id), key, serviceInstance);
+		ServiceInstanceDTO resource = salesforceConnectorService.updateServiceInstance( new Id(id), key, serviceInstance);
 		
 		return Response.ok()
 				.entity(resource)

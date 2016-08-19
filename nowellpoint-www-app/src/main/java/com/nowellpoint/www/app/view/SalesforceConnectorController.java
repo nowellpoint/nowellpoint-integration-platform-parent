@@ -96,7 +96,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route getEnvironment = (Request request, Response response) -> {		
+	public Route viewEnvironment = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -550,22 +550,80 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route getServiceInstance = (Request request, Response response) -> {
+	public Route viewServiceInstance = (Request request, Response response) -> {
+		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
-    	
-		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
-    	
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
-    	
-    	ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
-    	
-    	Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.path("service")
+    			.path(key)
+    			.execute();
+		
+		ServiceInstance serviceInstance = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			serviceInstance = httpResponse.getEntity(ServiceInstance.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", new SalesforceConnector(id));
+		model.put("mode", "view");
+		model.put("serviceInstance", serviceInstance);
+		
+		return render(request, model, "secure/".concat(serviceInstance.getConfigurationPage()));
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * editServiceInstance
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route editServiceInstance = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.path("service")
+    			.path(key)
+    			.execute();
+		
+		ServiceInstance serviceInstance = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			serviceInstance = httpResponse.getEntity(ServiceInstance.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", new SalesforceConnector(id));
+		model.put("mode", "edit");
+		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s", id, key));
 		model.put("serviceInstance", serviceInstance);
 		
 		return render(request, model, "secure/".concat(serviceInstance.getConfigurationPage()));
@@ -783,15 +841,18 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getServiceProviders
+	 * newServiceInstance
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route getServiceProviders = (Request request, Response response) -> {
+	public Route newServiceInstance = (Request request, Response response) -> {
+		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
+		
+		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
 		
 		List<ServiceProvider> providers = Collections.emptyList();
 		
@@ -808,11 +869,10 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(httpResponse.getAsString());
 		}
     	
-		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
-		
 		Map<String, Object> model = getModel();
 		model.put("serviceProviders", providers);
 		model.put("salesforceConnector", salesforceConnector);
+		model.put("mode", "add");
     	
 		return render(request, model, Path.Template.SERVICE_CATALOG);
 	};

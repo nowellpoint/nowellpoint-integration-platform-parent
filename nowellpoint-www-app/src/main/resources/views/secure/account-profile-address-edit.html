@@ -16,20 +16,19 @@
 
                 <br>
 
-                <div class="form-group">
-                    <#if successMessage??>
-                        <div id="success" class="alert alert-success">
-                            <a class="close" data-dismiss="alert">&times;</a>
-                            <div class="text-center">${successMessage!}</div>
-                        </div>
-                    </#if>
-                    <#if errorMessage??>
-                        <div id="alert" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">×</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
-                </div>
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div class="text-center">${successMessage!}</div>
+                    </div>
+                </#if>
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+
                 <br>
 
                 <form class="form" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/address">

@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,6 +9,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ServiceInstance {
 	
 	private String key;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 	
 	private String name;
 	
@@ -53,6 +58,22 @@ public class ServiceInstance {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public String getProviderType() {

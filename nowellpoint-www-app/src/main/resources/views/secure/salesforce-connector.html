@@ -226,7 +226,7 @@
             <br>
             <br>
 
-            <div class="row">
+            <div id="environments" class="row">
                 <div class="flextable">
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["environments"]}</h3>
@@ -278,13 +278,13 @@
             <br>
             <br>
 
-            <div class="row">
+            <div id="services" class="row">
                 <div class="flextable">
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["services"]}</h3>
                     </div>
                     <div class="flextable-item">
-                        <a href="${labels['base.path']}/${salesforceConnector.id}/providers" id="add-service" class="btn btn-primary" role="button">${labels["add.service"]}</a>
+                        <a href="${labels['base.path']}/${salesforceConnector.id}/services/add" id="add-service" class="btn btn-primary" role="button">${labels["add.service"]}</a>
                     </div>
                 </div>
                 <br>
@@ -294,14 +294,15 @@
                     <table class="table table-hover">
                         <thead>
                             <th class="col-xs-2">${labels["name"]}</th>
-                            <th class="col-xs-3">${labels["service.type"]}</th>
-                            <th class="col-xs-6">${labels["tag"]}</th>
+                            <th class="col-xs-3">${labels["service.name"]}</th>
+                            <th class="col-xs-3">${labels["tag"]}</th>
                             <th class="col-xs-1 text-center">${labels["active"]}</th>
+                            <th class="col-xs-3">${labels["action"]}</th>
                         </thead>
                         <tbody>
                             <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
                                 <tr id="${service.key}">
-                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/service/${service.key}/details">${service.name!service.key}</a></td>
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/services/${service.key}/view">${service.name!service.key}</a></td>
                                     <td>${service.serviceName!}</td>
                                     <td>${service.tag!}</td>
                                     <td class="text-center">
@@ -311,6 +312,8 @@
                                         <#if ! service.isActive>
                                             ${messages["no"]}
                                         </#if>
+                                    </td>
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/services/${(service.key)!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
                                     </td>
                                 </tr>
                             </#list>

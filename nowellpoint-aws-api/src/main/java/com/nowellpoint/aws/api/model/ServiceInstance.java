@@ -1,6 +1,7 @@
 package com.nowellpoint.aws.api.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,6 +16,10 @@ public class ServiceInstance implements Serializable {
 	private static final long serialVersionUID = 3675473602093498225L;
 	
 	private String key;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 	
 	private String name;
 	
@@ -49,6 +54,26 @@ public class ServiceInstance implements Serializable {
 	public String getKey() {
 		return key;
 	}
+	
+	public void setKey(String key) {
+		this.key = key;
+	}
+	
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
+	}
 
 	public String getName() {
 		return name;
@@ -58,10 +83,6 @@ public class ServiceInstance implements Serializable {
 		this.name = name;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
-	}
-	
 	public String getProviderType() {
 		return providerType;
 	}

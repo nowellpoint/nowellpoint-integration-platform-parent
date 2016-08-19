@@ -598,6 +598,29 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		updateSalesforceConnector(id, resource);
 	} 
 	
+	/***************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @return
+	 * 
+	 * 
+	 **************************************************************************************************************************/
+	
+	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		
+		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
+				.stream()
+				.filter(s -> key.equals(s.getKey()))
+				.findFirst()
+				.get();
+		
+		return serviceInstance;
+		
+	}
+	
 	/**************************************************************************************************************************
 	 * 
 	 * 
@@ -610,12 +633,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public SalesforceConnectorDTO addServiceInstance(Id id, String key) {		
+	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
-		
-		resource.getServiceInstances().stream().filter(s -> key.equals(s.getKey())).findFirst().ifPresent( s-> {
-			throw new ServiceException(String.format("Unable to add new environment. Service has already been added with type: %s", s.getKey()));
-		});
 		
 		ServiceProviderDTO serviceProvider = serviceProviderService.findByServiceKey(key);
 		
@@ -625,6 +644,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				.findFirst()
 				.get();
 		
+		if (resource.getServiceInstances() == null) {
+			resource.setServiceInstances(Collections.emptySet());
+		}
+		
+		resource.getServiceInstances().stream().filter(s -> s.getServiceType().equals(service.getType())).findFirst().ifPresent( s-> {
+			throw new ServiceException(String.format("Unable to add new environment. Service has already been added with type: %s", s.getServiceName()));
+		});
+		
 		ServiceInstanceDTO serviceInstance = new ServiceInstanceDTO();
 		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
 		serviceInstance.setServiceType(service.getType());
@@ -633,13 +660,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setServiceName(service.getServiceName());
 		serviceInstance.setProviderType(serviceProvider.getType());
 		serviceInstance.setIsActive(Boolean.FALSE);
+		serviceInstance.setAddedOn(Date.from(Instant.now()));
+		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
 		//serviceInstance.setPlan(plan);
 		
 		resource.addServiceInstance(serviceInstance);
 		
 		updateSalesforceConnector(id, resource);
 		
-		return resource;
+		return serviceInstance;
 	}
 	
 	/**************************************************************************************************************************
@@ -653,29 +682,30 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public SalesforceConnectorDTO updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
+	public ServiceInstanceDTO updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
 		}
 		
-		Map<String,ServiceInstanceDTO> map = resource.getServiceInstances().stream().collect(Collectors.toMap(p -> p.getKey(), (p) -> p));
+		ServiceInstanceDTO original = resource.getServiceInstances()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst()
+				.get();
 		
-		resource.getServiceInstances().clear();
+		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
-		if (map.containsKey(key)) {
-			ServiceInstanceDTO original = map.get(key);
-			original.setSourceEnvironment(serviceInstance.getSourceEnvironment());
-			original.setName(serviceInstance.getName());
-			map.put(key, original);
-		}
+		serviceInstance.setKey(key);
+		serviceInstance.setAddedOn(original.getAddedOn());
+		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
 		
-		resource.setServiceInstances(new HashSet<ServiceInstanceDTO>(map.values()));
-
+		resource.addServiceInstance(serviceInstance);
+		
 		updateSalesforceConnector(id, resource);
 		
-		return resource;
+		return serviceInstance;
 	}
 	
 	/**************************************************************************************************************************

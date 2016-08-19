@@ -1,0 +1,127 @@
+<#import "template.html" as t>
+    <@t.page>
+        <#include "navbar.html" />
+        <div class="container">
+            <div class="row">
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h6 class="dashhead-subtitle">${labels["service.details"]}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+            </div>
+            <div class="row">
+
+                <br>
+
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div class="text-center">${successMessage!}</div>
+                    </div>
+                </#if>
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+
+                <#if mode=="edit">
+
+                    <div class="row">
+
+                        <form id="service-instance-form" method="post" action="${action}">
+
+                            <div class="row">
+
+                                <div class="form-group col-md-4"></div>
+                                <div class="form-group col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="name">${labels["instance.name"]}</label>
+                                        <input type="text" class="form-control" id="name" value="${serviceInstance.name!serviceInstance.key}" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="providerName">${labels["service.provider.name"]}</label>
+                                        <input type="text" class="form-control" id="providerName" value="${(serviceInstance.providerName)!}" disabled />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="serviceName">${labels["service.name"]}</label>
+                                        <input type="text" class="form-control" id="serviceName" value="${(serviceInstance.serviceName)}" disabled />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="environmentName">${labels["active"]}</label>
+                                        <a href="#">Activate</a>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4"></div>
+                                <div class="form-group">
+                                    <div class="pull-right">
+                                        <a href="${labels['base.path']}/${salesforceConnector.id}#services" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
+                                        <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </#if>
+
+                <#if mode=="view">
+
+                    <div class="row">
+
+                        <br>
+
+                        <div class="col-md-3"></div>
+
+                        <div class="col-md-6">
+
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <dl class="dl-vertical">
+                                    <dt>${labels["instance.name"]}</dt>
+                                    <dd>${serviceInstance.name!serviceInstance.key}&emsp;</dd>
+                                    <hr>
+                                    <dt>${labels["service.provider.name"]}</dt>
+                                    <dd>${(serviceInstance.providerName)!}&emsp;</dd>
+                                    <hr>
+                                    <dt>${labels["service.name"]}</dt>
+                                    <dd>${(serviceInstance.serviceName)}</dd>
+                                    <hr>
+                                    <dt>${labels["active"]}</dt>
+                                    <dd>
+                                        <#if serviceInstance.isActive>
+                                            ${messages["yes"]}
+                                        </#if>
+                                        <#if ! serviceInstance.isActive>
+                                            ${messages["no"]}
+                                        </#if>
+                                        &emsp;
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <br>
+
+                            <div class="form-group col-md-12">
+                                <div class="pull-right">
+                                    <a href="${labels['base.path']}/${salesforceConnector.id}#services" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3"></div>
+
+                    </div>
+
+                </#if>
+
+            </div>
+        </div>
+    </@t.page>

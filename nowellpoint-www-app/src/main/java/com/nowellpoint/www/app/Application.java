@@ -214,18 +214,17 @@ public class Application implements SparkApplication {
         delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.deleteSalesforceConnector);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/edit"), salesforceConnectorController.editSalesforceConnector);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/add"), salesforceConnectorController.newEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/view"), salesforceConnectorController.getEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/view"), salesforceConnectorController.viewEnvironment);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/edit"), salesforceConnectorController.editEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments"), salesforceConnectorController.addEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.updateEnvironment);
         delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.removeEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers"), salesforceConnectorController.getServiceProviders);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/add"), salesforceConnectorController.newServiceInstance);       
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/:key/view"), salesforceConnectorController.viewServiceInstance);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/:key/edit"), salesforceConnectorController.editServiceInstance);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/:key"), salesforceConnectorController.addServiceInstance);
         
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.addServiceInstance);
-        
-        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/details"), salesforceConnectorController.getServiceInstance);
         
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/:environment/fields/:sobject"), salesforceConnectorController.getFields);
         
