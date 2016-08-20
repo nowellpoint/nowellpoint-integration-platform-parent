@@ -16,6 +16,7 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -56,9 +57,9 @@ public class AuthenticationController extends AbstractController {
     	if (statusCode != 200) {
     		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
     		if (error.get("code").asInt() == 7100) {
-    			throw new NotAuthorizedException(getValue(request, "login.error"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(MessageProvider.getMessage(getDefaultLocale(request), "login.error"), Status.NOT_AUTHORIZED);
     		} else if (error.get("code").asInt() == 7101) {
-    			throw new NotAuthorizedException(getValue(request, "disabled.account"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(MessageProvider.getMessage(getDefaultLocale(request), "disabled.account"), Status.NOT_AUTHORIZED);
     		} else {
     			throw new NotAuthorizedException(error.get("message").asText(), Status.NOT_AUTHORIZED);
     		}

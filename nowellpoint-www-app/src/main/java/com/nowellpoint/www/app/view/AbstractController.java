@@ -38,25 +38,6 @@ abstract class AbstractController {
 		return model;
 	}
 	
-	protected String getValue(Request request, String key) {
-		AccountProfile accountProfile = getAccount(request);
-		
-		Locale locale = null;
-		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
-			locale = new Locale(accountProfile.getLocaleSidKey());
-		} else {
-			locale = configuration.getLocale();
-		}
-		
-		ResourceBundleModel messages = new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
-		ResourceBundleModel labels = new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build());
-		if (labels.getBundle().containsKey(key)) {
-			return labels.getBundle().getString(key);
-		} else {
-			return messages.getBundle().getString(key);
-		}
-	}
-	
 	protected Token getToken(Request request) {
 		Token token = request.attribute("com.nowellpoint.auth.token");
 		return token;

@@ -1,7 +1,12 @@
 package com.nowellpoint.www.app.view;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -16,6 +21,7 @@ import com.nowellpoint.www.app.model.Address;
 import com.nowellpoint.www.app.model.Contact;
 import com.nowellpoint.www.app.model.CreditCard;
 import com.nowellpoint.www.app.model.ExceptionResponse;
+import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
@@ -47,7 +53,9 @@ public class AccountProfileController extends AbstractController {
 		model.put("account", account);
 		model.put("accountProfile", account);
 		model.put("successMessage", request.cookie("successMessage"));
-		
+		model.put("locales", getLocales(account));
+		model.put("languages", getSupportedLanguages());
+
 		return render(request, model, Path.Template.ACCOUNT_PROFILE);
 	};
 	
@@ -65,6 +73,8 @@ public class AccountProfileController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", account);
+		model.put("locales", new TreeMap<String, String>(getLocales(account)));
+		model.put("languages", getSupportedLanguages());
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);		
 	};
@@ -172,7 +182,9 @@ public class AccountProfileController extends AbstractController {
 				.withFax(request.queryParams("fax"))
 				.withMobilePhone(request.queryParams("mobilePhone"))
 				.withPhone(request.queryParams("phone"))
-				.withExtension(request.queryParams("extension"));
+				.withExtension(request.queryParams("extension"))
+				.withLanguageSidKey(request.queryParams("languageSidKey"))
+				.withLocaleSidKey(request.queryParams("localeSidKey"));
 
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -191,6 +203,8 @@ public class AccountProfileController extends AbstractController {
 				.parameter("mobilePhone", accountProfile.getMobilePhone())
 				.parameter("phone", accountProfile.getPhone())
 				.parameter("extension", accountProfile.getExtension())
+				.parameter("languageSidKey", accountProfile.getLanguageSidKey())
+				.parameter("localeSidKey", accountProfile.getLocaleSidKey())
 				.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
@@ -208,7 +222,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", getValue(request, "update.profile.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.profile.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
@@ -260,7 +274,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", getValue(request, "update.address.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.address.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";		
@@ -479,7 +493,7 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", getValue(request, "add.credit.card.success"));
+			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.credit.card.success"));
 		} else {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
@@ -552,7 +566,7 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", getValue(request, "update.credit.card.success"));
+			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.credit.card.success"));
 		} else {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
@@ -592,7 +606,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue(request, "primary.credit.card.set"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "primary.credit.card.set"), 3, Boolean.FALSE);
 		
 		return "";
 	};
@@ -621,8 +635,36 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", getValue(request, "remove.credit.card.success"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.credit.card.success"), 3, Boolean.FALSE);
 		
 		return "";
 	};
+	
+	/**
+	 * 
+	 * @param accountProfile
+	 * @return Locale map 
+	 */
+	
+	private Map<String,String> getLocales(AccountProfile accountProfile) {
+		Locale.setDefault(new Locale(accountProfile.getLocaleSidKey()));
+		
+		Map<String,String> localeMap = Arrays.asList(Locale.getAvailableLocales())
+				.stream()
+				.collect(Collectors.toMap(l -> l.toString(), l -> l.getDisplayLanguage()
+						.concat(! l.getCountry().isEmpty() ? " (".concat(l.getDisplayCountry().concat(")")) : "")));
+		
+		return localeMap;
+	}
+	
+	/**
+	 * 
+	 * @return application supported languages
+	 */
+	
+	private Map<String,String> getSupportedLanguages() {
+		Map<String,String> languageMap = new HashMap<String,String>();
+		languageMap.put(Locale.US.toString(), Locale.US.getDisplayLanguage());
+		return languageMap;
+	}
 }

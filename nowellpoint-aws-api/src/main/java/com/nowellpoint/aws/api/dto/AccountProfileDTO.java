@@ -105,6 +105,12 @@ public class AccountProfileDTO extends AbstractDTO {
 	 */
 
 	private String timeZoneSidKey;
+	
+	/**
+	 * 
+	 */
+	
+	private String languageSidKey;
 
 	/**
 	 * 
@@ -117,12 +123,6 @@ public class AccountProfileDTO extends AbstractDTO {
 	 */
 
 	private String emailEncodingKey;
-
-	/**
-	 * 
-	 */
-
-	private String languageLocaleKey;
 
 	/**
 	 * 
@@ -302,6 +302,14 @@ public class AccountProfileDTO extends AbstractDTO {
 		this.timeZoneSidKey = timeZoneSidKey;
 	}
 
+	public String getLanguageSidKey() {
+		return languageSidKey;
+	}
+
+	public void setLanguageSidKey(String languageSidKey) {
+		this.languageSidKey = languageSidKey;
+	}
+
 	public String getLocaleSidKey() {
 		return localeSidKey;
 	}
@@ -316,14 +324,6 @@ public class AccountProfileDTO extends AbstractDTO {
 
 	public void setEmailEncodingKey(String emailEncodingKey) {
 		this.emailEncodingKey = emailEncodingKey;
-	}
-
-	public String getLanguageLocaleKey() {
-		return languageLocaleKey;
-	}
-
-	public void setLanguageLocaleKey(String languageLocaleKey) {
-		this.languageLocaleKey = languageLocaleKey;
 	}
 
 	public Date getLastLoginDate() {

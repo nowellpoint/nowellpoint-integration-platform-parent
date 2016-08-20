@@ -71,7 +71,7 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	}
 	
 	public void addEnvironment(EnvironmentDTO environment) {
-		if (environments == null) {
+		if (environments == null || environments.isEmpty()) {
 			environments = new HashSet<EnvironmentDTO>();
 		}
 		environments.add(environment);
@@ -86,7 +86,7 @@ public class SalesforceConnectorDTO extends AbstractDTO {
 	}
 	
 	public void addServiceInstance(ServiceInstanceDTO serviceInstance) {
-		if (serviceInstances == null) {
+		if (serviceInstances == null || serviceInstances.isEmpty()) {
 			serviceInstances = new HashSet<ServiceInstanceDTO>();
 		}
 		serviceInstances.add(serviceInstance);

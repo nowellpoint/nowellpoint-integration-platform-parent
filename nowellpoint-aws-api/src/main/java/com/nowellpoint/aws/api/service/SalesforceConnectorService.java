@@ -41,6 +41,7 @@ import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.Plan;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
+import com.nowellpoint.aws.api.model.SimpleStorageService;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -301,7 +302,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id.getValue(), getSubject() );
 		if ( resource == null ) {		
 			resource = find(id.getValue());
-			hset( id.getValue(), getSubject(), resource );
+			if (resource != null) {
+				hset( id.getValue(), getSubject(), resource );
+			}
 		}
 		return resource;
 	}
@@ -695,7 +698,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				.findFirst()
 				.get();
 		
-		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+		resource.getServiceInstances().removeIf(e -> key.equals(e.getKey()));
 		
 		serviceInstance.setKey(key);
 		serviceInstance.setAddedOn(original.getAddedOn());
@@ -704,6 +707,69 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.addServiceInstance(serviceInstance);
 		
 		updateSalesforceConnector(id, resource);
+		
+		return serviceInstance;
+	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param id
+	 * @param key
+	 * @param parameters
+	 * @return ServiceInstanceDTO
+	 * 
+	 * 
+	 *************************************************************************************************************************/
+	
+	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
+		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		
+		if (resource.getServiceInstances() == null) {
+			resource.setServiceInstances(Collections.emptySet());
+		}
+		
+		Optional<ServiceInstanceDTO> query = resource.getServiceInstances()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst();
+		
+		if (! query.isPresent()) {
+			return null;
+		}
+		
+		ServiceInstanceDTO serviceInstance = query.get();
+		
+		if (parameters.containsKey("name")) {
+			serviceInstance.setName(parameters.getFirst("name"));
+		}
+		
+		if (parameters.containsKey("tag")) {
+			serviceInstance.setTag(parameters.getFirst("tag"));
+		}
+		
+		if (parameters.containsKey("bucketName") || parameters.containsKey("awsAccessKey") || parameters.containsKey("awsSecretAccessKey")) {
+			if (serviceInstance.getTargets() == null) {
+				serviceInstance.setTargets(new Targets());
+			}
+			if (serviceInstance.getTargets().getSimpleStorageService() == null) {
+				serviceInstance.getTargets().setSimpleStorageService(new SimpleStorageService());
+			}
+		}
+		
+		if (parameters.containsKey("bucketName")) {
+			serviceInstance.getTargets().getSimpleStorageService().setBucketName(parameters.getFirst("bucketName"));
+		}
+		
+		if (parameters.containsKey("awsAccessKey")) {
+			
+		}
+		
+		if (parameters.containsKey("awsSecretAccessKey")) {
+			
+		}
+		
+		updateServiceInstance(id, key, serviceInstance);
 		
 		return serviceInstance;
 	}

@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -24,12 +23,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.ExceptionResponse;
-import com.nowellpoint.www.app.model.Plan;
 import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.model.Service;
 import com.nowellpoint.www.app.model.ServiceInstance;
@@ -53,14 +52,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private static final SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
 	
 	public SalesforceConnectorController(Configuration cfg) {
-		super(SalesforceConnectorController.class, cfg);
-		
-        //post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key"), (request, response) -> saveServiceInstance(request, response), new FreeMarkerEngine(cfg));
-        
-        //delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key"), (request, response) -> deleteServiceInstance(request, response), new FreeMarkerEngine(cfg));
-
-        //post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/targets"), (request, response) -> saveTargets(request, response), new FreeMarkerEngine(cfg));        
-        
+		super(SalesforceConnectorController.class, cfg);      
 	}
 	
 	/**
@@ -225,9 +217,9 @@ public class SalesforceConnectorController extends AbstractController {
 			
 			throw new BadRequestException(output);
 		}
-		
-		response.cookie("successMessage", getValue(request, "add.environment.success"), 3);
-		response.redirect(String.format("/app/connectors/salesforce/%s", id));
+
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
 		
 		return "";		
 	};
@@ -287,8 +279,8 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", getValue(request, "update.environment.success"), 3);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE.concat("/").concat(id));
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.environment.success"), 3);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
 		
 		return "";		
 	};
@@ -321,7 +313,7 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie("successMessage", getValue(request, "remove.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.environment.success"), 3);
 		response.header("Location", Path.Route.CONNECTORS_SALESFORCE.concat("/").concat(id));
 		
 		return "";
@@ -359,109 +351,56 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getTargets
+	 * updateServiceInstance
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
-
-	public Route getTargets = (Request request, Response response) -> {
+	
+	public Route updateServiceInstance = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
+		String name = request.queryParams("name");
+		String tag = request.queryParams("tag");
+		String bucketName = request.queryParams("bucketName");
 		
-		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
-    	
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
+		PostRequest httpRequest = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+				.path(id)
+				.path("service")
+				.path(key);
 		
-		ServiceInstance serviceInstance = salesforceConnector.getServiceInstance(key);
+		if (name != null) {
+			httpRequest.parameter("name", name);
+		}
 		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
-		model.put("serviceInstance", serviceInstance);
-		model.put("targets", serviceInstance.getTargets());
-			
-		return render(request, model, Path.Template.TARGETS);
+		if (tag != null) {
+			httpRequest.parameter("tag", tag);
+		}
+		
+		if (bucketName != null) {
+			httpRequest.parameter("bucketName", bucketName);
+		}
+				
+		HttpResponse httpResponse = httpRequest.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			response.cookie("errorMessage", error.getMessage(), 3, Boolean.FALSE);
+			response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id).concat("/services/:key/edit".replace(":key", key)));
+			return "";
+		}
+
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id), "successMessage", MessageProvider.getMessage(this.getDefaultLocale(request), "update.service.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
+		
+		return "";		
 	};
-	
-//	private ModelAndView saveTargets(Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String id = request.params(":id");
-//		String key = request.params(":key");
-//		String bucketName = request.queryParams("bucketName");
-//		String awsAccessKey = request.queryParams("awsAccessKey");
-//		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
-//		
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		ObjectNode node = objectMapper.createObjectNode();
-//		node.set("simpleStorageService", objectMapper.createObjectNode()
-//				.put("bucketName", bucketName)
-//				.put("awsAccessKey", awsAccessKey)
-//				.put("awsSecretAccessKey", awsSecretAccessKey));
-//		
-//		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.accept(MediaType.APPLICATION_JSON)
-//				.bearerAuthorization(token.getAccessToken())
-//				.path("connectors")
-//    			.path("salesforce")
-//				.path(id)
-//				.path("service")
-//				.path(key)
-//				.path("targets")
-//				.body(node)
-//				.execute();
-//		
-//		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-//		
-//		Map<String, Object> model = getModel();
-//		
-//		if (httpResponse.getStatusCode() == Status.OK) {
-//			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-//			return new ModelAndView(model, "secure/fragments/success-message.html");
-//		} else {
-//			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
-//			return new ModelAndView(model, "secure/fragments/e-message.html");
-//		}
-//	}
-	
-//	private ModelAndView saveServiceInstance(Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String id = request.params(":id");
-//		String key = request.params(":key");
-//		String name = request.queryParams("name");
-//		String sourceEnvironment = request.queryParams("sourceEnvironment");
-//		
-//		ObjectNode node = new ObjectMapper().createObjectNode()
-//				.put("name", name)
-//				.put("sourceEnvironment", sourceEnvironment);
-//		
-//		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.accept(MediaType.APPLICATION_JSON)
-//				.bearerAuthorization(token.getAccessToken())
-//				.path("connectors")
-//    			.path("salesforce")
-//				.path(id)
-//				.path("service")
-//				.path(key)
-//				.body(node)
-//				.execute();
-//		
-//		Map<String, Object> model = getModel();
-//		
-//		if (httpResponse.getStatusCode() == Status.OK) {
-//			model.put("successMessage", MessageProvider.getMessage(Locale.US, "saveSuccess"));
-//			return new ModelAndView(model, "secure/fragments/success-message.html");
-//		} else {
-//			model.put("message", httpResponse.getEntity(JsonNode.class).get("message").asText());
-//			return new ModelAndView(model, "secure/fragments/e-message.html");
-//		}
-//	}
 	
 //	private ModelAndView deleteServiceInstance(Request request, Response response) {
 //		Token token = getToken(request);
@@ -581,6 +520,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("salesforceConnector", new SalesforceConnector(id));
 		model.put("mode", "view");
 		model.put("serviceInstance", serviceInstance);
+		model.put("successMessage", request.cookie("successMessage"));
 		
 		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
 	};
@@ -623,8 +563,9 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("salesforceConnector", new SalesforceConnector(id));
 		model.put("mode", "edit");
-		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s", id, key));
+		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s/update", id, key));
 		model.put("serviceInstance", serviceInstance);
+		model.put("errorMessage", request.cookie("errorMessage"));
 		
 		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
 	};
@@ -682,8 +623,8 @@ public class SalesforceConnectorController extends AbstractController {
 			return render(request, model, Path.Template.SERVICE_CATALOG);
 		}
 		
-		response.cookie(String.format("/app/connectors/salesforce/%s", id), "successMessage", getValue(request, "saved.plan"), 3, Boolean.FALSE);
-		response.redirect(String.format("/app/connectors/salesforce/%s", id));
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.service.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
 		
 		return "";		
 	};
@@ -696,7 +637,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route getSalesforceConnector = (Request request, Response response) -> {
+	public Route viewSalesforceConnector = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -795,8 +736,6 @@ public class SalesforceConnectorController extends AbstractController {
     			.path(id)
     			.parameter("tag", tag)
     			.execute();
-		
-		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());	
 		
 		SalesforceConnector salesforceConnector = null;
 		String message = null;
@@ -1128,9 +1067,9 @@ public class SalesforceConnectorController extends AbstractController {
 		Environment environment = httpResponse.getEntity(Environment.class);
 		
 		if (environment.getIsValid()) {
-			environment.setTestMessage(getValue(request, "test.connection.success"));
+			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(request), "test.connection.success"));
 		} else {
-			environment.setTestMessage(String.format("%s: %s", getValue(request, "test.connection.fail"), environment.getTestMessage()));
+			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(request), "test.connection.fail"), environment.getTestMessage()));
 		}
 		
 		return objectMapper.writeValueAsString(environment);

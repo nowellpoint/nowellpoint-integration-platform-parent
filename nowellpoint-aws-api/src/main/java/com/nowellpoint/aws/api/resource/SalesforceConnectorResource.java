@@ -191,9 +191,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/service")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addServiceInstance(
-			@PathParam(value="id") String id, 
-			@FormParam(value="key") String key) {
+	public Response addServiceInstance(@PathParam(value="id") String id, @FormParam(value="key") String key) {
 		
 		ServiceInstanceDTO resource = salesforceConnectorService.addServiceInstance( new Id(id), key);
 		
@@ -221,7 +219,7 @@ public class SalesforceConnectorResource {
 				.build(); 	
 	}
 	
-	@POST
+	@PUT
 	@Path("salesforce/{id}/service/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -231,6 +229,35 @@ public class SalesforceConnectorResource {
 			ServiceInstanceDTO serviceInstance) {
 		
 		ServiceInstanceDTO resource = salesforceConnectorService.updateServiceInstance( new Id(id), key, serviceInstance);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	/**
+	 * @POST
+	@Path("salesforce/{id}/service")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addServiceInstance(@PathParam(value="id") String id, @FormParam(value="key") String key) {
+	 */
+	
+	/**
+	 * 
+	 * @param id
+	 * @param key
+	 * @param parameters
+	 * @return
+	 */
+	
+	@POST
+	@Path("salesforce/{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
+		
+		ServiceInstanceDTO resource = salesforceConnectorService.updateServiceInstance( new Id(id), key, parameters);
 		
 		return Response.ok()
 				.entity(resource)

@@ -70,6 +70,34 @@
                                 <label class="control-label" for="fax">${labels["fax"]}</label>
                                 <input type="text" class="form-control" name="fax" id="fax" value="${accountProfile.fax!}" />
                             </div>
+                            
+                             <div class="form-group col-md-6">
+                                <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
+                                 <select id="languageSidKey" name="languageSidKey" class="form-control" required>
+                                    <#list languages?keys as key>
+                                        <#if accountProfile.languageSidKey==key>
+                                            <option value="${key}" selected="selected">${languages[key]}</option>
+                                        </#if>
+                                        <#if accountProfile.languageSidKey !=key>
+                                            <option value="${key}">${languages[key]}</option>
+                                        </#if>
+                                    </#list>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group col-md-6">
+                                <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
+                                <select id="localeSidKey" name="localeSidKey" class="form-control" required>
+                                    <#list locales?keys as key>
+                                        <#if accountProfile.localeSidKey==key>
+                                            <option value="${key}" selected="selected">${locales[key]}</option>
+                                        </#if>
+                                        <#if accountProfile.localeSidKey !=key>
+                                            <option value="${key}">${locales[key]}</option>
+                                        </#if>
+                                    </#list>
+                                </select>
+                            </div>
 
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="mobilePhone">${labels["mobile.phone"]}</label>
@@ -80,7 +108,7 @@
                                 <label class="control-label" for="phone">${labels["phone"]}</label>
                                 <input type="text" class="form-control" name="phone" id="phone" value="${accountProfile.phone!}" />
                             </div>
-
+                            
                             <div class="form-group col-md-6">
 
                             </div>

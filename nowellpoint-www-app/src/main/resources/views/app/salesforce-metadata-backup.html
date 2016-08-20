@@ -16,12 +16,6 @@
 
                 <br>
 
-                <#if successMessage??>
-                    <div id="success" class="alert alert-success">
-                        <a class="close" data-dismiss="alert">&times;</a>
-                        <div class="text-center">${successMessage!}</div>
-                    </div>
-                </#if>
                 <#if errorMessage??>
                     <div id="alert" class="alert alert-danger">
                         <a class="close" data-dismiss="alert">×</a>
@@ -37,11 +31,11 @@
 
                             <div class="row">
 
-                                <div class="form-group col-md-4"></div>
-                                <div class="form-group col-md-4">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="control-label" for="name">${labels["instance.name"]}</label>
-                                        <input type="text" class="form-control" id="name" value="${serviceInstance.name!serviceInstance.key}" />
+                                        <input type="text" class="form-control" name="name" id="name" autofocus="" value="${serviceInstance.name!serviceInstance.key}" />
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="providerName">${labels["service.provider.name"]}</label>
@@ -51,18 +45,15 @@
                                         <label class="control-label" for="serviceName">${labels["service.name"]}</label>
                                         <input type="text" class="form-control" id="serviceName" value="${(serviceInstance.serviceName)}" disabled />
                                     </div>
+                                    <#include "targets.html" />
                                     <div class="form-group">
-                                        <label class="control-label" for="environmentName">${labels["active"]}</label>
-                                        <a href="#">Activate</a>
+                                        <div class="pull-right">
+                                            <a href="${labels['base.path']}/${salesforceConnector.id}#services" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
+                                            <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="form-group col-md-4"></div>
-                                <div class="form-group">
-                                    <div class="pull-right">
-                                        <a href="${labels['base.path']}/${salesforceConnector.id}#services" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
-                                    </div>
-                                </div>
+                                <div class="col-md-4"></div>
 
                             </div>
 
@@ -78,33 +69,27 @@
 
                         <br>
 
-                        <div class="col-md-3"></div>
+                        <div class="col-md-4"></div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
 
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <dl class="dl-vertical">
-                                    <dt>${labels["instance.name"]}</dt>
-                                    <dd>${serviceInstance.name!serviceInstance.key}&emsp;</dd>
-                                    <hr>
-                                    <dt>${labels["service.provider.name"]}</dt>
-                                    <dd>${(serviceInstance.providerName)!}&emsp;</dd>
-                                    <hr>
-                                    <dt>${labels["service.name"]}</dt>
-                                    <dd>${(serviceInstance.serviceName)}</dd>
-                                    <hr>
-                                    <dt>${labels["active"]}</dt>
-                                    <dd>
-                                        <#if serviceInstance.isActive>
-                                            ${messages["yes"]}
-                                        </#if>
-                                        <#if ! serviceInstance.isActive>
-                                            ${messages["no"]}
-                                        </#if>
-                                        &emsp;
-                                    </dd>
-                                </dl>
-                            </div>
+                            <dl class="dl-vertical">
+                                <dt>${labels["instance.name"]}</dt>
+                                <dd>${serviceInstance.name!serviceInstance.key}&emsp;</dd>
+                                <hr>
+                                <dt>${labels["service.provider.name"]}</dt>
+                                <dd>${(serviceInstance.providerName)!}&emsp;</dd>
+                                <hr>
+                                <dt>${labels["service.name"]}</dt>
+                                <dd>${(serviceInstance.serviceName)}</dd>
+                                <#include "targets.html" />
+                                <hr>
+                                <dt>${messages["added.on"]}</dt>
+                                <dd>${(serviceInstance.addedOn?date?string.iso)!}</dd>
+                                <hr>
+                                <dt>${messages["updated.on"]}</dt>
+                                <dd>${(serviceInstance.updatedOn?date?string.iso)!}</dd>
+                            </dl>
 
                             <br>
 
@@ -116,7 +101,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3"></div>
+                        <div class="col-md-4"></div>
 
                     </div>
 

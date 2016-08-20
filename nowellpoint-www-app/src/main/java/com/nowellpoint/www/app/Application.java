@@ -209,7 +209,7 @@ public class Application implements SparkApplication {
         delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
         get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
-        get(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.getSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.viewSalesforceConnector);
         post(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.updateSalesforceConnector);
         delete(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.deleteSalesforceConnector);
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, salesforceConnectorController.editSalesforceConnector);
@@ -220,10 +220,11 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key"), salesforceConnectorController.updateEnvironment);
         delete(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key"), salesforceConnectorController.removeEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/test"), salesforceConnectorController.testConnection);        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/add"), salesforceConnectorController.newServiceInstance);       
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/catalog"), salesforceConnectorController.newServiceInstance);       
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/view"), salesforceConnectorController.viewServiceInstance);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/edit"), salesforceConnectorController.editServiceInstance);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key"), salesforceConnectorController.addServiceInstance);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/add"), salesforceConnectorController.addServiceInstance);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/update"), salesforceConnectorController.updateServiceInstance);
         
         
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/:environment/fields/:sobject"), salesforceConnectorController.getFields);
@@ -238,7 +239,6 @@ public class Application implements SparkApplication {
         
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.reviewPlans);
         
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/targets"), salesforceConnectorController.getTargets);
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.getEventListeners);
         
         

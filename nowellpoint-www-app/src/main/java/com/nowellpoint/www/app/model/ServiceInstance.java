@@ -41,7 +41,7 @@ public class ServiceInstance {
 	private Plan plan;
 	
 	public ServiceInstance() {
-
+		targets = new Targets();
 	}
 
 	public String getName() {

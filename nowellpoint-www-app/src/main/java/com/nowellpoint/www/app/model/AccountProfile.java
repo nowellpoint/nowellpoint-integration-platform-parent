@@ -101,18 +101,18 @@ public class AccountProfile extends Resource {
 	 */
 
 	private String localeSidKey;
+	
+	/**
+	 * 
+	 */
+
+	private String languageSidKey;
 
 	/**
 	 * 
 	 */
 
 	private String emailEncodingKey;
-
-	/**
-	 * 
-	 */
-
-	private String languageLocaleKey;
 
 	/**
 	 * 
@@ -289,20 +289,20 @@ public class AccountProfile extends Resource {
 		this.localeSidKey = localeSidKey;
 	}
 
+	public String getLanguageSidKey() {
+		return languageSidKey;
+	}
+
+	public void setLanguageSidKey(String languageSidKey) {
+		this.languageSidKey = languageSidKey;
+	}
+
 	public String getEmailEncodingKey() {
 		return emailEncodingKey;
 	}
 
 	public void setEmailEncodingKey(String emailEncodingKey) {
 		this.emailEncodingKey = emailEncodingKey;
-	}
-
-	public String getLanguageLocaleKey() {
-		return languageLocaleKey;
-	}
-
-	public void setLanguageLocaleKey(String languageLocaleKey) {
-		this.languageLocaleKey = languageLocaleKey;
 	}
 
 	public Date getLastLoginDate() {
@@ -414,6 +414,16 @@ public class AccountProfile extends Resource {
 	
 	public AccountProfile withMobilePhone(String mobilePhone) {
 		setMobilePhone(mobilePhone);
+		return this;
+	}
+	
+	public AccountProfile withLanguageSidKey(String languageSidKey) {
+		setLanguageSidKey(languageSidKey);
+		return this;
+	}
+	
+	public AccountProfile withLocaleSidKey(String localeSidKey) {
+		setLocaleSidKey(localeSidKey);
 		return this;
 	}
 }

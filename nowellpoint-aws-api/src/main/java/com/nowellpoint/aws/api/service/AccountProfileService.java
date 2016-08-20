@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -78,8 +80,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		AccountProfileDTO resource = findAccountProfileBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));
 		
-		System.out.println(resource.getHasFullAccess());
-		
 		replace(resource);
 
 		hset( resource.getId(), subject, resource );
@@ -91,12 +91,24 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @param subject
 	 * @param resource
 	 * @param eventSource
-	 * @return the created Identity resource
+	 * @return the created AccountProfile resource
 	 */
 	
 	public AccountProfileDTO createAccountProfile(AccountProfileDTO resource) {
 		resource.setUsername(resource.getEmail());
 		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
+		
+		if (resource.getLocaleSidKey() == null) {
+			resource.setLocaleSidKey(Locale.getDefault().toString());
+		}
+		
+		if (resource.getLanguageSidKey() == null) {
+			resource.setLanguageSidKey(Locale.getDefault().toString());
+		}
+		
+		if (resource.getTimeZoneSidKey() == null) {
+			resource.setTimeZoneSidKey(TimeZone.getDefault().getID());
+		}
 		
 		IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
 		
@@ -131,7 +143,6 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		resource.setHref(original.getHref());
 		resource.setEmailEncodingKey(original.getEmailEncodingKey());
 		resource.setIsActive(original.getIsActive());
-		resource.setLocaleSidKey(original.getLocaleSidKey());
 		resource.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		resource.setHasFullAccess(original.getHasFullAccess());
 		
