@@ -208,22 +208,22 @@ public class Application implements SparkApplication {
         post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), accountProfileController.setPrimaryCreditCard);
         delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
-        get(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.getSalesforceConnectors);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.getSalesforceConnector);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.updateSalesforceConnector);
-        delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id"), salesforceConnectorController.deleteSalesforceConnector);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/edit"), salesforceConnectorController.editSalesforceConnector);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/add"), salesforceConnectorController.newEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/view"), salesforceConnectorController.viewEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/edit"), salesforceConnectorController.editEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments"), salesforceConnectorController.addEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.updateEnvironment);
-        delete(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key"), salesforceConnectorController.removeEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/environments/:key/test"), salesforceConnectorController.testConnection);        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/add"), salesforceConnectorController.newServiceInstance);       
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/:key/view"), salesforceConnectorController.viewServiceInstance);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/:key/edit"), salesforceConnectorController.editServiceInstance);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/services/:key"), salesforceConnectorController.addServiceInstance);
+        get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
+        get(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.getSalesforceConnector);
+        post(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.updateSalesforceConnector);
+        delete(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.deleteSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE_EDIT, salesforceConnectorController.editSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENTS_ADD, salesforceConnectorController.newEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/view"), salesforceConnectorController.viewEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/edit"), salesforceConnectorController.editEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments"), salesforceConnectorController.addEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key"), salesforceConnectorController.updateEnvironment);
+        delete(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key"), salesforceConnectorController.removeEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/test"), salesforceConnectorController.testConnection);        
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/add"), salesforceConnectorController.newServiceInstance);       
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/view"), salesforceConnectorController.viewServiceInstance);
+        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/edit"), salesforceConnectorController.editServiceInstance);
+        post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key"), salesforceConnectorController.addServiceInstance);
         
         
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/:environment/fields/:sobject"), salesforceConnectorController.getFields);
@@ -335,7 +335,7 @@ public class Application implements SparkApplication {
     	Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	if (cookie.isPresent()) {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
-    		request.attribute("token", token);
+    		request.attribute("com.nowellpoint.auth.token", token);
     		
     		AccountProfile account = accountProfileService
     				.getMyAccountProfile(new GetMyAccountProfileRequest()

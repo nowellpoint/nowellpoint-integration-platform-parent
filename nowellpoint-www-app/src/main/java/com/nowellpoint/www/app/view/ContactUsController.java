@@ -39,10 +39,7 @@ public class ContactUsController extends AbstractController {
     		body.put(param, request.queryParams(param));
     	});
     	
-    	logger.info(body.toString());
-    	
     	HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-    			.header("x-api-key", System.getenv("NCS_API_KEY"))
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
     			.path("contact")
 				.parameter("leadSource", request.queryParams("leadSource"))

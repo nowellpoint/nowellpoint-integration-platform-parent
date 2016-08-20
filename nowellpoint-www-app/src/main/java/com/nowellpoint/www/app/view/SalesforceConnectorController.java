@@ -582,7 +582,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("mode", "view");
 		model.put("serviceInstance", serviceInstance);
 		
-		return render(request, model, "secure/".concat(serviceInstance.getConfigurationPage()));
+		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
 	};
 	
 	/**
@@ -626,7 +626,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s", id, key));
 		model.put("serviceInstance", serviceInstance);
 		
-		return render(request, model, "secure/".concat(serviceInstance.getConfigurationPage()));
+		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
 	};
 	
 	/**

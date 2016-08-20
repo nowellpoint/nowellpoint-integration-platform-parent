@@ -58,7 +58,7 @@ abstract class AbstractController {
 	}
 	
 	protected Token getToken(Request request) {
-		Token token = request.attribute("token");
+		Token token = request.attribute("com.nowellpoint.auth.token");
 		return token;
 	}
 	
@@ -68,7 +68,6 @@ abstract class AbstractController {
 			Template template = configuration.getTemplate(modelAndView.getViewName());
 			Environment environment = template.createProcessingEnvironment(modelAndView.getModel(), output);
 			environment.setLocale(locale);
-			//environment.setNumberFormat("0.####");
 			environment.process();
 			output.flush();
 		} catch (Exception e) {
@@ -82,7 +81,7 @@ abstract class AbstractController {
 		return request.attribute("account");
 	}
 	
-	public String render(Request request, Map<String,Object> model, String templateName) {
+	protected Locale getDefaultLocale(Request request) {
 		AccountProfile accountProfile = getAccount(request);
 		
 		Locale locale = null;
@@ -91,10 +90,14 @@ abstract class AbstractController {
 		} else {
 			locale = configuration.getLocale();
 		}
-		
+		return locale;
+	}
+	
+	protected String render(Request request, Map<String,Object> model, String templateName) {		
+		Locale locale = getDefaultLocale(request);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-        model.put("account", accountProfile);
+        model.put("account", getAccount(request));
         return buildTemplate(locale, new ModelAndView(model, templateName));
     }
 }

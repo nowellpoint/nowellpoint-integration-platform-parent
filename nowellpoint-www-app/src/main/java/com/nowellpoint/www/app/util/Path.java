@@ -8,6 +8,8 @@ public class Path {
 	 *
 	 */
 	
+	public static final String APPLICATION_CONTEXT = "app/%s";
+	
 	public static class Route {
 		public static final String INDEX = "/";
 		public static final String LOGIN = "/login";
@@ -17,20 +19,24 @@ public class Path {
 		public static final String SERVICES = "/services";
 		public static final String HEALTH_CHECK = "/healthcheck";
 		public static final String VERIFY_EMAIL = "/verify-email";
-		public static final String START = "/app/start";
-		public static final String DASHBOARD = "/app/dashboard";
-		public static final String NOTIFICATIONS = "/app/notifications";
-		public static final String SETUP = "/app/setup";
-		public static final String APPLICATIONS = "/app/applications";
-		public static final String PROJECTS = "/app/projects";
-		public static final String PROVIDERS = "/app/providers";
-		public static final String CONNECTORS_SALESFORCE = "/app/connectors/salesforce";
-		//public static final String CONNECTORS_SALESFORCE = "/app/connectors/salesforce/:id";
-		public static final String SALESFORCE_OAUTH = "/app/salesforce/oauth";
-		public static final String ACCOUNT_PROFILE = "/app/account-profile/:id";
-		public static final String ACCOUNT_PROFILE_ADDRESS = "/app/account-profile/:id/address";
-		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = "/app/account-profile/:id/payment-methods";
-		public static final String ADMINISTRATION = "/app/administration";
+		public static final String START = String.format(APPLICATION_CONTEXT, "/start");
+		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "/dashboard");
+		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "/notifications");
+		public static final String SETUP = String.format(APPLICATION_CONTEXT, "/setup");
+		public static final String APPLICATIONS = String.format(APPLICATION_CONTEXT, "/applications");
+		public static final String PROJECTS = String.format(APPLICATION_CONTEXT, "/projects");
+		public static final String PROVIDERS = String.format(APPLICATION_CONTEXT, "/providers");
+		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "/connectors/salesforce");
+		public static final String CONNECTORS_SALESFORCE = String.format(APPLICATION_CONTEXT, "/connectors/salesforce/:id");
+		public static final String CONNECTORS_SALESFORCE_EDIT = String.format(APPLICATION_CONTEXT, "/connectors/salesforce/:id/edit");
+		public static final String CONNECTORS_SALESFORCE_ENVIRONMENTS_ADD = String.format(APPLICATION_CONTEXT, "/connectors/salesforce/:id/environments/add");
+		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "/salesforce/oauth");
+		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "/account-profile/:id");
+		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "/account-profile/:id/address");
+		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "/account-profile/:id/payment-methods");
+		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "/administration");
+		
+		
 	}
 
 	public static class Template {
@@ -40,33 +46,33 @@ public class Path {
 		public static final String CONTACT_US = "contact.html";
 		public static final String SERVICES = "services.html";
 		public static final String VERIFY_EMAIL = "verify-email.html";
-		public static final String START = "secure/start.html";
-		public static final String DASHBOARD = "secure/dashboard.html";
-		public static final String SETUP = "secure/setup.html";
-		public static final String APPLICATION = "secure/application.html";
-		public static final String APPLICATION_EDIT = "secure/application-edit.html";
-		public static final String APPLICATIONS_LIST = "secure/application-list.html";
-		public static final String PROJECT = "secure/project.html";
-		public static final String PROJECT_LIST = "secure/project-list.html";
-		public static final String SERVICE_CATALOG = "secure/service-catalog.html";
-		public static final String REVIEW_SERVICE_PLANS = "secure/review-service-plans.html";
-		public static final String QUERY_EDIT = "secure/query-edit.html";
-		public static final String SALESFORCE_OUTBOUND_MESSAGE = "secure/salesforce-outbound-messages.html";
-		public static final String ENVIRONMENT = "secure/environment.html";
-		public static final String ENVIRONMENTS = "secure/environments.html";
-		public static final String SALESFORCE_CONNECTOR = "secure/salesforce-connector.html";
-		public static final String SALESFORCE_CONNECTOR_EDIT = "secure/salesforce-connector-edit.html";
-		public static final String SALESFORCE_CONNECTORS_LIST = "secure/salesforce-connectors-list.html";
-		public static final String EVENT_LISTENERS = "secure/event-listeners.html";
-		public static final String TARGETS = "secure/targets.html";
-		public static final String SALESFORCE_OAUTH = "secure/salesforce-callback.html";
-		public static final String ADMINISTRATION_HOME = "secure/administration-home.html";
-		public static final String CACHE_MANAGER = "secure/cache.html";
-		public static final String PROPERTY_MANAGER = "secure/properties-list.html";
-		public static final String ACCOUNT_PROFILE = "secure/account-profile.html";
-		public static final String ACCOUNT_PROFILE_EDIT = "secure/account-profile-edit.html";
-		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = "secure/account-profile-address-edit.html";
-		public static final String ACCOUNT_PROFILE_PAYMENT_METHOD = "secure/payment-method.html";
-		public static final String NOTIFICATIONS = "secure/notification-list.html";
+		public static final String START = String.format(APPLICATION_CONTEXT, "/start.html");
+		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "/dashboard.html");
+		public static final String SETUP = String.format(APPLICATION_CONTEXT, "/setup.html");
+		public static final String APPLICATION = String.format(APPLICATION_CONTEXT, "/application.html");
+		public static final String APPLICATION_EDIT = String.format(APPLICATION_CONTEXT, "/application-edit.html");
+		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "/application-list.html");
+		public static final String PROJECT = String.format(APPLICATION_CONTEXT, "/project.html");
+		public static final String PROJECT_LIST = String.format(APPLICATION_CONTEXT, "/project-list.html");
+		public static final String SERVICE_CATALOG = String.format(APPLICATION_CONTEXT, "/service-catalog.html");
+		public static final String REVIEW_SERVICE_PLANS = String.format(APPLICATION_CONTEXT, "/review-service-plans.html");
+		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "/query-edit.html");
+		public static final String SALESFORCE_OUTBOUND_MESSAGE = String.format(APPLICATION_CONTEXT, "/salesforce-outbound-messages.html");
+		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "/environment.html");
+		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "/environments.html");
+		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "/salesforce-connector.html");
+		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "/salesforce-connector-edit.html");
+		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "/salesforce-connectors-list.html");
+		public static final String EVENT_LISTENERS = String.format(APPLICATION_CONTEXT, "/event-listeners.html");
+		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "/targets.html");
+		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "/salesforce-callback.html");
+		public static final String ADMINISTRATION_HOME = String.format(APPLICATION_CONTEXT, "/administration-home.html");
+		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "/cache.html");
+		public static final String PROPERTY_MANAGER = String.format(APPLICATION_CONTEXT, "/properties-list.html");
+		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "/account-profile.html");
+		public static final String ACCOUNT_PROFILE_EDIT = String.format(APPLICATION_CONTEXT, "/account-profile-edit.html");
+		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = String.format(APPLICATION_CONTEXT, "/account-profile-address-edit.html");
+		public static final String ACCOUNT_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "/payment-method.html");
+		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "/notification-list.html");
 	}
 }
