@@ -364,6 +364,8 @@ public class SalesforceConnectorController extends AbstractController {
 		String name = request.queryParams("name");
 		String tag = request.queryParams("tag");
 		String bucketName = request.queryParams("bucketName");
+		String awsAccessKey = request.queryParams("awsAccessKey");
+		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
 		
 		PostRequest httpRequest = RestResource.post(API_ENDPOINT)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -385,6 +387,14 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		if (bucketName != null) {
 			httpRequest.parameter("bucketName", bucketName);
+		}
+		
+		if (awsAccessKey != null) {
+			httpRequest.parameter("awsAccessKey", awsAccessKey);
+		}
+		
+		if (awsSecretAccessKey != null) {
+			httpRequest.parameter("awsSecretAccessKey", awsSecretAccessKey);
 		}
 				
 		HttpResponse httpResponse = httpRequest.execute();

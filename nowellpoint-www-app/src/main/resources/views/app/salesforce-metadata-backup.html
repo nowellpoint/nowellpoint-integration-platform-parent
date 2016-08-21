@@ -43,7 +43,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="serviceName">${labels["service.name"]}</label>
-                                        <input type="text" class="form-control" id="serviceName" value="${(serviceInstance.serviceName)}" disabled />
+                                        <input type="text" class="form-control" id="serviceName" value="${(serviceInstance.serviceName)!}" disabled />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="tag">${labels["tag"]}</label>
+                                        <input type="text" class="form-control" name="tag" id="tag" value="${(serviceInstance.tag)!}" />
                                     </div>
                                     <#include "targets.html" />
                                     <div class="form-group">
@@ -81,7 +85,10 @@
                                 <dd>${(serviceInstance.providerName)!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["service.name"]}</dt>
-                                <dd>${(serviceInstance.serviceName)}</dd>
+                                <dd>${(serviceInstance.serviceName)!}&emsp;</dd>
+                                <hr>
+                                <dt>${labels["tag"]}</dt>
+                                <dd>${(serviceInstance.tag)!}&emsp;</dd>
                                 <#include "targets.html" />
                                 <hr>
                                 <dt>${messages["added.on"]}</dt>

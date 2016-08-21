@@ -92,7 +92,14 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
 	private static final String ACCESS_TOKEN_PROPERTY = "access.token";
 	private static final String REFRESH_TOKEN_PROPERTY = "refresh.token";
+	private static final String AWS_ACCESS_KEY_PROPERTY = "aws.access.key";
+	private static final String AWS_SECRET_ACCESS_KEY_PROPERTY = "aws.secret.access.key";
 	private static final String SECURITY_TOKEN_PARAM = "securityToken";
+	private static final String NAME_PARAM = "name";
+	private static final String TAG_PARAM = "tag";
+	private static final String BUCKET_NAME_PARAM = "bucketName";
+	private static final String AWS_ACCESS_KEY_PARAM = "awsAccessKey";
+	private static final String AWS_SECRET_ACCESS_KEY_PARAM = "awsSecretAccessKey";
 	
 	/**************************************************************************************************************************
 	 * 
@@ -704,6 +711,37 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setAddedOn(original.getAddedOn());
 		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
 		
+		Optional<SimpleStorageService> simpleStoreageService = Optional.of(serviceInstance)
+				.map(ServiceInstanceDTO::getTargets)
+				.map(Targets::getSimpleStorageService);
+		
+		if (simpleStoreageService.isPresent()) {
+			List<UserProperty> properties = new ArrayList<UserProperty>();
+			
+			UserProperty awsAccessKey = new UserProperty();
+			awsAccessKey.setSubject(serviceInstance.getKey());
+			awsAccessKey.setKey(AWS_ACCESS_KEY_PROPERTY);
+			awsAccessKey.setValue(simpleStoreageService.get().getAwsAccessKey());
+			awsAccessKey.setLastModifiedBy(getSubject());
+			awsAccessKey.setLastModifiedDate(Date.from(Instant.now()));
+			
+			properties.add(awsAccessKey);
+			
+			UserProperty awsSecretAccessKey = new UserProperty();
+			awsSecretAccessKey.setSubject(serviceInstance.getKey());
+			awsSecretAccessKey.setKey(AWS_SECRET_ACCESS_KEY_PROPERTY);
+			awsSecretAccessKey.setValue(simpleStoreageService.get().getAwsSecretAccessKey());
+			awsSecretAccessKey.setLastModifiedBy(getSubject());
+			awsSecretAccessKey.setLastModifiedDate(Date.from(Instant.now()));
+			
+			properties.add(awsSecretAccessKey);
+			
+			dynamoDBMapper.batchSave(properties);
+			
+			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(null);
+			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(null);
+		}
+		
 		resource.addServiceInstance(serviceInstance);
 		
 		updateSalesforceConnector(id, resource);
@@ -740,15 +778,17 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		ServiceInstanceDTO serviceInstance = query.get();
 		
-		if (parameters.containsKey("name")) {
-			serviceInstance.setName(parameters.getFirst("name"));
+		System.out.println("tag: " + parameters.getFirst(TAG_PARAM));
+		
+		if (parameters.containsKey(NAME_PARAM)) {
+			serviceInstance.setName(parameters.getFirst(NAME_PARAM));
 		}
 		
-		if (parameters.containsKey("tag")) {
-			serviceInstance.setTag(parameters.getFirst("tag"));
+		if (parameters.containsKey(TAG_PARAM)) {
+			serviceInstance.setTag(parameters.getFirst(TAG_PARAM));
 		}
 		
-		if (parameters.containsKey("bucketName") || parameters.containsKey("awsAccessKey") || parameters.containsKey("awsSecretAccessKey")) {
+		if (parameters.containsKey(BUCKET_NAME_PARAM) || parameters.containsKey(AWS_ACCESS_KEY_PARAM) || parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
 			if (serviceInstance.getTargets() == null) {
 				serviceInstance.setTargets(new Targets());
 			}
@@ -757,16 +797,16 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			}
 		}
 		
-		if (parameters.containsKey("bucketName")) {
-			serviceInstance.getTargets().getSimpleStorageService().setBucketName(parameters.getFirst("bucketName"));
+		if (parameters.containsKey(BUCKET_NAME_PARAM)) {
+			serviceInstance.getTargets().getSimpleStorageService().setBucketName(parameters.getFirst(BUCKET_NAME_PARAM));
 		}
 		
-		if (parameters.containsKey("awsAccessKey")) {
-			
+		if (parameters.containsKey(AWS_ACCESS_KEY_PARAM)) {
+			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(parameters.getFirst(AWS_ACCESS_KEY_PARAM));
 		}
 		
-		if (parameters.containsKey("awsSecretAccessKey")) {
-			
+		if (parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
+			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(parameters.getFirst(AWS_SECRET_ACCESS_KEY_PARAM));
 		}
 		
 		updateServiceInstance(id, key, serviceInstance);
