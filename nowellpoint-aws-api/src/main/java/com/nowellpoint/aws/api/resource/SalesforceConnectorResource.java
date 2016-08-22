@@ -30,7 +30,6 @@ import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.aws.api.model.ServiceProvider;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
@@ -342,23 +341,6 @@ public class SalesforceConnectorResource {
 		try {
 			resource = salesforceConnectorService.addEventListeners( new Id(id), key, eventListeners);
 		} catch (Exception e) {
-			throw new BadRequestException(e.getMessage());
-		}
-		
-		return Response.ok(resource)
-				.build(); 
-	}
-	
-	@POST
-	@Path("salesforce/{id}/service/{key}/targets")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addTargets(@PathParam(value="id") String id, @PathParam(value="key") String key, Targets targets) {
-				
-		SalesforceConnectorDTO resource = null;
-		try {
-			resource = salesforceConnectorService.addTargets( new Id(id), key, targets);
-		} catch (UnsupportedOperationException | IllegalArgumentException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		

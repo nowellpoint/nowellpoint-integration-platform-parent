@@ -71,4 +71,29 @@ public class UserProperty {
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
+	
+	public UserProperty withSubject(String subject) {
+		setSubject(subject);
+		return this;
+	}
+	
+	public UserProperty withKey(String key) {
+		setKey(key);
+		return this;
+	}
+	
+	public UserProperty withValue(String value) {
+		setValue(value);
+		return this;
+	}
+	
+	public UserProperty withLastModifiedBy(String lastModifiedBy) {
+		setLastModifiedBy(lastModifiedBy);
+		return this;
+	}
+	
+	public UserProperty withLastModifiedDate(Date lastModifiedDate) {
+		setLastModifiedDate(lastModifiedDate);
+		return this;
+	}
 }

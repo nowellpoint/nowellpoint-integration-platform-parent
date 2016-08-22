@@ -22,8 +22,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
@@ -43,9 +41,9 @@ import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.SimpleStorageService;
 import com.nowellpoint.aws.api.model.Targets;
+import com.nowellpoint.aws.api.model.dynamodb.UserProperties;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.Client;
@@ -81,8 +79,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	private SalesforceService salesforceService;
 	
 	private static final AmazonS3 s3Client = new AmazonS3Client();
-	
-	private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	private static final String IS_ACTIVE = "isActive";
 	private static final String API_VERSION = "apiVersion";
@@ -190,25 +186,25 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
-		UserProperty accessTokenProperty = new UserProperty();
-		accessTokenProperty.setSubject(environment.getKey());
-		accessTokenProperty.setKey(ACCESS_TOKEN_PROPERTY);
-		accessTokenProperty.setValue(token.getAccessToken());
-		accessTokenProperty.setLastModifiedBy(getSubject());
-		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		UserProperty accessTokenProperty = new UserProperty()
+				.withSubject(environment.getKey())
+				.withKey(ACCESS_TOKEN_PROPERTY)
+				.withValue(token.getAccessToken())
+				.withLastModifiedBy(getSubject())
+				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(accessTokenProperty);
 		
-		UserProperty refreshTokenProperty = new UserProperty();
-		refreshTokenProperty.setSubject(environment.getKey());
-		refreshTokenProperty.setKey(REFRESH_TOKEN_PROPERTY);
-		refreshTokenProperty.setValue(token.getRefreshToken());
-		refreshTokenProperty.setLastModifiedBy(getSubject());
-		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		UserProperty refreshTokenProperty = new UserProperty()
+				.withSubject(environment.getKey())
+				.withKey(REFRESH_TOKEN_PROPERTY)
+				.withValue(token.getRefreshToken())
+				.withLastModifiedBy(getSubject())
+				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(refreshTokenProperty);
 		
-		dynamoDBMapper.batchSave(properties);
+		UserProperties.batchSave(properties);
 		
 		return resource;
 	}
@@ -266,34 +262,35 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.getEnvironments().stream().forEach(e -> {
 			
 			if (e.getIsSandbox()) {
-				UserProperty passwordProperty = new UserProperty();
-				passwordProperty.setSubject(e.getKey());
-				passwordProperty.setKey(PASSWORD);
+				UserProperty passwordProperty = new UserProperty()
+						.withSubject(e.getKey())
+						.withKey(PASSWORD);
 				
 				properties.add(passwordProperty);
 				
-				UserProperty securityTokenProperty = new UserProperty();
-				securityTokenProperty.setSubject(e.getKey());
-				securityTokenProperty.setKey(SECURITY_TOKEN_PROPERTY);
+				UserProperty securityTokenProperty = new UserProperty()
+						.withSubject(e.getKey())
+						.withKey(SECURITY_TOKEN_PROPERTY);
 				
 				properties.add(securityTokenProperty);
+				
 			} else {
-				UserProperty accessTokenProperty = new UserProperty();
-				accessTokenProperty.setSubject(resource.getId());
-				accessTokenProperty.setKey(ACCESS_TOKEN_PROPERTY);
+				UserProperty accessTokenProperty = new UserProperty()
+						.withSubject(resource.getId())
+						.withKey(ACCESS_TOKEN_PROPERTY);
 				
 				properties.add(accessTokenProperty);
 				
-				UserProperty refreshTokenProperty = new UserProperty();
-				refreshTokenProperty.setSubject(resource.getId());
-				refreshTokenProperty.setKey(REFRESH_TOKEN_PROPERTY);
+				UserProperty refreshTokenProperty = new UserProperty()
+						.withSubject(resource.getId())
+						.withKey(REFRESH_TOKEN_PROPERTY);
 				
 				properties.add(refreshTokenProperty);
 			}
 			
 		});
 		
-		dynamoDBMapper.batchDelete(properties);
+		UserProperties.batchDelete(properties);
 	}
 	
 	/**************************************************************************************************************************
@@ -373,7 +370,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		List<UserProperty> properties = getEnvironmentUserProperties(environment);
 		
-		dynamoDBMapper.batchSave(properties);
+		UserProperties.batchSave(properties);
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -439,7 +436,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		List<UserProperty> properties = getEnvironmentUserProperties(environment);
 		
-		dynamoDBMapper.batchSave(properties);
+		UserProperties.batchSave(properties);
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -481,10 +478,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 					UserProperty userProperty = new UserProperty();
 					userProperty.setSubject(environment.getKey());
 					
-					DynamoDBQueryExpression<UserProperty> queryExpression = new DynamoDBQueryExpression<UserProperty>()
-							.withHashKeyValues(userProperty);
-					
-					Map<String, UserProperty> properties = dynamoDBMapper.query(UserProperty.class, queryExpression)
+					Map<String, UserProperty> properties = UserProperties.query(userProperty)
 							.stream()
 							.collect(Collectors.toMap(UserProperty::getKey, p -> p));
 
@@ -601,7 +595,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		List<UserProperty> properties = getEnvironmentUserProperties(environment);
 		
-		dynamoDBMapper.batchDelete(properties);
+		UserProperties.batchDelete(properties);
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
@@ -718,25 +712,25 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		if (simpleStoreageService.isPresent()) {
 			List<UserProperty> properties = new ArrayList<UserProperty>();
 			
-			UserProperty awsAccessKey = new UserProperty();
-			awsAccessKey.setSubject(serviceInstance.getKey());
-			awsAccessKey.setKey(AWS_ACCESS_KEY_PROPERTY);
-			awsAccessKey.setValue(simpleStoreageService.get().getAwsAccessKey());
-			awsAccessKey.setLastModifiedBy(getSubject());
-			awsAccessKey.setLastModifiedDate(Date.from(Instant.now()));
+			UserProperty awsAccessKey = new UserProperty()
+					.withSubject(serviceInstance.getKey())
+					.withKey(AWS_ACCESS_KEY_PROPERTY)
+					.withValue(simpleStoreageService.get().getAwsAccessKey())
+					.withLastModifiedBy(getSubject())
+					.withLastModifiedDate(Date.from(Instant.now()));
 			
 			properties.add(awsAccessKey);
 			
-			UserProperty awsSecretAccessKey = new UserProperty();
-			awsSecretAccessKey.setSubject(serviceInstance.getKey());
-			awsSecretAccessKey.setKey(AWS_SECRET_ACCESS_KEY_PROPERTY);
-			awsSecretAccessKey.setValue(simpleStoreageService.get().getAwsSecretAccessKey());
-			awsSecretAccessKey.setLastModifiedBy(getSubject());
-			awsSecretAccessKey.setLastModifiedDate(Date.from(Instant.now()));
+			UserProperty awsSecretAccessKey = new UserProperty()
+					.withSubject(serviceInstance.getKey())
+					.withKey(AWS_SECRET_ACCESS_KEY_PROPERTY)
+					.withValue(simpleStoreageService.get().getAwsSecretAccessKey())
+					.withLastModifiedBy(getSubject())
+					.withLastModifiedDate(Date.from(Instant.now()));
 			
 			properties.add(awsSecretAccessKey);
 			
-			dynamoDBMapper.batchSave(properties);
+			UserProperties.batchSave(properties);
 			
 			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(null);
 			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(null);
@@ -777,8 +771,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		}
 		
 		ServiceInstanceDTO serviceInstance = query.get();
-		
-		System.out.println("tag: " + parameters.getFirst(TAG_PARAM));
 		
 		if (parameters.containsKey(NAME_PARAM)) {
 			serviceInstance.setName(parameters.getFirst(NAME_PARAM));
@@ -835,47 +827,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		return resource;
 	}
 	
-//	public SalesforceConnectorDTO addEnvironments(String subject, String id, String key, Set<EnvironmentDTO> environments) {
-//		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-//		resource.setSubject(subject);
-//		
-//		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
-//				.stream()
-//				.filter(p -> p.getKey().equals(key))
-//				.findFirst();
-//		
-//		if (serviceInstance.isPresent()) {
-//			Map<Integer,Environment> map = serviceInstance.get().getEnvironments().stream().collect(Collectors.toMap(p -> p.getIndex(), (p) -> p));
-//			serviceInstance.get().getEnvironments().clear();
-//			serviceInstance.get().setActiveEnvironments(new Long(0));
-//			AtomicInteger index = new AtomicInteger();
-//			environments.stream().sorted((p1,p2) -> p2.getIndex().compareTo(p1.getIndex())).forEach(e -> {
-//				Environment environment = null;
-//				if (map.containsKey(e.getIndex())) {
-//					environment = map.get(e.getIndex());
-//				} else {
-//				    environment = new Environment();
-//				    environment.setLocked(Boolean.FALSE);
-//				    environment.setIndex(index.get());
-//				}
-//				environment.setName(e.getName());
-//				environment.setActive(e.getActive());
-//				environment.setLabel(e.getLabel());
-//				AtomicLong activeEnvironments = new AtomicLong(serviceInstance.get().getActiveEnvironments());
-//				if (e.getActive()) {
-//					activeEnvironments.incrementAndGet();
-//				}
-//				serviceInstance.get().setActiveEnvironments(activeEnvironments.get());
-//				serviceInstance.get().getEnvironments().add(environment);
-//				index.incrementAndGet();
-//			});
-//		}
-//		
-//		updateSalesforceConnector(resource);
-//		
-//		return resource;
-//		
-//	}
+
 //	
 //	public SalesforceConnectorDTO addEnvironmentVariables(String subject, String id, String key, String environmentName, Set<EnvironmentVariableDTO> environmentVariables) {
 //		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
@@ -968,83 +920,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		return resource;
 	}
-	
-	/**************************************************************************************************************************
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @param targets
-	 * @return
-	 * 
-	 * 
-	 *************************************************************************************************************************/
-	
-	public SalesforceConnectorDTO addTargets(Id id, String key, Targets targets) {		
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
-		
-		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
-				.stream()
-				.filter(p -> p.getKey().equals(key))
-				.findFirst();
-		
-		if (serviceInstance.isPresent()) {
-			
-			serviceInstance.get().setTargets(targets);
-			
-			updateSalesforceConnector(id, resource);
-		}
-		
-		return resource;
-	}
-	
-//	public SalesforceConnectorDTO testConnection(String subject, String id, String key, String environmentName) {
-//		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
-//		resource.setSubject(subject);
-//
-//		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
-//				.stream()
-//				.filter(p -> p.getKey().equals(key))
-//				.findFirst();
-//
-//		if (serviceInstance.isPresent()) {
-//			
-//			Optional<Environment> environment = serviceInstance.get()
-//					.getEnvironments()
-//					.stream()
-//					.filter(p -> p.getName().equals(environmentName))
-//					.findFirst();
-//			
-//			if (environment.isPresent()) {
-//				
-//				try {
-//				
-//					PartnerConnection connection = login(environment.get());
-//					
-//					environment.get().setEndpoint(connection.getConfig().getServiceEndpoint());
-//					environment.get().setOrganization(connection.getUserInfo().getOrganizationId());
-//					environment.get().setTest(Boolean.TRUE);
-//					environment.get().setTestMessage("Success!");
-//					
-//				} catch (ConnectionException e) {
-//					if (e instanceof LoginFault) {
-//						LoginFault loginFault = (LoginFault) e;
-//						environment.get().setTest(Boolean.FALSE);
-//						environment.get().setTestMessage(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
-//					} else {
-//						throw new InternalServerErrorException(e.getMessage());
-//					}
-//				} catch (IllegalArgumentException e) {
-//					environment.get().setTest(Boolean.FALSE);
-//					environment.get().setTestMessage("Missing connection enviroment variables");
-//				} finally {
-//					updateSalesforceConnector(resource);
-//				}
-//			}
-//		}
-//		
-//		return resource;
-//	}
 	
 //	public SalesforceConnectorDTO describeGlobal(String subject, String id, String key) {
 //		SalesforceConnectorDTO resource = findSalesforceConnector(subject, id);
@@ -1346,21 +1221,21 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	private List<UserProperty> getEnvironmentUserProperties(EnvironmentDTO environment) {
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
-		UserProperty accessTokenProperty = new UserProperty();
-		accessTokenProperty.setSubject(environment.getKey());
-		accessTokenProperty.setKey(PASSWORD);
-		accessTokenProperty.setValue(environment.getPassword());
-		accessTokenProperty.setLastModifiedBy(getSubject());
-		accessTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		UserProperty accessTokenProperty = new UserProperty()
+				.withSubject(environment.getKey())
+				.withKey(PASSWORD)
+				.withValue(environment.getPassword())
+				.withLastModifiedBy(getSubject())
+				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(accessTokenProperty);
 		
-		UserProperty refreshTokenProperty = new UserProperty();
-		refreshTokenProperty.setSubject(environment.getKey());
-		refreshTokenProperty.setKey(SECURITY_TOKEN_PROPERTY);
-		refreshTokenProperty.setValue(environment.getSecurityToken());
-		refreshTokenProperty.setLastModifiedBy(getSubject());
-		refreshTokenProperty.setLastModifiedDate(Date.from(Instant.now()));
+		UserProperty refreshTokenProperty = new UserProperty()
+				.withSubject(environment.getKey())
+				.withKey(SECURITY_TOKEN_PROPERTY)
+				.withValue(environment.getSecurityToken())
+				.withLastModifiedBy(getSubject())
+				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(refreshTokenProperty);
 		

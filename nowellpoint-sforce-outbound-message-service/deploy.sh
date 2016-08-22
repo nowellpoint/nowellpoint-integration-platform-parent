@@ -1,7 +1,7 @@
 mvn clean install
 
-aws s3 cp target/nowellpoint-sforce-outbound-message-service-0.0.2-SNAPSHOT.jar \
-s3://aws-microservices/nowellpoint-sforce-outbound-message-service-0.0.2-SNAPSHOT.jar
+aws s3 cp target/nowellpoint-sforce-outbound-message-service-0.0.5-SNAPSHOT.jar \
+s3://aws-microservices/nowellpoint-sforce-outbound-message-service-0.0.5-SNAPSHOT.jar
 
 aws lambda update-function-configuration \
 --function-name SalesforceOutboundMessageConsumer \
@@ -30,5 +30,5 @@ aws lambda update-function-configuration \
 aws lambda update-function-code \
 --function-name SalesforceOutboundMessageHandler \
 --s3-bucket aws-microservices \
---s3-key nowellpoint-sforce-outbound-message-service-0.0.2-SNAPSHOT.jar \
+--s3-key nowellpoint-sforce-outbound-message-service-0.0.5-SNAPSHOT.jar \
 --no-publish

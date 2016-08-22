@@ -2,4 +2,4 @@ mvn -f /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpo
 mvn -f /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-data/pom.xml clean deploy -DskipTests
 mvn -f /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sforce/pom.xml clean deploy -DskipTests
 mvn -f /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-api/pom.xml clean package -DskipTests
-java -jar target/nowellpoint-aws-api-0.0.4-SNAPSHOT-swarm.jar
+java -jar target/nowellpoint-aws-api-0.0.5-SNAPSHOT-swarm.jar
