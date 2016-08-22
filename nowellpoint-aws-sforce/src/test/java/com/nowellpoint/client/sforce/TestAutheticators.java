@@ -10,7 +10,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,9 +25,13 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpRequestException;
@@ -67,6 +73,15 @@ public class TestAutheticators {
 			
 			Client client = new Client();
 			
+			List<PartETag> partETags = new ArrayList<PartETag>();
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
+			
+			String keyName = String.format("%s/%s", response.getIdentity().getOrganizationId(), sdf.format(Date.from(Instant.now())));
+			
+			InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest("aws-microservices", keyName);
+			InitiateMultipartUploadResult initResponse = s3client.initiateMultipartUpload(initRequest);
+			
 			DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
 					.setAccessToken(response.getToken().getAccessToken())
 					.setSobjectsUrl(response.getIdentity().getUrls().getSobjects());
@@ -75,16 +90,21 @@ public class TestAutheticators {
 			
 			ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
 			
+			int i = 0;
 			for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
 				System.out.println(sobject.getName());
 				executor.submit(new Task(
 						response.getToken().getAccessToken(),
 						response.getIdentity().getUrls().getSobjects(),
 						sobject.getName(),
-						response.getIdentity().getOrganizationId(),
 						"aws-microservices",
 						s3client,
-						client));
+						client,
+						keyName,
+						initResponse.getUploadId(),
+						i));
+				
+				i++;
 				
 			}
 			
@@ -106,19 +126,23 @@ class Task implements Callable<Void> {
 	private String sessionId;
 	private String sobjectsUrl;
 	private String sobject;
-	private String organizationId;
 	private String bucketName;
 	private AmazonS3 s3client;
 	private Client client;
+	private String key;
+	private String uploadId;
+	private Integer partNumber;
 	
-	public Task(String sessionId, String sobjectsUrl, String sobject, String organizationId, String bucketName, AmazonS3 s3client, Client client) {
+	public Task(String sessionId, String sobjectsUrl, String sobject, String bucketName, AmazonS3 s3client, Client client, String key, String uploadId, Integer partNumber) {
 		this.sessionId = sessionId;
 		this.sobjectsUrl = sobjectsUrl;
 		this.sobject = sobject;
-		this.organizationId = organizationId;
 		this.bucketName = bucketName;
 		this.s3client = s3client;
 		this.client = client;
+		this.key = key;
+		this.uploadId = uploadId;
+		this.partNumber = partNumber;
 	}
 
 	@Override
@@ -133,18 +157,18 @@ class Task implements Callable<Void> {
 		DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 
 		byte[] input = new ObjectMapper().writeValueAsBytes(describeSobjectResult);
+		
+		UploadPartRequest uploadRequest = new UploadPartRequest()
+	            .withBucketName(bucketName)
+	            .withKey(key)
+	            .withUploadId(uploadId)
+	            .withPartNumber(partNumber)
+	            .withInputStream(new ByteArrayInputStream(input))
+	            .withPartSize(input.length);
+		
+		PartETag tag = s3client.uploadPart(uploadRequest).getPartETag();
+		System.out.println(tag);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
-
-		String fileName = String.format("%s/%s/%s", organizationId, sobject, sdf.format(Date.from(Instant.now())));
-
-		ObjectMetadata objectMetadata = new ObjectMetadata();
-	    objectMetadata.setContentLength(input.length);
-	    
-		s3client.putObject(new PutObjectRequest(bucketName, 
-				fileName, 
-				new ByteArrayInputStream(input),
-				objectMetadata));
 		
 	    } catch (AmazonClientException e) {
 	    	//System.out.println(e.getErrorCode());
