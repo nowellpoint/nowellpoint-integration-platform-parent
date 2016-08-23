@@ -14,6 +14,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -36,6 +38,8 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.aws.api.tasks.DescribeSobjectTask;
 
+@Singleton
+@Startup
 public class MetadataBackupService {
 	
 	private static AmazonS3 s3client = new AmazonS3Client();
@@ -49,9 +53,9 @@ public class MetadataBackupService {
 		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-				.setUsername(System.getenv("SALESFORCE_USERNAME"))
-				.setPassword(System.getenv("SALESFORCE_PASSWORD"))
-				.setSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"))
+				.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
+				.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
+				.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
 				.build();
 		
 		try {
