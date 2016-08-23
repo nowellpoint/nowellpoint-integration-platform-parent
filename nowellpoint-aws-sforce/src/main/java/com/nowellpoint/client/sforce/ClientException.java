@@ -1,6 +1,6 @@
 package com.nowellpoint.client.sforce;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.impl.SalesforceException;
 import com.nowellpoint.client.sforce.model.Error;
 
@@ -12,7 +12,7 @@ public class ClientException extends SalesforceException {
 		super(statusCode, error);
 	}
 	
-	public ClientException(int statusCode, ObjectNode error) {
+	public ClientException(int statusCode, ArrayNode error) {
 		super(statusCode, error);
 	}
 }

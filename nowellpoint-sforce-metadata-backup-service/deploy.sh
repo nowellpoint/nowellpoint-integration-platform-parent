@@ -10,7 +10,7 @@ aws lambda update-function-configuration \
 --runtime java8 \
 --description "Salesforce: Metadata Backup Request Handler" \
 --timeout 180 \
---memory-size 256
+--memory-size 1536
 
 aws lambda update-function-code \
 --function-name SalesforceMetadataBackupRequest \

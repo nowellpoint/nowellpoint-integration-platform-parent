@@ -1,6 +1,6 @@
 package com.nowellpoint.client.sforce.impl;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.Error;
 
 public class SalesforceException extends RuntimeException {
@@ -20,11 +20,12 @@ public class SalesforceException extends RuntimeException {
 		this.errorDescription = error.getErrorDescription();
 	}
 	
-	public SalesforceException(int statusCode, ObjectNode node) {
+	public SalesforceException(int statusCode, ArrayNode node) {
+		//[{"message":"TotalRequests Limit exceeded.","errorCode":"REQUEST_LIMIT_EXCEEDED"}]
 		super();
 		this.statusCode = statusCode;
-		this.error = node.get("errorCode").asText();
-		this.errorDescription = node.get("message").asText();
+		this.error = node.get(0).get("errorCode").asText();
+		this.errorDescription = node.get(0).get("message").asText();
 	}
 
 	public int getStatusCode() {

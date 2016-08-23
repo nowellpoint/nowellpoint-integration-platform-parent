@@ -2,7 +2,7 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -129,10 +129,13 @@ public class Client {
 		
 		DescribeGlobalSobjectsResult result = null;
 		
+		//System.out.println(httpResponse.getStatusCode());
+		//System.out.println(httpResponse.getAsString());
+		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeGlobalSobjectsResult.class);
 		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
 		
 		return result;
@@ -149,7 +152,7 @@ public class Client {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeSobjectResult.class);
 		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ObjectNode.class));
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
 		
 		return result;

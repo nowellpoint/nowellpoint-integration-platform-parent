@@ -1,6 +1,4 @@
-package com.nowellpoint.client.sforce;
-
-import static org.junit.Assert.assertNotNull;
+package com.nowellpoint.aws.api.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -9,15 +7,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import javax.ejb.Schedule;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -27,26 +23,29 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.ClientException;
+import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.aws.api.tasks.DescribeSobjectTask;
 
-public class TestAutheticators {
+public class MetadataBackupService {
 	
 	private static AmazonS3 s3client = new AmazonS3Client();
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	private static Client client = new Client();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
 	private static String bucketName = "nowellpoint-metadata-backups";
-	
-	@BeforeClass
-	public static void init() {
-		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
-	}
-	
-	@Test
-	public void testUsernamePasswordAuthentication() {
-		
+
+	@Schedule(hour="*")
+	public void executeBackups() {
 		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
@@ -58,10 +57,6 @@ public class TestAutheticators {
 		try {
 			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
-			
-			assertNotNull(response.getToken());
-			assertNotNull(response.getIdentity());
-			assertNotNull(response.getIdentity().getAddrCity());
 			
 			long startTime = System.currentTimeMillis();
 			
@@ -86,6 +81,7 @@ public class TestAutheticators {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 	
 	private void processDescribeGlobal(OauthAuthenticationResponse response) throws JsonProcessingException {
@@ -125,7 +121,7 @@ public class TestAutheticators {
 		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
 		
 		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			Future<DescribeSobjectResult> task = executor.submit(new Task(
+			Future<DescribeSobjectResult> task = executor.submit(new DescribeSobjectTask(
 					response.getToken().getAccessToken(),
 					response.getIdentity().getUrls().getSobjects(),
 					sobject.getName(),
@@ -151,32 +147,5 @@ public class TestAutheticators {
 				keyName,
 				new ByteArrayInputStream(bytes),
 				objectMetadata));
-	}
-}
-
-class Task implements Callable<DescribeSobjectResult> {
-	
-	private String sessionId;
-	private String sobjectsUrl;
-	private String sobject;
-	private Client client;
-	
-	public Task(String sessionId, String sobjectsUrl, String sobject, Client client) {
-		this.sessionId = sessionId;
-		this.sobjectsUrl = sobjectsUrl;
-		this.sobject = sobject;
-		this.client = client;
-	}
-
-	@Override
-	public DescribeSobjectResult call() throws Exception {
-		DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-				.withAccessToken(sessionId)
-				.withSobjectsUrl(sobjectsUrl)
-				.withSobject(sobject);
-
-		DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
-
-		return describeSobjectResult;
 	}
 }

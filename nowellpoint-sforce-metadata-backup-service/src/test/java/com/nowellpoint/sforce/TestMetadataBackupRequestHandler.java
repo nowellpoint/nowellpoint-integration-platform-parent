@@ -38,12 +38,12 @@ public class TestMetadataBackupRequestHandler {
 					.authenticate(request);
 			
 			MetadataBackupRequest metadataBackupRequest = new MetadataBackupRequest();
-			metadataBackupRequest.setOrganizationId("00DG0000000kGBrMAM");
+			metadataBackupRequest.setOrganizationId(response.getIdentity().getOrganizationId());
 			metadataBackupRequest.setSobjectsUrl(response.getIdentity().getUrls().getSobjects());
 			metadataBackupRequest.setSessionId(response.getToken().getAccessToken());
 			metadataBackupRequest.setAwsAccessKey(System.getenv("AWS_ACCESS_KEY"));
 			metadataBackupRequest.setAwsSecretAccessKey(System.getenv("AWS_SECRET_ACCESS_KEY"));
-			metadataBackupRequest.setBucketName("aws-microservices");
+			metadataBackupRequest.setBucketName("nowellpoint-metadata-backups");
 			
 			dynamoDBMapper.save(metadataBackupRequest);
 			
