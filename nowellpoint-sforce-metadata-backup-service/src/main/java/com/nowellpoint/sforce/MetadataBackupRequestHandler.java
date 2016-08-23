@@ -118,32 +118,44 @@ public class MetadataBackupRequestHandler {
 		String key = String.format("%s/DescribeSobjectResult-%s", metadataBackupRequest.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
 		
 		System.out.println(key);
+		
+		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
+		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
 				
 		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
 		
-		File file = new File("/tmp/DescribeSobjectResult.json");
-		
 		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			executor.submit(new DescribeSobjectTask(
-					metadataBackupRequest.getSessionId(),
-					metadataBackupRequest.getSobjectsUrl(),
-					sobject.getName(),
-					client,
-					file));
+			Future<DescribeSobjectResult> task = executor.submit(() -> {
+				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+						.withAccessToken(metadataBackupRequest.getSessionId())
+						.withSobjectsUrl(metadataBackupRequest.getSobjectsUrl())
+						.withSobject(sobject.getName());
+
+				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+
+				return describeSobjectResult;
+			});
+			
+			tasks.add(task);
 		}
 		
 		executor.shutdown();
 		executor.awaitTermination(30, TimeUnit.SECONDS);
 		
-		if (file.exists()) {
-			System.out.println("file exists");
-			System.out.println(file.length());
+		for (Future<DescribeSobjectResult> task : tasks) {
+			describeResults.add(task.get());
 		}
+		
+		byte[] bytes = objectMapper.writeValueAsBytes(describeResults);
+		
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setContentLength(bytes.length);
 		
 		s3client.putObject(new PutObjectRequest(
 				metadataBackupRequest.getBucketName(),
 				key,
-				file));
+				new ByteArrayInputStream(bytes),
+				objectMetadata));
 	}
 }
 

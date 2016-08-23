@@ -125,11 +125,16 @@ public class TestAutheticators {
 		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
 		
 		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			Future<DescribeSobjectResult> task = executor.submit(new Task(
-					response.getToken().getAccessToken(),
-					response.getIdentity().getUrls().getSobjects(),
-					sobject.getName(),
-					client));
+			Future<DescribeSobjectResult> task = executor.submit(() -> {
+				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+						.withAccessToken(response.getToken().getAccessToken())
+						.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
+						.withSobject(sobject.getName());
+
+				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+
+				return describeSobjectResult;
+			});
 			
 			tasks.add(task);
 		}

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.MultivaluedMap;
@@ -41,6 +44,7 @@ import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.SimpleStorageService;
 import com.nowellpoint.aws.api.model.Targets;
+import com.nowellpoint.aws.api.model.dynamodb.Callback;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperties;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -57,6 +61,10 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
+import com.sforce.soap.partner.DescribeSObjectResult;
+import com.sforce.soap.partner.Field;
+import com.sforce.soap.partner.fault.InvalidSObjectFault;
+import com.sforce.ws.ConnectionException;
 
 
 /**************************************************************************************************************************
@@ -1127,6 +1135,38 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 //			if (environment.isPresent()) {
 //				
 //				PartnerConnection connection = login(environment.get());
+	
+//	Callback callback = new Callback();
+//	callback.setType(eventListener.getName());
+//	callback.setCreate(eventListener.getCreate());
+//	callback.setUpdate(eventListener.getUpdate());
+//	callback.setDelete(eventListener.getDelete());
+//
+//	try {
+//		
+//		DescribeSObjectResult result = connection.describeSObject(eventListener.getName());
+//		
+//		Field[] fields = result.getFields();
+//		
+//		String queryString = "Select %s From ".concat(eventListener.getName());
+//		
+//		queryString = String.format(queryString, Arrays.asList(fields)
+//				.stream()
+//				.map(field -> field.getName())
+//				.collect(Collectors.joining(", ")));
+//		
+//		callback.setQueryString(queryString);
+//
+//	} catch (ConnectionException e) {
+//		if (e instanceof InvalidSObjectFault) {
+//			InvalidSObjectFault fault = (InvalidSObjectFault) e;
+//			throw new BadRequestException(fault.getExceptionCode().name().concat(": ").concat(fault.getExceptionMessage()));
+//		} else {
+//			throw new InternalServerErrorException(e.getMessage());
+//		}
+//	}
+//	
+//	return callback;
 //				
 //				List<BuildDefaultCallback> tasks = serviceInstance.get()
 //						.getEventListeners()

@@ -29,6 +29,7 @@ import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.ClientException;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
+import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
@@ -36,7 +37,6 @@ import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
-import com.nowellpoint.aws.api.tasks.DescribeSobjectTask;
 
 @Singleton
 @Startup
@@ -125,11 +125,16 @@ public class MetadataBackupService {
 		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
 		
 		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			Future<DescribeSobjectResult> task = executor.submit(new DescribeSobjectTask(
-					response.getToken().getAccessToken(),
-					response.getIdentity().getUrls().getSobjects(),
-					sobject.getName(),
-					client));
+			Future<DescribeSobjectResult> task = executor.submit(() -> {
+				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+						.withAccessToken(response.getToken().getAccessToken())
+						.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
+						.withSobject(sobject.getName());
+
+				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+
+				return describeSobjectResult;
+			});
 			
 			tasks.add(task);
 		}
