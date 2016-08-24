@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.aws.data.mongodb.DateDeserializer;
+import com.nowellpoint.aws.data.mongodb.DateSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceInstance implements Serializable {
@@ -17,8 +21,12 @@ public class ServiceInstance implements Serializable {
 	
 	private String key;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date addedOn;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date updatedOn;
 	
 	private String name;
@@ -44,6 +52,8 @@ public class ServiceInstance implements Serializable {
 	private Targets targets;
 
 	private String configurationPage;
+	
+	private Set<Schedule> schedules;
 	
 	private Plan plan;
 	
@@ -169,6 +179,14 @@ public class ServiceInstance implements Serializable {
 
 	public void setTargets(Targets targets) {
 		this.targets = targets;
+	}
+
+	public Set<Schedule> getSchedules() {
+		return schedules;
+	}
+
+	public void setSchedules(Set<Schedule> schedules) {
+		this.schedules = schedules;
 	}
 
 	public Plan getPlan() {

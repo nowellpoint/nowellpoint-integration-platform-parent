@@ -168,7 +168,7 @@ accepting any such warranty or additional liability.
 END OF TERMS AND CONDITIONS
  */
 
-package com.nowellpoint.aws.data.mongodb.sforce;
+package com.nowellpoint.aws.api.model.sforce;
 
 import java.io.Serializable;
 import java.util.Locale;

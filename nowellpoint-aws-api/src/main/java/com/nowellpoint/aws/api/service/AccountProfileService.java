@@ -43,7 +43,6 @@ import com.nowellpoint.aws.api.util.UserContext;
 import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.aws.tools.TokenParser;
 
 public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
 	
@@ -72,10 +71,10 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @param token
 	 */
 	
-	public void loggedInEvent(@Observes Token token) {
-		String subject = TokenParser.parseToken(System.getProperty(Properties.STORMPATH_API_KEY_SECRET), token.getAccessToken());
-		
+	public void loggedInEvent(@Observes Token token) {		
 		UserContext.setUserContext(token.getAccessToken());
+		
+		String subject = UserContext.getPrincipal().getName();
 		
 		AccountProfileDTO resource = findAccountProfileBySubject(subject);
 		resource.setLastLoginDate(Date.from(Instant.now()));

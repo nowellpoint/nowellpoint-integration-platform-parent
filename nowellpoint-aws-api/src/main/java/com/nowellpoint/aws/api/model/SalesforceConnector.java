@@ -5,11 +5,11 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.SalesforceConnectionCodec;
+import com.nowellpoint.aws.api.model.sforce.Identity;
+import com.nowellpoint.aws.api.model.sforce.Organization;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
-import com.nowellpoint.aws.data.mongodb.sforce.Identity;
-import com.nowellpoint.aws.data.mongodb.sforce.Organization;
 
 @Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)

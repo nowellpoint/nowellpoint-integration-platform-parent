@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.Schedule;
@@ -38,8 +40,6 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 
-@Singleton
-@Startup
 public class MetadataBackupService {
 	
 	private static AmazonS3 s3client = new AmazonS3Client();
@@ -47,45 +47,55 @@ public class MetadataBackupService {
 	private static Client client = new Client();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
 	private static String bucketName = "nowellpoint-metadata-backups";
+	
+	public void processBackups() {
+		ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+		
+		ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
-	@Schedule(hour="*")
-	public void executeBackups() {
-		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
-				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-				.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
-				.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
-				.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
-				.build();
-		
-		try {
-			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
-					.authenticate(request);
+			@Override
+			public void run() {
+				UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
+						.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+						.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+						.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
+						.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
+						.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
+						.build();
+				
+				try {
+					OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
+							.authenticate(request);
+					
+					long startTime = System.currentTimeMillis();
+					
+					System.out.println("starting backups");
+					
+					processDescribeGlobal(response);
+					processDescribeSobject(response);
+					
+					System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
+					
+				} catch (OauthException e) {
+					System.out.println(e.getStatusCode());
+					System.out.println(e.getError());
+					System.out.println(e.getErrorDescription());
+				} catch (ClientException e) {
+					System.out.println(e.getErrorDescription());
+					System.out.println(e.getError());
+					System.out.println(e.getStatusCode());
+				} catch (AmazonClientException | IOException e) {
+			    	System.out.println(e.getMessage());
+			    } catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
 			
-			long startTime = System.currentTimeMillis();
-			
-			processDescribeGlobal(response);
-			processDescribeSobject(response);
-			
-			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
-			
-		} catch (OauthException e) {
-			System.out.println(e.getStatusCode());
-			System.out.println(e.getError());
-			System.out.println(e.getErrorDescription());
-		} catch (ClientException e) {
-			System.out.println(e.getErrorDescription());
-			System.out.println(e.getError());
-			System.out.println(e.getStatusCode());
-		} catch (AmazonClientException | IOException e) {
-	    	System.out.println(e.getMessage());
-	    } catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		}, 0, 1, TimeUnit.HOURS);
 	}
 	
 	private void processDescribeGlobal(OauthAuthenticationResponse response) throws JsonProcessingException {

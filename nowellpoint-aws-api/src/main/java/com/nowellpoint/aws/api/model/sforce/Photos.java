@@ -168,166 +168,43 @@ accepting any such warranty or additional liability.
 END OF TERMS AND CONDITIONS
  */
 
-package com.nowellpoint.aws.data.mongodb.sforce;
+package com.nowellpoint.aws.api.model.sforce;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Urls implements Serializable {
+public class Photos implements Serializable {
 
 	/**
 	 * 
 	 */
 	
-	private static final long serialVersionUID = -329107825780218997L;
+	private static final long serialVersionUID = -9055234826108934569L;
 
-	@JsonProperty("enterprise")
-	private String enterprise;
+	@JsonProperty("picture")
+	private String picture;
 
-	@JsonProperty("metadata")
-	private String metadata;
-
-	@JsonProperty("partner")
-	private String partner;
-
-	@JsonProperty("rest")
-	private String rest;
-
-	@JsonProperty("sobjects")
-	private String sobjects;
-
-	@JsonProperty("search")
-	private String search;
-
-	@JsonProperty("query")
-	private String query;
-
-	@JsonProperty("recent")
-	private String recent;
-
-	@JsonProperty("profile")
-	private String profile;
-
-	@JsonProperty("feeds")
-	private String feeds;
-
-	@JsonProperty("feed_items")
-	private String feedItems;
-
-	@JsonProperty("groups")
-	private String groups;
-
-	@JsonProperty("users")
-	private String users;
+	@JsonProperty("thumbnail")
+	private String thumbnail;
 	
-	public Urls() {
+	public Photos() {
 		
 	}
 
-	public String getEnterprise() {
-		return enterprise;
+	public String getPicture() {
+		return picture;
 	}
 
-	public void setEnterprise(String enterprise) {
-		this.enterprise = enterprise;
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 
-	public String getMetadata() {
-		return metadata;
+	public String getThumbnail() {
+		return thumbnail;
 	}
 
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
-	}
-
-	public String getPartner() {
-		return partner;
-	}
-
-	public void setPartner(String partner) {
-		this.partner = partner;
-	}
-
-	public String getRest() {
-		return rest;
-	}
-
-	public void setRest(String rest) {
-		this.rest = rest;
-	}
-
-	public String getSobjects() {
-		return sobjects;
-	}
-
-	public void setSobjects(String sobjects) {
-		this.sobjects = sobjects;
-	}
-
-	public String getSearch() {
-		return search;
-	}
-
-	public void setSearch(String search) {
-		this.search = search;
-	}
-
-	public String getQuery() {
-		return query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
-	public String getRecent() {
-		return recent;
-	}
-
-	public void setRecent(String recent) {
-		this.recent = recent;
-	}
-
-	public String getProfile() {
-		return profile;
-	}
-
-	public void setProfile(String profile) {
-		this.profile = profile;
-	}
-
-	public String getFeeds() {
-		return feeds;
-	}
-
-	public void setFeeds(String feeds) {
-		this.feeds = feeds;
-	}
-
-	public String getFeedItems() {
-		return feedItems;
-	}
-
-	public void setFeedItems(String feedItems) {
-		this.feedItems = feedItems;
-	}
-
-	public String getGroups() {
-		return groups;
-	}
-
-	public void setGroups(String groups) {
-		this.groups = groups;
-	}
-
-	public String getUsers() {
-		return users;
-	}
-
-	public void setUsers(String users) {
-		this.users = users;
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 }

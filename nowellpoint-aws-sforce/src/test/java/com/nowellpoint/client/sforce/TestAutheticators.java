@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -156,32 +155,5 @@ public class TestAutheticators {
 				keyName,
 				new ByteArrayInputStream(bytes),
 				objectMetadata));
-	}
-}
-
-class Task implements Callable<DescribeSobjectResult> {
-	
-	private String sessionId;
-	private String sobjectsUrl;
-	private String sobject;
-	private Client client;
-	
-	public Task(String sessionId, String sobjectsUrl, String sobject, Client client) {
-		this.sessionId = sessionId;
-		this.sobjectsUrl = sobjectsUrl;
-		this.sobject = sobject;
-		this.client = client;
-	}
-
-	@Override
-	public DescribeSobjectResult call() throws Exception {
-		DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-				.withAccessToken(sessionId)
-				.withSobjectsUrl(sobjectsUrl)
-				.withSobject(sobject);
-
-		DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
-
-		return describeSobjectResult;
 	}
 }

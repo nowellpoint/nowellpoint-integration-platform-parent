@@ -1,15 +1,11 @@
 package com.nowellpoint.sforce;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,9 +61,7 @@ public class MetadataBackupRequestHandler {
 			
 			try {
 				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(metadataBackupRequest);
-				System.out.println("complete describeGlobalSobjectsResult");
 				describeSobjects(metadataBackupRequest, describeGlobalSobjectsResult);
-				System.out.println("complete describeSobjects");
 				metadataBackupRequest.setStatus("PROCESSED");
 			} catch (Exception e) {
 				metadataBackupRequest.setStatus("FAILED");
@@ -88,8 +82,6 @@ public class MetadataBackupRequestHandler {
 		AmazonS3 s3client = new AmazonS3Client(credentials);
 		
 		String key = String.format("%s/DescribeGlobalResult-%s", metadataBackupRequest.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-		
-		System.out.println(key);
 		
 		DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
 				.setAccessToken(metadataBackupRequest.getSessionId())
@@ -116,8 +108,6 @@ public class MetadataBackupRequestHandler {
 		AmazonS3 s3client = new AmazonS3Client(credentials);
 		
 		String key = String.format("%s/DescribeSobjectResult-%s", metadataBackupRequest.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-		
-		System.out.println(key);
 		
 		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
 		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
@@ -156,45 +146,5 @@ public class MetadataBackupRequestHandler {
 				key,
 				new ByteArrayInputStream(bytes),
 				objectMetadata));
-	}
-}
-
-class DescribeSobjectTask implements Callable<Void> {
-	
-	private String sessionId;
-	private String sobjectsUrl;
-	private String sobject;
-	private Client client;
-	private File file;
-	
-	public DescribeSobjectTask(String sessionId, String sobjectsUrl, String sobject, Client client, File file) {
-		this.sessionId = sessionId;
-		this.sobjectsUrl = sobjectsUrl;
-		this.sobject = sobject;
-		this.client = client;
-		this.file = file;
-	}
-
-	@Override
-	public Void call() throws Exception {
-		DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-				.withAccessToken(sessionId)
-				.withSobjectsUrl(sobjectsUrl)
-				.withSobject(sobject);
-
-		DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
-		
-		if (file.exists()) {
-			System.out.println("file exists");
-			System.out.println(file.length());
-		}
-
-		//true = append file
-		FileWriter fileWritter = new FileWriter(file.getName(),true);
-	        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-	        bufferWritter.write(new ObjectMapper().writeValueAsString(describeSobjectResult));
-	        bufferWritter.close();
-
-		return null;
 	}
 }

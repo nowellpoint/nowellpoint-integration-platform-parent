@@ -6,18 +6,11 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
-
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.api.dto.ProjectDTO;
 import com.nowellpoint.aws.api.model.Project;
-import com.nowellpoint.aws.data.dynamodb.Event;
-import com.nowellpoint.aws.data.dynamodb.EventAction;
-import com.nowellpoint.aws.data.dynamodb.EventBuilder;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class ProjectService extends AbstractDocumentService<ProjectDTO, Project> {
@@ -115,23 +108,6 @@ public class ProjectService extends AbstractDocumentService<ProjectDTO, Project>
 		project.setLastModifiedDate(Date.from(Instant.now()));
 		project.setLastModifiedById(subject);
 		
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subject)
-					.withEventAction(EventAction.SHARE)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(project)
-					.withType(Project.class)
-					.build();
-			
-			mapper.save(event);
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Share Project exception", e.getCause() );
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
 		
 		hset( subject, ProjectDTO.class.getName().concat(resource.getId()), resource );
 		hset( resource.getId(), subject, resource );
@@ -143,24 +119,6 @@ public class ProjectService extends AbstractDocumentService<ProjectDTO, Project>
 		
 		project.setLastModifiedDate(Date.from(Instant.now()));
 		project.setLastModifiedById(subjectId);
-		
-		Event event = null;
-		try {			
-			event = new EventBuilder()
-					.withSubject(subjectId)
-					.withEventAction(EventAction.RESTRICT)
-					.withEventSource(eventSource)
-					.withPropertyStore(System.getenv("NCS_PROPERTY_STORE"))
-					.withPayload(project)
-					.withType(Project.class)
-					.build();
-			
-			mapper.save(event);
-			
-		} catch (JsonProcessingException e) {
-			LOGGER.error( "Share Project exception", e.getCause() );
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
 		
 		hdel( resource.getId(), subjectId );
 	}

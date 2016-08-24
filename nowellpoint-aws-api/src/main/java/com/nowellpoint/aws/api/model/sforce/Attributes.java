@@ -1,16 +1,8 @@
-package com.nowellpoint.aws.data.mongodb.sforce;
+package com.nowellpoint.aws.api.model.sforce;
 
-import java.io.Serializable;
-
-public class Attributes implements Serializable {
-
-	/**
-	 * 
-	 */
+public class Attributes {
 	
-	private static final long serialVersionUID = -4180438562996624005L;
-
-	private String type;
+private String type;
 	
 	private String url;
 	

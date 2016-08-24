@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb.sforce;
+package com.nowellpoint.aws.api.model.sforce;
 
 import java.io.Serializable;
 
