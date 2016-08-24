@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -23,16 +25,22 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
+import com.stormpath.sdk.application.Applications;
+import com.stormpath.sdk.authc.AuthenticationRequest;
+import com.stormpath.sdk.authc.AuthenticationResult;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
+import com.stormpath.sdk.http.HttpRequest;
 import com.stormpath.sdk.oauth.AccessToken;
+import com.stormpath.sdk.oauth.AccessTokenResult;
 import com.stormpath.sdk.oauth.Authenticators;
-import com.stormpath.sdk.oauth.JwtAuthenticationRequest;
-import com.stormpath.sdk.oauth.JwtAuthenticationResult;
-import com.stormpath.sdk.oauth.Oauth2Requests;
-import com.stormpath.sdk.oauth.OauthGrantAuthenticationResult;
-import com.stormpath.sdk.oauth.PasswordGrantRequest;
-import com.stormpath.sdk.oauth.RefreshGrantRequest;
+import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
+import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
+import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
+import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
+import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
+import com.stormpath.sdk.oauth.OAuthRequests;
+import com.stormpath.sdk.oauth.TokenResponse;
 import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
@@ -61,6 +69,14 @@ public class IdentityProviderService extends AbstractCacheService {
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
 	}
 	
+	public TokenResponse authenticate(HttpServletRequest httpServletRequest) throws ResourceException {
+		DefaultServletApiRequestAuthenticator authenticator = new DefaultServletApiRequestAuthenticator(application);
+		
+		com.stormpath.sdk.impl.http.ServletHttpRequest httpRequest = new com.stormpath.sdk.impl.http.ServletHttpRequest(httpServletRequest);
+	    AccessTokenResult result = (AccessTokenResult) Applications.apiRequestAuthenticator(application).authenticate(httpRequest);
+	    return result.getTokenResponse();
+	}
+	
 	/**
 	 * 
 	 * @param username
@@ -69,13 +85,13 @@ public class IdentityProviderService extends AbstractCacheService {
 	 */
 	
 	public Token authenticate(String username, String password) throws ResourceException {			
-		PasswordGrantRequest request = Oauth2Requests.PASSWORD_GRANT_REQUEST
+		OAuthPasswordGrantRequestAuthentication request = OAuthRequests.OAUTH_PASSWORD_GRANT_REQUEST
 				.builder()
 				.setLogin(username)
                 .setPassword(password)
                 .build();
 
-        OauthGrantAuthenticationResult result = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
+        OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_PASSWORD_GRANT_REQUEST_AUTHENTICATOR
         		.forApplication(application)
         		.authenticate(request);
         
@@ -101,10 +117,10 @@ public class IdentityProviderService extends AbstractCacheService {
         
         if (accessToken.getAccount().getGroups().getSize() > 0) {
         	Set<Group> items = new HashSet<Group>();
-            accessToken.getAccount().getGroups().forEach(p -> {
+            accessToken.getAccount().getGroups().forEach(g -> {
             	Group group = new Group();
-            	group.setHref(p.getHref());
-            	group.setName(p.getName());
+            	group.setHref(g.getHref());
+            	group.setName(g.getName());
             	items.add(group);
             });
             account.getGroups().setItems(items);
@@ -279,11 +295,11 @@ public class IdentityProviderService extends AbstractCacheService {
 	 */
 	
 	public Token refresh(String bearerToken) {		
-		RefreshGrantRequest refreshRequest = Oauth2Requests.REFRESH_GRANT_REQUEST.builder()
+		OAuthRefreshTokenRequestAuthentication refreshRequest = OAuthRequests.OAUTH_REFRESH_TOKEN_REQUEST.builder()
 				  .setRefreshToken(bearerToken)
 				  .build();
 		
-		OauthGrantAuthenticationResult result = Authenticators.REFRESH_GRANT_AUTHENTICATOR
+		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_REFRESH_TOKEN_REQUEST_AUTHENTICATOR
 				  .forApplication(application)
 				  .authenticate(refreshRequest);
 		
@@ -306,11 +322,11 @@ public class IdentityProviderService extends AbstractCacheService {
 	 */
 	
 	public String verify(String bearerToken) {		
-		JwtAuthenticationRequest request = Oauth2Requests.JWT_AUTHENTICATION_REQUEST.builder()
+		OAuthBearerRequestAuthentication request = OAuthRequests.OAUTH_BEARER_REQUEST.builder()
 				.setJwt(bearerToken)
 				.build();
 		
-		JwtAuthenticationResult result = Authenticators.JWT_AUTHENTICATOR
+		OAuthBearerRequestAuthenticationResult result = Authenticators.OAUTH_BEARER_REQUEST_AUTHENTICATOR
 				.forApplication(application)
 				.withLocalValidation()
 				.authenticate(request);
