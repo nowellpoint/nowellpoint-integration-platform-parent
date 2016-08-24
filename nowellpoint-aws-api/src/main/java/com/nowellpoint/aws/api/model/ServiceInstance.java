@@ -53,8 +53,6 @@ public class ServiceInstance implements Serializable {
 
 	private String configurationPage;
 	
-	private Set<Schedule> schedules;
-	
 	private Plan plan;
 	
 	public ServiceInstance() {
@@ -179,14 +177,6 @@ public class ServiceInstance implements Serializable {
 
 	public void setTargets(Targets targets) {
 		this.targets = targets;
-	}
-
-	public Set<Schedule> getSchedules() {
-		return schedules;
-	}
-
-	public void setSchedules(Set<Schedule> schedules) {
-		this.schedules = schedules;
 	}
 
 	public Plan getPlan() {

@@ -38,8 +38,6 @@ public class ServiceInstance {
 
 	private String configurationPage;
 	
-	private List<Schedule> schedules;
-	
 	private Plan plan;
 	
 	public ServiceInstance() {
@@ -164,14 +162,6 @@ public class ServiceInstance {
 
 	public void setTargets(Targets targets) {
 		this.targets = targets;
-	}
-
-	public List<Schedule> getSchedules() {
-		return schedules;
-	}
-
-	public void setSchedules(List<Schedule> schedules) {
-		this.schedules = schedules;
 	}
 
 	public Plan getPlan() {

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
 
 public class TestAuthenticators {
@@ -25,6 +26,9 @@ public class TestAuthenticators {
 			assertNotNull(oauthAuthenticationResponse.getToken().getRefreshToken());
 			assertNotNull(oauthAuthenticationResponse.getToken().getStormpathAccessTokenHref());
 			assertNotNull(oauthAuthenticationResponse.getToken().getTokenType());
+			
+			BasicCredentials credentials = new BasicCredentials(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"));
+			NowellpointClient client = new NowellpointClient(credentials);
 			
 		} catch (OauthException e) {
 			System.out.println(e.getCode());
