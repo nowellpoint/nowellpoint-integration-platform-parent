@@ -3,12 +3,27 @@ package com.nowellpoint.aws.api.service;
 import java.net.URI;
 import java.util.Set;
 
+import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.api.model.Application;
 
+/**************************************************************************************************************************
+ * 
+ * 
+ * @author jherson
+ *
+ * 
+ *************************************************************************************************************************/
+
 public class ApplicationService extends AbstractDocumentService<ApplicationDTO, Application> {
 	
-	private static final String CONFIGURATION_PHASE = "Configuration";
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * constructor
+	 * 
+	 * 
+	 *************************************************************************************************************************/
 	
 	public ApplicationService() {
 		super(ApplicationDTO.class, Application.class);
@@ -22,14 +37,11 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	
 	public Set<ApplicationDTO> getAll(String subject) {
 		Set<ApplicationDTO> resources = hscan( subject, ApplicationDTO.class );
-		
 		if (resources.isEmpty()) {
 			resources = findAllByOwner(subject);
 			hset( subject, resources );
 		}
-		
 		return resources;
-		
 	}
 	
 	/**
@@ -41,7 +53,9 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 */
 	
 	public ApplicationDTO createApplication(ApplicationDTO resource) {
-		resource.setPhase(CONFIGURATION_PHASE);
+		
+		AccountProfileDTO owner = new AccountProfileDTO();
+		owner.setHref(getSubject());
 		
 		create(resource);
 

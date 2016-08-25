@@ -10,14 +10,13 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
+import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -102,22 +101,21 @@ public class AuthenticationController extends AbstractController {
     		Token token = null;
     		
     		try {
-    			token = new ObjectMapper().readValue(cookie.get(), Token.class);
+    			token = objectMapper.readValue(cookie.get(), Token.class);
     		} catch (IOException e) {
         		throw new InternalServerErrorException(e);
         	}
     		
-    		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-					.bearerAuthorization(token.getAccessToken())
-	    			.path("oauth")
-	    			.path("token")
-	    			.execute();
-	    	
-	    	int statusCode = httpResponse.getStatusCode();
-	    	
-	    	if (statusCode != 204) {
-	    		throw new BadRequestException(httpResponse.getAsString());
-	    	}
+    		try {
+    			RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+    					.setAccessToken(token.getAccessToken())
+    					.build();
+    			
+    			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
+    			
+    		} catch (OauthException e) {
+    			throw new BadRequestException(e.getMessage());
+    		}
         	
 	    	response.removeCookie("com.nowellpoint.redirectUrl");
         	response.removeCookie("com.nowellpoint.oauth.token"); 

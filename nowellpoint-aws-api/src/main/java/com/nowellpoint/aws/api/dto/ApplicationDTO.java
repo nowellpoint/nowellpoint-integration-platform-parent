@@ -1,5 +1,7 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.util.Set;
+
 import com.nowellpoint.aws.api.model.ServiceInstance;
 
 public class ApplicationDTO extends AbstractDTO {
@@ -14,9 +16,11 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private String name;
 	
-	private ServiceInstance serviceInstance;
+	private String description;
 	
-	private String phase;
+	private Set<ServiceInstance> serviceInstances;
+	
+	private String status;
 	
 	public ApplicationDTO() {
 		
@@ -42,19 +46,27 @@ public class ApplicationDTO extends AbstractDTO {
 		return name;
 	}
 
-	public ServiceInstance getServiceInstance() {
-		return serviceInstance;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setServiceInstance(ServiceInstance serviceInstance) {
-		this.serviceInstance = serviceInstance;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getPhase() {
-		return phase;
+	public Set<ServiceInstance> getServiceInstances() {
+		return serviceInstances;
 	}
 
-	public void setPhase(String phase) {
-		this.phase = phase;
+	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
+		this.serviceInstances = serviceInstances;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

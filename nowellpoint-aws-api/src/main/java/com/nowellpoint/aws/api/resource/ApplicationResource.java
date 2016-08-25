@@ -33,14 +33,11 @@ import com.nowellpoint.aws.api.service.ApplicationService;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.aws.api.service.ServiceProviderService;
 
-@Path("/application")
+@Path("/applications")
 public class ApplicationResource {
 	
 	@Inject
 	private ApplicationService applicationService;
-	
-	@Inject
-	private AccountProfileService accountProfileService;
 	
 	@Inject
 	private ServiceProviderService serviceProviderService;
@@ -119,7 +116,7 @@ public class ApplicationResource {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);
+//		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);
 		
 		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
 		
@@ -138,9 +135,9 @@ public class ApplicationResource {
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		
-		resource.setOwner(owner);
-		resource.setName(name);
-		resource.setServiceInstance(serviceInstance);
+	//	resource.setOwner(owner);
+	//	resource.setName(name);
+		//resource.setServiceInstance(serviceInstance);
 		
 		applicationService.createApplication(resource);
 		

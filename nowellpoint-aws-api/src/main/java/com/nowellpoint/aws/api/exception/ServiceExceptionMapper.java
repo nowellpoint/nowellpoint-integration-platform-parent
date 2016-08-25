@@ -2,7 +2,6 @@ package com.nowellpoint.aws.api.exception;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -13,7 +12,7 @@ public class ServiceExceptionMapper implements ExceptionMapper<ServiceException>
 
 	@Override
 	public Response toResponse(ServiceException exception) {
-		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
+		ResponseBuilder builder = Response.status(exception.getStatus());
 		builder.entity(exception.getError());
 		return builder.build();
 	}

@@ -127,22 +127,24 @@ public class ApplicationController extends AbstractController {
 	
 	public Route getApplications = (Request request, Response response) -> {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
-				.path("application")
+				.path("applications")
 				.execute();
+		
+		List<Application> applications = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			applications = httpResponse.getEntityList(Application.class);
+		} else {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
-		List<Application> applications = httpResponse.getEntityList(Application.class);
-		
-		applications = applications.stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).collect(Collectors.toList());
-		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		Map<String, Object> model = getModel();
 		model.put("applicationList", applications);
 		
 		return render(request, model, Path.Template.APPLICATIONS_LIST);
@@ -222,7 +224,7 @@ public class ApplicationController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("application", application);
 		
-		return render(request, model, "secure/" + application.getServiceInstance().getConfigurationPage());
+		return render(request, model, "secure/");
 	};
 	
 	/**

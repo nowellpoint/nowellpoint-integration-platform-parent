@@ -1,14 +1,18 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.List;
+
 public class Application extends Resource {
-	
-	private String name;
-	
-	private ServiceInstance serviceInstance;
 	
 	private AccountProfile owner;
 	
-	private String phase;
+	private String name;
+	
+	private String description;
+	
+	private List<ServiceInstance> serviceInstances;
+	
+	private String status;
 	
 	public Application() {
 		
@@ -22,14 +26,6 @@ public class Application extends Resource {
 		return name;
 	}
 
-	public ServiceInstance getServiceInstance() {
-		return serviceInstance;
-	}
-
-	public void setServiceInstance(ServiceInstance serviceInstance) {
-		this.serviceInstance = serviceInstance;
-	}
-
 	public AccountProfile getOwner() {
 		return owner;
 	}
@@ -38,11 +34,27 @@ public class Application extends Resource {
 		this.owner = owner;
 	}
 
-	public String getPhase() {
-		return phase;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setPhase(String phase) {
-		this.phase = phase;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<ServiceInstance> getServiceInstances() {
+		return serviceInstances;
+	}
+
+	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
+		this.serviceInstances = serviceInstances;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

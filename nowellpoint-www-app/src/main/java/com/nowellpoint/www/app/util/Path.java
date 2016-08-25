@@ -51,7 +51,7 @@ public class Path {
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup.html");
 		public static final String APPLICATION = String.format(APPLICATION_CONTEXT, "application.html");
 		public static final String APPLICATION_EDIT = String.format(APPLICATION_CONTEXT, "application-edit.html");
-		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "application-list.html");
+		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "applications-list.html");
 		public static final String PROJECT = String.format(APPLICATION_CONTEXT, "project.html");
 		public static final String PROJECT_LIST = String.format(APPLICATION_CONTEXT, "project-list.html");
 		public static final String SERVICE_CATALOG = String.format(APPLICATION_CONTEXT, "service-catalog.html");

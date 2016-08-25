@@ -30,7 +30,6 @@ import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 

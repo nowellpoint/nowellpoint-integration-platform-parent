@@ -1,6 +1,5 @@
 package com.nowellpoint.aws.api.model;
 
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,7 +31,7 @@ public class SalesforceConnector extends AbstractDocument {
 	
 	private Set<Environment> environments;
 	
-	private List<ServiceInstance> serviceInstances;
+	private Set<ServiceInstance> serviceInstances;
 	
 	public SalesforceConnector() {
 		
@@ -78,11 +77,11 @@ public class SalesforceConnector extends AbstractDocument {
 		this.environments = environments;
 	}
 
-	public List<ServiceInstance> getServiceInstances() {
+	public Set<ServiceInstance> getServiceInstances() {
 		return serviceInstances;
 	}
 
-	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
+	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
 	}
 }

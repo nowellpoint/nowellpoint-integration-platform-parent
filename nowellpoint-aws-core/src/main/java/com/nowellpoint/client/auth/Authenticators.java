@@ -16,6 +16,7 @@ public class Authenticators {
 	private static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
 	
 	public static final PasswordGrantResponseFactory PASSWORD_GRANT_AUTHENTICATOR = new PasswordGrantResponseFactory();
+	public static final RevokeTokenResponseFactory REVOKE_TOKEN_INVALIDATOR = new RevokeTokenResponseFactory();
 	
 	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(PasswordGrantRequest passwordGrantRequest) {
@@ -42,6 +43,23 @@ public class Authenticators {
 	    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 	    	
 	    	return response;
+		}
+	}
+	
+	public static class RevokeTokenResponseFactory {
+		public void revoke(RevokeTokenRequest revokeTokenRequest) {
+			HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+					.bearerAuthorization(revokeTokenRequest.getAccessToken())
+	    			.path("oauth")
+	    			.path("token")
+	    			.execute();
+	    	
+	    	int statusCode = httpResponse.getStatusCode();
+	    	
+	    	if (statusCode != 204) {
+	    		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
+	    		throw new OauthException(error.get("code").asInt(), error.get("message").asText());
+	    	}
 		}
 	}
 }
