@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,14 +23,9 @@ import com.nowellpoint.aws.model.admin.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
-import com.stormpath.sdk.application.Applications;
-import com.stormpath.sdk.authc.AuthenticationRequest;
-import com.stormpath.sdk.authc.AuthenticationResult;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
-import com.stormpath.sdk.http.HttpRequest;
 import com.stormpath.sdk.oauth.AccessToken;
-import com.stormpath.sdk.oauth.AccessTokenResult;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
@@ -40,7 +33,6 @@ import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRequests;
-import com.stormpath.sdk.oauth.TokenResponse;
 import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
@@ -67,14 +59,6 @@ public class IdentityProviderService extends AbstractCacheService {
 		
 		application = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/applications/")
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
-	}
-	
-	public TokenResponse authenticate(HttpServletRequest httpServletRequest) throws ResourceException {
-		DefaultServletApiRequestAuthenticator authenticator = new DefaultServletApiRequestAuthenticator(application);
-		
-		com.stormpath.sdk.impl.http.ServletHttpRequest httpRequest = new com.stormpath.sdk.impl.http.ServletHttpRequest(httpServletRequest);
-	    AccessTokenResult result = (AccessTokenResult) Applications.apiRequestAuthenticator(application).authenticate(httpRequest);
-	    return result.getTokenResponse();
 	}
 	
 	/**

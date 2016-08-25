@@ -1,7 +1,5 @@
 package com.nowellpoint.client.auth;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 
 import com.nowellpoint.client.NowellpointClient;
@@ -11,24 +9,13 @@ public class TestAuthenticators {
 	
 	@Test
 	public void testPasswordGrantAuthentication() {
-		PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setUsername(System.getenv("STORMPATH_USERNAME"))
-				.setPassword(System.getenv("STORMPATH_PASSWORD"))
-				.build();
+		
+		BasicCredentials credentials = new BasicCredentials(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"));
 		
 		try {
-			OauthAuthenticationResponse oauthAuthenticationResponse = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
-					.authenticate(passwordGrantRequest);
-			
-			assertNotNull(oauthAuthenticationResponse.getToken());
-			assertNotNull(oauthAuthenticationResponse.getToken().getAccessToken());
-			assertNotNull(oauthAuthenticationResponse.getToken().getExpiresIn());
-			assertNotNull(oauthAuthenticationResponse.getToken().getRefreshToken());
-			assertNotNull(oauthAuthenticationResponse.getToken().getStormpathAccessTokenHref());
-			assertNotNull(oauthAuthenticationResponse.getToken().getTokenType());
-			
-			BasicCredentials credentials = new BasicCredentials(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"));
 			NowellpointClient client = new NowellpointClient(credentials);
+			
+			client.logout();
 			
 		} catch (OauthException e) {
 			System.out.println(e.getCode());
