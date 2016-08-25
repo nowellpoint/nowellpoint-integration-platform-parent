@@ -24,6 +24,7 @@ public class Path {
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
 		public static final String APPLICATIONS = String.format(APPLICATION_CONTEXT, "applications");
+		public static final String APPLICATIONS_NEW = String.format(APPLICATION_CONTEXT, "applications/new");
 		public static final String PROJECTS = String.format(APPLICATION_CONTEXT, "projects");
 		public static final String PROVIDERS = String.format(APPLICATION_CONTEXT, "providers");
 		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce");
@@ -50,6 +51,7 @@ public class Path {
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup.html");
 		public static final String APPLICATION = String.format(APPLICATION_CONTEXT, "application.html");
+		public static final String APPLICATION_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "application-connector-select.html");
 		public static final String APPLICATION_EDIT = String.format(APPLICATION_CONTEXT, "application-edit.html");
 		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "applications-list.html");
 		public static final String PROJECT = String.format(APPLICATION_CONTEXT, "project.html");

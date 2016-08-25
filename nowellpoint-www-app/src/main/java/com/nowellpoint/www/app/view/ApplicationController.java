@@ -45,45 +45,26 @@ public class ApplicationController extends AbstractController {
 	
 	public Route newApplication = (Request request, Response response) -> {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
-		String serviceProviderId = request.params(":id");
-		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
-				.path("providers")
-				.path(serviceProviderId)
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-		
-		ServiceProvider provider = httpResponse.getEntity(ServiceProvider.class);
-		
-		httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
-				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
     			.path("salesforce")
-    			.path("connectors")
     			.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		List<SalesforceConnector> salesforceConnectors = null;
 		
-		List<SalesforceConnector> salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		if (httpResponse.getStatusCode() == Status.OK) {
+			salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
+		} else {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
 		
-		Account account = request.attribute("account");
-		
-		Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("account", account);
-    	model.put("serviceProvider", provider);
+		Map<String, Object> model = getModel();
     	model.put("salesforceConnectorsList", salesforceConnectors);
-		model.put("application", new Application());
 		
-		return render(request, model, Path.Template.APPLICATION);
+		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
 	};
 	
 	/**
@@ -97,7 +78,7 @@ public class ApplicationController extends AbstractController {
 		
 		String applicationId = request.params(":id");
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
 				.header("x-api-key", System.getenv("NCS_API_KEY"))
@@ -114,7 +95,7 @@ public class ApplicationController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("application", application);
 		
-		return render(request, model, Path.Template.APPLICATION_EDIT);
+		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
 	};
 	
 	/**

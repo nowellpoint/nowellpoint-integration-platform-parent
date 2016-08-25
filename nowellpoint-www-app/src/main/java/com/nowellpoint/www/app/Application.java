@@ -169,7 +169,7 @@ public class Application implements SparkApplication {
         
         get(Path.Route.SETUP, setupController.showSetup);
         
-        get(Path.Route.APPLICATIONS.concat("/provider/:id"), applicationController.newApplication);
+        get(Path.Route.APPLICATIONS_NEW, applicationController.newApplication);
 		get(Path.Route.APPLICATIONS.concat("/:id"), applicationController.getApplication);
 		get(Path.Route.APPLICATIONS, applicationController.getApplications);
 		delete(Path.Route.APPLICATIONS.concat("/:id"), applicationController.deleteApplication);
