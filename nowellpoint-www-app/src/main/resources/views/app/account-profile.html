@@ -2,9 +2,15 @@
     <@t.page>
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
-            <div class="row">
-                <br>
+        <div class="container-fluid">
+
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+
+                <#include "sidebar.html"/>
+
+            </div>
+
+            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
                 <#if successMessage??>
                     <div id="success" class="alert alert-success">
@@ -14,8 +20,8 @@
                 </#if>
 
                 <br>
-                
-                <div class="flextable">
+
+                <div class="flextable m-t-md">
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["user.profile"]}</h3>
                     </div>
@@ -25,187 +31,184 @@
                 </div>
                 <br>
                 <div class="hr-divider"></div>
-            </div>
-            
-            <div class="row">
-                <br>
-                <br>
 
-                <div class="col-md-3">
-
-                    <dl class="dl-vertical">
-                        <dt>${labels["name"]}</dt>
-                        <dd>${accountProfile.name!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["email"]}</dt>
-                        <dd>${accountProfile.email!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["title"]}</dt>
-                        <dd>${accountProfile.title!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["company"]}</dt>
-                        <dd>${accountProfile.company!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["division"]}</dt>
-                        <dd>${accountProfile.division!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["language.key"]}</dt>
-                        <dd>${languages[accountProfile.languageSidKey]!}&emsp;</dd>
-
-                    </dl>
-                </div>
-
-                <div class="col-md-3">
-
-                    <dl class="dl-vertical">
-                        <dt>${labels["department"]}</dt>
-                        <dd>${accountProfile.department!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["mobile.phone"]}</dt>
-                        <dd>${accountProfile.mobilePhone!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["phone"]}</dt>
-                        <dd>${accountProfile.phone!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["extension"]}</dt>
-                        <dd>${accountProfile.extension!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["fax"]}</dt>
-                        <dd>${accountProfile.fax!}&emsp;</dd>
-                        <hr>
-                        <dt>${labels["locale.key"]}</dt>
-                        <dd>${locales[accountProfile.localeSidKey]!}&emsp;</dd>
-                    </dl>
-                </div>
-
-                <div class="col-md-2">
-                    <div>
-                        <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
-                    </div>
+                <div class="row">
                     <br>
-                    <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
-                        <div class="text-center">
-                            <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
-                            </a>
+                    <br>
+
+                    <div class="col-md-3">
+
+                        <dl class="dl-vertical">
+                            <dt>${labels["name"]}</dt>
+                            <dd>${accountProfile.name!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["email"]}</dt>
+                            <dd>${accountProfile.email!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["title"]}</dt>
+                            <dd>${accountProfile.title!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["company"]}</dt>
+                            <dd>${accountProfile.company!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["division"]}</dt>
+                            <dd>${accountProfile.division!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["language.key"]}</dt>
+                            <dd>${languages[accountProfile.languageSidKey]!}&emsp;</dd>
+
+                        </dl>
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <dl class="dl-vertical">
+                            <dt>${labels["department"]}</dt>
+                            <dd>${accountProfile.department!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["mobile.phone"]}</dt>
+                            <dd>${accountProfile.mobilePhone!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["phone"]}</dt>
+                            <dd>${accountProfile.phone!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["extension"]}</dt>
+                            <dd>${accountProfile.extension!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["fax"]}</dt>
+                            <dd>${accountProfile.fax!}&emsp;</dd>
+                            <hr>
+                            <dt>${labels["locale.key"]}</dt>
+                            <dd>${locales[accountProfile.localeSidKey]!}&emsp;</dd>
+                        </dl>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div>
+                            <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
                         </div>
-                    </#if>
+                        <br>
+                        <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
+                            <div class="text-center">
+                                <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
+                                </a>
+                            </div>
+                        </#if>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                    </div>
 
                 </div>
 
-                <div class="col-md-4">
+                <br>
+                <br>
 
+                <div id="address" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["address"]}</h3>
+                            </div>
+                            <div class="flextable-item">
+                                <a href="${labels['base.path']}/${accountProfile.id}/address" id="edit-account-profile-address" class="btn btn-primary" role="button">${labels["edit.address"]}</a>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="hr-divider"></div>
+                        <br>
+                        <address>
+                            ${accountProfile.address.street!}<br>
+                            ${accountProfile.address.city!}, ${accountProfile.address.state!} ${accountProfile.address.postalCode!}<br>
+                            ${accountProfile.address.country!}<br>
+                        </address>
+                    </div>
                 </div>
 
+                <br>
+                <br>
+
+                <div id="payment-methods" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["payment.methods"]}</h3>
+                            </div>
+                            <div class="flextable-item">
+                                <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" id="add-card" class="btn btn-primary" role="button">${labels["add.payment.method"]}</a>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="hr-divider"></div>
+                        <br>
+
+                        <div class="content table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <th>${labels["card.type"]}</th>
+                                    <th class="text-center">${labels['primary']}</th>
+                                    <th>${labels["name.on.card"]}</th>
+                                    <th>${labels["expires.on"]}</th>
+                                    <th class="col-lg-4 col-md-4 col-sm-4 col-xs-4">${labels["action"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list accountProfile.creditCards?sort_by( "addedOn") as creditCard>
+                                        <tr id="${creditCard.token}">
+                                            <td><img src="${(creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view">${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</a></td>
+                                            <td class="text-center">
+                                                <#if creditCard.primary><span class="icon icon-check text-success"></span></#if>
+                                            </td>
+                                            <td>${creditCard.cardholderName}</td>
+                                            <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
+                                            <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span>${labels["edit"]}</a>
+                                                <#if ! creditCard.primary>
+                                                    &emsp;
+                                                    <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a> &emsp;
+                                                    <a href="" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
+                                            </td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <br>
+
+                <div id="settings" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["settings"]}</h3>
+                            </div>
+                            <div class="flextable-item">
+                                <a href="${labels['base.path']}/${accountProfile.id}/disable" class="btn btn-danger" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="hr-divider"></div>
+                        <br>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="dl-vertical">
+                            <dt>${messages["created.on"]}</dt>
+                            <dd>${accountProfile.createdDate?date?string.iso!}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="dl-vertical">
+                            <dt>${messages["last.modified.on"]}</dt>
+                            <dd>${accountProfile.lastModifiedDate?date?string.iso!}</dd>
+                        </dl>
+                    </div>
+                </div>
             </div>
-
-            <br>
-            <br>
-
-            <div id="address" class="row">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["address"]}</h3>
-                    </div>
-                    <div class="flextable-item">
-                        <a href="${labels['base.path']}/${accountProfile.id}/address" id="edit-account-profile-address" class="btn btn-primary" role="button">${labels["edit.address"]}</a>
-                    </div>
-                </div>
-
-                <br>
-                <div class="hr-divider"></div>
-                <br>
-
-                <div class="col-md-12">
-                    <dl class="dl-vertical">
-                        <dd>${accountProfile.address.street!}
-                            <br>${accountProfile.address.city!}, ${accountProfile.address.state!} ${accountProfile.address.postalCode!}
-                            <br>${accountProfile.address.country!}&emsp;
-                        </dd>
-                    </dl>
-
-                </div>
-
-            </div>
-
-            <br>
-            <br>
-
-            <div id="payment-methods" class="row">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["payment.methods"]}</h3>
-                    </div>
-                    <div class="flextable-item">
-                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" id="add-card" class="btn btn-primary" role="button">${labels["add.payment.method"]}</a>
-                    </div>
-                </div>
-
-                <br>
-                <div class="hr-divider"></div>
-                <br>
-
-                <div class="content table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <th>${labels["card.type"]}</th>
-                            <th class="text-center">${labels['primary']}</th>
-                            <th>${labels["name.on.card"]}</th>
-                            <th>${labels["expires.on"]}</th>
-                            <th class="col-lg-4 col-md-4 col-sm-4 col-xs-4">${labels["action"]}</th>
-                        </thead>
-                        <tbody>
-                            <#list accountProfile.creditCards?sort_by( "addedOn") as creditCard>
-                                <tr id="${creditCard.token}">
-                                    <td><img src="${(creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view">${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</a></td>
-                                    <td class="text-center">
-                                        <#if creditCard.primary><span class="icon icon-check text-success"></span></#if>
-                                    </td>
-                                    <td>${creditCard.cardholderName}</td>
-                                    <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
-                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span>${labels["edit"]}</a>
-                                        <#if ! creditCard.primary>
-                                            &emsp;
-                                            <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a> &emsp;
-                                            <a href="" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
-                                    </td>
-                                </tr>
-                            </#list>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <br>
-            <br>
-
-            <div id="settings" class="row">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["settings"]}</h3>
-                    </div>
-                    <div class="flextable-item">
-                        <a href="${labels['base.path']}/${accountProfile.id}/disable" class="btn btn-danger" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
-                    </div>
-                </div>
-                <br>
-                <div class="hr-divider"></div>
-
-                <br>
-
-                <div class="col-md-6">
-                    <dl class="dl-vertical">
-                        <dt>${messages["created.on"]}</dt>
-                        <dd>${accountProfile.createdDate?date?string.iso!}</dd>
-                    </dl>
-                </div>
-                <div class="col-md-6">
-                    <dl class="dl-vertical">
-                        <dt>${messages["last.modified.on"]}</dt>
-                        <dd>${accountProfile.lastModifiedDate?date?string.iso!}</dd>
-                    </dl>
-                </div>
-            </div>
-
         </div>
 
         <#include "confirm-dialog.html"/>

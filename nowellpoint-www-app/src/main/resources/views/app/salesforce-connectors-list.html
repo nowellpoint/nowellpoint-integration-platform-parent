@@ -6,13 +6,13 @@
 
         <div class="container-fluid">
 
-            <div class="col-lg-2 col-sm-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 
                 <#include "sidebar.html"/>
 
             </div>
 
-            <div class="col-lg-10 col-sm-10">
+            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
@@ -35,44 +35,36 @@
                 <br>
 
                 <div class="row">
-
-                    <div class="col-sm-12">
-
-                        <div class="content table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <th></th>
-                                    <th>${labels["organization.name"]}</th>
-                                    <th>${labels["organization.type"]}</th>
-                                    <th>${labels["instance.name"]}</th>
-                                    <th>${labels["identity.name"]}</th>
-                                    <th>${labels["action"]}</th>
-                                </thead>
-                                <tbody>
-                                    <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
-                                        <tr id="${salesforceConnector.id}">
-                                            <td><img src="${salesforceConnector.identity.photos.thumbnail}" height="24" width="36" class="img-circle img-responsive center-block"></td>
-                                            <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
-                                            <td>${salesforceConnector.organization.organizationType}</td>
-                                            <td>${salesforceConnector.organization.instanceName}</td>
-                                            <td>${salesforceConnector.identity.displayName}</td>
-                                            <td>
-                                                <a href="#" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.name} (${salesforceConnector.organization.instanceName})" data-title="${labels['delete.message']}">
-                                                    <span class="icon icon-trash"></span>${labels["delete"]}
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th>${labels["organization.name"]}</th>
+                                <th>${labels["organization.type"]}</th>
+                                <th>${labels["instance.name"]}</th>
+                                <th>${labels["identity.name"]}</th>
+                                <th>${labels["action"]}</th>
+                            </thead>
+                            <tbody>
+                                <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+                                    <tr id="${salesforceConnector.id}">
+                                        <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                        <td>${salesforceConnector.organization.organizationType}</td>
+                                        <td>${salesforceConnector.organization.instanceName}</td>
+                                        <td>${salesforceConnector.identity.displayName}</td>
+                                        <td>
+                                            <a href="#" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.name} (${salesforceConnector.organization.instanceName})" data-title="${labels['delete.message']}">
+                                                <span class="icon icon-trash"></span>${labels["delete"]}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
                     </div>
+                    </div>    
                 </div>
-
-
-
             </div>
-
         </div>
 
         <#include "confirm-dialog.html"/>

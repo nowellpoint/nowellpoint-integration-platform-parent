@@ -14,37 +14,33 @@
                         </div>
                         <div class="dashhead-toolbar">
                             <p class="pull-right">
-                                <a id="cancel" href="#" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
+                                <a id="cancel" href="/app/applications" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="hr-divider"></div>
-            </div>
-            <br>
-
-
-            <div class="content table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <th></th>
-                        <th>${labels["organization.name"]}</th>
-                        <th>${labels["organization.type"]}</th>
-                        <th>${labels["instance.name"]}</th>
-                        <th>${labels["identity.name"]}</th>
-                    </thead>
-                    <tbody>
-                        <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
-                            <tr id="${salesforceConnector.id}">
-                                <td><img src="${salesforceConnector.identity.photos.thumbnail}" height="24" width="36" class="img-circle img-responsive center-block"></td>
-                                <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
-                                <td>${salesforceConnector.organization.organizationType}</td>
-                                <td>${salesforceConnector.organization.instanceName}</td>
-                                <td>${salesforceConnector.identity.displayName}</td>
-                            </tr>
-                        </#list>
-                    </tbody>
-                </table>
+                <br>
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>${labels["organization.name"]}</th>
+                            <th>${labels["organization.type"]}</th>
+                            <th>${labels["instance.name"]}</th>
+                            <th>${labels["identity.name"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+                                <tr id="${salesforceConnector.id}">
+                                    <td><a href="/app/connectors/salesforce/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                                    <td>${salesforceConnector.organization.organizationType}</td>
+                                    <td>${salesforceConnector.organization.instanceName}</td>
+                                    <td>${salesforceConnector.identity.displayName}</td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
