@@ -12,6 +12,8 @@ public class Application extends Resource {
 	
 	private List<ServiceInstance> serviceInstances;
 	
+	private List<Environment> environments;
+	
 	private String status;
 	
 	public Application() {
@@ -48,6 +50,14 @@ public class Application extends Resource {
 
 	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public List<Environment> getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(List<Environment> environments) {
+		this.environments = environments;
 	}
 
 	public String getStatus() {

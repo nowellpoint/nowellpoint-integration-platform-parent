@@ -3,8 +3,12 @@ package com.nowellpoint.aws.api.service;
 import java.net.URI;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.dto.Id;
+import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.model.Application;
 
 /**************************************************************************************************************************
@@ -16,6 +20,9 @@ import com.nowellpoint.aws.api.model.Application;
  *************************************************************************************************************************/
 
 public class ApplicationService extends AbstractDocumentService<ApplicationDTO, Application> {
+	
+	@Inject
+	private SalesforceConnectorService salesforceConnectorService;
 	
 	/**************************************************************************************************************************
 	 * 
@@ -52,10 +59,23 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO createApplication(ApplicationDTO resource) {
+	public ApplicationDTO createApplication(ApplicationDTO resource, String connectorId, Boolean importEnvironments, Boolean importServices) {
 		
 		AccountProfileDTO owner = new AccountProfileDTO();
 		owner.setHref(getSubject());
+		
+		resource.setOwner(owner);
+		resource.setStatus("WORK_IN_PROGRESS");
+		
+		SalesforceConnectorDTO connector = salesforceConnectorService.find(connectorId);
+		
+		if (importEnvironments) {
+			resource.setEnvironments(connector.getEnvironments());
+		}
+		
+		if (importServices) {
+			resource.setServiceInstances(connector.getServiceInstances());
+		}
 		
 		create(resource);
 

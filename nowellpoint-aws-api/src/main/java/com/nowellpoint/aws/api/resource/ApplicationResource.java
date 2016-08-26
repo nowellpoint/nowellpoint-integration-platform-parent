@@ -110,36 +110,17 @@ public class ApplicationResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createApplication(
-			@FormParam("serviceProviderId") @NotEmpty String serviceProviderId,
+			@FormParam("description") @NotEmpty String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
-			@FormParam("name") @NotEmpty String name) {
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-//		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);
-		
-		ServiceProviderDTO provider = serviceProviderService.getServiceProvider(serviceProviderId);
-		
-		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
-		
-		ServiceInstance serviceInstance = new ServiceInstance();
-		//serviceInstance.setServiceType(provider.getService().getType());
-		//serviceInstance.setConfigurationPage(provider.getService().getConfigurationPage());
-		//serviceInstance.setCurrencyIsoCode(provider.getService().getCurrencyIsoCode());
-		serviceInstance.setProviderName(provider.getName());
-		//serviceInstance.setIsActive(provider.getService().getIsActive());
-		//serviceInstance.setServiceName(provider.getService().getName());
-		//serviceInstance.setPrice(provider.getService().getPrice());
-		serviceInstance.setProviderType(provider.getType());
-		//serviceInstance.setUnitOfMeasure(provider.getService().getUnitOfMeasure());
+			@FormParam("name") @NotEmpty String name,
+			@FormParam("importEnvironments") Boolean importEnvironments,
+			@FormParam("importServices") Boolean importServices) {
 		
 		ApplicationDTO resource = new ApplicationDTO();
+		resource.setName(name);
+		resource.setDescription(description);
 		
-	//	resource.setOwner(owner);
-	//	resource.setName(name);
-		//resource.setServiceInstance(serviceInstance);
-		
-		applicationService.createApplication(resource);
+		applicationService.createApplication(resource, connectorId, importEnvironments, importServices);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ApplicationResource.class)

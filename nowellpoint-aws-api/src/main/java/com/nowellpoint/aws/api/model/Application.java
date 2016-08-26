@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.ApplicationCodec;
+import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 
@@ -25,6 +26,8 @@ public class Application extends AbstractDocument implements Serializable {
 	private String description;
 	
 	private Set<ServiceInstance> serviceInstances;
+	
+	private Set<EnvironmentDTO> environments;
 	
 	private String status;
 	
@@ -62,6 +65,14 @@ public class Application extends AbstractDocument implements Serializable {
 
 	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public Set<EnvironmentDTO> getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(Set<EnvironmentDTO> environments) {
+		this.environments = environments;
 	}
 
 	public String getStatus() {

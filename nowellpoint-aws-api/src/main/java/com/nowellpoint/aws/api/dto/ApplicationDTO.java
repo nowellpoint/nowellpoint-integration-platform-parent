@@ -2,8 +2,6 @@ package com.nowellpoint.aws.api.dto;
 
 import java.util.Set;
 
-import com.nowellpoint.aws.api.model.ServiceInstance;
-
 public class ApplicationDTO extends AbstractDTO {
 
 	/**
@@ -18,7 +16,9 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private String description;
 	
-	private Set<ServiceInstance> serviceInstances;
+	private Set<ServiceInstanceDTO> serviceInstances;
+	
+	private Set<EnvironmentDTO> environments;
 	
 	private String status;
 	
@@ -54,12 +54,20 @@ public class ApplicationDTO extends AbstractDTO {
 		this.description = description;
 	}
 
-	public Set<ServiceInstance> getServiceInstances() {
+	public Set<ServiceInstanceDTO> getServiceInstances() {
 		return serviceInstances;
 	}
 
-	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
+	public void setServiceInstances(Set<ServiceInstanceDTO> serviceInstances) {
 		this.serviceInstances = serviceInstances;
+	}
+
+	public Set<EnvironmentDTO> getEnvironments() {
+		return environments;
+	}
+
+	public void setEnvironments(Set<EnvironmentDTO> environments) {
+		this.environments = environments;
 	}
 
 	public String getStatus() {
