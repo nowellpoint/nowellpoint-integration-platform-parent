@@ -3,12 +3,11 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>aws-parent</artifactId>
-		<version>0.0.5-SNAPSHOT</version>
+		<version>0.0.6-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-api</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
 	<name>Nowellpoint Rest Api</name>
 	<packaging>jar</packaging>
 

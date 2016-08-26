@@ -1,0 +1,80 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "API for all interactions with the Nowellpoint integration platform",
+    "version" : "v1.0",
+    "title" : "The Nowellpoint API"
+  },
+  "tags" : [ {
+    "name" : "oauth"
+  } ],
+  "paths" : {
+    "/oauth/token" : {
+      "post" : {
+        "tags" : [ "oauth" ],
+        "summary" : "Authenticate with the API",
+        "description" : "Returns the OAuth Token",
+        "operationId" : "authenticate",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "basic authorization header",
+          "required" : true,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Token"
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "oauth" ],
+        "summary" : "Expire the OAuth token",
+        "description" : "Access to the API will be revoked until a new token is issued",
+        "operationId" : "revoke",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "bearer authorization header",
+          "required" : true,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Token" : {
+      "type" : "object",
+      "properties" : {
+        "refreshToken" : {
+          "type" : "string"
+        },
+        "tokenType" : {
+          "type" : "string"
+        },
+        "expiresIn" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "accessToken" : {
+          "type" : "string"
+        },
+        "stormpathAccessTokenHref" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
