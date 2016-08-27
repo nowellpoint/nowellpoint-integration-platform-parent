@@ -4,136 +4,175 @@
 
         <#include "navbar.html" />
 
-        <div class="container-fluid container-fluid-spacious">
-            <div class="dashhead m-t-md">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h2 class="title">${createApplication}</h2>
+        <div class="container-fluid">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+
+                <#include "sidebar.html"/>
+
+            </div>
+
+            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div class="text-center">${successMessage!}</div>
+                    </div>
+                </#if>
+
+                <br>
+
+                <div class="flextable  m-t-md">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["application"]}</h3>
+                    </div>
+                    <div class="flextable-item">
+                        <a id="edit-salesforce-connector" href="${labels['base.path']}/${application.id!}/edit" class="btn btn-primary" role="button">${labels["edit.application"]}</a>
                     </div>
                 </div>
-            </div>
 
-            <br>
+                <br>
+                <div class="hr-divider"></div>
+                
+                                <br>
+                <br>
 
-            <div class="hr-divider">
-
-            </div>
-
-            <br>
-
-            <div class="col-lg-3 col-md-3 col-sm-3">
-                <#include "sidebar.html" />
-            </div>
-
-            <div class="col-lg-9 col-md-9 col-sm-9">
-
-                <form class="form-horizontal" id="form" role="form" method="post" action="/app/application">
-                    
-                    <input type="hidden" name="id" id="id" value="${application.id!}" />
-                    <input type="hidden" name="serviceProviderId" id="serviceProviderId" value="${serviceProvider.id!}" />
-                    <input type="hidden" name="connectorId" id="connectorId" value="" />
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${name}</label>
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-                            <input type="text" class="form-control input-lg" name="name" id="name" autofocus="" value="${application.name!}" />
-                        </div>
-                    </div>
-                    
-                     <div class="form-group">
-                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="serviceName">${serviceName}</label>
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-                            <div class="form-control-static">${serviceProvider.service.name!}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="serviceDescription">${serviceDescription}</label>
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-                            <div class="form-control-static">${serviceProvider.service.description!}</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label col-sm-2 col-md-2 col-lg-2" for="connectorName">${connectorName}</label>
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-                            <input type="text" class="form-control input-lg" name="connectorName" id="connectorName" value="" disabled="disabled" />
-                        </div>
-                        <div class="col-sm-1 col-md-1 col-lg-1">
-                            <a href="#sourceDialog" data-toggle="modal"><i class="fa fa-search fa-2x"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class=" col-sm-6 col-md-6 col-lg-6">
-                            <div class="pull-right">
-                                <a href="/app/applications">${cancel}</a>&nbsp;
-                                <button type="submit" name="save" id="save" class="btn btn-primary btn-lg">${save}</button>
+                <div id="environments" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["environments"]}</h3>
+                            </div>
+                            <div class="flextable-item">
+                                <a href="${labels['base.path']}/${application.id}/environments/add" id="add-service" class="btn btn-primary" role="button">${labels["add.sandbox"]}</a>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Modal Dialog -->
-            <div class="modal fade" id="sourceDialog" role="dialog" tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <form class="form-vertical" role="form" method="post">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h4 class="modal-title">${connectors}</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="content table-responsive">
-                                    <table id="table" class="table table-hover">
-                                        <thead>
-                                            <th></th>
-                                            <th>${organization}</th>
-                                            <th>${instanceName}</th>
-                                            <th>${displayName}</th>
-                                            <th>${username}</th>
-                                            <th>${action}</th>
-                                        </thead>
-                                        <tbody>
-                                            <#list salesforceConnectorsList as salesforceConnector>
-                                                <tr id="${salesforceConnector.id}" data-name="${salesforceConnector.organization.name}">
-                                                    <td><img src="${salesforceConnector.identity.photos.thumbnail}" class="img-circle img-responsive center-block"></td>
-                                                    <td>${salesforceConnector.organization.name}</td>
-                                                    <td>${salesforceConnector.organization.instanceName}</td>
-                                                    <td>${salesforceConnector.identity.displayName}</td>
-                                                    <td>${salesforceConnector.identity.username}</td>
-                                                    <td>
-                                                        <a href="" data-dismiss="modal">
-                                                            ${select}
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </#list>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" name="cancel" id="cancel" class="btn btn-default" data-dismiss="modal">${cancel}</button>
-                            </div>
-
+                        <br>
+                        <div class="hr-divider"></div>
+                        <br>
+                        <div class="content table-responsive">
+                            <table id="environments-table" class="table table-hover">
+                                <thead>
+                                    <th class="col-xs-2">${labels["name"]}</th>
+                                    <th class="col-xs-3">${labels["service.endpoint"]}</th>
+                                    <th class="col-xs-1">${labels["api.version"]}</th>
+                                    <th class="col-xs-3">${labels["status.message"]}</th>
+                                    <th class="col-xs-3">${labels["action"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list application.environments?sort_by( "addedOn") as environment>
+                                        <tr id="${environment.key}">
+                                            <td><a href="${labels['base.path']}/${application.id}/environments/${(environment.key)!}/view">${(environment.environmentName)!}</a></td>
+                                            <td>${(environment.serviceEndpoint)!}</td>
+                                            <td>${(environment.apiVersion)!}</td>
+                                            <td>
+                                                <#if environment.isValid>
+                                                    <span class="icon icon-check fa-1x text-success"></span>
+                                                </#if>
+                                                <#if ! environment.isValid>
+                                                    <span class="icon icon-squared-cross fa-1x text-danger"></span>
+                                                </#if>
+                                                &emsp;${(environment.testMessage)!}
+                                            </td>
+                                            <td><a href="${labels['base.path']}/${application.id}/environments/${(environment.key)!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
+                                                <a href="#" class="test-connection" data-href="${labels['base.path']}/${application.id}/environments/${environment.key}/test" data-id="${environment.key}"><span class="icon icon-flash"></span>${labels["test.connection"]}</a>
+                                                <#if environment.isSandbox>
+                                                    <a href="#" id="confirm-remove-environment" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${application.id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}"><span class="icon icon-trash"></span>${labels["delete"]}</a>
+                                                </#if>
+                                            </td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
                         </div>
-                    </form>
+                    </div>
                 </div>
+                
+                                <br>
+                <br>
+
+                <div id="services" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["services"]}</h3>
+                            </div>
+                            <div class="flextable-item">
+                                <a href="${labels['base.path']}/${application.id}/services/catalog" id="add-service" class="btn btn-primary" role="button">${labels["add.service"]}</a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="hr-divider"></div>
+                        <br>
+                        <div class="content table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <th class="col-xs-2">${labels["name"]}</th>
+                                    <th class="col-xs-3">${labels["service.name"]}</th>
+                                    <th class="col-xs-3">${labels["tag"]}</th>
+                                    <th class="col-xs-1 text-center">${labels["active"]}</th>
+                                    <th class="col-xs-3">${labels["action"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list application.serviceInstances?sort_by( "key") as service>
+                                        <tr id="${service.key}">
+                                            <td><a href="${labels['base.path']}/${application.id}/services/${service.key}/view">${service.name!service.key}</a></td>
+                                            <td>${service.serviceName!}</td>
+                                            <td>${service.tag!}</td>
+                                            <td class="text-center">
+                                                <#if service.isActive>
+                                                    ${messages["yes"]}
+                                                </#if>
+                                                <#if ! service.isActive>
+                                                    ${messages["no"]}
+                                                </#if>
+                                            </td>
+                                            <td><a href="${labels['base.path']}/${application.id}/services/${(service.key)!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
+                                            </td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                                <br>
+                <br>
+
+                <div class="row" id="settings">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["settings"]}</h3>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="hr-divider"></div>
+                        <br>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="dl-vertical">
+                            <dt>${messages["created.on"]}</dt>
+                            <dd>${application.createdDate?date?string.iso!}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="dl-vertical">
+                            <dt>${messages["last.modified.on"]}</dt>
+                            <dd>${application.lastModifiedDate?date?string.iso!}</dd>
+                        </dl>
+                    </div>
+                </div>
+
+
             </div>
 
         </div>
 
         <script>
             
-            $('#table').on('click', 'tr', function(e) {
-                var id = this.id;
-                var name = $(this).attr('data-name');
-                $('#connectorId').val(id);
-                $('#connectorName').val(name);
-            });
+           
             
         </script>
         

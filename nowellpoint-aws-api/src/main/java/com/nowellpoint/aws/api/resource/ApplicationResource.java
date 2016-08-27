@@ -76,9 +76,8 @@ public class ApplicationResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		ApplicationDTO resource = applicationService.getApplication( id, subject );
+		ApplicationDTO resource = applicationService.findApplication( new Id(id) );
 		
 		return Response.ok(resource).build();
 	}
@@ -113,14 +112,14 @@ public class ApplicationResource {
 			@FormParam("description") @NotEmpty String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("name") @NotEmpty String name,
-			@FormParam("importEnvironments") Boolean importEnvironments,
-			@FormParam("importServices") Boolean importServices) {
+			@FormParam("importSandboxes") @NotEmpty Boolean importSandboxes,
+			@FormParam("importServices") @NotEmpty Boolean importServices) {
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		resource.setName(name);
 		resource.setDescription(description);
 		
-		applicationService.createApplication(resource, connectorId, importEnvironments, importServices);
+		applicationService.createApplication(resource, connectorId, importSandboxes, importServices);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ApplicationResource.class)
@@ -170,9 +169,7 @@ public class ApplicationResource {
 			@PathParam("id") String id,
 			@FormParam("name") @NotEmpty String name) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ApplicationDTO resource = applicationService.getApplication(id, subject);
+		ApplicationDTO resource = applicationService.findApplication( new Id(id) );
 		resource.setId(id);
 		resource.setName(name);
 		

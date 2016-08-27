@@ -1,5 +1,6 @@
 package com.nowellpoint.aws.api.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class ApplicationDTO extends AbstractDTO {
@@ -68,6 +69,13 @@ public class ApplicationDTO extends AbstractDTO {
 
 	public void setEnvironments(Set<EnvironmentDTO> environments) {
 		this.environments = environments;
+	}
+	
+	public void addEnvironment(EnvironmentDTO environment) {
+		if (environments == null || environments.isEmpty()) {
+			environments = new HashSet<EnvironmentDTO>();
+		}
+		environments.add(environment);
 	}
 
 	public String getStatus() {

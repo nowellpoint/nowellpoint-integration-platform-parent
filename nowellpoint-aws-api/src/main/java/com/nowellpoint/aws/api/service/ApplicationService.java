@@ -59,18 +59,22 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO createApplication(ApplicationDTO resource, String connectorId, Boolean importEnvironments, Boolean importServices) {
+	public ApplicationDTO createApplication(ApplicationDTO resource, String connectorId, Boolean importSandboxes, Boolean importServices) {
 		
-		AccountProfileDTO owner = new AccountProfileDTO();
-		owner.setHref(getSubject());
+		if (resource.getOwner() == null) {
+			AccountProfileDTO owner = new AccountProfileDTO();
+			owner.setHref(getSubject());
+			resource.setOwner(owner);
+		}
 		
-		resource.setOwner(owner);
 		resource.setStatus("WORK_IN_PROGRESS");
 		
 		SalesforceConnectorDTO connector = salesforceConnectorService.find(connectorId);
 		
-		if (importEnvironments) {
+		if (importSandboxes) {
 			resource.setEnvironments(connector.getEnvironments());
+		} else {
+			resource.addEnvironment(connector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
 		}
 		
 		if (importServices) {
@@ -94,7 +98,8 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 */
 	
 	public ApplicationDTO updateApplication(ApplicationDTO resource) {
-		ApplicationDTO original = getApplication( resource.getId(), getSubject() );
+		/// need to fix this to accept id as a paramter
+		ApplicationDTO original = findApplication( new Id(resource.getId()) );
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
 		
@@ -129,14 +134,14 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO getApplication(String id, String subject) {
-		ApplicationDTO resource = hget( ApplicationDTO.class, id, subject );
-		
-		if ( resource == null ) {
-			resource = find(id);
-			hset( id, subject, resource );
+	public ApplicationDTO findApplication(Id id) {
+		ApplicationDTO resource = hget( ApplicationDTO.class, id.getValue(), getSubject() );
+		if ( resource == null ) {		
+			resource = find(id.getValue());
+			if (resource != null) {
+				hset( id.getValue(), getSubject(), resource );
+			}
 		}
-		
 		return resource;
 	}	
 }

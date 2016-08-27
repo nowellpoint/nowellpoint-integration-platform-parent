@@ -48,12 +48,12 @@
                                 <tbody>
                                     <#list applicationList?sort_by( "createdDate") as application>
                                         <tr id="${application.id}">
-                                            <td><a href="/app/application/${application.id}">${application.name}</a></td>
+                                            <td><a href="${labels['base.path']}/${application.id}">${application.name}</a></td>
                                             <td>${application.description}</td>
                                             <td>${application.status}</td>
                                             <td><a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editApplication}"><span class="icon icon-edit"></span></a>&nbsp;
                                                 <a href="#" class="" title="${edit}" data-toggle="modal" data-title="${editApplication}"><span class="icon icon-cog"></span></a>&nbsp;
-                                                <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${deleteMessage}"><span class="icon icon-trash"></span></a></td>
+                                                <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${labels['delete.message']}"><span class="icon icon-trash"></span></a></td>
                                         </tr>
                                     </#list>
                                 </tbody>

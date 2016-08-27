@@ -1,14 +1,13 @@
 package com.nowellpoint.www.app.view;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 
 import org.jboss.logging.Logger;
 
@@ -16,11 +15,11 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Application;
 import com.nowellpoint.www.app.model.SalesforceConnector;
-import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
+import com.nowellpoint.www.app.service.SalesforceConnectorService;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -32,15 +31,18 @@ public class ApplicationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ApplicationController.class);
 	
+	private static final SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
+	
 	public ApplicationController(Configuration cfg) {
 		super(ApplicationController.class, cfg);
 	}
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * newApplication
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route newApplication = (Request request, Response response) -> {
@@ -62,48 +64,77 @@ public class ApplicationController extends AbstractController {
 		}
 		
 		Map<String, Object> model = getModel();
+		model.put("mode", "select");
     	model.put("salesforceConnectorsList", salesforceConnectors);
+		
+		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
+	};
+
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * addSalesforceConnector
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route importSalesforceConnector = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.queryParams("id");
+		
+		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
+				.withAccessToken(token.getAccessToken())
+				.withId(id);
+		
+		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
+		
+		Map<String, Object> model = getModel();
+		model.put("mode", "import");
+    	model.put("salesforceConnector", salesforceConnector);
 		
 		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * getApplication
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route getApplication = (Request request, Response response) -> {
 		
-		String applicationId = request.params(":id");
+		String id = request.params(":id");
 		
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-				.header("x-api-key", System.getenv("NCS_API_KEY"))
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
-				.path("application")
-				.path(applicationId)
+				.path("applications")
+				.path(id)
 				.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		Application application = httpResponse.getEntity(Application.class);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
+		System.out.println(application.getId());
+		
+		Map<String, Object> model = getModel();
 		model.put("application", application);
 		
-		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
+		return render(request, model, Path.Template.APPLICATION);
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
+	 * getSalesforceConnectors
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route getApplications = (Request request, Response response) -> {
@@ -132,88 +163,44 @@ public class ApplicationController extends AbstractController {
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
+	 * createApplication
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route saveApplication = (Request request, Response response) -> {
+	public Route createApplication = (Request request, Response response) -> {
 		
-		Token token = request.attribute("token");
+		Token token = getToken(request);
 		
-		HttpResponse httpResponse = null;
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path("applications")
+				.parameter("name", request.queryParams("name"))
+				.parameter("description", request.queryParams("description"))
+				.parameter("importSandboxes", request.queryParams("importSandboxes") != null ? "true" : "false")
+				.parameter("importServices", request.queryParams("importServices") != null ? "true" : "false")
+				.parameter("connectorId", request.queryParams("connectorId"))
+				.execute();
 		
-		if (request.queryParams("id").trim().isEmpty()) {
-			
-			String body;
-			try {
-				body = new StringBuilder()
-						.append("serviceProviderId=")
-						.append(request.queryParams("serviceProviderId"))
-						.append("&name=")
-						.append(URLEncoder.encode(request.queryParams("name"), "UTF-8"))
-						.append("&connectorId=")
-						.append(request.queryParams("connectorId"))
-						.toString();
-				
-			} catch (UnsupportedEncodingException e) {
-				throw new BadRequestException(e);
-			}
-			
-			httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.accept(MediaType.APPLICATION_JSON)
-					.path("application")
-					.body(body)
-					.execute();
-			
-		} else {
-			
-			String body;
-			try {
-				body = new StringBuilder()
-						.append("name=")
-						.append(URLEncoder.encode(request.queryParams("name"), "UTF-8"))
-						.toString();
-				
-			} catch (UnsupportedEncodingException e) {
-				throw new BadRequestException(e);
-			}
-			
-			httpResponse = RestResource.put(System.getenv("NCS_API_ENDPOINT"))
-					.header("x-api-key", System.getenv("NCS_API_KEY"))
-					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.accept(MediaType.APPLICATION_JSON)
-					.path("application")
-					.path(request.queryParams("id"))
-					.body(body)
-					.execute();
-			
-		}
-		
-		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
 		
 		Application application = httpResponse.getEntity(Application.class);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("account", request.attribute("account"));
-		model.put("application", application);
+		response.redirect(Path.Route.APPLICATION.replace(":id", application.getId()));
 		
-		return render(request, model, "secure/");
+		return "";
 	};
 	
 	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
+	 * deleteApplication
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
 	public Route deleteApplication = (Request request, Response response) -> {

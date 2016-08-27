@@ -150,13 +150,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
-		AccountProfileDTO owner = new AccountProfileDTO();
-		owner.setHref(getSubject());
-		
 		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
-		resource.setOwner(owner);
+		
+		if (resource.getOwner() == null) {
+			AccountProfileDTO owner = new AccountProfileDTO();
+			owner.setHref(getSubject());
+			resource.setOwner(owner);
+		}
 		
 		EnvironmentDTO environment = new EnvironmentDTO();
 		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
