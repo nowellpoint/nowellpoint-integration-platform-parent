@@ -8,7 +8,6 @@ import org.wildfly.swarm.container.Container;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
 import org.wildfly.swarm.logging.LoggingFraction;
-import org.wildfly.swarm.swagger.SwaggerArchive;
 
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -43,11 +42,6 @@ public class Main {
         		.addAsWebInfResource(new File("src/main/resources/WEB-INF/web.xml"), "web.xml")
         		.addAsWebInfResource(new File("src/main/resources/META-INF/beans.xml"), "beans.xml")
         		.addAsWebResource(new File("src/main/resources/ValidationMessages.properties"));
-        
-        SwaggerArchive archive = deployment.as(SwaggerArchive.class)
-        		.setVersion("1.0")
-        		.setTitle("Nowellpoint Cloud Services API")
-        		.setResourcePackages("com.nowellpoint.aws.api.resource");
         
         deployment.addAllDependencies();
         

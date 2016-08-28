@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.idp.model.Token;
@@ -43,12 +44,13 @@ abstract class AbstractController {
 		return token;
 	}
 	
-	private String buildTemplate(Locale locale, ModelAndView modelAndView) {
+	private String buildTemplate(Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
 		try {
 			Template template = configuration.getTemplate(modelAndView.getViewName());
 			Environment environment = template.createProcessingEnvironment(modelAndView.getModel(), output);
 			environment.setLocale(locale);
+			environment.setTimeZone(timeZone);
 			environment.process();
 			output.flush();
 		} catch (Exception e) {
@@ -74,11 +76,25 @@ abstract class AbstractController {
 		return locale;
 	}
 	
+	protected TimeZone getDefaultTimeZone(Request request) {
+		AccountProfile accountProfile = getAccount(request);
+		
+		TimeZone timeZone = null;
+		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
+			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
+		} else {
+			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
+		}
+		
+		return timeZone;
+	}
+	
 	protected String render(Request request, Map<String,Object> model, String templateName) {		
 		Locale locale = getDefaultLocale(request);
+		TimeZone timeZone = getDefaultTimeZone(request);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("account", getAccount(request));
-        return buildTemplate(locale, new ModelAndView(model, templateName));
+        return buildTemplate(locale, timeZone, new ModelAndView(model, templateName));
     }
 }

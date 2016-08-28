@@ -169,12 +169,14 @@ public class Application implements SparkApplication {
         
         get(Path.Route.SETUP, setupController.showSetup);
         
+        get(Path.Route.APPLICATIONS_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
+        get(Path.Route.APPLICATIONS_EDIT, applicationController.editApplication);
         get(Path.Route.APPLICATIONS_NEW, applicationController.newApplication);
-        get(Path.Route.APPLICATIONS_IMPORT, applicationController.importSalesforceConnector);
 		get(Path.Route.APPLICATION, applicationController.getApplication);
 		get(Path.Route.APPLICATIONS, applicationController.getApplications);
 		delete(Path.Route.APPLICATIONS.concat("/:id"), applicationController.deleteApplication);
 		post(Path.Route.APPLICATIONS_CREATE, applicationController.createApplication);
+		post(Path.Route.APPLICATIONS_UPDATE, applicationController.updateApplication);
 		
 		get(Path.Route.PROJECTS, projectController.getProjects);
 		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);

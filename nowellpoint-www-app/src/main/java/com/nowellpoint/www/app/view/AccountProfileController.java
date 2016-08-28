@@ -3,8 +3,10 @@ package com.nowellpoint.www.app.view;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -75,6 +77,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("accountProfile", account);
 		model.put("locales", new TreeMap<String, String>(getLocales(account)));
 		model.put("languages", getSupportedLanguages());
+		model.put("timeZones", getTimeZones());
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);		
 	};
@@ -184,7 +187,8 @@ public class AccountProfileController extends AbstractController {
 				.withPhone(request.queryParams("phone"))
 				.withExtension(request.queryParams("extension"))
 				.withLanguageSidKey(request.queryParams("languageSidKey"))
-				.withLocaleSidKey(request.queryParams("localeSidKey"));
+				.withLocaleSidKey(request.queryParams("localeSidKey"))
+				.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"));
 
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -205,6 +209,7 @@ public class AccountProfileController extends AbstractController {
 				.parameter("extension", accountProfile.getExtension())
 				.parameter("languageSidKey", accountProfile.getLanguageSidKey())
 				.parameter("localeSidKey", accountProfile.getLocaleSidKey())
+				.parameter("timeZoneSidKey", accountProfile.getTimeZoneSidKey())
 				.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
@@ -666,5 +671,14 @@ public class AccountProfileController extends AbstractController {
 		Map<String,String> languageMap = new HashMap<String,String>();
 		languageMap.put(Locale.US.toString(), Locale.US.getDisplayLanguage());
 		return languageMap;
+	}
+	
+	/**
+	 * 
+	 * @return application supported timezones
+	 */
+	
+	private List<String> getTimeZones() {
+		return Arrays.asList(TimeZone.getAvailableIDs());
 	}
 }

@@ -22,28 +22,15 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.api.dto.Id;
-import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.api.model.ServiceInstance;
-import com.nowellpoint.aws.api.service.AccountProfileService;
 import com.nowellpoint.aws.api.service.ApplicationService;
-import com.nowellpoint.aws.api.service.SalesforceConnectorService;
-import com.nowellpoint.aws.api.service.ServiceProviderService;
 
 @Path("/applications")
 public class ApplicationResource {
 	
 	@Inject
 	private ApplicationService applicationService;
-	
-	@Inject
-	private ServiceProviderService serviceProviderService;
-	
-	@Inject
-	private SalesforceConnectorService salesforceConnectorService;
 
 	@Context
 	private UriInfo uriInfo;
@@ -131,29 +118,6 @@ public class ApplicationResource {
 				.build();	
 	}
 	
-//	@Consumes(MediaType.APPLICATION_JSON)
-//    @Produces(MediaType.APPLICATION_JSON)
-//	public Response createApplication(ApplicationDTO resource) {
-//		String subject = securityContext.getUserPrincipal().getName();
-//		
-//		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(subject);	
-//		
-//		resource.setOwner(owner);
-//		resource.setSubject(subject);
-//		resource.setEventSource(uriInfo.getBaseUri());
-//		
-//		applicationService.createApplication(resource);
-//		
-//		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-//				.path(ApplicationResource.class)
-//				.path("/{id}")
-//				.build(resource.getId());
-//		
-//		return Response.created(uri)
-//				.entity(resource)
-//				.build();
-//	}
-	
 	/**
 	 * 
 	 * @param id
@@ -167,20 +131,16 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(
 			@PathParam("id") String id,
-			@FormParam("name") @NotEmpty String name) {
+			@FormParam("name") @NotEmpty String name,
+			@FormParam("description") @NotEmpty String description) {
 		
-		ApplicationDTO resource = applicationService.findApplication( new Id(id) );
-		resource.setId(id);
+		ApplicationDTO resource = new ApplicationDTO();
 		resource.setName(name);
+		resource.setDescription(description);
 		
-		applicationService.updateApplication(resource);
+		applicationService.updateApplication(new Id(id), resource);
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(ApplicationResource.class)
-				.path("/{id}")
-				.build(resource.getId());
-		
-		return Response.created(uri)
+		return Response.ok()
 				.entity(resource)
 				.build();	
 	}

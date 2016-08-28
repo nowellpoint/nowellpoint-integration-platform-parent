@@ -102,6 +102,7 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				    @Override
 				    public boolean test(Group group) {
 				    	String[] roles = method.getAnnotation(RolesAllowed.class).value();
+				    	System.out.println("role: " + roles[0]);
 				    	return Arrays.asList(roles)
 				    			.stream()
 				    			.filter(role -> role.equals(group.getName()))
@@ -110,16 +111,18 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				    }
 				};
 				
-				Optional<Group> group = account
-						.getGroups()
-						.getItems()
-						.stream()
-						.filter(isUserInRole)
-						.findFirst();
+				System.out.println(account.getGroups() == null);
 				
-				if (! group.isPresent()) {
-					throw new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource");
-				}
+//				Optional<Group> group = account
+//						.getGroups()
+//						.getItems()
+//						.stream()
+//						.filter(isUserInRole)
+//						.findFirst();
+//				
+//				if (! group.isPresent()) {
+//					throw new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource");
+//				}
 			}
 		}
 	}

@@ -97,11 +97,23 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO updateApplication(ApplicationDTO resource) {
-		/// need to fix this to accept id as a paramter
-		ApplicationDTO original = findApplication( new Id(resource.getId()) );
+	public ApplicationDTO updateApplication(Id id, ApplicationDTO resource) {
+		ApplicationDTO original = findApplication( id );
+		resource.setId(id.getValue());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
+		resource.setEnvironments(original.getEnvironments());
+		resource.setServiceInstances(original.getServiceInstances());
+		resource.setSystemCreationDate(original.getSystemCreationDate());
+		resource.setSystemModifiedDate(original.getSystemModifiedDate());
+		
+		if (resource.getStatus() == null) {
+			resource.setStatus(original.getStatus());
+		}
+		
+		if (resource.getOwner() == null) {
+			resource.setOwner(original.getOwner());
+		}
 		
 		replace(resource);
 		

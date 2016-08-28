@@ -1,9 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +36,12 @@ public class ApplicationController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * newApplication
+	 * selectSalesforceConnector
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route newApplication = (Request request, Response response) -> {
+	public Route selectSalesforceConnector = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
 		
@@ -64,7 +60,6 @@ public class ApplicationController extends AbstractController {
 		}
 		
 		Map<String, Object> model = getModel();
-		model.put("mode", "select");
     	model.put("salesforceConnectorsList", salesforceConnectors);
 		
 		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
@@ -73,12 +68,12 @@ public class ApplicationController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * addSalesforceConnector
+	 * newApplication
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route importSalesforceConnector = (Request request, Response response) -> {
+	public Route newApplication = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
 		
@@ -91,10 +86,10 @@ public class ApplicationController extends AbstractController {
 		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
 		
 		Map<String, Object> model = getModel();
-		model.put("mode", "import");
+		model.put("mode", "new");
     	model.put("salesforceConnector", salesforceConnector);
 		
-		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
+		return render(request, model, Path.Template.APPLICATION_EDIT);
 	};
 	
 	/**
@@ -121,12 +116,41 @@ public class ApplicationController extends AbstractController {
 		
 		Application application = httpResponse.getEntity(Application.class);
 		
-		System.out.println(application.getId());
-		
 		Map<String, Object> model = getModel();
 		model.put("application", application);
 		
 		return render(request, model, Path.Template.APPLICATION);
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * editApplication
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route editApplication = (Request request, Response response) -> {
+		
+		String id = request.params(":id");
+		
+		Token token = getToken(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("applications")
+				.path(id)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		Application application = httpResponse.getEntity(Application.class);
+		
+		Map<String, Object> model = getModel();
+		model.put("application", application);
+		model.put("mode", "edit");
+		
+		return render(request, model, Path.Template.APPLICATION_EDIT);
 	};
 	
 	/**
@@ -184,6 +208,39 @@ public class ApplicationController extends AbstractController {
 				.parameter("importSandboxes", request.queryParams("importSandboxes") != null ? "true" : "false")
 				.parameter("importServices", request.queryParams("importServices") != null ? "true" : "false")
 				.parameter("connectorId", request.queryParams("connectorId"))
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		
+		Application application = httpResponse.getEntity(Application.class);
+		
+		response.redirect(Path.Route.APPLICATION.replace(":id", application.getId()));
+		
+		return "";
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updateApplication
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route updateApplication = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path("applications")
+				.path(id)
+				.parameter("name", request.queryParams("name"))
+				.parameter("description", request.queryParams("description"))
 				.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());

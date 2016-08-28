@@ -111,7 +111,8 @@ public class AccountProfileResource {
     		@FormParam("phone") String phone,
     		@FormParam("extension") String extension,
     		@FormParam("localeSidKey") String localeSidKey,
-    		@FormParam("languageSidKey") String languageSidKey) {
+    		@FormParam("languageSidKey") String languageSidKey,
+    		@FormParam("timeZoneSidKey") String timeZoneSidKey) {
 				
 		String subject = securityContext.getUserPrincipal().getName();
 				
@@ -153,6 +154,7 @@ public class AccountProfileResource {
 		resource.setExtension(extension);
 		resource.setLocaleSidKey(localeSidKey);
 		resource.setLanguageSidKey(languageSidKey);
+		resource.setTimeZoneSidKey(timeZoneSidKey);
 		
 		accountProfileService.updateAccountProfile(resource);
 		

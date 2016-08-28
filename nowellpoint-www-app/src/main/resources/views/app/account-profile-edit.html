@@ -98,6 +98,20 @@
                                     </#list>
                                 </select>
                             </div>
+                            
+                            <div class="form-group col-md-6">
+                                <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
+                                <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
+                                    <#list timeZones as timeZone>
+                                        <#if accountProfile.timeZoneSidKey==timeZone>
+                                            <option value="${timeZone}" selected="selected">${timeZone}</option>
+                                        </#if>
+                                        <#if accountProfile.timeZoneSidKey !=timeZone>
+                                            <option value="${timeZone}">${timeZone}</option>
+                                        </#if>
+                                    </#list>
+                                </select>
+                            </div>
 
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="mobilePhone">${labels["mobile.phone"]}</label>
@@ -107,10 +121,6 @@
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="phone">${labels["phone"]}</label>
                                 <input type="text" class="form-control" name="phone" id="phone" value="${accountProfile.phone!}" />
-                            </div>
-                            
-                            <div class="form-group col-md-6">
-
                             </div>
 
                             <div class="form-group col-md-6">

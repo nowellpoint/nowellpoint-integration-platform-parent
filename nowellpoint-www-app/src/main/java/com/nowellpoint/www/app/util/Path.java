@@ -25,9 +25,11 @@ public class Path {
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
 		public static final String APPLICATIONS = String.format(APPLICATION_CONTEXT, "applications");
 		public static final String APPLICATION = String.format(APPLICATION_CONTEXT, "applications/:id");
+		public static final String APPLICATIONS_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "applications/select");
+		public static final String APPLICATIONS_EDIT = String.format(APPLICATION_CONTEXT, "applications/:id/edit");
 		public static final String APPLICATIONS_NEW = String.format(APPLICATION_CONTEXT, "applications/new");
-		public static final String APPLICATIONS_IMPORT = String.format(APPLICATION_CONTEXT, "applications/import");
 		public static final String APPLICATIONS_CREATE = String.format(APPLICATION_CONTEXT, "applications/create");
+		public static final String APPLICATIONS_UPDATE = String.format(APPLICATION_CONTEXT, "applications/:id/update");
 		public static final String PROJECTS = String.format(APPLICATION_CONTEXT, "projects");
 		public static final String PROVIDERS = String.format(APPLICATION_CONTEXT, "providers");
 		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce");
@@ -39,8 +41,6 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "account-profile/:id/address");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
-		
-		
 	}
 
 	public static class Template {

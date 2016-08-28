@@ -221,6 +221,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.setId(original.getId());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
+		resource.setSystemCreationDate(original.getSystemCreationDate());
+		resource.setSystemModifiedDate(original.getSystemModifiedDate());
 		
 		replace( resource );
 		

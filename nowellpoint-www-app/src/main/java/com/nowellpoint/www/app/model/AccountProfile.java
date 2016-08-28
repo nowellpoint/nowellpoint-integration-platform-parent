@@ -426,4 +426,9 @@ public class AccountProfile extends Resource {
 		setLocaleSidKey(localeSidKey);
 		return this;
 	}
+	
+	public AccountProfile withTimeZoneSidKey(String timeZoneSidKey) {
+		setTimeZoneSidKey(timeZoneSidKey);
+		return this;
+	}
 }
