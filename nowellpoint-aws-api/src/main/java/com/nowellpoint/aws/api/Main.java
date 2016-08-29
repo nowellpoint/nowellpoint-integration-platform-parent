@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.Optional;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.wildfly.swarm.container.Container;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 
 import org.wildfly.swarm.logging.LoggingFraction;
@@ -25,7 +26,7 @@ public class Main {
 		// build and start the container
 		//
 		
-        Container container = new Container();
+        Swarm container = new Swarm();
         
 		//
         // set system properties from configuration
@@ -39,8 +40,9 @@ public class Main {
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class, "nowellpoint-api.war")
         		.addPackages(true, Package.getPackage("com.nowellpoint.aws.api"))
+        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
         		.addAsWebInfResource(new File("src/main/resources/WEB-INF/web.xml"), "web.xml")
-        		.addAsWebInfResource(new File("src/main/resources/META-INF/beans.xml"), "beans.xml")
+        		//.addAsWebInfResource(new File("src/main/resources/META-INF/beans.xml"), "beans.xml")
         		.addAsWebResource(new File("src/main/resources/ValidationMessages.properties"));
         
         deployment.addAllDependencies();
