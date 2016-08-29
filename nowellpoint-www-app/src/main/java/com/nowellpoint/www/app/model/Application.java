@@ -20,6 +20,10 @@ public class Application extends Resource {
 		
 	}
 	
+	public Application(String id) {
+		setId(id);
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}

@@ -349,13 +349,13 @@
                     <div class="col-md-6">
                         <dl class="dl-vertical">
                             <dt>${messages["created.on"]}</dt>
-                            <dd>${salesforceConnector.createdDate?date?string.iso!}</dd>
+                            <dd>${salesforceConnector.createdDate?date?string.iso!} ${salesforceConnector.createdDate?time?string.medium!}</dd>
                         </dl>
                     </div>
                     <div class="col-md-6">
                         <dl class="dl-vertical">
                             <dt>${messages["last.modified.on"]}</dt>
-                            <dd>${salesforceConnector.lastModifiedDate?date?string.iso!}</dd>
+                            <dd>${salesforceConnector.lastModifiedDate?date?string.iso!} ${salesforceConnector.lastModifiedDate?time?string.medium!}</dd>
                         </dl>
                     </div>
                 </div>

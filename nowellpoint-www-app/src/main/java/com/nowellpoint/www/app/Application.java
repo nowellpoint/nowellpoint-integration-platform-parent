@@ -169,21 +169,29 @@ public class Application implements SparkApplication {
         
         get(Path.Route.SETUP, setupController.showSetup);
         
-        get(Path.Route.APPLICATIONS_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
-        get(Path.Route.APPLICATIONS_EDIT, applicationController.editApplication);
-        get(Path.Route.APPLICATIONS_NEW, applicationController.newApplication);
+        get(Path.Route.APPLICATION_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
+        get(Path.Route.APPLICATION_EDIT, applicationController.editApplication);
+        get(Path.Route.APPLICATION_NEW, applicationController.newApplication);
 		get(Path.Route.APPLICATION, applicationController.getApplication);
-		get(Path.Route.APPLICATIONS, applicationController.getApplications);
-		delete(Path.Route.APPLICATIONS.concat("/:id"), applicationController.deleteApplication);
-		post(Path.Route.APPLICATIONS_CREATE, applicationController.createApplication);
-		post(Path.Route.APPLICATIONS_UPDATE, applicationController.updateApplication);
+		get(Path.Route.APPLICATION_LIST, applicationController.getApplications);
+		delete(Path.Route.APPLICATION_DELETE, applicationController.deleteApplication);
+		post(Path.Route.APPLICATION_CREATE, applicationController.createApplication);
+		post(Path.Route.APPLICATION_UPDATE, applicationController.updateApplication);
+		post(Path.Route.APPLICATION_ENVIRONMENT_TEST, applicationController.testConnection);   
+		get(Path.Route.APPLICATION_ENVIRONMENT_VIEW, applicationController.viewEnvironment);
+		get(Path.Route.APPLICATION_ENVIRONMENT_EDIT, applicationController.editEnvironment);
+		get(Path.Route.APPLICATION_ENVIRONMENT_ADD, applicationController.newEnvironment);
+		get(Path.Route.APPLICATION_SERVICE_VIEW, applicationController.viewServiceInstance);
+		get(Path.Route.APPLICATION_SERVICE_EDIT, applicationController.editServiceInstance);
+		get(Path.Route.APPLICATION_SERVICE_NEW, applicationController.newServiceInstance);       
+		//get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.reviewPlans);
 		
 		get(Path.Route.PROJECTS, projectController.getProjects);
 		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
 		post(Path.Route.PROJECTS, projectController.saveProject);
 		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
 		
-		get(Path.Route.PROVIDERS, (request, response) -> serviceProviderController.getServiceProviders);
+		get(Path.Route.PROVIDERS, serviceProviderController.getServiceProviders);
         get(Path.Route.PROVIDERS.concat("/:id"), serviceProviderController.getServiceProvider);
         delete(Path.Route.PROVIDERS.concat("/:id"), serviceProviderController.deleteServiceProvider);
         
@@ -228,21 +236,7 @@ public class Application implements SparkApplication {
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/edit"), salesforceConnectorController.editServiceInstance);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/add"), salesforceConnectorController.addServiceInstance);
         post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/update"), salesforceConnectorController.updateServiceInstance);
-        
-        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/:environment/fields/:sobject"), salesforceConnectorController.getFields);
-        
-        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/sobjects"), salesforceConnectorController.getSobjects);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/deployment/:environment"), salesforceConnectorController.deploy);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.saveEventListeners);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners/query"), salesforceConnectorController.testQuery);
-        
-        
-        
         get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.reviewPlans);
-        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/service/:key/listeners"), salesforceConnectorController.getEventListeners);
         
         
         //

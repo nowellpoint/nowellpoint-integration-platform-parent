@@ -52,7 +52,7 @@
                                     <#include "targets.html" />
                                     <div class="form-group">
                                         <div class="pull-right">
-                                            <a href="${labels['base.path']}/${salesforceConnector.id}#services" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
+                                            <a href="${labels['base.path']}/${id}#services" class="btn btn-default" role="button" >${labels["cancel"]}</a>
                                             <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
                                         </div>
                                     </div>
@@ -92,18 +92,17 @@
                                 <#include "targets.html" />
                                 <hr>
                                 <dt>${messages["added.on"]}</dt>
-                                <dd>${(serviceInstance.addedOn?date?string.iso)!}</dd>
+                                <dd>${(serviceInstance.addedOn?date?string.iso)!} ${serviceInstance.addedOn?time?string.medium!}</dd>
                                 <hr>
                                 <dt>${messages["updated.on"]}</dt>
-                                <dd>${(serviceInstance.updatedOn?date?string.iso)!}</dd>
+                                <dd>${(serviceInstance.updatedOn?date?string.iso)!} ${serviceInstance.updatedOn?time?string.medium!}</dd>
                             </dl>
 
                             <br>
 
                             <div class="form-group">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}#services" id="submit-backup" class="btn btn-success" role="button">${labels["manage.backups"]}</a>
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}#services" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
+                                    <a href="${labels['base.path']}/${id}#services" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
                                 </div>
                             </div>
                         </div>

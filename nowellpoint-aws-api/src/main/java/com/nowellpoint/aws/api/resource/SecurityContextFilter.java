@@ -111,8 +111,6 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				    }
 				};
 				
-				System.out.println(account.getGroups() == null);
-				
 //				Optional<Group> group = account
 //						.getGroups()
 //						.getItems()

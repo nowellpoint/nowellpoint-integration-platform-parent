@@ -5,15 +5,15 @@
         <#include "navbar.html" />
 
         <div class="container-fluid">
-            
+
             <#if successMessage??>
                 <br>
-                    <div id="success" class="alert alert-success">
-                        <a class="close" data-dismiss="alert">&times;</a>
-                        <div class="text-center">${successMessage!}</div>
-                    </div>
-                </#if>
-            
+                <div id="success" class="alert alert-success">
+                    <a class="close" data-dismiss="alert">&times;</a>
+                    <div class="text-center">${successMessage!}</div>
+                </div>
+            </#if>
+
             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 
                 <#include "sidebar.html"/>
@@ -191,7 +191,29 @@
 
         </div>
 
-        <script>
-        </script>
+        <#include "spinner.html"/>
+
+        <div class="modal fade" id="confirm-remove-environment-dialog" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p></p>
+                        <input type="hidden" id="href" />
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-link modal-action" data-dismiss="modal">${messages["cancel"]}</button>
+                        <button type="button" class="btn-link modal-action" data-dismiss="modal" id="confirm-remove-environment-button">
+                            <p class="text-danger"><strong>${messages["confirm"]}</strong></p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script src="/js/application.js"></script>
 
     </@t.page>

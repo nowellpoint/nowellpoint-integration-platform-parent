@@ -120,7 +120,7 @@
 
                                 <div class="form-group">
                                     <div class="pull-right">
-                                        <a href="${labels['base.path']}/${salesforceConnector.id}#environments" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
+                                        <a href="${labels['base.path']}/${id}#environments" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
                                     </div>
                                 </div>
@@ -158,7 +158,7 @@
                                     <dd>${(environment.serviceEndpoint)!}&emsp;</dd>
                                     <hr>
                                     <dt>${messages["added.on"]}</dt>
-                                    <dd>${(environment.addedOn?date?string.iso)!}</dd>
+                                    <dd>${(environment.addedOn?date?string.iso)!} ${environment.addedOn?time?string.medium!}</dd>
                                 </dl>
                             </div>
 
@@ -178,7 +178,7 @@
                                     <dd>${(environment.apiVersion)!}&emsp;</dd>
                                     <hr>
                                     <dt>${messages["updated.on"]}</dt>
-                                    <dd>${(environment.updatedOn?date?string.iso)!}</dd>
+                                    <dd>${(environment.updatedOn?date?string.iso)!} ${environment.updatedOn?time?string.medium!}</dd>
                                 </dl>
 
                             </div>
@@ -187,11 +187,11 @@
 
                             <div class="form-group col-md-12">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}#environments" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a> 
+                                    <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
+                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
+                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a> 
                                     <#if environment.isSandbox>
-                                        <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
+                                        <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                                     </#if>
                                 </div>
                             </div>
@@ -213,7 +213,7 @@
                     type: "POST",
                     dataType: "json",
                     data: $( "#enviroment-form" ).serialize(),
-                    url: "${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/test",
+                    url: "${labels['base.path']}/${id}/environments/${(environment.key)!}/test",
                     success: function (response) {
                         var environment = response;
                         if (environment.isValid) {

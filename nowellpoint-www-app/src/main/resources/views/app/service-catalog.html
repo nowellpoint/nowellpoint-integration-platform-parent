@@ -14,7 +14,7 @@
                         </div>
                         <div class="dashhead-toolbar">
                             <p class="pull-right">
-                                <a id="cancel" href="${labels['base.path']}/${salesforceConnector.id}#services" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
+                                <a id="cancel" href="${labels['base.path']}/${id}#services" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
                             </p>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                             <#if service.isActive>
 
                                 <li>
-                                    <form method="POST" action="${labels['base.path']}/${(salesforceConnector.id)!}/services/${service.key}/add">
+                                    <form method="POST" action="${labels['base.path']}/${(id)!}/services/${service.key}/add">
                                         <div class="panel panel-default">
                                             <div class="panel-body">
                                                 <br>

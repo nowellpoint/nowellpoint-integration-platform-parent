@@ -8,6 +8,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -15,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
@@ -23,7 +25,9 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.Id;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
 import com.nowellpoint.aws.api.service.ApplicationService;
 
 @Path("/applications")
@@ -60,7 +64,7 @@ public class ApplicationResource {
 	 */
 	
 	@GET
-	@Path("/{id}")
+	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
 		
@@ -76,12 +80,11 @@ public class ApplicationResource {
 	 */
 	
 	@DELETE
-	@Path("/{id}")
+	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteApplication(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		applicationService.deleteApplication(id, subject, uriInfo.getBaseUri());
+		applicationService.deleteApplication( new Id(id));
 		
 		return Response.noContent().build();
 	}
@@ -126,7 +129,7 @@ public class ApplicationResource {
 	 */
 	
 	@PUT
-	@Path("/{id}")
+	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateApplication(
@@ -145,18 +148,58 @@ public class ApplicationResource {
 				.build();	
 	}
 	
-//	@PUT
-//	@Path("/{id}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Response updateApplication(@PathParam("id") String id, ApplicationDTO resource) {
-//		String subject = securityContext.getUserPrincipal().getName();
-//		
-//		resource.setSubject(subject);
-//		resource.setId(id);
-//		
-//		applicationService.updateApplication(resource);
-//		
-//		return Response.ok(resource).build();
-//	}
+	@GET
+	@Path("{id}/environment/{key}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
+		
+		EnvironmentDTO resource = applicationService.getEnvironment(new Id(id), key);
+		
+		if (resource == null) {
+			throw new NotFoundException(String.format("Environment for key %s was not found",key));
+		}
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+	}
+	
+	@POST
+	@Path("{id}/environment/{key}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
+		
+		EnvironmentDTO resource = applicationService.updateEnvironment(new Id(id), key, parameters);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+	}
+	
+	@DELETE
+	@Path("{id}/environment/{key}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
+		
+		applicationService.removeEnvironment(new Id(id), key);
+		
+		return Response.ok()
+				.build(); 
+	}
+	
+	@GET
+	@Path("{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getServiceInstance(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key) {
+		
+		ServiceInstanceDTO resource = applicationService.getServiceInstance( new Id(id), key );
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
 }
