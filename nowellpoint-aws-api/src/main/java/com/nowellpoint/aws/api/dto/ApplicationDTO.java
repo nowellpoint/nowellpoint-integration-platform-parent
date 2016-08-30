@@ -62,6 +62,13 @@ public class ApplicationDTO extends AbstractDTO {
 	public void setServiceInstances(Set<ServiceInstanceDTO> serviceInstances) {
 		this.serviceInstances = serviceInstances;
 	}
+	
+	public void addServiceInstance(ServiceInstanceDTO serviceInstance) {
+		if (serviceInstances == null || serviceInstances.isEmpty()) {
+			serviceInstances = new HashSet<ServiceInstanceDTO>();
+		}
+		serviceInstances.add(serviceInstance);
+	}
 
 	public Set<EnvironmentDTO> getEnvironments() {
 		return environments;

@@ -165,6 +165,19 @@ public class ApplicationResource {
 	}
 	
 	@POST
+	@Path("salesforce/{id}/environment")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO resource) {
+		
+		applicationService.addEnvironment(new Id(id), resource);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+	}
+	
+	@POST
 	@Path("{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -197,6 +210,60 @@ public class ApplicationResource {
 			@PathParam(value="key") String key) {
 		
 		ServiceInstanceDTO resource = applicationService.getServiceInstance( new Id(id), key );
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	@POST
+	@Path("{id}/service")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addServiceInstance(@PathParam(value="id") String id, @FormParam(value="key") String key) {
+		
+		ServiceInstanceDTO resource = applicationService.addServiceInstance( new Id(id), key);
+		
+		if ( resource == null ) {
+			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", "Service", key ) );
+		}
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	@PUT
+	@Path("{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateServiceInstance(
+			@PathParam(value="id") String id,
+			@PathParam(value="key") String key,
+			ServiceInstanceDTO resource) {
+		
+		applicationService.updateServiceInstance( new Id(id), key, resource);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 	
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param key
+	 * @param parameters
+	 * @return
+	 */
+	
+	@POST
+	@Path("{id}/service/{key}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
+		
+		ServiceInstanceDTO resource = applicationService.updateServiceInstance( new Id(id), key, parameters);
 		
 		return Response.ok()
 				.entity(resource)

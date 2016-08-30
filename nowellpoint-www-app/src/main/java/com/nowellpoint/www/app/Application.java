@@ -172,7 +172,7 @@ public class Application implements SparkApplication {
         get(Path.Route.APPLICATION_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
         get(Path.Route.APPLICATION_EDIT, applicationController.editApplication);
         get(Path.Route.APPLICATION_NEW, applicationController.newApplication);
-		get(Path.Route.APPLICATION, applicationController.getApplication);
+		get(Path.Route.APPLICATION_VIEW, applicationController.viewApplication);
 		get(Path.Route.APPLICATION_LIST, applicationController.getApplications);
 		delete(Path.Route.APPLICATION_DELETE, applicationController.deleteApplication);
 		post(Path.Route.APPLICATION_CREATE, applicationController.createApplication);
@@ -180,11 +180,15 @@ public class Application implements SparkApplication {
 		post(Path.Route.APPLICATION_ENVIRONMENT_TEST, applicationController.testConnection);   
 		get(Path.Route.APPLICATION_ENVIRONMENT_VIEW, applicationController.viewEnvironment);
 		get(Path.Route.APPLICATION_ENVIRONMENT_EDIT, applicationController.editEnvironment);
-		get(Path.Route.APPLICATION_ENVIRONMENT_ADD, applicationController.newEnvironment);
+		get(Path.Route.APPLICATION_ENVIRONMENT_NEW, applicationController.newEnvironment);
+		post(Path.Route.APPLICATION_ENVIRONMENT_ADD, applicationController.addEnvironment);
+		post(Path.Route.APPLICATION_ENVIRONMENT_UPDATE, applicationController.updateEnvironment);
+		delete(Path.Route.APPLICATION_ENVIRONMENT_REMOVE, applicationController.removeEnvironment);
 		get(Path.Route.APPLICATION_SERVICE_VIEW, applicationController.viewServiceInstance);
 		get(Path.Route.APPLICATION_SERVICE_EDIT, applicationController.editServiceInstance);
-		get(Path.Route.APPLICATION_SERVICE_NEW, applicationController.newServiceInstance);       
-		//get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.reviewPlans);
+		get(Path.Route.APPLICATION_SERVICE_NEW, applicationController.newServiceInstance);  
+		post(Path.Route.APPLICATION_SERVICE_ADD, applicationController.addServiceInstance);
+		post(Path.Route.APPLICATION_SERVICE_UPDATE, applicationController.updateServiceInstance);  
 		
 		get(Path.Route.PROJECTS, projectController.getProjects);
 		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
@@ -220,24 +224,22 @@ public class Application implements SparkApplication {
         delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
         get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
-        get(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.viewSalesforceConnector);
-        post(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.updateSalesforceConnector);
-        delete(Path.Route.CONNECTORS_SALESFORCE, salesforceConnectorController.deleteSalesforceConnector);
+        get(Path.Route.CONNECTORS_SALESFORCE_VIEW, salesforceConnectorController.viewSalesforceConnector);
+        post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, salesforceConnectorController.updateSalesforceConnector);
+        delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, salesforceConnectorController.deleteSalesforceConnector);
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, salesforceConnectorController.editSalesforceConnector);
-        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENTS_ADD, salesforceConnectorController.newEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/view"), salesforceConnectorController.viewEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/edit"), salesforceConnectorController.editEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments"), salesforceConnectorController.addEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key"), salesforceConnectorController.updateEnvironment);
-        delete(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key"), salesforceConnectorController.removeEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/environments/:key/test"), salesforceConnectorController.testConnection);        
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/catalog"), salesforceConnectorController.newServiceInstance);       
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/view"), salesforceConnectorController.viewServiceInstance);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/edit"), salesforceConnectorController.editServiceInstance);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/add"), salesforceConnectorController.addServiceInstance);
-        post(Path.Route.CONNECTORS_SALESFORCE.concat("/services/:key/update"), salesforceConnectorController.updateServiceInstance);
-        get(Path.Route.CONNECTORS_SALESFORCE.concat("/:id/providers/:serviceProviderId/service/:serviceType"), salesforceConnectorController.reviewPlans);
-        
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_NEW, salesforceConnectorController.newEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_VIEW, salesforceConnectorController.viewEnvironment);
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_EDIT, salesforceConnectorController.editEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_ADD, salesforceConnectorController.addEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE, salesforceConnectorController.updateEnvironment);
+        delete(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE, salesforceConnectorController.removeEnvironment);
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, salesforceConnectorController.testConnection);  
+        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_EDIT, salesforceConnectorController.editServiceInstance);
+        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_NEW, salesforceConnectorController.newServiceInstance);       
+        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_VIEW, salesforceConnectorController.viewServiceInstance);
+        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, salesforceConnectorController.addServiceInstance);
+        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_UPDATE, salesforceConnectorController.updateServiceInstance);
         
         //
         // exception handlers

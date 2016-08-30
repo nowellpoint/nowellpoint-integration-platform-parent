@@ -11,6 +11,7 @@ import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
@@ -102,12 +103,12 @@ public class ApplicationController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getApplication
+	 * viewApplication
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route getApplication = (Request request, Response response) -> {
+	public Route viewApplication = (Request request, Response response) -> {
 		
 		String id = request.params(":id");
 		
@@ -125,6 +126,7 @@ public class ApplicationController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("application", application);
+		model.put("successMessage", request.cookie("successMessage"));
 		
 		return render(request, model, Path.Template.APPLICATION);
 	};
@@ -221,7 +223,7 @@ public class ApplicationController extends AbstractController {
 		
 		Application application = httpResponse.getEntity(Application.class);
 		
-		response.redirect(Path.Route.APPLICATION.replace(":id", application.getId()));
+		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", application.getId()));
 		
 		return "";
 	};
@@ -254,7 +256,7 @@ public class ApplicationController extends AbstractController {
 		
 		Application application = httpResponse.getEntity(Application.class);
 		
-		response.redirect(Path.Route.APPLICATION.replace(":id", application.getId()));
+		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", application.getId()));
 		
 		return "";
 	};
@@ -393,6 +395,124 @@ public class ApplicationController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * addEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
+	public Route addEnvironment = (Request request, Response response) -> {		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String active = request.queryParams("active");
+		String authEndpoint = request.queryParams("authEndpoint");
+		String name = request.queryParams("environmentName");
+		String password = request.queryParams("password");
+		String username = request.queryParams("username");
+		String securityToken = request.queryParams("securityToken");
+		
+		Environment environment = new Environment()
+				.withIsActive(Boolean.valueOf(active))
+				.withAuthEndpoint(authEndpoint)
+				.withEnvironmentName(name)
+				.withPassword(password)
+				.withUsername(username)
+				.withSecurityToken(securityToken);
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("applications")
+    			.path(id)
+    			.path("environment")
+    			.body(environment)
+				.execute();
+
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			Map<String, Object> model = getModel();
+			model.put("id", id);
+			model.put("mode", "add");
+			model.put("action", String.format("/app/applications/%s/environments", id));
+			model.put("environment", environment);
+			model.put("errorMessage", error.getMessage());
+			
+			String output = render(request, model, Path.Template.ENVIRONMENT);
+			
+			throw new BadRequestException(output);
+		}
+
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
+		
+		return "";		
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updateEnvironment
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+
+	public Route updateEnvironment = (Request request, Response response) -> {		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String active = request.queryParams("active");
+		String authEndpoint = request.queryParams("authEndpoint");
+		String environmentName = request.queryParams("environmentName");
+		String password = request.queryParams("password");
+		String username = request.queryParams("username");
+		String securityToken = request.queryParams("securityToken");
+		
+		Environment environment = new Environment()
+				.withIsActive(Boolean.valueOf(active))
+				.withAuthEndpoint(authEndpoint)
+				.withEnvironmentName(environmentName)
+				.withPassword(password)
+				.withUsername(username)
+				.withSecurityToken(securityToken);
+		
+		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("applications")
+    			.path(id)
+    			.path("environment")
+    			.path(key)
+    			.body(environment)
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			Map<String, Object> model = getModel();
+			model.put("id", id);
+			model.put("mode", "edit");
+			model.put("action", String.format("/app/applications/%s/environments/%s", id, key));
+			model.put("environment", environment);
+			model.put("errorMessage", error.getMessage());
+			
+			String output = render(request, model, Path.Template.ENVIRONMENT);
+			
+			throw new BadRequestException(output);
+		}
+		
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.environment.success"), 3);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
+		
+		return "";		
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
 	 * removeEnvironment
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -418,7 +538,7 @@ public class ApplicationController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.environment.success"), 3);
-		response.header("Location", Path.Route.CONNECTORS_SALESFORCE.concat("/").concat(id));
+		response.header("Location", Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";
 	};
@@ -548,6 +668,62 @@ public class ApplicationController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * addServiceInstance
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route addServiceInstance = (Request request, Response response) -> {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path("applications")
+				.path(id)
+				.path("service")
+				.parameter("key", key)
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			
+			List<ServiceProvider> providers = Collections.emptyList();
+			
+			httpResponse = RestResource.get(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("providers")
+					.queryParameter("localeSidKey", "en_US")
+					.queryParameter("languageLocaleKey", "en_US")
+					.execute();
+				
+			if (httpResponse.getStatusCode() == Status.OK) {
+				providers = httpResponse.getEntityList(ServiceProvider.class);
+			} else {
+				throw new BadRequestException(httpResponse.getAsString());
+			}
+			
+			Map<String, Object> model = getModel();
+			model.put("serviceProviders", providers);
+			model.put("id", id);
+			model.put("errorMessage", error.getMessage());
+	    	
+			return render(request, model, Path.Template.SERVICE_CATALOG);
+		}
+		
+		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.service.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
+		
+		return "";		
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
 	 * editServiceInstance
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -587,5 +763,68 @@ public class ApplicationController extends AbstractController {
 		model.put("errorMessage", request.cookie("errorMessage"));
 		
 		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updateServiceInstance
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route updateServiceInstance = (Request request, Response response) -> {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String name = request.queryParams("name");
+		String tag = request.queryParams("tag");
+		String bucketName = request.queryParams("bucketName");
+		String awsAccessKey = request.queryParams("awsAccessKey");
+		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
+		
+		PostRequest httpRequest = RestResource.post(API_ENDPOINT)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path("applications")
+				.path(id)
+				.path("service")
+				.path(key);
+		
+		if (name != null) {
+			httpRequest.parameter("name", name);
+		}
+		
+		if (tag != null) {
+			httpRequest.parameter("tag", tag);
+		}
+		
+		if (bucketName != null) {
+			httpRequest.parameter("bucketName", bucketName);
+		}
+		
+		if (awsAccessKey != null) {
+			httpRequest.parameter("awsAccessKey", awsAccessKey);
+		}
+		
+		if (awsSecretAccessKey != null) {
+			httpRequest.parameter("awsSecretAccessKey", awsSecretAccessKey);
+		}
+				
+		HttpResponse httpResponse = httpRequest.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			response.cookie("errorMessage", error.getMessage(), 3, Boolean.FALSE);
+			response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id).concat("/services/:key/edit".replace(":key", key)));
+			return "";
+		}
+
+		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(this.getDefaultLocale(request), "update.service.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
+		
+		return "";		
 	};
 }

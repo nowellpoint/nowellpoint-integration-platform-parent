@@ -19,7 +19,6 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.www.app.model.Environment;
 import com.nowellpoint.www.app.model.ExceptionResponse;
 import com.nowellpoint.www.app.model.SalesforceConnector;
-import com.nowellpoint.www.app.model.Service;
 import com.nowellpoint.www.app.model.ServiceInstance;
 import com.nowellpoint.www.app.model.ServiceProvider;
 import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
@@ -192,7 +191,7 @@ public class SalesforceConnectorController extends AbstractController {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
 			Map<String, Object> model = getModel();
-			model.put("salesforceConnector", new SalesforceConnector(id));
+			model.put("id", id);
 			model.put("mode", "add");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
 			model.put("environment", environment);
@@ -203,8 +202,8 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
 	};
@@ -253,7 +252,7 @@ public class SalesforceConnectorController extends AbstractController {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
 			Map<String, Object> model = getModel();
-			model.put("salesforceConnector", new SalesforceConnector(id));
+			model.put("id", id);
 			model.put("mode", "edit");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
 			model.put("environment", environment);
@@ -265,7 +264,7 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.environment.success"), 3);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
 	};
@@ -299,7 +298,7 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.environment.success"), 3);
-		response.header("Location", Path.Route.CONNECTORS_SALESFORCE.concat("/").concat(id));
+		response.header("Location", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";
 	};
@@ -358,12 +357,12 @@ public class SalesforceConnectorController extends AbstractController {
 		if (httpResponse.getStatusCode() != Status.OK) {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			response.cookie("errorMessage", error.getMessage(), 3, Boolean.FALSE);
-			response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id).concat("/services/:key/edit".replace(":key", key)));
+			response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id).concat("/services/:key/edit".replace(":key", key)));
 			return "";
 		}
 
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id), "successMessage", MessageProvider.getMessage(this.getDefaultLocale(request), "update.service.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(this.getDefaultLocale(request), "update.service.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
 	};
@@ -499,19 +498,17 @@ public class SalesforceConnectorController extends AbstractController {
 			} else {
 				throw new BadRequestException(httpResponse.getAsString());
 			}
-	    	
-			SalesforceConnector salesforceConnector = new SalesforceConnector(id);
 			
 			Map<String, Object> model = getModel();
 			model.put("serviceProviders", providers);
-			model.put("salesforceConnector", salesforceConnector);
+			model.put("id", id);
 			model.put("errorMessage", error.getMessage());
 	    	
 			return render(request, model, Path.Template.SERVICE_CATALOG);
 		}
 		
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.service.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE.replace(":id", id));
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.service.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
 	};
@@ -697,50 +694,6 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("mode", "add");
     	
 		return render(request, model, Path.Template.SERVICE_CATALOG);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * reviewPlans
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route reviewPlans = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String serviceProviderId = request.params(":serviceProviderId");
-		String serviceType = request.params(":serviceType");
-		
-		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
-		ServiceProvider provider = null;
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("providers")
-				.path(serviceProviderId)
-				.execute();
-			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			provider = httpResponse.getEntity(ServiceProvider.class);
-		} else {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Service service = provider.getServices()
-				.stream()
-				.filter(s -> s.getType().equals(serviceType))
-				.findFirst()
-				.get();
-		
-		Map<String, Object> model = getModel();
-		model.put("serviceProvider", provider);
-		model.put("service", service);
-		model.put("salesforceConnector", salesforceConnector);
-    	
-		return render(request, model, Path.Template.REVIEW_SERVICE_PLANS);
 	};
 	
 	/**

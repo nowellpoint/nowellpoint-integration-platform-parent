@@ -5,12 +5,18 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
+import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
+import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
+import com.nowellpoint.aws.api.model.Service;
+import com.nowellpoint.aws.api.model.SimpleStorageService;
+import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperties;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -26,10 +32,13 @@ import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
 
-public class EnviromentService {
+public class CommonFunctions {
 	
 	@Inject
 	private SalesforceService salesforceService;
+	
+	@Inject
+	private ServiceProviderService serviceProviderService;
 	
 	private static final String IS_ACTIVE = "isActive";
 	private static final String API_VERSION = "apiVersion";
@@ -39,8 +48,28 @@ public class EnviromentService {
 	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
 	private static final String SECURITY_TOKEN_PARAM = "securityToken";
 	private static final String REFRESH_TOKEN_PROPERTY = "refresh.token";
+	private static final String NAME_PARAM = "name";
+	private static final String TAG_PARAM = "tag";
+	private static final String BUCKET_NAME_PARAM = "bucketName";
+	private static final String AWS_ACCESS_KEY_PARAM = "awsAccessKey";
+	private static final String AWS_SECRET_ACCESS_KEY_PARAM = "awsSecretAccessKey";
+	private static final String AWS_ACCESS_KEY_PROPERTY = "aws.access.key";
+	private static final String AWS_SECRET_ACCESS_KEY_PROPERTY = "aws.secret.access.key";
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param environment
+	 * @param parameters
+	 * 
+	 * 
+	 **************************************************************************************************************************/
 	
 	public void updateEnvironment(EnvironmentDTO environment, MultivaluedMap<String, String> parameters) {
+		
+		// must query current state
+		
+		
 		
 		if (parameters.containsKey(IS_ACTIVE)) {
 			environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
@@ -66,6 +95,15 @@ public class EnviromentService {
 			environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
 		}
 	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param environment
+	 * @param parameters
+	 * 
+	 * 
+	 **************************************************************************************************************************/
 	
 	public void testConnection(EnvironmentDTO environment, MultivaluedMap<String, String> parameters) {
 		
@@ -167,5 +205,107 @@ public class EnviromentService {
 		properties.add(refreshTokenProperty);
 		
 		return properties;
+	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * 
+	 * @param key
+	 * @param parameters
+	 * @return
+	 * 
+	 * 
+	 **************************************************************************************************************************/
+	
+	public ServiceInstanceDTO buildServiceInstance(String key, ServiceInstanceDTO serviceInstance, MultivaluedMap<String, String> parameters) {
+		serviceInstance.setKey(key);
+		
+		if (parameters.containsKey(NAME_PARAM)) {
+			serviceInstance.setName(parameters.getFirst(NAME_PARAM));
+		}
+		
+		if (parameters.containsKey(TAG_PARAM)) {
+			serviceInstance.setTag(parameters.getFirst(TAG_PARAM));
+		}
+		
+		if (parameters.containsKey(BUCKET_NAME_PARAM) || parameters.containsKey(AWS_ACCESS_KEY_PARAM) || parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
+			if (serviceInstance.getTargets() == null) {
+				serviceInstance.setTargets(new Targets());
+			}
+			if (serviceInstance.getTargets().getSimpleStorageService() == null) {
+				serviceInstance.getTargets().setSimpleStorageService(new SimpleStorageService());
+			}
+		}
+		
+		if (parameters.containsKey(BUCKET_NAME_PARAM)) {
+			serviceInstance.getTargets().getSimpleStorageService().setBucketName(parameters.getFirst(BUCKET_NAME_PARAM));
+		}
+		
+		if (parameters.containsKey(AWS_ACCESS_KEY_PARAM)) {
+			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(parameters.getFirst(AWS_ACCESS_KEY_PARAM));
+		}
+		
+		if (parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
+			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(parameters.getFirst(AWS_SECRET_ACCESS_KEY_PARAM));
+		}
+		
+		return serviceInstance;
+	}
+	
+	/**************************************************************************************************************************
+	 * 
+	 * @param subject
+	 * @param key
+	 * @param simpleStoreageService
+	 * 
+	 * 
+	 **************************************************************************************************************************/
+	
+	public void saveAwsCredentials(String subject, String key, SimpleStorageService simpleStoreageService) {
+		List<UserProperty> properties = new ArrayList<UserProperty>();
+		
+		UserProperty awsAccessKey = new UserProperty()
+				.withSubject(key)
+				.withKey(AWS_ACCESS_KEY_PROPERTY)
+				.withValue(simpleStoreageService.getAwsAccessKey())
+				.withLastModifiedBy(subject)
+				.withLastModifiedDate(Date.from(Instant.now()));
+		
+		properties.add(awsAccessKey);
+		
+		UserProperty awsSecretAccessKey = new UserProperty()
+				.withSubject(key)
+				.withKey(AWS_SECRET_ACCESS_KEY_PROPERTY)
+				.withValue(simpleStoreageService.getAwsSecretAccessKey())
+				.withLastModifiedBy(subject)
+				.withLastModifiedDate(Date.from(Instant.now()));
+		
+		properties.add(awsSecretAccessKey);
+		
+		UserProperties.batchSave(properties);
+	}
+	
+	public ServiceInstanceDTO buildServiceInstance(String key) {
+		ServiceProviderDTO serviceProvider = serviceProviderService.findByServiceKey(key);
+		
+		Service service = serviceProvider.getServices()
+				.stream()
+				.filter(s -> key.equals(s.getKey()))
+				.findFirst()
+				.get();
+		
+		ServiceInstanceDTO serviceInstance = new ServiceInstanceDTO();
+		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
+		serviceInstance.setServiceType(service.getType());
+		serviceInstance.setConfigurationPage(service.getConfigurationPage());
+		serviceInstance.setProviderName(serviceProvider.getName());
+		serviceInstance.setServiceName(service.getServiceName());
+		serviceInstance.setProviderType(serviceProvider.getType());
+		serviceInstance.setIsActive(Boolean.FALSE);
+		serviceInstance.setAddedOn(Date.from(Instant.now()));
+		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
+		//serviceInstance.setPlan(plan);
+		
+		return serviceInstance;
 	}
 }

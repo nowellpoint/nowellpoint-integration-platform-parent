@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -26,7 +25,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
-import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
@@ -139,9 +137,9 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO environment) {
+	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO resource) {
 		
-		EnvironmentDTO resource = salesforceConnectorService.addEnvironment(new Id(id), environment);
+		salesforceConnectorService.addEnvironment(new Id(id), resource);
 		
 		return Response.ok()
 				.entity(resource)
@@ -224,9 +222,9 @@ public class SalesforceConnectorResource {
 	public Response updateServiceInstance(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			ServiceInstanceDTO serviceInstance) {
+			ServiceInstanceDTO resource) {
 		
-		ServiceInstanceDTO resource = salesforceConnectorService.updateServiceInstance( new Id(id), key, serviceInstance);
+		salesforceConnectorService.updateServiceInstance( new Id(id), key, resource);
 		
 		return Response.ok()
 				.entity(resource)
@@ -252,34 +250,6 @@ public class SalesforceConnectorResource {
 		return Response.ok()
 				.entity(resource)
 				.build(); 	
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param eventListeners
-	 * @return
-	 */
-	
-	@POST
-	@Path("salesforce/{id}/service/{key}/listeners")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEventListeners(
-			@PathParam(value="id") String id,
-			@PathParam(value="key") String key,
-			Set<EventListenerDTO> eventListeners) {
-		
-		SalesforceConnectorDTO resource = null;
-		try {
-			resource = salesforceConnectorService.addEventListeners( new Id(id), key, eventListeners);
-		} catch (Exception e) {
-			throw new BadRequestException(e.getMessage());
-		}
-		
-		return Response.ok(resource)
-				.build(); 
 	}
 	
 	/**

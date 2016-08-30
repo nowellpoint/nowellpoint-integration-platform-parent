@@ -57,4 +57,5 @@ $('.test-connection').on('click', function (e) {
             }
         }
     });
+    location.hash = '#environments';
 });

@@ -5,11 +5,11 @@
     </div>
     <div class="form-group">
         <label for="awsAccessKey">${labels["aws.access.key"]}</label>
-        <input type="text" class="form-control" name="awsAccessKey" id="awsAccessKey" value="${(serviceInstance.targets.simpleStorageService.awsAccessKey)!}" autocomplete="off" />
+        <input type="password" class="form-control" name="awsAccessKey" id="awsAccessKey" value="${(serviceInstance.targets.simpleStorageService.awsAccessKey)!}" autocomplete="off" />
     </div>
     <div class="form-group">
         <label for="awsSecretAccessKey">${labels["aws.secret.access.key"]}</label>
-        <input type="text" class="form-control" name="awsSecretAccessKey" id="awsSecretAccessKey" value="${(serviceInstance.targets.simpleStorageService.awsSecretAccessKey)!}" autocomplete="off" />
+        <input type="password" class="form-control" name="awsSecretAccessKey" id="awsSecretAccessKey" value="${(serviceInstance.targets.simpleStorageService.awsSecretAccessKey)!}" autocomplete="off" />
     </div>
 </#if>
 
@@ -18,6 +18,5 @@
     <hr>
     <dt>${labels["s3bucket"]}</dt>
     <dd>${(serviceInstance.targets.simpleStorageService.bucketName)!}&emsp;</dd>
-
 
 </#if>

@@ -7,13 +7,10 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
@@ -31,14 +28,10 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
-import com.nowellpoint.aws.api.dto.EventListenerDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.aws.api.dto.ServiceProviderDTO;
-import com.nowellpoint.aws.api.model.EventListener;
 import com.nowellpoint.aws.api.model.SalesforceConnector;
-import com.nowellpoint.aws.api.model.Service;
 import com.nowellpoint.aws.api.model.SimpleStorageService;
 import com.nowellpoint.aws.api.model.Targets;
 import com.nowellpoint.aws.api.model.dynamodb.UserProperties;
@@ -63,27 +56,17 @@ import com.nowellpoint.client.sforce.model.Token;
 public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
 	
 	@Inject
-	private ServiceProviderService serviceProviderService;
-	
-	@Inject
 	private SalesforceService salesforceService;
 	
 	@Inject
-	private EnviromentService environmentService;
-	
-	private static final AmazonS3 s3Client = new AmazonS3Client();
+	private CommonFunctions commonFunctions;
 	
 	private static final String PASSWORD = "password";
 	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
 	private static final String ACCESS_TOKEN_PROPERTY = "access.token";
 	private static final String REFRESH_TOKEN_PROPERTY = "refresh.token";
-	private static final String AWS_ACCESS_KEY_PROPERTY = "aws.access.key";
-	private static final String AWS_SECRET_ACCESS_KEY_PROPERTY = "aws.secret.access.key";
-	private static final String NAME_PARAM = "name";
-	private static final String TAG_PARAM = "tag";
-	private static final String BUCKET_NAME_PARAM = "bucketName";
-	private static final String AWS_ACCESS_KEY_PARAM = "awsAccessKey";
-	private static final String AWS_SECRET_ACCESS_KEY_PARAM = "awsSecretAccessKey";
+	
+	private static final AmazonS3 s3Client = new AmazonS3Client();
 	
 	/**************************************************************************************************************************
 	 * 
@@ -338,7 +321,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public EnvironmentDTO addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
+	public void addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
@@ -360,7 +343,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		List<UserProperty> properties = environmentService.getEnvironmentUserProperties(getSubject(), environment);
+		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
 		
 		UserProperties.batchSave(properties);
 		
@@ -370,8 +353,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.addEnvironment(environment);
 		
 		updateSalesforceConnector(id, resource);
-		
-		return environment;
 	}
 	
 	/**************************************************************************************************************************
@@ -441,7 +422,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			environment.setIsValid(Boolean.FALSE);
 		}
 		
-		List<UserProperty> properties = environmentService.getEnvironmentUserProperties(getSubject(), environment);
+		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
 		
 		UserProperties.batchSave(properties);
 		
@@ -478,7 +459,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			
 			resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 			
-			environmentService.testConnection(environment, parameters);
+			commonFunctions.testConnection(environment, parameters);
 			
 			resource.addEnvironment(environment);
 			
@@ -486,7 +467,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 			
 		} else {
 			
-			environmentService.updateEnvironment(environment, parameters);
+			commonFunctions.updateEnvironment(environment, parameters);
 			
 			updateEnvironment(resource, environment);
 		}
@@ -512,7 +493,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 				.findFirst()
 				.get();
 		
-		List<UserProperty> properties = environmentService.getEnvironmentUserProperties(getSubject(), environment);
+		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
 		
 		UserProperties.batchDelete(properties);
 		
@@ -559,33 +540,15 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
-		ServiceProviderDTO serviceProvider = serviceProviderService.findByServiceKey(key);
-		
-		Service service = serviceProvider.getServices()
-				.stream()
-				.filter(s -> key.equals(s.getKey()))
-				.findFirst()
-				.get();
-		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
 		}
 		
-		resource.getServiceInstances().stream().filter(s -> s.getServiceType().equals(service.getType())).findFirst().ifPresent( s-> {
+		ServiceInstanceDTO serviceInstance = commonFunctions.buildServiceInstance(key);
+		
+		resource.getServiceInstances().stream().filter(s -> s.getServiceType().equals(serviceInstance.getServiceType())).findFirst().ifPresent( s-> {
 			throw new ServiceException(String.format("Unable to add new environment. Service has already been added with type: %s", s.getServiceName()));
 		});
-		
-		ServiceInstanceDTO serviceInstance = new ServiceInstanceDTO();
-		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
-		serviceInstance.setServiceType(service.getType());
-		serviceInstance.setConfigurationPage(service.getConfigurationPage());
-		serviceInstance.setProviderName(serviceProvider.getName());
-		serviceInstance.setServiceName(service.getServiceName());
-		serviceInstance.setProviderType(serviceProvider.getType());
-		serviceInstance.setIsActive(Boolean.FALSE);
-		serviceInstance.setAddedOn(Date.from(Instant.now()));
-		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
-		//serviceInstance.setPlan(plan);
 		
 		resource.addServiceInstance(serviceInstance);
 		
@@ -605,18 +568,23 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public ServiceInstanceDTO updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
+	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
 		}
 		
-		ServiceInstanceDTO original = resource.getServiceInstances()
+		Optional<ServiceInstanceDTO> query = resource.getServiceInstances()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.get();
+				.findFirst();
+		
+		if (! query.isPresent()) {
+			return;
+		}
+		
+		ServiceInstanceDTO original = query.get();
 		
 		resource.getServiceInstances().removeIf(e -> key.equals(e.getKey()));
 		
@@ -624,32 +592,34 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		serviceInstance.setAddedOn(original.getAddedOn());
 		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
 		
+		/**
+		serviceInstance.setConfigurationPage(original.getConfigurationPage());
+		serviceInstance.setProviderName(original.getProviderName());
+		serviceInstance.setProviderType(original.getProviderType());
+		serviceInstance.setServiceName(original.getServiceName());
+		serviceInstance.setServiceType(original.getServiceType());
+		
+		if (serviceInstance.getIsActive() == null) {
+			serviceInstance.setIsActive(original.getIsActive());
+		}
+		
+		if (serviceInstance.getName() == null || serviceInstance.getName().trim().isEmpty()) {
+			serviceInstance.setName(original.getName());
+		}
+		
+		if (serviceInstance.getStatus() == null) {
+			serviceInstance.setStatus(original.getStatus());
+		}
+		
+		if (serviceInstance.getTag() == null || serviceInstance.getTag().) */
+		
 		Optional<SimpleStorageService> simpleStoreageService = Optional.of(serviceInstance)
 				.map(ServiceInstanceDTO::getTargets)
 				.map(Targets::getSimpleStorageService);
 		
 		if (simpleStoreageService.isPresent()) {
-			List<UserProperty> properties = new ArrayList<UserProperty>();
 			
-			UserProperty awsAccessKey = new UserProperty()
-					.withSubject(serviceInstance.getKey())
-					.withKey(AWS_ACCESS_KEY_PROPERTY)
-					.withValue(simpleStoreageService.get().getAwsAccessKey())
-					.withLastModifiedBy(getSubject())
-					.withLastModifiedDate(Date.from(Instant.now()));
-			
-			properties.add(awsAccessKey);
-			
-			UserProperty awsSecretAccessKey = new UserProperty()
-					.withSubject(serviceInstance.getKey())
-					.withKey(AWS_SECRET_ACCESS_KEY_PROPERTY)
-					.withValue(simpleStoreageService.get().getAwsSecretAccessKey())
-					.withLastModifiedBy(getSubject())
-					.withLastModifiedDate(Date.from(Instant.now()));
-			
-			properties.add(awsSecretAccessKey);
-			
-			UserProperties.batchSave(properties);
+			commonFunctions.saveAwsCredentials(getSubject(), key, simpleStoreageService.get());
 			
 			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(null);
 			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(null);
@@ -658,8 +628,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.addServiceInstance(serviceInstance);
 		
 		updateSalesforceConnector(id, resource);
-		
-		return serviceInstance;
 	}
 	
 	/**************************************************************************************************************************
@@ -691,34 +659,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		ServiceInstanceDTO serviceInstance = query.get();
 		
-		if (parameters.containsKey(NAME_PARAM)) {
-			serviceInstance.setName(parameters.getFirst(NAME_PARAM));
-		}
-		
-		if (parameters.containsKey(TAG_PARAM)) {
-			serviceInstance.setTag(parameters.getFirst(TAG_PARAM));
-		}
-		
-		if (parameters.containsKey(BUCKET_NAME_PARAM) || parameters.containsKey(AWS_ACCESS_KEY_PARAM) || parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
-			if (serviceInstance.getTargets() == null) {
-				serviceInstance.setTargets(new Targets());
-			}
-			if (serviceInstance.getTargets().getSimpleStorageService() == null) {
-				serviceInstance.getTargets().setSimpleStorageService(new SimpleStorageService());
-			}
-		}
-		
-		if (parameters.containsKey(BUCKET_NAME_PARAM)) {
-			serviceInstance.getTargets().getSimpleStorageService().setBucketName(parameters.getFirst(BUCKET_NAME_PARAM));
-		}
-		
-		if (parameters.containsKey(AWS_ACCESS_KEY_PARAM)) {
-			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(parameters.getFirst(AWS_ACCESS_KEY_PARAM));
-		}
-		
-		if (parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
-			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(parameters.getFirst(AWS_SECRET_ACCESS_KEY_PARAM));
-		}
+		commonFunctions.buildServiceInstance(key, serviceInstance, parameters);
 		
 		updateServiceInstance(id, key, serviceInstance);
 		
@@ -742,52 +683,6 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));
 
 		updateSalesforceConnector(id, resource);
-		
-		return resource;
-	}
-	
-	/**************************************************************************************************************************
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @param eventListeners
-	 * @return
-	 * 
-	 * 
-	 *************************************************************************************************************************/
-	
-	public SalesforceConnectorDTO addEventListeners(Id id, String key, Set<EventListenerDTO> eventListeners) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
-		
-		Optional<ServiceInstanceDTO> serviceInstance = resource.getServiceInstances()
-				.stream()
-				.filter(p -> p.getKey().equals(key))
-				.findFirst();
-		
-		if (serviceInstance.isPresent()) {
-			
-			if (serviceInstance.get().getEventListeners() == null) {
-				serviceInstance.get().setEventListeners(Collections.emptySet());
-			}
-			
-			Map<String,EventListener> map = serviceInstance.get().getEventListeners().stream().collect(Collectors.toMap(p -> p.getName(), (p) -> p));
-			
-			serviceInstance.get().getEventListeners().clear();
-			
-			eventListeners.stream().forEach(p -> {
-				EventListener eventListener =  map.get(p.getName());
-				eventListener.setCreate(p.getCreate());
-				eventListener.setUpdate(p.getUpdate());
-				eventListener.setDelete(p.getDelete());
-				eventListener.setCallback(p.getCallback());
-				map.put(p.getName(), eventListener);
-			});
-			
-			serviceInstance.get().setEventListeners(new HashSet<EventListener>(map.values()));
-			
-			updateSalesforceConnector(id, resource);
-		}
 		
 		return resource;
 	}

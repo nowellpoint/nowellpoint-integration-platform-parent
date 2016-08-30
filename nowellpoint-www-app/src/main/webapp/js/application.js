@@ -55,6 +55,8 @@ $('.test-connection').on('click', function (e) {
             } else {
                 row.find('td:eq(3)').html('<span class="icon icon-squared-cross fa-1x text-danger">&emsp;' + environment.testMessage + '</span>');
             }
+            
         }
     });
+    location.hash = '#environments';
 });
