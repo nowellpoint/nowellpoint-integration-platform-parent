@@ -273,7 +273,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 
 		ApplicationDTO resource = findApplication(id);
 		
-		if (resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
+		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
 		}
 		

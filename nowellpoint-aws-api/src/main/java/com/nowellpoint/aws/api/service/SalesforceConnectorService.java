@@ -145,7 +145,9 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setIsValid(Boolean.TRUE);
 		environment.setAddedOn(Date.from(Instant.now()));
 		environment.setUpdatedOn(Date.from(Instant.now()));
+		environment.setUserId(identity.getUserId());
 		environment.setUsername(identity.getUsername());
+		environment.setOrganizationId(organization.getId());
 		environment.setOrganizationName(organization.getName());
 		environment.setServiceEndpoint(token.getInstanceUrl());
 		environment.setAuthEndpoint("https://login.salesforce.com");
@@ -326,7 +328,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 
 		SalesforceConnectorDTO resource = findSalesforceConnector(id);
 		
-		if (resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
+		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
 		}
 		
@@ -339,6 +341,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		environment.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
 		environment.setIsSandbox(Boolean.TRUE);
 		environment.setUserId(loginResult.getUserId());
+		environment.setUsername(loginResult.getUserName());
 		environment.setOrganizationId(loginResult.getOrganizationId());
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
