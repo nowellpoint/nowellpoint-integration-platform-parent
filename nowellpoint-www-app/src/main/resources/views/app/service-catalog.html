@@ -42,7 +42,8 @@
                             <#if service.isActive>
 
                                 <li>
-                                    <form method="POST" action="${labels['base.path']}/${id!}/services/${service.key}/add">
+                                    <form method="POST" action="${labels['base.path']}/${id!}/services">
+                                        <input type="hidden" name="serviceKey" id="serviceKey" value="${service.key}" />
                                         <div class="panel panel-default">
                                             <div class="panel-body">
                                                 <br>

@@ -102,12 +102,14 @@ public class ApplicationResource {
 			@FormParam("description") @NotEmpty String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("name") @NotEmpty String name,
-			@FormParam("importSandboxes") @NotEmpty Boolean importSandboxes,
-			@FormParam("importServices") @NotEmpty Boolean importServices) {
+			@FormParam("importSandboxes") Boolean importSandboxes,
+			@FormParam("importServices") Boolean importServices) {
 		
 		ApplicationDTO resource = new ApplicationDTO();
 		resource.setName(name);
 		resource.setDescription(description);
+		
+		System.out.println(importServices);
 		
 		applicationService.createApplication(resource, connectorId, importSandboxes, importServices);
 		

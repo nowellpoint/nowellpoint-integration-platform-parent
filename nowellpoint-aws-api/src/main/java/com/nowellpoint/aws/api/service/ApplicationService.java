@@ -123,10 +123,16 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		resource.setId(id.getValue());
 		resource.setCreatedById(original.getCreatedById());
 		resource.setCreatedDate(original.getCreatedDate());
-		resource.setEnvironments(original.getEnvironments());
-		resource.setServiceInstances(original.getServiceInstances());
 		resource.setSystemCreationDate(original.getSystemCreationDate());
 		resource.setSystemModifiedDate(original.getSystemModifiedDate());
+		
+		if (resource.getEnvironments() == null || resource.getEnvironments().isEmpty()) {
+			resource.setEnvironments(original.getEnvironments());
+		}
+		
+		if (resource.getServiceInstances() == null || resource.getServiceInstances().isEmpty()) {
+			resource.setServiceInstances(original.getServiceInstances());
+		}
 		
 		if (resource.getStatus() == null) {
 			resource.setStatus(original.getStatus());
@@ -274,7 +280,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		ApplicationDTO resource = findApplication(id);
 		
 		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
-			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
+			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s with Id: ", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
 		}
 		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
@@ -448,7 +454,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	
 	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
 		ApplicationDTO resource = findApplication(id);
-		
+
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
 		}
@@ -469,7 +475,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		serviceInstance.setKey(key);
 		serviceInstance.setAddedOn(original.getAddedOn());
 		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
-		
+
 		Optional<SimpleStorageService> simpleStoreageService = Optional.of(serviceInstance)
 				.map(ServiceInstanceDTO::getTargets)
 				.map(Targets::getSimpleStorageService);
@@ -481,9 +487,9 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(null);
 			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(null);
 		}
-		
+
 		resource.addServiceInstance(serviceInstance);
-		
+
 		updateApplication(id, resource);
 	}
 	

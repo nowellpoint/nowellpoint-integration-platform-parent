@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app.model;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Application extends Resource {
@@ -17,7 +18,8 @@ public class Application extends Resource {
 	private String status;
 	
 	public Application() {
-		
+		setServiceInstances(Collections.emptyList());
+		setEnvironments(Collections.emptyList());
 	}
 	
 	public Application(String id) {

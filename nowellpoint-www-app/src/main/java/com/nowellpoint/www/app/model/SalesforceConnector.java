@@ -1,6 +1,7 @@
 package com.nowellpoint.www.app.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,7 +25,8 @@ public class SalesforceConnector extends Resource {
 	private List<Environment> environments;
 	
 	public SalesforceConnector() {
-		
+		setServiceInstances(Collections.emptyList());
+		setEnvironments(Collections.emptyList());
 	}
 	
 	public SalesforceConnector(String id) {

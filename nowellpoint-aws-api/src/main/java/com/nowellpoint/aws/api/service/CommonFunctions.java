@@ -67,10 +67,6 @@ public class CommonFunctions {
 	
 	public void updateEnvironment(EnvironmentDTO environment, MultivaluedMap<String, String> parameters) {
 		
-		// must query current state
-		
-		
-		
 		if (parameters.containsKey(IS_ACTIVE)) {
 			environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
 		}
@@ -217,7 +213,7 @@ public class CommonFunctions {
 	 * 
 	 **************************************************************************************************************************/
 	
-	public ServiceInstanceDTO buildServiceInstance(String key, ServiceInstanceDTO serviceInstance, MultivaluedMap<String, String> parameters) {
+	public void buildServiceInstance(String key, ServiceInstanceDTO serviceInstance, MultivaluedMap<String, String> parameters) {
 		serviceInstance.setKey(key);
 		
 		if (parameters.containsKey(NAME_PARAM)) {
@@ -248,8 +244,6 @@ public class CommonFunctions {
 		if (parameters.containsKey(AWS_SECRET_ACCESS_KEY_PARAM)) {
 			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(parameters.getFirst(AWS_SECRET_ACCESS_KEY_PARAM));
 		}
-		
-		return serviceInstance;
 	}
 	
 	/**************************************************************************************************************************

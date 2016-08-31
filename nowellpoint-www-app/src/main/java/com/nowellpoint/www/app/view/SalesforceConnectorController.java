@@ -449,7 +449,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "edit");
-		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s/update", id, key));
+		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s", id, key));
 		model.put("serviceInstance", serviceInstance);
 		model.put("errorMessage", request.cookie("errorMessage"));
 		
@@ -468,7 +468,9 @@ public class SalesforceConnectorController extends AbstractController {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
-		String key = request.params(":key");
+		String serviceKey = request.queryParams("serviceKey");
+		
+		System.out.println(serviceKey);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -478,7 +480,7 @@ public class SalesforceConnectorController extends AbstractController {
     			.path("salesforce")
 				.path(id)
 				.path("service")
-				.parameter("key", key)
+				.parameter("key", serviceKey)
 				.execute();
 		
 		if (httpResponse.getStatusCode() != Status.OK) {
@@ -500,8 +502,8 @@ public class SalesforceConnectorController extends AbstractController {
 			}
 			
 			Map<String, Object> model = getModel();
-			model.put("serviceProviders", providers);
 			model.put("id", id);
+			model.put("serviceProviders", providers);
 			model.put("errorMessage", error.getMessage());
 	    	
 			return render(request, model, Path.Template.SERVICE_CATALOG);

@@ -207,6 +207,8 @@ public class ApplicationController extends AbstractController {
 		
 		Token token = getToken(request);
 		
+		System.out.println(request.queryParams("importServices") != null ? "true" : "false");
+		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -677,7 +679,7 @@ public class ApplicationController extends AbstractController {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
-		String key = request.params(":key");
+		String serviceKey = request.queryParams("serviceKey");
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -686,7 +688,7 @@ public class ApplicationController extends AbstractController {
 				.path("applications")
 				.path(id)
 				.path("service")
-				.parameter("key", key)
+				.parameter("key", serviceKey)
 				.execute();
 		
 		if (httpResponse.getStatusCode() != Status.OK) {
@@ -708,8 +710,8 @@ public class ApplicationController extends AbstractController {
 			}
 			
 			Map<String, Object> model = getModel();
-			model.put("serviceProviders", providers);
 			model.put("id", id);
+			model.put("serviceProviders", providers);
 			model.put("errorMessage", error.getMessage());
 	    	
 			return render(request, model, Path.Template.SERVICE_CATALOG);
@@ -758,7 +760,7 @@ public class ApplicationController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "edit");
-		model.put("action", String.format("/app/applications/%s/services/%s/update", id, key));
+		model.put("action", String.format("/app/applications/%s/services/%s", id, key));
 		model.put("serviceInstance", serviceInstance);
 		model.put("errorMessage", request.cookie("errorMessage"));
 		
