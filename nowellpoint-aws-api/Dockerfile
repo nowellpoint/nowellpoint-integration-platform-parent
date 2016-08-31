@@ -1,11 +1,10 @@
 FROM java:openjdk-8-jdk
+FROM maven:3-jdk-8
 EXPOSE 9090
 
 WORKDIR /code
 
 # Install maven
-RUN apt-get update  
-RUN apt-get install -y maven
 ADD pom.xml /code/pom.xml
 
 RUN ["mvn", "dependency:resolve"]  
@@ -15,4 +14,4 @@ RUN ["mvn", "verify"]
 ADD src /code/src  
 RUN ["mvn", "package"]
 
-ENTRYPOINT ["java","-jar","nowellpoint-aws-api-swarm.jar"]
+ENTRYPOINT ["java","-jar","target/nowellpoint-aws-api-0.0.6-SNAPSHOT-swarm.jar"]

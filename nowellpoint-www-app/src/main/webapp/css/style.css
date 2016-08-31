@@ -49,17 +49,24 @@ a:focus, a:hover {
     border-color: #ee4137;
 }
 
+primary:focus {
+    
+    background-color: #ee4137;
+}
 .btn-primary:hover {
     
     color: #ffffff;
-    background-color: #ccc;
-    border-color: #ccc;
+    background-color: #ee4137;
+    border-color: #ee4137;
     
     transition: ease-in-out .15s;
    
-    
-    
+}
 
+.btn-primary:active {
+    
+    background-color: #ee4137;
+    border-color: #ee4137;
 }
 
 img {
@@ -89,8 +96,9 @@ body {
     padding: 8px 22px;
     font-size:16px;
     margin-top:20px;
-    border: 2px solid #ee4137;
+    border: 2px solid #ccc;
     border-radius: 25px;
+    background-color: #ccc;
 }
 
 label {
