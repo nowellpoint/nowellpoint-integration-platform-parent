@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>nowellpoint-sforce-metadata-backup-service</name>
-  <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <comment>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>nowellpoint-aws-data</project>
     <project>nowellpoint-aws-sforce</project>

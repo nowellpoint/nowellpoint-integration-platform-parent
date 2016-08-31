@@ -4,22 +4,26 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>aws-parent</artifactId>
-		<version>0.0.6-SNAPSHOT</version>
+		<version>0.0.7-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-api</artifactId>
 	<name>Nowellpoint Rest Api</name>
 	<packaging>jar</packaging>
-	
+
 	<repositories>
-    <repository>
-      <id>snapshots-repo</id>
-         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-         <releases><enabled>true</enabled></releases>
-         <snapshots><enabled>true</enabled></snapshots>
-    </repository>
-    </repositories>
+		<repository>
+			<id>snapshots-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -147,6 +151,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>nowellpoint-aws-api</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.wildfly.swarm</groupId>

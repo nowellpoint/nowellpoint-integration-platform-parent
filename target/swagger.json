@@ -1,7 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "description" : "API for all interactions with the Nowellpoint integration platform",
+    "description" : "API for all interactions with the Nowellpoint\n\t\t\t\t\t\t\t\t\tintegration platform",
     "version" : "v1.0",
     "title" : "The Nowellpoint API"
   },
@@ -58,6 +58,9 @@
     "Token" : {
       "type" : "object",
       "properties" : {
+        "accessToken" : {
+          "type" : "string"
+        },
         "refreshToken" : {
           "type" : "string"
         },
@@ -67,9 +70,6 @@
         "expiresIn" : {
           "type" : "integer",
           "format" : "int64"
-        },
-        "accessToken" : {
-          "type" : "string"
         },
         "stormpathAccessTokenHref" : {
           "type" : "string"

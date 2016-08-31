@@ -4,25 +4,38 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-sforce-metadata-backup-service</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint Salesforce Metadata Backup Service</name> 
+	<name>Nowellpoint Salesforce Metadata Backup Service</name>
 
 	<parent>
-        <groupId>com.nowellpoint</groupId>
-        <artifactId>aws-parent</artifactId>
-        <version>0.0.6-SNAPSHOT</version>
-    </parent>
+		<groupId>com.nowellpoint</groupId>
+		<artifactId>aws-parent</artifactId>
+		<version>0.0.7-SNAPSHOT</version>
+	</parent>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-bom</artifactId>
-                <version>${aws.sdk.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+	<repositories>
+		<repository>
+			<id>snapshots-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-bom</artifactId>
+				<version>${aws.sdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -59,11 +72,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -80,6 +93,12 @@
 						<version>2.3</version>
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>com.nowellpoint.sforce.Main</mainClass>
+								</transformer>
+							</transformers>
 						</configuration>
 						<executions>
 							<execution>
@@ -91,50 +110,6 @@
 									<!-- <minimizeJar>true</minimizeJar> <filters> <filter> <includes> 
 										<include>**</include> </includes> </filter> </filters> -->
 								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>main</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<repositories>
-				<repository>
-					<id>snapshots-repo</id>
-					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-					<releases>
-						<enabled>false</enabled>
-					</releases>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<archive>
-								<manifest>
-									<mainClass>com.nowellpoint.sforce.Main</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-						</configuration>
-						<executions>
-							<execution>
-								<id>make-assembly</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
