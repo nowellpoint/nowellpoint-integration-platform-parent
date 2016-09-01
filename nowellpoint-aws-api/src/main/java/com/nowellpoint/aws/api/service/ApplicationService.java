@@ -118,36 +118,43 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 * @return
 	 */
 	
-	public ApplicationDTO updateApplication(Id id, ApplicationDTO resource) {
+	public void updateApplication(Id id, ApplicationDTO application) {
 		ApplicationDTO original = findApplication( id );
-		resource.setId(id.getValue());
-		resource.setCreatedById(original.getCreatedById());
-		resource.setCreatedDate(original.getCreatedDate());
-		resource.setSystemCreationDate(original.getSystemCreationDate());
-		resource.setSystemModifiedDate(original.getSystemModifiedDate());
 		
-		if (resource.getEnvironments() == null || resource.getEnvironments().isEmpty()) {
-			resource.setEnvironments(original.getEnvironments());
+		application.setId(id.getValue());
+		application.setCreatedById(original.getCreatedById());
+		application.setCreatedDate(original.getCreatedDate());
+		application.setSystemCreationDate(original.getSystemCreationDate());
+		application.setSystemModifiedDate(original.getSystemModifiedDate());
+		
+		if (application.getName() == null) {
+			application.setName(original.getName());
 		}
 		
-		if (resource.getServiceInstances() == null || resource.getServiceInstances().isEmpty()) {
-			resource.setServiceInstances(original.getServiceInstances());
+		if (application.getDescription() == null) {
+			application.setDescription(original.getDescription());
 		}
 		
-		if (resource.getStatus() == null) {
-			resource.setStatus(original.getStatus());
+		if (application.getEnvironments() == null || application.getEnvironments().isEmpty()) {
+			application.setEnvironments(original.getEnvironments());
 		}
 		
-		if (resource.getOwner() == null) {
-			resource.setOwner(original.getOwner());
+		if (application.getServiceInstances() == null || application.getServiceInstances().isEmpty()) {
+			application.setServiceInstances(original.getServiceInstances());
 		}
 		
-		replace(resource);
+		if (application.getStatus() == null) {
+			application.setStatus(original.getStatus());
+		}
 		
-		hset( getSubject(), ApplicationDTO.class.getName().concat(resource.getId()), resource );
-		hset( resource.getId(), getSubject(), resource );
-
-		return resource;
+		if (application.getOwner() == null) {
+			application.setOwner(original.getOwner());
+		}
+		
+		replace(application);
+		
+		hset( getSubject(), ApplicationDTO.class.getName().concat(application.getId()), application );
+		hset( application.getId(), getSubject(), application );
 	}
 	
 	/**
@@ -196,9 +203,11 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	 *************************************************************************************************************************/
 	
 	public void updateEnvironment(Id id, String key, EnvironmentDTO environment) {
-		ApplicationDTO resource = findApplication( id );
+		ApplicationDTO application = findApplication( id );
 		
-		updateEnvironment(resource, environment);
+		environment.setKey(key);
+		
+		updateEnvironment(application, environment);
 	} 
 	
 	/**************************************************************************************************************************
@@ -214,9 +223,9 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	
 	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
-		ApplicationDTO resource = findApplication( id );
+		ApplicationDTO application = findApplication( id );
 		
-		EnvironmentDTO environment = resource.getEnvironments()
+		EnvironmentDTO environment = application.getEnvironments()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
@@ -224,19 +233,19 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		
 		if (parameters.containsKey("test") || Boolean.valueOf(parameters.getFirst("test"))) {
 			
-			resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+			application.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 			
 			commonFunctions.testConnection(environment, parameters);
 			
-			resource.addEnvironment(environment);
+			application.addEnvironment(environment);
 			
-			updateApplication( id, resource );
+			updateApplication( id, application );
 			
 		} else {
 			
 			commonFunctions.updateEnvironment(environment, parameters);
 			
-			updateEnvironment(resource, environment);
+			updateEnvironment(application, environment);
 		}
 		
 		return environment;

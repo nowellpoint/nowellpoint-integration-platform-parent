@@ -53,9 +53,7 @@
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
                                         <td>
-                                            <a href="#" class="confirm-delete" title="${labels['delete']}" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}" data-id="${salesforceConnector.id}" data-message="${salesforceConnector.organization.name} (${salesforceConnector.organization.instanceName})" data-title="${labels['delete.message']}">
-                                                <span class="icon icon-trash"></span>${labels["delete"]}
-                                            </a>
+                                            <a href="/app/connectors/salesforce/${salesforceConnector.id}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a>
                                         </td>
                                     </tr>
                                 </#list>

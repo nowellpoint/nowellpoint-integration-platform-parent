@@ -446,8 +446,8 @@ public class ApplicationController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
+		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
+		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";		
 	};
@@ -507,7 +507,7 @@ public class ApplicationController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.environment.success"), 3);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
+		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";		
 	};

@@ -35,7 +35,7 @@ public class Path {
 		public static final String APPLICATION_ENVIRONMENT_NEW = String.format(APPLICATION_CONTEXT, "applications/:id/environments/new");
 		public static final String APPLICATION_ENVIRONMENT_ADD = String.format(APPLICATION_CONTEXT, "applications/:id/environments");
 		public static final String APPLICATION_ENVIRONMENT_EDIT = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key/edit");
-		public static final String APPLICATION_ENVIRONMENT_UPDATE = String.format(APPLICATION_CONTEXT, "applications/:id/environments");
+		public static final String APPLICATION_ENVIRONMENT_UPDATE = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key");
 		public static final String APPLICATION_ENVIRONMENT_TEST = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key/test");
 		public static final String APPLICATION_ENVIRONMENT_REMOVE = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key");
 		public static final String APPLICATION_SERVICE_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id/services/:key/view");
@@ -54,7 +54,7 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/view");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_ADD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/edit");
-		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments");
+		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_TEST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/test");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key");
 		public static final String CONNECTORS_SALESFORCE_SERVICE_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/services/:key/view");

@@ -167,12 +167,25 @@ public class ApplicationResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/environment")
+	@Path("{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO resource) {
 		
 		applicationService.addEnvironment(new Id(id), resource);
+		
+		return Response.ok()
+				.entity(resource)
+				.build(); 
+	}
+	
+	@PUT
+	@Path("{id}/environment/{key}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO resource) {
+		
+		applicationService.updateEnvironment(new Id(id), key, resource);
 		
 		return Response.ok()
 				.entity(resource)

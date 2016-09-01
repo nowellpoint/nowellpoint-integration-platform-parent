@@ -37,6 +37,28 @@
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <#list applicationList?sort_by( "createdDate") as application>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object" src="/images/application.png">
+                                            </a>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading"><a href="${labels['base.path']}/${application.id}">${application.name}</a></h4>
+                                            <p>${application.description}</p>
+                                        </div>
+                                        <div class="media-right">
+                                            <a href="${labels['base.path']}/${application.id!}/edit" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </#list>
+
+                        <!--
                         <div class="content table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -51,13 +73,12 @@
                                             <td><a href="${labels['base.path']}/${application.id}">${application.name}</a></td>
                                             <td>${application.description}</td>
                                             <td>${application.status}</td>
-                                            <td><a href="${labels['base.path']}/${application.id!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>&nbsp;
-                                                <a href="" class="confirm-delete" title="${delete}" data-toggle="modal" aria-hidden="true" data-id="${application.id}" data-message="${application.name}" data-title="${labels['delete.message']}"><span class="icon icon-trash"></span></a></td>
+                                            <td><a href="${labels['base.path']}/${application.id!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
                                         </tr>
                                     </#list>
                                 </tbody>
                             </table>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div>

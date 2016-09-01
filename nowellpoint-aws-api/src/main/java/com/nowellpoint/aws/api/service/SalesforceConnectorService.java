@@ -194,20 +194,19 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 *
 	 *************************************************************************************************************************/
 	
-	public SalesforceConnectorDTO updateSalesforceConnector(Id id, SalesforceConnectorDTO resource) {		
+	public void updateSalesforceConnector(Id id, SalesforceConnectorDTO salesforceConnector) {		
 		SalesforceConnectorDTO original = findSalesforceConnector(id);
-		resource.setId(original.getId());
-		resource.setCreatedById(original.getCreatedById());
-		resource.setCreatedDate(original.getCreatedDate());
-		resource.setSystemCreationDate(original.getSystemCreationDate());
-		resource.setSystemModifiedDate(original.getSystemModifiedDate());
 		
-		replace( resource );
+		salesforceConnector.setId(original.getId());
+		salesforceConnector.setCreatedById(original.getCreatedById());
+		salesforceConnector.setCreatedDate(original.getCreatedDate());
+		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
+		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
 		
-		hset( getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
-		hset( resource.getId(), getSubject(), resource );
+		replace( salesforceConnector );
 		
-		return resource;
+		hset( getSubject(), SalesforceConnectorDTO.class.getName().concat( salesforceConnector.getId() ), salesforceConnector );
+		hset( salesforceConnector.getId(), getSubject(), salesforceConnector );
 	}
 	
 	/**************************************************************************************************************************
@@ -369,12 +368,13 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public EnvironmentDTO updateEnvironment(Id id, String key, EnvironmentDTO environment) {
-		SalesforceConnectorDTO resource = findSalesforceConnector( id );
+	public void updateEnvironment(Id id, String key, EnvironmentDTO environment) {
+		SalesforceConnectorDTO salesforceConnector = findSalesforceConnector( id );
 		
-		updateEnvironment(resource, environment);
+		environment.setKey(key);
 		
-		return environment;
+		updateEnvironment(salesforceConnector, environment);
+
 	} 
 
 	/**************************************************************************************************************************

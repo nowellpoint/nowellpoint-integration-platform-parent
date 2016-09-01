@@ -150,9 +150,9 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO resource) {
 		
-		EnvironmentDTO resource = salesforceConnectorService.updateEnvironment(new Id(id), key, environment);
+		salesforceConnectorService.updateEnvironment(new Id(id), key, resource);
 		
 		return Response.ok()
 				.entity(resource)
