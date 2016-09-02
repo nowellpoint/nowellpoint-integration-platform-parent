@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.model.ExceptionResponse;
+import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.www.app.model.ExceptionResponse;
-import com.nowellpoint.www.app.model.SalesforceConnector;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;

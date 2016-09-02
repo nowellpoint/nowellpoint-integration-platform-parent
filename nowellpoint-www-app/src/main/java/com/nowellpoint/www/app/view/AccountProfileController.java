@@ -18,11 +18,11 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.AccountProfile;
-import com.nowellpoint.www.app.model.Address;
-import com.nowellpoint.www.app.model.Contact;
-import com.nowellpoint.www.app.model.CreditCard;
-import com.nowellpoint.www.app.model.ExceptionResponse;
+import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.Address;
+import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.CreditCard;
+import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 

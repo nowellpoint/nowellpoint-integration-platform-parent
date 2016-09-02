@@ -7,7 +7,7 @@ import javax.ws.rs.BadRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.www.app.model.AccountProfile;
+import com.nowellpoint.client.model.AccountProfile;
 
 public class AccountProfileService {
 	

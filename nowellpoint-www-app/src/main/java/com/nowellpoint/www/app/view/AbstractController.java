@@ -12,7 +12,7 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.AccountProfile;
+import com.nowellpoint.client.model.AccountProfile;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;

@@ -28,6 +28,8 @@ public class Application extends AbstractDocument implements Serializable {
 	
 	private Set<Environment> environments;
 	
+	private Set<BatchJob> batchJobs;
+	
 	private String status;
 	
 	public Application() {
@@ -72,6 +74,14 @@ public class Application extends AbstractDocument implements Serializable {
 
 	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
+	}
+
+	public Set<BatchJob> getBatchJobs() {
+		return batchJobs;
+	}
+
+	public void setBatchJobs(Set<BatchJob> batchJobs) {
+		this.batchJobs = batchJobs;
 	}
 
 	public String getStatus() {

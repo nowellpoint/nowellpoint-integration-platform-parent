@@ -51,55 +51,14 @@
                                             <p>${application.description}</p>
                                         </div>
                                         <div class="media-right">
-                                            <a href="${labels['base.path']}/${application.id!}/edit" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                                            <a href="${labels['base.path']}/${application.id!}/edit?view=1" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </#list>
-
-                        <!--
-                        <div class="content table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <th>${labels["name"]}</th>
-                                    <th>${labels["description"]}</th>
-                                    <th>${labels["status"]}</th>
-                                    <th>${action}</th>
-                                </thead>
-                                <tbody>
-                                    <#list applicationList?sort_by( "createdDate") as application>
-                                        <tr id="${application.id}">
-                                            <td><a href="${labels['base.path']}/${application.id}">${application.name}</a></td>
-                                            <td>${application.description}</td>
-                                            <td>${application.status}</td>
-                                            <td><a href="${labels['base.path']}/${application.id!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
-                                        </tr>
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </div>-->
                     </div>
                 </div>
             </div>
         </div>
-
-        <#include "confirm-dialog.html"/>
-        <#include "spinner.html" />
-
-        <script>
-            $('#confirm').click(function(e) {
-                var id = $('#confirmDialog').data('id');
-                var row = $('#'.concat(id));
-                $.ajax({
-                    url: '/app/applications/' + id,
-                    type: 'DELETE',
-                    success: function() {
-                        row.remove();
-                    }
-                });
-                $('#confirmDialog').modal('hide');
-            });
-        </script>
-
     </@t.page>

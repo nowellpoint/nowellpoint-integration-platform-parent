@@ -11,8 +11,8 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.AccountProfile;
-import com.nowellpoint.www.app.model.Property;
+import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.Property;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;

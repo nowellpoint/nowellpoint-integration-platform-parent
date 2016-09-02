@@ -21,6 +21,8 @@ public class ApplicationDTO extends AbstractDTO {
 	
 	private Set<EnvironmentDTO> environments;
 	
+	private Set<BatchJobDTO> batchJobs;
+	
 	private String status;
 	
 	public ApplicationDTO() {
@@ -91,5 +93,20 @@ public class ApplicationDTO extends AbstractDTO {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Set<BatchJobDTO> getBatchJobs() {
+		return batchJobs;
+	}
+
+	public void setBatchJobs(Set<BatchJobDTO> batchJobs) {
+		this.batchJobs = batchJobs;
+	}
+	
+	public void addBatchJob(BatchJobDTO batchJob) {
+		if (batchJobs == null || batchJobs.isEmpty()) {
+			batchJobs = new HashSet<BatchJobDTO>();
+		}
+		batchJobs.add(batchJob);
 	}
 }

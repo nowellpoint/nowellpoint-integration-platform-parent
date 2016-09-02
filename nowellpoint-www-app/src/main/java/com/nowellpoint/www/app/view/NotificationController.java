@@ -10,7 +10,7 @@ import org.jboss.logging.Logger;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.Application;
+import com.nowellpoint.client.model.Application;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;

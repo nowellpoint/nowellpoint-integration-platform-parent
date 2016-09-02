@@ -28,8 +28,9 @@ import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.AccountProfile;
-import com.nowellpoint.www.app.model.IsoCountry;
+import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.IsoCountry;
+import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.www.app.service.AccountProfileService;
 import com.nowellpoint.www.app.service.GetMyAccountProfileRequest;
 import com.nowellpoint.www.app.util.Path;
@@ -246,6 +247,11 @@ public class Application implements SparkApplication {
         //
         
         exception(NotAuthorizedException.class, authenticationController.handleNotAuthorizedException);
+        
+        exception(NowellpointServiceException.class, (exception, request, response) ->{
+        	response.status(((NowellpointServiceException) exception).getStatusCode());
+        	response.body(exception.getMessage());
+        });
         
         exception(BadRequestException.class, (exception, request, response) -> {
             response.status(400);

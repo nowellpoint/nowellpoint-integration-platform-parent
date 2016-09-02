@@ -15,12 +15,14 @@ import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.www.app.model.Application;
-import com.nowellpoint.www.app.model.Environment;
-import com.nowellpoint.www.app.model.ExceptionResponse;
-import com.nowellpoint.www.app.model.SalesforceConnector;
-import com.nowellpoint.www.app.model.ServiceInstance;
-import com.nowellpoint.www.app.model.ServiceProvider;
+import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.auth.TokenCredentials;
+import com.nowellpoint.client.model.Application;
+import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.ExceptionResponse;
+import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.ServiceInstance;
+import com.nowellpoint.client.model.ServiceProvider;
 import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
 import com.nowellpoint.www.app.service.SalesforceConnectorService;
 import com.nowellpoint.www.app.util.MessageProvider;
@@ -142,22 +144,23 @@ public class ApplicationController extends AbstractController {
 	public Route editApplication = (Request request, Response response) -> {
 		
 		String id = request.params(":id");
+		String view = request.queryParams("view");
 		
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-				.path(id)
-				.execute();
-		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
-		
-		Application application = httpResponse.getEntity(Application.class);
+		Application application = new NowellpointClient(new TokenCredentials(token))
+				.getApplicationResource()
+				.getApplication(id);
 		
 		Map<String, Object> model = getModel();
 		model.put("application", application);
 		model.put("mode", "edit");
+		
+		if (view != null && view.equals("1")) {
+			model.put("cancel", Path.Route.APPLICATION_LIST);
+		} else {
+			model.put("cancel", Path.Route.APPLICATION_VIEW.replace(":id", id));
+		}
 		
 		return render(request, model, Path.Template.APPLICATION_EDIT);
 	};
@@ -277,13 +280,8 @@ public class ApplicationController extends AbstractController {
 		
 		Token token = request.attribute("token");
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("application")
-				.path(id)
-				.execute();
-		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		NowellpointClient client = new NowellpointClient(new TokenCredentials(token));
+		client.getApplicationResource().deleteApplication(id);
 		
 		return "";	
 	};

@@ -7,7 +7,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.www.app.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnector;
 
 public class SalesforceConnectorService {
 

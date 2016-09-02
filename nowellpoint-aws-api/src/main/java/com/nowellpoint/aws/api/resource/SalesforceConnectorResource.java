@@ -28,6 +28,7 @@ import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
+import com.nowellpoint.aws.api.model.SalesforceConnector;
 import com.nowellpoint.aws.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -86,9 +87,13 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
-		SalesforceConnectorDTO resource = salesforceConnectorService.findSalesforceConnector( new Id(id) );
+		SalesforceConnectorDTO salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id(id) );
 		
-		return Response.ok(resource).build();
+		if (salesforceConnector == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
+		}
+		
+		return Response.ok(salesforceConnector).build();
 	}
 	
 	@POST

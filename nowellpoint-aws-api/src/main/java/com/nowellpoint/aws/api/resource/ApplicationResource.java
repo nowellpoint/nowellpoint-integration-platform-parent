@@ -28,6 +28,7 @@ import com.nowellpoint.aws.api.dto.ApplicationDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.ServiceInstanceDTO;
+import com.nowellpoint.aws.api.model.Application;
 import com.nowellpoint.aws.api.service.ApplicationService;
 
 @Path("/applications")
@@ -68,9 +69,13 @@ public class ApplicationResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
 		
-		ApplicationDTO resource = applicationService.findApplication( new Id(id) );
+		ApplicationDTO application = applicationService.findApplication( new Id( id ) );
 		
-		return Response.ok(resource).build();
+		if (application == null) {
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Application.class.getSimpleName(), id ) );
+		}
+		
+		return Response.ok(application).build();
 	}
 	
 	/**

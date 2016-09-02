@@ -183,7 +183,7 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 	public ApplicationDTO findApplication(Id id) {
 		ApplicationDTO resource = hget( ApplicationDTO.class, id.getValue(), getSubject() );
 		if ( resource == null ) {		
-			resource = find(id.getValue());
+			resource = find(id.getValue());			
 			if (resource != null) {
 				hset( id.getValue(), getSubject(), resource );
 			}

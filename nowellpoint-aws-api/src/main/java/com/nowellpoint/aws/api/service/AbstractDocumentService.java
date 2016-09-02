@@ -5,8 +5,7 @@ import static com.mongodb.client.model.Filters.eq;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.Response;
 
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
@@ -141,14 +140,19 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	
 	protected R find(String id) {		
 		String collectionName = documentType.getAnnotation(Document.class).collectionName();
-
-		D document = MongoDBDatastore.getDatabase().getCollection( collectionName )
-				.withDocumentClass( documentType )
-				.find( eq ( "_id", new ObjectId( id ) ) )
-				.first();
+		
+		D document = null;
+		try {
+			document = MongoDBDatastore.getDatabase().getCollection( collectionName )
+					.withDocumentClass( documentType )
+					.find( eq ( "_id", new ObjectId( id ) ) )
+					.first();
+		} catch (IllegalArgumentException e) {
+			
+		}
 
 		if ( document == null ) {
-			throw new WebApplicationException( String.format( "%s Id: %s does not exist or you do not have access to view", documentType.getSimpleName(), id ), Status.NOT_FOUND );
+			return null;
 		}
 		
 		R resource = modelMapper.map( document, resourceType );
@@ -201,7 +205,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 			MongoDBDatastore.insertOne( document );
 		} catch (MongoException e) {
 			LOGGER.error( "Create Document exception", e.getCause());
-			throw new WebApplicationException(e);
+			throw new ServiceException(Response.Status.BAD_REQUEST, e.getMessage());
 		}
 		
 		modelMapper.map( document, resource );
@@ -227,7 +231,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 			MongoDBDatastore.replaceOne( document );
 		} catch (MongoException e) {
 			LOGGER.error( "Update Document exception", e.getCause());
-			throw new WebApplicationException(e);
+			throw new ServiceException(Response.Status.BAD_REQUEST, e.getMessage());
 		}
 				
 		modelMapper.map( document, resource );
@@ -266,7 +270,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 			MongoDBDatastore.deleteOne( document );
 		} catch (MongoException e) {
 			LOGGER.error( "Delete Document exception", e.getCause());
-			throw new WebApplicationException(e);
+			throw new ServiceException(Response.Status.BAD_REQUEST, e.getMessage());
 		}
 	}
 }
