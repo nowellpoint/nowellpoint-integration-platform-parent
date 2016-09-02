@@ -1,15 +1,16 @@
-package com.nowellpoint.aws.data;
+package com.nowellpoint.aws.data.mongodb;
 
 import static com.mongodb.MongoClient.getDefaultCodecRegistry;
 import static com.mongodb.MongoClientOptions.builder;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-import java.sql.Date;
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -30,17 +31,23 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.annotation.Audited;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
 import com.nowellpoint.aws.model.admin.Properties;
 
+import redis.clients.jedis.JedisPool;
+
 @WebListener
-public class MongoDBDatastore implements ServletContextListener {
+public class MongoDatastore implements ServletContextListener {
 	
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
 	private static MongoDatabase mongoDatabase;
 	
-	private MongoDBDatastore() {
+	private static JedisPool jedisPool;
+	private static Cipher cipher;
+	private static SecretKey secretKey;
+	private static IvParameterSpec iv;
+	
+	private MongoDatastore() {
 		
 	}
 	
@@ -66,9 +73,7 @@ public class MongoDBDatastore implements ServletContextListener {
 		return mongoDatabase;
 	}
 	
-	public static void replaceOne(AbstractDocument document) {	
-		document.setLastModifiedDate(Date.from(Instant.now()));
-		document.setSystemModifiedDate(Date.from(Instant.now()));
+	public static void replaceOne(MongoDocument document) {	
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -85,12 +90,7 @@ public class MongoDBDatastore implements ServletContextListener {
 		});
 	}
 	
-	public static void insertOne(AbstractDocument document) {
-		document.setId(new ObjectId());
-		document.setCreatedDate(Date.from(Instant.now()));
-		document.setLastModifiedDate(Date.from(Instant.now()));
-		document.setSystemCreationDate(Date.from(Instant.now()));
-		document.setSystemModifiedDate(Date.from(Instant.now()));
+	public static void insertOne(MongoDocument document) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -107,7 +107,7 @@ public class MongoDBDatastore implements ServletContextListener {
 		});
 	}
 	
-	public static void deleteOne(AbstractDocument document) {
+	public static void deleteOne(MongoDocument document) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -124,7 +124,7 @@ public class MongoDBDatastore implements ServletContextListener {
 		});
 	}
 	
-	public static <T extends AbstractDocument> void updateOne(Class<T> documentClass, ObjectId id, String json) {
+	public static <T extends MongoDocument> void updateOne(Class<T> documentClass, ObjectId id, String json) {
 		getCollection( documentClass ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
 	}
 	
@@ -136,16 +136,16 @@ public class MongoDBDatastore implements ServletContextListener {
 		}
 	}
 	
-	public static <T extends AbstractDocument> String getCollectionName(Class<T> type) {
+	public static <T extends MongoDocument> String getCollectionName(Class<T> type) {
 		return type.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends AbstractDocument> MongoCollection<T> getCollection(AbstractDocument document) {
+	public static <T extends MongoDocument> MongoCollection<T> getCollection(MongoDocument document) {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(document.getClass()), document.getClass());
 	}
 	
-	public static <T extends AbstractDocument> MongoCollection<T> getCollection(Class<T> type) {
+	public static <T extends MongoDocument> MongoCollection<T> getCollection(Class<T> type) {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(type), type);
 	}
 	

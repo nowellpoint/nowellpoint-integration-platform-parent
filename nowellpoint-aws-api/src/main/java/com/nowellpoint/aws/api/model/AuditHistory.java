@@ -12,14 +12,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.aws.api.codec.AuditHistoryCodec;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 import com.nowellpoint.aws.data.mongodb.ObjectIdDeserializer;
 import com.nowellpoint.aws.data.mongodb.ObjectIdSerializer;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="audit.history", codec=AuditHistoryCodec.class)
-public class AuditHistory extends AbstractDocument {
+public class AuditHistory extends MongoDocument {
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class AuditHistory extends AbstractDocument {
 	
 	private String type;
 	
-	private AbstractDocument document;
+	private MongoDocument document;
 
 	public AuditHistory() {
 		Date now = Instant.now().toDate();
@@ -73,11 +73,11 @@ public class AuditHistory extends AbstractDocument {
 		this.type = type;
 	}
 
-	public AbstractDocument getDocument() {
+	public MongoDocument getDocument() {
 		return document;
 	}
 
-	public void setDocument(AbstractDocument document) {
+	public void setDocument(MongoDocument document) {
 		this.document = document;
 	}
 	
@@ -91,7 +91,7 @@ public class AuditHistory extends AbstractDocument {
 		return this;
 	}
 	
-	public AuditHistory withDocument(AbstractDocument document) {
+	public AuditHistory withDocument(MongoDocument document) {
 		setDocument(document);
 		setType(document.getClass().getName());
 		return this;

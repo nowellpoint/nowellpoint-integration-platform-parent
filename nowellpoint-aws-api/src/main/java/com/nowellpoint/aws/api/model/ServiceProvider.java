@@ -6,11 +6,11 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.ServiceProviderCodec;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="service.providers", codec=ServiceProviderCodec.class)
-public class ServiceProvider extends AbstractDocument implements Serializable {
+public class ServiceProvider extends MongoDocument implements Serializable {
 
 	/**
 	 * 

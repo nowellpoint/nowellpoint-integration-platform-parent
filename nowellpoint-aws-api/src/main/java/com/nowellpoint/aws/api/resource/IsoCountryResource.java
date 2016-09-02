@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.api.model.IsoCountry;
-import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
 @Path("/iso-countries")
 public class IsoCountryResource {
@@ -29,7 +29,7 @@ public class IsoCountryResource {
 	@PermitAll
     public Response findAll() {
 			
-		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
+		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 			
@@ -45,7 +45,7 @@ public class IsoCountryResource {
 	@PermitAll
     public Response findByLanguage(@PathParam("language") String language) {
 		
-		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
+		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 		
@@ -61,7 +61,7 @@ public class IsoCountryResource {
 	@PermitAll
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
-		MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
+		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
 				.getCollection(COLLECTION_NAME)
 				.withDocumentClass(IsoCountry.class);
 				

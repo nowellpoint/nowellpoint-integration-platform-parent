@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class AbstractDocument implements Serializable {
+public abstract class MongoDocument implements Serializable {
 	
 	/**
 	 * 
@@ -80,7 +80,7 @@ public abstract class AbstractDocument implements Serializable {
 	@JsonInclude(Include.NON_NULL)
 	private Date systemModifiedDate;
 	
-	public AbstractDocument() {
+	public MongoDocument() {
 		
 	}
 	

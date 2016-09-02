@@ -10,14 +10,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.aws.api.codec.AccountProfileCodec;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 import com.nowellpoint.aws.data.mongodb.DateDeserializer;
 import com.nowellpoint.aws.data.mongodb.DateSerializer;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="account.profiles", codec=AccountProfileCodec.class)
-public class AccountProfile extends AbstractDocument {
+public class AccountProfile extends MongoDocument {
 
 	/**
 	 * 

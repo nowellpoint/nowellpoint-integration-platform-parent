@@ -47,7 +47,7 @@ import com.nowellpoint.aws.api.tasks.AccountSetupRequest;
 import com.nowellpoint.aws.api.tasks.AccountSetupTask;
 import com.nowellpoint.aws.api.tasks.SubmitLeadRequest;
 import com.nowellpoint.aws.api.tasks.SubmitLeadTask;
-import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -144,7 +144,7 @@ public class SignUpService {
 			accountProfile.setLeadId(submitLeadTask.get().getId());
 			accountProfile.setHref(account.getHref());
 			
-			MongoDBDatastore.replaceOne( accountProfile );
+			MongoDatastore.replaceOne( accountProfile );
 			
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);

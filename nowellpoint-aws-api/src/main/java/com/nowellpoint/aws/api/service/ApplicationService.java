@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.dto.ApplicationDTO;
+import com.nowellpoint.aws.api.dto.BatchJobDTO;
 import com.nowellpoint.aws.api.dto.EnvironmentDTO;
 import com.nowellpoint.aws.api.dto.Id;
 import com.nowellpoint.aws.api.dto.SalesforceConnectorDTO;
@@ -536,5 +537,15 @@ public class ApplicationService extends AbstractDocumentService<ApplicationDTO, 
 		updateServiceInstance(id, key, serviceInstance);
 		
 		return serviceInstance;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	
+	public Set<BatchJobDTO> getBatchJobs(Id id) {
+		
 	}
 }

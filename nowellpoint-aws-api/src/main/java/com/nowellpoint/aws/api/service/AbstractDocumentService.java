@@ -23,11 +23,11 @@ import com.nowellpoint.aws.api.dto.AccountProfileDTO;
 import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.api.model.User;
 import com.nowellpoint.aws.api.util.UserContext;
-import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
-public abstract class AbstractDocumentService<R extends AbstractDTO, D extends AbstractDocument> extends AbstractCacheService {
+public abstract class AbstractDocumentService<R extends AbstractDTO, D extends MongoDocument> extends AbstractCacheService {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractDocumentService.class);
 	
@@ -81,7 +81,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 				AccountProfileDTO resource = new AccountProfileDTO();
 				if (source != null && source.getIdentity() != null) {
 					
-					AccountProfile identity = MongoDBDatastore.getDatabase()
+					AccountProfile identity = MongoDatastore.getDatabase()
 							.getCollection( source.getIdentity().getCollectionName() )
 							.withDocumentClass( AccountProfile.class )
 							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
@@ -98,7 +98,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 
 			@Override
 			protected User convert(AccountProfileDTO source) {
-				String collectionName = MongoDBDatastore.getCollectionName( AccountProfile.class );
+				String collectionName = MongoDatastore.getCollectionName( AccountProfile.class );
 				ObjectId id = null;
 				
 				User user = new User();
@@ -106,7 +106,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 					user.setHref(source.getHref());
 					if (source.getId() == null) {
 						
-						AccountProfile identity = MongoDBDatastore.getDatabase()
+						AccountProfile identity = MongoDatastore.getDatabase()
 								.getCollection( collectionName )
 								.withDocumentClass( AccountProfile.class )
 								.find( eq ( "href", source.getHref() ) )
@@ -128,6 +128,11 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 		});
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	protected String getSubject() {
 		return UserContext.getPrincipal().getName();
 	}
@@ -143,7 +148,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 		
 		D document = null;
 		try {
-			document = MongoDBDatastore.getDatabase().getCollection( collectionName )
+			document = MongoDatastore.getDatabase().getCollection( collectionName )
 					.withDocumentClass( documentType )
 					.find( eq ( "_id", new ObjectId( id ) ) )
 					.first();
@@ -169,7 +174,7 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	protected Set<R> findAllByOwner(String subject) {		
 		String collectionName = documentType.getAnnotation(Document.class).collectionName();
 		
-		FindIterable<D> documents = MongoDBDatastore.getDatabase()
+		FindIterable<D> documents = MongoDatastore.getDatabase()
 				.getCollection( collectionName )
 				.withDocumentClass( documentType )
 				.find( eq ( "owner.href", subject ) );
@@ -197,12 +202,12 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	protected R create(R resource) {
 		String subject = getSubject();
 		
-		AbstractDocument document = modelMapper.map( resource, documentType );		
+		MongoDocument document = modelMapper.map( resource, documentType );		
 		document.setCreatedById(subject);
 		document.setLastModifiedById(subject);
 		
 		try {
-			MongoDBDatastore.insertOne( document );
+			MongoDatastore.insertOne( document );
 		} catch (MongoException e) {
 			LOGGER.error( "Create Document exception", e.getCause());
 			throw new ServiceException(Response.Status.BAD_REQUEST, e.getMessage());
@@ -224,11 +229,11 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	protected R replace(R resource) {
 		String subject = getSubject();
 		
-		AbstractDocument document = modelMapper.map( resource, documentType );
+		MongoDocument document = modelMapper.map( resource, documentType );
 		document.setLastModifiedById(subject);
 		
 		try {
-			MongoDBDatastore.replaceOne( document );
+			MongoDatastore.replaceOne( document );
 		} catch (MongoException e) {
 			LOGGER.error( "Update Document exception", e.getCause());
 			throw new ServiceException(Response.Status.BAD_REQUEST, e.getMessage());
@@ -265,9 +270,9 @@ public abstract class AbstractDocumentService<R extends AbstractDTO, D extends A
 	 */
 	
 	protected void delete(R resource) {		
-		AbstractDocument document = modelMapper.map( resource, documentType );
+		MongoDocument document = modelMapper.map( resource, documentType );
 		try {
-			MongoDBDatastore.deleteOne( document );
+			MongoDatastore.deleteOne( document );
 		} catch (MongoException e) {
 			LOGGER.error( "Delete Document exception", e.getCause());
 			throw new ServiceException(Response.Status.BAD_REQUEST, e.getMessage());

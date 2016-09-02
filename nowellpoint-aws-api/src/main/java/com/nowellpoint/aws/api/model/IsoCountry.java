@@ -3,11 +3,11 @@ package com.nowellpoint.aws.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.IsoCountryCodec;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="iso.countries", codec=IsoCountryCodec.class)
-public class IsoCountry extends AbstractDocument {
+public class IsoCountry extends MongoDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
 	

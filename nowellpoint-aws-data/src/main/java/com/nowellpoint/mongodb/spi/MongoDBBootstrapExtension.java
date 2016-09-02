@@ -14,8 +14,8 @@ import javax.enterprise.inject.spi.WithAnnotations;
 import org.bson.codecs.Codec;
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
 public class MongoDBBootstrapExtension implements Extension {
 	
@@ -44,7 +44,7 @@ public class MongoDBBootstrapExtension implements Extension {
     }
     
     public void afterBeanDiscovery(@Observes AfterBeanDiscovery discovery) {
-    	MongoDBDatastore.registerCodecs(codecs);
+    	MongoDatastore.registerCodecs(codecs);
     	LOGGER.info("finished the scanning process");
     }
 }

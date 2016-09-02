@@ -40,8 +40,8 @@ import com.nowellpoint.aws.api.model.IsoCountry;
 import com.nowellpoint.aws.api.model.Photos;
 import com.nowellpoint.aws.api.model.SystemReference;
 import com.nowellpoint.aws.api.util.UserContext;
-import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
@@ -235,7 +235,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 
 		if ( resource == null ) {		
 
-			AccountProfile accountProfile = MongoDBDatastore.getDatabase()
+			AccountProfile accountProfile = MongoDatastore.getDatabase()
 					.getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
 					.withDocumentClass( AccountProfile.class )
 					.find( eq ( "href", subject ) )
@@ -255,7 +255,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	}
 	
 	public AccountProfileDTO findAccountProfileByUsername(String username) {
-		Optional<AccountProfile> queryResult = Optional.ofNullable( MongoDBDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
+		Optional<AccountProfile> queryResult = Optional.ofNullable( MongoDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
 				.withDocumentClass( AccountProfile.class )
 				.find( eq( "username", username ) )
 				.first() );

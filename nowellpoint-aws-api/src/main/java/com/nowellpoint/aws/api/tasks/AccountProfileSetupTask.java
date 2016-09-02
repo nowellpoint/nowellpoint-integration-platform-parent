@@ -9,8 +9,8 @@ import java.util.concurrent.Callable;
 
 import com.nowellpoint.aws.api.model.AccountProfile;
 import com.nowellpoint.aws.api.model.Address;
-import com.nowellpoint.aws.data.MongoDBDatastore;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
 public class AccountProfileSetupTask implements Callable<AccountProfile> {
 	
@@ -23,7 +23,7 @@ public class AccountProfileSetupTask implements Callable<AccountProfile> {
 	@Override
 	public AccountProfile call() throws Exception {
 		
-		AccountProfile accountProfile = Optional.ofNullable( MongoDBDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
+		AccountProfile accountProfile = Optional.ofNullable( MongoDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
 				.withDocumentClass( AccountProfile.class )
 				.find( eq ( "username", accountProfileSetupRequest.getUsername() ) )
 				.first() )
@@ -43,11 +43,11 @@ public class AccountProfileSetupTask implements Callable<AccountProfile> {
 		accountProfile.setAddress(address);
 		
 		if (accountProfile.getId() != null) {			
-			MongoDBDatastore.replaceOne( accountProfile );
+			MongoDatastore.replaceOne( accountProfile );
 		} else {
 			accountProfile.setCreatedById(accountProfile.getLastModifiedById());
 			accountProfile.setCreatedDate(accountProfile.getLastModifiedDate());
-			MongoDBDatastore.insertOne( accountProfile );
+			MongoDatastore.insertOne( accountProfile );
 		}
 		
 		return accountProfile;

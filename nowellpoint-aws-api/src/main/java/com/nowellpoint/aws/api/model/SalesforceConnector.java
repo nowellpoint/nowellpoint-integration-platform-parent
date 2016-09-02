@@ -8,12 +8,12 @@ import com.nowellpoint.aws.api.model.sforce.Identity;
 import com.nowellpoint.aws.api.model.sforce.Organization;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SalesforceConnector extends AbstractDocument {
+public class SalesforceConnector extends MongoDocument {
 
 	/**
 	 * 

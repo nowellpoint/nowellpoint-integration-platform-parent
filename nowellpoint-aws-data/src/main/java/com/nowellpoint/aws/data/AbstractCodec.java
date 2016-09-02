@@ -16,9 +16,9 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
-public class AbstractCodec<T extends AbstractDocument> implements CollectibleCodec<T> {
+public class AbstractCodec<T extends MongoDocument> implements CollectibleCodec<T> {
 	
 	private final ObjectMapper objectMapper;
 	private final Codec<Document> documentCodec;

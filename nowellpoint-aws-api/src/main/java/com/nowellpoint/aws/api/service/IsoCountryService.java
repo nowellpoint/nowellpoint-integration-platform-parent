@@ -5,7 +5,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.aws.api.model.IsoCountry;
-import com.nowellpoint.aws.data.MongoDBDatastore;
+import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
 public class IsoCountryService extends AbstractCacheService {
 	
@@ -16,7 +16,7 @@ public class IsoCountryService extends AbstractCacheService {
 		IsoCountry isoCountry = get(IsoCountry.class, iso2Code);
 		
 		if (isoCountry == null) {
-			MongoCollection<IsoCountry> collection = MongoDBDatastore.getDatabase()
+			MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
 					.getCollection(COLLECTION_NAME)
 					.withDocumentClass(IsoCountry.class);
 					

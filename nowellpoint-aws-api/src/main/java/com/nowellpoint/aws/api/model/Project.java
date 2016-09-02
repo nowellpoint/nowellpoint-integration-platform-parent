@@ -7,11 +7,11 @@ import org.bson.types.ObjectId;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.aws.api.codec.ProjectCodec;
 import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.AbstractDocument;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="projects", codec=ProjectCodec.class)
-public class Project extends AbstractDocument {
+public class Project extends MongoDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
 	
