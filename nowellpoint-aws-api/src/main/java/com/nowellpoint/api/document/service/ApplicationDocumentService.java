@@ -57,6 +57,6 @@ public class ApplicationDocumentService extends AbstractModelMapper<Application>
 	
 	public void deleteApplication(ApplicationDTO application) {
 		Application document = modelMapper.map(application, Application.class);
-		delete(document);
+		delete(getSubject(), document);
 	}
 }

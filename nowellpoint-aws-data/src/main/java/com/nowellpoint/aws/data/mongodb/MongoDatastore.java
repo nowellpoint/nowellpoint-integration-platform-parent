@@ -122,11 +122,17 @@ public class MongoDatastore implements ServletContextListener {
 	
 	public static <T extends MongoDocument> T findOne(Class<T> documentClass, Bson query) {
 		
+		String collectionName = getCollectionName( documentClass );
+		
 		T document = getDatabase()
-				.getCollection( getCollectionName( documentClass ) )
+				.getCollection( collectionName )
 				.withDocumentClass( documentClass )
 				.find( query )
 				.first();
+		
+		if (document == null) {
+			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found", documentClass.getSimpleName() ) );
+		}
 		
 		return document;
 	}
@@ -150,12 +156,19 @@ public class MongoDatastore implements ServletContextListener {
 		return documents;
 	}
 	
-	public static <T extends MongoDocument> T findById(Class<T> documentClass, ObjectId id) {		
+	public static <T extends MongoDocument> T findById(Class<T> documentClass, ObjectId id) {	
+		
+		String collectionName = getCollectionName( documentClass );
+		
 		T document = getDatabase()
-					.getCollection( getCollectionName( documentClass ) )
+					.getCollection( collectionName )
 					.withDocumentClass( documentClass )
 					.find( eq ( "_id", id ) )
 					.first();
+		
+		if (document == null) {
+			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found", documentClass.getSimpleName() ) );
+		}
 		
 		return document;
 	}

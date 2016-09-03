@@ -84,7 +84,7 @@ public class AccountProfileDocumentService extends AbstractModelMapper<AccountPr
 	
 	public void deleteApplication(AccountProfileDTO accountProfile) {
 		AccountProfile document = modelMapper.map(accountProfile, AccountProfile.class);
-		delete(document);
+		delete(getSubject(), document);
 	}
 	
 	/**
@@ -97,11 +97,8 @@ public class AccountProfileDocumentService extends AbstractModelMapper<AccountPr
 	 */
 	
 	public AccountProfileDTO findAccountProfileBySubject(String subject) {
-		Optional<AccountProfile> document = Optional.ofNullable(findOne( eq ( "href", subject ) ) );
-		AccountProfileDTO accountProfile = null;
-		if (document.isPresent()) {
-			accountProfile = modelMapper.map(document.get(), AccountProfileDTO.class);
-		}
+		AccountProfile document = findOne( eq ( "href", subject) );
+		AccountProfileDTO accountProfile = modelMapper.map(document, AccountProfileDTO.class);
 		return accountProfile;
 	}
 	

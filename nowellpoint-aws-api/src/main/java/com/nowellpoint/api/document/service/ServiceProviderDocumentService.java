@@ -89,11 +89,8 @@ public class ServiceProviderDocumentService extends AbstractModelMapper<ServiceP
 	 */
 	
 	public ServiceProviderDTO findByServiceKey(String key) {
-		Optional<ServiceProvider> document = Optional.ofNullable( super.findOne( eq ( "services.key", key ) ) );
-		ServiceProviderDTO serviceProvider = null;
-		if (document.isPresent()) {
-			serviceProvider = modelMapper.map( document.get(), ServiceProviderDTO.class );
-		}
+		ServiceProvider document = super.findOne( eq ( "services.key", key ) );
+		ServiceProviderDTO serviceProvider = modelMapper.map( document, ServiceProviderDTO.class );
 		return serviceProvider;
 	}
 	
@@ -130,6 +127,6 @@ public class ServiceProviderDocumentService extends AbstractModelMapper<ServiceP
 	
 	public void deleteServiceProvider(ServiceProviderDTO serviceProvider) {
 		ServiceProvider document = modelMapper.map(serviceProvider, ServiceProvider.class);
-		delete(document);
+		delete(getSubject(), document);
 	}
 }

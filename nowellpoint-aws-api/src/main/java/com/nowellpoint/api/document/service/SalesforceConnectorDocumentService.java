@@ -56,6 +56,6 @@ public class SalesforceConnectorDocumentService extends AbstractModelMapper<Sale
 	
 	public void deleteSalesforceConnector(SalesforceConnectorDTO salesforceConnector) {
 		SalesforceConnector document = modelMapper.map(salesforceConnector, SalesforceConnector.class);
-		delete(document);
+		delete(getSubject(), document);
 	}
 }

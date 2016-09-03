@@ -9,11 +9,13 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.nowellpoint.aws.data.CacheManager;
 
@@ -28,7 +30,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	private static final Logger LOGGER = Logger.getLogger(MongoDocumentService.class);
 	
-	private final Class<T> documentType;
+	private final Class<T> documentClass;
 	
 //	private static JedisPool jedisPool;
 //	private static Cipher cipher;
@@ -41,8 +43,8 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 * @param documentType
 	 */
 	
-	public MongoDocumentService(Class<T> documentType) {		
-		this.documentType = documentType;
+	public MongoDocumentService(Class<T> documentClass) {		
+		this.documentClass = documentClass;
 		
 //		String endpoint = System.getProperty(Properties.REDIS_HOST);
 //		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
@@ -88,12 +90,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 //	}
 	
 	protected Set<T> find(Bson query) {
-		Set<T> documents = hscan(documentType, query.toString());
+		Set<T> documents = hscan(documentClass, toString(query));
 		
 		if (documents == null) {
 			try {
-				documents = MongoDatastore.find(documentType, query);
-				hset(query.toString(), documents);
+				documents = MongoDatastore.find(documentClass, query);
+				hset(toString(query), documents);
 			} catch (IllegalArgumentException e) {
 				
 			}
@@ -103,12 +105,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	}
 	
 	protected T findOne(Bson query) {
-		T document = get(documentType, query.toString());
+		T document = get(documentClass, toString(query));
 		
 		if (document == null) {
 			try {
-				document = MongoDatastore.findOne(documentType, query);
-				set(query.toString(), document);
+				document = MongoDatastore.findOne(documentClass, query);
+				set(toString(query), document);
 			} catch (IllegalArgumentException e) {
 				
 			}
@@ -124,11 +126,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 */
 	
 	protected T findById(String id) {	
-		T document = get(documentType, id);
+		T document = get(documentClass, id);
 		
 		if (document == null) {
 			try {
-				document = MongoDatastore.findById(documentType, new ObjectId(id));
+				document = MongoDatastore.findById(documentClass, new ObjectId(id));
 				set(id, document);
 			} catch (IllegalArgumentException e) {
 				
@@ -145,11 +147,10 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 */
 	
 	protected Set<T> findAllByOwner(String owner) {		
-		Set<T> documents = hscan(documentType, owner);
+		Set<T> documents = hscan(documentClass, owner);
 		
 		if (documents == null || documents.isEmpty()) {
-			System.out.println("findallByOwnerl cache miss");
-			documents = MongoDatastore.find(documentType, eq ( "owner.href", owner ));
+			documents = MongoDatastore.find(documentClass, eq ( "owner.href", owner ));
 			hset( owner, documents );
 		}
 		
@@ -178,6 +179,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		}
 		
 		set(document.getId().toString(), document);
+		hset(subject, document);
 		
 		try {
 			MongoDatastore.insertOne( document );
@@ -201,6 +203,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		document.setSystemModifiedDate(Date.from(Instant.now()));
 		
 		set(document.getId().toString(), document);
+		hset(subject, document);
 		
 		try {
 			MongoDatastore.replaceOne( document );
@@ -218,8 +221,9 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 * @throws MongoException
 	 */
 	
-	protected void delete(T document) {
+	protected void delete(String subject, T document) {
 		del(document.getId().toString());
+		hdel(subject, document);
 		
 		try {
 			MongoDatastore.deleteOne( document );
@@ -281,7 +285,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		} finally {
 			jedis.close();
 		}
-		
 	}
 	
 	/**
@@ -336,6 +339,28 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		}
 		
 		p.sync();
+	}
+	
+	private static <T extends MongoDocument> void hset(String key, T value) {
+		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		try {
+			jedis.hset(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes(), CacheManager.serialize(value));
+		} finally {
+			jedis.close();
+		}
+	}
+	
+	private static <T extends MongoDocument> void hdel(String key, T value) {
+		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		try {
+			jedis.hdel(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes());
+		} finally {
+			jedis.close();
+		}
+	}
+	
+	private String toString(Bson bson) {
+		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
 	}
 	
 	/**

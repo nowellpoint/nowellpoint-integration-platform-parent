@@ -57,6 +57,6 @@ public class ProjectDocumentService extends AbstractModelMapper<Project> {
 	
 	public void deleteServiceProvider(ProjectDTO project) {
 		Project document = modelMapper.map(project, Project.class);
-		delete(document);
+		delete(getSubject(), document);
 	}
 }
