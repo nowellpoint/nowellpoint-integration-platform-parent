@@ -20,8 +20,8 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.ServiceProviderDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.ServiceProvider;
 import com.nowellpoint.api.service.ServiceProviderService;
 
 @Path("/providers")
@@ -42,34 +42,35 @@ public class ServiceProviderResource {
     		@QueryParam("localeSidKey") String localeSidKey, 
     		@QueryParam("languageLocaleKey") String languageLocaleKey) {
 		
-		Set<ServiceProviderDTO> resources = serviceProviderService.getAllActive(localeSidKey, languageLocaleKey);
+		Set<ServiceProvider> serviceProviders = serviceProviderService.getAllActive(localeSidKey, languageLocaleKey);
 		
-		return Response.ok(resources).build();
+		return Response.ok(serviceProviders).build();
     }
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getServiceProvider(@PathParam("id") String id) {		
-		ServiceProviderDTO resource = serviceProviderService.getServiceProvider( new Id( id ) );		
-		return Response.ok(resource)
+		ServiceProvider serviceProvider = serviceProviderService.getServiceProvider( new Id( id ) );		
+		
+		return Response.ok(serviceProvider)
 				.build();
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createServiceProvider(ServiceProviderDTO resource) {
+	public Response createServiceProvider(ServiceProvider serviceProvider) {
 		
-		serviceProviderService.createServiceProvider(resource);
+		serviceProviderService.createServiceProvider(serviceProvider);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ServiceProviderResource.class)
 				.path("/{id}")
-				.build(resource.getId());
+				.build(serviceProvider.getId());
 		
 		return Response.created(uri)
-				.entity(resource)
+				.entity(serviceProvider)
 				.build();
 	}
 	
@@ -78,6 +79,7 @@ public class ServiceProviderResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteServiceProvider(@PathParam("id") String id) {
 		serviceProviderService.deleteServiceProvider(new Id( id ));		
+		
 		return Response.noContent().build();
 	}
 	
@@ -85,12 +87,12 @@ public class ServiceProviderResource {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateServiceProvider(@PathParam("id") String id, ServiceProviderDTO resource) {
+	public Response updateServiceProvider(@PathParam("id") String id, ServiceProvider serviceProvider) {
 
-		resource.setId(id);
+		serviceProvider.setId(id);
 		
-		serviceProviderService.updateServiceProvider(resource);
+		serviceProviderService.updateServiceProvider(serviceProvider);
 		
-		return Response.ok(resource).build();
+		return Response.ok(serviceProvider).build();
 	}
 }

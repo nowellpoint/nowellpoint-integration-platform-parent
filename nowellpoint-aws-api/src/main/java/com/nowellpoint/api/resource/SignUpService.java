@@ -34,9 +34,9 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.ErrorDTO;
-import com.nowellpoint.api.model.AccountProfile;
+import com.nowellpoint.api.model.document.AccountProfileDocument;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.ErrorDTO;
 import com.nowellpoint.api.model.sforce.Lead;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
@@ -120,7 +120,7 @@ public class SignUpService {
 		ExecutorService executor = Executors.newFixedThreadPool(3);
 		
 		Future<Account> accountSetupTask = executor.submit(new AccountSetupTask(accountSetupRequest));
-		Future<AccountProfile> accountProfileSetupTask = executor.submit(new AccountProfileSetupTask(accountProfileSetupRequest));
+		Future<AccountProfileDocument> accountProfileSetupTask = executor.submit(new AccountProfileSetupTask(accountProfileSetupRequest));
 		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(submitLeadRequest));
 		
 		executor.shutdown();
@@ -131,7 +131,7 @@ public class SignUpService {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
-		AccountProfile accountProfile = null; 
+		AccountProfileDocument accountProfile = null; 
 		
 		try {
 			
@@ -192,7 +192,7 @@ public class SignUpService {
 		
 		emailService.sendWelcomeMessage(account);
 		
-		Optional<AccountProfileDTO> query = Optional.ofNullable(accountProfileService.findAccountProfileBySubject(href));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileBySubject(href));
 		
 		if (! query.isPresent()) {
 			ErrorDTO error = new ErrorDTO(1001, String.format("AccountProfile for href: %s was not found", href));
@@ -201,7 +201,7 @@ public class SignUpService {
 			throw new WebApplicationException(builder.build());
 		}
 		
-		AccountProfileDTO resource = query.get();
+		AccountProfile resource = query.get();
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)

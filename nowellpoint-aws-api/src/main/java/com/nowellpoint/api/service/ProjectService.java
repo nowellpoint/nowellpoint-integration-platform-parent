@@ -2,11 +2,11 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.document.service.ProjectDocumentService;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.ProjectDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.Project;
+import com.nowellpoint.api.model.mapper.ProjectModelMapper;
 
-public class ProjectService extends ProjectDocumentService {
+public class ProjectService extends ProjectModelMapper {
 	
 	public ProjectService() {
 		super();
@@ -18,7 +18,7 @@ public class ProjectService extends ProjectDocumentService {
 	 * @return the list of Projects that is associated to the subject
 	 */
 	
-	public Set<ProjectDTO> findAllByOwner() {
+	public Set<Project> findAllByOwner() {
 		return super.findAllByOwner();
 	}
 
@@ -30,7 +30,7 @@ public class ProjectService extends ProjectDocumentService {
 	 * @return the created project
 	 */
 	
-	public void createProject(ProjectDTO project) {
+	public void createProject(Project project) {
 		super.createServiceProvider(project);
 	}
 	
@@ -42,8 +42,8 @@ public class ProjectService extends ProjectDocumentService {
 	 * @return
 	 */
 
-	public void updateProject(Id id, ProjectDTO project) {
-		ProjectDTO original = findProject( id );
+	public void updateProject(Id id, Project project) {
+		Project original = findProject( id );
 		project.setId(id.getValue());
 		project.setCreatedById(original.getCreatedById());
 		project.setCreatedDate(original.getCreatedDate());
@@ -59,7 +59,7 @@ public class ProjectService extends ProjectDocumentService {
 	 */
 	
 	public void deleteProject(Id id) {
-		ProjectDTO project = findProject(id);
+		Project project = findProject(id);
 		super.deleteServiceProvider(project);
 	}
 	
@@ -70,8 +70,8 @@ public class ProjectService extends ProjectDocumentService {
 	 * @return
 	 */
 	
-	public ProjectDTO findProject(Id id) {
-		ProjectDTO project = super.findServiceProvider(id);
+	public Project findProject(Id id) {
+		Project project = super.findServiceProvider(id);
 		return project;
 	}
 }

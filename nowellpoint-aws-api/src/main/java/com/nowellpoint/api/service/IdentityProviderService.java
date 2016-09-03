@@ -9,8 +9,8 @@ import java.util.Set;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.dto.ErrorDTO;
 import com.nowellpoint.api.dto.idp.Token;
+import com.nowellpoint.api.model.dto.ErrorDTO;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;

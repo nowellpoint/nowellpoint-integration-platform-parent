@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response;
 
 import org.modelmapper.ModelMapper;
 
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.PropertyDTO;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.PropertyDTO;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.aws.model.admin.Property;
@@ -28,7 +28,7 @@ public class PropertyService {
 	
 	public Set<PropertyDTO> getProperties() {
 		String subject = UserContext.getPrincipal().getName();
-		AccountProfileDTO accountProfile = accountProfileService.findAccountProfileBySubject(subject);
+		AccountProfile accountProfile = accountProfileService.findAccountProfileBySubject(subject);
 		if (! accountProfile.getHasFullAccess()) {
 			throw new ServiceException(Response.Status.UNAUTHORIZED, String.format("Your profile does not have permission to access the requested resource"));
 		}

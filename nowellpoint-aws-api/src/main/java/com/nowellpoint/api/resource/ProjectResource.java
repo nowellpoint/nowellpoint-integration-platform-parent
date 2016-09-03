@@ -19,9 +19,9 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.ProjectDTO;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.Project;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.ProjectService;
 
@@ -49,9 +49,9 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		
-		Set<ProjectDTO> resources = projectService.findAllByOwner();
+		Set<Project> projects = projectService.findAllByOwner();
 		
-		return Response.ok(resources)
+		return Response.ok(projects)
 				.build();
     }
 	
@@ -66,9 +66,9 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getProject(@PathParam("id") String id) {
 
-		ProjectDTO resource = projectService.findProject( new Id( id ) );
+		Project project = projectService.findProject( new Id( id ) );
 		
-		return Response.ok(resource)
+		return Response.ok(project)
 				.build();
 	}
 	
@@ -98,21 +98,21 @@ public class ProjectResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createProject(ProjectDTO resource) {
+	public Response createProject(Project project) {
 		
-		AccountProfileDTO owner = accountProfileService.findAccountProfileBySubject(resource.getOwner().getHref());	
+		AccountProfile owner = accountProfileService.findAccountProfileBySubject(project.getOwner().getHref());	
 		
-		resource.setOwner(owner);
+		project.setOwner(owner);
 		
-		projectService.createProject(resource);
+		projectService.createProject(project);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ProjectResource.class)
 				.path("/{id}")
-				.build(resource.getId());
+				.build(project.getId());
 		
 		return Response.created(uri)
-				.entity(resource)
+				.entity(project)
 				.build();
 	}
 	
@@ -126,39 +126,11 @@ public class ProjectResource {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateProject(@PathParam("id") String id, ProjectDTO resource) {
+	public Response updateProject(@PathParam("id") String id, Project project) {
 		
-		projectService.updateProject( new Id(id), resource );
+		projectService.updateProject( new Id(id), project );
 		
-		return Response.ok(resource)
+		return Response.ok(project)
 				.build();
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param subjectId
-	 * @return
-	 */
-	
-	@PUT
-	@Path("/{id}/{subjectId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response shareProject(@PathParam("id") String id, @PathParam("subjectId") String subjectId) {
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param subjectId
-	 * @return
-	 */
-	
-	@PUT
-	@Path("/{id}/{subjectId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response restrictProject(@PathParam("id") String id, @PathParam("subjectId") String subjectId) {
-		return null;
 	}
 }

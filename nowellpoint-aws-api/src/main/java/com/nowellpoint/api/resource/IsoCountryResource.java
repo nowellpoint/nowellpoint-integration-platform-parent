@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.mongodb.client.MongoCollection;
-import com.nowellpoint.api.model.IsoCountry;
+import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
 @Path("/iso-countries")

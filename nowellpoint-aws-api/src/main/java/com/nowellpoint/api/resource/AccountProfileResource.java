@@ -31,11 +31,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.CreditCardDTO;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.model.Address;
-import com.nowellpoint.api.model.Photos;
+import com.nowellpoint.api.model.document.Address;
+import com.nowellpoint.api.model.document.Photos;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.CreditCardDTO;
+import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.ServiceException;
@@ -64,9 +64,9 @@ public class AccountProfileResource {
 	public Response getUserProfile() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
+		AccountProfile accountProfile = accountProfileService.findAccountProfileBySubject( subject );
 		
-		return Response.ok(resource)
+		return Response.ok(accountProfile)
 				.build();
 	}
 	
@@ -140,25 +140,25 @@ public class AccountProfileResource {
 		// update identity
 		//
 		
-		AccountProfileDTO resource = new AccountProfileDTO();
-		resource.setFirstName(firstName);
-		resource.setLastName(lastName);
-		resource.setEmail(email);
-		resource.setCompany(company);
-		resource.setDivision(division);
-		resource.setDepartment(department);
-		resource.setFax(fax);
-		resource.setTitle(title);
-		resource.setMobilePhone(mobilePhone);
-		resource.setPhone(phone);
-		resource.setExtension(extension);
-		resource.setLocaleSidKey(localeSidKey);
-		resource.setLanguageSidKey(languageSidKey);
-		resource.setTimeZoneSidKey(timeZoneSidKey);
+		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setFirstName(firstName);
+		accountProfile.setLastName(lastName);
+		accountProfile.setEmail(email);
+		accountProfile.setCompany(company);
+		accountProfile.setDivision(division);
+		accountProfile.setDepartment(department);
+		accountProfile.setFax(fax);
+		accountProfile.setTitle(title);
+		accountProfile.setMobilePhone(mobilePhone);
+		accountProfile.setPhone(phone);
+		accountProfile.setExtension(extension);
+		accountProfile.setLocaleSidKey(localeSidKey);
+		accountProfile.setLanguageSidKey(languageSidKey);
+		accountProfile.setTimeZoneSidKey(timeZoneSidKey);
 		
-		accountProfileService.updateAccountProfile(new Id( id ), resource);
+		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
 		
-		return Response.ok(resource)
+		return Response.ok(accountProfile)
 				.build();
 	}
 	
@@ -167,7 +167,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile resource = accountProfileService.findAccountProfile( new Id( id ) );
 		
 		return Response.ok(resource)
 				.build();
@@ -176,14 +176,14 @@ public class AccountProfileResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createAccountProfile(AccountProfileDTO resource) {
+    public Response createAccountProfile(AccountProfile accountProfile) {
 		
-		accountProfileService.createAccountProfile( resource );
+		accountProfileService.createAccountProfile( accountProfile );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)
 				.path("/{id}")
-				.build(resource.getId());
+				.build(accountProfile.getId());
 		
 		return Response.created(uri).build();
 	}
@@ -192,11 +192,11 @@ public class AccountProfileResource {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response udpateAccountProfile(@PathParam("id") String id, AccountProfileDTO resource) {
+    public Response udpateAccountProfile(@PathParam("id") String id, AccountProfile accountProfile) {
 		
-		accountProfileService.updateAccountProfile(new Id( id ), resource);
+		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
 		
-		return Response.ok(resource).build();
+		return Response.ok(accountProfile).build();
 	}
 	
 	@DELETE
@@ -205,7 +205,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response disableAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile resource = accountProfileService.findAccountProfile( new Id( id ) );
 		
 		try {
 			identityProviderService.disableAccount(resource.getHref());
@@ -236,16 +236,16 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO resource) {
+	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO creditCard) {
 		
 		try {
-			accountProfileService.addCreditCard( new Id( id ), resource);
+			accountProfileService.addCreditCard( new Id( id ), creditCard);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
 		return Response
-				.ok(resource)
+				.ok(creditCard)
 				.build();
 	}
 	
@@ -271,16 +271,16 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO resource) {
+	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO creditCard) {
 		
 		try {
-			accountProfileService.updateCreditCard( new Id( id ), token, resource);
+			accountProfileService.updateCreditCard( new Id( id ), token, creditCard);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
 		
 		return Response
-				.ok(resource)
+				.ok(creditCard)
 				.build();
 	}
 	
@@ -302,13 +302,13 @@ public class AccountProfileResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfileBySubject(@QueryParam("subject") String subject) {		
-		AccountProfileDTO resource = accountProfileService.findAccountProfileBySubject( subject );
+		AccountProfile accountProfile = accountProfileService.findAccountProfileBySubject( subject );
 		
-		if (resource == null) {
+		if (accountProfile == null) {
 			throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
 		}
 		
-		return Response.ok(resource)
+		return Response.ok(accountProfile)
 				.build();
 	}
 	
@@ -318,22 +318,22 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture(@PathParam("id") String id) {
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( id ) );
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
-		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("nowellpoint-profile-pictures", resource.getId());
+		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("nowellpoint-profile-pictures", accountProfile.getId());
 		
 		s3Client.deleteObject(deleteObjectRequest);
 		
 		Photos photos = new Photos();
 		photos.setProfilePicture("/images/person-generic.jpg");
 		
-		resource.setPhotos(photos);
+		accountProfile.setPhotos(photos);
 		
-		accountProfileService.updateAccountProfile( new Id( id ), resource);
+		accountProfileService.updateAccountProfile( new Id( id ), accountProfile);
 		
-		return Response.ok(resource)
+		return Response.ok(accountProfile)
 				.build();
 	}
 }

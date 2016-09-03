@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
 
-import com.nowellpoint.api.dto.EnvironmentDTO;
-import com.nowellpoint.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.dto.ServiceProviderDTO;
-import com.nowellpoint.api.model.Service;
-import com.nowellpoint.api.model.SimpleStorageService;
-import com.nowellpoint.api.model.Targets;
+import com.nowellpoint.api.model.document.Service;
+import com.nowellpoint.api.model.document.SimpleStorageService;
+import com.nowellpoint.api.model.document.Targets;
+import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
+import com.nowellpoint.api.model.dto.ServiceProvider;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -280,7 +280,7 @@ public class CommonFunctions {
 	}
 	
 	public ServiceInstanceDTO buildServiceInstance(String key) {
-		ServiceProviderDTO serviceProvider = serviceProviderService.findByServiceKey(key);
+		ServiceProvider serviceProvider = serviceProviderService.findByServiceKey(key);
 		
 		Service service = serviceProvider.getServices()
 				.stream()

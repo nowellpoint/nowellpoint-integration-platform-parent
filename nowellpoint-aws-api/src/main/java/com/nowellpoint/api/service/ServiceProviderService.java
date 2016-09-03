@@ -2,9 +2,9 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.document.service.ServiceProviderDocumentService;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.ServiceProviderDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.ServiceProvider;
+import com.nowellpoint.api.model.mapper.ServiceProviderModelMapper;
 
 /**
  * 
@@ -14,7 +14,7 @@ import com.nowellpoint.api.dto.ServiceProviderDTO;
  *
  */
 
-public class ServiceProviderService extends ServiceProviderDocumentService {
+public class ServiceProviderService extends ServiceProviderModelMapper {
 	
 	/**
 	 * 
@@ -34,7 +34,7 @@ public class ServiceProviderService extends ServiceProviderDocumentService {
 	 * 
 	 */
 	
-	public Set<ServiceProviderDTO> getAllActive(String localeSidKey, String languageLocaleKey) {
+	public Set<ServiceProvider> getAllActive(String localeSidKey, String languageLocaleKey) {
 		return super.getAllActive(localeSidKey, languageLocaleKey);
 	}
 	
@@ -47,7 +47,7 @@ public class ServiceProviderService extends ServiceProviderDocumentService {
 	 * 
 	 */
 	
-	public ServiceProviderDTO findByServiceKey(String key) {
+	public ServiceProvider findByServiceKey(String key) {
 		return super.findByServiceKey(key);
 	}
 	
@@ -58,7 +58,7 @@ public class ServiceProviderService extends ServiceProviderDocumentService {
 	 * 
 	 */
 	
-	public void createServiceProvider(ServiceProviderDTO serviceProvider) {
+	public void createServiceProvider(ServiceProvider serviceProvider) {
 		super.createServiceProvider(serviceProvider);
 	}
 	
@@ -73,8 +73,8 @@ public class ServiceProviderService extends ServiceProviderDocumentService {
 	 * 
 	 */
 	
-	public void updateServiceProvider(Id id, ServiceProviderDTO serviceProvider) {
-		ServiceProviderDTO original = getServiceProvider( id );
+	public void updateServiceProvider(Id id, ServiceProvider serviceProvider) {
+		ServiceProvider original = getServiceProvider( id );
 		serviceProvider.setCreatedById(original.getCreatedById());
 		serviceProvider.setCreatedDate(original.getCreatedDate());
 		
@@ -90,7 +90,7 @@ public class ServiceProviderService extends ServiceProviderDocumentService {
 	 */
 	
 	public void deleteServiceProvider(Id id) {		
-		ServiceProviderDTO serviceProvider = getServiceProvider( id );
+		ServiceProvider serviceProvider = getServiceProvider( id );
 		super.deleteServiceProvider(serviceProvider);
 	}
 	
@@ -101,7 +101,7 @@ public class ServiceProviderService extends ServiceProviderDocumentService {
 	 * @return
 	 */
 	
-	public ServiceProviderDTO getServiceProvider(Id id) {
+	public ServiceProvider getServiceProvider(Id id) {
 		return super.findServiceProvider(id);
 	}
 }

@@ -2,7 +2,7 @@ package com.nowellpoint.api.service;
 
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.api.dto.ErrorDTO;
+import com.nowellpoint.api.model.dto.ErrorDTO;
 
 public class ServiceException extends RuntimeException {
 

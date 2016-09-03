@@ -26,16 +26,16 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.api.document.service.SalesforceConnectorDocumentService;
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.EnvironmentDTO;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.model.SimpleStorageService;
-import com.nowellpoint.api.model.Targets;
+import com.nowellpoint.api.model.document.SimpleStorageService;
+import com.nowellpoint.api.model.document.Targets;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.SalesforceConnector;
+import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
+import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
@@ -53,7 +53,7 @@ import com.nowellpoint.client.sforce.model.Token;
  * 
  *************************************************************************************************************************/
 
-public class SalesforceConnectorService extends SalesforceConnectorDocumentService {
+public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	@Inject
 	private SalesforceService salesforceService;
@@ -89,7 +89,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 * 
 	 *************************************************************************************************************************/
 	
-	public Set<SalesforceConnectorDTO> findAllByOwner() {
+	public Set<SalesforceConnector> findAllByOwner() {
 		return super.findAllByOwner();
 	}
 	
@@ -102,7 +102,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *
 	 *************************************************************************************************************************/
 	
-	public SalesforceConnectorDTO createSalesforceConnector(Token token) {
+	public SalesforceConnector createSalesforceConnector(Token token) {
 		
 		Client client = new Client();
 		
@@ -121,12 +121,12 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 		
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
-		SalesforceConnectorDTO resource = new SalesforceConnectorDTO();
+		SalesforceConnector resource = new SalesforceConnector();
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		
 		if (resource.getOwner() == null) {
-			AccountProfileDTO owner = new AccountProfileDTO();
+			AccountProfile owner = new AccountProfile();
 			owner.setHref(getSubject());
 			resource.setOwner(owner);
 		}
@@ -187,8 +187,8 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *
 	 *************************************************************************************************************************/
 	
-	public void updateSalesforceConnector(Id id, SalesforceConnectorDTO salesforceConnector) {		
-		SalesforceConnectorDTO original = findSalesforceConnector(id);
+	public void updateSalesforceConnector(Id id, SalesforceConnector salesforceConnector) {		
+		SalesforceConnector original = findSalesforceConnector(id);
 		
 		salesforceConnector.setId(original.getId());
 		salesforceConnector.setCreatedById(original.getCreatedById());
@@ -208,7 +208,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public void deleteSalesforceConnector(Id id) {
-		SalesforceConnectorDTO resource = findSalesforceConnector( id );
+		SalesforceConnector resource = findSalesforceConnector( id );
 		
 		super.deleteSalesforceConnector(resource);
 
@@ -265,7 +265,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 * 
 	 *************************************************************************************************************************/
 	
-	public SalesforceConnectorDTO findSalesforceConnector(Id id) {		
+	public SalesforceConnector findSalesforceConnector(Id id) {		
 		return super.findSalesforceConnector(id);
 	}
 	
@@ -280,7 +280,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public EnvironmentDTO getEnvironment(Id id, String key) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
 				.stream()
@@ -305,7 +305,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	public void addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s with Id: ", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
@@ -349,7 +349,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public void updateEnvironment(Id id, String key, EnvironmentDTO environment) {
-		SalesforceConnectorDTO salesforceConnector = findSalesforceConnector( id );
+		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
 		
 		environment.setKey(key);
 		
@@ -366,7 +366,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void updateEnvironment(SalesforceConnectorDTO resource, EnvironmentDTO environment) {
+	public void updateEnvironment(SalesforceConnector resource, EnvironmentDTO environment) {
 		
 		EnvironmentDTO original = resource.getEnvironments()
 				.stream()
@@ -430,7 +430,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	
 	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
-		SalesforceConnectorDTO resource = findSalesforceConnector( id );
+		SalesforceConnector resource = findSalesforceConnector( id );
 		
 		EnvironmentDTO environment = resource.getEnvironments()
 				.stream()
@@ -468,7 +468,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public void removeEnvironment(Id id, String key) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
 				.stream()
@@ -496,7 +496,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 **************************************************************************************************************************/
 	
 	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -521,7 +521,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
@@ -552,7 +552,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
@@ -625,7 +625,7 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 *************************************************************************************************************************/
 	
 	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
@@ -660,8 +660,8 @@ public class SalesforceConnectorService extends SalesforceConnectorDocumentServi
 	 **************************************************************************************************************************
 	 */
 	
-	public SalesforceConnectorDTO removeServiceInstance(Id id, String key) {		
-		SalesforceConnectorDTO resource = findSalesforceConnector(id);
+	public SalesforceConnector removeServiceInstance(Id id, String key) {		
+		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));
 

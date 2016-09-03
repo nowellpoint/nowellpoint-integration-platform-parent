@@ -12,30 +12,30 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.api.document.service.ApplicationDocumentService;
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.ApplicationDTO;
-import com.nowellpoint.api.dto.BatchJobDTO;
-import com.nowellpoint.api.dto.EnvironmentDTO;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.SalesforceConnectorDTO;
-import com.nowellpoint.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.model.SimpleStorageService;
-import com.nowellpoint.api.model.Targets;
+import com.nowellpoint.api.model.document.SimpleStorageService;
+import com.nowellpoint.api.model.document.Targets;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.Application;
+import com.nowellpoint.api.model.dto.BatchJobDTO;
+import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.SalesforceConnector;
+import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
+import com.nowellpoint.api.model.mapper.ApplicationModelMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;
 
-/**************************************************************************************************************************
+/**
  * 
  * 
  * @author jherson
  *
  * 
- *************************************************************************************************************************/
+ */
 
-public class ApplicationService extends ApplicationDocumentService {
+public class ApplicationService extends ApplicationModelMapper {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
@@ -46,13 +46,13 @@ public class ApplicationService extends ApplicationDocumentService {
 	@Inject
 	private CommonFunctions commonFunctions;
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
-	 * constructor
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 * 
+	 */
 	
 	public ApplicationService() {
 		
@@ -64,7 +64,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 * @return
 	 */
 	
-	public Set<ApplicationDTO> findAllByOwner() {
+	public Set<Application> findAllByOwner() {
 		return super.findAllByOwner();
 	}
 	
@@ -74,31 +74,32 @@ public class ApplicationService extends ApplicationDocumentService {
 	 * @param resource
 	 * @param eventSource
 	 * @return
+	 * 
 	 */
 	
-	public void createApplication(ApplicationDTO resource, String connectorId, Boolean importSandboxes, Boolean importServices) {
+	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {
 		
-		if (resource.getOwner() == null) {
-			AccountProfileDTO owner = new AccountProfileDTO();
+		if (application.getOwner() == null) {
+			AccountProfile owner = new AccountProfile();
 			owner.setHref(getSubject());
-			resource.setOwner(owner);
+			application.setOwner(owner);
 		}
 		
-		resource.setStatus("WORK_IN_PROGRESS");
+		application.setStatus("WORK_IN_PROGRESS");
 		
-		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
+		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
 		
 		if (importSandboxes) {
-			resource.setEnvironments(connector.getEnvironments());
+			application.setEnvironments(connector.getEnvironments());
 		} else {
-			resource.addEnvironment(connector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
+			application.addEnvironment(connector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
 		}
 		
 		if (importServices) {
-			resource.setServiceInstances(connector.getServiceInstances());
+			application.setServiceInstances(connector.getServiceInstances());
 		}
 		
-		super.createApplication(resource);
+		super.createApplication(application);
 	}
 	
 	/**
@@ -109,8 +110,8 @@ public class ApplicationService extends ApplicationDocumentService {
 	 * @return
 	 */
 	
-	public void updateApplication(Id id, ApplicationDTO application) {
-		ApplicationDTO original = findApplication( id );
+	public void updateApplication(Id id, Application application) {
+		Application original = findApplication( id );
 		
 		application.setId(id.getValue());
 		application.setCreatedById(original.getCreatedById());
@@ -153,7 +154,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 */
 	
 	public void deleteApplication(Id id) {		
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		super.deleteApplication(resource);
 	}
 	
@@ -164,7 +165,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 * @return
 	 */
 	
-	public ApplicationDTO findApplication(Id id) {
+	public Application findApplication(Id id) {
 		return super.findApplication(id);
 	}	
 	
@@ -180,7 +181,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 *************************************************************************************************************************/
 	
 	public void updateEnvironment(Id id, String key, EnvironmentDTO environment) {
-		ApplicationDTO application = findApplication( id );
+		Application application = findApplication( id );
 		
 		environment.setKey(key);
 		
@@ -200,7 +201,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	
 	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
-		ApplicationDTO application = findApplication( id );
+		Application application = findApplication( id );
 		
 		EnvironmentDTO environment = application.getEnvironments()
 				.stream()
@@ -239,7 +240,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 *************************************************************************************************************************/
 	
 	public EnvironmentDTO getEnvironment(Id id, String key) {
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
 				.stream()
@@ -263,7 +264,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	public void addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		
 		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s with Id: ", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
@@ -294,7 +295,7 @@ public class ApplicationService extends ApplicationDocumentService {
 		updateApplication(id, resource);
 	}
 	
-	public void updateEnvironment(ApplicationDTO resource, EnvironmentDTO environment) {
+	public void updateEnvironment(Application resource, EnvironmentDTO environment) {
 		
 		EnvironmentDTO original = resource.getEnvironments()
 				.stream()
@@ -358,7 +359,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 *************************************************************************************************************************/
 	
 	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
@@ -387,7 +388,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 *************************************************************************************************************************/
 	
 	public void removeEnvironment(Id id, String key) {
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		
 		EnvironmentDTO environment = resource.getEnvironments()
 				.stream()
@@ -415,7 +416,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 **************************************************************************************************************************/
 	
 	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		
 		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
 				.stream()
@@ -439,7 +440,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 *************************************************************************************************************************/
 	
 	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());
@@ -491,7 +492,7 @@ public class ApplicationService extends ApplicationDocumentService {
 	 *************************************************************************************************************************/
 	
 	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
-		ApplicationDTO resource = findApplication(id);
+		Application resource = findApplication(id);
 		
 		if (resource.getServiceInstances() == null) {
 			resource.setServiceInstances(Collections.emptySet());

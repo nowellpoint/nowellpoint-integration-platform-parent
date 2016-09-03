@@ -24,11 +24,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.dto.ApplicationDTO;
-import com.nowellpoint.api.dto.EnvironmentDTO;
-import com.nowellpoint.api.dto.Id;
-import com.nowellpoint.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.model.Application;
+import com.nowellpoint.api.model.document.ApplicationDocument;
+import com.nowellpoint.api.model.dto.Application;
+import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.service.ApplicationService;
 
 @Path("/applications")
@@ -52,7 +52,7 @@ public class ApplicationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
 		
-		Set<ApplicationDTO> resources = applicationService.findAllByOwner();
+		Set<Application> resources = applicationService.findAllByOwner();
 		
 		return Response.ok(resources).build();
     }
@@ -68,10 +68,10 @@ public class ApplicationResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
 		
-		ApplicationDTO application = applicationService.findApplication( new Id( id ) );
+		Application application = applicationService.findApplication( new Id( id ) );
 		
 		if (application == null) {
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Application.class.getSimpleName(), id ) );
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", ApplicationDocument.class.getSimpleName(), id ) );
 		}
 		
 		return Response.ok(application).build();
@@ -109,21 +109,19 @@ public class ApplicationResource {
 			@FormParam("importSandboxes") Boolean importSandboxes,
 			@FormParam("importServices") Boolean importServices) {
 		
-		ApplicationDTO resource = new ApplicationDTO();
-		resource.setName(name);
-		resource.setDescription(description);
+		Application application = new Application();
+		application.setName(name);
+		application.setDescription(description);
 		
-		System.out.println(importServices);
-		
-		applicationService.createApplication(resource, connectorId, importSandboxes, importServices);
+		applicationService.createApplication(application, connectorId, importSandboxes, importServices);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ApplicationResource.class)
 				.path("/{id}")
-				.build(resource.getId());
+				.build(application.getId());
 		
 		return Response.created(uri)
-				.entity(resource)
+				.entity(application)
 				.build();	
 	}
 	
@@ -143,14 +141,14 @@ public class ApplicationResource {
 			@FormParam("name") @NotEmpty String name,
 			@FormParam("description") @NotEmpty String description) {
 		
-		ApplicationDTO resource = new ApplicationDTO();
-		resource.setName(name);
-		resource.setDescription(description);
+		Application application = new Application();
+		application.setName(name);
+		application.setDescription(description);
 		
-		applicationService.updateApplication(new Id(id), resource);
+		applicationService.updateApplication(new Id(id), application);
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(application)
 				.build();	
 	}
 	
@@ -159,14 +157,14 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		EnvironmentDTO resource = applicationService.getEnvironment(new Id(id), key);
+		EnvironmentDTO environment = applicationService.getEnvironment(new Id(id), key);
 		
-		if (resource == null) {
+		if (environment == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
 		}
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(environment)
 				.build(); 
 	}
 	
@@ -174,12 +172,12 @@ public class ApplicationResource {
 	@Path("{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO resource) {
+	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO environment) {
 		
-		applicationService.addEnvironment(new Id(id), resource);
+		applicationService.addEnvironment(new Id(id), environment);
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(environment)
 				.build(); 
 	}
 	
@@ -187,12 +185,12 @@ public class ApplicationResource {
 	@Path("{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO resource) {
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
 		
-		applicationService.updateEnvironment(new Id(id), key, resource);
+		applicationService.updateEnvironment(new Id(id), key, environment);
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(environment)
 				.build(); 
 	}
 	
@@ -202,10 +200,10 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		EnvironmentDTO resource = applicationService.updateEnvironment(new Id(id), key, parameters);
+		EnvironmentDTO environment = applicationService.updateEnvironment(new Id(id), key, parameters);
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(environment)
 				.build(); 
 	}
 	
@@ -228,10 +226,10 @@ public class ApplicationResource {
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key) {
 		
-		ServiceInstanceDTO resource = applicationService.getServiceInstance( new Id(id), key );
+		ServiceInstanceDTO serviceInstance = applicationService.getServiceInstance( new Id(id), key );
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(serviceInstance)
 				.build(); 	
 	}
 	
@@ -241,14 +239,14 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceInstance(@PathParam(value="id") String id, @FormParam(value="key") String key) {
 		
-		ServiceInstanceDTO resource = applicationService.addServiceInstance( new Id(id), key);
+		ServiceInstanceDTO serviceInstance = applicationService.addServiceInstance( new Id(id), key);
 		
-		if ( resource == null ) {
+		if ( serviceInstance == null ) {
 			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", "Service", key ) );
 		}
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(serviceInstance)
 				.build(); 	
 	}
 	
@@ -259,12 +257,12 @@ public class ApplicationResource {
 	public Response updateServiceInstance(
 			@PathParam(value="id") String id,
 			@PathParam(value="key") String key,
-			ServiceInstanceDTO resource) {
+			ServiceInstanceDTO serviceInstance) {
 		
-		applicationService.updateServiceInstance( new Id(id), key, resource);
+		applicationService.updateServiceInstance( new Id(id), key, serviceInstance);
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(serviceInstance)
 				.build(); 	
 	}
 	
@@ -282,10 +280,10 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		ServiceInstanceDTO resource = applicationService.updateServiceInstance( new Id(id), key, parameters);
+		ServiceInstanceDTO serviceInstance = applicationService.updateServiceInstance( new Id(id), key, parameters);
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(serviceInstance)
 				.build(); 	
 	}
 }

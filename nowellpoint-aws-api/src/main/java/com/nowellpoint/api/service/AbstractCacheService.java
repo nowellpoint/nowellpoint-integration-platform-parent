@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.nowellpoint.api.dto.AbstractDTO;
+import com.nowellpoint.api.model.dto.AbstractDTO;
 import com.nowellpoint.aws.data.CacheManager;
 
 import redis.clients.jedis.Jedis;

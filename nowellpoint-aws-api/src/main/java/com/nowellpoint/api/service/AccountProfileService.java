@@ -29,19 +29,19 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
-import com.nowellpoint.api.document.service.AccountProfileDocumentService;
-import com.nowellpoint.api.dto.AccountProfileDTO;
-import com.nowellpoint.api.dto.CreditCardDTO;
-import com.nowellpoint.api.dto.Id;
 import com.nowellpoint.api.dto.idp.Token;
-import com.nowellpoint.api.model.Address;
-import com.nowellpoint.api.model.IsoCountry;
-import com.nowellpoint.api.model.Photos;
-import com.nowellpoint.api.model.SystemReference;
+import com.nowellpoint.api.model.document.Address;
+import com.nowellpoint.api.model.document.IsoCountry;
+import com.nowellpoint.api.model.document.Photos;
+import com.nowellpoint.api.model.document.SystemReference;
+import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.CreditCardDTO;
+import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.model.admin.Properties;
 
-public class AccountProfileService extends AccountProfileDocumentService {
+public class AccountProfileService extends AccountProfileModelMapper {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
@@ -76,7 +76,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 		
 		String subject = UserContext.getPrincipal().getName();
 		
-		AccountProfileDTO accountProfile = findAccountProfileBySubject(subject);
+		AccountProfile accountProfile = findAccountProfileBySubject(subject);
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
 		super.updateAccountProfile(accountProfile);
@@ -90,7 +90,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	 * 
 	 */
 	
-	public void createAccountProfile(AccountProfileDTO accountProfile) {
+	public void createAccountProfile(AccountProfile accountProfile) {
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 		
@@ -126,8 +126,8 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	 * @return the updated Identity resource
 	 */
 	
-	public void updateAccountProfile(Id id, AccountProfileDTO accountProfile) {
-		AccountProfileDTO original = findAccountProfile( id );
+	public void updateAccountProfile(Id id, AccountProfile accountProfile) {
+		AccountProfile original = findAccountProfile( id );
 		accountProfile.setId( id.getValue() );
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 		accountProfile.setCreatedById(original.getCreatedById());
@@ -165,7 +165,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	 */
 	
 	public void updateAccountProfileAddress(Id id, Address address) {
-		AccountProfileDTO accountProfile = findAccountProfile( id );
+		AccountProfile accountProfile = findAccountProfile( id );
 		
 		if (address.getCountryCode() != accountProfile.getAddress().getCountryCode()) {
 			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
@@ -185,7 +185,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	 */
 	
 	public Address getAccountProfileAddress(Id id) {
-		AccountProfileDTO resource = findAccountProfile( id );
+		AccountProfile resource = findAccountProfile( id );
 		return resource.getAddress();
 	}
 	
@@ -195,7 +195,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	 * @return Identity resource for id
 	 */
 	
-	public AccountProfileDTO findAccountProfile(Id id) {		
+	public AccountProfile findAccountProfile(Id id) {		
 		return super.findAccountProfile(id);
 	}
 	
@@ -205,11 +205,11 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	 * @return Identity resource for subject
 	 */
 	
-	public AccountProfileDTO findAccountProfileBySubject(String subject) {
+	public AccountProfile findAccountProfileBySubject(String subject) {
 		return super.findAccountProfileBySubject(subject);
 	}
 	
-	public AccountProfileDTO findAccountProfileByUsername(String username) {
+	public AccountProfile findAccountProfileByUsername(String username) {
 		return super.findAccountProfileByUsername(username);
 	}
 	
@@ -237,7 +237,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	}
 	
 	public CreditCardDTO getCreditCard(Id id, String token) {
-		AccountProfileDTO resource = findAccountProfile(id);
+		AccountProfile resource = findAccountProfile(id);
 		
 		Optional<CreditCardDTO> creditCard = resource.getCreditCards()
 				.stream()
@@ -249,7 +249,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	}
 	
 	public void addCreditCard(Id id, CreditCardDTO creditCard) {
-		AccountProfileDTO resource = findAccountProfile(id);
+		AccountProfile resource = findAccountProfile(id);
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.company(resource.getCompany())
@@ -343,7 +343,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	}
 	
 	public void updateCreditCard(Id id, String token, CreditCardDTO creditCard) {
-		AccountProfileDTO resource = findAccountProfile(id);
+		AccountProfile resource = findAccountProfile(id);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -430,7 +430,7 @@ public class AccountProfileService extends AccountProfileDocumentService {
 	}
 	
 	public void removeCreditCard(Id id, String token) {
-		AccountProfileDTO resource = findAccountProfile(id);
+		AccountProfile resource = findAccountProfile(id);
 		
 		com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
 		

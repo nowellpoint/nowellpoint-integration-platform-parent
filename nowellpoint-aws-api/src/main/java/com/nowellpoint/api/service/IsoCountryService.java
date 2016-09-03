@@ -4,7 +4,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 import com.mongodb.client.MongoCollection;
-import com.nowellpoint.api.model.IsoCountry;
+import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
 public class IsoCountryService extends AbstractCacheService {

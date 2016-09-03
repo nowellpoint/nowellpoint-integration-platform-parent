@@ -200,6 +200,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	protected T replace(String subject, T document) {
 		document.setLastModifiedById(subject);
+		document.setLastModifiedDate(Date.from(Instant.now()));
 		document.setSystemModifiedDate(Date.from(Instant.now()));
 		
 		set(document.getId().toString(), document);

@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import com.nowellpoint.api.model.AccountProfile;
-import com.nowellpoint.api.model.Address;
+import com.nowellpoint.api.model.document.AccountProfileDocument;
+import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
-public class AccountProfileSetupTask implements Callable<AccountProfile> {
+public class AccountProfileSetupTask implements Callable<AccountProfileDocument> {
 	
 	private AccountProfileSetupRequest accountProfileSetupRequest;
 	
@@ -21,13 +21,13 @@ public class AccountProfileSetupTask implements Callable<AccountProfile> {
 	}
 
 	@Override
-	public AccountProfile call() throws Exception {
+	public AccountProfileDocument call() throws Exception {
 		
-		AccountProfile accountProfile = Optional.ofNullable( MongoDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
-				.withDocumentClass( AccountProfile.class )
+		AccountProfileDocument accountProfile = Optional.ofNullable( MongoDatastore.getDatabase().getCollection( AccountProfileDocument.class.getAnnotation(Document.class).collectionName() )
+				.withDocumentClass( AccountProfileDocument.class )
 				.find( eq ( "username", accountProfileSetupRequest.getUsername() ) )
 				.first() )
-				.orElse(new AccountProfile());
+				.orElse(new AccountProfileDocument());
 		
 		accountProfile.setLastModifiedById(accountProfileSetupRequest.getHref());
 		accountProfile.setLastModifiedDate(Date.from(Instant.now()));
