@@ -1,7 +1,5 @@
 package com.nowellpoint.api.service;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
@@ -31,20 +29,19 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
+import com.nowellpoint.api.document.service.AccountProfileDocumentService;
 import com.nowellpoint.api.dto.AccountProfileDTO;
 import com.nowellpoint.api.dto.CreditCardDTO;
+import com.nowellpoint.api.dto.Id;
 import com.nowellpoint.api.dto.idp.Token;
-import com.nowellpoint.api.model.AccountProfile;
 import com.nowellpoint.api.model.Address;
 import com.nowellpoint.api.model.IsoCountry;
 import com.nowellpoint.api.model.Photos;
 import com.nowellpoint.api.model.SystemReference;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 import com.nowellpoint.aws.model.admin.Properties;
 
-public class AccountProfileService extends AbstractDocumentService<AccountProfileDTO, AccountProfile> {
+public class AccountProfileService extends AccountProfileDocumentService {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
@@ -63,12 +60,15 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	}
 	
 	public AccountProfileService() {
-		super(AccountProfileDTO.class, AccountProfile.class);
+		super();
 	}
 	
 	/**
 	 * 
+	 * 
 	 * @param token
+	 * 
+	 * 
 	 */
 	
 	public void loggedInEvent(@Observes Token token) {		
@@ -76,96 +76,84 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 		String subject = UserContext.getPrincipal().getName();
 		
-		AccountProfileDTO resource = findAccountProfileBySubject(subject);
-		resource.setLastLoginDate(Date.from(Instant.now()));
+		AccountProfileDTO accountProfile = findAccountProfileBySubject(subject);
+		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
-		replace(resource);
-
-		hset( resource.getId(), subject, resource );
-		hset( subject, AccountProfileDTO.class.getName(), resource );
+		super.updateAccountProfile(accountProfile);
 	}
 	
 	/**
 	 * 
-	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return the created AccountProfile resource
+	 * 
+	 * @param accountProfile
+	 * 
+	 * 
 	 */
 	
-	public AccountProfileDTO createAccountProfile(AccountProfileDTO resource) {
-		resource.setUsername(resource.getEmail());
-		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
+	public void createAccountProfile(AccountProfileDTO accountProfile) {
+		accountProfile.setUsername(accountProfile.getEmail());
+		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 		
-		if (resource.getLocaleSidKey() == null) {
-			resource.setLocaleSidKey(Locale.getDefault().toString());
+		if (accountProfile.getLocaleSidKey() == null) {
+			accountProfile.setLocaleSidKey(Locale.getDefault().toString());
 		}
 		
-		if (resource.getLanguageSidKey() == null) {
-			resource.setLanguageSidKey(Locale.getDefault().toString());
+		if (accountProfile.getLanguageSidKey() == null) {
+			accountProfile.setLanguageSidKey(Locale.getDefault().toString());
 		}
 		
-		if (resource.getTimeZoneSidKey() == null) {
-			resource.setTimeZoneSidKey(TimeZone.getDefault().getID());
+		if (accountProfile.getTimeZoneSidKey() == null) {
+			accountProfile.setTimeZoneSidKey(TimeZone.getDefault().getID());
 		}
 		
-		IsoCountry isoCountry = isoCountryService.lookupByIso2Code(resource.getAddress().getCountryCode(), "US");
+		IsoCountry isoCountry = isoCountryService.lookupByIso2Code(accountProfile.getAddress().getCountryCode(), "US");
 		
-		resource.getAddress().setCountry(isoCountry.getDescription());
+		accountProfile.getAddress().setCountry(isoCountry.getDescription());
 		
 		Photos photos = new Photos();
 		photos.setProfilePicture("/images/person-generic.jpg");
 		
-		resource.setPhotos(photos);
+		accountProfile.setPhotos(photos);
 		
-		create(resource);
-		
-		hset( resource.getId(), getSubject(), resource );
-		hset( getSubject(), AccountProfileDTO.class.getName(), resource );
-		
-		return resource;
+		super.createAccountProfile(accountProfile);
 	}
 	
 	/**
 	 * 
 	 * @param subject
-	 * @param resource
+	 * @param accountProfile
 	 * @param eventSource
 	 * @return the updated Identity resource
 	 */
 	
-	public AccountProfileDTO updateAccountProfile(AccountProfileDTO resource) {
-		AccountProfileDTO original = findAccountProfile( resource.getId() );
-		resource.setName(resource.getFirstName() != null ? resource.getFirstName().concat(" ").concat(resource.getLastName()) : resource.getLastName());
-		resource.setCreatedById(original.getCreatedById());
-		resource.setCreatedDate(original.getCreatedDate());
-		resource.setHref(original.getHref());
-		resource.setEmailEncodingKey(original.getEmailEncodingKey());
-		resource.setIsActive(original.getIsActive());
-		resource.setHasFullAccess(original.getHasFullAccess());
+	public void updateAccountProfile(Id id, AccountProfileDTO accountProfile) {
+		AccountProfileDTO original = findAccountProfile( id );
+		accountProfile.setId( id.getValue() );
+		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
+		accountProfile.setCreatedById(original.getCreatedById());
+		accountProfile.setCreatedDate(original.getCreatedDate());
+		accountProfile.setHref(original.getHref());
+		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
+		accountProfile.setIsActive(original.getIsActive());
+		accountProfile.setHasFullAccess(original.getHasFullAccess());
 		
-		if (resource.getAddress() == null) {
-			resource.setAddress(original.getAddress());
+		if (accountProfile.getAddress() == null) {
+			accountProfile.setAddress(original.getAddress());
 		}
 		
-		if (resource.getLastLoginDate() == null) {
-			resource.setLastLoginDate(original.getLastLoginDate());
+		if (accountProfile.getLastLoginDate() == null) {
+			accountProfile.setLastLoginDate(original.getLastLoginDate());
 		}
 		
-		if (resource.getPhotos() == null) {
-			resource.setPhotos(original.getPhotos());
+		if (accountProfile.getPhotos() == null) {
+			accountProfile.setPhotos(original.getPhotos());
 		}
 		
-		if (resource.getCreditCards() == null) {
-			resource.setCreditCards(original.getCreditCards());
+		if (accountProfile.getCreditCards() == null) {
+			accountProfile.setCreditCards(original.getCreditCards());
 		}
 		
-		replace(resource);
-
-		hset( resource.getId(), getSubject(), resource );
-		hset( getSubject(), AccountProfileDTO.class.getName(), resource );
-		
-		return resource;
+		super.updateAccountProfile(accountProfile);
 	}
 	
 	/**
@@ -176,22 +164,17 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return
 	 */
 	
-	public Address updateAccountProfileAddress(String id, Address address) {
-		AccountProfileDTO resource = findAccountProfile( id );
+	public void updateAccountProfileAddress(Id id, Address address) {
+		AccountProfileDTO accountProfile = findAccountProfile( id );
 		
-		if (address.getCountryCode() != resource.getAddress().getCountryCode()) {
+		if (address.getCountryCode() != accountProfile.getAddress().getCountryCode()) {
 			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
 			address.setCountry(isoCountry.getDescription());
 		}
 		
-		resource.setAddress(address);
+		accountProfile.setAddress(address);
 		
-		replace(resource);
-
-		hset( id, getSubject(), resource );
-		hset( getSubject(), AccountProfileDTO.class.getName(), resource );
-		
-		return address;
+		super.updateAccountProfile(accountProfile);
 	}
 	
 	/**
@@ -201,7 +184,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return
 	 */
 	
-	public Address getAccountProfileAddress(String id) {
+	public Address getAccountProfileAddress(Id id) {
 		AccountProfileDTO resource = findAccountProfile( id );
 		return resource.getAddress();
 	}
@@ -212,16 +195,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 * @return Identity resource for id
 	 */
 	
-	public AccountProfileDTO findAccountProfile(String id) {		
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
-		
-		if ( resource == null ) {
-			resource = find(id);
-			hset( resource.getId(), getSubject(), resource );
-			hset( getSubject(), AccountProfileDTO.class.getName(), resource );
-		}
-		
-		return resource;
+	public AccountProfileDTO findAccountProfile(Id id) {		
+		return super.findAccountProfile(id);
 	}
 	
 	/**
@@ -231,42 +206,11 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 	 */
 	
 	public AccountProfileDTO findAccountProfileBySubject(String subject) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, subject, AccountProfileDTO.class.getName() );
-
-		if ( resource == null ) {		
-
-			AccountProfile accountProfile = MongoDatastore.getDatabase()
-					.getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
-					.withDocumentClass( AccountProfile.class )
-					.find( eq ( "href", subject ) )
-					.first();
-			
-			if ( accountProfile == null ) {
-				return null;
-			}
-
-			resource = modelMapper.map( accountProfile, AccountProfileDTO.class );
-
-			hset( resource.getId(), subject, resource );
-			hset( subject, AccountProfileDTO.class.getName(), resource );
-		}
-		
-		return resource;		
+		return super.findAccountProfileBySubject(subject);
 	}
 	
 	public AccountProfileDTO findAccountProfileByUsername(String username) {
-		Optional<AccountProfile> queryResult = Optional.ofNullable( MongoDatastore.getDatabase().getCollection( AccountProfile.class.getAnnotation(Document.class).collectionName() )
-				.withDocumentClass( AccountProfile.class )
-				.find( eq( "username", username ) )
-				.first() );
-		
-		AccountProfileDTO resource = null;
-		
-		if (queryResult.isPresent()) {
-			resource = modelMapper.map( queryResult.get(), AccountProfileDTO.class );
-		}
-		
-		return resource;
+		return super.findAccountProfileByUsername(username);
 	}
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
@@ -292,8 +236,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public CreditCardDTO getCreditCard(String id, String token) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
+	public CreditCardDTO getCreditCard(Id id, String token) {
+		AccountProfileDTO resource = findAccountProfile(id);
 		
 		Optional<CreditCardDTO> creditCard = resource.getCreditCards()
 				.stream()
@@ -304,8 +248,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		
 	}
 	
-	public void addCreditCard(String id, CreditCardDTO creditCard) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
+	public void addCreditCard(Id id, CreditCardDTO creditCard) {
+		AccountProfileDTO resource = findAccountProfile(id);
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.company(resource.getCompany())
@@ -390,7 +334,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			
 			resource.addCreditCard(creditCard);
 			
-			updateAccountProfile(resource);
+			updateAccountProfile(id, resource);
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
@@ -398,8 +342,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public void updateCreditCard(String id, String token, CreditCardDTO creditCard) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
+	public void updateCreditCard(Id id, String token, CreditCardDTO creditCard) {
+		AccountProfileDTO resource = findAccountProfile(id);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -452,7 +396,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			
 			resource.addCreditCard(creditCard);
 			
-			updateAccountProfile(resource);
+			updateAccountProfile(id, resource);
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
@@ -460,7 +404,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		}
 	}
 	
-	public CreditCardDTO updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
+	public CreditCardDTO updateCreditCard(Id id, String token, MultivaluedMap<String,String> parameters) {
 		
 		CreditCardDTO creditCard = getCreditCard(id, token);
 		
@@ -485,8 +429,8 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 		return creditCard;
 	}
 	
-	public void removeCreditCard(String id, String token) {
-		AccountProfileDTO resource = hget( AccountProfileDTO.class, id, getSubject() );
+	public void removeCreditCard(Id id, String token) {
+		AccountProfileDTO resource = findAccountProfile(id);
 		
 		com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
 		
@@ -497,7 +441,7 @@ public class AccountProfileService extends AbstractDocumentService<AccountProfil
 			
 			resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 			
-			updateAccountProfile(resource);
+			updateAccountProfile(id, resource);
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
 			throw new ServiceException(creditCardResult.getMessage());

@@ -1,119 +1,97 @@
 package com.nowellpoint.api.service;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.and;
-
-import java.util.Optional;
 import java.util.Set;
 
-import com.mongodb.Block;
-import com.mongodb.client.FindIterable;
+import com.nowellpoint.api.document.service.ServiceProviderDocumentService;
+import com.nowellpoint.api.dto.Id;
 import com.nowellpoint.api.dto.ServiceProviderDTO;
-import com.nowellpoint.api.model.ServiceProvider;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
-public class ServiceProviderService extends AbstractDocumentService<ServiceProviderDTO, ServiceProvider> {
+/**
+ * 
+ * 
+ * @author jherson
+ * 
+ *
+ */
+
+public class ServiceProviderService extends ServiceProviderDocumentService {
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public ServiceProviderService() {
-		super(ServiceProviderDTO.class, ServiceProvider.class);
+
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public Set<ServiceProviderDTO> getAllActive(String localeSidKey, String languageLocaleKey) {
-		Set<ServiceProviderDTO> resources = hscan( ServiceProviderDTO.class.getName().concat(localeSidKey).concat(languageLocaleKey), ServiceProviderDTO.class );
-		
-		if (resources.isEmpty()) {
-			
-			String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
-			
-			FindIterable<ServiceProvider> documents = MongoDatastore.getDatabase()
-					.getCollection( collectionName )
-					.withDocumentClass( ServiceProvider.class )
-					.find( and ( 
-							eq ( "isActive", Boolean.TRUE ), 
-							eq ( "localeSidKey", localeSidKey ), 
-							eq ( "languageLocaleKey", languageLocaleKey ) ) );
-			
-			documents.forEach(new Block<ServiceProvider>() {
-				@Override
-				public void apply(final ServiceProvider document) {
-			        resources.add(modelMapper.map( document, ServiceProviderDTO.class ));
-			    }
-			});
-
-			hset( ServiceProviderDTO.class.getName().concat(localeSidKey).concat(languageLocaleKey), resources );
-		}
-		
-		return resources;
+		return super.getAllActive(localeSidKey, languageLocaleKey);
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param key
+	 * @return
+	 * 
+	 * 
+	 */
 	
 	public ServiceProviderDTO findByServiceKey(String key) {
-		return Optional.ofNullable(get(ServiceProviderDTO.class, key)).orElseGet(() -> {
-
-			String collectionName = ServiceProvider.class.getAnnotation(Document.class).collectionName();
-			
-			ServiceProvider document = MongoDatastore.getDatabase()
-					.getCollection( collectionName )
-					.withDocumentClass( ServiceProvider.class )
-					.find(eq ( "services.key", key ) )
-					.first();
-					
-			if (document == null) {
-				System.out.println("document is not found");
-				return null;
-			}
-
-			ServiceProviderDTO resource = modelMapper.map( document, ServiceProviderDTO.class );
-					
-			set( key, resource );
-					
-			return resource;
-		});	
+		return super.findByServiceKey(key);
 	}
 	
 	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
+	public void createServiceProvider(ServiceProviderDTO serviceProvider) {
+		super.createServiceProvider(serviceProvider);
+	}
+	
+	/**
+	 * 
 	 * 
 	 * @param subject
 	 * @param resource
 	 * @param eventSource
 	 * @return
-	 */
-	
-	public ServiceProviderDTO createServiceProvider(ServiceProviderDTO resource) {
-		create(resource);
-		set(resource.getId(), resource);
-		return resource;
-	}
-	
-	/**
 	 * 
-	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return
+	 * 
 	 */
 	
-	public ServiceProviderDTO updateServiceProvider(ServiceProviderDTO resource) {
-		ServiceProviderDTO original = getServiceProvider( resource.getId() );
-		resource.setCreatedById(original.getCreatedById());
-		resource.setCreatedDate(original.getCreatedDate());
+	public void updateServiceProvider(Id id, ServiceProviderDTO serviceProvider) {
+		ServiceProviderDTO original = getServiceProvider( id );
+		serviceProvider.setCreatedById(original.getCreatedById());
+		serviceProvider.setCreatedDate(original.getCreatedDate());
 		
-		replace(resource);
-		set(resource.getId(), resource);
-		return resource;
+		super.updateServiceProvider(serviceProvider);
 	}
 	
 	/**
 	 * 
-	 * @param applicationId
-	 * @param subject
-	 * @param eventSource
+	 * 
+	 * @param id
+	 * 
+	 * 
 	 */
 	
-	public void deleteServiceProvider(String serviceProviderId) {		
-		ServiceProviderDTO resource = new ServiceProviderDTO(serviceProviderId);
-		delete(resource);
-		del(serviceProviderId);
+	public void deleteServiceProvider(Id id) {		
+		ServiceProviderDTO serviceProvider = getServiceProvider( id );
+		super.deleteServiceProvider(serviceProvider);
 	}
 	
 	/**
@@ -123,15 +101,7 @@ public class ServiceProviderService extends AbstractDocumentService<ServiceProvi
 	 * @return
 	 */
 	
-	public ServiceProviderDTO getServiceProvider(String id) {
-		
-		ServiceProviderDTO resource = get( ServiceProviderDTO.class, id );
-		
-		if ( resource == null ) {
-			resource = find(id);
-			set(resource.getId(), resource);
-		}
-		
-		return resource;
+	public ServiceProviderDTO getServiceProvider(Id id) {
+		return super.findServiceProvider(id);
 	}
 }

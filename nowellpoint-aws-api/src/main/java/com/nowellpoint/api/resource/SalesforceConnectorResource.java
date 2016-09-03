@@ -48,9 +48,8 @@ public class SalesforceConnectorResource {
 	@Path("salesforce")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		Set<SalesforceConnectorDTO> resources = salesforceConnectorService.getAll(subject);
+		Set<SalesforceConnectorDTO> resources = salesforceConnectorService.findAllByOwner();
 		
 		return Response.ok(resources)
 				.build();

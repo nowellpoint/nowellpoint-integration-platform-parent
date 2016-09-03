@@ -20,6 +20,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.dto.AccountProfileDTO;
+import com.nowellpoint.api.dto.Id;
 import com.nowellpoint.api.dto.ProjectDTO;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.ProjectService;
@@ -47,9 +48,8 @@ public class ProjectResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		Set<ProjectDTO> resources = projectService.getAll(subject);
+		Set<ProjectDTO> resources = projectService.findAllByOwner();
 		
 		return Response.ok(resources)
 				.build();
@@ -65,9 +65,8 @@ public class ProjectResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getProject(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		ProjectDTO resource = projectService.findProject( subject, id );
+
+		ProjectDTO resource = projectService.findProject( new Id( id ) );
 		
 		return Response.ok(resource)
 				.build();
@@ -83,9 +82,8 @@ public class ProjectResource {
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteProject(@PathParam("id") String id) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		projectService.deleteProject(id, subject);
+		projectService.deleteProject( new Id( id ) );
 		
 		return Response.noContent()
 				.build();
@@ -129,11 +127,8 @@ public class ProjectResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(@PathParam("id") String id, ProjectDTO resource) {
-		String subject = securityContext.getUserPrincipal().getName();
 		
-		resource.setId(id);
-		
-		projectService.updateProject(subject, resource, uriInfo.getBaseUri());
+		projectService.updateProject( new Id(id), resource );
 		
 		return Response.ok(resource)
 				.build();

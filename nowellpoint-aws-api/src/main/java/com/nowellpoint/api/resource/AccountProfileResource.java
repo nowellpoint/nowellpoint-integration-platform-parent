@@ -33,6 +33,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.nowellpoint.api.dto.AccountProfileDTO;
 import com.nowellpoint.api.dto.CreditCardDTO;
+import com.nowellpoint.api.dto.Id;
 import com.nowellpoint.api.model.Address;
 import com.nowellpoint.api.model.Photos;
 import com.nowellpoint.api.service.AccountProfileService;
@@ -75,7 +76,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfileAddress(@PathParam("id") String id) {
 		
-		Address address = accountProfileService.getAccountProfileAddress(id);
+		Address address = accountProfileService.getAccountProfileAddress( new Id( id ) );
 		
 		return Response.ok(address)
 				.build();
@@ -87,7 +88,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateAccountProfileAddress(@PathParam("id") String id, Address address) {
 		
-		accountProfileService.updateAccountProfileAddress(id, address);
+		accountProfileService.updateAccountProfileAddress( new Id( id ), address);
 		
 		return Response.ok(address)
 				.build();
@@ -140,7 +141,6 @@ public class AccountProfileResource {
 		//
 		
 		AccountProfileDTO resource = new AccountProfileDTO();
-		resource.setId(id);
 		resource.setFirstName(firstName);
 		resource.setLastName(lastName);
 		resource.setEmail(email);
@@ -156,7 +156,7 @@ public class AccountProfileResource {
 		resource.setLanguageSidKey(languageSidKey);
 		resource.setTimeZoneSidKey(timeZoneSidKey);
 		
-		accountProfileService.updateAccountProfile(resource);
+		accountProfileService.updateAccountProfile(new Id( id ), resource);
 		
 		return Response.ok(resource)
 				.build();
@@ -167,7 +167,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( id );
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( new Id( id ) );
 		
 		return Response.ok(resource)
 				.build();
@@ -194,9 +194,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response udpateAccountProfile(@PathParam("id") String id, AccountProfileDTO resource) {
 		
-		resource.setId(id);
-		
-		accountProfileService.updateAccountProfile(resource);
+		accountProfileService.updateAccountProfile(new Id( id ), resource);
 		
 		return Response.ok(resource).build();
 	}
@@ -207,7 +205,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response disableAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile( id );
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( new Id( id ) );
 		
 		try {
 			identityProviderService.disableAccount(resource.getHref());
@@ -223,7 +221,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		CreditCardDTO resource = accountProfileService.getCreditCard(id, token);
+		CreditCardDTO resource = accountProfileService.getCreditCard( new Id( id ), token);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
@@ -241,7 +239,7 @@ public class AccountProfileResource {
 	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO resource) {
 		
 		try {
-			accountProfileService.addCreditCard(id, resource);
+			accountProfileService.addCreditCard( new Id( id ), resource);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -259,7 +257,7 @@ public class AccountProfileResource {
 		
 		CreditCardDTO resource = null;
 		try {
-			resource = accountProfileService.updateCreditCard(id, token, parameters);
+			resource = accountProfileService.updateCreditCard( new Id( id ), token, parameters);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -276,7 +274,7 @@ public class AccountProfileResource {
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO resource) {
 		
 		try {
-			accountProfileService.updateCreditCard(id, token, resource);
+			accountProfileService.updateCreditCard( new Id( id ), token, resource);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -291,7 +289,7 @@ public class AccountProfileResource {
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
 		try {
-			accountProfileService.removeCreditCard(id, token);
+			accountProfileService.removeCreditCard( new Id( id ), token);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -320,7 +318,7 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture(@PathParam("id") String id) {
 		
-		AccountProfileDTO resource = accountProfileService.findAccountProfile(id);
+		AccountProfileDTO resource = accountProfileService.findAccountProfile( new Id( id ) );
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
@@ -333,7 +331,7 @@ public class AccountProfileResource {
 		
 		resource.setPhotos(photos);
 		
-		accountProfileService.updateAccountProfile(resource);
+		accountProfileService.updateAccountProfile( new Id( id ), resource);
 		
 		return Response.ok(resource)
 				.build();

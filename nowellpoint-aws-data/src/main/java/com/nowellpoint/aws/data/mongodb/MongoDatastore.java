@@ -120,6 +120,17 @@ public class MongoDatastore implements ServletContextListener {
 		});
 	}
 	
+	public static <T extends MongoDocument> T findOne(Class<T> documentClass, Bson query) {
+		
+		T document = getDatabase()
+				.getCollection( getCollectionName( documentClass ) )
+				.withDocumentClass( documentClass )
+				.find( query )
+				.first();
+		
+		return document;
+	}
+	
 	public static <T extends MongoDocument> Set<T> find(Class<T> documentClass, Bson query) {
 		
 		Set<T> documents = new HashSet<T>();

@@ -86,7 +86,7 @@ public class ApplicationService extends ApplicationDocumentService {
 		
 		resource.setStatus("WORK_IN_PROGRESS");
 		
-		SalesforceConnectorDTO connector = salesforceConnectorService.find(connectorId);
+		SalesforceConnectorDTO connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
 		
 		if (importSandboxes) {
 			resource.setEnvironments(connector.getEnvironments());

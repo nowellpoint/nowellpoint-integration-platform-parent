@@ -26,12 +26,12 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.nowellpoint.api.document.service.SalesforceConnectorDocumentService;
 import com.nowellpoint.api.dto.AccountProfileDTO;
 import com.nowellpoint.api.dto.EnvironmentDTO;
 import com.nowellpoint.api.dto.Id;
 import com.nowellpoint.api.dto.SalesforceConnectorDTO;
 import com.nowellpoint.api.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.model.SalesforceConnector;
 import com.nowellpoint.api.model.SimpleStorageService;
 import com.nowellpoint.api.model.Targets;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
@@ -53,7 +53,7 @@ import com.nowellpoint.client.sforce.model.Token;
  * 
  *************************************************************************************************************************/
 
-public class SalesforceConnectorService extends AbstractDocumentService<SalesforceConnectorDTO, SalesforceConnector> {
+public class SalesforceConnectorService extends SalesforceConnectorDocumentService {
 	
 	@Inject
 	private SalesforceService salesforceService;
@@ -77,7 +77,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorService() {
-		super(SalesforceConnectorDTO.class, SalesforceConnector.class);
+		
 	}
 	
 	/**************************************************************************************************************************
@@ -89,13 +89,8 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 * 
 	 *************************************************************************************************************************/
 	
-	public Set<SalesforceConnectorDTO> getAll(String subject) {
-		Set<SalesforceConnectorDTO> resources = hscan( subject, SalesforceConnectorDTO.class );		
-		if (resources.isEmpty()) {
-			resources = findAllByOwner(subject);
-			hset( subject, resources );
-		}
-		return resources;
+	public Set<SalesforceConnectorDTO> findAllByOwner() {
+		return super.findAllByOwner();
 	}
 	
 	/**************************************************************************************************************************
@@ -155,9 +150,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		
 		resource.addEnvironment(environment);
 		
-		create( resource );
-		hset( getSubject(), SalesforceConnectorDTO.class.getName().concat( resource.getId() ), resource );
-		hset( resource.getId(), getSubject(), resource );
+		super.createSalesforceConnector( resource );
 		
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
@@ -203,10 +196,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
 		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
 		
-		replace( salesforceConnector );
-		
-		hset( getSubject(), SalesforceConnectorDTO.class.getName().concat( salesforceConnector.getId() ), salesforceConnector );
-		hset( salesforceConnector.getId(), getSubject(), salesforceConnector );
+		super.updateSalesforceConnector(salesforceConnector);
 	}
 	
 	/**************************************************************************************************************************
@@ -220,10 +210,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	public void deleteSalesforceConnector(Id id) {
 		SalesforceConnectorDTO resource = findSalesforceConnector( id );
 		
-		delete(resource);
-		
-		hdel( getSubject(), SalesforceConnectorDTO.class.getName().concat(id.getValue()) );
-		hdel( id.getValue(), getSubject() );
+		super.deleteSalesforceConnector(resource);
 
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
 		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
@@ -279,14 +266,7 @@ public class SalesforceConnectorService extends AbstractDocumentService<Salesfor
 	 *************************************************************************************************************************/
 	
 	public SalesforceConnectorDTO findSalesforceConnector(Id id) {		
-		SalesforceConnectorDTO resource = hget( SalesforceConnectorDTO.class, id.getValue(), getSubject() );
-		if ( resource == null ) {		
-			resource = find(id.getValue());
-			if (resource != null) {
-				hset( id.getValue(), getSubject(), resource );
-			}
-		}
-		return resource;
+		return super.findSalesforceConnector(id);
 	}
 	
 	/**************************************************************************************************************************
