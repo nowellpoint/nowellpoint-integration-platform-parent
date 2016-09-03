@@ -2,15 +2,15 @@ package com.nowellpoint.aws.data.mongodb;
 
 import static com.mongodb.MongoClient.getDefaultCodecRegistry;
 import static com.mongodb.MongoClientOptions.builder;
+import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -18,22 +18,23 @@ import javax.servlet.annotation.WebListener;
 import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.PublishRequest;
+import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCommandException;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.model.admin.Properties;
-
-import redis.clients.jedis.JedisPool;
 
 @WebListener
 public class MongoDatastore implements ServletContextListener {
@@ -41,11 +42,6 @@ public class MongoDatastore implements ServletContextListener {
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
 	private static MongoDatabase mongoDatabase;
-	
-	private static JedisPool jedisPool;
-	private static Cipher cipher;
-	private static SecretKey secretKey;
-	private static IvParameterSpec iv;
 	
 	private MongoDatastore() {
 		
@@ -122,6 +118,35 @@ public class MongoDatastore implements ServletContextListener {
 				}
 			}
 		});
+	}
+	
+	public static <T extends MongoDocument> Set<T> find(Class<T> documentClass, Bson query) {
+		
+		Set<T> documents = new HashSet<T>();
+		
+		FindIterable<T> search = getDatabase()
+				.getCollection( getCollectionName( documentClass ) )
+				.withDocumentClass( documentClass )
+				.find( query );
+		
+		search.forEach(new Block<T>() {
+			@Override
+			public void apply(final T document) {
+				documents.add(document);
+		    }
+		});
+		
+		return documents;
+	}
+	
+	public static <T extends MongoDocument> T findById(Class<T> documentClass, ObjectId id) {		
+		T document = getDatabase()
+					.getCollection( getCollectionName( documentClass ) )
+					.withDocumentClass( documentClass )
+					.find( eq ( "_id", id ) )
+					.first();
+		
+		return document;
 	}
 	
 	public static <T extends MongoDocument> void updateOne(Class<T> documentClass, ObjectId id, String json) {

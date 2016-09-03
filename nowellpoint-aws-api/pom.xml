@@ -158,7 +158,7 @@
 				<artifactId>wildfly-swarm-plugin</artifactId>
 				<version>1.0.0.Final</version>
 				<configuration>
-					<mainClass>com.nowellpoint.aws.api.Main</mainClass>
+					<mainClass>com.nowellpoint.api.Main</mainClass>
 				</configuration>
 				<executions>
 					<execution>
