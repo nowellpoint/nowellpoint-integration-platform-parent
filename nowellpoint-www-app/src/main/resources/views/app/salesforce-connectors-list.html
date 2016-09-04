@@ -14,17 +14,18 @@
 
             <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
 
-                <div class="dashhead m-t-md">
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle"></h6>
-                            <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
-                        </div>
-                        <div class="dashhead-toolbar">
-                            <p class="pull-right">
-                                <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
-                            </p>
-                        </div>
+                <br>
+
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">&emsp;</h6>
+                        <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
+                    </div>
+
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="/app/salesforce/oauth" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
+                        </p>
                     </div>
                 </div>
 
@@ -41,9 +42,7 @@
                                 <div class="panel-body">
                                     <div class="media">
                                         <div class="media-left">
-                                            <a href="#">
-                                                <img class="media-object" src="/images/connection.png">
-                                            </a>
+                                            <img class="media-object" src="/images/connection.png">
                                         </div>
                                         <div class="media-body">
                                             <h4 class="media-heading"><a href="${labels['base.path']}/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></h4>
