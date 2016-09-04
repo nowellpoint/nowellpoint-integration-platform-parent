@@ -66,6 +66,7 @@ public class Path {
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
 		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "account-profile/:id/address");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
+		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 	}
 
@@ -103,6 +104,7 @@ public class Path {
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile.html");
 		public static final String ACCOUNT_PROFILE_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-edit.html");
 		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-address-edit.html");
+		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile-deactivate.html");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notification-list.html");
 	}

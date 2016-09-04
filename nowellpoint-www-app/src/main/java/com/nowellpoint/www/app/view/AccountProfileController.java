@@ -119,12 +119,12 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * disableAccountProfile
+	 * deleteAccountProfile
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route disableAccountProfile = (Request request, Response response) -> {	
+	public Route deleteAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
@@ -158,6 +158,36 @@ public class AccountProfileController extends AbstractController {
     	response.redirect("/");
 		
 		return "";	
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * deactivateAccountProfile
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route deactivateAccountProfile = (Request request, Response response) -> {	
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(request.params(":id"))
+				.execute();
+			
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
+			
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_DEACTIVATE);		
 	};
 	
 	/**
