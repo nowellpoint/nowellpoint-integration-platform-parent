@@ -28,6 +28,11 @@ public class PutRequest extends HttpRequest {
 		return this;
 	}
 	
+	public PutRequest parameter(String key, Boolean value) {
+		super.parameter(key, value);
+		return this;
+	}
+	
 	public PutRequest acceptCharset(Charset charset) {
 		super.acceptCharset(charset);
 		return this;

@@ -2,30 +2,27 @@ package com.nowellpoint.api.model.mapper;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.util.Optional;
-
 import com.nowellpoint.api.model.document.AccountProfileDocument;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
 
-/**************************************************************************************************************************
+/**
  * 
  * 
  * @author jherson
  *
  * 
- *************************************************************************************************************************/
+ */
 
 public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfileDocument> {
 	
-	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * constructor
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public AccountProfileModelMapper() {
 		super(AccountProfileDocument.class);
@@ -111,11 +108,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public AccountProfile findAccountProfileByUsername(String username) {
-		Optional<AccountProfileDocument> document = Optional.ofNullable(findOne( eq( "username", username ) ) );
-		AccountProfile accountProfile = null;
-		if (document.isPresent()) {
-			accountProfile = modelMapper.map(document.get(), AccountProfile.class);
-		}
+		AccountProfileDocument document = findOne( eq ( "username", username ) );
+		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile; 
 	}
 }

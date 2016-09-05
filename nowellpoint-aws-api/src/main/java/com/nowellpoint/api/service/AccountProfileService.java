@@ -91,30 +91,31 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 */
 	
 	public void createAccountProfile(AccountProfile accountProfile) {
+		accountProfile.setEnableSalesforceLogin(Boolean.FALSE);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		
+
 		if (accountProfile.getLocaleSidKey() == null) {
 			accountProfile.setLocaleSidKey(Locale.getDefault().toString());
 		}
-		
+
 		if (accountProfile.getLanguageSidKey() == null) {
 			accountProfile.setLanguageSidKey(Locale.getDefault().toString());
 		}
-		
+
 		if (accountProfile.getTimeZoneSidKey() == null) {
 			accountProfile.setTimeZoneSidKey(TimeZone.getDefault().getID());
 		}
-		
+
 		IsoCountry isoCountry = isoCountryService.lookupByIso2Code(accountProfile.getAddress().getCountryCode(), "US");
-		
+
 		accountProfile.getAddress().setCountry(isoCountry.getDescription());
-		
+
 		Photos photos = new Photos();
 		photos.setProfilePicture("/images/person-generic.jpg");
-		
+
 		accountProfile.setPhotos(photos);
-		
+
 		super.createAccountProfile(accountProfile);
 	}
 	
@@ -136,6 +137,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
 		accountProfile.setIsActive(original.getIsActive());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
+		
+		if (accountProfile.getEnableSalesforceLogin() == null) {
+			accountProfile.setEnableSalesforceLogin(original.getEnableSalesforceLogin());
+		}
 		
 		if (accountProfile.getAddress() == null) {
 			accountProfile.setAddress(original.getAddress());

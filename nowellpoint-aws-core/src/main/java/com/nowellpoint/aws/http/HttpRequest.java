@@ -67,6 +67,11 @@ public abstract class HttpRequest {
 		return this;
 	}
 	
+	protected HttpRequest parameter(String key, Boolean value) {
+		parameters.put(key, String.valueOf(value));
+		return this;
+	}
+	
 	protected HttpRequest parameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 		return this;

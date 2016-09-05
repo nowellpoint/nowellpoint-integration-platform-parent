@@ -113,7 +113,8 @@ public class AccountProfileResource {
     		@FormParam("extension") String extension,
     		@FormParam("localeSidKey") String localeSidKey,
     		@FormParam("languageSidKey") String languageSidKey,
-    		@FormParam("timeZoneSidKey") String timeZoneSidKey) {
+    		@FormParam("timeZoneSidKey") String timeZoneSidKey,
+    		@FormParam("enableSalesforceLogin") Boolean enableSalesforceLogin) {
 				
 		String subject = securityContext.getUserPrincipal().getName();
 				
@@ -155,6 +156,7 @@ public class AccountProfileResource {
 		accountProfile.setLocaleSidKey(localeSidKey);
 		accountProfile.setLanguageSidKey(languageSidKey);
 		accountProfile.setTimeZoneSidKey(timeZoneSidKey);
+		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
 		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
 		

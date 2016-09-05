@@ -64,7 +64,6 @@ public class ProjectController extends AbstractController {
 		
 		AccountProfile owner = new AccountProfile();
 		owner.setName(account.getFullName());
-		owner.setHref(account.getHref());
 		
 		Project project = new Project();
 		project.setOwner(owner);
@@ -112,7 +111,6 @@ public class ProjectController extends AbstractController {
 		
 		AccountProfile owner = new AccountProfile();
 		owner.setId(request.queryParams("ownerId").trim().isEmpty() ? null : request.queryParams("ownerId"));
-		owner.setHref(account.getHref());
 		
 		Project project = new Project();
 		project.setDescription(request.queryParams("description"));

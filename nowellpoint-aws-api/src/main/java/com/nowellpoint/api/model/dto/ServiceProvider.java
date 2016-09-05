@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.nowellpoint.api.model.document.Service;
 
-public class ServiceProvider extends AbstractDTO {
+public class ServiceProvider extends AbstractResource {
 	
 	/**
 	 * 

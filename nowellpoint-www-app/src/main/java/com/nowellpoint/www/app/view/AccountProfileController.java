@@ -71,6 +71,8 @@ public class AccountProfileController extends AbstractController {
 	
 	public Route editAccountProfile = (Request request, Response response) -> {		
 		AccountProfile account = getAccount(request);
+		
+		System.out.println("enable salesorce login: " + account.getEnableSalesforceLogin());
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
@@ -203,6 +205,8 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
+		System.out.println(request.queryParams("enableSalesforceLogin"));
+		
 		AccountProfile accountProfile = new AccountProfile()
 				.withId(request.params(":id"))
 				.withFirstName(request.queryParams("firstName"))
@@ -218,7 +222,8 @@ public class AccountProfileController extends AbstractController {
 				.withExtension(request.queryParams("extension"))
 				.withLanguageSidKey(request.queryParams("languageSidKey"))
 				.withLocaleSidKey(request.queryParams("localeSidKey"))
-				.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"));
+				.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
+				.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
 
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -240,6 +245,7 @@ public class AccountProfileController extends AbstractController {
 				.parameter("languageSidKey", accountProfile.getLanguageSidKey())
 				.parameter("localeSidKey", accountProfile.getLocaleSidKey())
 				.parameter("timeZoneSidKey", accountProfile.getTimeZoneSidKey())
+				.parameter("enableSalesforceLogin", accountProfile.getEnableSalesforceLogin())
 				.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -32,11 +33,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	private final Class<T> documentClass;
 	
-//	private static JedisPool jedisPool;
-//	private static Cipher cipher;
-//	private static SecretKey secretKey;
-//	private static IvParameterSpec iv;
-	
 	/**
 	 * 
 	 * @param resourceType
@@ -45,57 +41,15 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	public MongoDocumentService(Class<T> documentClass) {		
 		this.documentClass = documentClass;
-		
-//		String endpoint = System.getProperty(Properties.REDIS_HOST);
-//		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
-//		
-//		JedisPoolConfig poolConfig = new JedisPoolConfig();
-//        poolConfig.setMaxTotal(30);
-//		
-//		jedisPool = new JedisPool(poolConfig, endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
-//		
-//		String keyString = System.getProperty(Properties.CACHE_DATA_ENCRYPTION_KEY);
-//		
-//		try {
-//			byte[] key = keyString.getBytes("UTF-8");
-//			
-//			MessageDigest sha = MessageDigest.getInstance("SHA-512");
-//			key = sha.digest(key);
-//			key = Arrays.copyOf(key, 32);
-//		    
-//		    secretKey = new SecretKeySpec(key, "AES");
-//		    
-//		    cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-//		    
-//		    byte[] ivBytes = new byte[cipher.getBlockSize()];
-//		    iv = new IvParameterSpec(ivBytes);
-//		    
-//		} catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-//			e.printStackTrace();
-//		}
-//		
-//		LOGGER.info("connecting to cache...is connected: " + ! jedisPool.isClosed());
 	}
 	
-//	public void destroy() {
-//		try {
-//			jedisPool.destroy();
-//        } catch (Exception e) {
-//        	LOGGER.warn(String.format("Cannot properly close Jedis pool %s", e.getMessage()));
-//        }
-//		
-//		LOGGER.info("disconnecting from cache...is connected: " + ! jedisPool.isClosed());
-//		
-//		jedisPool = null;
-//	}
-	
 	protected Set<T> find(Bson query) {
-		Set<T> documents = hscan(documentClass, toString(query));
+		Set<T> documents = null; //hscan(documentClass, toString(query));
 		
 		if (documents == null) {
 			try {
 				documents = MongoDatastore.find(documentClass, query);
-				hset(toString(query), documents);
+				//hset(toString(query), documents);
 			} catch (IllegalArgumentException e) {
 				
 			}
@@ -105,12 +59,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	}
 	
 	protected T findOne(Bson query) {
-		T document = get(documentClass, toString(query));
+		T document = null; //get(documentClass, toString(query));
 		
 		if (document == null) {
 			try {
 				document = MongoDatastore.findOne(documentClass, query);
-				set(toString(query), document);
+				//set(toString(query), document);
 			} catch (IllegalArgumentException e) {
 				
 			}
@@ -265,7 +219,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 */
 	
 	private static void del(String key) {
-		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.del(key.getBytes());
 		} finally {
@@ -296,7 +250,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 */
 	
 	private static <T> Set<T> hscan(Class<T> type, String key) {
-		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		Jedis jedis = CacheManager.getCache();
 		ScanParams params = new ScanParams();
 	    params.match(type.getName().concat("*"));
 		
@@ -318,6 +272,10 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		return results;
 	}
 	
+	private static <T> void clearCache(Class<T> type) {
+		
+	}
+	
 	/**
 	 * 
 	 * @param key
@@ -325,7 +283,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 */
 	
 	private static <T extends MongoDocument> void hset(String key, Set<T> values) {
-		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		Jedis jedis = CacheManager.getCache();
 		Pipeline p = jedis.pipelined();	
 		try {
 			values.stream().forEach(value -> {
@@ -352,7 +310,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	}
 	
 	private static <T extends MongoDocument> void hdel(String key, T value) {
-		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.hdel(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes());
 		} finally {
@@ -361,47 +319,8 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	}
 	
 	private String toString(Bson bson) {
+		String key = bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).entrySet().stream().map(k -> k.toString()).collect(Collectors.joining(":"));
+		System.out.println(key);
 		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
 	}
-	
-	/**
-	 * 
-	 * @param object
-	 * @return
-	 */
-	
-//	private static byte[] serialize(Object object) {
-//		byte[] bytes = null;
-//		try {
-//			String json = Base64.getEncoder().encodeToString(objectMapper.writeValueAsString(object).getBytes());
-//			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-//			bytes = cipher.doFinal(json.getBytes("UTF8"));
-//		} catch (JsonProcessingException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
-//			LOGGER.error("Cache serialize issue >>>");
-//			e.printStackTrace();
-//		}
-//        
-//		return bytes;
-//    }
-	
-	/**
-	 * 
-	 * @param bytes
-	 * @param type
-	 * @return
-	 */
-	
-//	private static <T> T deserialize(byte[] bytes, Class<T> type) {
-//		T object = null;
-//		try {
-//			cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-//			bytes = cipher.doFinal(bytes);
-//			object = objectMapper.readValue(Base64.getDecoder().decode(bytes), type);
-//		} catch (IOException | InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-//			LOGGER.error("Cache deserialize issue >>>");
-//			e.printStackTrace();
-//		}
-//		
-//		return object;
-//	}
 }

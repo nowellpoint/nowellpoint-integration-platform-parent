@@ -2,6 +2,8 @@ package com.nowellpoint.api.model.mapper;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.util.Optional;
+
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
@@ -16,12 +18,13 @@ import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 import com.nowellpoint.aws.data.mongodb.MongoDocument;
 import com.nowellpoint.aws.data.mongodb.MongoDocumentService;
+import com.nowellpoint.aws.model.admin.Properties;
 
-public class AbstractModelMapper<D extends MongoDocument> extends MongoDocumentService<D> {
+public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentService<T> {
 	
 	protected final ModelMapper modelMapper = new ModelMapper();
 	
-	public AbstractModelMapper(Class<D> documentType) {		
+	public AbstractModelMapper(Class<T> documentType) {		
 		super(documentType);
 		
 		configureModelMapper();
@@ -106,6 +109,10 @@ public class AbstractModelMapper<D extends MongoDocument> extends MongoDocumentS
 	 */
 	
 	protected String getSubject() {
-		return UserContext.getPrincipal().getName();
+		if (Optional.ofNullable(UserContext.getSecurityContext()).isPresent()) {
+			return UserContext.getPrincipal().getName();
+		} else {
+			return System.getProperty(Properties.DEFAULT_SUBJECT);
+		}
 	}
 }

@@ -4,17 +4,25 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.document.SystemReference;
 
-public class AccountProfile extends AbstractDTO {
+public class AccountProfile extends AbstractResource {
 	
 	/**
 	 * 
 	 */
 	
 	private static final long serialVersionUID = -856231703315633645L;
+	
+	/**
+	 * 
+	 */
+	
+	@JsonIgnore
+	private String leadId;
 
 	/**
 	 * 
@@ -140,12 +148,14 @@ public class AccountProfile extends AbstractDTO {
 	 * 
 	 */
 
+	@JsonIgnore
 	private String href;
 	
 	/**
 	 * 
 	 */
 	
+	@JsonIgnore
 	private String emailVerificationToken;
 	
 	/**
@@ -170,6 +180,7 @@ public class AccountProfile extends AbstractDTO {
 	 * 
 	 */
 	
+	@JsonIgnore
 	private Set<SystemReference> systemReferences;
 	
 	/**
@@ -178,8 +189,22 @@ public class AccountProfile extends AbstractDTO {
 	
 	private Boolean hasFullAccess;
 	
+	/**
+	 * 
+	 */
+	
+	private Boolean enableSalesforceLogin;
+	
 	public AccountProfile() {
 		
+	}
+
+	public String getLeadId() {
+		return leadId;
+	}
+
+	public void setLeadId(String leadId) {
+		this.leadId = leadId;
 	}
 
 	public String getUsername() {
@@ -410,5 +435,13 @@ public class AccountProfile extends AbstractDTO {
 
 	public void setHasFullAccess(Boolean hasFullAccess) {
 		this.hasFullAccess = hasFullAccess;
+	}
+
+	public Boolean getEnableSalesforceLogin() {
+		return enableSalesforceLogin;
+	}
+
+	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
+		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
 }

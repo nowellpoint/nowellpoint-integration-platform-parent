@@ -124,6 +124,38 @@ public class IdentityProviderService extends AbstractCacheService {
         return token;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param username
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public Boolean isEnabledAccount(String username) {
+		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.accept(MediaType.APPLICATION_JSON)
+				.path("directories")
+				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
+				.path("accounts")
+				.path("?username=".concat(username))
+				.execute();
+		
+		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
+		
+		if (searchResult.getSize() == 0) {
+			return false;
+		} else {
+			Account account = searchResult.getItems().get(0);
+			if ("ENABLED".equals(account.getStatus())) {
+				return true;
+			}
+			return false;
+		}
+	}
+	
 	public Account getAccount(String id) {
 		
 		Account account = null;

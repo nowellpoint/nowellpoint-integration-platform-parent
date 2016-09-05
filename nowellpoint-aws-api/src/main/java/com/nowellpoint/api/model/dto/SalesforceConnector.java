@@ -6,7 +6,7 @@ import java.util.Set;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 
-public class SalesforceConnector extends AbstractDTO {
+public class SalesforceConnector extends AbstractResource {
 
 	private static final long serialVersionUID = -6847034908687287362L;
 	

@@ -70,10 +70,10 @@
                                 <label class="control-label" for="fax">${labels["fax"]}</label>
                                 <input type="text" class="form-control" name="fax" id="fax" value="${accountProfile.fax!}" />
                             </div>
-                            
-                             <div class="form-group col-md-6">
+
+                            <div class="form-group col-md-6">
                                 <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
-                                 <select id="languageSidKey" name="languageSidKey" class="form-control" required>
+                                <select id="languageSidKey" name="languageSidKey" class="form-control" required>
                                     <#list languages?keys as key>
                                         <#if accountProfile.languageSidKey==key>
                                             <option value="${key}" selected="selected">${languages[key]}</option>
@@ -84,7 +84,7 @@
                                     </#list>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
                                 <select id="localeSidKey" name="localeSidKey" class="form-control" required>
@@ -98,7 +98,7 @@
                                     </#list>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
                                 <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
@@ -126,6 +126,16 @@
                             <div class="form-group col-md-6">
                                 <label class="control-label" for="extension">${labels["extension"]}</label>
                                 <input type="text" class="form-control" name="extension" id="extension" value="${accountProfile.extension!}" />
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label class="checkbox-inline">
+                                    <!-- <#if accountProfile.enableSalesforceLogin> -->
+                                    <input type="checkbox" name="enableSalesforceLogin" id="enableSalesforceLogin" checked/>${labels["enable.salesforce.login"]}
+                                    <!-- <#else> -->
+                                    <input type="checkbox" name="enableSalesforceLogin" id="enableSalesforceLogin" />${labels["enable.salesforce.login"]}
+                                    <!-- </#if> -->
+                                </label>
                             </div>
 
                             <div class="form-group col-md-12">

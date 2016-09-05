@@ -3,7 +3,7 @@ package com.nowellpoint.api.model.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Application extends AbstractDTO {
+public class Application extends AbstractResource {
 
 	/**
 	 * 

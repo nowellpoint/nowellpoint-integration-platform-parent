@@ -1,8 +1,6 @@
 package com.nowellpoint.api.resource;
 
 import java.net.URI;
-import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,26 +31,32 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.model.document.AccountProfileDocument;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.ErrorDTO;
 import com.nowellpoint.api.model.sforce.Lead;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.api.tasks.AccountProfileSetupRequest;
-import com.nowellpoint.api.tasks.AccountProfileSetupTask;
-import com.nowellpoint.api.tasks.AccountSetupRequest;
-import com.nowellpoint.api.tasks.AccountSetupTask;
-import com.nowellpoint.api.tasks.SubmitLeadRequest;
-import com.nowellpoint.api.tasks.SubmitLeadTask;
-import com.nowellpoint.aws.data.mongodb.MongoDatastore;
+import com.nowellpoint.aws.data.mongodb.DocumentNotFoundException;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.client.sforce.model.Error;
+import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/signup")
 public class SignUpService {
+	
+	private static final Logger LOGGER = Logger.getLogger(SignUpService.class);
 	
 	@Inject
 	private EmailService emailService;
@@ -83,45 +87,195 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
     	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password) {
 		
-		Account account = identityProviderService.findAccountByUsername(email);
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 		
-		if (account != null && "ENABLED".equals(account.getStatus())) {
+		if (identityProviderService.isEnabledAccount(email)) {
 			ErrorDTO error = new ErrorDTO(1000, "Account for email is already enabled");
 			ResponseBuilder builder = Response.status(Status.CONFLICT);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
 		
-		AccountSetupRequest accountSetupRequest = new AccountSetupRequest()
-				.withEmail("administrator@nowellpoint.com")
-				.withGivenName(firstName)
-				.withHref(account != null ? account.getHref() : null)
-				.withSurname(lastName)
-				.withMiddleName(null)
-				.withPassword(password)
-				.withUsername(email);
-		
-		AccountProfileSetupRequest accountProfileSetupRequest = new AccountProfileSetupRequest()
-				.withEmail(email)
-				.withFirstName(firstName)
-				.withIsActive(Boolean.TRUE)
-				.withLastName(lastName)
-				.withUsername(email)
-				.withHref(System.getProperty(Properties.DEFAULT_SUBJECT))
-				.withCountryCode(countryCode);
-		
-		SubmitLeadRequest submitLeadRequest = new SubmitLeadRequest()
-				.withCountryCode(countryCode)
-				.withEmail(email)
-				.withFirstName(firstName)
-				.withLastName(lastName)
-				.withLeadSource(leadSource);
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 		
 		ExecutorService executor = Executors.newFixedThreadPool(3);
 		
-		Future<Account> accountSetupTask = executor.submit(new AccountSetupTask(accountSetupRequest));
-		Future<AccountProfileDocument> accountProfileSetupTask = executor.submit(new AccountProfileSetupTask(accountProfileSetupRequest));
-		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(submitLeadRequest));
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		Future<Account> accountSetupTask = executor.submit(() -> {
+			String directoryId = System.getProperty(Properties.STORMPATH_DIRECTORY_ID);
+			String apiEndpoint = System.getProperty(Properties.STORMPATH_API_ENDPOINT);
+			String apiKeyId = System.getProperty(Properties.STORMPATH_API_KEY_ID);
+			String apiKeySecret = System.getProperty(Properties.STORMPATH_API_KEY_SECRET);
+			
+			Account account = identityProviderService.findAccountByUsername(email);
+			
+			if (account == null) {
+				account = new Account();
+			}
+			
+			account = new Account();
+			account.setGivenName(firstName);
+			account.setMiddleName(null);
+			account.setSurname(lastName);
+			account.setEmail("administrator@nowellpoint.com");
+			account.setUsername(email);
+			account.setPassword(password);
+			account.setStatus("UNVERIFIED");
+			
+			if (account.getHref() == null) {
+				
+				HttpResponse httpResponse = RestResource.post(apiEndpoint)
+						.contentType(MediaType.APPLICATION_JSON)
+						.path("directories")
+						.path(directoryId)
+						.path("accounts")
+						.basicAuthorization(apiKeyId, apiKeySecret)
+						.body(account)
+						.execute();
+				
+				LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
+							
+				if (httpResponse.getStatusCode() != 201) {
+					ObjectNode node = httpResponse.getEntity(ObjectNode.class);
+					LOGGER.error(node.toString());
+					throw new Exception(node.toString());
+				}
+				
+				account = httpResponse.getEntity(Account.class);
+				
+			} else {
+				
+				HttpResponse httpResponse = RestResource.post(account.getHref())
+						.contentType(MediaType.APPLICATION_JSON)
+						.basicAuthorization(apiKeyId, apiKeySecret)
+						.body(account)
+						.execute();
+				
+				LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
+								
+				if (httpResponse.getStatusCode() != 200) {
+					ObjectNode node = httpResponse.getEntity(ObjectNode.class);
+					LOGGER.error(node.toString());
+					throw new Exception(node.toString());
+				}
+				
+				account = httpResponse.getEntity(Account.class);
+			}
+			
+			return account;
+		});
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		Future<AccountProfile> accountProfileSetupTask = executor.submit(() -> {
+			AccountProfile accountProfile = null;
+			
+			try {
+				accountProfile = accountProfileService.findAccountProfileByUsername(email);
+			} catch (DocumentNotFoundException e) {
+				accountProfile = new AccountProfile();
+			}
+			
+			accountProfile.setFirstName(firstName);
+			accountProfile.setLastName(lastName);
+			accountProfile.setEmail(email);
+			accountProfile.setUsername(email);
+			accountProfile.setIsActive(Boolean.TRUE);
+			
+			Address address = accountProfile.getAddress() != null ? accountProfile.getAddress() : new Address();
+			address.setCountryCode(countryCode);
+			
+			accountProfile.setAddress(address);
+			
+			if (accountProfile.getId() != null) {			
+				System.out.println("updating account profile");
+				accountProfileService.updateAccountProfile( accountProfile );
+			} else {
+				System.out.println("creating account profile");
+				accountProfileService.createAccountProfile( accountProfile );
+			}
+			
+			return accountProfile;
+		});
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		Future<Lead> submitLeadTask = executor.submit(() -> {
+			
+			Lead lead = new Lead();
+			lead.setLeadSource(leadSource);
+			lead.setFirstName(firstName);
+			lead.setLastName(lastName);
+			lead.setEmail(email);
+			lead.setCountryCode(countryCode);
+
+			UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
+					.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+					.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+					.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
+					.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
+					.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
+					.build();
+			
+			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
+					.authenticate(request);
+			
+			Token token = response.getToken();
+				
+			HttpResponse httpResponse = RestResource.post(token.getInstanceUrl())
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.path("services/apexrest/nowellpoint/lead")
+					.bearerAuthorization(token.getAccessToken())
+					.body(lead)
+					.execute();
+			
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
+			
+			if (httpResponse.getStatusCode() != 200 && httpResponse.getStatusCode() != 201) {
+				Error error = httpResponse.getEntity(Error.class);
+				throw new Exception(error.getErrorDescription());
+			}
+			
+			String leadId = httpResponse.getAsString();
+			
+			lead.setId(leadId);
+			
+			return lead;
+		});
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 		
 		executor.shutdown();
 		
@@ -131,24 +285,38 @@ public class SignUpService {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
 		
-		AccountProfileDocument accountProfile = null; 
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		AccountProfile accountProfile = null; 
+		Account account = null;
+		Lead lead = null;
 		
 		try {
 			
-			account = accountSetupTask.get();
-			
 			accountProfile = accountProfileSetupTask.get();
-			accountProfile.setCreatedById(account.getHref());
-			accountProfile.setLastModifiedById(account.getHref());
-			accountProfile.setLastModifiedDate(Date.from(Instant.now()));
-			accountProfile.setLeadId(submitLeadTask.get().getId());
+			account = accountSetupTask.get();
+			lead = submitLeadTask.get();
+			
+			accountProfile.setLeadId(lead.getId());
 			accountProfile.setHref(account.getHref());
 			
-			MongoDatastore.replaceOne( accountProfile );
+			accountProfileService.updateAccountProfile(accountProfile);
 			
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
 		}
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 		
 		String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
 		
@@ -163,7 +331,7 @@ public class SignUpService {
 		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)
 				.path("/{id}")
-				.build(accountProfile.getId().toString());
+				.build(accountProfile.getId());
 		
 		Map<String,Object> response = new HashMap<String,Object>();
 		response.put("href", resourceUri);

@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.nowellpoint.api.model.dto.AbstractDTO;
+import com.nowellpoint.api.model.dto.AbstractResource;
 import com.nowellpoint.aws.data.CacheManager;
 
 import redis.clients.jedis.Jedis;
@@ -162,7 +162,7 @@ public abstract class AbstractCacheService {
 	 * @param values
 	 */
 	
-	protected <T extends AbstractDTO> void hset(String key, Set<T> values) {
+	protected <T extends AbstractResource> void hset(String key, Set<T> values) {
 		Jedis jedis = CacheManager.getCache();
 		Pipeline p = jedis.pipelined();	
 		try {

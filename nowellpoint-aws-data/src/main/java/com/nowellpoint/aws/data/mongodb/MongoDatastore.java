@@ -139,10 +139,12 @@ public class MongoDatastore implements ServletContextListener {
 	
 	public static <T extends MongoDocument> Set<T> find(Class<T> documentClass, Bson query) {
 		
+		String collectionName = getCollectionName( documentClass );
+		
 		Set<T> documents = new HashSet<T>();
 		
 		FindIterable<T> search = getDatabase()
-				.getCollection( getCollectionName( documentClass ) )
+				.getCollection( collectionName )
 				.withDocumentClass( documentClass )
 				.find( query );
 		

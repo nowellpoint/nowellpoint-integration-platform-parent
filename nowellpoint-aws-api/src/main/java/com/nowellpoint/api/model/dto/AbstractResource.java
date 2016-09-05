@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractDTO implements Serializable {
+public abstract class AbstractResource implements Serializable {
 	
 	/**
 	 * 
@@ -64,7 +64,7 @@ public abstract class AbstractDTO implements Serializable {
 	private Date systemModifiedDate;
 	
 	
-	public AbstractDTO() {
+	public AbstractResource() {
 		
 	}
 

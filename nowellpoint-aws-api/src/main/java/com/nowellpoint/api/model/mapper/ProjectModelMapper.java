@@ -1,5 +1,6 @@
 package com.nowellpoint.api.model.mapper;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.modelmapper.TypeToken;
@@ -50,7 +51,7 @@ public class ProjectModelMapper extends AbstractModelMapper<ProjectDocument> {
 	
 	public Set<Project> findAllByOwner() {
 		Set<ProjectDocument> documents = findAllByOwner(getSubject());
-		Set<Project> resources = modelMapper.map(documents, new TypeToken<Set<Project>>() {}.getType());
+		Set<Project> resources = modelMapper.map(documents, new TypeToken<HashSet<Project>>() {}.getType());
 		return resources;
 	}
 	

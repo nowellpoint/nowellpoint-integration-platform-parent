@@ -125,12 +125,6 @@ public class AccountProfile extends Resource {
 	 */
 	
 	private Address address;
-
-	/**
-	 * 
-	 */
-
-	private String href;
 	
 	/**
 	 * 
@@ -149,6 +143,16 @@ public class AccountProfile extends Resource {
 	 */
 	
 	private Boolean hasFullAccess;
+	
+	/**
+	 * 
+	 */
+	
+	private Boolean enableSalesforceLogin;
+	
+	/**
+	 * 
+	 */
 	
 	public AccountProfile() {
 		address = new Address();
@@ -321,14 +325,6 @@ public class AccountProfile extends Resource {
 		this.address = address;
 	}
 
-	public String getHref() {
-		return href;
-	}
-
-	public void setHref(String href) {
-		this.href = href;
-	}
-
 	public Photos getPhotos() {
 		return photos;
 	}
@@ -355,6 +351,14 @@ public class AccountProfile extends Resource {
 
 	public void setHasFullAccess(Boolean hasFullAccess) {
 		this.hasFullAccess = hasFullAccess;
+	}
+	
+	public Boolean getEnableSalesforceLogin() {
+		return enableSalesforceLogin;
+	}
+
+	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
+		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
 	
 	public AccountProfile withId(String id) {
@@ -429,6 +433,11 @@ public class AccountProfile extends Resource {
 	
 	public AccountProfile withTimeZoneSidKey(String timeZoneSidKey) {
 		setTimeZoneSidKey(timeZoneSidKey);
+		return this;
+	}
+
+	public AccountProfile withEnableSalesforceLogin(Boolean enableSalesforceLogin) {
+		setEnableSalesforceLogin(enableSalesforceLogin);
 		return this;
 	}
 }

@@ -1,6 +1,6 @@
 package com.nowellpoint.api.model.dto;
 
-public class Project extends AbstractDTO {
+public class Project extends AbstractResource {
 	
 	/**
 	 * 

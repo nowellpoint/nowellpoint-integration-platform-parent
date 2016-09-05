@@ -1,5 +1,6 @@
 package com.nowellpoint.api.model.mapper;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.modelmapper.TypeToken;
@@ -37,7 +38,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<Salesfor
 	
 	public Set<SalesforceConnector> findAllByOwner() {
 		Set<SalesforceConnectorDocument> documents = findAllByOwner(getSubject());
-		Set<SalesforceConnector> resources = modelMapper.map(documents, new TypeToken<Set<SalesforceConnector>>() {}.getType());
+		Set<SalesforceConnector> resources = modelMapper.map(documents, new TypeToken<HashSet<SalesforceConnector>>() {}.getType());
 		return resources;
 	}
 	

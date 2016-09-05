@@ -23,13 +23,23 @@ import javax.ws.rs.core.Response.Status;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.model.sforce.Lead;
-import com.nowellpoint.api.tasks.SubmitLeadRequest;
-import com.nowellpoint.api.tasks.SubmitLeadTask;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.client.sforce.model.Error;
+import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/contact")
 public class ContactService {
+	
+	private static final Logger LOGGER = Logger.getLogger(ContactService.class);
 
 	@Context
 	private UriInfo uriInfo;
@@ -47,19 +57,65 @@ public class ContactService {
     		@FormParam("company") String company,
     		@FormParam("description") String description) {
 		
-		SubmitLeadRequest submitLeadRequest = new SubmitLeadRequest()
-				.withCountryCode("US")
-				.withDescription(description)
-				.withCompany(company)
-				.withPhone(phone)
-				.withEmail(email)
-				.withFirstName(firstName)
-				.withLastName(lastName)
-				.withLeadSource(leadSource);
+//		SubmitLeadRequest submitLeadRequest = new SubmitLeadRequest()
+//				.withCountryCode("US")
+//				.withDescription(description)
+//				.withCompany(company)
+//				.withPhone(phone)
+//				.withEmail(email)
+//				.withFirstName(firstName)
+//				.withLastName(lastName)
+//				.withLeadSource(leadSource);
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		
-		Future<Lead> submitLeadTask = executor.submit(new SubmitLeadTask(submitLeadRequest));
+		Future<Lead> submitLeadTask = executor.submit(() -> {
+			
+			Lead lead = new Lead();
+			lead.setLeadSource(leadSource);
+			lead.setFirstName(firstName);
+			lead.setLastName(lastName);
+			lead.setEmail(email);
+			lead.setDescription(description);
+			lead.setCompany(company);
+			lead.setPhone(phone);
+			lead.setCountryCode("US");
+
+			UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
+					.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+					.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+					.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
+					.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
+					.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
+					.build();
+			
+			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
+					.authenticate(request);
+			
+			Token token = response.getToken();
+				
+			HttpResponse httpResponse = RestResource.post(token.getInstanceUrl())
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.path("services/apexrest/nowellpoint/lead")
+					.bearerAuthorization(token.getAccessToken())
+					.body(lead)
+					.execute();
+			
+			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
+			
+			if (httpResponse.getStatusCode() != 200 && httpResponse.getStatusCode() != 201) {
+				Error error = httpResponse.getEntity(Error.class);
+				throw new Exception(error.getErrorDescription());
+			}
+			
+			String leadId = httpResponse.getAsString();
+			
+			lead.setId(leadId);
+			
+			return lead;
+		});
+
 		executor.shutdown();
 		
 		Lead lead = null;

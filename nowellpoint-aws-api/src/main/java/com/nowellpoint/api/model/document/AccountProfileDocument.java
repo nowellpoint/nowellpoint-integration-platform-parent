@@ -183,6 +183,12 @@ public class AccountProfileDocument extends MongoDocument {
 	
 	private Boolean hasFullAccess;
 	
+	/**
+	 * 
+	 */
+	
+	private Boolean enableSalesforceLogin;
+	
 	public AccountProfileDocument() {
 		setHasFullAccess(Boolean.FALSE);
 	}
@@ -393,5 +399,13 @@ public class AccountProfileDocument extends MongoDocument {
 
 	public void setHasFullAccess(Boolean hasFullAccess) {
 		this.hasFullAccess = hasFullAccess;
+	}
+
+	public Boolean getEnableSalesforceLogin() {
+		return enableSalesforceLogin;
+	}
+
+	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
+		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
 }

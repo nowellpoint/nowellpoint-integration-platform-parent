@@ -28,6 +28,11 @@ public class PostRequest extends HttpRequest {
 		return this;
 	}
 	
+	public PostRequest parameter(String key, Boolean value) {
+		super.parameter(key, value);
+		return this;
+	}
+	
 	public PostRequest acceptCharset(Charset charset) {
 		super.acceptCharset(charset);
 		return this;

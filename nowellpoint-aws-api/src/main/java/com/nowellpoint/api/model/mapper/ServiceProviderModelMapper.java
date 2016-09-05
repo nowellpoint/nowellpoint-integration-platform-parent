@@ -3,6 +3,7 @@ package com.nowellpoint.api.model.mapper;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -102,15 +103,15 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public Set<ServiceProvider> getAllActive(String localeSidKey, String languageLocaleKey) {
-		Optional<Set<ServiceProviderDocument>> documents = Optional.ofNullable( super.find( and ( 
+		Set<ServiceProviderDocument> documents = super.find( and ( 
 							eq ( "isActive", Boolean.TRUE ), 
 							eq ( "localeSidKey", localeSidKey ), 
-							eq ( "languageLocaleKey", languageLocaleKey ) ) ) );
+							eq ( "languageLocaleKey", languageLocaleKey ) ) );
 		
 		Set<ServiceProvider> serviceProviders = null;
 		
-		if (documents.isPresent()) {
-			serviceProviders = modelMapper.map(documents, new TypeToken<Set<ServiceProvider>>() {}.getType());
+		if (! documents.isEmpty()) {
+			serviceProviders = modelMapper.map(documents, new TypeToken<HashSet<ServiceProvider>>() {}.getType());
 		}
 		
 		return serviceProviders;
