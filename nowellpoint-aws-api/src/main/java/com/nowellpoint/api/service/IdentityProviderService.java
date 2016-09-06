@@ -112,11 +112,12 @@ public class IdentityProviderService extends AbstractCacheService {
         
         hset(account.getHref(), Account.class.getName(), account);
         
+        Jwts.builder().setSubject(account.getId());
+        
         Token token = new Token();
 		token.setAccessToken(result.getAccessTokenString());
 		token.setExpiresIn(result.getExpiresIn());
 		token.setRefreshToken(result.getRefreshTokenString());
-		token.setStormpathAccessTokenHref(result.getAccessTokenHref());
 		token.setTokenType(result.getTokenType());
 		
 		setex(token.getAccessToken(), token.getExpiresIn().intValue(), token);
