@@ -72,25 +72,6 @@
                 $(this).find('[autofocus]').focus();
             });
 
-            $('#projectDialog').on('show.bs.modal', function(e) {
-                $title = $('.project-dialog').data('title');
-                $(this).find('.modal-title').text($title);
-            });
-
-            $('.confirm-delete').on('click', function(e) {
-                e.preventDefault();
-
-                var id = $(this).data('id');
-                var message = $(this).data('message');
-                var title = $(this).data('title');
-                var href = $(this).data('href');
-
-                $('#confirmDialog').find('.modal-body p').text(message);
-                $('#confirmDialog').find('.modal-title').text(title);
-                $('#confirmDialog').find('#href').val(href);
-                $('#confirmDialog').data('id', id).modal('show');
-
-            });
         </script>
     </body>
 
