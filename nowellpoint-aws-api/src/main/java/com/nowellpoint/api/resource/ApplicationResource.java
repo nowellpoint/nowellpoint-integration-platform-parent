@@ -24,7 +24,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.document.ApplicationDocument;
 import com.nowellpoint.api.model.dto.Application;
 import com.nowellpoint.api.model.dto.EnvironmentDTO;
 import com.nowellpoint.api.model.dto.Id;
@@ -71,7 +70,7 @@ public class ApplicationResource {
 		Application application = applicationService.findApplication( new Id( id ) );
 		
 		if (application == null) {
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", ApplicationDocument.class.getSimpleName(), id ) );
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Application.class.getSimpleName(), id ) );
 		}
 		
 		return Response.ok(application).build();

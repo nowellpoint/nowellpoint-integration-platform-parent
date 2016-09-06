@@ -24,6 +24,16 @@ $("#use-contact-info").change(function () {
 });
 
 
+$('#deactivate-account-profile').click(function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: "DELETE",
+        url: $(this).attr("href"),
+        complete: function () {
+            $(location).attr("href", "/");
+        }
+    });
+});
 
 $('#confirm').click(function (e) {
     e.preventDefault();

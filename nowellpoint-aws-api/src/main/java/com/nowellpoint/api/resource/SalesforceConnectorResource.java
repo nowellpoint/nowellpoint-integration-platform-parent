@@ -24,7 +24,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.document.SalesforceConnectorDocument;
 import com.nowellpoint.api.model.dto.EnvironmentDTO;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
@@ -89,7 +88,7 @@ public class SalesforceConnectorResource {
 		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id(id) );
 		
 		if (salesforceConnector == null){
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnectorDocument.class.getSimpleName(), id ) );
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
 		}
 		
 		return Response.ok(salesforceConnector).build();

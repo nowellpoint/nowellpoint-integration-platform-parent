@@ -11,7 +11,7 @@ import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="projects", codec=ProjectCodec.class)
-public class ProjectDocument extends MongoDocument {
+public class Project extends MongoDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
 	
@@ -23,13 +23,13 @@ public class ProjectDocument extends MongoDocument {
 	
 	private User owner;
 	
-	private List<ApplicationDocument> salesforceOrganizations;
+	private List<Application> salesforceOrganizations;
 
-	public ProjectDocument() {
+	public Project() {
 		
 	}
 	
-	public ProjectDocument(ObjectId id) {
+	public Project(ObjectId id) {
 		setId(id);
 	}
 
@@ -65,11 +65,11 @@ public class ProjectDocument extends MongoDocument {
 		this.owner = owner;
 	}
 	
-	public List<ApplicationDocument> getSalesforceOrganizations() {
+	public List<Application> getSalesforceOrganizations() {
 		return salesforceOrganizations;
 	}
 	
-	public void setSalesforceOrganizations(List<ApplicationDocument>salesforceOrganizations) {
+	public void setSalesforceOrganizations(List<Application>salesforceOrganizations) {
 		this.salesforceOrganizations = salesforceOrganizations;
 	}
 }

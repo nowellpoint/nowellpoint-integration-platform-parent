@@ -1,11 +1,11 @@
 package com.nowellpoint.api.model.codec;
 
-import com.nowellpoint.api.model.document.ApplicationDocument;
+import com.nowellpoint.api.model.document.Application;
 import com.nowellpoint.aws.data.AbstractCodec;
 
-public class ApplicationCodec extends AbstractCodec<ApplicationDocument> {
+public class ApplicationCodec extends AbstractCodec<Application> {
 	
 	public ApplicationCodec() {
-		super(ApplicationDocument.class);
+		super(Application.class);
 	}
 }

@@ -10,7 +10,7 @@ import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="applications", codec=ApplicationCodec.class)
-public class ApplicationDocument extends MongoDocument implements Serializable {
+public class Application extends MongoDocument implements Serializable {
 	
 	/**
 	 * 
@@ -32,7 +32,7 @@ public class ApplicationDocument extends MongoDocument implements Serializable {
 	
 	private String status;
 	
-	public ApplicationDocument() {
+	public Application() {
 		
 	}
 	

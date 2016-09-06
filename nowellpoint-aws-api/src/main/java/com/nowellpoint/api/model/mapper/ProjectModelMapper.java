@@ -5,58 +5,57 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.document.ProjectDocument;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.Project;
 
-/**************************************************************************************************************************
+/**
  * 
  * 
  * @author jherson
  *
  * 
- *************************************************************************************************************************/
+ */
 
-public class ProjectModelMapper extends AbstractModelMapper<ProjectDocument> {
+public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.model.document.Project> {
 	
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * constructor
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public ProjectModelMapper() {
-		super(ProjectDocument.class);
+		super(com.nowellpoint.api.model.document.Project.class);
 	}
 	
 	public Project findServiceProvider(Id id) {
-		ProjectDocument document = findById(id.getValue());
+		com.nowellpoint.api.model.document.Project document = findById(id.getValue());
 		return modelMapper.map(document, Project.class);
 	}	
 	
 	public void createServiceProvider(Project project) {
-		ProjectDocument document = modelMapper.map(project, ProjectDocument.class);
+		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
 		create(getSubject(), document);
 		modelMapper.map(document, project);
 	}
 	
 	public void updateServiceProvider(Project project) {
-		ProjectDocument document = modelMapper.map(project, ProjectDocument.class);
+		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, project);
 	}
 	
 	public Set<Project> findAllByOwner() {
-		Set<ProjectDocument> documents = findAllByOwner(getSubject());
+		Set<com.nowellpoint.api.model.document.Project> documents = findAllByOwner(getSubject());
 		Set<Project> resources = modelMapper.map(documents, new TypeToken<HashSet<Project>>() {}.getType());
 		return resources;
 	}
 	
 	public void deleteServiceProvider(Project project) {
-		ProjectDocument document = modelMapper.map(project, ProjectDocument.class);
+		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
 		delete(getSubject(), document);
 	}
 }

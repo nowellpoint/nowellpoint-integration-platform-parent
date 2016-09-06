@@ -5,58 +5,57 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.document.ApplicationDocument;
 import com.nowellpoint.api.model.dto.Application;
 import com.nowellpoint.api.model.dto.Id;
 
-/**************************************************************************************************************************
+/**
  * 
  * 
  * @author jherson
  *
  * 
- *************************************************************************************************************************/
+ */
 
-public class ApplicationModelMapper extends AbstractModelMapper<ApplicationDocument> {
+public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.api.model.document.Application> {
 	
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * constructor
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public ApplicationModelMapper() {
-		super(ApplicationDocument.class);
+		super(com.nowellpoint.api.model.document.Application.class);
 	}
 	
 	public Application findApplication(Id id) {
-		ApplicationDocument document = findById(id.getValue());
+		com.nowellpoint.api.model.document.Application document = findById(id.getValue());
 		return modelMapper.map(document, Application.class);
 	}	
 	
 	public void createApplication(Application application) {
-		ApplicationDocument document = modelMapper.map(application, ApplicationDocument.class);
+		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
 		create(getSubject(), document);
 		modelMapper.map(document, application);
 	}
 	
 	public void updateApplication(Application application) {
-		ApplicationDocument document = modelMapper.map(application, ApplicationDocument.class);
+		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, application);
 	}
 	
 	public Set<Application> findAllByOwner() {
-		Set<ApplicationDocument> documents = findAllByOwner(getSubject());
+		Set<com.nowellpoint.api.model.document.Application> documents = findAllByOwner(getSubject());
 		Set<Application> resources = modelMapper.map(documents, new TypeToken<HashSet<Application>>() {}.getType());
 		return resources;
 	}
 	
 	public void deleteApplication(Application application) {
-		ApplicationDocument document = modelMapper.map(application, ApplicationDocument.class);
+		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
 		delete(getSubject(), document);
 	}
 }

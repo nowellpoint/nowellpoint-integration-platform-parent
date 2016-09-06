@@ -2,7 +2,6 @@ package com.nowellpoint.api.model.mapper;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import com.nowellpoint.api.model.document.AccountProfileDocument;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
 
@@ -14,7 +13,7 @@ import com.nowellpoint.api.model.dto.Id;
  * 
  */
 
-public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfileDocument> {
+public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoint.api.model.document.AccountProfile> {
 	
 	/**
 	 * 
@@ -25,7 +24,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public AccountProfileModelMapper() {
-		super(AccountProfileDocument.class);
+		super(com.nowellpoint.api.model.document.AccountProfile.class);
 	}
 	
 	/**
@@ -38,7 +37,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public AccountProfile findAccountProfile(Id id) {
-		AccountProfileDocument document = findById(id.getValue());
+		com.nowellpoint.api.model.document.AccountProfile document = findById(id.getValue());
 		return modelMapper.map(document, AccountProfile.class);
 	}	
 	
@@ -51,7 +50,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public void createAccountProfile(AccountProfile accountProfile) {
-		AccountProfileDocument document = modelMapper.map(accountProfile, AccountProfileDocument.class);
+		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		create(getSubject(), document);
 		modelMapper.map(document, accountProfile);
 	}
@@ -65,7 +64,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public void updateAccountProfile(AccountProfile accountProfile) {
-		AccountProfileDocument document = modelMapper.map(accountProfile, AccountProfileDocument.class);
+		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, accountProfile);
 	}
@@ -79,7 +78,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public void deleteApplication(AccountProfile accountProfile) {
-		AccountProfileDocument document = modelMapper.map(accountProfile, AccountProfileDocument.class);
+		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		delete(getSubject(), document);
 	}
 	
@@ -93,7 +92,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public AccountProfile findAccountProfileBySubject(String subject) {
-		AccountProfileDocument document = findOne( eq ( "href", subject) );
+		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "href", subject) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile;
 	}
@@ -108,7 +107,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<AccountProfil
 	 */
 	
 	public AccountProfile findAccountProfileByUsername(String username) {
-		AccountProfileDocument document = findOne( eq ( "username", username ) );
+		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "username", username ) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile; 
 	}

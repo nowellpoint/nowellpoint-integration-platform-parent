@@ -212,8 +212,8 @@ public class Application implements SparkApplication {
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
-        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.deactivateAccountProfile);
-        
+        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.confirmDeactivateAccountProfile);
+        delete(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.deactivateAccountProfile);
         delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), accountProfileController.removeProfilePicture);
         get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAccountProfileAddress);
         post(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.updateAccountProfileAddress);

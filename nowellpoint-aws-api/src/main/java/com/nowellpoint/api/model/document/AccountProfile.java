@@ -17,7 +17,7 @@ import com.nowellpoint.aws.data.mongodb.DateSerializer;
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="account.profiles", codec=AccountProfileCodec.class)
-public class AccountProfileDocument extends MongoDocument {
+public class AccountProfile extends MongoDocument {
 
 	/**
 	 * 
@@ -189,7 +189,7 @@ public class AccountProfileDocument extends MongoDocument {
 	
 	private Boolean enableSalesforceLogin;
 	
-	public AccountProfileDocument() {
+	public AccountProfile() {
 		setHasFullAccess(Boolean.FALSE);
 	}
 

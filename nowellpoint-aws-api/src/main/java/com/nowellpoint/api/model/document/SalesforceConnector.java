@@ -13,7 +13,7 @@ import com.nowellpoint.aws.data.mongodb.MongoDocument;
 @Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SalesforceConnectorDocument extends MongoDocument {
+public class SalesforceConnector extends MongoDocument {
 
 	/**
 	 * 
@@ -33,7 +33,7 @@ public class SalesforceConnectorDocument extends MongoDocument {
 	
 	private Set<ServiceInstance> serviceInstances;
 	
-	public SalesforceConnectorDocument() {
+	public SalesforceConnector() {
 		
 	}
 

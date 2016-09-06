@@ -4,12 +4,10 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.document.ServiceProviderDocument;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ServiceProvider;
 
@@ -21,7 +19,7 @@ import com.nowellpoint.api.model.dto.ServiceProvider;
  *
  */
 
-public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProviderDocument> {
+public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpoint.api.model.document.ServiceProvider> {
 	
 	/**
 	 * 
@@ -30,7 +28,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public ServiceProviderModelMapper() {
-		super(ServiceProviderDocument.class);
+		super(com.nowellpoint.api.model.document.ServiceProvider.class);
 	}
 	
 	/**
@@ -43,11 +41,8 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public ServiceProvider findServiceProvider(Id id) {
-		Optional<ServiceProviderDocument> document = Optional.ofNullable(findById(id.getValue()));
-		ServiceProvider serviceProvider = null;
-		if (document.isPresent()) {
-			serviceProvider = modelMapper.map(document, ServiceProvider.class);
-		}
+		com.nowellpoint.api.model.document.ServiceProvider document = findById(id.getValue());
+		ServiceProvider serviceProvider = modelMapper.map(document, ServiceProvider.class);
 		return serviceProvider;
 	}	
 	
@@ -60,7 +55,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public void createServiceProvider(ServiceProvider serviceProvider) {
-		ServiceProviderDocument document = modelMapper.map(serviceProvider, ServiceProviderDocument.class);
+		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
 		create(getSubject(), document);
 		modelMapper.map(document, serviceProvider);
 	}
@@ -74,7 +69,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public void updateServiceProvider(ServiceProvider serviceProvider) {
-		ServiceProviderDocument document = modelMapper.map(serviceProvider, ServiceProviderDocument.class);
+		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, serviceProvider);
 	}
@@ -89,7 +84,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public ServiceProvider findByServiceKey(String key) {
-		ServiceProviderDocument document = super.findOne( eq ( "services.key", key ) );
+		com.nowellpoint.api.model.document.ServiceProvider document = super.findOne( eq ( "services.key", key ) );
 		ServiceProvider serviceProvider = modelMapper.map( document, ServiceProvider.class );
 		return serviceProvider;
 	}
@@ -103,7 +98,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public Set<ServiceProvider> getAllActive(String localeSidKey, String languageLocaleKey) {
-		Set<ServiceProviderDocument> documents = super.find( and ( 
+		Set<com.nowellpoint.api.model.document.ServiceProvider> documents = super.find( and ( 
 							eq ( "isActive", Boolean.TRUE ), 
 							eq ( "localeSidKey", localeSidKey ), 
 							eq ( "languageLocaleKey", languageLocaleKey ) ) );
@@ -126,7 +121,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<ServiceProvi
 	 */
 	
 	public void deleteServiceProvider(ServiceProvider serviceProvider) {
-		ServiceProviderDocument document = modelMapper.map(serviceProvider, ServiceProviderDocument.class);
+		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
 		delete(getSubject(), document);
 	}
 }

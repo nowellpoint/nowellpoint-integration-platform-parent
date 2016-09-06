@@ -8,15 +8,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.nowellpoint.aws.data.CacheManager;
 
@@ -35,38 +32,56 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
-	 * @param resourceType
-	 * @param documentType
+	 * 
+	 * @param documentClass
+	 * 
+	 * 
 	 */
 	
 	public MongoDocumentService(Class<T> documentClass) {		
 		this.documentClass = documentClass;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param query
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	protected Set<T> find(Bson query) {
-		Set<T> documents = null; //hscan(documentClass, toString(query));
+		Set<T> documents = null;
 		
 		if (documents == null) {
 			try {
 				documents = MongoDatastore.find(documentClass, query);
-				//hset(toString(query), documents);
 			} catch (IllegalArgumentException e) {
-				
+				LOGGER.error( "Find exception : ", e.getCause() );
 			}
 		}
 		
 		return documents;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param query
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	protected T findOne(Bson query) {
-		T document = null; //get(documentClass, toString(query));
+		T document = null;
 		
 		if (document == null) {
 			try {
 				document = MongoDatastore.findOne(documentClass, query);
-				//set(toString(query), document);
 			} catch (IllegalArgumentException e) {
-				
+				LOGGER.error( "FindOne exception : ", e.getCause());
 			}
 		}
 
@@ -75,8 +90,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
 	 * @param id
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected T findById(String id) {	
@@ -87,7 +105,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 				document = MongoDatastore.findById(documentClass, new ObjectId(id));
 				set(id, document);
 			} catch (IllegalArgumentException e) {
-				
+				LOGGER.error( "FindById exception : ", e.getCause());
 			}
 		}
 
@@ -96,8 +114,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
 	 * @param owner
 	 * @return Collection of documents for owner
+	 * 
+	 * 
 	 */
 	
 	protected Set<T> findAllByOwner(String owner) {		
@@ -113,11 +134,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
 	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return the created Document
-	 * @throws MongoException
+	 * @param document
+	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected T create(String subject, T document) {	
@@ -147,9 +169,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
+	 * @param subject
 	 * @param document
-	 * @return the document that has been replaced
-	 * @throws MongoException
+	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected T replace(String subject, T document) {
@@ -172,8 +197,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
+	 * @param subject
 	 * @param document
-	 * @throws MongoException
+	 * 
+	 * 
 	 */
 	
 	protected void delete(String subject, T document) {
@@ -190,9 +218,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
-	 * @param <T>
+	 * 
+	 * @param type
 	 * @param key
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	private static <T> T get(Class<T> type, String key) {
@@ -215,7 +246,10 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
+	 * 
+	 * 
 	 */
 	
 	private static void del(String key) {
@@ -229,8 +263,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param value
+	 * 
+	 * 
 	 */
 	
 	private static void set(String key, Object value) {
@@ -244,9 +281,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param type
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	private static <T> Set<T> hscan(Class<T> type, String key) {
@@ -272,14 +312,13 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		return results;
 	}
 	
-	private static <T> void clearCache(Class<T> type) {
-		
-	}
-	
 	/**
+	 * 
 	 * 
 	 * @param key
 	 * @param values
+	 * 
+	 * 
 	 */
 	
 	private static <T extends MongoDocument> void hset(String key, Set<T> values) {
@@ -300,6 +339,15 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		p.sync();
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param key
+	 * @param value
+	 * 
+	 * 
+	 */
+	
 	private static <T extends MongoDocument> void hset(String key, T value) {
 		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
 		try {
@@ -308,6 +356,15 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 			jedis.close();
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param key
+	 * @param value
+	 * 
+	 * 
+	 */
 	
 	private static <T extends MongoDocument> void hdel(String key, T value) {
 		Jedis jedis = CacheManager.getCache();
@@ -318,9 +375,9 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 		}
 	}
 	
-	private String toString(Bson bson) {
-		String key = bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).entrySet().stream().map(k -> k.toString()).collect(Collectors.joining(":"));
-		System.out.println(key);
-		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
-	}
+//	private String toString(Bson bson) {
+//		String key = bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).entrySet().stream().map(k -> k.toString()).collect(Collectors.joining(":"));
+//		System.out.println(key);
+//		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
+//	}
 }

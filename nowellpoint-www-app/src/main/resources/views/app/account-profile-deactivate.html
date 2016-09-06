@@ -2,10 +2,10 @@
     <@t.page>
         <#include "navbar.html" />
         <div class="container">
-            
+
             <br>
             <br>
-            
+
             <div class="row">
 
                 <br>
@@ -18,26 +18,24 @@
                 </#if>
 
                 <br>
-                
+
                 <div class="panel panel-default">
-                                            <div class="panel-body">
-                                                <br>
-                                                <h4 class="text-danger">${labels["confirm.deactivate.profile"]}</h4>
-                                                <h4><small></small></h4>
-                                                <br>
-                                                <p class="pull-right">
-                                                    <a href="${labels['base.path']}/${(accountProfile.id)!}#settings" class="btn btn-default" role="button">${labels["cancel"]}</a>
-                                                    <button type="submit" id="add-plan" class="btn btn-danger">${labels["deactivate.profile"]}</button>
-                                                </p>
+                    <div class="panel-body">
+                        <br>
+                        <h4>${labels["confirm.deactivate.profile"]}</h4>
+                        <h4><small></small></h4>
+                        <br>
+                        <p class="pull-right">
+                            <a href="${labels['base.path']}/${(accountProfile.id)!}#settings" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                            <a href="${labels['base.path']}/${accountProfile.id}/deactivate" id="deactivate-account-profile" class="btn btn-danger" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+                        </p>
 
-                                            </div>
+                    </div>
 
-                                        </div>
-                
-                <!--
-                <a href="${labels['base.path']}/${accountProfile.id}/delete" class="btn btn-danger" aria-hidden="true" role="button">${labels["confirm.deactivate.profile"]}</a>
--->
-                
+                </div>
+
             </div>
         </div>
+        
+        <script src="/js/account-profile.js"></script>
     </@t.page>

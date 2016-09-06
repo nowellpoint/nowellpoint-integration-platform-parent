@@ -11,7 +11,6 @@ import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
 import com.mongodb.DBRef;
-import com.nowellpoint.api.model.document.AccountProfileDocument;
 import com.nowellpoint.api.model.document.User;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.util.UserContext;
@@ -53,19 +52,19 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 
 			@Override
 			protected AccountProfile convert(User source) {
-				AccountProfile resource = new AccountProfile();
+				AccountProfile accountProfile = new AccountProfile();
 				if (source != null && source.getIdentity() != null) {
 					
-					AccountProfileDocument identity = MongoDatastore.getDatabase()
+					com.nowellpoint.api.model.document.AccountProfile identity = MongoDatastore.getDatabase()
 							.getCollection( source.getIdentity().getCollectionName() )
-							.withDocumentClass( AccountProfileDocument.class )
+							.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
 							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
 							.first();
 					
-					resource = modelMapper.map(identity, AccountProfile.class );
+					accountProfile = modelMapper.map(identity, AccountProfile.class );
 				}
 				
-				return resource; 
+				return accountProfile; 
 			}			
 		});
 		
@@ -73,7 +72,7 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 
 			@Override
 			protected User convert(AccountProfile source) {
-				String collectionName = MongoDatastore.getCollectionName( AccountProfileDocument.class );
+				String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 				ObjectId id = null;
 				
 				User user = new User();
@@ -81,9 +80,9 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 					user.setHref(source.getHref());
 					if (source.getId() == null) {
 						
-						AccountProfileDocument identity = MongoDatastore.getDatabase()
+						com.nowellpoint.api.model.document.AccountProfile identity = MongoDatastore.getDatabase()
 								.getCollection( collectionName )
-								.withDocumentClass( AccountProfileDocument.class )
+								.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
 								.find( eq ( "href", source.getHref() ) )
 								.first();
 						
@@ -95,7 +94,6 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 
 					DBRef reference = new DBRef( collectionName, id );
 					user.setIdentity(reference);
-
 				}
 				
 				return user; 

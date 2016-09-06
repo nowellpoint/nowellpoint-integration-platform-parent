@@ -57,16 +57,6 @@ public class ContactService {
     		@FormParam("company") String company,
     		@FormParam("description") String description) {
 		
-//		SubmitLeadRequest submitLeadRequest = new SubmitLeadRequest()
-//				.withCountryCode("US")
-//				.withDescription(description)
-//				.withCompany(company)
-//				.withPhone(phone)
-//				.withEmail(email)
-//				.withFirstName(firstName)
-//				.withLastName(lastName)
-//				.withLeadSource(leadSource);
-		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		
 		Future<Lead> submitLeadTask = executor.submit(() -> {

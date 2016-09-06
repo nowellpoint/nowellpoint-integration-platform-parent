@@ -10,7 +10,7 @@ import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="service.providers", codec=ServiceProviderCodec.class)
-public class ServiceProviderDocument extends MongoDocument implements Serializable {
+public class ServiceProvider extends MongoDocument implements Serializable {
 
 	/**
 	 * 
@@ -34,7 +34,7 @@ public class ServiceProviderDocument extends MongoDocument implements Serializab
 	
 	private Set<Service> services;
 
-	public ServiceProviderDocument() {
+	public ServiceProvider() {
 		
 	}
 

@@ -126,8 +126,10 @@ public class AccountProfileController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route deleteAccountProfile = (Request request, Response response) -> {	
+	public Route deactivateAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
+		
+		System.out.println("dactivating profile: " + request.params(":id"));
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -165,12 +167,12 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * deactivateAccountProfile
+	 * confirmDeactivateAccountProfile
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route deactivateAccountProfile = (Request request, Response response) -> {	
+	public Route confirmDeactivateAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
