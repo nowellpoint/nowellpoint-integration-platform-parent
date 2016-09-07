@@ -55,13 +55,13 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 				AccountProfile accountProfile = new AccountProfile();
 				if (source != null && source.getIdentity() != null) {
 					
-					com.nowellpoint.api.model.document.AccountProfile identity = MongoDatastore.getDatabase()
+					com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
 							.getCollection( source.getIdentity().getCollectionName() )
 							.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
 							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
 							.first();
 					
-					accountProfile = modelMapper.map(identity, AccountProfile.class );
+					accountProfile = modelMapper.map(document, AccountProfile.class );
 				}
 				
 				return accountProfile; 
@@ -80,13 +80,13 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 					user.setHref(source.getHref());
 					if (source.getId() == null) {
 						
-						com.nowellpoint.api.model.document.AccountProfile identity = MongoDatastore.getDatabase()
+						com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
 								.getCollection( collectionName )
 								.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
 								.find( eq ( "href", source.getHref() ) )
 								.first();
 						
-						id = identity.getId();
+						id = document.getId();
 						
 					} else {
 						id = new ObjectId( source.getId() );

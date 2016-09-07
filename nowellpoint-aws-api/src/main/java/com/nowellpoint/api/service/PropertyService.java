@@ -28,7 +28,7 @@ public class PropertyService {
 	
 	public Set<PropertyDTO> getProperties() {
 		String subject = UserContext.getPrincipal().getName();
-		AccountProfile accountProfile = accountProfileService.findAccountProfileBySubject(subject);
+		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(subject);
 		if (! accountProfile.getHasFullAccess()) {
 			throw new ServiceException(Response.Status.UNAUTHORIZED, String.format("Your profile does not have permission to access the requested resource"));
 		}

@@ -1,16 +1,21 @@
 package com.nowellpoint.api.service;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.dto.idp.Token;
+import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.ErrorDTO;
+import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -38,10 +43,14 @@ import com.stormpath.sdk.resource.ResourceException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class IdentityProviderService extends AbstractCacheService {
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class);
+	
+	@Inject
+	private AccountProfileService accountProfileService;
 	
 	private static ApiKey apiKey;
 	private static Client client;
@@ -110,17 +119,18 @@ public class IdentityProviderService extends AbstractCacheService {
             account.getGroups().setItems(items);
         }
         
-        hset(account.getHref(), Account.class.getName(), account);
+        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(account.getHref());
         
-        Jwts.builder().setSubject(account.getId());
+        String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
+        Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
+        
+        String jwt = createJwt(id, account.getHref().concat("-").concat(accountProfile.getId()), expiration);
         
         Token token = new Token();
-		token.setAccessToken(result.getAccessTokenString());
+		token.setAccessToken(jwt);
 		token.setExpiresIn(result.getExpiresIn());
 		token.setRefreshToken(result.getRefreshTokenString());
 		token.setTokenType(result.getTokenType());
-		
-		setex(token.getAccessToken(), token.getExpiresIn().intValue(), token);
         
         return token;
 	}
@@ -320,14 +330,18 @@ public class IdentityProviderService extends AbstractCacheService {
 				  .forApplication(application)
 				  .authenticate(refreshRequest);
 		
+		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(result.getAccessToken().getAccount().getHref());
+		
+		String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
+		Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
+		
+		String jwt = createJwt(id, result.getAccessToken().getAccount().getHref().concat("-").concat(accountProfile.getId()), expiration);
+		
 		Token token = new Token();
-		token.setAccessToken(result.getAccessTokenString());
+		token.setAccessToken(jwt);
 		token.setExpiresIn(result.getExpiresIn());
 		token.setRefreshToken(result.getRefreshTokenString());
-		token.setStormpathAccessTokenHref(result.getAccessTokenHref());
 		token.setTokenType(result.getTokenType());
-		
-		setex(token.getAccessToken(), token.getExpiresIn().intValue(), token);
         
         return token;
 	}
@@ -422,5 +436,18 @@ public class IdentityProviderService extends AbstractCacheService {
 		}
 		
 		return response.get("href").asText();
+	}
+	
+	private String createJwt(String id, String subject, Date expiration) {
+		return Jwts.builder()
+        		.setId(id)
+        		.setHeaderParam("typ", "JWT")
+        		.setIssuer("nowellpoint.com")
+        		.setSubject(subject)
+        		.setIssuedAt(new Date(System.currentTimeMillis()))
+        		.setExpiration(expiration)
+        		.signWith(SignatureAlgorithm.HS256, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+        		.compact();
+		
 	}
 }

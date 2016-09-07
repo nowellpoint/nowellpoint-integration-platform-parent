@@ -360,7 +360,7 @@ public class SignUpService {
 		
 		emailService.sendWelcomeMessage(account);
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileBySubject(href));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(href));
 		
 		if (! query.isPresent()) {
 			ErrorDTO error = new ErrorDTO(1001, String.format("AccountProfile for href: %s was not found", href));

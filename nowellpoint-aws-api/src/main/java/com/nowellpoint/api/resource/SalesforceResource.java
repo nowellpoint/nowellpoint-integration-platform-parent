@@ -43,8 +43,6 @@ public class SalesforceResource {
 	@PermitAll
 	public Response oauth(@QueryParam(value="state") String state) {
 		
-		System.out.println(System.getProperty(Properties.SALESFORCE_REDIRECT_URI));
-		
 		String url = null;
 		try {
 			url = new StringBuilder().append(System.getProperty(Properties.SALESFORCE_AUTHORIZE_URI))

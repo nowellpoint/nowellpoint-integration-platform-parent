@@ -349,7 +349,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 	 */
 	
 	private static <T extends MongoDocument> void hset(String key, T value) {
-		Jedis jedis = CacheManager.getCache(); //jedisPool.getResource();
+		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.hset(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes(), CacheManager.serialize(value));
 		} finally {
@@ -374,10 +374,4 @@ public abstract class MongoDocumentService<T extends MongoDocument> {
 			jedis.close();
 		}
 	}
-	
-//	private String toString(Bson bson) {
-//		String key = bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).entrySet().stream().map(k -> k.toString()).collect(Collectors.joining(":"));
-//		System.out.println(key);
-//		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
-//	}
 }

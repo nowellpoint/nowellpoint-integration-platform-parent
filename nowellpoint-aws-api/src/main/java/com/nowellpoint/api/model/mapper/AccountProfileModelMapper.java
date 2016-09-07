@@ -91,8 +91,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public AccountProfile findAccountProfileBySubject(String subject) {
-		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "href", subject) );
+	public AccountProfile findAccountProfileByHref(String href) {
+		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "href", href) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile;
 	}

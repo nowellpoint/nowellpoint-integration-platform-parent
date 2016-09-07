@@ -82,6 +82,7 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 			} catch (SignatureException e) {
 				throw new NotAuthorizedException("Invalid token. Signature is invalid");
 			} catch (ExpiredJwtException e) {
+				e.printStackTrace();
 				throw new NotAuthorizedException("Invalid token. Bearer token has expired");
 			} catch (IllegalArgumentException e) {	
 				throw new NotAuthorizedException("Invalid authorization. Bearer token is missing");
@@ -93,7 +94,7 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				
 				Account account;
 				try {
-					account = identityProviderService.getAccountBySubject(subject);
+					account = identityProviderService.getAccountBySubject(subject.split("-")[0]);
 				} catch (IOException e) {
 					throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 				}

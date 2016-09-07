@@ -75,11 +75,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		UserContext.setUserContext(token.getAccessToken());
 		
 		String subject = UserContext.getPrincipal().getName();
+		String accountProfileId = subject.split("-")[1];
 		
-		AccountProfile accountProfile = findAccountProfileBySubject(subject);
+		AccountProfile accountProfile = new AccountProfile( accountProfileId );
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
-		super.updateAccountProfile(accountProfile);
+		updateAccountProfile(new Id( accountProfileId ), accountProfile);
 	}
 	
 	/**
@@ -137,6 +138,18 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
 		accountProfile.setIsActive(original.getIsActive());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
+		
+		if (accountProfile.getLocaleSidKey() == null) {
+			accountProfile.setLocaleSidKey(original.getLocaleSidKey());
+		}
+
+		if (accountProfile.getLanguageSidKey() == null) {
+			accountProfile.setLanguageSidKey(original.getLanguageSidKey());
+		}
+
+		if (accountProfile.getTimeZoneSidKey() == null) {
+			accountProfile.setTimeZoneSidKey(original.getTimeZoneSidKey());
+		}
 		
 		if (accountProfile.getEnableSalesforceLogin() == null) {
 			accountProfile.setEnableSalesforceLogin(original.getEnableSalesforceLogin());
@@ -210,8 +223,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * @return Identity resource for subject
 	 */
 	
-	public AccountProfile findAccountProfileBySubject(String subject) {
-		return super.findAccountProfileBySubject(subject);
+	public AccountProfile findAccountProfileByHref(String href) {
+		return super.findAccountProfileByHref(href);
 	}
 	
 	public AccountProfile findAccountProfileByUsername(String username) {

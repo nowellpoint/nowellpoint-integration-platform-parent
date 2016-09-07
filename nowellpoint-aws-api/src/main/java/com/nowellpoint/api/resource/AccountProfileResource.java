@@ -64,7 +64,9 @@ public class AccountProfileResource {
 	public Response getUserProfile() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfileBySubject( subject );
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject.split("-")[1] ) );
+		
+		System.out.println(accountProfile.getId());
 		
 		return Response.ok(accountProfile)
 				.build();
@@ -304,7 +306,7 @@ public class AccountProfileResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfileBySubject(@QueryParam("subject") String subject) {		
-		AccountProfile accountProfile = accountProfileService.findAccountProfileBySubject( subject );
+		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref( subject );
 		
 		if (accountProfile == null) {
 			throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );

@@ -100,7 +100,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(Project project) {
 		
-		AccountProfile owner = accountProfileService.findAccountProfileBySubject(project.getOwner().getHref());	
+		AccountProfile owner = accountProfileService.findAccountProfileByHref(project.getOwner().getHref());	
 		
 		project.setOwner(owner);
 		

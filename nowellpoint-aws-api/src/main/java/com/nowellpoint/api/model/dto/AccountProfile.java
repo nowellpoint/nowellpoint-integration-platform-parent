@@ -198,6 +198,10 @@ public class AccountProfile extends AbstractResource {
 	public AccountProfile() {
 		
 	}
+	
+	public AccountProfile(String id) {
+		setId(id);
+	}
 
 	public String getLeadId() {
 		return leadId;
