@@ -66,8 +66,6 @@ public class AccountProfileResource {
 		
 		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject.split("-")[1] ) );
 		
-		System.out.println(accountProfile.getId());
-		
 		return Response.ok(accountProfile)
 				.build();
 	}

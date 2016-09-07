@@ -20,8 +20,7 @@ public class UserContext {
 		
 		String subject = claims.getBody().getSubject();
 		
-		Principal principal = new UserPrincipal(subject); 
-		SecurityContext securityContext = new UserPrincipalSecurityContext(principal);
+		SecurityContext securityContext = new UserPrincipalSecurityContext(subject);
 		threadLocal.set(securityContext);
 	}
 
@@ -62,14 +61,16 @@ public class UserContext {
 	static class UserPrincipalSecurityContext implements SecurityContext {
 		
 		private Principal principal;
+		private String authenticationScheme;
 		
-		public UserPrincipalSecurityContext(Principal principal) {
-			this.principal = principal;
+		public UserPrincipalSecurityContext(String subject) {
+			this.authenticationScheme = subject.split("-")[0];
+			this.principal = new UserPrincipal(subject);
 		}
 
 		@Override
 		public String getAuthenticationScheme() {
-			return null;
+			return authenticationScheme;
 		}
 
 		@Override

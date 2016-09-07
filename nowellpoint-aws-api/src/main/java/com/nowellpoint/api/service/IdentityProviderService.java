@@ -406,10 +406,12 @@ public class IdentityProviderService extends AbstractCacheService {
 					.setSigningKey(Base64.getUrlEncoder().encodeToString(apiKey.getSecret().getBytes()))
 					.parseClaimsJws(bearerToken); 
 			
+			System.out.println("revoke: " + UserContext.getSecurityContext().getAuthenticationScheme());
+			
 			HttpResponse httpResponse = RestResource.delete(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 					.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 					.path("accessTokens")
-					.path(claims.getBody().getId())
+					.path(UserContext.getSecurityContext().getAuthenticationScheme())
 					.execute();
 			
 			if (httpResponse.getStatusCode() != Status.NO_CONTENT) {

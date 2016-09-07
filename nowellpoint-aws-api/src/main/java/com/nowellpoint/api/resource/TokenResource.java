@@ -24,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.util.UserContext;
 
 @Path("/oauth")
 @Api(value = "/oauth")
@@ -122,6 +123,8 @@ public class TokenResource {
 		//
 		
 		String bearerToken = new String(authorization.replace("Bearer ", ""));
+		
+		UserContext.getSecurityContext().getAuthenticationScheme();
 		
 		//
 		// call the identity provider service to revoke the token
