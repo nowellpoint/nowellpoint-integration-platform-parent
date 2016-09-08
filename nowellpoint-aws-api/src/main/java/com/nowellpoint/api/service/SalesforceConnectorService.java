@@ -68,39 +68,39 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	private static final AmazonS3 s3Client = new AmazonS3Client();
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * constructor
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public SalesforceConnectorService() {
 		
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 *
 	 * 
 	 * @param subject
 	 * @return all SalesforceConnectorDTO owned by @param subject
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public Set<SalesforceConnector> findAllByOwner() {
 		return super.findAllByOwner();
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 *
 	 * 
 	 * @param token
 	 * @return the created SalesforceConnectorDTO
 	 * 
 	 *
-	 *************************************************************************************************************************/
+	 */
 	
 	public SalesforceConnector createSalesforceConnector(Token token) {
 		
@@ -127,7 +127,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		if (resource.getOwner() == null) {
 			AccountProfile owner = new AccountProfile();
-			owner.setHref(getSubject());
+			owner.setSubject(getSubject());
 			resource.setOwner(owner);
 		}
 		

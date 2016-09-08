@@ -59,9 +59,9 @@ public class AccountProfileResource {
 	
 	
 	@GET
-	@Path("/me")
+	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUserProfile() {
+	public Response getAccountProfile() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject.split("-")[1] ) );
@@ -129,7 +129,7 @@ public class AccountProfileResource {
 		account.setSurname(lastName);
 		account.setEmail(email);
 		account.setUsername(email);
-		account.setHref(subject);
+		account.setHref(subject.split("-")[0]);
 
 		try {
 			identityProviderService.updateAccount(account);
@@ -165,7 +165,7 @@ public class AccountProfileResource {
 	}
 	
 	@GET
-	@Path("/{id}")
+	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
 		

@@ -77,13 +77,13 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 				
 				User user = new User();
 				if (source != null) {					
-					user.setHref(source.getHref());
+					user.setHref(source.getSubject());
 					if (source.getId() == null) {
 						
 						com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
 								.getCollection( collectionName )
 								.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
-								.find( eq ( "href", source.getHref() ) )
+								.find( eq ( "subject", source.getSubject() ) )
 								.first();
 						
 						id = document.getId();

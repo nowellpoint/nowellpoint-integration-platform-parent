@@ -24,9 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.api.util.UserContext;
 
-@Path("/oauth")
+@Path("oauth")
 @Api(value = "/oauth")
 public class TokenResource {
 	
@@ -40,7 +39,7 @@ public class TokenResource {
 	private UriInfo uriInfo;
 	
 	@POST
-	@Path("/token")
+	@Path("token")
 	@ApiOperation(value = "Authenticate with the API", notes = "Returns the OAuth Token", response = Token.class)
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
@@ -103,7 +102,7 @@ public class TokenResource {
 	}
 	
 	@DELETE
-	@Path("/token")
+	@Path("token")
 	@ApiOperation(value = "Expire the OAuth token", notes = "Access to the API will be revoked until a new token is issued")
 	@ApiResponses(value = { 
 		      @ApiResponse(code = 204, message = "successful operation") 
@@ -123,8 +122,6 @@ public class TokenResource {
 		//
 		
 		String bearerToken = new String(authorization.replace("Bearer ", ""));
-		
-		UserContext.getSecurityContext().getAuthenticationScheme();
 		
 		//
 		// call the identity provider service to revoke the token

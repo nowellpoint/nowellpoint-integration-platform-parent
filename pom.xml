@@ -17,7 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<aws.sdk.version>1.11.28</aws.sdk.version>
+		<aws.sdk.version>1.11.32</aws.sdk.version>
 		<jackson.version>2.7.0</jackson.version>
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>
@@ -33,9 +33,9 @@
 		<module>nowellpoint-aws-sforce</module>
 		<module>nowellpoint-aws-admin</module>
 		<module>nowellpoint-sforce-outbound-message-service</module>
-                <module>nowellpoint-sforce-metadata-backup-service</module>
+        <module>nowellpoint-sforce-metadata-backup-service</module>
 		<module>nowellpoint-aws-api</module>
-                <module>nowellpoint-www-app</module>
+        <module>nowellpoint-www-app</module>
 		<module>nowellpoint-aws-test</module>
 	</modules>
 

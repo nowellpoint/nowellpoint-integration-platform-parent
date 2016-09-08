@@ -8,22 +8,18 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Executors;
-import java.util.function.Predicate;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.logging.Logger;
@@ -31,10 +27,7 @@ import org.jboss.logging.Logger;
 import com.amazonaws.util.IOUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.aws.idp.model.Account;
-import com.nowellpoint.aws.idp.model.Group;
 import com.nowellpoint.aws.model.admin.Properties;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -45,9 +38,6 @@ import io.jsonwebtoken.SignatureException;
 public class SecurityContextFilter implements ContainerRequestFilter, ContainerResponseFilter {
 	
 	private static final Logger LOGGER = Logger.getLogger(SecurityContextFilter.class);
-	
-	@Inject
-	private IdentityProviderService identityProviderService;
 	
 	@Context
 	private ResourceInfo resourceInfo;
@@ -78,50 +68,28 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				UserContext.setUserContext(bearerToken);
 				requestContext.setSecurityContext(UserContext.getSecurityContext());
 			} catch (MalformedJwtException e) {
+				LOGGER.error(e);
 				throw new NotAuthorizedException("Invalid token. Bearer token is invalid");
 			} catch (SignatureException e) {
+				LOGGER.error(e);
 				throw new NotAuthorizedException("Invalid token. Signature is invalid");
 			} catch (ExpiredJwtException e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 				throw new NotAuthorizedException("Invalid token. Bearer token has expired");
 			} catch (IllegalArgumentException e) {	
+				LOGGER.error(e);
 				throw new NotAuthorizedException("Invalid authorization. Bearer token is missing");
 			}
 			
-			String subject = UserContext.getPrincipal().getName();
-			
 			if (method.isAnnotationPresent(RolesAllowed.class)) {
 				
-				Account account;
-				try {
-					account = identityProviderService.getAccountBySubject(subject.split("-")[0]);
-				} catch (IOException e) {
-					throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-				}
+				String[] roles = method.getAnnotation(RolesAllowed.class).value();
 				
-				Predicate<Group> isUserInRole = new Predicate<Group>() {
-				    @Override
-				    public boolean test(Group group) {
-				    	String[] roles = method.getAnnotation(RolesAllowed.class).value();
-				    	System.out.println("role: " + roles[0]);
-				    	return Arrays.asList(roles)
-				    			.stream()
-				    			.filter(role -> role.equals(group.getName()))
-				    			.findFirst()
-				    			.isPresent();
-				    }
-				};
-				
-//				Optional<Group> group = account
-//						.getGroups()
-//						.getItems()
-//						.stream()
-//						.filter(isUserInRole)
-//						.findFirst();
-//				
-//				if (! group.isPresent()) {
-//					throw new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource");
-//				}
+				Arrays.asList(roles)
+					.stream()
+					.filter(role -> UserContext.getSecurityContext().isUserInRole(role))
+					.findFirst()
+					.orElseThrow(() -> new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource"));
 			}
 		}
 	}

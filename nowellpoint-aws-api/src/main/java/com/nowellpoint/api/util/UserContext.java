@@ -1,7 +1,9 @@
 package com.nowellpoint.api.util;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 
 import javax.ws.rs.core.SecurityContext;
 
@@ -19,8 +21,10 @@ public class UserContext {
 		Jws<Claims> claims = parseClaims(accessToken); 
 		
 		String subject = claims.getBody().getSubject();
+		@SuppressWarnings("unchecked")
+		ArrayList<String> groups = (ArrayList<String>) claims.getBody().getOrDefault("groups", Collections.emptyList());
 		
-		SecurityContext securityContext = new UserPrincipalSecurityContext(subject);
+		SecurityContext securityContext = new UserPrincipalSecurityContext(subject, groups);
 		threadLocal.set(securityContext);
 	}
 
@@ -62,10 +66,12 @@ public class UserContext {
 		
 		private Principal principal;
 		private String authenticationScheme;
+		private ArrayList<String> groups;
 		
-		public UserPrincipalSecurityContext(String subject) {
+		public UserPrincipalSecurityContext(String subject, ArrayList<String> groups) {
 			this.authenticationScheme = subject.split("-")[0];
 			this.principal = new UserPrincipal(subject);
+			this.groups = groups;
 		}
 
 		@Override
@@ -85,7 +91,10 @@ public class UserContext {
 
 		@Override
 		public boolean isUserInRole(String role) {
-			return false;
+			if (groups == null) {
+				return false;
+			}
+			return groups.contains(role);
 		}
 	}
 }

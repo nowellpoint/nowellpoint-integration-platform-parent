@@ -81,7 +81,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		if (application.getOwner() == null) {
 			AccountProfile owner = new AccountProfile();
-			owner.setHref(getSubject());
+			owner.setSubject(getSubject());
 			application.setOwner(owner);
 		}
 		

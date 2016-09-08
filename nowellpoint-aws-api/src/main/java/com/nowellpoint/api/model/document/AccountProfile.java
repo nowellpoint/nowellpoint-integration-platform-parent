@@ -24,6 +24,12 @@ public class AccountProfile extends MongoDocument {
 	 */
 
 	private static final long serialVersionUID = 3163086585922281575L;
+	
+	/**
+	 * 
+	 */
+	
+	private String subject;
 
 	/**
 	 * 
@@ -191,6 +197,14 @@ public class AccountProfile extends MongoDocument {
 	
 	public AccountProfile() {
 		setHasFullAccess(Boolean.FALSE);
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public String getUsername() {

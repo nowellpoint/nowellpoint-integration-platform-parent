@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Base64;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -121,16 +120,7 @@ public class IdentityProviderService extends AbstractCacheService {
         
         AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(account.getHref());
         
-        String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
-        Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
-        
-        String jwt = createJwt(id, account.getHref().concat("-").concat(accountProfile.getId()), expiration);
-        
-        Token token = new Token();
-		token.setAccessToken(jwt);
-		token.setExpiresIn(result.getExpiresIn());
-		token.setRefreshToken(result.getRefreshTokenString());
-		token.setTokenType(result.getTokenType());
+        Token token = createToken(result, accountProfile.getId());
         
         return token;
 	}
@@ -332,16 +322,7 @@ public class IdentityProviderService extends AbstractCacheService {
 		
 		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(result.getAccessToken().getAccount().getHref());
 		
-		String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
-		Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
-		
-		String jwt = createJwt(id, result.getAccessToken().getAccount().getHref().concat("-").concat(accountProfile.getId()), expiration);
-		
-		Token token = new Token();
-		token.setAccessToken(jwt);
-		token.setExpiresIn(result.getExpiresIn());
-		token.setRefreshToken(result.getRefreshTokenString());
-		token.setTokenType(result.getTokenType());
+		Token token = createToken(result, accountProfile.getId());
         
         return token;
 	}
@@ -399,27 +380,32 @@ public class IdentityProviderService extends AbstractCacheService {
 	 */
 	
 	public void revoke(String bearerToken) {		
-		Optional.ofNullable(get(Token.class, bearerToken)).ifPresent(token -> {
-			del(bearerToken);
-			
-			Jws<Claims> claims = Jwts.parser()
-					.setSigningKey(Base64.getUrlEncoder().encodeToString(apiKey.getSecret().getBytes()))
-					.parseClaimsJws(bearerToken); 
-			
-			System.out.println("revoke: " + UserContext.getSecurityContext().getAuthenticationScheme());
-			
-			HttpResponse httpResponse = RestResource.delete(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-					.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-					.path("accessTokens")
-					.path(UserContext.getSecurityContext().getAuthenticationScheme())
-					.execute();
-			
-			if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
-				ObjectNode response = httpResponse.getEntity(ObjectNode.class);
-				LOGGER.warn(response.toString()); 
-			}
-		});
+		Jws<Claims> claims = Jwts.parser()
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(apiKey.getSecret().getBytes()))
+				.parseClaimsJws(bearerToken); 
+		
+		HttpResponse httpResponse = RestResource.delete(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.path("accessTokens")
+				.path(claims.getBody().getId())
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
+			ObjectNode response = httpResponse.getEntity(ObjectNode.class);
+			LOGGER.warn(response.toString()); 
+		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param emailVerificationToken
+	 * @return
+	 * 
+	 * 
+	 */
 	
 	public String verifyEmail(String emailVerificationToken) {	
 		
@@ -440,16 +426,45 @@ public class IdentityProviderService extends AbstractCacheService {
 		return response.get("href").asText();
 	}
 	
-	private String createJwt(String id, String subject, Date expiration) {
-		return Jwts.builder()
+	/**
+	 * 
+	 * 
+	 * @param result
+	 * @param key
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	private Token createToken(OAuthGrantRequestAuthenticationResult result, String key) {
+		String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
+		
+		Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
+		
+		Set<String> groups = new HashSet<String>();
+		result.getAccessToken().getAccount().getGroups().forEach(g -> {
+			groups.add(g.getName());
+        });
+		
+		//System.out.println("base64" + Base64.getEncoder().encodeToString(result.getAccessToken().getAccount().getHref().concat("-").concat(key).getBytes()));
+		
+		String jwt = Jwts.builder()
         		.setId(id)
         		.setHeaderParam("typ", "JWT")
         		.setIssuer("nowellpoint.com")
-        		.setSubject(subject)
+        		.setSubject(result.getAccessToken().getAccount().getHref().concat("-").concat(key))
         		.setIssuedAt(new Date(System.currentTimeMillis()))
         		.setExpiration(expiration)
         		.signWith(SignatureAlgorithm.HS256, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
-        		.compact();
+        		.claim("groups", groups.toArray(new String[groups.size()]))
+        		.compact();	 
 		
+		Token token = new Token();
+		token.setAccessToken(jwt);
+		token.setExpiresIn(result.getExpiresIn());
+		token.setRefreshToken(result.getRefreshTokenString());
+		token.setTokenType(result.getTokenType());
+        
+        return token;
 	}
 }
