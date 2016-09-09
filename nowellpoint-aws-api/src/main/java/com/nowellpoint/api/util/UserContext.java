@@ -41,9 +41,9 @@ public class UserContext {
 		threadLocal.remove();
 	}
 	
-	public static String getSubject() {
-		return new String(Base64.getUrlDecoder().decode(getPrincipal().getName()));
-	}
+	//public static String getSubject() {
+//		return new String(Base64.getUrlDecoder().decode(getPrincipal().getName()));
+	//}
 	
 	public static Jws<Claims> parseClaims(String accessToken) {
 		Jws<Claims> claims = Jwts.parser()

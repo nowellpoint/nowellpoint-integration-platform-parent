@@ -19,7 +19,7 @@ public class Application extends AbstractResource {
 	
 	private Set<ServiceInstanceDTO> serviceInstances;
 	
-	private Set<EnvironmentDTO> environments;
+	private Set<Environment> environments;
 	
 	private Set<BatchJobDTO> batchJobs;
 	
@@ -72,17 +72,17 @@ public class Application extends AbstractResource {
 		serviceInstances.add(serviceInstance);
 	}
 
-	public Set<EnvironmentDTO> getEnvironments() {
+	public Set<Environment> getEnvironments() {
 		return environments;
 	}
 
-	public void setEnvironments(Set<EnvironmentDTO> environments) {
+	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
 	}
 	
-	public void addEnvironment(EnvironmentDTO environment) {
+	public void addEnvironment(Environment environment) {
 		if (environments == null || environments.isEmpty()) {
-			environments = new HashSet<EnvironmentDTO>();
+			environments = new HashSet<Environment>();
 		}
 		environments.add(environment);
 	}

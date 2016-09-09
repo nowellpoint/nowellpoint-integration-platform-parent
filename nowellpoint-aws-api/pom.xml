@@ -65,6 +65,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>monitor</artifactId>
+			<version>${version.wildfly.swarm}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>logging</artifactId>
 		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
@@ -139,6 +144,11 @@
 			<artifactId>nowellpoint-aws-sforce</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.6.0</version>
+        </dependency>
 	</dependencies>
 
 	<build>

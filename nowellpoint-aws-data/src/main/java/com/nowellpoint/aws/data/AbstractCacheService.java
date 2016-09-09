@@ -1,4 +1,4 @@
-package com.nowellpoint.api.service;
+package com.nowellpoint.aws.data;
 
 import static com.nowellpoint.aws.data.CacheManager.deserialize;
 import static com.nowellpoint.aws.data.CacheManager.serialize;
@@ -9,8 +9,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import com.nowellpoint.api.model.dto.AbstractResource;
-import com.nowellpoint.aws.data.CacheManager;
+import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
@@ -21,8 +20,22 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
+	public AbstractCacheService() {
+		
+	}
+	
+	/**
+	 * 
+	 * 
 	 * @param key
 	 * @param value
+	 * 
+	 * 
 	 */
 	
 	protected void set(String key, Object value) {
@@ -37,9 +50,12 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param expire
 	 * @param value
+	 * 
+	 * 
 	 */
 	
 	protected void setex(String key, int expire, Object value) {
@@ -54,9 +70,12 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param <T>
 	 * @param key
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected <T> T get(Class<T> type, String key) {
@@ -77,7 +96,10 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
+	 * 
+	 * 
 	 */
 	
 	protected void del(String key) {
@@ -91,9 +113,12 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param field
 	 * @param value
+	 * 
+	 * 
 	 */
 	
 	protected <T> void hset(String key, String field, T value) {
@@ -107,8 +132,11 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param field
+	 * 
+	 * 
 	 */
 	
 	protected void hdel(String key, String field) {
@@ -122,9 +150,12 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param field
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected <T> T hget(Class<T> type, String key, String field) {
@@ -158,17 +189,20 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param values
+	 * 
+	 * 
 	 */
 	
-	protected <T extends AbstractResource> void hset(String key, Set<T> values) {
+	protected <T extends MongoDocument> void hset(String key, Set<T> values) {
 		Jedis jedis = CacheManager.getCache();
 		Pipeline p = jedis.pipelined();	
 		try {
 			values.stream().forEach(value -> {
 				try {
-					p.hset(key.getBytes(), value.getClass().getName().concat(value.getId()).getBytes(), serialize(value));
+					p.hset(key.getBytes(), value.getClass().getName().concat(value.getId().toString()).getBytes(), serialize(value));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -182,9 +216,12 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param field
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected Boolean hexists(String key, String field) {		
@@ -207,12 +244,15 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param type
 	 * @return
+	 * 
+	 * 
 	 */
 	
-	protected <T> Set<T> hscan(String key, Class<T> type) {
+	protected <T> Set<T> hscan(Class<T> type, String key) {
 		Jedis jedis = CacheManager.getCache();
 		ScanParams params = new ScanParams();
 	    params.match(type.getName().concat("*"));
@@ -237,14 +277,53 @@ public abstract class AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param key
 	 * @param seconds
+	 * 
+	 * 
 	 */
 	
 	protected void expire(String key, int seconds) {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.expire(key.getBytes(), seconds);
+		} finally {
+			jedis.close();
+		}
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param key
+	 * @param value
+	 * 
+	 * 
+	 */
+	
+	protected <T extends MongoDocument> void hset(String key, T value) {
+		Jedis jedis = CacheManager.getCache();
+		try {
+			jedis.hset(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes(), CacheManager.serialize(value));
+		} finally {
+			jedis.close();
+		}
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param key
+	 * @param value
+	 * 
+	 * 
+	 */
+	
+	protected <T extends MongoDocument> void hdel(String key, T value) {
+		Jedis jedis = CacheManager.getCache();
+		try {
+			jedis.hdel(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes());
 		} finally {
 			jedis.close();
 		}

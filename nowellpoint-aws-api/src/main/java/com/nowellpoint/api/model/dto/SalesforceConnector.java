@@ -18,7 +18,7 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String tag;
 	
-	private Set<EnvironmentDTO> environments;
+	private Set<Environment> environments;
 	
 	private Set<ServiceInstanceDTO> serviceInstances;
 	
@@ -62,17 +62,17 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public Set<EnvironmentDTO> getEnvironments() {
+	public Set<Environment> getEnvironments() {
 		return environments;
 	}
 
-	public void setEnvironments(Set<EnvironmentDTO> environments) {
+	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
 	}
 	
-	public void addEnvironment(EnvironmentDTO environment) {
+	public void addEnvironment(Environment environment) {
 		if (environments == null || environments.isEmpty()) {
-			environments = new HashSet<EnvironmentDTO>();
+			environments = new HashSet<Environment>();
 		}
 		environments.add(environment);
 	}

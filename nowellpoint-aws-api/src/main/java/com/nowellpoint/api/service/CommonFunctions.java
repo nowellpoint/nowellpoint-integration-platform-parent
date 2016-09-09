@@ -14,7 +14,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import com.nowellpoint.api.model.document.Service;
 import com.nowellpoint.api.model.document.SimpleStorageService;
 import com.nowellpoint.api.model.document.Targets;
-import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.model.dto.ServiceProvider;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
@@ -65,7 +65,7 @@ public class CommonFunctions {
 	 * 
 	 **************************************************************************************************************************/
 	
-	public void updateEnvironment(EnvironmentDTO environment, MultivaluedMap<String, String> parameters) {
+	public void updateEnvironment(Environment environment, MultivaluedMap<String, String> parameters) {
 		
 		if (parameters.containsKey(IS_ACTIVE)) {
 			environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
@@ -101,7 +101,7 @@ public class CommonFunctions {
 	 * 
 	 **************************************************************************************************************************/
 	
-	public void testConnection(EnvironmentDTO environment, MultivaluedMap<String, String> parameters) {
+	public void testConnection(Environment environment, MultivaluedMap<String, String> parameters) {
 		
 		try {
 			UserProperty userProperty = new UserProperty();
@@ -179,7 +179,7 @@ public class CommonFunctions {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public List<UserProperty> getEnvironmentUserProperties(String subject, EnvironmentDTO environment) {
+	public List<UserProperty> getEnvironmentUserProperties(String subject, Environment environment) {
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
 		UserProperty accessTokenProperty = new UserProperty()

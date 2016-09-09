@@ -5,66 +5,51 @@
         <#include "navbar.html" />
 
 
-        <div class="container-fluid">
+        <div class="container">
 
             <br>
 
             <div class="row">
 
-                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <br>
+                <br>
+                <br>
 
-                    <#include "sidebar.html"/>
-
+                <div class="statcard statcard-primary p-a-md m-b">
+                    <h2>${messages["welcome"]}</h2>
+                    <h4>${messages["welcome.text"]}</h4>
                 </div>
 
-                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                <br>
+                <br>
+                <br>
 
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h2 class="dashhead-title">${welcome}</h2>
-                            <h6 class="dashhead-subtitle">${welcomeText}</h6>
-                        </div>
+                <div class="row">
+
+                    <div class="col-lg-4 col-md-4 text-center">
+                        <img class="media-object center-block" src="/images/dashboard.png">
+                        <h3>${messages["dashboard"]}</h3>
+                        <p class="text-muted">${messages["dashboard.headline"]}</p>
+                        <br>
+                        <a href="/app/dashboard" class="btn btn-primary center-block" role="button">${messages["go.to"]}</a>
                     </div>
 
-                    <br>
-                    <br>
-                    <br>
-
-                    <div class="row">
-
-                    <div class="col-lg-3 col-md-3 text-center">
-                        <div class="media">
-                            <div class="media-left">
-                                <img class="media-object" src="/images/connection.png">
-                            </div>
-                            <div class="media-body">
-                                <h3>${linkToServiceProvider}</h3>
-                                <p class="text-muted">${linkToServiceProviderDescription}</p>
-                                <br>
-                                <a href="/app/salesforce/oauth" class="btn btn-primary center-block" role="button">${addServiceProvider}</a>
-                            </div>
-                        </div>
+                    <div class="col-lg-4 col-md-4 text-center">
+                        <img class="media-object center-block" src="/images/connection.png">
+                        <h3>${messages["connectors"]}</h3>
+                        <p class="text-muted">${messages["service.provider.headline"]}</p>
+                        <br>
+                        <a href="/app/connectors/salesforce" class="btn btn-primary center-block" role="button">${messages["go.to"]}</a>
                     </div>
 
-                    <div class="col-lg-3 col-md-3 text-center">
-                        <div class="media">
-                            <div class="media-left">
-                                <img class="media-object" src="/images/application.png">
-                            </div>
-                            <div class="media-body">
-                                <h3>Add Services</h3>
-                                <p class="text-muted"></p>
-                                <br>
-                                <a href="/app/salesforce/oauth" class="btn btn-primary center-block" role="button"></a>
-                            </div>
-                        </div>
+                    <div class="col-lg-4 col-md-4 text-center">
+                        <img class="media-object center-block" src="/images/application.png">
+                        <h3>${messages["applications"]}</h3>
+                        <p class="text-muted">${messages["application.headline"]}</p>
+                        <br>
+                        <a href="/app/applications" class="btn btn-primary center-block" role="button">${messages["go.to"]}</a>
                     </div>
-                        
-                    </div>    
-
                 </div>
-
             </div>
         </div>
-
     </@t.page>

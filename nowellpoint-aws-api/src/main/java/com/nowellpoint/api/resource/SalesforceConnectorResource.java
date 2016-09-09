@@ -24,7 +24,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
@@ -125,7 +125,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		EnvironmentDTO environment = salesforceConnectorService.getEnvironment(new Id(id), key);
+		Environment environment = salesforceConnectorService.getEnvironment(new Id(id), key);
 		
 		if (environment == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
@@ -140,7 +140,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO resource) {
+	public Response addEnvironment(@PathParam(value="id") String id, Environment resource) {
 		
 		salesforceConnectorService.addEnvironment(new Id(id), resource);
 		
@@ -153,7 +153,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Environment environment) {
 		
 		salesforceConnectorService.updateEnvironment(new Id(id), key, environment);
 		
@@ -179,7 +179,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		EnvironmentDTO environment = salesforceConnectorService.updateEnvironment(new Id(id), key, parameters);
+		Environment environment = salesforceConnectorService.updateEnvironment(new Id(id), key, parameters);
 		
 		return Response.ok()
 				.entity(environment)

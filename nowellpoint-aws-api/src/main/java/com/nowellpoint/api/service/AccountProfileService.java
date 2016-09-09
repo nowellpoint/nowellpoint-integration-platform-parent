@@ -74,9 +74,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void loggedInEvent(@Observes Token token) {		
 		UserContext.setUserContext(token.getAccessToken());
 		
-		String subject = UserContext.getSubject();
+		String subject = UserContext.getPrincipal().getName();
 		
-		Id id = new Id( subject.split("-")[1] );
+		Id id = new Id( subject );
 		
 		AccountProfile accountProfile = findAccountProfile( id );
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));

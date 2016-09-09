@@ -1,7 +1,6 @@
 package com.nowellpoint.api.resource;
 
 import java.net.URI;
-import java.util.Base64;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -43,7 +42,7 @@ import com.nowellpoint.api.service.ServiceException;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.idp.model.Account;
 
-@Path("/account-profile")
+@Path("account-profile")
 public class AccountProfileResource {
 	
 	@Inject
@@ -63,9 +62,9 @@ public class AccountProfileResource {
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfile() {
-		String subject = new String(Base64.getUrlDecoder().decode(securityContext.getUserPrincipal().getName()));
+		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject.split("-")[1] ) );
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject ) );
 		
 		return Response.ok(accountProfile)
 				.build();

@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.dto.Application;
-import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.service.ApplicationService;
@@ -156,7 +156,7 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		EnvironmentDTO environment = applicationService.getEnvironment(new Id(id), key);
+		Environment environment = applicationService.getEnvironment(new Id(id), key);
 		
 		if (environment == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
@@ -171,7 +171,7 @@ public class ApplicationResource {
 	@Path("{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, EnvironmentDTO environment) {
+	public Response addEnvironment(@PathParam(value="id") String id, Environment environment) {
 		
 		applicationService.addEnvironment(new Id(id), environment);
 		
@@ -184,7 +184,7 @@ public class ApplicationResource {
 	@Path("{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, EnvironmentDTO environment) {
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Environment environment) {
 		
 		applicationService.updateEnvironment(new Id(id), key, environment);
 		
@@ -199,7 +199,7 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		EnvironmentDTO environment = applicationService.updateEnvironment(new Id(id), key, parameters);
+		Environment environment = applicationService.updateEnvironment(new Id(id), key, parameters);
 		
 		return Response.ok()
 				.entity(environment)

@@ -9,6 +9,7 @@ import javax.ws.rs.InternalServerErrorException;
 
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;

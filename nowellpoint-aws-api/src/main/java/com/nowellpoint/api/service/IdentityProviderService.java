@@ -1,6 +1,5 @@
 package com.nowellpoint.api.service;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Base64;
 import java.util.HashSet;
@@ -44,7 +43,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-public class IdentityProviderService extends AbstractCacheService {
+public class IdentityProviderService {
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class);
 	
@@ -157,6 +156,15 @@ public class IdentityProviderService extends AbstractCacheService {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	public Account getAccount(String id) {
 		
 		Account account = null;
@@ -176,6 +184,15 @@ public class IdentityProviderService extends AbstractCacheService {
 		
 		return account;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param href
+	 * @return
+	 * 
+	 * 
+	 */
 	
 	public Account getAccountByHref(String href) {
 		
@@ -198,8 +215,10 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * @param resource
-	 * @throws IOException 
+	 * 
+	 * @param account
+	 * 
+	 * 
 	 */
 	
 	public Account createAccount(Account account) {	
@@ -225,7 +244,10 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * @param resource
+	 * 
+	 * @param account
+	 * 
+	 * 
 	 */
 	
 	public Account updateAccount(Account account) {	
@@ -244,16 +266,15 @@ public class IdentityProviderService extends AbstractCacheService {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		if (hexists(account.getHref(), Account.class.getName())) {
-			hset(account.getHref(), Account.class.getName(), account);
-		}
-		
 		return account;
 	}
 	
 	/**
 	 * 
+	 * 
 	 * @param href
+	 * 
+	 * 
 	 */
 	
 	public void disableAccount(String href) {
@@ -271,35 +292,30 @@ public class IdentityProviderService extends AbstractCacheService {
 		if (httpResponse.getStatusCode() != 200) {
 			throw new ServiceException(httpResponse.getAsString());
 		}
-		
-		if (hexists(href, Account.class.getName())) {
-			hdel(href, Account.class.getName());
-		}
 	}
 	
 	/**
 	 * 
+	 * 
 	 * @param subject
 	 * @return
-	 * @throws IOException 
+	 * 
+	 * 
 	 */
 	
-	public Account getAccountBySubject(String subject) throws IOException {
-		Account account = hget(Account.class, subject, Account.class.getName());
-		
-		if (account == null) {			
-			HttpResponse httpResponse = RestResource.get(subject)
-					.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-					.queryParameter("expand","groups")
-					.execute();
-				
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+	public Account getAccountBySubject(String subject) {		
+		HttpResponse httpResponse = RestResource.get(subject)
+				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
+				.queryParameter("expand","groups")
+				.execute();
 			
-			if (httpResponse.getStatusCode() == 200) {
-				account = httpResponse.getEntity(Account.class);
-			} else {
-				LOGGER.error(httpResponse.getAsString());
-			}
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		
+		Account account = null;
+		if (httpResponse.getStatusCode() == 200) {
+			account = httpResponse.getEntity(Account.class);
+		} else {
+			LOGGER.error(httpResponse.getAsString());
 		}
 		
 		return account;
@@ -307,8 +323,11 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param bearerToken
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public Token refresh(String bearerToken) {		
@@ -329,8 +348,11 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param bearerToken
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public String verify(String bearerToken) {		
@@ -348,8 +370,11 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param username
 	 * @return the Account associated with the @param username
+	 * 
+	 * 
 	 */
 	
 	public Account findAccountByUsername(String username) {
@@ -376,7 +401,10 @@ public class IdentityProviderService extends AbstractCacheService {
 	
 	/**
 	 * 
+	 * 
 	 * @param bearerToken
+	 * 
+	 * 
 	 */
 	
 	public void revoke(String bearerToken) {		
@@ -436,7 +464,7 @@ public class IdentityProviderService extends AbstractCacheService {
 	 * 
 	 */
 	
-	private Token createToken(OAuthGrantRequestAuthenticationResult result, String key) {
+	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {
 		String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
 		
 		Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
@@ -445,8 +473,6 @@ public class IdentityProviderService extends AbstractCacheService {
 		result.getAccessToken().getAccount().getGroups().forEach(g -> {
 			groups.add(g.getName());
         });
-		
-		String subject = Base64.getUrlEncoder().encodeToString(result.getAccessToken().getAccount().getHref().concat("-").concat(key).getBytes());
 		
 		String jwt = Jwts.builder()
         		.setId(id)

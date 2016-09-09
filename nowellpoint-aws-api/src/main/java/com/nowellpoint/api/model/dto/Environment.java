@@ -2,7 +2,7 @@ package com.nowellpoint.api.model.dto;
 
 import java.util.Date;
 
-public class EnvironmentDTO {
+public class Environment {
 	
 	private String key;
 	
@@ -40,7 +40,7 @@ public class EnvironmentDTO {
 	
 	private String testMessage;
 	
-	public EnvironmentDTO() {
+	public Environment() {
 
 	}
 	

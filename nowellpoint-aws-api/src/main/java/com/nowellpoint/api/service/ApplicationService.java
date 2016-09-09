@@ -17,7 +17,7 @@ import com.nowellpoint.api.model.document.Targets;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Application;
 import com.nowellpoint.api.model.dto.BatchJobDTO;
-import com.nowellpoint.api.model.dto.EnvironmentDTO;
+import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
@@ -180,7 +180,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void updateEnvironment(Id id, String key, EnvironmentDTO environment) {
+	public void updateEnvironment(Id id, String key, Environment environment) {
 		Application application = findApplication( id );
 		
 		environment.setKey(key);
@@ -199,11 +199,11 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public EnvironmentDTO updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
+	public Environment updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
 		Application application = findApplication( id );
 		
-		EnvironmentDTO environment = application.getEnvironments()
+		Environment environment = application.getEnvironments()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
@@ -239,10 +239,10 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public EnvironmentDTO getEnvironment(Id id, String key) {
+	public Environment getEnvironment(Id id, String key) {
 		Application resource = findApplication(id);
 		
-		EnvironmentDTO environment = resource.getEnvironments()
+		Environment environment = resource.getEnvironments()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst()
@@ -261,7 +261,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void addEnvironment(Id id, EnvironmentDTO environment) throws ServiceException {
+	public void addEnvironment(Id id, Environment environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
 		Application resource = findApplication(id);
@@ -295,9 +295,9 @@ public class ApplicationService extends ApplicationModelMapper {
 		updateApplication(id, resource);
 	}
 	
-	public void updateEnvironment(Application resource, EnvironmentDTO environment) {
+	public void updateEnvironment(Application resource, Environment environment) {
 		
-		EnvironmentDTO original = resource.getEnvironments()
+		Environment original = resource.getEnvironments()
 				.stream()
 				.filter(e -> environment.getKey().equals(e.getKey()))
 				.findFirst()
@@ -390,7 +390,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	public void removeEnvironment(Id id, String key) {
 		Application resource = findApplication(id);
 		
-		EnvironmentDTO environment = resource.getEnvironments()
+		Environment environment = resource.getEnvironments()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
