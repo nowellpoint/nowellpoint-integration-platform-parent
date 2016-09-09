@@ -74,14 +74,14 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void loggedInEvent(@Observes Token token) {		
 		UserContext.setUserContext(token.getAccessToken());
 		
-		String subject = UserContext.getPrincipal().getName();
+		String subject = UserContext.getSubject();
 		
-		Id accountProfileId = new Id( subject.split("-")[1] );
+		Id id = new Id( subject.split("-")[1] );
 		
-		AccountProfile accountProfile = findAccountProfile( accountProfileId );
+		AccountProfile accountProfile = findAccountProfile( id );
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
-		updateAccountProfile( accountProfileId, accountProfile);
+		updateAccountProfile( id, accountProfile);
 	}
 	
 	/**

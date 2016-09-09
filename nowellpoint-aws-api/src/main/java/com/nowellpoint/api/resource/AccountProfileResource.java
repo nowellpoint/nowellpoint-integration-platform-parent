@@ -1,6 +1,7 @@
 package com.nowellpoint.api.resource;
 
 import java.net.URI;
+import java.util.Base64;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -62,7 +63,7 @@ public class AccountProfileResource {
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfile() {
-		String subject = securityContext.getUserPrincipal().getName();
+		String subject = new String(Base64.getUrlDecoder().decode(securityContext.getUserPrincipal().getName()));
 		
 		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject.split("-")[1] ) );
 		

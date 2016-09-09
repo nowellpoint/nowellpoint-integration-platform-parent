@@ -21,6 +21,7 @@ public class UserContext {
 		Jws<Claims> claims = parseClaims(accessToken); 
 		
 		String subject = claims.getBody().getSubject();
+		
 		@SuppressWarnings("unchecked")
 		ArrayList<String> groups = (ArrayList<String>) claims.getBody().getOrDefault("groups", Collections.emptyList());
 		
@@ -38,6 +39,10 @@ public class UserContext {
 	
 	public static void clear() {
 		threadLocal.remove();
+	}
+	
+	public static String getSubject() {
+		return new String(Base64.getUrlDecoder().decode(getPrincipal().getName()));
 	}
 	
 	public static Jws<Claims> parseClaims(String accessToken) {

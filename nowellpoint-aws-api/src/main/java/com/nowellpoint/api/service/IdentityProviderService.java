@@ -446,13 +446,13 @@ public class IdentityProviderService extends AbstractCacheService {
 			groups.add(g.getName());
         });
 		
-		//System.out.println("base64" + Base64.getEncoder().encodeToString(result.getAccessToken().getAccount().getHref().concat("-").concat(key).getBytes()));
+		String subject = Base64.getUrlEncoder().encodeToString(result.getAccessToken().getAccount().getHref().concat("-").concat(key).getBytes());
 		
 		String jwt = Jwts.builder()
         		.setId(id)
         		.setHeaderParam("typ", "JWT")
         		.setIssuer("nowellpoint.com")
-        		.setSubject(result.getAccessToken().getAccount().getHref().concat("-").concat(key))
+        		.setSubject(subject)
         		.setIssuedAt(new Date(System.currentTimeMillis()))
         		.setExpiration(expiration)
         		.signWith(SignatureAlgorithm.HS256, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
