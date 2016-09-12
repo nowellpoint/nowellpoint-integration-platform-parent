@@ -2,6 +2,7 @@ package com.nowellpoint.client.model;
 
 import java.util.List;
 
+
 public class ScheduledJob extends Resource {
 	
 	private AccountProfile owner;

@@ -51,10 +51,10 @@
                                 <dd>${scheduledJob.description!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["connector.type"]}</dt>
-                                <dd>${scheduledJob.connectorType!}&emsp;</dd>
+                                <dd><a href="${connectorHref!}">${scheduledJob.connectorType!}</a>&emsp;</dd>
                                 <hr>
                                 <dt>${labels["scheduled.job.type"]}</dt>
-                                <dd>${scheduledJob.jobType!}&emsp;</dd>
+                                <dd>${(scheduledJob.jobType)!}&emsp;</dd>
                                 <hr>
                             </dl>
                         </div>
