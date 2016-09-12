@@ -44,6 +44,7 @@ import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
+import com.nowellpoint.www.app.view.ScheduledJobController;
 import com.nowellpoint.www.app.view.ServiceProviderController;
 import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
@@ -140,6 +141,7 @@ public class Application implements SparkApplication {
         ProjectController projectController = new ProjectController(cfg);
         ServiceProviderController serviceProviderController = new ServiceProviderController(cfg);
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
+        ScheduledJobController scheduledJobsController = new ScheduledJobController(cfg);
         
         // setup routes
         
@@ -242,6 +244,13 @@ public class Application implements SparkApplication {
         get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_VIEW, salesforceConnectorController.viewServiceInstance);
         post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, salesforceConnectorController.addServiceInstance);
         post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_UPDATE, salesforceConnectorController.updateServiceInstance);
+        
+        get(Path.Route.SCHEDULED_JOBS_LIST, scheduledJobsController.getScheduledJobs);
+        get(Path.Route.SCHEDULED_JOB_SELECT, scheduledJobsController.selectSalesforceConnector);
+        get(Path.Route.SCHEDULED_JOB_NEW, scheduledJobsController.newScheduledJob);
+        post(Path.Route.SCHEDULED_JOB_CREATE, scheduledJobsController.createScheduledJob);
+        get(Path.Route.SCHEDULED_JOB_VIEW, scheduledJobsController.viewScheduledJob);
+        get(Path.Route.SCHEDULED_JOB_EDIT, scheduledJobsController.editScheduledJob);
         
         //
         // exception handlers

@@ -37,7 +37,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 */
 	
 	public AccountProfile findAccountProfile(Id id) {
-		com.nowellpoint.api.model.document.AccountProfile document = findById(id.getValue());
+		com.nowellpoint.api.model.document.AccountProfile document = findById(id.toString());
 		return modelMapper.map(document, AccountProfile.class);
 	}	
 	

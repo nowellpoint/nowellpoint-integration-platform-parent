@@ -324,7 +324,7 @@ public class AccountProfileResource {
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
-		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("nowellpoint-profile-pictures", accountProfile.getId());
+		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("nowellpoint-profile-pictures", accountProfile.getId().toString());
 		
 		s3Client.deleteObject(deleteObjectRequest);
 		

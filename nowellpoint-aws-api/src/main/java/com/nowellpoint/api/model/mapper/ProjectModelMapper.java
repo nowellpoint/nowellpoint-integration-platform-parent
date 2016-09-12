@@ -32,7 +32,7 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 	}
 	
 	public Project findServiceProvider(Id id) {
-		com.nowellpoint.api.model.document.Project document = findById(id.getValue());
+		com.nowellpoint.api.model.document.Project document = findById(id.toString());
 		return modelMapper.map(document, Project.class);
 	}	
 	

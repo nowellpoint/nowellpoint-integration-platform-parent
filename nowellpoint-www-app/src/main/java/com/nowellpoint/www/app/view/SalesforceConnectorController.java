@@ -16,13 +16,13 @@ import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
 import com.nowellpoint.client.model.ServiceProvider;
-import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
-import com.nowellpoint.www.app.service.SalesforceConnectorService;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -34,8 +34,6 @@ import spark.Route;
 public class SalesforceConnectorController extends AbstractController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
-	
-	private static final SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
 	
 	public SalesforceConnectorController(Configuration cfg) {
 		super(SalesforceConnectorController.class, cfg);      
@@ -528,11 +526,9 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
-    	
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
+		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+				.getSalesforceConnectorResource()
+				.getSalesforceConnector(id);
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
@@ -555,11 +551,9 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String view = request.queryParams("view");
     	
-		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
-    	
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
+		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+				.getSalesforceConnectorResource()
+				.getSalesforceConnector(id);
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);

@@ -16,7 +16,7 @@ import com.nowellpoint.api.model.document.SimpleStorageService;
 import com.nowellpoint.api.model.document.Targets;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Application;
-import com.nowellpoint.api.model.dto.BatchJobDTO;
+import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
@@ -80,8 +80,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {
 		
 		if (application.getOwner() == null) {
-			AccountProfile owner = new AccountProfile();
-			owner.setSubject(getSubject());
+			AccountProfile owner = new AccountProfile(getSubject());
 			application.setOwner(owner);
 		}
 		
@@ -113,7 +112,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	public void updateApplication(Id id, Application application) {
 		Application original = findApplication( id );
 		
-		application.setId(id.getValue());
+		application.setId(id);
 		application.setCreatedById(original.getCreatedById());
 		application.setCreatedDate(original.getCreatedDate());
 		application.setSystemCreationDate(original.getSystemCreationDate());
@@ -169,7 +168,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		return super.findApplication(id);
 	}	
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -178,7 +177,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void updateEnvironment(Id id, String key, Environment environment) {
 		Application application = findApplication( id );
@@ -188,7 +187,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		updateEnvironment(application, environment);
 	} 
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -197,7 +196,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * @return updated EnvironmentDTO
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public Environment updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
@@ -343,7 +342,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		resource.addEnvironment(environment);
 		
-		updateApplication(new Id(resource.getId()), resource);
+		updateApplication(resource.getId(), resource);
 	}
 	
 	/**************************************************************************************************************************
@@ -522,7 +521,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * @return
 	 */
 	
-	public Set<BatchJobDTO> getBatchJobs(Id id) {
+	public Set<ScheduledJob> getBatchJobs(Id id) {
 		return null;
 	}
 }

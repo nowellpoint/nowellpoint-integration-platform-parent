@@ -126,8 +126,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		resource.setIdentity(identity);
 		
 		if (resource.getOwner() == null) {
-			AccountProfile owner = new AccountProfile();
-			owner.setSubject(getSubject());
+			AccountProfile owner = new AccountProfile(getSubject());
 			resource.setOwner(owner);
 		}
 		
@@ -239,13 +238,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 			} else {
 				UserProperty accessTokenProperty = new UserProperty()
-						.withSubject(resource.getId())
+						.withSubject(resource.getId().toString())
 						.withKey(ACCESS_TOKEN_PROPERTY);
 				
 				properties.add(accessTokenProperty);
 				
 				UserProperty refreshTokenProperty = new UserProperty()
-						.withSubject(resource.getId())
+						.withSubject(resource.getId().toString())
 						.withKey(REFRESH_TOKEN_PROPERTY);
 				
 				properties.add(refreshTokenProperty);
@@ -414,7 +413,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		resource.addEnvironment(environment);
 		
-		updateSalesforceConnector(new Id(resource.getId()), resource);
+		updateSalesforceConnector(resource.getId(), resource);
 	}
 	
 	/**************************************************************************************************************************

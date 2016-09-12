@@ -20,7 +20,7 @@ public class Project extends AbstractResource {
 	}
 	
 	public Project(String id) {
-		setId(id);
+		super(id);
 	}
 
 	public String getName() {

@@ -41,7 +41,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 */
 	
 	public ServiceProvider findServiceProvider(Id id) {
-		com.nowellpoint.api.model.document.ServiceProvider document = findById(id.getValue());
+		com.nowellpoint.api.model.document.ServiceProvider document = findById(id.toString());
 		ServiceProvider serviceProvider = modelMapper.map(document, ServiceProvider.class);
 		return serviceProvider;
 	}	

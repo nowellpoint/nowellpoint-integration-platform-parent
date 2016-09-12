@@ -27,7 +27,7 @@ public class SalesforceConnector extends AbstractResource {
 	}
 	
 	public SalesforceConnector(String id) {
-		setId(id);
+		super(id);
 	}
 
 	public AccountProfile getOwner() {

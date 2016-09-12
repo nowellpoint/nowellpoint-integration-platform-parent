@@ -23,8 +23,6 @@ import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
 import com.nowellpoint.client.model.ServiceProvider;
-import com.nowellpoint.www.app.service.GetSalesforceConnectorRequest;
-import com.nowellpoint.www.app.service.SalesforceConnectorService;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -37,10 +35,8 @@ public class ApplicationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ApplicationController.class);
 	
-	private static final SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
-	
-	public ApplicationController(Configuration cfg) {
-		super(ApplicationController.class, cfg);
+	public ApplicationController(Configuration configuration) {
+		super(ApplicationController.class, configuration);
 	}
 	
 	/**
@@ -89,11 +85,9 @@ public class ApplicationController extends AbstractController {
 		
 		String id = request.queryParams("id");
 		
-		GetSalesforceConnectorRequest getSalesforceConnectorRequest = new GetSalesforceConnectorRequest()
-				.withAccessToken(token.getAccessToken())
-				.withId(id);
-		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.getSalesforceConnector(getSalesforceConnectorRequest);
+		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+				.getSalesforceConnectorResource()
+				.getSalesforceConnector(id);
 		
 		Map<String, Object> model = getModel();
 		model.put("mode", "new");
@@ -168,7 +162,7 @@ public class ApplicationController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getSalesforceConnectors
+	 * getApplications
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
@@ -209,8 +203,6 @@ public class ApplicationController extends AbstractController {
 	public Route createApplication = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
-		
-		System.out.println(request.queryParams("importServices") != null ? "true" : "false");
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())

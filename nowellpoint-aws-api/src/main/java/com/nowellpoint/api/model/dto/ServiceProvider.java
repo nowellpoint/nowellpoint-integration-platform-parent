@@ -31,10 +31,6 @@ public class ServiceProvider extends AbstractResource {
 	public ServiceProvider() {
 		
 	}
-	
-	public ServiceProvider(String id) {
-		setId(id);
-	}
 
 	public String getType() {
 		return type;

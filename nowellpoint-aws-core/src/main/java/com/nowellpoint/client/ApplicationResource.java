@@ -7,14 +7,10 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.NowellpointServiceException;
 
-public class ApplicationResource {
-	
-	private static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
-	
-	private Token token;
+public class ApplicationResource extends AbstractResource {
 	
 	public ApplicationResource(Token token) {
-		this.token = token;
+		super(token);
 	}
 	
 	public Application getApplication(String id) {

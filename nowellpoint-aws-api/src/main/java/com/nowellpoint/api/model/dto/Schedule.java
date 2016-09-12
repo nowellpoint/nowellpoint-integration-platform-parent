@@ -1,12 +1,14 @@
-package com.nowellpoint.client.model;
+package com.nowellpoint.api.model.dto;
 
 import java.util.Date;
 
-public class BatchJob {
+public class Schedule {
 	
 	private String key;
 	
-	private String jobName;
+	private Date addedOn;
+	
+	private Date updatedOn;
 	
 	private String environmentName;
 	
@@ -18,11 +20,9 @@ public class BatchJob {
 	
 	private Integer second;
 	
-	private Date addedOn;
+	private String status;
 	
-	private Date updatedOn;
-	
-	public BatchJob() {
+	public Schedule() {
 		
 	}
 
@@ -34,12 +34,20 @@ public class BatchJob {
 		this.key = key;
 	}
 
-	public String getJobName() {
-		return jobName;
+	public Date getAddedOn() {
+		return addedOn;
 	}
 
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public String getEnvironmentName() {
@@ -82,19 +90,11 @@ public class BatchJob {
 		return second;
 	}
 
-	public Date getAddedOn() {
-		return addedOn;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setAddedOn(Date addedOn) {
-		this.addedOn = addedOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

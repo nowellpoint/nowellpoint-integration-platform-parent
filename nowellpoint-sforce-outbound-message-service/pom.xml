@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>aws-parent</artifactId>
-		<version>0.0.8-SNAPSHOT</version>
+		<version>0.0.9-SNAPSHOT</version>
 	</parent>
 
 	<dependencyManagement>
@@ -94,5 +94,5 @@
 			</build>
 		</profile>
 	</profiles>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.0.9-SNAPSHOT</version>
 </project>

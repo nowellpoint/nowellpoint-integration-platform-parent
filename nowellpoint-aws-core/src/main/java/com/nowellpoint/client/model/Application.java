@@ -15,14 +15,11 @@ public class Application extends Resource {
 	
 	private List<Environment> environments;
 	
-	private List<BatchJob> batchJobs; 
-	
 	private String status;
 	
 	public Application() {
 		setServiceInstances(Collections.emptyList());
 		setEnvironments(Collections.emptyList());
-		setBatchJobs(Collections.emptyList());
 	}
 	
 	public Application(String id) {
@@ -75,13 +72,5 @@ public class Application extends Resource {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-	
-	public List<BatchJob> getBatchJobs() {
-		return batchJobs;
-	}
-
-	public void setBatchJobs(List<BatchJob> batchJobs) {
-		this.batchJobs = batchJobs;
 	}
 }

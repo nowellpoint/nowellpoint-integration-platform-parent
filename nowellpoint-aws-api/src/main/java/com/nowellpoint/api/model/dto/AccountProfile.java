@@ -23,13 +23,6 @@ public class AccountProfile extends AbstractResource {
 	
 	@JsonIgnore
 	private String leadId;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonIgnore
-	private String subject;
 
 	/**
 	 * 
@@ -207,15 +200,7 @@ public class AccountProfile extends AbstractResource {
 	}
 	
 	public AccountProfile(String id) {
-		setId(id);
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
+		super(id);
 	}
 
 	public String getLeadId() {

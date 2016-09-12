@@ -21,16 +21,10 @@ public class Application extends AbstractResource {
 	
 	private Set<Environment> environments;
 	
-	private Set<BatchJobDTO> batchJobs;
-	
 	private String status;
 	
 	public Application() {
 		
-	}
-	
-	public Application(String id) {
-		setId(id);
 	}
 
 	public AccountProfile getOwner() {
@@ -93,20 +87,5 @@ public class Application extends AbstractResource {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Set<BatchJobDTO> getBatchJobs() {
-		return batchJobs;
-	}
-
-	public void setBatchJobs(Set<BatchJobDTO> batchJobs) {
-		this.batchJobs = batchJobs;
-	}
-	
-	public void addBatchJob(BatchJobDTO batchJob) {
-		if (batchJobs == null || batchJobs.isEmpty()) {
-			batchJobs = new HashSet<BatchJobDTO>();
-		}
-		batchJobs.add(batchJob);
 	}
 }

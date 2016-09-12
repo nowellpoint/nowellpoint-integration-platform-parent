@@ -13,7 +13,7 @@ public class ObjectIdSerializer extends JsonSerializer<ObjectId> {
 
 	@Override
 	public void serialize(ObjectId value, JsonGenerator generator, SerializerProvider provider) throws IOException, JsonProcessingException {
-		if(value == null) {
+		if (value == null) {
 			generator.writeNull();
 		} else {
         	generator.writeString(value.toString());

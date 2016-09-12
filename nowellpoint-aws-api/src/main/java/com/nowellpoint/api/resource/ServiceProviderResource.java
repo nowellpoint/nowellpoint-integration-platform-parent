@@ -89,7 +89,7 @@ public class ServiceProviderResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceProvider(@PathParam("id") String id, ServiceProvider serviceProvider) {
 
-		serviceProvider.setId(id);
+		serviceProvider.setId(new Id(id));
 		
 		serviceProviderService.updateServiceProvider(serviceProvider);
 		

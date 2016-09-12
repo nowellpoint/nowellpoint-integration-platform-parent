@@ -13,6 +13,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.User;
 import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 import com.nowellpoint.aws.data.mongodb.MongoDocument;
@@ -32,19 +33,19 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 	private void configureModelMapper() {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
-		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
+		modelMapper.addConverter(new AbstractConverter<Id, ObjectId>() {
 			
 			@Override
-			protected ObjectId convert(String source) {
-				return source == null ? null : new ObjectId(source);
+			protected ObjectId convert(Id source) {
+				return source == null ? null : new ObjectId(source.toString());
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {		
+		modelMapper.addConverter(new AbstractConverter<ObjectId, Id>() {		
 			
 			@Override
-			protected String convert(ObjectId source) {
-				return source == null ? null : source.toString();
+			protected Id convert(ObjectId source) {
+				return source == null ? null : new Id(source.toString());
 			}
 		});
 		
@@ -77,20 +78,8 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 				
 				User user = new User();
 				if (source != null) {					
-					user.setHref(source.getSubject());
-					if (source.getId() == null) {
-						
-						com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
-								.getCollection( collectionName )
-								.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
-								.find( eq ( "subject", source.getSubject() ) )
-								.first();
-						
-						id = document.getId();
-						
-					} else {
-						id = new ObjectId( source.getId() );
-					}
+					user.setHref(source.getHref());
+					id = new ObjectId( source.getId().toString() );
 
 					DBRef reference = new DBRef( collectionName, id );
 					user.setIdentity(reference);

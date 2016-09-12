@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>aws-parent</artifactId>
-		<version>0.0.8-SNAPSHOT</version>
+		<version>0.0.9-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -60,17 +60,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>swagger</artifactId>
-			<version>${version.wildfly.swarm}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>monitor</artifactId>
 			<version>${version.wildfly.swarm}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jaxrs</artifactId>
+			<version>1.5.10</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
 			</dependency> -->
@@ -145,10 +145,10 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.6.0</version>
-        </dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.6.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -43,4 +43,12 @@ public class NowellpointClient {
 	public ApplicationResource getApplicationResource() {
 		return new ApplicationResource(token);
 	}
+	
+	public ScheduledJobResource getScheduledJobResource() {
+		return new ScheduledJobResource(token);
+	}
+	
+	public SalesforceConnectorResource getSalesforceConnectorResource() {
+		return new SalesforceConnectorResource(token);
+	}
 }

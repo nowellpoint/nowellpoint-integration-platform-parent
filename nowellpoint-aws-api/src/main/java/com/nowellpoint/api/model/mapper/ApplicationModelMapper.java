@@ -32,7 +32,7 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 	}
 	
 	public Application findApplication(Id id) {
-		com.nowellpoint.api.model.document.Application document = findById(id.getValue());
+		com.nowellpoint.api.model.document.Application document = findById(id.toString());
 		return modelMapper.map(document, Application.class);
 	}	
 	

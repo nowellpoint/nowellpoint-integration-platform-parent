@@ -119,7 +119,7 @@ public class IdentityProviderService {
         
         AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(account.getHref());
         
-        Token token = createToken(result, accountProfile.getId());
+        Token token = createToken(result, accountProfile.getId().toString());
         
         return token;
 	}
@@ -341,7 +341,7 @@ public class IdentityProviderService {
 		
 		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(result.getAccessToken().getAccount().getHref());
 		
-		Token token = createToken(result, accountProfile.getId());
+		Token token = createToken(result, accountProfile.getId().toString());
         
         return token;
 	}

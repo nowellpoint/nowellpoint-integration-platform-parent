@@ -1,26 +1,23 @@
 package com.nowellpoint.api.model.document;
 
-import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.aws.data.mongodb.DateDeserializer;
 import com.nowellpoint.aws.data.mongodb.DateSerializer;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class BatchJob implements Serializable {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 4880299116047933778L;
+public class Schedule {
 	
 	private String key;
 	
-	private String jobName;
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	private Date addedOn;
+	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	private Date updatedOn;
 	
 	private String environmentName;
 	
@@ -32,15 +29,9 @@ public class BatchJob implements Serializable {
 	
 	private Integer second;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	private Date addedOn;
+	private String status;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	private Date updatedOn;
-	
-	public BatchJob() {
+	public Schedule() {
 		
 	}
 
@@ -52,12 +43,20 @@ public class BatchJob implements Serializable {
 		this.key = key;
 	}
 
-	public String getJobName() {
-		return jobName;
+	public Date getAddedOn() {
+		return addedOn;
 	}
 
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public String getEnvironmentName() {
@@ -100,19 +99,11 @@ public class BatchJob implements Serializable {
 		return second;
 	}
 
-	public Date getAddedOn() {
-		return addedOn;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setAddedOn(Date addedOn) {
-		this.addedOn = addedOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }
