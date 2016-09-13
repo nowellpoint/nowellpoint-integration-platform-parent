@@ -7,6 +7,7 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.Schedule;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.www.app.util.Path;
 
@@ -174,5 +175,83 @@ public class ScheduledJobController extends AbstractController {
 		}
 		
 		return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updateScheduledJob
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route updateScheduledJob = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String name = request.queryParams("name");
+		String description = request.queryParams("description");
+		
+		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+				.getScheduledJobResource()
+				.updateScheduledJob(id, name, description);
+		
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
+		
+		return "";
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * editSchedule
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route editSchedule = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		Schedule schedule = new NowellpointClient(new TokenCredentials(token))
+				.getScheduledJobResource()
+				.getSchedule(id, key);
+		
+		Map<String, Object> model = getModel();
+		model.put("id", id);
+		model.put("schedule", schedule);
+		model.put("mode", "edit");
+		
+		return render(request, model, Path.Template.SCHEDULE);
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * viewSchedule
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route viewSchedule = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		Schedule schedule = new NowellpointClient(new TokenCredentials(token))
+				.getScheduledJobResource()
+				.getSchedule(id, key);
+		
+		Map<String, Object> model = getModel();
+		model.put("schedule", schedule);
+		model.put("mode", "view");
+		
+		return render(request, model, Path.Template.SCHEDULE);
 	};
 }

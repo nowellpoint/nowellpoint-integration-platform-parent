@@ -10,12 +10,12 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
@@ -96,7 +96,7 @@ public class ScheduledJobResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createScheduledJob(
-			@FormParam("description") @NotEmpty String description,
+			@FormParam("description") String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("connectorType") @NotEmpty String connectorType,
 			//@FormParam("serviceCatalogItemId") @NotEmpty String serviceCatalogItemId,
@@ -128,24 +128,31 @@ public class ScheduledJobResource {
 	 * @return
 	 */
 	
-	@PUT
+	@POST
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateScheduledJob(@PathParam("id") String id,
 			@FormParam("name") @NotEmpty String name,
-			@FormParam("description") @NotEmpty String description) {
+			@FormParam("description") String description) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setName(name);
 		scheduledJob.setDescription(description);
 		
-		scheduledJobService.updateScheduledJob(scheduledJob);
+		scheduledJobService.updateScheduledJob(new Id(id), scheduledJob);
 		
 		return Response.ok()
 				.entity(scheduledJob)
 				.build();	
 	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param key
+	 * @return
+	 */
 	
 	@GET
 	@Path("{id}/schedules/{key}")
@@ -162,25 +169,23 @@ public class ScheduledJobResource {
 				.build(); 
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param key
+	 * @param status
+	 * @param hour
+	 * @param minute
+	 * @param second
+	 * @return
+	 */
+	
 	@POST
 	@Path("{id}/schedules/{key}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSchedule(@PathParam("id") String id, 
-			@PathParam("key") String key, 
-			@FormParam("status") @NotEmpty String status,
-			@FormParam("hour") @NotEmpty Integer hour,
-			@FormParam("minute") @NotEmpty Integer minute,
-			@FormParam("second") @NotEmpty Integer second) {
-		
-		Schedule schedule = new Schedule();
-		schedule.setKey(key);
-		schedule.setHour(hour);
-		schedule.setMinute(minute);
-		schedule.setSecond(second);
-		schedule.setStatus(status);
-		
-		scheduledJobService.updateSchedule(new Id(id), schedule);
+	public Response updateSchedule(@PathParam("id") String id, @PathParam("key") String key, MultivaluedMap<String, String> parameters) {
+		Schedule schedule = scheduledJobService.updateSchedule(new Id(id), key, parameters);
 		
 		return Response.ok()
 				.entity(schedule)

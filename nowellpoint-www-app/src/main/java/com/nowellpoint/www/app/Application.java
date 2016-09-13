@@ -251,6 +251,9 @@ public class Application implements SparkApplication {
         post(Path.Route.SCHEDULED_JOB_CREATE, scheduledJobsController.createScheduledJob);
         get(Path.Route.SCHEDULED_JOB_VIEW, scheduledJobsController.viewScheduledJob);
         get(Path.Route.SCHEDULED_JOB_EDIT, scheduledJobsController.editScheduledJob);
+        post(Path.Route.SCHEDULED_JOB_UPDATE, scheduledJobsController.updateScheduledJob);
+        get(Path.Route.SCHEDULED_JOB_SCHEDULE_EDIT, scheduledJobsController.editSchedule);
+        get(Path.Route.SCHEDULED_JOB_SCHEDULE_VIEW, scheduledJobsController.viewSchedule);
         
         //
         // exception handlers

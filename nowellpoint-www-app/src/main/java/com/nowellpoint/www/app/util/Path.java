@@ -74,6 +74,9 @@ public class Path {
 		public static final String SCHEDULED_JOB_VIEW = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id");
 		public static final String SCHEDULED_JOB_CREATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
 		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/edit");
+		public static final String SCHEDULED_JOB_UPDATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id");
+		public static final String SCHEDULED_JOB_SCHEDULE_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/schedules/:key/edit");
+		public static final String SCHEDULED_JOB_SCHEDULE_VIEW = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/schedules/:key/view");
 	}
 
 	public static class Template {
@@ -117,5 +120,6 @@ public class Path {
 		public static final String SCHEDULED_JOB_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-connector-select.html");
 		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
 		public static final String SCHEDULED_JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
+		public static final String SCHEDULE = String.format(APPLICATION_CONTEXT, "schedule.html");
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.MultivaluedMap;
 
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
@@ -48,7 +49,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setJobType("METADATA_BACKUP");
 			scheduledJob.setJobName("Metadata Backup");
 			
-			salesforceConnector.getEnvironments().stream().forEach(e -> {
+			salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).forEach(e -> {
 				Schedule schedule = new Schedule();
 				schedule.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 				schedule.setHour(00);
@@ -73,7 +74,15 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
-		scheduledJob.setSystemModifiedDate(original.getSystemModifiedDate());
+		scheduledJob.setConnectorId(original.getConnectorId());
+		scheduledJob.setConnectorType(original.getConnectorType());
+		scheduledJob.setJobType(original.getJobType());
+		scheduledJob.setJobName(original.getJobName());
+		scheduledJob.setSchedules(original.getSchedules());
+		
+		if (scheduledJob.getOwner() == null) {
+			scheduledJob.setOwner(original.getOwner());
+		}
 		
 		super.updateScheduledJob(scheduledJob);
 	}
@@ -101,6 +110,40 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		}
 	}
 	
+	public Schedule updateSchedule(Id id, String key, MultivaluedMap<String, String> parameters) {
+		Schedule schedule = new Schedule();
+		schedule.setKey(key);
+		
+		if (parameters.containsKey("hour")) {
+			schedule.setHour(Integer.valueOf(parameters.getFirst("hour")));
+		}
+		
+		if (parameters.containsKey("minute")) {
+			schedule.setMinute(Integer.valueOf(parameters.getFirst("minute")));
+		}
+		
+		if (parameters.containsKey("second")) {
+			schedule.setSecond(Integer.valueOf(parameters.getFirst("second")));
+		}
+
+		if (parameters.containsKey("status")) {
+			schedule.setStatus(parameters.getFirst("status"));
+		}
+		
+		updateSchedule(id, schedule);
+		
+		return schedule;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param schedule
+	 * 
+	 * 
+	 */
+	
 	public void updateSchedule(Id id, Schedule schedule) {
 		ScheduledJob scheduledJob = findScheduledJobById(id);
 		
@@ -116,5 +159,23 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		schedule.setUpdatedOn(Date.from(Instant.now()));
 		schedule.setEnvironmentKey(original.getEnvironmentKey());
 		schedule.setEnvironmentName(original.getEnvironmentName());		
+		
+		if (schedule.getHour() == null) {
+			schedule.setHour(original.getHour());
+		}
+		
+		if (schedule.getMinute() == null) {
+			schedule.setMinute(original.getMinute());
+		}
+		
+		if (schedule.getSecond() == null) {
+			schedule.setSecond(original.getSecond());
+		}
+		
+		if (schedule.getStatus() == null) {
+			schedule.setStatus(original.getStatus());
+		}
+		
+		scheduledJob.addSchedule(schedule);
 	}
 }
