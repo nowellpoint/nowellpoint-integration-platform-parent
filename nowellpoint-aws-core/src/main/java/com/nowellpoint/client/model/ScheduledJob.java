@@ -15,6 +15,8 @@ public class ScheduledJob extends Resource {
 	
 	private String description;
 	
+	private String jobTypeId;
+	
 	private String jobType;
 	
 	private String jobName;

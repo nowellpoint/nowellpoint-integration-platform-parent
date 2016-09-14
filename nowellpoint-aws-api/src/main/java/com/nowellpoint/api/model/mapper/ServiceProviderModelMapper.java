@@ -40,7 +40,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	public ServiceProvider findServiceProvider(Id id) {
+	protected ServiceProvider findServiceProvider(Id id) {
 		com.nowellpoint.api.model.document.ServiceProvider document = findById(id.toString());
 		ServiceProvider serviceProvider = modelMapper.map(document, ServiceProvider.class);
 		return serviceProvider;
@@ -54,7 +54,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	public void createServiceProvider(ServiceProvider serviceProvider) {
+	protected void createServiceProvider(ServiceProvider serviceProvider) {
 		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
 		create(getSubject(), document);
 		modelMapper.map(document, serviceProvider);
@@ -68,7 +68,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	public void updateServiceProvider(ServiceProvider serviceProvider) {
+	protected void updateServiceProvider(ServiceProvider serviceProvider) {
 		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, serviceProvider);
@@ -83,7 +83,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	public ServiceProvider findByServiceKey(String key) {
+	protected ServiceProvider findByServiceKey(String key) {
 		com.nowellpoint.api.model.document.ServiceProvider document = super.findOne( eq ( "services.key", key ) );
 		ServiceProvider serviceProvider = modelMapper.map( document, ServiceProvider.class );
 		return serviceProvider;
@@ -97,7 +97,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	public Set<ServiceProvider> getAllActive(String localeSidKey, String languageLocaleKey) {
+	protected Set<ServiceProvider> getAllActive(String localeSidKey, String languageLocaleKey) {
 		Set<com.nowellpoint.api.model.document.ServiceProvider> documents = super.find( and ( 
 							eq ( "isActive", Boolean.TRUE ), 
 							eq ( "localeSidKey", localeSidKey ), 
@@ -120,7 +120,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	public void deleteServiceProvider(ServiceProvider serviceProvider) {
+	protected void deleteServiceProvider(ServiceProvider serviceProvider) {
 		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
 		delete(getSubject(), document);
 	}

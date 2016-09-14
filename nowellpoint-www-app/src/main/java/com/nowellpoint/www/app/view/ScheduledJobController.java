@@ -6,9 +6,12 @@ import java.util.Map;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
+import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Schedule;
 import com.nowellpoint.client.model.ScheduledJob;
+import com.nowellpoint.client.model.ScheduledJobType;
+import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -43,28 +46,6 @@ public class ScheduledJobController extends AbstractController {
 		
 		return render(request, model, Path.Template.SCHEDULED_JOBS_LIST);
 	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * selectSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route selectSalesforceConnector = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
-				.getSalesforceConnectorResource()
-				.getSalesforceConnectors();
-		
-		Map<String, Object> model = getModel();
-    	model.put("salesforceConnectorsList", salesforceConnectors);
-		
-		return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
-	};
 
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -78,19 +59,59 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		String id = request.queryParams("id");
+		AccountProfile account = getAccount(request);
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
-				.getSalesforceConnectorResource()
-				.getSalesforceConnector(id);
+		String step = request.params(":step");
 		
 		Map<String, Object> model = getModel();
-		model.put("mode", "new");
-    	model.put("connectorId", salesforceConnector.getId());
-    	model.put("connectorType", "SALESFORCE");
-    	model.put("jobType", "Metadata Backup");
 		
-		return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+		if ("select-type".equals(step)) {
+			
+			List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(new TokenCredentials(token))
+					.getScheduledJobTypeResource()
+					.getScheduledJobTypesByLanguage(account.getLanguageSidKey());
+			
+	    	model.put("scheduledJobTypeList", scheduledJobTypes);
+	    	model.put("title", MessageProvider.getMessage(getDefaultLocale(request), "select.scheduled.job.type"));
+	    	model.put("step", step);
+			
+		} else if ("select-connector".equals(step)) {
+			
+			String jobTypeId = request.queryParams("job-type-id");
+			String connectorType = request.queryParams("connector-type");
+			
+			if ("SALESFORCE".equals(connectorType)) {
+				
+				List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+						.getSalesforceConnectorResource()
+						.getSalesforceConnectors();
+
+		    	model.put("salesforceConnectorsList", salesforceConnectors);
+			}
+			
+			model.put("jobTypeId", jobTypeId);
+	    	model.put("title", MessageProvider.getMessage(getDefaultLocale(request), "select.connector"));
+	    	model.put("step", step);
+	    	
+		} else if ("schedule".equals(step)) {
+			
+			String connectorId = request.queryParams("connector-id");
+			String jobTypeId = request.queryParams("job-type-id");
+			
+			SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+					.getSalesforceConnectorResource()
+					.getSalesforceConnector(connectorId);
+			
+			model.put("mode", "new");
+			model.put("jobTypeId", jobTypeId);
+	    	model.put("connectorId", salesforceConnector.getId());
+	    	model.put("connectorType", "SALESFORCE");
+	    	model.put("jobType", "Metadata Backup");
+			
+			return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+		}
+		
+		return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
 	};
 	
 	/**

@@ -21,72 +21,68 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.ServiceProvider;
-import com.nowellpoint.api.service.ServiceProviderService;
+import com.nowellpoint.api.model.dto.ScheduledJobType;
+import com.nowellpoint.api.service.ScheduledJobTypeService;
 
-@Path("/providers")
-public class ServiceProviderResource {
+@Path("scheduled-job-types")
+public class ScheduledJobTypeResource {
 	
 	@Context
 	private UriInfo uriInfo;
 	
-	@Inject
-	private ServiceProviderService serviceProviderService;
-	
 	@Context 
 	private SecurityContext securityContext;
 	
+	@Inject
+	private ScheduledJobTypeService scheduledJobTypeService;
+	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAllActive(
-    		@QueryParam("localeSidKey") String localeSidKey, 
-    		@QueryParam("languageLocaleKey") String languageLocaleKey) {
-		
-		Set<ServiceProvider> serviceProviders = serviceProviderService.getAllActive(localeSidKey, languageLocaleKey);
-		return Response.ok(serviceProviders).build();
+    public Response findByLanguage(@QueryParam("languageSidKey") String languageSidKey) {
+		Set<ScheduledJobType> scheduledJobTypes = scheduledJobTypeService.findByLanguage(languageSidKey);
+		return Response.ok(scheduledJobTypes).build();
     }
 	
 	@GET
-	@Path("/{id}")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getServiceProvider(@PathParam("id") String id) {		
-		ServiceProvider serviceProvider = serviceProviderService.getServiceProvider( new Id( id ) );		
-		
-		return Response.ok(serviceProvider)
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById( new Id( id ) );		
+		return Response.ok(scheduledJobType)
 				.build();
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public Response createServiceProvider(ServiceProvider serviceProvider) {
+	public Response createServiceProvider(ScheduledJobType scheduledJobType) {
 		
-		serviceProviderService.createServiceProvider(serviceProvider);
+		scheduledJobTypeService.createScheduledJobType(scheduledJobType);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(ServiceProviderResource.class)
+				.path(ScheduledJobTypeResource.class)
 				.path("/{id}")
-				.build(serviceProvider.getId());
+				.build(scheduledJobType.getId());
 		
 		return Response.created(uri)
-				.entity(serviceProvider)
+				.entity(scheduledJobType)
 				.build();
 	}
 	
 	@DELETE
-	@Path("/{id}")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteServiceProvider(@PathParam("id") String id) {
-		serviceProviderService.deleteServiceProvider(new Id( id ));		
+		scheduledJobTypeService.deleteScheduledJobType(new Id( id ));		
 		return Response.noContent().build();
 	}
 	
 	@PUT
-	@Path("/{id}")
+	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateServiceProvider(@PathParam("id") String id, ServiceProvider serviceProvider) {
-		serviceProviderService.updateServiceProvider(new Id(id), serviceProvider);
-		return Response.ok(serviceProvider).build();
+	public Response updateServiceProvider(@PathParam("id") String id, ScheduledJobType scheduledJobType) {
+		scheduledJobTypeService.updateScheduledJobType(new Id(id), scheduledJobType);
+		return Response.ok(scheduledJobType).build();
 	}
 }

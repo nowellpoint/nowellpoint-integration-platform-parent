@@ -36,7 +36,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public AccountProfile findAccountProfile(Id id) {
+	protected AccountProfile findAccountProfile(Id id) {
 		com.nowellpoint.api.model.document.AccountProfile document = findById(id.toString());
 		return modelMapper.map(document, AccountProfile.class);
 	}	
@@ -49,7 +49,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public void createAccountProfile(AccountProfile accountProfile) {
+	protected void createAccountProfile(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		create(getSubject(), document);
 		modelMapper.map(document, accountProfile);
@@ -63,7 +63,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public void updateAccountProfile(AccountProfile accountProfile) {
+	protected void updateAccountProfile(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, accountProfile);
@@ -77,7 +77,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public void deleteApplication(AccountProfile accountProfile) {
+	protected void deleteApplication(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		delete(getSubject(), document);
 	}
@@ -91,7 +91,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public AccountProfile findAccountProfileByHref(String href) {
+	protected AccountProfile findAccountProfileByHref(String href) {
 		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "href", href) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile;
@@ -106,7 +106,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	public AccountProfile findAccountProfileByUsername(String username) {
+	protected AccountProfile findAccountProfileByUsername(String username) {
 		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "username", username ) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile; 

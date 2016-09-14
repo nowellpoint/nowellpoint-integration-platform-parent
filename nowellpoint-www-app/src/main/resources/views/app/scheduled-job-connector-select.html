@@ -9,43 +9,77 @@
 
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
-                        <h3 class="dashhead-titles">${labels["create.scheduled.job"]}</h3>
-                        <div class="dashhead-toolbar">
-                            <div class="dashhead-toolbar-item">
-                                <ol class="breadcrumb">
-                                    <li><a href="${labels['base.path']}">${messages["scheduled.jobs"]}</a></li>
-                                    <li class="active">${labels["select.connector"]}</li>
-                                </ol>
-                            </div>
-                        </div>
+                        <h3 class="dashhead-titles">${title}</h3>
                     </div>
                 </div>
 
                 <div class="hr-divider"></div>
                 <br>
 
-                <div class="content table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <th>${labels["organization.name"]}</th>
-                            <th>${labels["organization.type"]}</th>
-                            <th>${labels["instance.name"]}</th>
-                            <th>${labels["identity.name"]}</th>
-                            <th></th>
-                        </thead>
-                        <tbody>
-                            <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
-                                <tr id="${salesforceConnector.id}">
-                                    <td>${salesforceConnector.organization.name}</td>
-                                    <td>${salesforceConnector.organization.organizationType}</td>
-                                    <td>${salesforceConnector.organization.instanceName}</td>
-                                    <td>${salesforceConnector.identity.displayName}</td>
-                                    <td><a href="${labels['base.path']}/new?id=${salesforceConnector.id}">${labels["select"]}</a></td>
-                                </tr>
-                            </#list>
-                        </tbody>
-                    </table>
-                </div>
+                <#if step=="select-type">
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th class="col-md-3">${labels["name"]}</th>
+                                <th class="col-md-6">${labels["description"]}</th>
+                                <th class="col-md-2">${labels["connector.type"]}</th>
+                                <th class="col-md-1"></th>
+                            </thead>
+                            <tbody>
+                                <#list scheduledJobTypeList?sort_by( "createdDate") as scheduledJobType>
+                                    <tr id="${scheduledJobType.id}">
+                                        <td>${scheduledJobType.name}</td>
+                                        <td class="p-r">${scheduledJobType.description}</td>
+                                        <td>${scheduledJobType.connectorType.name}</td>
+                                        <td><a href="${labels['base.path']}/new/select-connector?job-type-id=${scheduledJobType.id}&connector-type=${scheduledJobType.connectorType.code}">${labels["select"]}</a></td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="hr-divider"></div>
+                    <br>
+
+                    <div class="pull-right">
+                        <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                    </div>
+
+                </#if>
+
+                <#if step=="select-connector">
+                    <div class="content table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <th class="col-md-3">${labels["organization.name"]}</th>
+                                <th class="col-md-3">${labels["organization.type"]}</th>
+                                <th class="col-md-2">${labels["instance.name"]}</th>
+                                <th class="col-md-3">${labels["identity.name"]}</th>
+                                <th class="col-md-1"></th>
+                            </thead>
+                            <tbody>
+                                <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+                                    <tr id="${salesforceConnector.id}">
+                                        <td>${salesforceConnector.organization.name}</td>
+                                        <td>${salesforceConnector.organization.organizationType}</td>
+                                        <td>${salesforceConnector.organization.instanceName}</td>
+                                        <td>${salesforceConnector.identity.displayName}</td>
+                                        <td><a href="${labels['base.path']}/new/schedule?job-type-id=${jobTypeId}&connector-id=${salesforceConnector.id}">${labels["select"]}</a></td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="hr-divider"></div>
+                    <br>
+
+                    <div class="pull-right">
+                        <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                        <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["previous"]}</a>
+                    </div>
+                    
+                </#if>
             </div>
         </div>
     </@t.page>

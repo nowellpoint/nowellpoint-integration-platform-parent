@@ -31,30 +31,30 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 		super(com.nowellpoint.api.model.document.Project.class);
 	}
 	
-	public Project findServiceProvider(Id id) {
+	protected Project findServiceProvider(Id id) {
 		com.nowellpoint.api.model.document.Project document = findById(id.toString());
 		return modelMapper.map(document, Project.class);
 	}	
 	
-	public void createServiceProvider(Project project) {
+	protected void createServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
 		create(getSubject(), document);
 		modelMapper.map(document, project);
 	}
 	
-	public void updateServiceProvider(Project project) {
+	protected void updateServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, project);
 	}
 	
-	public Set<Project> findAllByOwner() {
+	protected Set<Project> findAllByOwner() {
 		Set<com.nowellpoint.api.model.document.Project> documents = findAllByOwner(getSubject());
 		Set<Project> resources = modelMapper.map(documents, new TypeToken<HashSet<Project>>() {}.getType());
 		return resources;
 	}
 	
-	public void deleteServiceProvider(Project project) {
+	protected void deleteServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
 		delete(getSubject(), document);
 	}

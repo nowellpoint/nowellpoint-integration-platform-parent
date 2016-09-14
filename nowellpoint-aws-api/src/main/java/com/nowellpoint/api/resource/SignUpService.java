@@ -209,10 +209,8 @@ public class SignUpService {
 			accountProfile.setAddress(address);
 			
 			if (accountProfile.getId() != null) {			
-				System.out.println("updating account profile");
-				accountProfileService.updateAccountProfile( accountProfile );
+				accountProfileService.updateAccountProfile( accountProfile.getId(), accountProfile );
 			} else {
-				System.out.println("creating account profile");
 				accountProfileService.createAccountProfile( accountProfile );
 			}
 			
@@ -305,7 +303,7 @@ public class SignUpService {
 			accountProfile.setLeadId(lead.getId());
 			accountProfile.setHref(account.getHref());
 			
-			accountProfileService.updateAccountProfile(accountProfile);
+			accountProfileService.updateAccountProfile(accountProfile.getId(), accountProfile);
 			
 		} catch (InterruptedException | ExecutionException e) {
 			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);

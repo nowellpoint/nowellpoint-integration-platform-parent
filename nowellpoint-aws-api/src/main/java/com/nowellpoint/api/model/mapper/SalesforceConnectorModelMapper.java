@@ -39,7 +39,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	public SalesforceConnector findSalesforceConnector(Id id) {
+	protected SalesforceConnector findSalesforceConnector(Id id) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = findById(id.toString());
 		return modelMapper.map(document, SalesforceConnector.class);
 	}
@@ -52,7 +52,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	public Set<SalesforceConnector> findAllByOwner() {
+	protected Set<SalesforceConnector> findAllByOwner() {
 		Set<com.nowellpoint.api.model.document.SalesforceConnector> documents = findAllByOwner(getSubject());
 		Set<SalesforceConnector> resources = modelMapper.map(documents, new TypeToken<HashSet<SalesforceConnector>>() {}.getType());
 		return resources;
@@ -66,7 +66,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	public void createSalesforceConnector(SalesforceConnector salesforceConnector) {
+	protected void createSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
 		create(getSubject(), document);
 		modelMapper.map(document, salesforceConnector);
@@ -80,7 +80,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	public void updateSalesforceConnector(SalesforceConnector salesforceConnector) {
+	protected void updateSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, salesforceConnector);
@@ -94,7 +94,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	public void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
+	protected void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
 		delete(getSubject(), document);
 	}

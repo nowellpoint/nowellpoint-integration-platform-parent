@@ -69,8 +69,7 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 		public static final String SCHEDULED_JOBS_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
-		public static final String SCHEDULED_JOB_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/select");
-		public static final String SCHEDULED_JOB_NEW = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new");
+		public static final String SCHEDULED_JOB_NEW = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/:step");
 		public static final String SCHEDULED_JOB_VIEW = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id");
 		public static final String SCHEDULED_JOB_CREATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
 		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/edit");

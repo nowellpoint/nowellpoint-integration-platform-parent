@@ -31,30 +31,30 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 		super(com.nowellpoint.api.model.document.Application.class);
 	}
 	
-	public Application findApplication(Id id) {
+	protected Application findApplication(Id id) {
 		com.nowellpoint.api.model.document.Application document = findById(id.toString());
 		return modelMapper.map(document, Application.class);
 	}	
 	
-	public void createApplication(Application application) {
+	protected void createApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
 		create(getSubject(), document);
 		modelMapper.map(document, application);
 	}
 	
-	public void updateApplication(Application application) {
+	protected void updateApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
 		replace(getSubject(), document);
 		modelMapper.map(document, application);
 	}
 	
-	public Set<Application> findAllByOwner() {
+	protected Set<Application> findAllByOwner() {
 		Set<com.nowellpoint.api.model.document.Application> documents = findAllByOwner(getSubject());
 		Set<Application> resources = modelMapper.map(documents, new TypeToken<HashSet<Application>>() {}.getType());
 		return resources;
 	}
 	
-	public void deleteApplication(Application application) {
+	protected void deleteApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
 		delete(getSubject(), document);
 	}

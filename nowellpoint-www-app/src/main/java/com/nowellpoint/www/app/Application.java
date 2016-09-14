@@ -246,7 +246,6 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_UPDATE, salesforceConnectorController.updateServiceInstance);
         
         get(Path.Route.SCHEDULED_JOBS_LIST, scheduledJobsController.getScheduledJobs);
-        get(Path.Route.SCHEDULED_JOB_SELECT, scheduledJobsController.selectSalesforceConnector);
         get(Path.Route.SCHEDULED_JOB_NEW, scheduledJobsController.newScheduledJob);
         post(Path.Route.SCHEDULED_JOB_CREATE, scheduledJobsController.createScheduledJob);
         get(Path.Route.SCHEDULED_JOB_VIEW, scheduledJobsController.viewScheduledJob);

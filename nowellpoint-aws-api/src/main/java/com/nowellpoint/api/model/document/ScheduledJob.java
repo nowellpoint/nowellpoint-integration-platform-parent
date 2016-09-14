@@ -1,6 +1,5 @@
 package com.nowellpoint.api.model.document;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,7 +9,7 @@ import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="scheduled.jobs", codec=ScheduledJobCodec.class)
-public class ScheduledJob extends MongoDocument implements Serializable {
+public class ScheduledJob extends MongoDocument {
 
 	/**
 	 * 
