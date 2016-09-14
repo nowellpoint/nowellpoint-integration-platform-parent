@@ -1,23 +1,6 @@
 package com.nowellpoint.api.model.document;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.aws.data.mongodb.DateDeserializer;
-import com.nowellpoint.aws.data.mongodb.DateSerializer;
-
 public class Schedule {
-	
-	private String key;
-	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	private Date addedOn;
-	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	private Date updatedOn;
 	
 	private String environmentName;
 	
@@ -33,30 +16,6 @@ public class Schedule {
 	
 	public Schedule() {
 		
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public Date getAddedOn() {
-		return addedOn;
-	}
-
-	public void setAddedOn(Date addedOn) {
-		this.addedOn = addedOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
 	}
 
 	public String getEnvironmentName() {

@@ -1,7 +1,6 @@
 package com.nowellpoint.api.model.dto;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.nowellpoint.client.model.Reference;
 
 public class ScheduledJob extends AbstractResource {
 
@@ -13,19 +12,13 @@ public class ScheduledJob extends AbstractResource {
 	
 	private AccountProfile owner;
 	
-	private String connectorId;
+	private Reference connector;
 	
-	private String connectorType;
-	
-	private String name;
+	private Reference scheduledJob;
 	
 	private String description;
-
-	private String jobType;
 	
-	private String jobName;
-	
-	private Set<Schedule> schedules;
+	private Schedule schedule;
 	
 	public ScheduledJob() {
 		
@@ -39,28 +32,20 @@ public class ScheduledJob extends AbstractResource {
 		this.owner = owner;
 	}
 
-	public String getConnectorId() {
-		return connectorId;
+	public Reference getConnector() {
+		return connector;
 	}
 
-	public void setConnectorId(String connectorId) {
-		this.connectorId = connectorId;
+	public void setConnector(Reference connector) {
+		this.connector = connector;
 	}
 
-	public String getConnectorType() {
-		return connectorType;
+	public Reference getScheduledJob() {
+		return scheduledJob;
 	}
 
-	public void setConnectorType(String connectorType) {
-		this.connectorType = connectorType;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setScheduledJob(Reference scheduledJob) {
+		this.scheduledJob = scheduledJob;
 	}
 
 	public String getDescription() {
@@ -71,34 +56,15 @@ public class ScheduledJob extends AbstractResource {
 		this.description = description;
 	}
 
-	public String getJobType() {
-		return jobType;
+	public Schedule getSchedule() {
+		return schedule;
 	}
 
-	public void setJobType(String jobType) {
-		this.jobType = jobType;
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 
-	public String getJobName() {
-		return jobName;
-	}
-
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
-	}
-
-	public Set<Schedule> getSchedules() {
-		return schedules;
-	}
-
-	public void setSchedules(Set<Schedule> schedules) {
-		this.schedules = schedules;
-	}
-	
-	public void addSchedule(Schedule schedule) {
-		if (schedules == null) {
-			schedules = new HashSet<Schedule>();
-		}
-		schedules.add(schedule);
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

@@ -1,27 +1,17 @@
 package com.nowellpoint.client.model;
 
-import java.util.List;
-
 
 public class ScheduledJob extends Resource {
 	
 	private AccountProfile owner;
 	
-	private String connectorId;
+	private Reference connector;
 	
-	private String connectorType;
-	
-	private String name;
+	private Reference scheduledJob;
 	
 	private String description;
 	
-	private String jobTypeId;
-	
-	private String jobType;
-	
-	private String jobName;
-	
-	private List<Schedule> schedules;
+	private Schedule schedule;
 	
 	public ScheduledJob() {
 		
@@ -35,28 +25,20 @@ public class ScheduledJob extends Resource {
 		this.owner = owner;
 	}
 
-	public String getConnectorId() {
-		return connectorId;
+	public Reference getConnector() {
+		return connector;
 	}
 
-	public void setConnectorId(String connectorId) {
-		this.connectorId = connectorId;
+	public void setConnector(Reference connector) {
+		this.connector = connector;
 	}
 
-	public String getConnectorType() {
-		return connectorType;
+	public Reference getScheduledJob() {
+		return scheduledJob;
 	}
 
-	public void setConnectorType(String connectorType) {
-		this.connectorType = connectorType;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setScheduledJob(Reference scheduledJob) {
+		this.scheduledJob = scheduledJob;
 	}
 
 	public String getDescription() {
@@ -67,27 +49,11 @@ public class ScheduledJob extends Resource {
 		this.description = description;
 	}
 
-	public String getJobType() {
-		return jobType;
+	public Schedule getSchedule() {
+		return schedule;
 	}
 
-	public void setJobType(String jobType) {
-		this.jobType = jobType;
-	}
-
-	public String getJobName() {
-		return jobName;
-	}
-
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
-	}
-
-	public List<Schedule> getSchedules() {
-		return schedules;
-	}
-
-	public void setSchedules(List<Schedule> schedules) {
-		this.schedules = schedules;
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 }

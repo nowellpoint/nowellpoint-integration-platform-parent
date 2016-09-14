@@ -160,7 +160,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", scheduledJob);
-		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnectorId()));
+		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnector().getId()));
 		model.put("successMessage", request.cookie("successMessage"));
 		
 		return render(request, model, Path.Template.SCHEDULED_JOB);

@@ -1,11 +1,10 @@
 package com.nowellpoint.api.model.document;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.ScheduledJobCodec;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.MongoDocument;
+import com.nowellpoint.client.model.Reference;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="scheduled.jobs", codec=ScheduledJobCodec.class)
@@ -19,19 +18,13 @@ public class ScheduledJob extends MongoDocument {
 	
 	private User owner;
 	
-	private String connectorId;
+	private Reference connector;
 	
-	private String connectorType;
-	
-	private String name;
+	private Reference scheduledJob;
 	
 	private String description;
 	
-	private String jobType;
-	
-	private String jobName;
-	
-	private Set<Schedule> schedules;
+	private Schedule schedule;
 	
 	public ScheduledJob() {
 		
@@ -45,28 +38,20 @@ public class ScheduledJob extends MongoDocument {
 		this.owner = owner;
 	}
 
-	public String getConnectorId() {
-		return connectorId;
+	public Reference getConnector() {
+		return connector;
 	}
 
-	public void setConnectorId(String connectorId) {
-		this.connectorId = connectorId;
+	public void setConnector(Reference connector) {
+		this.connector = connector;
 	}
 
-	public String getConnectorType() {
-		return connectorType;
+	public Reference getScheduledJob() {
+		return scheduledJob;
 	}
 
-	public void setConnectorType(String connectorType) {
-		this.connectorType = connectorType;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setScheduledJob(Reference scheduledJob) {
+		this.scheduledJob = scheduledJob;
 	}
 
 	public String getDescription() {
@@ -77,27 +62,11 @@ public class ScheduledJob extends MongoDocument {
 		this.description = description;
 	}
 
-	public String getJobType() {
-		return jobType;
+	public Schedule getSchedule() {
+		return schedule;
 	}
 
-	public void setJobType(String jobType) {
-		this.jobType = jobType;
-	}
-
-	public String getJobName() {
-		return jobName;
-	}
-
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
-	}
-
-	public Set<Schedule> getSchedules() {
-		return schedules;
-	}
-
-	public void setSchedules(Set<Schedule> schedules) {
-		this.schedules = schedules;
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 }

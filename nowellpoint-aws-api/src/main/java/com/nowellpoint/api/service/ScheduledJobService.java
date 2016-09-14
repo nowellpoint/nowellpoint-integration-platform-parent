@@ -1,25 +1,16 @@
 package com.nowellpoint.api.service;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
-import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.Schedule;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
-	
-	@Inject
-	private SalesforceConnectorService salesforceConnectorService;
 	
 	/**
 	 * 
@@ -43,27 +34,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setOwner(owner);
 		}
 		
-		if ("SALESFORCE".equals(scheduledJob.getConnectorType())) {
-			SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id( scheduledJob.getConnectorId() ) );
-			
-			scheduledJob.setJobType("METADATA_BACKUP");
-			scheduledJob.setJobName("Metadata Backup");
-			
-			salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).forEach(e -> {
-				Schedule schedule = new Schedule();
-				schedule.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
-				schedule.setHour(00);
-				schedule.setMinute(00);
-				schedule.setSecond(00);
-				schedule.setStatus("Not Started");
-				schedule.setAddedOn(Date.from(Instant.now()));
-				schedule.setEnvironmentKey(e.getKey());
-				schedule.setEnvironmentName(e.getEnvironmentName());
-				schedule.setUpdatedOn(Date.from(Instant.now()));
-				scheduledJob.addSchedule(schedule);
-			});
-		}
-		
 		super.createScheduledJob(scheduledJob);
 	}
 	
@@ -74,11 +44,14 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
-		scheduledJob.setConnectorId(original.getConnectorId());
-		scheduledJob.setConnectorType(original.getConnectorType());
-		scheduledJob.setJobType(original.getJobType());
-		scheduledJob.setJobName(original.getJobName());
-		scheduledJob.setSchedules(original.getSchedules());
+		
+		if (scheduledJob.getConnector() == null) {
+			scheduledJob.setConnector(original.getConnector());
+		}
+		
+		if (scheduledJob.getScheduledJob() == null) {
+			scheduledJob.setScheduledJob(original.getScheduledJob());
+		}
 		
 		if (scheduledJob.getOwner() == null) {
 			scheduledJob.setOwner(original.getOwner());
@@ -95,24 +68,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		return super.findScheduedJobById(id);
 	}
 	
-	public Schedule getSchedule(Id id, String key) {
-		ScheduledJob scheduledJob = findScheduledJobById(id);
-		
-		Optional<Schedule> schedule = scheduledJob.getSchedules()
-				.stream()
-				.filter(p -> p.getKey().equals(key))
-				.findFirst();
-		
-		if (schedule.isPresent()) {
-			return schedule.get();
-		} else {
-			return null;
-		}
-	}
-	
 	public Schedule updateSchedule(Id id, String key, MultivaluedMap<String, String> parameters) {
 		Schedule schedule = new Schedule();
-		schedule.setKey(key);
 		
 		if (parameters.containsKey("hour")) {
 			schedule.setHour(Integer.valueOf(parameters.getFirst("hour")));
@@ -146,36 +103,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public void updateSchedule(Id id, Schedule schedule) {
 		ScheduledJob scheduledJob = findScheduledJobById(id);
-		
-		Schedule original = getSchedule(id, schedule.getKey());
-		
-		if (original == null) {
-			return;
-		}
-		
-		scheduledJob.getSchedules().removeIf(s -> schedule.getKey().equals(s.getKey()));
-		
-		schedule.setAddedOn(original.getAddedOn());
-		schedule.setUpdatedOn(Date.from(Instant.now()));
-		schedule.setEnvironmentKey(original.getEnvironmentKey());
-		schedule.setEnvironmentName(original.getEnvironmentName());		
-		
-		if (schedule.getHour() == null) {
-			schedule.setHour(original.getHour());
-		}
-		
-		if (schedule.getMinute() == null) {
-			schedule.setMinute(original.getMinute());
-		}
-		
-		if (schedule.getSecond() == null) {
-			schedule.setSecond(original.getSecond());
-		}
-		
-		if (schedule.getStatus() == null) {
-			schedule.setStatus(original.getStatus());
-		}
-		
-		scheduledJob.addSchedule(schedule);
+		super.updateScheduledJob(scheduledJob);
 	}
 }

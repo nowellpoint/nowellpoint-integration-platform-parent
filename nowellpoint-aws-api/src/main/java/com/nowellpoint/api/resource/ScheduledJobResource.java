@@ -98,14 +98,11 @@ public class ScheduledJobResource {
 	public Response createScheduledJob(
 			@FormParam("description") String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
-			@FormParam("connectorType") @NotEmpty String connectorType,
-			//@FormParam("serviceCatalogItemId") @NotEmpty String serviceCatalogItemId,
-			@FormParam("name") @NotEmpty String name) {
+			@FormParam("connectorType") @NotEmpty String connectorType) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
-		scheduledJob.setConnectorType(connectorType);
-		scheduledJob.setConnectorId(connectorId);
-		scheduledJob.setName(name);
+		scheduledJob.getConnector().setCode(connectorType);
+		scheduledJob.getConnector().setId(connectorId);
 		scheduledJob.setDescription(description);
 		
 		scheduledJobService.createScheduledJob(scheduledJob);
@@ -137,7 +134,6 @@ public class ScheduledJobResource {
 			@FormParam("description") String description) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
-		scheduledJob.setName(name);
 		scheduledJob.setDescription(description);
 		
 		scheduledJobService.updateScheduledJob(new Id(id), scheduledJob);
@@ -145,50 +141,5 @@ public class ScheduledJobResource {
 		return Response.ok()
 				.entity(scheduledJob)
 				.build();	
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 */
-	
-	@GET
-	@Path("{id}/schedules/{key}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSchedule(@PathParam("id") String id, @PathParam("key") String key) {
-		Schedule schedule = scheduledJobService.getSchedule(new Id(id), key);
-		
-		if (schedule == null) {
-			throw new NotFoundException(String.format("Schedule for key %s was not found", key));
-		}
-		
-		return Response.ok()
-				.entity(schedule)
-				.build(); 
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param status
-	 * @param hour
-	 * @param minute
-	 * @param second
-	 * @return
-	 */
-	
-	@POST
-	@Path("{id}/schedules/{key}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSchedule(@PathParam("id") String id, @PathParam("key") String key, MultivaluedMap<String, String> parameters) {
-		Schedule schedule = scheduledJobService.updateSchedule(new Id(id), key, parameters);
-		
-		return Response.ok()
-				.entity(schedule)
-				.build();
 	}
 }

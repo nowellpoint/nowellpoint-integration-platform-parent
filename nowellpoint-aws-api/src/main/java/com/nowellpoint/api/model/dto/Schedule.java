@@ -1,14 +1,6 @@
 package com.nowellpoint.api.model.dto;
 
-import java.util.Date;
-
 public class Schedule {
-	
-	private String key;
-	
-	private Date addedOn;
-	
-	private Date updatedOn;
 	
 	private String environmentName;
 	
@@ -24,30 +16,6 @@ public class Schedule {
 	
 	public Schedule() {
 		
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public Date getAddedOn() {
-		return addedOn;
-	}
-
-	public void setAddedOn(Date addedOn) {
-		this.addedOn = addedOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
 	}
 
 	public String getEnvironmentName() {
