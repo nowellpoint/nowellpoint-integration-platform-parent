@@ -1,7 +1,5 @@
 package com.nowellpoint.api.model.dto;
 
-import com.nowellpoint.client.model.Reference;
-
 public class ScheduledJob extends AbstractResource {
 
 	/**

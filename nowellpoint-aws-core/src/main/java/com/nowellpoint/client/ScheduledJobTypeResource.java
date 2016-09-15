@@ -16,6 +16,24 @@ public class ScheduledJobTypeResource extends AbstractResource {
 	public ScheduledJobTypeResource(Token token) {
 		super(token);
 	}
+	
+	public ScheduledJobType getById(String id) {
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.execute();
+		
+		ScheduledJobType scheduledJobType = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			scheduledJobType = httpResponse.getEntity(ScheduledJobType.class);
+		} else {
+			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+		}
+		
+		return scheduledJobType;
+	}
 
 	public List<ScheduledJobType> getScheduledJobTypesByLanguage(String language) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)

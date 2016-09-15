@@ -121,6 +121,18 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
+	@Path("salesforce/{id}/environments")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getEnvironments(@PathParam(value="id") String id) {	
+		
+		Set<Environment> environments = salesforceConnectorService.getEnvironments(new Id ( id ));
+		
+		return Response.ok()
+				.entity(environments)
+				.build(); 
+	}
+	
+	@GET
 	@Path("salesforce/{id}/environment/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		

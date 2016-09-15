@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.ScheduledJobCodec;
 import com.nowellpoint.aws.data.annotation.Document;
 import com.nowellpoint.aws.data.mongodb.MongoDocument;
-import com.nowellpoint.client.model.Reference;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="scheduled.jobs", codec=ScheduledJobCodec.class)

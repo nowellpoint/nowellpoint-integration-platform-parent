@@ -268,7 +268,21 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return super.findSalesforceConnector(id);
 	}
 	
-	/**************************************************************************************************************************
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public Set<Environment> getEnvironments(Id id) {
+		SalesforceConnector salesforceConnector = findSalesforceConnector(id);
+		return salesforceConnector.getEnvironments();
+	}
+	
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -276,7 +290,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public Environment getEnvironment(Id id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);

@@ -1,13 +1,20 @@
 package com.nowellpoint.client.model;
 
-
 public class ScheduledJob extends Resource {
 	
 	private AccountProfile owner;
 	
-	private Reference connector;
+	private String environmentKey;
 	
-	private Reference scheduledJob;
+	private String environmentName;
+	
+	private String connectorId;
+	
+	private String jobTypeId;
+	
+	private String jobTypeCode;
+	
+	private String jobTypeName;
 	
 	private String description;
 	
@@ -25,20 +32,52 @@ public class ScheduledJob extends Resource {
 		this.owner = owner;
 	}
 
-	public Reference getConnector() {
-		return connector;
+	public String getEnvironmentKey() {
+		return environmentKey;
 	}
 
-	public void setConnector(Reference connector) {
-		this.connector = connector;
+	public void setEnvironmentKey(String environmentKey) {
+		this.environmentKey = environmentKey;
 	}
 
-	public Reference getScheduledJob() {
-		return scheduledJob;
+	public String getEnvironmentName() {
+		return environmentName;
 	}
 
-	public void setScheduledJob(Reference scheduledJob) {
-		this.scheduledJob = scheduledJob;
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
+	}
+
+	public String getConnectorId() {
+		return connectorId;
+	}
+
+	public void setConnectorId(String connectorId) {
+		this.connectorId = connectorId;
+	}
+
+	public String getJobTypeId() {
+		return jobTypeId;
+	}
+
+	public void setJobTypeId(String jobTypeId) {
+		this.jobTypeId = jobTypeId;
+	}
+
+	public String getJobTypeCode() {
+		return jobTypeCode;
+	}
+
+	public void setJobTypeCode(String jobTypeCode) {
+		this.jobTypeCode = jobTypeCode;
+	}
+
+	public String getJobTypeName() {
+		return jobTypeName;
+	}
+
+	public void setJobTypeName(String jobTypeName) {
+		this.jobTypeName = jobTypeName;
 	}
 
 	public String getDescription() {

@@ -15,7 +15,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
@@ -24,7 +23,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.Schedule;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
 
