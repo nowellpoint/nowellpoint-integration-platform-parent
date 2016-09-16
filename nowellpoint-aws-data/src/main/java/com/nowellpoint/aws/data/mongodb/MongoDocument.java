@@ -3,6 +3,7 @@ package com.nowellpoint.aws.data.mongodb;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class MongoDocument implements Serializable {
+public abstract class MongoDocument  implements Serializable {
 	
 	/**
 	 * 

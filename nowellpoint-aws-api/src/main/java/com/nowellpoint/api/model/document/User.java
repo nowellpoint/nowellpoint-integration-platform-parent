@@ -16,22 +16,12 @@ public class User implements Serializable {
 	
 	private static final long serialVersionUID = 5065948775547812678L;
 	
-	private String href;
-	
 	@JsonSerialize(using=DBRefSerializer.class)
 	@JsonDeserialize(using=DBRefDeserializer.class)
 	private DBRef identity;
 	
 	public User() {
 		
-	}
-
-	public String getHref() {
-		return href;
-	}
-
-	public void setHref(String href) {
-		this.href = href;
 	}
 
 	public DBRef getIdentity() {

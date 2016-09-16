@@ -73,14 +73,11 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 		modelMapper.addConverter(new AbstractConverter<AccountProfile,User>() {
 
 			@Override
-			protected User convert(AccountProfile source) {
-				String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
-				ObjectId id = null;
-				
+			protected User convert(AccountProfile source) {				
 				User user = new User();
-				if (source != null) {					
-					user.setHref(source.getHref());
-					id = new ObjectId( source.getId().toString() );
+				if (source != null) {		
+					String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+					ObjectId id = new ObjectId( source.getId().toString() );
 
 					DBRef reference = new DBRef( collectionName, id );
 					user.setIdentity(reference);
@@ -101,7 +98,9 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 	 */
 	
 	protected Set<T> findAllByOwner(String owner) {		
-		Set<T> documents = this.find(eq ( "owner.identity", new DBRef( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), new ObjectId( owner ))));
+		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		ObjectId id = new ObjectId( owner );
+		Set<T> documents = find( eq ( "owner.identity", new DBRef( collectionName, id )));
 		return documents;
 	}
 	

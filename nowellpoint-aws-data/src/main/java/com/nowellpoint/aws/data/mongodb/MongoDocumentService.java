@@ -1,19 +1,17 @@
 package com.nowellpoint.aws.data.mongodb;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBRef;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.nowellpoint.aws.data.AbstractCacheService;
 
@@ -47,11 +45,14 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 */
 	
 	protected Set<T> find(Bson query) {
-		Set<T> documents = null;
+		System.out.println("scanning..." + toString(query));
+		Set<T> documents = hscan(documentClass, encode(toString(query)));
 		
-		if (documents == null) {
+		if (documents.isEmpty()) {
+			System.out.println("cache miss");
 			try {
 				documents = MongoDatastore.find(documentClass, query);
+				hset(encode(toString(query)), documents);
 			} catch (IllegalArgumentException e) {
 				LOGGER.error( "Find exception : ", e.getCause() );
 			}
@@ -202,5 +203,18 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	
 	private static String encode(String src) {
 		return Base64.getEncoder().encodeToString(src.getBytes());
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param bson
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	private String toString(Bson bson) {
+		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
 	}
 }
