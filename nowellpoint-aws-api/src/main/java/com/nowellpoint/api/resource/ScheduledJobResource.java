@@ -1,9 +1,13 @@
 package com.nowellpoint.api.resource;
 
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -95,13 +99,28 @@ public class ScheduledJobResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createScheduledJob(
 			@FormParam("description") String description,
-			@FormParam("connectorId") @NotEmpty String connectorId,
-			@FormParam("connectorType") @NotEmpty String connectorType) {
+			@FormParam("connectorId") String connectorId,
+			@FormParam("environmentKey") String environmentKey,
+			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
+			@FormParam("scheduleDate") String scheduleDate,
+			@FormParam("scheduleTime") String scheduleTime,
+			@FormParam("status") String status) {
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
-		scheduledJob.getConnector().setCode(connectorType);
-		scheduledJob.getConnector().setId(connectorId);
+		scheduledJob.setConnectorId(connectorId);
+		scheduledJob.setEnvironmentKey(environmentKey);
+		scheduledJob.setJobTypeId(jobTypeId);
 		scheduledJob.setDescription(description);
+		scheduledJob.setStatus(status);
+		try {
+			scheduledJob.setScheduleDate(scheduleDate != null ? dateFormat.parse(scheduleDate) : null);
+			scheduledJob.setScheduleTime(scheduleTime != null ? timeFormat.parse(scheduleTime) : null);
+		} catch (ParseException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		scheduledJobService.createScheduledJob(scheduledJob);
 		
@@ -128,11 +147,28 @@ public class ScheduledJobResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateScheduledJob(@PathParam("id") String id,
-			@FormParam("name") @NotEmpty String name,
-			@FormParam("description") String description) {
+			@FormParam("description") String description,
+			@FormParam("connectorId") String connectorId,
+			@FormParam("environmentKey") String environmentKey,
+			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
+			@FormParam("scheduleDate") String scheduleDate,
+			@FormParam("scheduleTime") String scheduleTime) {
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setDescription(description);
+		scheduledJob.setConnectorId(connectorId);
+		scheduledJob.setEnvironmentKey(environmentKey);
+		scheduledJob.setJobTypeId(jobTypeId);
+		scheduledJob.setDescription(description);
+		try {
+			scheduledJob.setScheduleDate(scheduleDate != null ? dateFormat.parse(scheduleDate) : null);
+			scheduledJob.setScheduleTime(scheduleTime != null ? timeFormat.parse(scheduleTime) : null);
+		} catch (ParseException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		
 		scheduledJobService.updateScheduledJob(new Id(id), scheduledJob);
 		

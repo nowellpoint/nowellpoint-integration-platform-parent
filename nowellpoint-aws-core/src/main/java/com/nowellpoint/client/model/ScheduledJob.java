@@ -1,5 +1,7 @@
 package com.nowellpoint.client.model;
 
+import java.util.Date;
+
 public class ScheduledJob extends Resource {
 	
 	private AccountProfile owner;
@@ -18,7 +20,9 @@ public class ScheduledJob extends Resource {
 	
 	private String description;
 	
-	private Schedule schedule;
+	private Date scheduleDate;
+	
+	private Date scheduleTime;
 	
 	public ScheduledJob() {
 		
@@ -88,11 +92,19 @@ public class ScheduledJob extends Resource {
 		this.description = description;
 	}
 
-	public Schedule getSchedule() {
-		return schedule;
+	public Date getScheduleDate() {
+		return scheduleDate;
 	}
 
-	public void setSchedule(Schedule schedule) {
-		this.schedule = schedule;
+	public void setScheduleDate(Date scheduleDate) {
+		this.scheduleDate = scheduleDate;
+	}
+
+	public Date getScheduleTime() {
+		return scheduleTime;
+	}
+
+	public void setScheduleTime(Date scheduleTime) {
+		this.scheduleTime = scheduleTime;
 	}
 }

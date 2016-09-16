@@ -4,6 +4,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DBRef;
 import com.mongodb.MongoException;
 import com.nowellpoint.aws.data.AbstractCacheService;
 
@@ -103,26 +105,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		}
 
 		return document;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param owner
-	 * @return Collection of documents for owner
-	 * 
-	 * 
-	 */
-	
-	protected Set<T> findAllByOwner(String owner) {		
-		Set<T> documents = hscan(documentClass, encode(owner));
-		
-		if (documents == null || documents.isEmpty()) {
-			documents = MongoDatastore.find(documentClass, eq ( "owner.href", owner ));
-			hset( encode(owner), documents );
-		}
-		
-		return documents; 
 	}
 	
 	/**

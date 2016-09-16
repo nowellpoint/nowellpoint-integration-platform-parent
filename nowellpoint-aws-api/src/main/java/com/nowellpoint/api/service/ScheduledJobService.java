@@ -2,15 +2,18 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import javax.ws.rs.core.MultivaluedMap;
+import javax.inject.Inject;
 
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.Schedule;
 import com.nowellpoint.api.model.dto.ScheduledJob;
+import com.nowellpoint.api.model.dto.ScheduledJobType;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
+	
+	@Inject
+	private ScheduledJobTypeService scheduledJobTypeService;
 	
 	/**
 	 * 
@@ -34,6 +37,15 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setOwner(owner);
 		}
 		
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(new Id(scheduledJob.getJobTypeId()));
+		
+		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
+		scheduledJob.setJobTypeName(scheduledJobType.getName());
+		
+		if (scheduledJob.getStatus() == null) {
+			scheduledJob.setStatus("NotStarted");
+		}
+		
 		super.createScheduledJob(scheduledJob);
 	}
 	
@@ -44,14 +56,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
-		
-		if (scheduledJob.getConnector() == null) {
-			scheduledJob.setConnector(original.getConnector());
-		}
-		
-		if (scheduledJob.getScheduledJob() == null) {
-			scheduledJob.setScheduledJob(original.getScheduledJob());
-		}
 		
 		if (scheduledJob.getOwner() == null) {
 			scheduledJob.setOwner(original.getOwner());
@@ -66,43 +70,5 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public ScheduledJob findScheduledJobById(Id id) {
 		return super.findScheduedJobById(id);
-	}
-	
-	public Schedule updateSchedule(Id id, String key, MultivaluedMap<String, String> parameters) {
-		Schedule schedule = new Schedule();
-		
-		if (parameters.containsKey("hour")) {
-			schedule.setHour(Integer.valueOf(parameters.getFirst("hour")));
-		}
-		
-		if (parameters.containsKey("minute")) {
-			schedule.setMinute(Integer.valueOf(parameters.getFirst("minute")));
-		}
-		
-		if (parameters.containsKey("second")) {
-			schedule.setSecond(Integer.valueOf(parameters.getFirst("second")));
-		}
-
-		if (parameters.containsKey("status")) {
-			schedule.setStatus(parameters.getFirst("status"));
-		}
-		
-		updateSchedule(id, schedule);
-		
-		return schedule;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param schedule
-	 * 
-	 * 
-	 */
-	
-	public void updateSchedule(Id id, Schedule schedule) {
-		ScheduledJob scheduledJob = findScheduledJobById(id);
-		super.updateScheduledJob(scheduledJob);
 	}
 }

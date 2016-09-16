@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.document;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.ScheduledJobCodec;
 import com.nowellpoint.aws.data.annotation.Document;
@@ -17,13 +19,23 @@ public class ScheduledJob extends MongoDocument {
 	
 	private User owner;
 	
-	private Reference connector;
+	private String environmentKey;
 	
-	private Reference scheduledJob;
+	private String environmentName;
+	
+	private String connectorId;
+	
+	private String jobTypeId;
+	
+	private String jobTypeCode;
+	
+	private String jobTypeName;
 	
 	private String description;
 	
-	private Schedule schedule;
+	private Date scheduleDate;
+	
+	private Date scheduleTime;
 	
 	public ScheduledJob() {
 		
@@ -37,20 +49,52 @@ public class ScheduledJob extends MongoDocument {
 		this.owner = owner;
 	}
 
-	public Reference getConnector() {
-		return connector;
+	public String getEnvironmentKey() {
+		return environmentKey;
 	}
 
-	public void setConnector(Reference connector) {
-		this.connector = connector;
+	public void setEnvironmentKey(String environmentKey) {
+		this.environmentKey = environmentKey;
 	}
 
-	public Reference getScheduledJob() {
-		return scheduledJob;
+	public String getEnvironmentName() {
+		return environmentName;
 	}
 
-	public void setScheduledJob(Reference scheduledJob) {
-		this.scheduledJob = scheduledJob;
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
+	}
+
+	public String getConnectorId() {
+		return connectorId;
+	}
+
+	public void setConnectorId(String connectorId) {
+		this.connectorId = connectorId;
+	}
+
+	public String getJobTypeId() {
+		return jobTypeId;
+	}
+
+	public void setJobTypeId(String jobTypeId) {
+		this.jobTypeId = jobTypeId;
+	}
+
+	public String getJobTypeCode() {
+		return jobTypeCode;
+	}
+
+	public void setJobTypeCode(String jobTypeCode) {
+		this.jobTypeCode = jobTypeCode;
+	}
+
+	public String getJobTypeName() {
+		return jobTypeName;
+	}
+
+	public void setJobTypeName(String jobTypeName) {
+		this.jobTypeName = jobTypeName;
 	}
 
 	public String getDescription() {
@@ -61,11 +105,19 @@ public class ScheduledJob extends MongoDocument {
 		this.description = description;
 	}
 
-	public Schedule getSchedule() {
-		return schedule;
+	public Date getScheduleDate() {
+		return scheduleDate;
 	}
 
-	public void setSchedule(Schedule schedule) {
-		this.schedule = schedule;
+	public void setScheduleDate(Date scheduleDate) {
+		this.scheduleDate = scheduleDate;
+	}
+
+	public Date getScheduleTime() {
+		return scheduleTime;
+	}
+
+	public void setScheduleTime(Date scheduleTime) {
+		this.scheduleTime = scheduleTime;
 	}
 }

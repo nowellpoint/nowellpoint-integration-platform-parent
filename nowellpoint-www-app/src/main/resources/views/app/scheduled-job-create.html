@@ -27,7 +27,7 @@
                             </thead>
                             <tbody>
                                 <#list scheduledJobTypeList?sort_by( "createdDate") as scheduledJobType>
-                                    <tr id="${scheduledJobType.id}">
+                                    <tr>
                                         <td>${scheduledJobType.name}</td>
                                         <td class="p-r">${scheduledJobType.description}</td>
                                         <td>${scheduledJobType.connectorType.name}</td>
@@ -58,12 +58,12 @@
                             </thead>
                             <tbody>
                                 <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
-                                    <tr id="${salesforceConnector.id}">
+                                    <tr>
                                         <td>${salesforceConnector.organization.name}</td>
                                         <td>${salesforceConnector.organization.organizationType}</td>
                                         <td>${salesforceConnector.organization.instanceName}</td>
                                         <td>${salesforceConnector.identity.displayName}</td>
-                                        <td><a href="${labels['base.path']}/new/select-environment?connector-id=${salesforceConnector.id}">${labels["select"]}</a></td>
+                                        <td><a href="${labels['base.path']}/new/select-environment?id=${scheduledJob.id}&connector-id=${salesforceConnector.id}">${labels["select"]}</a></td>
                                     </tr>
                                 </#list>
                             </tbody>
@@ -91,11 +91,11 @@
                             </thead>
                             <tbody>
                                 <#list environments?sort_by( "addedOn") as environment>
-                                    <tr id="${environment.key}">
+                                    <tr>
                                         <td>${(environment.environmentName)!}</td>
                                         <td>${(environment.serviceEndpoint)!}</td>
                                         <td>${(environment.apiVersion)!}</td>
-                                        <td><a href="${labels['base.path']}/new/schedule?connector-id=${scheduledJob.connectorId}&environment-key=${environment.key}">${labels["select"]}</a></td>
+                                        <td><a href="${labels['base.path']}/new/schedule?d=${scheduledJob.id}&connector-id=${scheduledJob.connectorId}&environment-key=${environment.key}">${labels["select"]}</a></td>
                                     </tr>
                                 </#list>
                             </tbody>
