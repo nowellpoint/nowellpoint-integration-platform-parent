@@ -2,7 +2,7 @@ package com.nowellpoint.api.model.dto;
 
 import java.util.Date;
 
-public class PropertyDTO {
+public class Property {
 
 	private String store;
 	
@@ -14,7 +14,7 @@ public class PropertyDTO {
 	
 	private Date lastModifiedDate;
 	
-	public PropertyDTO() {
+	public Property() {
 		
 	}
 	

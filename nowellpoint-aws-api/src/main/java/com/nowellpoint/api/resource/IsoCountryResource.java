@@ -19,7 +19,7 @@ import com.mongodb.client.MongoCollection;
 import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.aws.data.mongodb.MongoDatastore;
 
-@Path("/iso-countries")
+@Path("iso-countries")
 public class IsoCountryResource {
 	
 	private static final String COLLECTION_NAME = "iso.countries";
@@ -40,7 +40,7 @@ public class IsoCountryResource {
     }
 	
 	@GET
-	@Path("/{language}")
+	@Path("{language}")
     @Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
     public Response findByLanguage(@PathParam("language") String language) {
@@ -56,7 +56,7 @@ public class IsoCountryResource {
     }
 	
 	@GET
-	@Path("/{language}/{code}")
+	@Path("{language}/{code}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {

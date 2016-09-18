@@ -41,10 +41,6 @@ public class UserContext {
 		threadLocal.remove();
 	}
 	
-	//public static String getSubject() {
-//		return new String(Base64.getUrlDecoder().decode(getPrincipal().getName()));
-	//}
-	
 	public static Jws<Claims> parseClaims(String accessToken) {
 		Jws<Claims> claims = Jwts.parser()
 				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))

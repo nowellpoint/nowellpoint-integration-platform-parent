@@ -22,8 +22,6 @@ public class ScheduledJob extends Resource {
 	
 	private Date scheduleDate;
 	
-	private Date scheduleTime;
-	
 	public ScheduledJob() {
 		
 	}
@@ -98,13 +96,5 @@ public class ScheduledJob extends Resource {
 
 	public void setScheduleDate(Date scheduleDate) {
 		this.scheduleDate = scheduleDate;
-	}
-
-	public Date getScheduleTime() {
-		return scheduleTime;
-	}
-
-	public void setScheduleTime(Date scheduleTime) {
-		this.scheduleTime = scheduleTime;
 	}
 }

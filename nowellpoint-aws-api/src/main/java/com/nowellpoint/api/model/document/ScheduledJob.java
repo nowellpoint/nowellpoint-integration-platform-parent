@@ -3,8 +3,12 @@ package com.nowellpoint.api.model.document;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.model.codec.ScheduledJobCodec;
 import com.nowellpoint.aws.data.annotation.Document;
+import com.nowellpoint.aws.data.mongodb.DateDeserializer;
+import com.nowellpoint.aws.data.mongodb.DateSerializer;
 import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,8 +37,12 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String description;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date scheduleDate;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date scheduleTime;
 	
 	public ScheduledJob() {

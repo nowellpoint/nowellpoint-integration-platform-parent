@@ -265,7 +265,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.profile.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.profile.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
@@ -282,7 +282,7 @@ public class AccountProfileController extends AbstractController {
 	public Route updateAccountProfileAddress = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		AccountProfile accountProfile = getAccount(request);
 		
 		Address address = new Address()
 				.withCity(request.queryParams("city"))
@@ -307,7 +307,7 @@ public class AccountProfileController extends AbstractController {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
 			Map<String, Object> model = getModel();
-			model.put("account", account);
+			model.put("account", accountProfile);
 			model.put("accountProfile", new AccountProfile(request.params(":id")));
 			model.put("address", address);
 			model.put("errorMessage", error.getMessage());
@@ -317,7 +317,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.address.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.address.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";		
@@ -399,8 +399,6 @@ public class AccountProfileController extends AbstractController {
 	public Route newCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
-		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
@@ -420,7 +418,6 @@ public class AccountProfileController extends AbstractController {
 		creditCard.setBillingContact(new Contact());
 			
 		Map<String, Object> model = getModel();
-		model.put("account", account);
 		model.put("creditCard", creditCard);
 		model.put("accountProfile", accountProfile);
 		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
@@ -439,8 +436,6 @@ public class AccountProfileController extends AbstractController {
 	
 	public Route editCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -466,7 +461,6 @@ public class AccountProfileController extends AbstractController {
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
 		model.put("accountProfile", accountProfile);
 		model.put("creditCard", creditCard);
 		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
@@ -486,7 +480,7 @@ public class AccountProfileController extends AbstractController {
 	public Route addCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		AccountProfile accountProfile = getAccount(request);
 		
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
@@ -528,7 +522,6 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 			
 		if (httpResponse.getStatusCode() == Status.OK) {
@@ -536,7 +529,7 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.credit.card.success"));
+			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "add.credit.card.success"));
 		} else {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
@@ -560,7 +553,7 @@ public class AccountProfileController extends AbstractController {
 	public Route updateCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		AccountProfile accountProfile = getAccount(request);
 		
 		String cardholderName = request.queryParams("cardholderName");
 		String expirationMonth = request.queryParams("expirationMonth");
@@ -601,7 +594,6 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 			
 		if (httpResponse.getStatusCode() == Status.OK) {
@@ -609,7 +601,7 @@ public class AccountProfileController extends AbstractController {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.credit.card.success"));
+			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.credit.card.success"));
 		} else {
 			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
 			
@@ -649,7 +641,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "primary.credit.card.set"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "primary.credit.card.set"), 3, Boolean.FALSE);
 		
 		return "";
 	};
@@ -678,7 +670,7 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.credit.card.success"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.credit.card.success"), 3, Boolean.FALSE);
 		
 		return "";
 	};

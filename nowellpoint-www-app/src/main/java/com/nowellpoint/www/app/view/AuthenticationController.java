@@ -1,7 +1,10 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.halt;
+
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,24 +15,29 @@ import javax.ws.rs.NotAuthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
+import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
+import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
+import spark.Filter;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 public class AuthenticationController extends AbstractController {
 	
-	private static final String REDIRECT_COOKIE = "com.nowellpoint.redirectUrl";
+	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
+	private static final String REDIRECT_URL = "com.nowellpoint.redirect.url";
 	
 	public AuthenticationController(Configuration configuration) {
 		super(AuthenticationController.class, configuration);
@@ -48,10 +56,11 @@ public class AuthenticationController extends AbstractController {
      * 
      */
     
-    public Route login = (Request request, Response response) -> {
+    public static Route login = (Request request, Response response) -> {
+    	
     	PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setUsername(System.getenv("STORMPATH_USERNAME"))
-				.setPassword(System.getenv("STORMPATH_PASSWORD"))
+				.setUsername(request.queryParams("username"))
+				.setPassword(request.queryParams("password"))
 				.build();
 		
 		try {
@@ -63,24 +72,33 @@ public class AuthenticationController extends AbstractController {
 	    	Long expiresIn = token.getExpiresIn();
 	    		
 	    	try {
-	    		response.cookie("com.nowellpoint.auth.token", new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true); 
+	    		response.cookie(AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true); 
 	    	} catch (IOException e) {
 	    		throw new InternalServerErrorException(e);
 	    	}
 
 		} catch (OauthException e) {
+			
+			String acceptLanguages = request.headers("Accept-Language");
+			
+			System.out.println(acceptLanguages);
+			
+			String[] locales = acceptLanguages.trim().replace("-", "_").split(";");
+			
+			System.out.println(locales[0]);
+		
 			if (e.getCode() == 7100) {
-    			throw new NotAuthorizedException(MessageProvider.getMessage(getDefaultLocale(request), "login.error"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"), Status.NOT_AUTHORIZED);
     		} else if (e.getCode() == 7101) {
-    			throw new NotAuthorizedException(MessageProvider.getMessage(getDefaultLocale(request), "disabled.account"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "disabled.account"), Status.NOT_AUTHORIZED);
     		} else {
     			throw new NotAuthorizedException(e.getMessage(), Status.NOT_AUTHORIZED);
     		}
 		}
 		
-		if (request.cookie(REDIRECT_COOKIE) != null) {
-    		response.redirect(request.cookie(REDIRECT_COOKIE));
-    		response.removeCookie(REDIRECT_COOKIE);
+		if (request.cookie(REDIRECT_URL) != null) {
+    		response.redirect(request.cookie(REDIRECT_URL));
+    		response.removeCookie(REDIRECT_URL);
     	} else {
     		response.redirect(Path.Route.START);
     	}
@@ -92,7 +110,7 @@ public class AuthenticationController extends AbstractController {
      * 
      */
 	
-    public Route logout = (Request request, Response response) -> {
+    public static Route logout = (Request request, Response response) -> {
 		
 		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	
@@ -117,8 +135,8 @@ public class AuthenticationController extends AbstractController {
     			throw new BadRequestException(e.getMessage());
     		}
         	
-	    	response.removeCookie("com.nowellpoint.redirectUrl");
-        	response.removeCookie("com.nowellpoint.oauth.token"); 
+	    	response.removeCookie(REDIRECT_URL);
+        	response.removeCookie(AUTH_TOKEN); 
     	}
     	
     	request.session().invalidate();
@@ -126,6 +144,29 @@ public class AuthenticationController extends AbstractController {
     	response.redirect(Path.Route.INDEX);
     	
     	return "";
+	};
+	
+	
+	/**
+	 * 
+	 */
+	
+	public static Filter verify = (Request request, Response response) -> {
+    	Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
+    	if (cookie.isPresent()) {
+    		Token token = objectMapper.readValue(cookie.get(), Token.class);
+    		request.attribute(AUTH_TOKEN, token);
+    		
+    		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+    				.getAccountProfileResource()
+    				.getMyAccountProfile();
+    		
+    		request.attribute("account", accountProfile);
+    	} else {
+    		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);
+    		response.redirect(Path.Route.LOGIN);
+    		halt();
+    	}
 	};
 	
 	/**

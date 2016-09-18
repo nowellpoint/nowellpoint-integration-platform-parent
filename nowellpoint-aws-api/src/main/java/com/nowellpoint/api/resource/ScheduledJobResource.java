@@ -3,7 +3,6 @@ package com.nowellpoint.api.resource;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -99,11 +98,11 @@ public class ScheduledJobResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createScheduledJob(
 			@FormParam("description") String description,
-			@FormParam("connectorId") String connectorId,
-			@FormParam("environmentKey") String environmentKey,
+			@FormParam("connectorId") @NotEmpty String connectorId,
+			@FormParam("environmentKey") @NotEmpty String environmentKey,
 			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
-			@FormParam("scheduleDate") String scheduleDate,
-			@FormParam("scheduleTime") String scheduleTime,
+			@FormParam("scheduleDate") @NotEmpty String scheduleDate,
+			@FormParam("scheduleTime") @NotEmpty String scheduleTime,
 			@FormParam("status") String status) {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

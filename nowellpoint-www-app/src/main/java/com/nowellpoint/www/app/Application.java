@@ -7,12 +7,10 @@ import static spark.Spark.get;
 import static spark.Spark.halt;
 import static spark.Spark.post;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -21,18 +19,11 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.idp.model.Token;
-import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.IsoCountry;
 import com.nowellpoint.client.model.NowellpointServiceException;
-import com.nowellpoint.www.app.service.AccountProfileService;
-import com.nowellpoint.www.app.service.GetMyAccountProfileRequest;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
@@ -61,9 +52,6 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 public class Application implements SparkApplication {
 	
-	private static final ObjectMapper objectMapper = new ObjectMapper();
-	private static final AccountProfileService accountProfileService = new AccountProfileService();
-
     public static void main(String[] args) throws Exception {
     	new Application().init();
     }
@@ -145,7 +133,7 @@ public class Application implements SparkApplication {
         
         // setup routes
         
-        before("/app/*", (request, response) -> verify(request, response));
+        before("/app/*", AuthenticationController.verify);
         
         get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
         
@@ -154,8 +142,8 @@ public class Application implements SparkApplication {
         get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
         get(Path.Route.LOGIN, authenticationController.showLoginPage);
-        post(Path.Route.LOGIN, authenticationController.login);
-        get(Path.Route.LOGOUT, authenticationController.logout);
+        post(Path.Route.LOGIN, AuthenticationController.login);
+        get(Path.Route.LOGOUT, AuthenticationController.logout);
         
         get(Path.Route.CONTACT_US, contactUsController.showContactUs);
 		post(Path.Route.CONTACT_US, contactUsController.contactUs);
@@ -246,7 +234,10 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_UPDATE, salesforceConnectorController.updateServiceInstance);
         
         get(Path.Route.SCHEDULED_JOBS_LIST, scheduledJobsController.getScheduledJobs);
-        get(Path.Route.SCHEDULED_JOB_NEW, scheduledJobsController.newScheduledJob);
+        get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, scheduledJobsController.selectType);
+        get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, scheduledJobsController.selectConnector);
+        get(Path.Route.SCHEDULED_JOB_SELECT_ENVIRONMENT, scheduledJobsController.selectEnvironment);
+        get(Path.Route.SCHEDULED_JOB_SET_SCHEDULE, scheduledJobsController.setSchedule);
         post(Path.Route.SCHEDULED_JOB_CREATE, scheduledJobsController.createScheduledJob);
         get(Path.Route.SCHEDULED_JOB_VIEW, scheduledJobsController.viewScheduledJob);
         get(Path.Route.SCHEDULED_JOB_EDIT, scheduledJobsController.editScheduledJob);
@@ -345,22 +336,5 @@ public class Application implements SparkApplication {
 	 * @throws IOException
 	 */
 	
-	private static void verify(Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
-		
-    	Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
-    	if (cookie.isPresent()) {
-    		Token token = objectMapper.readValue(cookie.get(), Token.class);
-    		request.attribute("com.nowellpoint.auth.token", token);
-    		
-    		AccountProfile account = accountProfileService
-    				.getMyAccountProfile(new GetMyAccountProfileRequest()
-    						.withAccessToken(token.getAccessToken()));
-    		
-    		request.attribute("account", account);
-    	} else {
-    		response.cookie("/", "com.nowellpoint.redirectUrl", request.pathInfo(), 72000, Boolean.TRUE);
-    		response.redirect(Path.Route.LOGIN);
-    		halt();
-    	}
-	}
+	
 }

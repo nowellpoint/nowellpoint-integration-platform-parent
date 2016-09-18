@@ -17,6 +17,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
+import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
@@ -436,7 +437,7 @@ public class ApplicationController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 
-		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.environment.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";		
@@ -496,7 +497,7 @@ public class ApplicationController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.environment.success"), 3);
 		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";		
@@ -529,7 +530,7 @@ public class ApplicationController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.environment.success"), 3);
 		response.header("Location", Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";
@@ -545,6 +546,8 @@ public class ApplicationController extends AbstractController {
 
 	public Route testConnection = (Request request, Response response) -> {	
 		Token token = getToken(request);
+		
+		AccountProfile accountProfile = getAccount(request);
 		
 		String id = request.params(":id");
 		String key = request.params(":key");
@@ -567,9 +570,9 @@ public class ApplicationController extends AbstractController {
 		Environment environment = httpResponse.getEntity(Environment.class);
 		
 		if (environment.getIsValid()) {
-			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(request), "test.connection.success"));
+			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(accountProfile), "test.connection.success"));
 		} else {
-			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(request), "test.connection.fail"), environment.getTestMessage()));
+			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(accountProfile), "test.connection.fail"), environment.getTestMessage()));
 		}
 		
 		return objectMapper.writeValueAsString(environment);
@@ -707,7 +710,7 @@ public class ApplicationController extends AbstractController {
 			return render(request, model, Path.Template.SERVICE_CATALOG);
 		}
 		
-		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.service.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.service.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";		
@@ -814,7 +817,7 @@ public class ApplicationController extends AbstractController {
 			return "";
 		}
 
-		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(this.getDefaultLocale(request), "update.service.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.service.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
 		
 		return "";		

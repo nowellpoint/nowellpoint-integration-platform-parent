@@ -55,4 +55,8 @@ public class NowellpointClient {
 	public ScheduledJobTypeResource getScheduledJobTypeResource() {
 		return new ScheduledJobTypeResource(token);
 	}
+	
+	public AccountProfileResource getAccountProfileResource() {
+		return new AccountProfileResource(token);
+	}
 }

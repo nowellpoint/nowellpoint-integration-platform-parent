@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.dto.PropertyDTO;
+import com.nowellpoint.api.model.dto.Property;
 import com.nowellpoint.api.service.PropertyService;
 
 @Path("/properties")
@@ -29,7 +29,7 @@ public class PropertyResource {
 	@RolesAllowed("System Administrator")
     public Response findAll() {
 		
-		Set<PropertyDTO> resources = propertyService.getProperties();
+		Set<Property> resources = propertyService.getProperties();
 		
 		return Response.ok(resources).build();
     }

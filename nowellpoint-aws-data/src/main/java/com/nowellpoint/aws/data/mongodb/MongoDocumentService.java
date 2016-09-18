@@ -3,6 +3,7 @@ package com.nowellpoint.aws.data.mongodb;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bson.Document;
@@ -46,13 +47,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	
 	protected Set<T> find(Bson query) {
 		System.out.println("scanning..." + toString(query));
-		Set<T> documents = hscan(documentClass, encode(toString(query)));
+		Set<T> documents = new HashSet<T>(); //hscan(documentClass, encode(toString(query)));
 		
 		if (documents.isEmpty()) {
-			System.out.println("cache miss");
 			try {
 				documents = MongoDatastore.find(documentClass, query);
-				hset(encode(toString(query)), documents);
+				//hset(encode(toString(query)), documents);
 			} catch (IllegalArgumentException e) {
 				LOGGER.error( "Find exception : ", e.getCause() );
 			}

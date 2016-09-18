@@ -59,13 +59,16 @@ public class CacheManager implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		String endpoint = System.getProperty(Properties.REDIS_HOST);
-		Integer port = Integer.valueOf(System.getProperty(Properties.REDIS_PORT));
 		
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(30);
 		
-		jedisPool = new JedisPool(poolConfig, endpoint, port, Protocol.DEFAULT_TIMEOUT, System.getProperty(Properties.REDIS_PASSWORD));
+		jedisPool = new JedisPool(
+				poolConfig, 
+				System.getProperty(Properties.REDIS_HOST), 
+				Integer.valueOf(System.getProperty(Properties.REDIS_PORT)), 
+				Protocol.DEFAULT_TIMEOUT, 
+				System.getProperty(Properties.REDIS_PASSWORD));
 		
 		String keyString = System.getProperty(Properties.CACHE_DATA_ENCRYPTION_KEY);
 		

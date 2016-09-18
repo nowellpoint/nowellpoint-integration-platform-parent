@@ -10,12 +10,18 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.MediaType;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.model.AccountProfile;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
@@ -24,6 +30,7 @@ import spark.Request;
 
 abstract class AbstractController {
 	
+	private static final Logger LOGGER = Logger.getLogger(AbstractController.class.getName());
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	private Class<?> controllerClass;
@@ -42,6 +49,52 @@ abstract class AbstractController {
 	protected Token getToken(Request request) {
 		Token token = request.attribute("com.nowellpoint.auth.token");
 		return token;
+	}
+	
+	protected String getValue(Token token, String key) {
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.accept(MediaType.TEXT_PLAIN)
+				.bearerAuthorization(token.getAccessToken())
+				.path("cache")
+    			.path(key)
+    			.execute();
+		
+		String value = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			value = httpResponse.getAsString();
+		} else {
+			LOGGER.error("Cache exception: " + httpResponse.getAsString());
+		}
+		
+		return value;
+	}
+	
+	protected void putValue(Token token, String key, String value) {
+		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+				.contentType(MediaType.TEXT_PLAIN)
+				.bearerAuthorization(token.getAccessToken())
+				.path("cache")
+    			.path(key)
+    			.body(value)
+    			.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			LOGGER.error("Cache exception: " + httpResponse.getAsString());
+		}
+	}
+	
+	protected void removeValue(Token token, String key) {
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.contentType(MediaType.TEXT_PLAIN)
+				.bearerAuthorization(token.getAccessToken())
+				.path("cache")
+    			.path(key)
+    			.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			LOGGER.error("Cache exception: " + httpResponse.getAsString());
+		}
 	}
 	
 	private String buildTemplate(Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
@@ -64,9 +117,7 @@ abstract class AbstractController {
 		return request.attribute("account");
 	}
 	
-	protected Locale getDefaultLocale(Request request) {
-		AccountProfile accountProfile = getAccount(request);
-		
+	protected Locale getDefaultLocale(AccountProfile accountProfile) {
 		Locale locale = null;
 		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
 			locale = new Locale(accountProfile.getLocaleSidKey());
@@ -76,9 +127,7 @@ abstract class AbstractController {
 		return locale;
 	}
 	
-	protected TimeZone getDefaultTimeZone(Request request) {
-		AccountProfile accountProfile = getAccount(request);
-		
+	protected TimeZone getDefaultTimeZone(AccountProfile accountProfile) {		
 		TimeZone timeZone = null;
 		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
 			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
@@ -89,12 +138,17 @@ abstract class AbstractController {
 		return timeZone;
 	}
 	
-	protected String render(Request request, Map<String,Object> model, String templateName) {		
-		Locale locale = getDefaultLocale(request);
-		TimeZone timeZone = getDefaultTimeZone(request);
+	protected String getLabel(AccountProfile accountProfile, String key) {
+		return ResourceBundle.getBundle(controllerClass.getName(), getDefaultLocale(accountProfile)).getString(key);
+	}
+	
+	protected String render(Request request, Map<String,Object> model, String templateName) {	
+		AccountProfile accountProfile = getAccount(request);
+		Locale locale = getDefaultLocale(accountProfile);
+		TimeZone timeZone = getDefaultTimeZone(accountProfile);
+		model.put("account", accountProfile);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-        model.put("account", getAccount(request));
         return buildTemplate(locale, timeZone, new ModelAndView(model, templateName));
     }
 }

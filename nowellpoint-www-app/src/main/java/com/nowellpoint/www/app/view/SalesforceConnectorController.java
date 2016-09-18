@@ -200,7 +200,7 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.environment.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.environment.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
@@ -261,7 +261,7 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "update.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.environment.success"), 3);
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
@@ -295,7 +295,7 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(request), "remove.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.environment.success"), 3);
 		response.header("Location", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";
@@ -359,7 +359,7 @@ public class SalesforceConnectorController extends AbstractController {
 			return "";
 		}
 
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(this.getDefaultLocale(request), "update.service.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.service.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
@@ -507,7 +507,7 @@ public class SalesforceConnectorController extends AbstractController {
 			return render(request, model, Path.Template.SERVICE_CATALOG);
 		}
 		
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(request), "add.service.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.service.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
@@ -732,9 +732,9 @@ public class SalesforceConnectorController extends AbstractController {
 		Environment environment = httpResponse.getEntity(Environment.class);
 		
 		if (environment.getIsValid()) {
-			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(request), "test.connection.success"));
+			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "test.connection.success"));
 		} else {
-			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(request), "test.connection.fail"), environment.getTestMessage()));
+			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "test.connection.fail"), environment.getTestMessage()));
 		}
 		
 		return objectMapper.writeValueAsString(environment);

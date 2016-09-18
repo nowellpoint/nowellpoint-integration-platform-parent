@@ -27,10 +27,12 @@ public class DateDeserializer extends JsonDeserializer<Date> {
 		
         if (node.get("$date") != null) {
         	JsonNode field = node.get("$date");
+        	value = new Date(field.asLong());
         	if (field.isLong()) {
         		value = new Date(field.asLong());
         	} else {
         		try {
+        			System.out.println(field.asText());
     				value = sdf.parse(field.asText());
     			} catch (ParseException e) {
     				throw new IOException(e);

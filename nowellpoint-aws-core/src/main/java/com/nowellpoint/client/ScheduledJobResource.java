@@ -61,11 +61,11 @@ public class ScheduledJobResource extends AbstractResource {
 			postRequest.parameter("jobTypeId", jobTypeId);
 		}
 		
-		if (Optional.ofNullable(connectorId).isPresent()) {
+		if (Optional.ofNullable(scheduleDate).isPresent()) {
 			postRequest.parameter("scheduleDate", scheduleDate != null ? dateFormat.format(scheduleDate) : null);
 		}
 		
-		if (Optional.ofNullable(connectorId).isPresent()) {
+		if (Optional.ofNullable(scheduleTime).isPresent()) {
 			postRequest.parameter("scheduleTime", scheduleTime != null ? timeFormat.format(scheduleTime) : null);
 		}
 		
