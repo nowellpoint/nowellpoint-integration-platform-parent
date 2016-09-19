@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.nowellpoint.client.NowellpointClient;
@@ -11,8 +12,6 @@ import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.ScheduledJob;
-
-import io.jsonwebtoken.lang.Assert;
 
 public class TestAuthenticators {
 	
@@ -34,7 +33,7 @@ public class TestAuthenticators {
 			ScheduledJob scheduledJob = client.getScheduledJobResource()
 					.createScheduledJob(createScheduledJobRequest);
 			
-			Assert.notNull(scheduledJob.getId());
+			Assert.assertNotNull(scheduledJob.getId());
 			
 			System.out.println(scheduledJob.getId());
 			
