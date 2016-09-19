@@ -1,6 +1,6 @@
 package com.nowellpoint.client.auth;
 
-public class BasicCredentials implements Credentials {
+public class BasicCredentials implements UsernamePasswordCredentials {
 	
 	private String username;
 	private String password;
