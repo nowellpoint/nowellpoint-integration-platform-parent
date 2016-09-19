@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.model.codec.ScheduledJobCodec;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.DateDeserializer;
-import com.nowellpoint.aws.data.mongodb.DateSerializer;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.DateDeserializer;
+import com.nowellpoint.mongodb.document.DateSerializer;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="scheduled.jobs", codec=ScheduledJobCodec.class)
@@ -29,6 +29,8 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String connectorId;
 	
+	private String connectorType;
+	
 	private String jobTypeId;
 	
 	private String jobTypeCode;
@@ -40,10 +42,6 @@ public class ScheduledJob extends MongoDocument {
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date scheduleDate;
-	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	private Date scheduleTime;
 	
 	public ScheduledJob() {
 		
@@ -79,6 +77,14 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setConnectorId(String connectorId) {
 		this.connectorId = connectorId;
+	}
+
+	public String getConnectorType() {
+		return connectorType;
+	}
+
+	public void setConnectorType(String connectorType) {
+		this.connectorType = connectorType;
 	}
 
 	public String getJobTypeId() {
@@ -119,13 +125,5 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setScheduleDate(Date scheduleDate) {
 		this.scheduleDate = scheduleDate;
-	}
-
-	public Date getScheduleTime() {
-		return scheduleTime;
-	}
-
-	public void setScheduleTime(Date scheduleTime) {
-		this.scheduleTime = scheduleTime;
 	}
 }

@@ -53,11 +53,11 @@
                                 <dt>${labels["scheduled.job.type"]}</dt>
                                 <dd>${(scheduledJob.environmentName)!}&emsp;</dd>
                                 <hr>
-                                <dt>${labels["scheduled.job.type"]}</dt>
+                                <dt>${labels["scheduled.date"]}</dt>
                                 <dd>${(scheduledJob.scheduleDate?date?string.iso)!}&emsp;</dd>
                                 <hr>
-                                <dt>${labels["scheduled.job.type"]}</dt>
-                                <dd>${(scheduledJob.scheduleTime?time?string.medium)!}&emsp;</dd>
+                                <dt>${labels["scheduled.time"]}</dt>
+                                <dd>${(scheduledJob.scheduleDate?time?string.medium)!}&emsp;</dd>
                                 <hr>
                             </dl>
                         </div>

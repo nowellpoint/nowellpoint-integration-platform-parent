@@ -2,8 +2,8 @@ package com.nowellpoint.api.model.document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.IsoCountryCodec;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="iso.countries", codec=IsoCountryCodec.class)

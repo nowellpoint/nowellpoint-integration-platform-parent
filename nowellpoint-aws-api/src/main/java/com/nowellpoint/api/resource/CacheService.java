@@ -16,6 +16,8 @@ import javax.ws.rs.core.SecurityContext;
 
 import com.nowellpoint.aws.data.CacheManager;
 
+import redis.clients.jedis.Jedis;
+
 @Path("cache")
 public class CacheService {
 	
@@ -34,10 +36,20 @@ public class CacheService {
 	@Path("{key}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getValue(@PathParam("key") String key) {
-		String value = CacheManager.getCache().get(key);
+		
+		Jedis jedis = CacheManager.getCache();
+		
+		String value = null;
+		try {
+			value = CacheManager.getCache().get(key);
+		} finally {
+			jedis.close();
+		}
+		
 		if (value == null) {
 			throw new NotFoundException(String.format("Value for key: %s was not found", key));
 		}
+		
 		return Response.ok(value).build();
 	}
 	
@@ -45,14 +57,30 @@ public class CacheService {
 	@Path("{key}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public Response putValue(@PathParam("key") String key, String value) {
-		CacheManager.getCache().setex(key, 86400, value);
+		
+		Jedis jedis = CacheManager.getCache();
+		
+		try {
+			jedis.setex(key, 86400, value);
+		} finally {
+			jedis.close();
+		}
+		
 		return Response.ok().build();
 	}
 	
 	@DELETE
 	@Path("{key}")
 	public Response removeValue(@PathParam("key") String key) {
-		CacheManager.getCache().del(key);
+		
+		Jedis jedis = CacheManager.getCache();
+		
+		try {
+			jedis.del(key);
+		} finally {
+			jedis.close();
+		}
+		
 		return Response.ok().build();
 	}
 }

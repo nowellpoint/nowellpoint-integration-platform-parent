@@ -6,8 +6,8 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.ProjectCodec;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="projects", codec=ProjectCodec.class)

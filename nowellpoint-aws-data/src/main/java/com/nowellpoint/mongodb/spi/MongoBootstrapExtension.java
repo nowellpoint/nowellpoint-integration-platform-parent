@@ -14,8 +14,8 @@ import javax.enterprise.inject.spi.WithAnnotations;
 import org.bson.codecs.Codec;
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDatastore;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 
 public class MongoBootstrapExtension implements Extension {
 	

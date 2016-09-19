@@ -11,10 +11,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.model.codec.AuditHistoryCodec;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
-import com.nowellpoint.aws.data.mongodb.ObjectIdDeserializer;
-import com.nowellpoint.aws.data.mongodb.ObjectIdSerializer;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.mongodb.document.ObjectIdDeserializer;
+import com.nowellpoint.mongodb.document.ObjectIdSerializer;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)

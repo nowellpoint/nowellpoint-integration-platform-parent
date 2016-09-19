@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.annotation;
+package com.nowellpoint.mongodb.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -10,6 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target({ TYPE })
 @Retention(RUNTIME)
-public @interface Audited {
-
+public @interface Document {
+	String collectionName();
+	Class<?> codec() default Object.class;
 }

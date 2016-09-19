@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.model.codec.AccountProfileCodec;
-import com.nowellpoint.aws.data.annotation.Document;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
-import com.nowellpoint.aws.data.mongodb.DateDeserializer;
-import com.nowellpoint.aws.data.mongodb.DateSerializer;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.DateDeserializer;
+import com.nowellpoint.mongodb.document.DateSerializer;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)

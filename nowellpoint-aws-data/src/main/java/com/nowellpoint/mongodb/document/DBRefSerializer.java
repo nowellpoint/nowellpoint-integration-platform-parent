@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.document;
+package com.nowellpoint.mongodb.document;
 
 import java.io.IOException;
 

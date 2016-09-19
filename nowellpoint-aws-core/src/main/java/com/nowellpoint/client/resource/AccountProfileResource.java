@@ -1,4 +1,4 @@
-package com.nowellpoint.client;
+package com.nowellpoint.client.resource;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;

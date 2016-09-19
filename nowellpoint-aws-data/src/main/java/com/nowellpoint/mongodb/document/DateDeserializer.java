@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.mongodb.document;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -32,7 +32,6 @@ public class DateDeserializer extends JsonDeserializer<Date> {
         		value = new Date(field.asLong());
         	} else {
         		try {
-        			System.out.println(field.asText());
     				value = sdf.parse(field.asText());
     			} catch (ParseException e) {
     				throw new IOException(e);

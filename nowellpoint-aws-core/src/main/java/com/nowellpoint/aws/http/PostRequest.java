@@ -2,6 +2,7 @@ package com.nowellpoint.aws.http;
 
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 public class PostRequest extends HttpRequest {
 
@@ -30,6 +31,11 @@ public class PostRequest extends HttpRequest {
 	
 	public PostRequest parameter(String key, Boolean value) {
 		super.parameter(key, value);
+		return this;
+	}
+	
+	public PostRequest parameters(Map<String, String> parameters) {
+		super.parameters(parameters);
 		return this;
 	}
 	

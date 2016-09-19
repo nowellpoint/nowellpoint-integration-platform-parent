@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 import com.mongodb.client.MongoCollection;
 import com.nowellpoint.api.model.document.IsoCountry;
-import com.nowellpoint.aws.data.mongodb.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 
 @Path("iso-countries")
 public class IsoCountryResource {

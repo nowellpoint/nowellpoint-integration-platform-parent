@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.mongodb.DBRef;
+import com.nowellpoint.mongodb.document.DBRefDeserializer;
+import com.nowellpoint.mongodb.document.DBRefSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {

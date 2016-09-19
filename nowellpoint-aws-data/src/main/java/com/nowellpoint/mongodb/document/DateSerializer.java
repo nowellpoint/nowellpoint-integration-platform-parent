@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.mongodb.document;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

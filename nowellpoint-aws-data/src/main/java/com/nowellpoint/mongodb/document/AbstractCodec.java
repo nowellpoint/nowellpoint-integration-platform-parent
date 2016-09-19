@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data;
+package com.nowellpoint.mongodb.document;
 
 import java.io.IOException;
 
@@ -13,10 +13,10 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.DocumentCodec;
 import org.bson.codecs.EncoderContext;
 import org.bson.types.ObjectId;
+import org.bson.json.JsonParseException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
 
 public class AbstractCodec<T extends MongoDocument> implements CollectibleCodec<T> {
 	
@@ -36,7 +36,7 @@ public class AbstractCodec<T extends MongoDocument> implements CollectibleCodec<
 		try {
 			document = Document.parse(objectMapper.writeValueAsString(value));
 			document.put("_id", value.getId());
-		} catch (JsonProcessingException e) {
+		} catch (JsonParseException | JsonProcessingException e) {
 			e.printStackTrace();
 			return;
 		}

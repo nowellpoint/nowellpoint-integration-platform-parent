@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.mongodb.document;
 
 public class DocumentNotFoundException extends RuntimeException {
 

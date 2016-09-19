@@ -1,4 +1,4 @@
-package com.nowellpoint.client;
+package com.nowellpoint.client.resource;
 
 import java.util.List;
 

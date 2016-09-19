@@ -41,7 +41,6 @@ import com.nowellpoint.api.model.sforce.Lead;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.aws.data.mongodb.DocumentNotFoundException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.idp.model.Account;
@@ -52,6 +51,7 @@ import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 @Path("/signup")
 public class SignUpService {

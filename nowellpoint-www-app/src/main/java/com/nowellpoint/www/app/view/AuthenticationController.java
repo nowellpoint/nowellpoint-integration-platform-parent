@@ -81,18 +81,21 @@ public class AuthenticationController extends AbstractController {
 			
 			String acceptLanguages = request.headers("Accept-Language");
 			
-			System.out.println(acceptLanguages);
+			LOGGER.info(acceptLanguages);
 			
-			String[] locales = acceptLanguages.trim().replace("-", "_").split(";");
+			String[] languages = acceptLanguages.trim().replace("-", "_").split(";");
 			
-			System.out.println(locales[0]);
+			String[] locales = languages[0].split(",");
+			
+			LOGGER.info(locales[0]);
 		
 			if (e.getCode() == 7100) {
     			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"), Status.NOT_AUTHORIZED);
     		} else if (e.getCode() == 7101) {
     			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "disabled.account"), Status.NOT_AUTHORIZED);
     		} else {
-    			throw new NotAuthorizedException(e.getMessage(), Status.NOT_AUTHORIZED);
+    			LOGGER.error(e.getMessage());
+    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"), Status.NOT_AUTHORIZED);
     		}
 		}
 		

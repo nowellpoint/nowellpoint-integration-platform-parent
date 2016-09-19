@@ -1,17 +1,16 @@
-package com.nowellpoint.client;
+package com.nowellpoint.client.resource;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.ScheduledJob;
+import com.nowellpoint.client.model.UpdateScheduledJobRequest;
 
 public class ScheduledJobResource extends AbstractResource {
 	
@@ -38,38 +37,18 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJobs;
 	}
 	
-	public ScheduledJob createScheduledJob(String environmentKey, String description, String jobTypeId, String connectorId, Date scheduleDate, Date scheduleTime) {
-		PostRequest postRequest = RestResource.post(API_ENDPOINT)
+	public ScheduledJob createScheduledJob(CreateScheduledJobRequest createScheduledJobRequest) {		
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT);
-				
-		if (Optional.ofNullable(environmentKey).isPresent()) {
-			postRequest.parameter("environmentKey", environmentKey);
-		}
-		
-		if (Optional.ofNullable(description).isPresent()) {
-			postRequest.parameter("description", description);
-		}
-		
-		if (Optional.ofNullable(connectorId).isPresent()) {
-			postRequest.parameter("connectorId", connectorId);
-		}
-		
-		if (Optional.ofNullable(jobTypeId).isPresent()) {
-			postRequest.parameter("jobTypeId", jobTypeId);
-		}
-		
-		if (Optional.ofNullable(scheduleDate).isPresent()) {
-			postRequest.parameter("scheduleDate", scheduleDate != null ? dateFormat.format(scheduleDate) : null);
-		}
-		
-		if (Optional.ofNullable(scheduleTime).isPresent()) {
-			postRequest.parameter("scheduleTime", scheduleTime != null ? timeFormat.format(scheduleTime) : null);
-		}
-		
-		HttpResponse httpResponse = postRequest.execute();
+				.path(RESOURCE_CONTEXT)
+				.parameter("environmentKey", createScheduledJobRequest.getEnvironmentKey())
+				.parameter("description", createScheduledJobRequest.getDescription())
+				.parameter("connectorId", createScheduledJobRequest.getConnectorId())
+				.parameter("jobTypeId", createScheduledJobRequest.getJobTypeId())
+				.parameter("scheduleDate", dateFormat.format(createScheduledJobRequest.getScheduleDate()))
+				.execute();
 		
 		ScheduledJob scheduledJob = null;
 		
@@ -82,18 +61,17 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJob;
 	}
 	
-	public ScheduledJob updateScheduledJob(String id, String environmentKey, String description, String connectorId, Date scheduleDate, Date scheduleTime) {
+	public ScheduledJob updateScheduledJob(UpdateScheduledJobRequest updateScheduledJobRequest) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.parameter("environmentKey", environmentKey)
-				.parameter("description", description)
-				.parameter("connectorId", connectorId)
-				.parameter("scheduleDate", scheduleDate != null ? dateFormat.format(scheduleDate) : null)
-				.parameter("scheduleTime", scheduleTime != null ? timeFormat.format(scheduleTime) : null)
+				.path(updateScheduledJobRequest.getId())
+				.parameter("environmentKey", updateScheduledJobRequest.getEnvironmentKey())
+				.parameter("description", updateScheduledJobRequest.getDescription())
+				.parameter("connectorId", updateScheduledJobRequest.getConnectorId())
+				.parameter("scheduleDate", dateFormat.format(updateScheduledJobRequest.getScheduleDate()))
 				.execute();
 		
 		ScheduledJob scheduledJob = null;
@@ -123,5 +101,17 @@ public class ScheduledJobResource extends AbstractResource {
 		}
 		
 		return scheduledJob;
+	}
+	
+	public void deleteScheduledJob(String id) {
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
+			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+		}
 	}
 }

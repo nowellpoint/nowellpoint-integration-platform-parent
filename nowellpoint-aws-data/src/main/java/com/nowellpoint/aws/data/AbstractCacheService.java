@@ -7,9 +7,10 @@ import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.Optional;
 
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
+import com.nowellpoint.mongodb.document.MongoDocument;
+
+import java.util.Optional;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;

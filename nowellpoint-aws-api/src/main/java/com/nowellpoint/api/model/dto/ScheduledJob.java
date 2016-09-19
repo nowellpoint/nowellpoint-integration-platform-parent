@@ -18,6 +18,8 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String connectorId;
 	
+	private String connectorType;
+	
 	private String jobTypeId;
 	
 	private String jobTypeCode;
@@ -27,8 +29,6 @@ public class ScheduledJob extends AbstractResource {
 	private String description;
 	
 	private Date scheduleDate;
-	
-	private Date scheduleTime;
 	
 	private String status;
 	
@@ -66,6 +66,14 @@ public class ScheduledJob extends AbstractResource {
 
 	public void setConnectorId(String connectorId) {
 		this.connectorId = connectorId;
+	}
+
+	public String getConnectorType() {
+		return connectorType;
+	}
+
+	public void setConnectorType(String connectorType) {
+		this.connectorType = connectorType;
 	}
 
 	public String getJobTypeId() {
@@ -106,14 +114,6 @@ public class ScheduledJob extends AbstractResource {
 
 	public void setScheduleDate(Date scheduleDate) {
 		this.scheduleDate = scheduleDate;
-	}
-
-	public Date getScheduleTime() {
-		return scheduleTime;
-	}
-
-	public void setScheduleTime(Date scheduleTime) {
-		this.scheduleTime = scheduleTime;
 	}
 
 	public String getStatus() {

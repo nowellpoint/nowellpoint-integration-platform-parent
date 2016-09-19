@@ -12,6 +12,8 @@ public class ScheduledJob extends Resource {
 	
 	private String connectorId;
 	
+	private String connectorType;
+	
 	private String jobTypeId;
 	
 	private String jobTypeCode;
@@ -56,6 +58,14 @@ public class ScheduledJob extends Resource {
 
 	public void setConnectorId(String connectorId) {
 		this.connectorId = connectorId;
+	}
+
+	public String getConnectorType() {
+		return connectorType;
+	}
+
+	public void setConnectorType(String connectorType) {
+		this.connectorType = connectorType;
 	}
 
 	public String getJobTypeId() {

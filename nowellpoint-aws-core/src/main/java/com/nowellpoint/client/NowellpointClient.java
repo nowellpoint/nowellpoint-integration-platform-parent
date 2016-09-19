@@ -9,6 +9,11 @@ import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.TokenCredentials;
+import com.nowellpoint.client.resource.AccountProfileResource;
+import com.nowellpoint.client.resource.ApplicationResource;
+import com.nowellpoint.client.resource.SalesforceConnectorResource;
+import com.nowellpoint.client.resource.ScheduledJobResource;
+import com.nowellpoint.client.resource.ScheduledJobTypeResource;
 
 public class NowellpointClient {
 	

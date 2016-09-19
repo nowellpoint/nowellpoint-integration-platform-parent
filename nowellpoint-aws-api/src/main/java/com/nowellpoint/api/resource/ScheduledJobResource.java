@@ -1,11 +1,12 @@
 package com.nowellpoint.api.resource;
 
 import java.net.URI;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
@@ -32,8 +34,13 @@ import com.nowellpoint.api.service.ScheduledJobService;
 @Path("scheduled-jobs")
 public class ScheduledJobResource {
 	
+	private static final Logger LOGGER = Logger.getLogger(ScheduledJobResource.class);
+	
 	@Inject
 	private ScheduledJobService scheduledJobService;
+	
+	@Context
+	private HttpServletRequest httpServletRequest;
 
 	@Context
 	private UriInfo uriInfo;
@@ -83,13 +90,18 @@ public class ScheduledJobResource {
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteScheduledJob(@PathParam("id") String id) {
-		scheduledJobService.deleteScheduledJob( new Id(id));
+		scheduledJobService.deleteScheduledJob( new Id(id) );
 		return Response.noContent().build();
 	}
 	
 	/**
 	 * 
-	 * @param resource
+	 * @param description
+	 * @param connectorId
+	 * @param environmentKey
+	 * @param jobTypeId
+	 * @param scheduleDate
+	 * @param status
 	 * @return
 	 */
 	
@@ -99,14 +111,10 @@ public class ScheduledJobResource {
 	public Response createScheduledJob(
 			@FormParam("description") String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
-			@FormParam("environmentKey") @NotEmpty String environmentKey,
+			@FormParam("environmentKey") String environmentKey,
 			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
 			@FormParam("scheduleDate") @NotEmpty String scheduleDate,
-			@FormParam("scheduleTime") @NotEmpty String scheduleTime,
 			@FormParam("status") String status) {
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setConnectorId(connectorId);
@@ -115,9 +123,11 @@ public class ScheduledJobResource {
 		scheduledJob.setDescription(description);
 		scheduledJob.setStatus(status);
 		try {
-			scheduledJob.setScheduleDate(scheduleDate != null ? dateFormat.parse(scheduleDate) : null);
-			scheduledJob.setScheduleTime(scheduleTime != null ? timeFormat.parse(scheduleTime) : null);
-		} catch (ParseException e) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
+			scheduledJob.setScheduleDate(scheduleDate != null ? sdf.parse(scheduleDate) : null);
+		} catch (Exception e) {
+			LOGGER.warn(httpServletRequest.getRequestURI() + " " + e.getMessage());
 			throw new BadRequestException(e.getMessage());
 		}
 		
@@ -136,8 +146,11 @@ public class ScheduledJobResource {
 	/**
 	 * 
 	 * @param id
-	 * @param name
 	 * @param description
+	 * @param connectorId
+	 * @param environmentKey
+	 * @param scheduleDate
+	 * @param status
 	 * @return
 	 */
 	
@@ -149,23 +162,20 @@ public class ScheduledJobResource {
 			@FormParam("description") String description,
 			@FormParam("connectorId") String connectorId,
 			@FormParam("environmentKey") String environmentKey,
-			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
 			@FormParam("scheduleDate") String scheduleDate,
-			@FormParam("scheduleTime") String scheduleTime) {
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+			@FormParam("status") String status) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setDescription(description);
 		scheduledJob.setConnectorId(connectorId);
 		scheduledJob.setEnvironmentKey(environmentKey);
-		scheduledJob.setJobTypeId(jobTypeId);
 		scheduledJob.setDescription(description);
 		try {
-			scheduledJob.setScheduleDate(scheduleDate != null ? dateFormat.parse(scheduleDate) : null);
-			scheduledJob.setScheduleTime(scheduleTime != null ? timeFormat.parse(scheduleTime) : null);
-		} catch (ParseException e) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
+			scheduledJob.setScheduleDate(scheduleDate != null ? sdf.parse(scheduleDate) : null);
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage());
 			throw new BadRequestException(e.getMessage());
 		}
 		

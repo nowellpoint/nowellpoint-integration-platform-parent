@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.mongodb.document;
 
 import java.time.Instant;
 import java.util.Base64;
@@ -132,7 +132,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		
 		set(document.getId().toString(), document);
 		hset(encode(subject), document);
-		
+
 		try {
 			MongoDatastore.insertOne( document );
 		} catch (MongoException e) {

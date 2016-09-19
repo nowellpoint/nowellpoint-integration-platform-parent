@@ -12,6 +12,7 @@ import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
+import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
 	
@@ -46,21 +47,33 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(new Id(scheduledJob.getJobTypeId()));
 		
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
-			SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id( scheduledJob.getConnectorId() ) );
-			Optional<Environment> environment = salesforceConnector.getEnvironments().stream().filter(e -> scheduledJob.getEnvironmentKey().equals(e.getKey())).findFirst();
-			if (! environment.isPresent()) {
-				throw new ServiceException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
+			SalesforceConnector salesforceConnector = null;
+			try {
+				salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id( scheduledJob.getConnectorId() ) );
+			} catch (DocumentNotFoundException e) {
+				throw new ServiceException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
+			}
+			
+			Optional<Environment> environment = null;
+			if (scheduledJob.getEnvironmentKey() != null) {
+				environment = salesforceConnector.getEnvironments().stream().filter(e -> scheduledJob.getEnvironmentKey().equals(e.getKey())).findFirst();
+				if (! environment.isPresent()) {
+					throw new ServiceException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
+				}
+			} else {
+				environment = salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst();
 			}
 			scheduledJob.setEnvironmentName(environment.get().getEnvironmentName());
 		}
 		
+		scheduledJob.setConnectorType(scheduledJobType.getConnectorType().getCode());
 		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
 		scheduledJob.setJobTypeName(scheduledJobType.getName());
 		
 		if (scheduledJob.getStatus() == null) {
 			scheduledJob.setStatus("NotStarted");
 		}
-		
+
 		super.createScheduledJob(scheduledJob);
 	}
 	
@@ -68,6 +81,9 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		ScheduledJob original = findScheduledJobById(id);
 		
 		scheduledJob.setId(id);
+		scheduledJob.setJobTypeId(original.getJobTypeId());
+		scheduledJob.setJobTypeCode(original.getJobTypeCode());
+		scheduledJob.setJobTypeName(original.getJobTypeName());
 		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());

@@ -30,15 +30,16 @@ import spark.Request;
 
 abstract class AbstractController {
 	
-	private static final Logger LOGGER = Logger.getLogger(AbstractController.class.getName());
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	private Class<?> controllerClass;
 	private Configuration configuration;
+	protected static Logger LOGGER;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
 		this.controllerClass = controllerClass;
 		this.configuration = configuration;
+		LOGGER = Logger.getLogger(controllerClass.getName());
 	}
 	
 	protected Map<String, Object> getModel() {
@@ -120,7 +121,14 @@ abstract class AbstractController {
 	protected Locale getDefaultLocale(AccountProfile accountProfile) {
 		Locale locale = null;
 		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
-			locale = new Locale(accountProfile.getLocaleSidKey());
+			String[] attrs = accountProfile.getLocaleSidKey().split("_");
+			if (attrs.length == 1) {
+				locale = new Locale(attrs[0]);
+			} else if (attrs.length == 2) {
+				locale = new Locale(attrs[0], attrs[1]);
+			} else if (attrs.length == 3) {
+				locale = new Locale(attrs[0], attrs[1], attrs[3]);
+			}
 		} else {
 			locale = configuration.getLocale();
 		}

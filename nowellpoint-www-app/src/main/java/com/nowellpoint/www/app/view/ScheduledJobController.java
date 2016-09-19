@@ -10,10 +10,12 @@ import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
+import com.nowellpoint.client.model.UpdateScheduledJobRequest;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -165,14 +167,14 @@ public class ScheduledJobController extends AbstractController {
 		Token token = getToken(request);
 		
 		String id = request.queryParams("id");
-		String connectorId = request.queryParams("connector-id");
 		String environmentKey = request.queryParams("environment-key");
+		
+		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
 		Environment environment = new NowellpointClient(new TokenCredentials(token))
 				.getSalesforceConnectorResource()
-				.getEnvironment(connectorId, environmentKey);
+				.getEnvironment(scheduledJob.getConnectorId(), environmentKey);
 		
-		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		scheduledJob.setEnvironmentKey(environment.getKey());
 		scheduledJob.setEnvironmentName(environment.getEnvironmentName());
 		
@@ -204,34 +206,37 @@ public class ScheduledJobController extends AbstractController {
 		String scheduleDate = request.queryParams("scheduleDate");
 		String scheduleTime = request.queryParams("scheduleTime");
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		
-		Map<String, Object> model = getModel();
-		
 		try {
-			dateFormat.parse(scheduleDate);
-			timeFormat.parse(scheduleTime);
 			
-			sdf.parse(scheduleDate.concat("T").concat(scheduleTime));
+			new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate);
+			new SimpleDateFormat("HH:mm:ss").parse(scheduleTime);
 			
 		} catch (ParseException e) {
+			LOGGER.error(e.getMessage());
+			
+			ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
+			
+			Map<String, Object> model = getModel();
+			model.put("step", "set-schedule");
+			model.put("scheduledJob", scheduledJob);
+			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
+			model.put("title", getLabel(getAccount(request), "schedule.job"));
 			model.put("errorMessage", getLabel(getAccount(request), "unparseable.date.time"));
 			return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
 		}
-		
+
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
+		
+		CreateScheduledJobRequest createScheduledJobRequest = new CreateScheduledJobRequest()
+				.withConnectorId(scheduledJob.getConnectorId())
+				.withDescription(description)
+				.withEnvironmentKey(scheduledJob.getEnvironmentKey())
+				.withJobTypeId(scheduledJob.getJobTypeId())
+				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime)));
+		
 		scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.getScheduledJobResource()
-				.createScheduledJob(
-						scheduledJob.getEnvironmentKey(), 
-						description,
-						scheduledJob.getJobTypeId(), 
-						scheduledJob.getConnectorId(), 
-						sdf.parse(scheduleDate.concat("T").concat(scheduleTime)),
-						timeFormat.parse(scheduleTime));
+				.createScheduledJob(createScheduledJobRequest);
 		
 		removeValue(token, id);
 		
@@ -317,9 +322,16 @@ public class ScheduledJobController extends AbstractController {
 		String scheduleDate = request.queryParams("scheduleDate");
 		String scheduleTime = request.queryParams("scheduleTime");
 		
+		UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
+				.withId(id)
+				.withConnectorId(connectorId)
+				.withDescription(description)
+				.withEnvironmentKey(environmentKey)
+				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime)));
+		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.getScheduledJobResource() 
-				.updateScheduledJob(id, environmentKey, description, connectorId, null, null);
+				.updateScheduledJob(updateScheduledJobRequest);
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
 		

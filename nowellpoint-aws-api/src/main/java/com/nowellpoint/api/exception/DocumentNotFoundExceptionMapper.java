@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.aws.data.mongodb.DocumentNotFoundException;
+import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 @Provider
 public class DocumentNotFoundExceptionMapper implements ExceptionMapper<DocumentNotFoundException> {

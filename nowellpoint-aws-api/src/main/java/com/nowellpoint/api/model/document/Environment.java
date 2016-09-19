@@ -6,8 +6,8 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.aws.data.mongodb.DateDeserializer;
-import com.nowellpoint.aws.data.mongodb.DateSerializer;
+import com.nowellpoint.mongodb.document.DateDeserializer;
+import com.nowellpoint.mongodb.document.DateSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Environment {

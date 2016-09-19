@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.data.mongodb;
+package com.nowellpoint.mongodb.document;
 
 import static com.mongodb.MongoClient.getDefaultCodecRegistry;
 import static com.mongodb.MongoClientOptions.builder;
@@ -33,8 +33,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.data.annotation.Audited;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.mongodb.annotation.Audited;
 
 @WebListener
 public class MongoDatastore implements ServletContextListener {
@@ -169,7 +169,7 @@ public class MongoDatastore implements ServletContextListener {
 					.first();
 		
 		if (document == null) {
-			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found", documentClass.getSimpleName() ) );
+			throw new DocumentNotFoundException(String.format( "Resource of type: %s for Id: %s was not found", documentClass.getSimpleName(), id.toString() ) );
 		}
 		
 		return document;
@@ -188,7 +188,7 @@ public class MongoDatastore implements ServletContextListener {
 	}
 	
 	public static <T extends MongoDocument> String getCollectionName(Class<T> type) {
-		return type.getAnnotation(com.nowellpoint.aws.data.annotation.Document.class).collectionName();
+		return type.getAnnotation(com.nowellpoint.mongodb.annotation.Document.class).collectionName();
 	}
 	
 	@SuppressWarnings("unchecked")

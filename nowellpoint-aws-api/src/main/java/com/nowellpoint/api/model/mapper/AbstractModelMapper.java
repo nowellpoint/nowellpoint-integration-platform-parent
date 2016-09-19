@@ -16,10 +16,10 @@ import com.nowellpoint.api.model.document.User;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.aws.data.mongodb.MongoDatastore;
-import com.nowellpoint.aws.data.mongodb.MongoDocument;
-import com.nowellpoint.aws.data.mongodb.MongoDocumentService;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.mongodb.document.MongoDocumentService;
 
 public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentService<T> {
 	

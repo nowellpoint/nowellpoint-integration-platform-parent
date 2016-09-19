@@ -97,7 +97,7 @@
                                     <td>${(environment.environmentName)!}</td>
                                     <td>${(environment.serviceEndpoint)!}</td>
                                     <td>${(environment.apiVersion)!}</td>
-                                    <td><a href="${labels['base.path']}/new/set-schedule?id=${scheduledJob.id}&connector-id=${scheduledJob.connectorId}&environment-key=${environment.key}">${labels["select"]}</a></td>
+                                    <td><a href="${labels['base.path']}/new/set-schedule?id=${scheduledJob.id}&environment-key=${environment.key}">${labels["select"]}</a></td>
                                 </tr>
                             </#list>
                         </tbody>
@@ -115,7 +115,7 @@
 
                 <!-- <#if step == "set-schedule"> -->
 
-                <form id="enviroment-form" name="enviroment-form" method="post" action="${action}">
+                <form id="schedule-form" name="enviroment-form" method="post" action="${action}">
 
                     <input type="hidden" name="id" id="id" value="${scheduledJob.id}" />
 
