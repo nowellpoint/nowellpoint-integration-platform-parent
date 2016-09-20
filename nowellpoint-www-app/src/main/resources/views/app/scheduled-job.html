@@ -41,26 +41,36 @@
                         <br>
                         <br>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
 
                             <dl class="dl-vertical">
                                 <dt>${labels["description"]}</dt>
                                 <dd>${scheduledJob.description!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["connector.type"]}</dt>
-                                <dd><a href="${connectorHref!}">${scheduledJob.jobTypeName!}</a>&emsp;</dd>
+                                <dd><a href="${connectorHref!}">${(scheduledJob.connectorType)!}</a>&emsp;</dd>
                                 <hr>
-                                <dt>${labels["scheduled.job.type"]}</dt>
+                                <dt>${labels["environment.name"]}</dt>
                                 <dd>${(scheduledJob.environmentName)!}&emsp;</dd>
                                 <hr>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <dl class="dl-vertical">
                                 <dt>${labels["scheduled.date"]}</dt>
                                 <dd>${(scheduledJob.scheduleDate?date?string.iso)!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["scheduled.time"]}</dt>
                                 <dd>${(scheduledJob.scheduleDate?time?string.medium)!}&emsp;</dd>
                                 <hr>
+                                <dt>${labels["status"]}</dt>
+                                <dd>${(scheduledJob.status)!}&emsp;</dd>
+                                <hr>
                             </dl>
                         </div>
+
                     </div>
 
                     <br>

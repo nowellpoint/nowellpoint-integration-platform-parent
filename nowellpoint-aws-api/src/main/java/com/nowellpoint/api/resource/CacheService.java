@@ -28,7 +28,15 @@ public class CacheService {
     @Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed("System Administrator")
 	public Response flushCache() {
-		CacheManager.getCache().flushAll();
+		
+		Jedis jedis = CacheManager.getCache();
+		
+		try {
+			jedis.flushAll();
+		} finally {
+			jedis.close();
+		}
+
 		return Response.ok().build();
 	}
 	

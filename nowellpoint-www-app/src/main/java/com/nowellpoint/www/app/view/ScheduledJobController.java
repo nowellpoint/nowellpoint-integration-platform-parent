@@ -293,6 +293,7 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", scheduledJob);
 		model.put("mode", "edit");
+		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE);
 		
 		if (view != null && view.equals("1")) {
 			model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);

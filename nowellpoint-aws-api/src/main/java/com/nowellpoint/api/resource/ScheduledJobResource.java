@@ -109,10 +109,10 @@ public class ScheduledJobResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createScheduledJob(
+			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
 			@FormParam("description") String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("environmentKey") String environmentKey,
-			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
 			@FormParam("scheduleDate") @NotEmpty String scheduleDate,
 			@FormParam("status") String status) {
 		
@@ -125,7 +125,7 @@ public class ScheduledJobResource {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
-			scheduledJob.setScheduleDate(scheduleDate != null ? sdf.parse(scheduleDate) : null);
+			scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
 		} catch (Exception e) {
 			LOGGER.warn(httpServletRequest.getRequestURI() + " " + e.getMessage());
 			throw new BadRequestException(e.getMessage());
@@ -170,6 +170,7 @@ public class ScheduledJobResource {
 		scheduledJob.setConnectorId(connectorId);
 		scheduledJob.setEnvironmentKey(environmentKey);
 		scheduledJob.setDescription(description);
+		scheduledJob.setStatus(status);
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  

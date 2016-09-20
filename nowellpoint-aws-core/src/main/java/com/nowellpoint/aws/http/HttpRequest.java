@@ -196,7 +196,9 @@ public abstract class HttpRequest {
 				parameters.keySet().forEach(param -> {
 					sb.append(param);
 					sb.append("=");
-					sb.append(parameters.get(param));
+					if (parameters.get(param) != null) {
+						sb.append(parameters.get(param));
+					}
 					sb.append("&");
 				});
 				
@@ -204,23 +206,21 @@ public abstract class HttpRequest {
 			} 
 			
 			if (ofNullable(body).isPresent()) {
-								
+				
+				if (! Optional.ofNullable(headers.get(HttpHeaders.CONTENT_TYPE)).isPresent()) {
+					throw new IOException("Missing content type header");
+				}
+				
 				byte[] bytes = null;
 				
-				if (body.getClass().isAssignableFrom(String.class)) {
-					bytes = String.valueOf(body).getBytes();
+				if (headers.get(HttpHeaders.CONTENT_TYPE).equals(MediaType.APPLICATION_JSON)) {
+					bytes = objectMapper.writeValueAsString(body).getBytes();
 				} else {
-					if (! Optional.ofNullable(headers.get(HttpHeaders.CONTENT_TYPE)).isPresent()) {
-						throw new IOException("Missing content type header");
-					}
-					
-					if (headers.get(HttpHeaders.CONTENT_TYPE).equals(MediaType.APPLICATION_JSON)) {
-						bytes = objectMapper.writeValueAsString(body).getBytes();
-					}
+					bytes = String.valueOf(body).getBytes();
 				}
 				
 				connection.setDoOutput(true);
-				connection.setRequestProperty("Content-Length", Integer.toString(bytes.length));
+				connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(bytes.length));
 				
 				OutputStream os = connection.getOutputStream();
 				os.write( bytes );    

@@ -1,11 +1,11 @@
 package com.nowellpoint.client.auth;
 
-public class EnvironmentPropertyCredentials implements UsernamePasswordCredentials {
+public class EnvironmentVariablesCredentials implements UsernamePasswordCredentials {
 	
 	private String username;
 	private String password;
 	
-	public EnvironmentPropertyCredentials() {
+	public EnvironmentVariablesCredentials() {
 		this.username = System.getenv("NOWELLPOINT_USERNAME");
 		this.password = System.getenv("NOWELLPOINT_PASSWORD");
 	}
