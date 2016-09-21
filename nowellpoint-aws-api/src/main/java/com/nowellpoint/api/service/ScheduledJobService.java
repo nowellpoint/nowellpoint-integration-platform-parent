@@ -1,5 +1,8 @@
 package com.nowellpoint.api.service;
 
+import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNullOrEmpty;
+
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
@@ -7,7 +10,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.amazonaws.util.StringUtils;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
@@ -59,7 +61,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public void createScheduledJob(ScheduledJob scheduledJob) {
-		if (scheduledJob.getOwner() == null) {
+		if (isNull(scheduledJob.getOwner())) {
 			AccountProfile owner = new AccountProfile(getSubject());
 			scheduledJob.setOwner(owner);
 		}
@@ -91,19 +93,19 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
 
-		if (StringUtils.isNullOrEmpty(scheduledJob.getConnectorId())) {
+		if (isNullOrEmpty(scheduledJob.getConnectorId())) {
 			scheduledJob.setConnectorId(original.getConnectorId());
 		}
 
-		if (scheduledJob.getOwner() == null) {
+		if (isNull(scheduledJob.getOwner())) {
 			scheduledJob.setOwner(original.getOwner());
 		}
 		
-		if (scheduledJob.getScheduleDate() == null) {
+		if (isNull(scheduledJob.getScheduleDate())) {
 			scheduledJob.setScheduleDate(original.getScheduleDate());
 		}
 		
-		if (StringUtils.isNullOrEmpty(scheduledJob.getStatus())) {
+		if (isNullOrEmpty(scheduledJob.getStatus())) {
 			scheduledJob.setStatus(original.getStatus());
 		}
 		

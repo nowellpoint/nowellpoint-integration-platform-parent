@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.idp.model;
+package com.nowellpoint.client.model.idp;
 
 import java.io.Serializable;
 import java.util.List;

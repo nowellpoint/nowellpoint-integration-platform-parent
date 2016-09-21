@@ -1,10 +1,10 @@
-package com.nowellpoint.aws.idp.model;
+package com.nowellpoint.client.model.idp;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class EmailVerificationToken implements Serializable {
+public class Tenant implements Serializable {
 
 	/**
 	 * 
@@ -14,7 +14,7 @@ public class EmailVerificationToken implements Serializable {
 	@JsonProperty(value="href")
 	private String href;
 	
-	public EmailVerificationToken() {
+	public Tenant() {
 		
 	}
 

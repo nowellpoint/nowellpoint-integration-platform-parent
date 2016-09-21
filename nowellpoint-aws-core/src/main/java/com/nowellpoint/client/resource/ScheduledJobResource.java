@@ -6,11 +6,11 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
+import com.nowellpoint.client.model.idp.Token;
 
 public class ScheduledJobResource extends AbstractResource {
 	

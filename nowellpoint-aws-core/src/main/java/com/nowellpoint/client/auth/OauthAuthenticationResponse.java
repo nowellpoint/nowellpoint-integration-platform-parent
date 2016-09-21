@@ -1,6 +1,6 @@
 package com.nowellpoint.client.auth;
 
-import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.client.model.idp.Token;
 
 public interface OauthAuthenticationResponse {
 	

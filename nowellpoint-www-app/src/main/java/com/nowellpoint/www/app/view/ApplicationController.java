@@ -14,7 +14,6 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
@@ -24,6 +23,7 @@ import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
 import com.nowellpoint.client.model.ServiceProvider;
+import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 

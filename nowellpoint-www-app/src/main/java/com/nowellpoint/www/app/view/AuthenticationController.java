@@ -14,7 +14,6 @@ import javax.ws.rs.NotAuthorizedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.idp.model.Token;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -24,6 +23,7 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 

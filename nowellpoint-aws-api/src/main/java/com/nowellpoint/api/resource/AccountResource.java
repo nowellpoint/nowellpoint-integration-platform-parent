@@ -18,7 +18,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.client.model.idp.Account;
 
 @Path("/account")
 public class AccountResource {

@@ -40,7 +40,7 @@ import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.ServiceException;
 import com.nowellpoint.aws.http.HttpRequestException;
-import com.nowellpoint.aws.idp.model.Account;
+import com.nowellpoint.client.model.idp.Account;
 
 @Path("account-profile")
 public class AccountProfileResource {

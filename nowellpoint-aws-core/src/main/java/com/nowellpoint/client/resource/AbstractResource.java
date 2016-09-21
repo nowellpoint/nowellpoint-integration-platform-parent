@@ -3,7 +3,7 @@ package com.nowellpoint.client.resource;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import com.nowellpoint.aws.idp.model.Token;
+import com.nowellpoint.client.model.idp.Token;
 
 public class AbstractResource {
 	

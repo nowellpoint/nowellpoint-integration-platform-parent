@@ -1,20 +1,20 @@
-package com.nowellpoint.aws.idp.model;
+package com.nowellpoint.client.model.idp;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Application implements Serializable {
+public class Directory implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2456321938436032586L;
+	private static final long serialVersionUID = -4028402953654987070L;
 	
 	@JsonProperty(value="href")
 	private String href;
 	
-	public Application() {
+	public Directory() {
 		
 	}
 

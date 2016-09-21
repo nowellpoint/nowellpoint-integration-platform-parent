@@ -1,5 +1,9 @@
 package com.nowellpoint.api.service;
 
+import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNotNull;
+import static com.nowellpoint.util.Assert.isNotEqual;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
@@ -97,15 +101,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 
-		if (accountProfile.getLocaleSidKey() == null) {
+		if (isNull(accountProfile.getLocaleSidKey())) {
 			accountProfile.setLocaleSidKey(Locale.getDefault().toString());
 		}
 
-		if (accountProfile.getLanguageSidKey() == null) {
+		if (isNull(accountProfile.getLanguageSidKey())) {
 			accountProfile.setLanguageSidKey(Locale.getDefault().toString());
 		}
 
-		if (accountProfile.getTimeZoneSidKey() == null) {
+		if (isNull(accountProfile.getTimeZoneSidKey())) {
 			accountProfile.setTimeZoneSidKey(TimeZone.getDefault().getID());
 		}
 
@@ -140,35 +144,35 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setIsActive(original.getIsActive());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
 		
-		if (accountProfile.getLocaleSidKey() == null) {
+		if (isNull(accountProfile.getLocaleSidKey())) {
 			accountProfile.setLocaleSidKey(original.getLocaleSidKey());
 		}
 
-		if (accountProfile.getLanguageSidKey() == null) {
+		if (isNull(accountProfile.getLanguageSidKey())) {
 			accountProfile.setLanguageSidKey(original.getLanguageSidKey());
 		}
 
-		if (accountProfile.getTimeZoneSidKey() == null) {
+		if (isNull(accountProfile.getTimeZoneSidKey())) {
 			accountProfile.setTimeZoneSidKey(original.getTimeZoneSidKey());
 		}
 		
-		if (accountProfile.getEnableSalesforceLogin() == null) {
+		if (isNull(accountProfile.getEnableSalesforceLogin())) {
 			accountProfile.setEnableSalesforceLogin(original.getEnableSalesforceLogin());
 		}
 		
-		if (accountProfile.getAddress() == null) {
+		if (isNull(accountProfile.getAddress())) {
 			accountProfile.setAddress(original.getAddress());
 		}
 		
-		if (accountProfile.getLastLoginDate() == null) {
+		if (isNull(accountProfile.getLastLoginDate())) {
 			accountProfile.setLastLoginDate(original.getLastLoginDate());
 		}
 		
-		if (accountProfile.getPhotos() == null) {
+		if (isNull(accountProfile.getPhotos())) {
 			accountProfile.setPhotos(original.getPhotos());
 		}
 		
-		if (accountProfile.getCreditCards() == null) {
+		if (isNull(accountProfile.getCreditCards())) {
 			accountProfile.setCreditCards(original.getCreditCards());
 		}
 		
@@ -186,7 +190,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void updateAccountProfileAddress(Id id, Address address) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		
-		if (address.getCountryCode() != accountProfile.getAddress().getCountryCode()) {
+		if (isNotEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
 			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
 			address.setCountry(isoCountry.getDescription());
 		}
@@ -279,7 +283,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		Result<Customer> customerResult = null;
 		
-		if (resource.getSystemReferences() != null) {
+		if (isNotNull(resource.getSystemReferences())) {
 			
 			Optional<SystemReference> optional = resource.getSystemReferences()
 					.stream()

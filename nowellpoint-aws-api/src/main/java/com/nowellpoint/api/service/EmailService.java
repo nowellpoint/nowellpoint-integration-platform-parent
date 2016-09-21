@@ -10,8 +10,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.aws.idp.model.Account;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.model.idp.Account;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
