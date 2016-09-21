@@ -56,7 +56,7 @@
                                 <div class="form-group">
                                     <label class="control-label" for="scheduleDate">${labels["scheduled.date"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="scheduleDate" name="scheduleDate" value="${(scheduledJob.scheduleDate?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" required>
+                                        <input type="text" id="scheduleDate" name="scheduleDate" value="${(scheduledJob.scheduleDate?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true"  data-date-format="yyyy-mm-dd" required>
                                         <span class="input-group-addon">
                                         <span class="icon icon-calendar"></span>
                                         </span>
@@ -66,7 +66,7 @@
                                 <div class="form-group">
                                     <label class="control-label" for="scheduleTime">${labels["scheduled.time"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="scheduleTime" name="scheduleTime" value="${(scheduledJob.scheduleDate?time?string.medium)!}" class="form-control" required/>
+                                        <input type="text" id="scheduleTime" name="scheduleTime" value="${(scheduledJob.scheduleDate?time?string['HH:mm:ss'])!}" class="form-control" required/>
                                         <span class="input-group-addon">${labels["time.format"]}
                                     </span>
                                     </div>

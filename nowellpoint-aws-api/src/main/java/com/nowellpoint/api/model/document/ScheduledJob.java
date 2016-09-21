@@ -43,6 +43,8 @@ public class ScheduledJob extends MongoDocument {
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date scheduleDate;
 	
+	private String status;
+	
 	public ScheduledJob() {
 		
 	}
@@ -125,5 +127,13 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setScheduleDate(Date scheduleDate) {
 		this.scheduleDate = scheduleDate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

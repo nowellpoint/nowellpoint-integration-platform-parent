@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.amazonaws.util.StringUtils;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
@@ -89,11 +90,11 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
-		
-		if (scheduledJob.getConnectorId() == null) {
+
+		if (StringUtils.isNullOrEmpty(scheduledJob.getConnectorId())) {
 			scheduledJob.setConnectorId(original.getConnectorId());
 		}
-		
+
 		if (scheduledJob.getOwner() == null) {
 			scheduledJob.setOwner(original.getOwner());
 		}
@@ -102,7 +103,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setScheduleDate(original.getScheduleDate());
 		}
 		
-		if (scheduledJob.getStatus() == null) {
+		if (StringUtils.isNullOrEmpty(scheduledJob.getStatus())) {
 			scheduledJob.setStatus(original.getStatus());
 		}
 		
@@ -151,7 +152,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		}
 		
 		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(new Id(scheduledJob.getJobTypeId()));
-		
+
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
 			SalesforceConnector salesforceConnector = null;
 			try {
@@ -159,7 +160,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			} catch (DocumentNotFoundException e) {
 				throw new ServiceException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}
-			
+
 			Optional<Environment> environment = null;
 			if (scheduledJob.getEnvironmentKey() != null && ! scheduledJob.getEnvironmentKey().trim().isEmpty()) {
 				environment = salesforceConnector.getEnvironments()
@@ -174,13 +175,14 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			} else {
 				environment = salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst();
 			}
-			
+
 			scheduledJob.setEnvironmentKey(environment.get().getKey());
 			scheduledJob.setEnvironmentName(environment.get().getEnvironmentName());
 		}
-		
+
 		scheduledJob.setConnectorType(scheduledJobType.getConnectorType().getCode());
 		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
 		scheduledJob.setJobTypeName(scheduledJobType.getName());
+
 	}
 }

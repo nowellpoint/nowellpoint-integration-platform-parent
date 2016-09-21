@@ -118,6 +118,7 @@
                 <form id="schedule-form" name="enviroment-form" method="post" action="${action}">
 
                     <input type="hidden" name="id" id="id" value="${scheduledJob.id}" />
+                    <input type="hidden" name="connectorId" id="connectorId" value="${scheduledJob.connectorId}" />
 
                     <div class="row">
                         <div class="form-group col-md-4"></div>
@@ -142,7 +143,7 @@
                                 <label class="control-label" for="scheduleDate">${labels["scheduled.date"]}</label>
                                 <div class="input-group">
                                     <#assign sysdate=. now />
-                                    <input type="text" id="scheduleDate" name="scheduleDate" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" required>
+                                    <input type="text" id="scheduleDate" name="scheduleDate" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose=true required>
                                     <span class="input-group-addon">
                                         <span class="icon icon-calendar"></span>
                                     </span>
@@ -169,8 +170,6 @@
 
                         </div>
                     </div>
-
-
 
                 </form>
 

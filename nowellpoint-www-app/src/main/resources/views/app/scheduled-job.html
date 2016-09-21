@@ -63,7 +63,7 @@
                                 <dd>${(scheduledJob.scheduleDate?date?string.iso)!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["scheduled.time"]}</dt>
-                                <dd>${(scheduledJob.scheduleDate?time?string.medium)!}&emsp;</dd>
+                                <dd>${(scheduledJob.scheduleDate?time?string["HH:mm:ss"])!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["status"]}</dt>
                                 <dd>${(scheduledJob.status)!}&emsp;</dd>

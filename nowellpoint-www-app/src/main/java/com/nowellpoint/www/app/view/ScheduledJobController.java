@@ -16,6 +16,7 @@ import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
+import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -221,7 +222,7 @@ public class ScheduledJobController extends AbstractController {
 			model.put("scheduledJob", scheduledJob);
 			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
 			model.put("title", getLabel(getAccount(request), "schedule.job"));
-			model.put("errorMessage", getLabel(getAccount(request), "unparseable.date.time"));
+			model.put("errorMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "unparseable.date.time"));
 			return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
 		}
 
@@ -293,7 +294,7 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", scheduledJob);
 		model.put("mode", "edit");
-		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE);
+		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 		
 		if (view != null && view.equals("1")) {
 			model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
@@ -319,13 +320,38 @@ public class ScheduledJobController extends AbstractController {
 		String id = request.params(":id");
 		String environmentKey = request.queryParams("environmentKey");
 		String description = request.queryParams("description");
-		String connectorId = request.queryParams("connectorId");
 		String scheduleDate = request.queryParams("scheduleDate");
 		String scheduleTime = request.queryParams("scheduleTime");
 		
+		try {
+			
+			new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate);
+			new SimpleDateFormat("HH:mm:ss").parse(scheduleTime);
+			
+		} catch (ParseException e) {
+			LOGGER.error(e.getMessage());
+			
+			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+					.getScheduledJobResource()
+					.getScheduledJob(id);
+			
+			String view = request.queryParams("view");
+			
+			Map<String, Object> model = getModel();
+			model.put("scheduledJob", scheduledJob);
+			model.put("mode", "edit");
+			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
+			model.put("errorMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "unparseable.date.time"));
+			if (view != null && view.equals("1")) {
+				model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
+			} else {
+				model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
+			}
+			return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+		}	
+		
 		UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
 				.withId(id)
-				.withConnectorId(connectorId)
 				.withDescription(description)
 				.withEnvironmentKey(environmentKey)
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime)));
