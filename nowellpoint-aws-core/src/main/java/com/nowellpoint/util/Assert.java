@@ -26,8 +26,24 @@ public class Assert {
 		}
 	}
 	
+	public static Boolean isNotNullOrEmpty(String value) {
+		if (value == null || value.isEmpty()) {
+			return Boolean.FALSE;
+		} else {
+			return Boolean.TRUE;
+		}
+	}
+	
 	public static Boolean isNull(Object value) {
 		if (value == null) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
+	
+	public static Boolean isEmpty(String value) {
+		if (value.isEmpty()) {
 			return Boolean.TRUE;
 		} else {
 			return Boolean.FALSE;

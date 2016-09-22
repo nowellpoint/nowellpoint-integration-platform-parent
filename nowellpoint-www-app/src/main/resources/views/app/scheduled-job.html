@@ -31,7 +31,19 @@
                             <h3 class="dashhead-title">${labels["scheduled.job"]}</h3>
                         </div>
                         <div class="flextable-item">
-                            <a id="edit-application" href="${labels['base.path']}/${scheduledJob.id!}/edit" class="btn btn-primary" role="button">${labels["edit.scheduled.job"]}</a>
+                            <!--  <#if scheduledJob.status == "Deactivated"> -->
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/activate">
+                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-primary">${labels["activate.scheduled.job"]}</button>
+                            </form>   
+                            <!-- </#if> -->
+                            <!--  <#if scheduledJob.status == "Scheduled"> -->
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/deactivate">
+                                <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-danger">${labels["deactivate.scheduled.job"]}</button>
+                            </form>  
+                            <!-- </#if> -->
+                        </div>
+                        <div class="flextable-item">
+                            <a id="edit-scheduled-job" href="${labels['base.path']}/${scheduledJob.id!}/edit" class="btn btn-primary" role="button">${labels["edit.scheduled.job"]}</a>
                         </div>
                     </div>
 
@@ -44,14 +56,14 @@
                         <div class="col-md-4">
 
                             <dl class="dl-vertical">
-                                <dt>${labels["description"]}</dt>
-                                <dd>${scheduledJob.description!}&emsp;</dd>
-                                <hr>
                                 <dt>${labels["connector.type"]}</dt>
                                 <dd><a href="${connectorHref!}">${(scheduledJob.connectorType)!}</a>&emsp;</dd>
                                 <hr>
                                 <dt>${labels["environment.name"]}</dt>
                                 <dd>${(scheduledJob.environmentName)!}&emsp;</dd>
+                                <hr>
+                                <dt>${labels["status"]}</dt>
+                                <dd>${(scheduledJob.status)!}&emsp;</dd>
                                 <hr>
                             </dl>
                         </div>
@@ -65,10 +77,23 @@
                                 <dt>${labels["scheduled.time"]}</dt>
                                 <dd>${(scheduledJob.scheduleDate?time?string["HH:mm:ss"])!}&emsp;</dd>
                                 <hr>
-                                <dt>${labels["status"]}</dt>
-                                <dd>${(scheduledJob.status)!}&emsp;</dd>
+                                <dt>&emsp;</dt>
+                                <dd>&emsp;</dd>
                                 <hr>
                             </dl>
+                        </div>
+                        
+                        <div class="col-md-4">
+                        </div>
+                        
+                        <div class="col-md-8">
+                        
+                            <dl class="dl-vertical">
+                            <dt>${labels["description"]}</dt>
+                                <dd>${scheduledJob.description!}&emsp;</dd>
+                                <hr>
+                            </dl>    
+                            
                         </div>
 
                     </div>

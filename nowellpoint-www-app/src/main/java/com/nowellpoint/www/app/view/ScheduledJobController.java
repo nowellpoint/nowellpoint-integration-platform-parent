@@ -267,7 +267,9 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", scheduledJob);
 		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnectorId()));
-		model.put("successMessage", request.cookie("successMessage"));
+		model.put("successMessage", getValue(token, "success.message"));
+		
+		removeValue(token, "success.message");
 		
 		return render(request, model, Path.Template.SCHEDULED_JOB);
 	};
@@ -303,6 +305,56 @@ public class ScheduledJobController extends AbstractController {
 		}
 		
 		return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * activateScheduledJob
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route activateScheduledJob = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+				.getScheduledJobResource() 
+				.activateScheduledJob(id);
+		
+		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "activate.scheduled.job.success"));
+		
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
+		
+		return "";
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * deactivateScheduledJob
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route deactivateScheduledJob = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+				.getScheduledJobResource() 
+				.deactivateScheduledJob(id);
+		
+		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
+		
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
+		
+		return "";
 	};
 	
 	/**

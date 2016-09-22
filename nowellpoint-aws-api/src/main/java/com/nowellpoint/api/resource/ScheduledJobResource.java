@@ -1,5 +1,7 @@
 package com.nowellpoint.api.resource;
 
+import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
+
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Set;
@@ -27,7 +29,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.amazonaws.util.StringUtils;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
@@ -168,17 +169,18 @@ public class ScheduledJobResource {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setDescription(description);
-		scheduledJob.setConnectorId(connectorId);
-		scheduledJob.setEnvironmentKey(environmentKey);
-		scheduledJob.setDescription(description);
-		scheduledJob.setStatus(status);
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
-			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
-			scheduledJob.setScheduleDate(StringUtils.isNullOrEmpty(scheduleDate) ? null : sdf.parse(scheduleDate));
-		} catch (Exception e) {
-			LOGGER.warn(e.getMessage());
-			throw new BadRequestException(e.getMessage());
+		scheduledJob.setConnectorId(isNotNullOrEmpty(connectorId) ? connectorId : null);
+		scheduledJob.setEnvironmentKey(isNotNullOrEmpty(environmentKey) ? environmentKey : null);
+		scheduledJob.setStatus(isNotNullOrEmpty(status) ? status : null);
+		if (isNotNullOrEmpty(scheduleDate)) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+				sdf.setTimeZone(TimeZone.getTimeZone("UTC"));  
+				scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+				throw new BadRequestException(e.getMessage());
+			}
 		}
 		
 		scheduledJobService.updateScheduledJob(new Id(id), scheduledJob);

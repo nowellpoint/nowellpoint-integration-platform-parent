@@ -77,6 +77,8 @@ public class Path {
 		public static final String SCHEDULED_JOB_CREATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
 		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/edit");
 		public static final String SCHEDULED_JOB_UPDATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id");
+		public static final String SCHEDULED_JOB_ACTIVATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/activate");
+		public static final String SCHEDULED_JOB_DEACTIVATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/deactivate");
 	}
 
 	public static class Template {

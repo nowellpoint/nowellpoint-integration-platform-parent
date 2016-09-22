@@ -85,6 +85,48 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJob;
 	}
 	
+	public ScheduledJob deactivateScheduledJob(String id) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.parameter("status", "Deactivated")
+				.execute();
+		
+		ScheduledJob scheduledJob = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+		} else {
+			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+		}
+		
+		return scheduledJob;
+	}
+	
+	public ScheduledJob activateScheduledJob(String id) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.parameter("status", "Scheduled")
+				.execute();
+		
+		ScheduledJob scheduledJob = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+		} else {
+			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+		}
+		
+		return scheduledJob;
+	}
+	
 	public ScheduledJob getScheduledJob(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
