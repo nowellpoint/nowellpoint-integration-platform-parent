@@ -63,7 +63,13 @@
                                 <dd>${(scheduledJob.environmentName)!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["status"]}</dt>
-                                <dd>${(scheduledJob.status)!}&emsp;</dd>
+                                <!--  <#if scheduledJob.status == "Deactivated"> -->
+                                <dd class="text-danger">
+                                <!-- </#if> -->
+                                <!--  <#if scheduledJob.status == "Scheduled"> -->
+                                <dd class="text-success">
+                                <!-- </#if> -->
+                                ${(scheduledJob.status)!}&emsp;</dd>
                                 <hr>
                             </dl>
                         </div>
