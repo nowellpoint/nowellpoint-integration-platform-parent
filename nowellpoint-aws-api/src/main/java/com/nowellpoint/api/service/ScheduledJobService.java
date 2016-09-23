@@ -159,8 +159,12 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ServiceException(Status.BAD_REQUEST, "Schedule Date cannot be before current date");
 		}
 		
+		if (! (scheduledJob.getStatus().equals("Scheduled") || scheduledJob.getStatus().equals("Deactivated"))) {
+			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
+		}
+		
 		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(new Id(scheduledJob.getJobTypeId()));
-System.out.println("1");
+
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
 			SalesforceConnector salesforceConnector = null;
 			try {
@@ -168,7 +172,7 @@ System.out.println("1");
 			} catch (DocumentNotFoundException e) {
 				throw new ServiceException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}
-			System.out.println("2");
+
 			Optional<Environment> environment = null;
 			if (scheduledJob.getEnvironmentKey() != null && ! scheduledJob.getEnvironmentKey().trim().isEmpty()) {
 				environment = salesforceConnector.getEnvironments()
@@ -183,7 +187,7 @@ System.out.println("1");
 			} else {
 				environment = salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst();
 			}
-			System.out.println("3");
+
 			scheduledJob.setEnvironmentKey(environment.get().getKey());
 			scheduledJob.setEnvironmentName(environment.get().getEnvironmentName());
 		}

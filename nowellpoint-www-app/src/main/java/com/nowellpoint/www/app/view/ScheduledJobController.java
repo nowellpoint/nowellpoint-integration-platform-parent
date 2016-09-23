@@ -269,7 +269,10 @@ public class ScheduledJobController extends AbstractController {
 		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnectorId()));
 		model.put("successMessage", getValue(token, "success.message"));
 		
-		removeValue(token, "success.message");
+		if (model.get("successMessage") != null) {
+			System.out.println("" + model.get("successMessage"));
+			removeValue(token, "success.message");
+		}
 		
 		return render(request, model, Path.Template.SCHEDULED_JOB);
 	};
