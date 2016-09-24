@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.mapper;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,12 +38,14 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	
 	protected void createScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
+		parseScheduledDate(document);
 		create(getSubject(), document);
 		modelMapper.map(document, scheduledJob);
 	}
 	
 	protected void updateScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
+		parseScheduledDate(document);
 		replace(getSubject(), document);
 		modelMapper.map(document, scheduledJob);
 	}
@@ -55,5 +59,16 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	protected void deleteScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
 		delete(getSubject(), document);
+	}
+	
+	private void parseScheduledDate(com.nowellpoint.api.model.document.ScheduledJob document) {
+		ZonedDateTime dateTime = ZonedDateTime.ofInstant(document.getScheduleDate().toInstant(), ZoneId.of("UTC"));
+		document.setYear(dateTime.getYear());
+		document.setMonth(dateTime.getMonth().getValue());
+		document.setDay(dateTime.getDayOfMonth());
+		document.setHour(dateTime.getHour());
+		document.setMinute(dateTime.getMinute());
+		document.setSecond(dateTime.getSecond());
+		document.setStatus("Scheduled");
 	}
 }

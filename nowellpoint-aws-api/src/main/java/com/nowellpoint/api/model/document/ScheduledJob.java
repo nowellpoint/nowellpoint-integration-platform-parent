@@ -45,6 +45,24 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String status;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
+	private Date lastRunDate;
+	
+	private String lastRunStatus;
+	
+	private Integer year;
+	
+	private Integer month;
+	
+	private Integer day;
+	
+	private Integer hour;
+	
+	private Integer minute;
+	
+	private Integer second;
+	
 	public ScheduledJob() {
 		
 	}
@@ -135,5 +153,69 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Date getLastRunDate() {
+		return lastRunDate;
+	}
+
+	public void setLastRunDate(Date lastRunDate) {
+		this.lastRunDate = lastRunDate;
+	}
+
+	public String getLastRunStatus() {
+		return lastRunStatus;
+	}
+
+	public void setLastRunStatus(String lastRunStatus) {
+		this.lastRunStatus = lastRunStatus;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public Integer getMonth() {
+		return month;
+	}
+
+	public void setMonth(Integer month) {
+		this.month = month;
+	}
+
+	public Integer getDay() {
+		return day;
+	}
+
+	public void setDay(Integer day) {
+		this.day = day;
+	}
+
+	public Integer getHour() {
+		return hour;
+	}
+
+	public void setHour(Integer hour) {
+		this.hour = hour;
+	}
+
+	public Integer getMinute() {
+		return minute;
+	}
+
+	public void setMinute(Integer minute) {
+		this.minute = minute;
+	}
+
+	public Integer getSecond() {
+		return second;
+	}
+
+	public void setSecond(Integer second) {
+		this.second = second;
 	}
 }

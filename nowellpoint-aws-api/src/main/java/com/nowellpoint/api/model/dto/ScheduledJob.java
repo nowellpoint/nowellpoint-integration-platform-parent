@@ -32,6 +32,10 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String status;
 	
+	private Date lastRunDate;
+	
+	private String lastRunStatus;
+	
 	public ScheduledJob() {
 		
 	}
@@ -122,5 +126,21 @@ public class ScheduledJob extends AbstractResource {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Date getLastRunDate() {
+		return lastRunDate;
+	}
+
+	public void setLastRunDate(Date lastRunDate) {
+		this.lastRunDate = lastRunDate;
+	}
+
+	public String getLastRunStatus() {
+		return lastRunStatus;
+	}
+
+	public void setLastRunStatus(String lastRunStatus) {
+		this.lastRunStatus = lastRunStatus;
 	}
 }

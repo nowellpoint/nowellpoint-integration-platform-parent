@@ -201,7 +201,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	private static String encode(String src) {
+	protected static String encode(String src) {
 		return Base64.getEncoder().encodeToString(src.getBytes());
 	}
 	

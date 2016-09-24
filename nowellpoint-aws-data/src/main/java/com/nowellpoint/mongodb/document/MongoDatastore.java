@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -39,6 +40,8 @@ import com.nowellpoint.mongodb.annotation.Audited;
 @WebListener
 public class MongoDatastore implements ServletContextListener {
 	
+	private static final Logger LOGGER = Logger.getLogger(MongoDatastore.class.getName());
+	
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
 	private static MongoDatabase mongoDatabase;
@@ -58,6 +61,7 @@ public class MongoDatastore implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		mongoClient = new MongoClient(mongoClientURI);	
 		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
+		LOGGER.info(mongoDatabase.getName());
 	}
 	
 	@Override
