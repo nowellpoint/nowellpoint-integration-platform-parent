@@ -31,14 +31,14 @@
                             <h3 class="dashhead-title">${labels["scheduled.job"]}</h3>
                         </div>
                         <div class="flextable-item">
-                            <!--  <#if scheduledJob.status == "Deactivated"> -->
-                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/activate">
-                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-primary">${labels["activate.scheduled.job"]}</button>
+                            <!--  <#if scheduledJob.status == "Stopped"> -->
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
+                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-primary">${labels["start.scheduled.job"]}</button>
                             </form>   
                             <!-- </#if> -->
                             <!--  <#if scheduledJob.status == "Scheduled"> -->
-                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/deactivate">
-                                <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-danger">${labels["deactivate.scheduled.job"]}</button>
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/stop">
+                                <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-danger">${labels["stop.scheduled.job"]}</button>
                             </form>  
                             <!-- </#if> -->
                         </div>
@@ -63,7 +63,7 @@
                                 <dd>${(scheduledJob.environmentName)!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["status"]}</dt>
-                                <!--  <#if scheduledJob.status == "Deactivated"> -->
+                                <!--  <#if scheduledJob.status == "Stopped"> -->
                                 <dd class="text-danger">
                                 <!-- </#if> -->
                                 <!--  <#if scheduledJob.status == "Scheduled"> -->

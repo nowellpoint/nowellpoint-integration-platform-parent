@@ -313,12 +313,12 @@ public class ScheduledJobController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * activateScheduledJob
+	 * startScheduledJob
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route activateScheduledJob = (Request request, Response response) -> {
+	public Route startScheduledJob = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
 		
@@ -326,7 +326,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.getScheduledJobResource() 
-				.activateScheduledJob(id);
+				.startScheduledJob(id);
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "activate.scheduled.job.success"));
 		
@@ -338,12 +338,12 @@ public class ScheduledJobController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * deactivateScheduledJob
+	 * stopScheduledJob
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route deactivateScheduledJob = (Request request, Response response) -> {
+	public Route stopScheduledJob = (Request request, Response response) -> {
 		
 		Token token = getToken(request);
 		
@@ -351,7 +351,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.getScheduledJobResource() 
-				.deactivateScheduledJob(id);
+				.stopScheduledJob(id);
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
 		

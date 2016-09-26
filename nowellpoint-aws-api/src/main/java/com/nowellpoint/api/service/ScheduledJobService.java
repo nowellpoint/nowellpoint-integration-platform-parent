@@ -92,6 +92,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
+		scheduledJob.setLastRunDate(original.getLastRunDate());
+		scheduledJob.setLastRunStatus(original.getLastRunStatus());
 		
 		if (isNull(scheduledJob.getDescription())) {
 			scheduledJob.setDescription(original.getDescription());
@@ -159,7 +161,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ServiceException(Status.BAD_REQUEST, "Schedule Date cannot be before current date");
 		}
 		
-		if (! (scheduledJob.getStatus().equals("Scheduled") || scheduledJob.getStatus().equals("Deactivated"))) {
+		if (! (scheduledJob.getStatus().equals("Scheduled") || scheduledJob.getStatus().equals("Stopped"))) {
 			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		
@@ -188,6 +190,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 				environment = salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst();
 			}
 
+			scheduledJob.setIsSandbox(environment.get().getIsSandbox());
 			scheduledJob.setEnvironmentKey(environment.get().getKey());
 			scheduledJob.setEnvironmentName(environment.get().getEnvironmentName());
 		}

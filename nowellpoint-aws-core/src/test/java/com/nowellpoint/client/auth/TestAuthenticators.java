@@ -58,7 +58,7 @@ public class TestAuthenticators {
 			
 			System.out.println(scheduledJob.getId());
 			
-			//client.getScheduledJobResource().deleteScheduledJob(scheduledJob.getId());
+			client.getScheduledJobResource().deleteScheduledJob(scheduledJob.getId());
 			
 			client.logout();
 			

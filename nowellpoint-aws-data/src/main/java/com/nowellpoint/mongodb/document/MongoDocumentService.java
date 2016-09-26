@@ -46,7 +46,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 */
 	
 	protected Set<T> find(Bson query) {
-		System.out.println("scanning..." + toString(query));
 		Set<T> documents = new HashSet<T>(); //hscan(documentClass, encode(toString(query)));
 		
 		if (documents.isEmpty()) {
@@ -119,15 +118,17 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 */
 	
 	protected T create(String subject, T document) {	
+		Date now = Date.from(Instant.now());
+		
 		document.setId(new ObjectId());
 		document.setCreatedById(subject);
 		document.setLastModifiedById(subject);
-		document.setSystemCreationDate(Date.from(Instant.now()));
-		document.setSystemModifiedDate(Date.from(Instant.now()));
+		document.setSystemCreationDate(now);
+		document.setSystemModifiedDate(now);
 		
 		if (document.getCreatedDate() == null) {
-			document.setCreatedDate(Date.from(Instant.now()));
-			document.setLastModifiedDate(Date.from(Instant.now()));
+			document.setCreatedDate(now);
+			document.setLastModifiedDate(now);
 		}
 		
 		set(document.getId().toString(), document);
@@ -145,6 +146,32 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	
 	/**
 	 * 
+	 * @param document
+	 * @return
+	 */
+	
+	protected void create(T document) {	
+		Date now = Date.from(Instant.now());
+		
+		document.setId(new ObjectId());
+		document.setSystemCreationDate(now);
+		document.setSystemModifiedDate(now);
+		
+		if (document.getCreatedDate() == null) {
+			document.setCreatedDate(now);
+			document.setLastModifiedDate(now);
+		}
+
+		try {
+			MongoDatastore.insertOne( document );
+		} catch (MongoException e) {
+			LOGGER.error( "Create Document exception", e.getCause());
+			throw e;
+		}	
+	}
+	
+	/**
+	 * 
 	 * 
 	 * @param subject
 	 * @param document
@@ -154,9 +181,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 */
 	
 	protected T replace(String subject, T document) {
+		Date now = Date.from(Instant.now());
+		
 		document.setLastModifiedById(subject);
-		document.setLastModifiedDate(Date.from(Instant.now()));
-		document.setSystemModifiedDate(Date.from(Instant.now()));
+		document.setLastModifiedDate(now);
+		document.setSystemModifiedDate(now);
 		
 		set(document.getId().toString(), document);
 		hset(encode(subject), document);
@@ -175,6 +204,31 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 * 
 	 * @param subject
+	 * @param filter
+	 * @param document
+	 * @return T
+	 * 
+	 * 
+	 */
+	
+	protected void replace(Bson filter, T document) {
+		Date now = Date.from(Instant.now());
+		
+		document.setLastModifiedDate(now);
+		document.setSystemModifiedDate(now);
+		
+		try {
+			MongoDatastore.replaceOne( filter, document );
+		} catch (MongoException e) {
+			LOGGER.error( "Update Document exception", e.getCause() );
+			throw e;
+		}
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param subject
 	 * @param document
 	 * 
 	 * 
@@ -187,7 +241,21 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		try {
 			MongoDatastore.deleteOne( document );
 		} catch (MongoException e) {
-			LOGGER.error( "Delete Document exception", e.getCause());
+			LOGGER.error( "Delete Document exception", e.getCause() );
+			throw e;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param document
+	 */
+	
+	protected void delete(T document) {		
+		try {
+			MongoDatastore.deleteOne( document );
+		} catch (MongoException e) {
+			LOGGER.error( "Delete Document exception", e.getCause() );
 			throw e;
 		}
 	}
@@ -214,6 +282,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
+	@SuppressWarnings("unused")
 	private String toString(Bson bson) {
 		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
 	}

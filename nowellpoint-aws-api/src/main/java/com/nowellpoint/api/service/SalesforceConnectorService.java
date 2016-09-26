@@ -255,14 +255,14 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		UserProperties.batchDelete(properties);
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public SalesforceConnector findSalesforceConnector(Id id) {		
 		return super.findSalesforceConnector(id);
@@ -304,7 +304,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return environment;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -313,7 +313,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @throws ServiceException
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void addEnvironment(Id id, Environment environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
@@ -350,7 +350,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		updateSalesforceConnector(id, resource);
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -359,7 +359,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void updateEnvironment(Id id, String key, Environment environment) {
 		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
@@ -370,14 +370,14 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 
 	} 
 
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param resource
 	 * @param environment
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void updateEnvironment(SalesforceConnector resource, Environment environment) {
 		
@@ -430,7 +430,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		updateSalesforceConnector(resource.getId(), resource);
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -439,7 +439,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return updated EnvironmentDTO
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public Environment updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
 		
@@ -471,14 +471,14 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return environment;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
 	 * @param key
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void removeEnvironment(Id id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -498,7 +498,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		updateSalesforceConnector(id, resource);
 	} 
 	
-	/***************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -506,7 +506,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 **************************************************************************************************************************/
+	 */
 	
 	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -521,7 +521,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -531,7 +531,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -553,7 +553,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return serviceInstance;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -562,7 +562,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -626,7 +626,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		updateSalesforceConnector(id, resource);
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -635,7 +635,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return ServiceInstanceDTO
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -662,7 +662,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return serviceInstance;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
@@ -670,7 +670,6 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 **************************************************************************************************************************
 	 */
 	
 	public SalesforceConnector removeServiceInstance(Id id, String key) {		
@@ -683,7 +682,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return resource;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param accessToken
@@ -691,7 +690,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	private String putImage(String accessToken, String imageUrl) {
 		

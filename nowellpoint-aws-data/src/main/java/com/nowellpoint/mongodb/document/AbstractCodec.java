@@ -35,7 +35,11 @@ public class AbstractCodec<T extends MongoDocument> implements CollectibleCodec<
 		Document document = null;
 		try {
 			document = Document.parse(objectMapper.writeValueAsString(value));
-			document.put("_id", value.getId());
+			if (value.getId() != null) {
+				document.put("_id", value.getId());
+			} else {
+				document.remove("_id");
+			}
 		} catch (JsonParseException | JsonProcessingException e) {
 			e.printStackTrace();
 			return;

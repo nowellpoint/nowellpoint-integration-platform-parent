@@ -27,6 +27,8 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String environmentName;
 	
+	private Boolean isSandbox;
+	
 	private String connectorId;
 	
 	private String connectorType;
@@ -89,6 +91,14 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setEnvironmentName(String environmentName) {
 		this.environmentName = environmentName;
+	}
+
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
 	}
 
 	public String getConnectorId() {

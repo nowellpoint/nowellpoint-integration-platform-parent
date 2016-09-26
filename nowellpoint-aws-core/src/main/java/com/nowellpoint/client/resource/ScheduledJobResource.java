@@ -85,14 +85,14 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJob;
 	}
 	
-	public ScheduledJob deactivateScheduledJob(String id) {
+	public ScheduledJob stopScheduledJob(String id) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(id)
-				.parameter("status", "Deactivated")
+				.parameter("status", "Stopped")
 				.execute();
 		
 		ScheduledJob scheduledJob = null;
@@ -106,7 +106,7 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJob;
 	}
 	
-	public ScheduledJob activateScheduledJob(String id) {
+	public ScheduledJob startScheduledJob(String id) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)

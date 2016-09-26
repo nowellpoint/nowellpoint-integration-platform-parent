@@ -69,6 +69,5 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		document.setHour(dateTime.getHour());
 		document.setMinute(dateTime.getMinute());
 		document.setSecond(dateTime.getSecond());
-		document.setStatus("Scheduled");
 	}
 }
