@@ -1,7 +1,7 @@
 package com.nowellpoint.client.auth;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,7 +21,7 @@ public class TestAuthenticators {
 	@Test
 	public void testPasswordGrantAuthentication() {
 		
-		try {
+		try {			
 			NowellpointClient client = new NowellpointClient(new EnvironmentVariablesCredentials());
 			
 			CreateScheduledJobRequest createScheduledJobRequest = new CreateScheduledJobRequest()

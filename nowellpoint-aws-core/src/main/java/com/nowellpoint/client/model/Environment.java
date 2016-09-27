@@ -51,6 +51,10 @@ public class Environment {
 	
 	private Boolean isReadOnly;
 	
+	private String identityId;
+	
+	private String grantType;
+	
 	private List<EnvironmentVariable> environmentVariables;
 	
 	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
@@ -202,6 +206,22 @@ public class Environment {
 
 	public void setIsReadOnly(Boolean isReadOnly) {
 		this.isReadOnly = isReadOnly;
+	}
+
+	public String getIdentityId() {
+		return identityId;
+	}
+
+	public void setIdentityId(String identityId) {
+		this.identityId = identityId;
+	}
+
+	public String getGrantType() {
+		return grantType;
+	}
+
+	public void setGrantType(String grantType) {
+		this.grantType = grantType;
 	}
 
 	public List<EnvironmentVariable> getEnvironmentVariables() {

@@ -22,11 +22,15 @@ public class Environment {
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date updatedOn;
 	
+	private String grantType;
+	
 	private String environmentName;
 	
 	private Boolean isActive;
 	
 	private Boolean isReadOnly;
+	
+	private String identityId;
 	
 	private String organizationId;
 	
@@ -86,6 +90,14 @@ public class Environment {
 		this.updatedOn = updatedOn;
 	}
 
+	public String getGrantType() {
+		return grantType;
+	}
+
+	public void setGrantType(String grantType) {
+		this.grantType = grantType;
+	}
+
 	public String getEnvironmentName() {
 		return environmentName;
 	}
@@ -108,6 +120,14 @@ public class Environment {
 
 	public void setIsReadOnly(Boolean isReadOnly) {
 		this.isReadOnly = isReadOnly;
+	}
+
+	public String getIdentityId() {
+		return identityId;
+	}
+
+	public void setIdentityId(String identityId) {
+		this.identityId = identityId;
 	}
 
 	public String getOrganizationId() {

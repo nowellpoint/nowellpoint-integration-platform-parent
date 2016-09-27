@@ -132,6 +132,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		Environment environment = new Environment();
 		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
+		environment.setIdentityId(identity.getId());
+		environment.setGrantType("token");
 		environment.setIsActive(Boolean.TRUE);
 		environment.setEnvironmentName("Production");
 		environment.setIsReadOnly(Boolean.TRUE);
@@ -325,6 +327,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		}
 		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
+		environment.setIdentityId(loginResult.getId());
+		environment.setGrantType("password");
 		environment.setIsActive(Boolean.TRUE);
 		environment.setIsReadOnly(Boolean.FALSE);
 		environment.setIsValid(Boolean.TRUE);

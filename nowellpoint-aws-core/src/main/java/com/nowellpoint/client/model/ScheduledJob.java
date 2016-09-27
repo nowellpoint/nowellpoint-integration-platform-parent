@@ -32,6 +32,8 @@ public class ScheduledJob extends Resource {
 	
 	private String lastRunStatus;
 	
+	private String failureMessage;
+	
 	public ScheduledJob() {
 		
 	}
@@ -146,5 +148,13 @@ public class ScheduledJob extends Resource {
 
 	public void setLastRunStatus(String lastRunStatus) {
 		this.lastRunStatus = lastRunStatus;
+	}
+
+	public String getFailureMessage() {
+		return failureMessage;
+	}
+
+	public void setFailureMessage(String failureMessage) {
+		this.failureMessage = failureMessage;
 	}
 }

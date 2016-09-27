@@ -12,6 +12,8 @@ public class Environment {
 	
 	private String environmentName;
 	
+	private String grantType;
+	
 	private Boolean isActive;
 	
 	private String serviceEndpoint;
@@ -19,6 +21,8 @@ public class Environment {
 	private String authEndpoint;
 	
 	private String apiVersion;
+	
+	private String identityId;
 	
 	private String userId;
 	
@@ -39,6 +43,8 @@ public class Environment {
 	private Boolean isValid;
 	
 	private String testMessage;
+	
+	private String failureMessage;
 	
 	public Environment() {
 
@@ -74,6 +80,14 @@ public class Environment {
 
 	public void setEnvironmentName(String environmentName) {
 		this.environmentName = environmentName;
+	}
+
+	public String getGrantType() {
+		return grantType;
+	}
+
+	public void setGrantType(String grantType) {
+		this.grantType = grantType;
 	}
 
 	public Boolean getIsActive() {
@@ -122,6 +136,14 @@ public class Environment {
 
 	public void setApiVersion(String apiVersion) {
 		this.apiVersion = apiVersion;
+	}
+
+	public String getIdentityId() {
+		return identityId;
+	}
+
+	public void setIdentityId(String identityId) {
+		this.identityId = identityId;
 	}
 
 	public String getUserId() {
@@ -186,5 +208,13 @@ public class Environment {
 
 	public void setTestMessage(String testMessage) {
 		this.testMessage = testMessage;
+	}
+
+	public String getFailureMessage() {
+		return failureMessage;
+	}
+
+	public void setFailureMessage(String failureMessage) {
+		this.failureMessage = failureMessage;
 	}
 }

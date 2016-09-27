@@ -87,7 +87,7 @@
                                 <dd>${(scheduledJob.scheduleDate?time?string["HH:mm:ss"])!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["last.run.status"]}</dt>
-                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Error"> -->
+                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
                                 <dd class="text-danger">
                                 <!-- </#if> -->
                                 <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->

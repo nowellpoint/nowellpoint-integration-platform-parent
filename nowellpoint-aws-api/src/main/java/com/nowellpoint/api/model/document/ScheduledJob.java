@@ -53,6 +53,8 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String lastRunStatus;
 	
+	private String failureMessage;
+	
 	private Integer year;
 	
 	private Integer month;
@@ -179,6 +181,14 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setLastRunStatus(String lastRunStatus) {
 		this.lastRunStatus = lastRunStatus;
+	}
+
+	public String getFailureMessage() {
+		return failureMessage;
+	}
+
+	public void setFailureMessage(String failureMessage) {
+		this.failureMessage = failureMessage;
 	}
 
 	public Integer getYear() {
