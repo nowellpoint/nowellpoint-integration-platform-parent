@@ -44,8 +44,6 @@ public class Environment {
 	
 	private String testMessage;
 	
-	private String failureMessage;
-	
 	public Environment() {
 
 	}
@@ -208,13 +206,5 @@ public class Environment {
 
 	public void setTestMessage(String testMessage) {
 		this.testMessage = testMessage;
-	}
-
-	public String getFailureMessage() {
-		return failureMessage;
-	}
-
-	public void setFailureMessage(String failureMessage) {
-		this.failureMessage = failureMessage;
 	}
 }

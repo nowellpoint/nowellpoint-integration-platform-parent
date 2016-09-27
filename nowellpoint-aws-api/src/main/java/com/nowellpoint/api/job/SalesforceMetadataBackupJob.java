@@ -6,12 +6,12 @@ import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -235,7 +235,7 @@ class ScheduledJobService extends MongoDocumentService<ScheduledJob> {
 	}
 	
 	public Set<ScheduledJob> getScheduledJobs() {
-		LocalDateTime  now = LocalDateTime.now(); 
+		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
 		return super.find( and ( 
 				eq ( "status", "Scheduled" ), 
 				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),

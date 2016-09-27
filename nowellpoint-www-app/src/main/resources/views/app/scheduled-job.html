@@ -34,12 +34,12 @@
                             <!--  <#if scheduledJob.status == "Stopped"> -->
                             <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
                                 <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-primary">${labels["start.scheduled.job"]}</button>
-                            </form>   
+                            </form>
                             <!-- </#if> -->
                             <!--  <#if scheduledJob.status == "Scheduled"> -->
                             <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/stop">
                                 <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-danger">${labels["stop.scheduled.job"]}</button>
-                            </form>  
+                            </form>
                             <!-- </#if> -->
                         </div>
                         <div class="flextable-item">
@@ -65,15 +65,15 @@
                                 <dt>${labels["status"]}</dt>
                                 <!--  <#if scheduledJob.status == "Stopped"> -->
                                 <dd class="text-danger">
-                                <!-- </#if> -->
-                                <!--  <#if scheduledJob.status == "Scheduled"> -->
-                                <dd class="text-success">
-                                <!-- </#if> -->
-                                ${(scheduledJob.status)!}&emsp;</dd>
-                                <hr>
-                                <dt>&emsp;</dt>
-                                <dd>&emsp;</dd>
-                                <hr>
+                                    <!-- </#if> -->
+                                    <!--  <#if scheduledJob.status == "Scheduled"> -->
+                                    <dd class="text-success">
+                                        <!-- </#if> -->
+                                        ${(scheduledJob.status)!}&emsp;</dd>
+                                    <hr>
+                                    <dt>&emsp;</dt>
+                                    <dd>&emsp;</dd>
+                                    <hr>
                             </dl>
                         </div>
 
@@ -89,29 +89,32 @@
                                 <dt>${labels["last.run.status"]}</dt>
                                 <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
                                 <dd class="text-danger">
-                                <!-- </#if> -->
-                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
-                                <dd class="text-success">
-                                <!-- </#if> -->
-                                ${(scheduledJob.lastRunStatus)!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["last.run.date"]}</dt>
-                                <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
-                                <hr>
+                                    <!-- </#if> -->
+                                    <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                                    <dd class="text-success">
+                                        <!-- </#if> -->
+                                        ${(scheduledJob.lastRunStatus)!}&emsp;</dd>
+                                    <hr>
+                                    <dt>${labels["last.run.date"]}</dt>
+                                    <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
+                                    <hr>
                             </dl>
                         </div>
-                        
+
                         <div class="col-md-4">
                         </div>
-                        
+
                         <div class="col-md-8">
-                        
+
                             <dl class="dl-vertical">
-                            <dt>${labels["description"]}</dt>
+                                <dt>${labels["description"]}</dt>
                                 <dd>${scheduledJob.description!}&emsp;</dd>
                                 <hr>
-                            </dl>    
-                            
+                                <dt>${labels["failure.message"]}</dt>
+                                <dd>${scheduledJob.failureMessage!}&emsp;</dd>
+                                <hr>
+                            </dl>
+
                         </div>
 
                     </div>

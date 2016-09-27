@@ -399,6 +399,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		environment.setIsSandbox(original.getIsSandbox());
 		environment.setApiVersion(original.getApiVersion());
 		environment.setTestMessage(original.getTestMessage());
+		environment.setGrantType(original.getGrantType());
 		
 		if (environment.getIsActive()) {
 			LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
@@ -409,12 +410,14 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				throw new ServiceException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
 			}
 			
+			environment.setIdentityId(loginResult.getId());
 			environment.setUserId(loginResult.getUserId());
 			environment.setOrganizationId(loginResult.getOrganizationId());
 			environment.setOrganizationName(loginResult.getOrganizationName());
 			environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 			environment.setIsValid(Boolean.TRUE);
 		} else {
+			environment.setIdentityId(original.getIdentityId());
 			environment.setUserId(original.getUserId());
 			environment.setOrganizationId(original.getOrganizationId());
 			environment.setOrganizationName(original.getOrganizationName());
