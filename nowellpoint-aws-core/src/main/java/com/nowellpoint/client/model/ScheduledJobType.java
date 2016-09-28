@@ -1,5 +1,7 @@
 package com.nowellpoint.client.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -14,6 +16,8 @@ public class ScheduledJobType extends Resource {
 	private String languageSidKey;
 	
 	private ConnectorType connectorType;
+	
+	private List<Plan> plans;
 	
 	public ScheduledJobType() {
 		
@@ -57,5 +61,13 @@ public class ScheduledJobType extends Resource {
 
 	public void setConnectorType(ConnectorType connectorType) {
 		this.connectorType = connectorType;
+	}
+
+	public List<Plan> getPlans() {
+		return plans;
+	}
+
+	public void setPlans(List<Plan> plans) {
+		this.plans = plans;
 	}
 }

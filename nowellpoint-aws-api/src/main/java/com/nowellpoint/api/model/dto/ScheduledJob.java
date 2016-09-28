@@ -38,7 +38,7 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String lastRunStatus;
 	
-	private String failureMessage;
+	private String lastRunFailureMessage;
 	
 	public ScheduledJob() {
 		
@@ -156,11 +156,11 @@ public class ScheduledJob extends AbstractResource {
 		this.lastRunStatus = lastRunStatus;
 	}
 
-	public String getFailureMessage() {
-		return failureMessage;
+	public String getLastRunFailureMessage() {
+		return lastRunFailureMessage;
 	}
 
-	public void setFailureMessage(String failureMessage) {
-		this.failureMessage = failureMessage;
+	public void setLastRunFailureMessage(String lastRunFailureMessage) {
+		this.lastRunFailureMessage = lastRunFailureMessage;
 	}
 }

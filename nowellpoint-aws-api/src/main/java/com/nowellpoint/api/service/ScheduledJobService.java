@@ -66,9 +66,9 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setOwner(owner);
 		}
 		
-		setupScheduledJob(scheduledJob);
-		
 		scheduledJob.setStatus("Scheduled");
+		
+		setupScheduledJob(scheduledJob);
 
 		super.createScheduledJob(scheduledJob);
 	}
@@ -94,7 +94,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
 		scheduledJob.setLastRunDate(original.getLastRunDate());
 		scheduledJob.setLastRunStatus(original.getLastRunStatus());
-		scheduledJob.setFailureMessage(original.getFailureMessage());
+		scheduledJob.setLastRunFailureMessage(original.getLastRunFailureMessage());
 		
 		if (isNull(scheduledJob.getDescription())) {
 			scheduledJob.setDescription(original.getDescription());
@@ -162,7 +162,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ServiceException(Status.BAD_REQUEST, "Schedule Date cannot be before current date");
 		}
 		
-		if (! (scheduledJob.getStatus().equals("Scheduled") || scheduledJob.getStatus().equals("Stopped"))) {
+		if (! ("Scheduled".equals(scheduledJob.getStatus()) || "Stopped".equals(scheduledJob.getStatus()))) {
 			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		

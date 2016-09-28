@@ -1,14 +1,6 @@
-package com.nowellpoint.api.model.document;
+package com.nowellpoint.api.model.dto;
 
-import java.io.Serializable;
-
-public class Plan implements Serializable {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -7569793449815113870L;
+public class Plan {
 	
 	private String planName;
 	
@@ -27,8 +19,6 @@ public class Plan implements Serializable {
 	private String billingFrequencyUnit;
 	
 	private String billingFrequencyQuantity;
-	
-	private Double proratedDailyUnitPrice;
 	
 	private Integer transactions;
 	
@@ -108,14 +98,6 @@ public class Plan implements Serializable {
 
 	public void setBillingFrequencyQuantity(String billingFrequencyQuantity) {
 		this.billingFrequencyQuantity = billingFrequencyQuantity;
-	}
-
-	public Double getProratedDailyUnitPrice() {
-		return proratedDailyUnitPrice;
-	}
-
-	public void setProratedDailyUnitPrice(Double proratedDailyUnitPrice) {
-		this.proratedDailyUnitPrice = proratedDailyUnitPrice;
 	}
 
 	public Integer getTransactions() {

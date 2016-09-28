@@ -30,9 +30,7 @@ public class SalesforceMetadataBackupListener implements JobListener {
 		String jobName = context.getJobDetail().getKey().getName();
 		String groupName = context.getJobDetail().getKey().getGroup();
 		
-		LOG.info(context.getFireInstanceId());
-		
-		LOG.info(String.format("JobToBeExecuted: %s", jobName));
+		LOG.info(String.format("JobToBeExecuted: %s with Id: %s", jobName, context.getFireInstanceId()));
 		
 		ScheduledJobRunDetail scheduledJobRunDetail = new ScheduledJobRunDetail();
 		scheduledJobRunDetail.setFireInstanceId(context.getFireInstanceId());
@@ -54,9 +52,7 @@ public class SalesforceMetadataBackupListener implements JobListener {
 		
 		String jobName = context.getJobDetail().getKey().getName();
 		
-		LOG.info(context.getFireInstanceId());
-		
-		LOG.info(String.format("JobWasExecuted: %s", jobName));
+		LOG.info(String.format("JobWasExecuted: %s with Id: %s", jobName, context.getFireInstanceId()));
 		
 		ScheduledJobRunDetail scheduledJobRunDetail = null;
 		try {

@@ -7,9 +7,13 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
+import com.nowellpoint.client.model.CreateScheduledJobResult;
+import com.nowellpoint.client.model.DeleteScheduledJobRequest;
+import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
+import com.nowellpoint.client.model.UpdateScheduledJobResult;
 import com.nowellpoint.client.model.idp.Token;
 
 public class ScheduledJobResource extends AbstractResource {
@@ -37,7 +41,7 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJobs;
 	}
 	
-	public ScheduledJob createScheduledJob(CreateScheduledJobRequest createScheduledJobRequest) {		
+	public CreateScheduledJobResult createScheduledJob(CreateScheduledJobRequest createScheduledJobRequest) {		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -50,18 +54,23 @@ public class ScheduledJobResource extends AbstractResource {
 				.parameter("scheduleDate", dateFormat.format(createScheduledJobRequest.getScheduleDate()))
 				.execute();
 		
-		ScheduledJob scheduledJob = null;
+		CreateScheduledJobResult createScheduledJobResult = new CreateScheduledJobResult();
 		
 		if (httpResponse.getStatusCode() == Status.CREATED) {
-			scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			createScheduledJobResult.setScheduledJob(scheduledJob);
+			createScheduledJobResult.setIsSuccess(Boolean.TRUE);
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			createScheduledJobResult.setError(error.getCode());
+			createScheduledJobResult.setErrorMessage(error.getMessage());
+			createScheduledJobResult.setIsSuccess(Boolean.FALSE);
 		}
 		
-		return scheduledJob;
+		return createScheduledJobResult;
 	}
 	
-	public ScheduledJob updateScheduledJob(UpdateScheduledJobRequest updateScheduledJobRequest) {
+	public UpdateScheduledJobResult updateScheduledJob(UpdateScheduledJobRequest updateScheduledJobRequest) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -74,18 +83,23 @@ public class ScheduledJobResource extends AbstractResource {
 				.parameter("scheduleDate", dateFormat.format(updateScheduledJobRequest.getScheduleDate()))
 				.execute();
 		
-		ScheduledJob scheduledJob = null;
+		UpdateScheduledJobResult updateScheduledJobResult = new UpdateScheduledJobResult();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			updateScheduledJobResult.setScheduledJob(scheduledJob);
+			updateScheduledJobResult.setIsSuccess(Boolean.TRUE);
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			updateScheduledJobResult.setError(error.getCode());
+			updateScheduledJobResult.setErrorMessage(error.getMessage());
+			updateScheduledJobResult.setIsSuccess(Boolean.FALSE);
 		}
 		
-		return scheduledJob;
+		return updateScheduledJobResult;
 	}
 	
-	public ScheduledJob stopScheduledJob(String id) {
+	public UpdateScheduledJobResult stopScheduledJob(String id) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -95,18 +109,23 @@ public class ScheduledJobResource extends AbstractResource {
 				.parameter("status", "Stopped")
 				.execute();
 		
-		ScheduledJob scheduledJob = null;
+		UpdateScheduledJobResult updateScheduledJobResult = new UpdateScheduledJobResult();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			updateScheduledJobResult.setScheduledJob(scheduledJob);
+			updateScheduledJobResult.setIsSuccess(Boolean.TRUE);
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			updateScheduledJobResult.setError(error.getCode());
+			updateScheduledJobResult.setErrorMessage(error.getMessage());
+			updateScheduledJobResult.setIsSuccess(Boolean.FALSE);
 		}
 		
-		return scheduledJob;
+		return updateScheduledJobResult;
 	}
 	
-	public ScheduledJob startScheduledJob(String id) {
+	public UpdateScheduledJobResult startScheduledJob(String id) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -116,15 +135,20 @@ public class ScheduledJobResource extends AbstractResource {
 				.parameter("status", "Scheduled")
 				.execute();
 		
-		ScheduledJob scheduledJob = null;
+		UpdateScheduledJobResult updateScheduledJobResult = new UpdateScheduledJobResult();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			updateScheduledJobResult.setScheduledJob(scheduledJob);
+			updateScheduledJobResult.setIsSuccess(Boolean.TRUE);
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			updateScheduledJobResult.setError(error.getCode());
+			updateScheduledJobResult.setErrorMessage(error.getMessage());
+			updateScheduledJobResult.setIsSuccess(Boolean.FALSE);
 		}
 		
-		return scheduledJob;
+		return updateScheduledJobResult;
 	}
 	
 	public ScheduledJob getScheduledJob(String id) {
@@ -145,11 +169,11 @@ public class ScheduledJobResource extends AbstractResource {
 		return scheduledJob;
 	}
 	
-	public void deleteScheduledJob(String id) {
+	public void deleteScheduledJob(DeleteScheduledJobRequest deleteScheduledJobRequest) {
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
-				.path(id)
+				.path(deleteScheduledJobRequest.getId())
 				.execute();
 		
 		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {

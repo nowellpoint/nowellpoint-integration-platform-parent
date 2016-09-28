@@ -1,6 +1,8 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -53,7 +55,9 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String lastRunStatus;
 	
-	private String failureMessage;
+	private String lastRunFailureMessage;
+	
+	private Set<RunHistory> runHistories;
 	
 	private Integer year;
 	
@@ -183,12 +187,20 @@ public class ScheduledJob extends MongoDocument {
 		this.lastRunStatus = lastRunStatus;
 	}
 
-	public String getFailureMessage() {
-		return failureMessage;
+	public String getLastRunFailureMessage() {
+		return lastRunFailureMessage;
 	}
 
-	public void setFailureMessage(String failureMessage) {
-		this.failureMessage = failureMessage;
+	public void setLastRunFailureMessage(String lastRunFailureMessage) {
+		this.lastRunFailureMessage = lastRunFailureMessage;
+	}
+
+	public Set<RunHistory> getRunHistories() {
+		return runHistories;
+	}
+
+	public void setRunHistories(Set<RunHistory> runHistories) {
+		this.runHistories = runHistories;
 	}
 
 	public Integer getYear() {
@@ -237,5 +249,12 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setSecond(Integer second) {
 		this.second = second;
+	}
+	
+	public void addRunHistory(RunHistory runHistory) {
+		if (runHistories == null) {
+			runHistories = new HashSet<RunHistory>();
+		}
+		runHistories.add(runHistory);
 	}
 }

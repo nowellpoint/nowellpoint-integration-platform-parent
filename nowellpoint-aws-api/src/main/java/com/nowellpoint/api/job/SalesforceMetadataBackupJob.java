@@ -32,6 +32,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.document.Environment;
+import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
 import com.nowellpoint.api.model.document.ScheduledJob;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
@@ -76,6 +77,10 @@ public class SalesforceMetadataBackupJob implements Job {
 		    	executor.submit(() -> {
 		    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		    		
+		    		RunHistory runHistory = new RunHistory();
+			    	runHistory.setFireInstanceId(context.getFireInstanceId());
+			    	runHistory.setFireTime(Date.from(Instant.now()));
+		    		
 		    		scheduledJob.setStatus("Running");
 		    		scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 			    	
@@ -99,10 +104,13 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	
 			    	} catch (Exception e) {
 			    		scheduledJob.setLastRunStatus("Failure");
-			    		scheduledJob.setFailureMessage(e.getMessage());
+			    		scheduledJob.setLastRunFailureMessage(e.getMessage());
 			    	}
+			    	
+			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - runHistory.getFireTime().getTime());
 			    				    	
 			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
+			    	
 			    	scheduledJob.setYear(dateTime.getYear());
 			    	scheduledJob.setMonth(dateTime.getMonth().getValue());
 			    	scheduledJob.setDay(dateTime.getDayOfMonth());
@@ -111,6 +119,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJob.setSecond(dateTime.getSecond());
 			    	scheduledJob.setStatus("Scheduled");
 			    	scheduledJob.setLastRunDate(Date.from(Instant.now()));
+			    	scheduledJob.addRunHistory(runHistory);
 			    	
 			    	scheduledJobService.replace(scheduledJob);
 			    	
@@ -241,6 +250,7 @@ class ScheduledJobService extends MongoDocumentService<ScheduledJob> {
 				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
 				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
 				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
-				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ) ) );
+				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
+				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
 	}
 }

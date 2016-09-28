@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.dto;
 
+import java.util.Set;
+
 public class ScheduledJobType extends AbstractResource {
 
 	/**
@@ -17,6 +19,8 @@ public class ScheduledJobType extends AbstractResource {
 	private String languageSidKey;
 	
 	private ConnectorType connectorType;
+	
+	private Set<Plan> plans;
 	
 	public ScheduledJobType() {
 		
@@ -60,5 +64,13 @@ public class ScheduledJobType extends AbstractResource {
 
 	public void setConnectorType(ConnectorType connectorType) {
 		this.connectorType = connectorType;
+	}
+
+	public Set<Plan> getPlans() {
+		return plans;
+	}
+
+	public void setPlans(Set<Plan> plans) {
+		this.plans = plans;
 	}
 }

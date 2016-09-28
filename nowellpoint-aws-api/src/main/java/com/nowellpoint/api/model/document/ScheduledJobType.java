@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.document;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.ScheduledJobTypeCodec;
 import com.nowellpoint.mongodb.annotation.Document;
@@ -24,6 +26,8 @@ public class ScheduledJobType extends MongoDocument {
 	private String languageSidKey;
 	
 	private ConnectorType connectorType;
+	
+	private Set<Plan> plans;
 	
 	public ScheduledJobType() {
 		
@@ -67,5 +71,13 @@ public class ScheduledJobType extends MongoDocument {
 
 	public void setConnectorType(ConnectorType connectorType) {
 		this.connectorType = connectorType;
+	}
+
+	public Set<Plan> getPlans() {
+		return plans;
+	}
+
+	public void setPlans(Set<Plan> plans) {
+		this.plans = plans;
 	}
 }

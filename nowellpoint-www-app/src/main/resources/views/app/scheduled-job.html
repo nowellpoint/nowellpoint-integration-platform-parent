@@ -84,20 +84,23 @@
                                 <dd>${(scheduledJob.scheduleDate?date?string.iso)!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["scheduled.time"]}</dt>
-                                <dd>${(scheduledJob.scheduleDate?time?string["HH:mm:ss"])!}&emsp;</dd>
+                                <dd>${(scheduledJob.scheduleDate?time?string["HH:mm"])!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["last.run.status"]}</dt>
                                 <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
                                 <dd class="text-danger">
-                                    <!-- </#if> -->
-                                    <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
-                                    <dd class="text-success">
-                                        <!-- </#if> -->
-                                        ${(scheduledJob.lastRunStatus)!}&emsp;</dd>
-                                    <hr>
-                                    <dt>${labels["last.run.date"]}</dt>
-                                    <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
-                                    <hr>
+                                <!-- </#if> -->
+                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                                <dd class="text-success">
+                                <!-- </#if> -->
+                                ${(scheduledJob.lastRunStatus)!}&emsp;
+                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->    
+                                    <a href="#" data-toggle="popover" data-placement="top" data-content="${scheduledJob.lastRunFailureMessage!}"><span class="icon icon-squared-cross"></span></a></dd>
+                                <!-- </#if> -->
+                                <hr>
+                                <dt>${labels["last.run.date"]}</dt>
+                                <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
+                                <hr>
                             </dl>
                         </div>
 
@@ -109,9 +112,6 @@
                             <dl class="dl-vertical">
                                 <dt>${labels["description"]}</dt>
                                 <dd>${scheduledJob.description!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["failure.message"]}</dt>
-                                <dd>${scheduledJob.failureMessage!}&emsp;</dd>
                                 <hr>
                             </dl>
 
@@ -178,5 +178,11 @@
         </div>
 
         <script src="/js/application.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('[data-toggle="popover"]').popover();
+            });
+        </script>
 
     </@t.page>
