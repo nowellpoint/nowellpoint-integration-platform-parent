@@ -71,8 +71,8 @@
                                         <!-- </#if> -->
                                         ${(scheduledJob.status)!}&emsp;</dd>
                                     <hr>
-                                    <dt>&emsp;</dt>
-                                    <dd>&emsp;</dd>
+                                    <dt>${labels["notification.email"]}</dt>
+                                    <dd>${(scheduledJob.notificationEmail)!}&emsp;</dd>
                                     <hr>
                             </dl>
                         </div>
@@ -117,6 +117,34 @@
 
                         </div>
 
+                    </div>
+                    
+                    <br>
+                    <br>
+                    
+                    <div id="runHistories" class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="flextable">
+                                <div class="flextable-item flextable-primary">
+                                    <h3 class="dashhead-title">${labels["run.history"]}</h3>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="hr-divider"></div>
+                            <br>
+                            <div class="content table-responsive">
+                                <table id="environments-table" class="table table-hover">
+                                    <thead>
+                                        
+                                    </thead>
+                                    <tbody>
+                                        <#list scheduledJob.runHistories?sort_by( "fireTime") as runHistory>
+                                            
+                                        </#list>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <br>

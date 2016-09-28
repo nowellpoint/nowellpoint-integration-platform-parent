@@ -1,6 +1,11 @@
 package com.nowellpoint.api.model.dto;
 
 import java.util.Date;
+import java.util.Set;
+
+import org.hibernate.validator.constraints.Email;
+
+import com.nowellpoint.api.model.document.RunHistory;
 
 public class ScheduledJob extends AbstractResource {
 
@@ -39,6 +44,11 @@ public class ScheduledJob extends AbstractResource {
 	private String lastRunStatus;
 	
 	private String lastRunFailureMessage;
+	
+	@Email
+	private String notificationEmail;
+	
+	private Set<RunHistory> runHistories;
 	
 	public ScheduledJob() {
 		
@@ -162,5 +172,21 @@ public class ScheduledJob extends AbstractResource {
 
 	public void setLastRunFailureMessage(String lastRunFailureMessage) {
 		this.lastRunFailureMessage = lastRunFailureMessage;
+	}
+
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
+	}
+
+	public Set<RunHistory> getRunHistories() {
+		return runHistories;
+	}
+
+	public void setRunHistories(Set<RunHistory> runHistories) {
+		this.runHistories = runHistories;
 	}
 }

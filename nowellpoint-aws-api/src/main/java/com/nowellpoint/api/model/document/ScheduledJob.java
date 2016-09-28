@@ -57,6 +57,8 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String lastRunFailureMessage;
 	
+	private String notificationEmail;
+	
 	private Set<RunHistory> runHistories;
 	
 	private Integer year;
@@ -195,6 +197,14 @@ public class ScheduledJob extends MongoDocument {
 		this.lastRunFailureMessage = lastRunFailureMessage;
 	}
 
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
+	}
+
 	public Set<RunHistory> getRunHistories() {
 		return runHistories;
 	}
@@ -254,6 +264,9 @@ public class ScheduledJob extends MongoDocument {
 	public void addRunHistory(RunHistory runHistory) {
 		if (runHistories == null) {
 			runHistories = new HashSet<RunHistory>();
+		}
+		if (runHistories.size() == 10) {
+			
 		}
 		runHistories.add(runHistory);
 	}

@@ -1,6 +1,7 @@
 package com.nowellpoint.client.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class ScheduledJob extends Resource {
 	
@@ -33,6 +34,10 @@ public class ScheduledJob extends Resource {
 	private String lastRunStatus;
 	
 	private String lastRunFailureMessage;
+	
+	private String notificationEmail;
+	
+	private List<RunHistory> runHistories;
 	
 	public ScheduledJob() {
 		
@@ -150,11 +155,27 @@ public class ScheduledJob extends Resource {
 		this.lastRunStatus = lastRunStatus;
 	}
 
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
+	}
+
 	public String getLastRunFailureMessage() {
 		return lastRunFailureMessage;
 	}
 
 	public void setLastRunFailureMessage(String lastRunFailureMessage) {
 		this.lastRunFailureMessage = lastRunFailureMessage;
+	}
+
+	public List<RunHistory> getRunHistories() {
+		return runHistories;
+	}
+
+	public void setRunHistories(List<RunHistory> runHistories) {
+		this.runHistories = runHistories;
 	}
 }

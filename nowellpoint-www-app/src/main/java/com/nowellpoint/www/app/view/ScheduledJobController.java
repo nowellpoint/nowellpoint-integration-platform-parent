@@ -344,7 +344,8 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.getScheduledJobResource() 
-				.startScheduledJob(id);
+				.startScheduledJob(id)
+				.getScheduledJob();
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "activate.scheduled.job.success"));
 		
@@ -369,7 +370,8 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.getScheduledJobResource() 
-				.stopScheduledJob(id);
+				.stopScheduledJob(id)
+				.getScheduledJob();
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
 		
