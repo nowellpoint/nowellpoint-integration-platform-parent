@@ -1,5 +1,6 @@
 package com.nowellpoint.client.model;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class ScheduledJob extends Resource {
 	private List<RunHistory> runHistories;
 	
 	public ScheduledJob() {
-		
+		setRunHistories(Collections.emptyList());
 	}
 
 	public AccountProfile getOwner() {

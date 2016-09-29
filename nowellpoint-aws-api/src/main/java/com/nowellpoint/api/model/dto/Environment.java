@@ -44,6 +44,8 @@ public class Environment {
 	
 	private String testMessage;
 	
+	private String email;
+	
 	public Environment() {
 
 	}
@@ -206,5 +208,13 @@ public class Environment {
 
 	public void setTestMessage(String testMessage) {
 		this.testMessage = testMessage;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

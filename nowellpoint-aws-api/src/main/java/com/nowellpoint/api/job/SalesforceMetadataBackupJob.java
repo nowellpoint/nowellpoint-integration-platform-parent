@@ -75,11 +75,10 @@ public class SalesforceMetadataBackupJob implements Job {
 		    scheduledJobs.stream().forEach(scheduledJob -> {
 		    	
 		    	executor.submit(() -> {
-		    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		    		
-		    		RunHistory runHistory = new RunHistory();
-			    	runHistory.setFireInstanceId(context.getFireInstanceId());
-			    	runHistory.setFireTime(Date.from(Instant.now()));
+		    		Date fireTime = Date.from(Instant.now());
+		    		
+		    		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		    		
 		    		scheduledJob.setStatus("Running");
 		    		scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
@@ -107,7 +106,12 @@ public class SalesforceMetadataBackupJob implements Job {
 			    		scheduledJob.setLastRunFailureMessage(e.getMessage());
 			    	}
 			    	
-			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - runHistory.getFireTime().getTime());
+			    	RunHistory runHistory = new RunHistory();
+			    	runHistory.setFireInstanceId(context.getFireInstanceId());
+			    	runHistory.setFireTime(fireTime);
+			    	runHistory.setStatus(scheduledJob.getLastRunStatus());
+			    	runHistory.setFailureMessage(scheduledJob.getLastRunFailureMessage());
+			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - fireTime.getTime());
 			    				    	
 			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 			    	

@@ -135,11 +135,19 @@
                             <div class="content table-responsive">
                                 <table id="environments-table" class="table table-hover">
                                     <thead>
-                                        
+                                        <th class="col-xs-2">${labels["instance.id"]}</th>
+                                        <th class="col-xs-2">${labels["fire.time"]}</th>
+                                        <th class="col-xs-2">${labels["run.time"]}</th>
+                                        <th class="col-xs-2">${labels["status"]}</th>
+                                        <th class="col-xs-2">${labels["error.message"]}</th>
                                     </thead>
                                     <tbody>
                                         <#list scheduledJob.runHistories?sort_by( "fireTime") as runHistory>
-                                            
+                                            <td>${(runHistory.instanceId)!}</td>
+                                            <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
+                                            <td>${(runHistory.jobRunTime)!}</td>
+                                            <td>${(runHistory.status)!}</td>
+                                            <td>${(runHistory.failureMessage)!}</td>
                                         </#list>
                                     </tbody>
                                 </table>

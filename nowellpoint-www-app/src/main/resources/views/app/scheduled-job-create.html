@@ -135,8 +135,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
-                                <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(scheduledJob.notificationEmail)!}" autofocus=""/>
+                                <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
+                                <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(scheduledJob.notificationEmail)!}" required autofocus=""/>
                             </div>
                             
                             <div class="form-group">
@@ -145,7 +145,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label" for="scheduleDate">${labels["scheduled.date"]}</label>
+                                <label class="control-label" for="scheduleDate">${labels["scheduled.date"]}*</label>
                                 <div class="input-group">
                                     <#assign sysdate=. now />
                                     <input type="text" id="scheduleDate" name="scheduleDate" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose=true required>
@@ -156,7 +156,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label" for="scheduleTime">${labels["scheduled.time"]}</label>
+                                <label class="control-label" for="scheduleTime">${labels["scheduled.time"]}*</label>
                                 <div class="input-group">
                                     <input type="text" id="scheduleTime" name="scheduleTime" class="form-control" required/>
                                     <span class="input-group-addon">${labels["time.format"]}

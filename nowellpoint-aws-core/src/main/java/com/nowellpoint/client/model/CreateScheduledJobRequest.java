@@ -6,6 +6,8 @@ public class CreateScheduledJobRequest {
 	
 	private String environmentKey;
 	
+	private String notificationEmail;
+	
 	private String description;
 	
 	private String jobTypeId;
@@ -24,6 +26,14 @@ public class CreateScheduledJobRequest {
 
 	public void setEnvironmentKey(String environmentKey) {
 		this.environmentKey = environmentKey;
+	}
+
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
 	}
 
 	public String getDescription() {
@@ -60,6 +70,11 @@ public class CreateScheduledJobRequest {
 	
 	public CreateScheduledJobRequest withEnvironmentKey(String environmentKey) {
 		setEnvironmentKey(environmentKey);
+		return this;
+	}
+	
+	public CreateScheduledJobRequest withNotificationEmail(String notificationEmail) {
+		setNotificationEmail(notificationEmail);
 		return this;
 	}
 	

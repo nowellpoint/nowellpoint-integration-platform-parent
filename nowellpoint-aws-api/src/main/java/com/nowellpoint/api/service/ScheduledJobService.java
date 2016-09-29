@@ -2,6 +2,7 @@ package com.nowellpoint.api.service;
 
 import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
 import java.time.Instant;
 import java.util.Date;
@@ -118,6 +119,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setStatus(original.getStatus());
 		}
 		
+		if (isNullOrEmpty(scheduledJob.getNotificationEmail())) {
+			scheduledJob.setNotificationEmail(original.getNotificationEmail());
+		}
+		
 		setupScheduledJob(scheduledJob);
 		
 		super.updateScheduledJob(scheduledJob);
@@ -191,6 +196,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 				environment = salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst();
 			}
 
+			if (scheduledJob.getNotificationEmail() == null) {
+				scheduledJob.setNotificationEmail(environment.get().getEmail());
+			}
+			
 			scheduledJob.setIsSandbox(environment.get().getIsSandbox());
 			scheduledJob.setEnvironmentKey(environment.get().getKey());
 			scheduledJob.setEnvironmentName(environment.get().getEnvironmentName());

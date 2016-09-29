@@ -48,8 +48,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	protected Set<T> find(Bson query) {
 		Set<T> documents = new HashSet<T>(); //hscan(documentClass, encode(toString(query)));
 		
-		System.out.println(toString(query));
-		
 		if (documents.isEmpty()) {
 			try {
 				documents = MongoDatastore.find(documentClass, query);

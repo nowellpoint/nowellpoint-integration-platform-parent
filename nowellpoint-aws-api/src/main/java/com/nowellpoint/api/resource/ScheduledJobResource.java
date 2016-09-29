@@ -29,6 +29,8 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
@@ -58,7 +60,15 @@ public class ScheduledJobResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
+		System.out.println("get scheduled Jobs");
 		Set<ScheduledJob> resources = scheduledJobService.findAllByOwner();
+		System.out.println("schedule job count: " + resources.size());
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(resources));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return Response.ok(resources).build();
     }
 	
@@ -112,6 +122,7 @@ public class ScheduledJobResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createScheduledJob(
 			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
+			@FormParam("notificationEmail") String notificationEmail,
 			@FormParam("description") String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("environmentKey") String environmentKey,
@@ -119,6 +130,7 @@ public class ScheduledJobResource {
 			@FormParam("status") String status) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
+		scheduledJob.setNotificationEmail(notificationEmail);
 		scheduledJob.setConnectorId(connectorId);
 		scheduledJob.setEnvironmentKey(environmentKey);
 		scheduledJob.setJobTypeId(jobTypeId);
@@ -161,6 +173,7 @@ public class ScheduledJobResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateScheduledJob(@PathParam("id") String id,
+			@FormParam("notificationEmail") String notificationEmail,
 			@FormParam("description") String description,
 			@FormParam("connectorId") String connectorId,
 			@FormParam("environmentKey") String environmentKey,
@@ -168,6 +181,7 @@ public class ScheduledJobResource {
 			@FormParam("status") String status) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
+		scheduledJob.setNotificationEmail(notificationEmail);
 		scheduledJob.setDescription(description);
 		scheduledJob.setConnectorId(isNotNullOrEmpty(connectorId) ? connectorId : null);
 		scheduledJob.setEnvironmentKey(isNotNullOrEmpty(environmentKey) ? environmentKey : null);

@@ -69,6 +69,7 @@ public class SalesforceService extends AbstractCacheService {
 			
 			LoginResult result = new LoginResult()
 					.withId(id)
+					.withEmail(connection.getUserInfo().getUserEmail())
 					.withAuthEndpoint(connection.getConfig().getAuthEndpoint())
 					.withDisplayName(connection.getUserInfo().getUserFullName())
 					.withOrganizationId(connection.getUserInfo().getOrganizationId())

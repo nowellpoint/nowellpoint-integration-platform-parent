@@ -1,11 +1,6 @@
 package com.nowellpoint.client.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -55,9 +50,7 @@ public class Environment {
 	
 	private String grantType;
 	
-	private List<EnvironmentVariable> environmentVariables;
-	
-	private Map<String, List<EnvironmentVariableValue>> environmentVariableValues;
+	private String email;
 	
 	public Environment() {
 		setIsReadOnly(Boolean.FALSE);
@@ -223,34 +216,15 @@ public class Environment {
 	public void setGrantType(String grantType) {
 		this.grantType = grantType;
 	}
-
-	public List<EnvironmentVariable> getEnvironmentVariables() {
-		if (environmentVariables == null) {
-			setEnvironmentVariables(new ArrayList<EnvironmentVariable>());
-		} else {
-			setEnvironmentVariables(environmentVariables
-					.stream()
-					.sorted((p1, p2) -> p1.getVariable().compareTo(p2.getVariable()))
-					.collect(Collectors.toList()));
-		}
-		return environmentVariables;
-	}
-
-	public void setEnvironmentVariables(List<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
-	}
 	
-	public Map<String,List<EnvironmentVariableValue>> getEnvironmentVariableValues() {
-		if (environmentVariableValues == null) {
-			setEnvironmentVariableValues(new HashMap<String, List<EnvironmentVariableValue>>());
-		}
-		return environmentVariableValues;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setEnvironmentVariableValues(Map<String, List<EnvironmentVariableValue>> environmentVariableValues) {
-		this.environmentVariableValues = environmentVariableValues;
+	public void setEmail(String email) {
+		this.email = email;
 	}
-	
+
 	public Environment withEnvironmentName(String environmentName) {
 		setEnvironmentName(environmentName);
 		return this;

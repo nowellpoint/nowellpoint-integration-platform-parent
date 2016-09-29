@@ -35,7 +35,7 @@ public class ScheduledJobController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getApplications
+	 * getScheduledJobs
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
@@ -50,7 +50,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJobList", scheduledJobs);
-		
+
 		return render(request, model, Path.Template.SCHEDULED_JOBS_LIST);
 	};
 	
@@ -178,6 +178,7 @@ public class ScheduledJobController extends AbstractController {
 				.getSalesforceConnectorResource()
 				.getEnvironment(scheduledJob.getConnectorId(), environmentKey);
 		
+		scheduledJob.setNotificationEmail(environment.getEmail());
 		scheduledJob.setEnvironmentKey(environment.getKey());
 		scheduledJob.setEnvironmentName(environment.getEnvironmentName());
 		
@@ -205,6 +206,7 @@ public class ScheduledJobController extends AbstractController {
 		Token token = getToken(request);
 		
 		String id = request.queryParams("id");
+		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		String scheduleDate = request.queryParams("scheduleDate");
 		String scheduleTime = request.queryParams("scheduleTime");
@@ -232,6 +234,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		CreateScheduledJobRequest createScheduledJobRequest = new CreateScheduledJobRequest()
 				.withConnectorId(scheduledJob.getConnectorId())
+				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
 				.withEnvironmentKey(scheduledJob.getEnvironmentKey())
 				.withJobTypeId(scheduledJob.getJobTypeId())
@@ -245,6 +248,7 @@ public class ScheduledJobController extends AbstractController {
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			
+			scheduledJob.setNotificationEmail(notificationEmail);
 			scheduledJob.setDescription(description);
 			scheduledJob.setScheduleDate(sdf.parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00.SSSZ")));
 			
@@ -393,6 +397,7 @@ public class ScheduledJobController extends AbstractController {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
+		String notificationEmail = request.queryParams("notificationEmail");
 		String environmentKey = request.queryParams("environmentKey");
 		String description = request.queryParams("description");
 		String scheduleDate = request.queryParams("scheduleDate");
@@ -427,6 +432,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
 				.withId(id)
+				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
 				.withEnvironmentKey(environmentKey)
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));

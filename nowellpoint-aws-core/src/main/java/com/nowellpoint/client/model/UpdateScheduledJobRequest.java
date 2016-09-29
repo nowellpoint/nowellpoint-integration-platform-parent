@@ -8,6 +8,8 @@ public class UpdateScheduledJobRequest {
 	
 	private String environmentKey;
 	
+	private String notificationEmail;
+	
 	private String description;
 	
 	private String connectorId;
@@ -32,6 +34,14 @@ public class UpdateScheduledJobRequest {
 
 	public void setEnvironmentKey(String environmentKey) {
 		this.environmentKey = environmentKey;
+	}
+
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
 	}
 
 	public String getDescription() {
@@ -65,6 +75,11 @@ public class UpdateScheduledJobRequest {
 	
 	public UpdateScheduledJobRequest withEnvironmentKey(String environmentKey) {
 		setEnvironmentKey(environmentKey);
+		return this;
+	}
+	
+	public UpdateScheduledJobRequest withNotificationEmail(String notificationEmail) {
+		setNotificationEmail(notificationEmail);
 		return this;
 	}
 	

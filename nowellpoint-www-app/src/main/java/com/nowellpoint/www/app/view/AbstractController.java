@@ -64,8 +64,6 @@ abstract class AbstractController {
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			value = httpResponse.getAsString();
-		} else {
-			LOGGER.error("Cache exception: " + httpResponse.getAsString());
 		}
 		
 		return value;

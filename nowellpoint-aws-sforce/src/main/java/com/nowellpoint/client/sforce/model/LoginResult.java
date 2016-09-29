@@ -24,6 +24,8 @@ public class LoginResult implements Serializable {
 	
 	private String userName;
 	
+	private String email;
+	
 	private String authEndpoint;
 	
 	private String serviceEndpoint;
@@ -90,6 +92,14 @@ public class LoginResult implements Serializable {
 		this.userName = userName;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getAuthEndpoint() {
 		return authEndpoint;
 	}
@@ -116,6 +126,11 @@ public class LoginResult implements Serializable {
 
 	public LoginResult withId(String id) {
 		setId(id);
+		return this;
+	}
+	
+	public LoginResult withEmail(String email) {
+		setEmail(email);
 		return this;
 	}
 

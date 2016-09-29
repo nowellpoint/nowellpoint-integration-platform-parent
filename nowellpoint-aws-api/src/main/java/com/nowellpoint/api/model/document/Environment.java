@@ -1,7 +1,6 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -54,7 +53,7 @@ public class Environment {
 	
 	private Boolean isValid;
 	
-	private Set<EnvironmentVariable> environmentVariables;
+	private String email;
 	
 	public Environment() {
 
@@ -218,11 +217,11 @@ public class Environment {
 		this.isValid = isValid;
 	}
 
-	public Set<EnvironmentVariable> getEnvironmentVariables() {
-		return environmentVariables;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setEnvironmentVariables(Set<EnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

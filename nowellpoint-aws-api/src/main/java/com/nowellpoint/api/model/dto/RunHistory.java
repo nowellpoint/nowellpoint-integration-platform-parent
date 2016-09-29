@@ -10,6 +10,10 @@ public class RunHistory {
 	
 	private Long jobRunTime;
 	
+	private String status;
+	
+	private String failureMessage;
+	
 	public RunHistory() {
 		
 	}
@@ -36,5 +40,21 @@ public class RunHistory {
 
 	public void setJobRunTime(Long jobRunTime) {
 		this.jobRunTime = jobRunTime;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getFailureMessage() {
+		return failureMessage;
+	}
+
+	public void setFailureMessage(String failureMessage) {
+		this.failureMessage = failureMessage;
 	}
 }
