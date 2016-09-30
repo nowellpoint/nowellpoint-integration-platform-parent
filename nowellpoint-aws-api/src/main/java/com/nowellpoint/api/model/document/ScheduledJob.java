@@ -24,6 +24,10 @@ public class ScheduledJob extends MongoDocument {
 	
 	private static final long serialVersionUID = 4880299116047933778L;
 	
+	private User createdBy;
+	
+	private User lastModifiedBy;
+	
 	private User owner;
 	
 	private String environmentKey;
@@ -76,6 +80,22 @@ public class ScheduledJob extends MongoDocument {
 	
 	public ScheduledJob() {
 		
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public User getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(User lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public User getOwner() {

@@ -6,6 +6,10 @@ import java.util.List;
 
 public class ScheduledJob extends Resource {
 	
+	private AccountProfile createdBy;
+	
+	private AccountProfile lastModifiedBy;
+	
 	private AccountProfile owner;
 	
 	private String environmentKey;
@@ -42,6 +46,22 @@ public class ScheduledJob extends Resource {
 	
 	public ScheduledJob() {
 		setRunHistories(Collections.emptyList());
+	}
+
+	public AccountProfile getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(AccountProfile createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public AccountProfile getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public AccountProfile getOwner() {

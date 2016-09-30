@@ -63,10 +63,13 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public void createScheduledJob(ScheduledJob scheduledJob) {
 		if (isNull(scheduledJob.getOwner())) {
-			AccountProfile owner = new AccountProfile(getSubject());
-			scheduledJob.setOwner(owner);
+			scheduledJob.setOwner(new AccountProfile(getSubject()));
 		}
 		
+		AccountProfile createdBy = new AccountProfile(getSubject());
+		
+		scheduledJob.setCreatedBy(createdBy);
+		scheduledJob.setLastModifiedBy(createdBy);
 		scheduledJob.setStatus("Scheduled");
 		
 		setupScheduledJob(scheduledJob);
@@ -96,6 +99,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setLastRunDate(original.getLastRunDate());
 		scheduledJob.setLastRunStatus(original.getLastRunStatus());
 		scheduledJob.setLastRunFailureMessage(original.getLastRunFailureMessage());
+		scheduledJob.setCreatedBy(original.getCreatedBy());
 		
 		if (isNull(scheduledJob.getDescription())) {
 			scheduledJob.setDescription(original.getDescription());
@@ -122,7 +126,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		if (isNullOrEmpty(scheduledJob.getNotificationEmail())) {
 			scheduledJob.setNotificationEmail(original.getNotificationEmail());
 		}
-		
+				
+		scheduledJob.setLastModifiedBy(new AccountProfile(getSubject()));
 		setupScheduledJob(scheduledJob);
 		
 		super.updateScheduledJob(scheduledJob);
