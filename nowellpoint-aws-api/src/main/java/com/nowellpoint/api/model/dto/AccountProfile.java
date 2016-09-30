@@ -21,13 +21,13 @@ public class AccountProfile extends AbstractResource {
 	 * 
 	 */
 	
-	private AccountProfile createdBy;
+	private UserInfo createdBy;
 	
 	/**
 	 * 
 	 */
 	
-	private AccountProfile lastModifiedBy;
+	private UserInfo lastModifiedBy;
 	
 	/**
 	 * 
@@ -215,19 +215,19 @@ public class AccountProfile extends AbstractResource {
 		super(id);
 	}
 
-	public AccountProfile getCreatedBy() {
+	public UserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(AccountProfile createdBy) {
+	public void setCreatedBy(UserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public AccountProfile getLastModifiedBy() {
+	public UserInfo getLastModifiedBy() {
 		return lastModifiedBy;
 	}
 
-	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+	public void setLastModifiedBy(UserInfo lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 

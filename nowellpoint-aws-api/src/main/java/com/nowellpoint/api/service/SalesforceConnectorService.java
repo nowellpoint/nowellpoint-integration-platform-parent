@@ -28,11 +28,11 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.document.SimpleStorageService;
 import com.nowellpoint.api.model.document.Targets;
-import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
+import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
@@ -126,7 +126,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		resource.setIdentity(identity);
 		
 		if (resource.getOwner() == null) {
-			AccountProfile owner = new AccountProfile(getSubject());
+			UserInfo owner = new UserInfo(getSubject());
 			resource.setOwner(owner);
 		}
 		
@@ -152,10 +152,10 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		resource.addEnvironment(environment);
 		
-		AccountProfile createdBy = new AccountProfile(getSubject());
+		UserInfo userInfo = new UserInfo(getSubject());
 		
-		resource.setCreatedBy(createdBy);
-		resource.setLastModifiedBy(createdBy);
+		resource.setCreatedBy(userInfo);
+		resource.setLastModifiedBy(userInfo);
 		
 		super.createSalesforceConnector( resource );
 		
@@ -203,7 +203,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
 		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
 		
-		salesforceConnector.setLastModifiedBy(new AccountProfile(getSubject()));
+		salesforceConnector.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		super.updateSalesforceConnector(salesforceConnector);
 	}

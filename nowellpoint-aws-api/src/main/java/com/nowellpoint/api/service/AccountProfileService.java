@@ -41,6 +41,7 @@ import com.nowellpoint.api.model.document.SystemReference;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCardDTO;
 import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -122,10 +123,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 
 		accountProfile.setPhotos(photos);
 		
-		AccountProfile createdBy = new AccountProfile(getSubject());
+		UserInfo userInfo = new UserInfo(getSubject());
 		
-		accountProfile.setCreatedBy(createdBy);
-		accountProfile.setLastModifiedBy(createdBy);
+		accountProfile.setCreatedBy(userInfo);
+		accountProfile.setLastModifiedBy(userInfo);
 
 		super.createAccountProfile(accountProfile);
 	}
@@ -149,6 +150,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
 		accountProfile.setIsActive(original.getIsActive());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
+		accountProfile.setCreatedBy(original.getCreatedBy());
 		
 		if (isNull(accountProfile.getLocaleSidKey())) {
 			accountProfile.setLocaleSidKey(original.getLocaleSidKey());
@@ -182,7 +184,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setCreditCards(original.getCreditCards());
 		}
 		
-		accountProfile.setLastModifiedBy(new AccountProfile(getSubject()));
+		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		super.updateAccountProfile(accountProfile);
 	}

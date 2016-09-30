@@ -71,8 +71,6 @@ public class AccountProfileController extends AbstractController {
 	
 	public Route editAccountProfile = (Request request, Response response) -> {		
 		AccountProfile account = getAccount(request);
-		
-		System.out.println("enable salesorce login: " + account.getEnableSalesforceLogin());
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
@@ -128,8 +126,6 @@ public class AccountProfileController extends AbstractController {
 	
 	public Route deactivateAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
-		
-		System.out.println("dactivating profile: " + request.params(":id"));
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -206,8 +202,6 @@ public class AccountProfileController extends AbstractController {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
-		
-		System.out.println(request.queryParams("enableSalesforceLogin"));
 		
 		AccountProfile accountProfile = new AccountProfile()
 				.withId(request.params(":id"))

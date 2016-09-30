@@ -12,15 +12,15 @@ import com.nowellpoint.client.model.sforce.Organization;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends Resource {
 	
-	private AccountProfile createdBy;
+	private UserInfo createdBy;
 	
-	private AccountProfile lastModifiedBy;
+	private UserInfo lastModifiedBy;
 
 	private Identity identity;
 	
 	private Organization organization;
 	
-	private AccountProfile owner;
+	private UserInfo owner;
 	
 	private String tag;
 	
@@ -37,19 +37,19 @@ public class SalesforceConnector extends Resource {
 		setId(id);
 	}
 
-	public AccountProfile getCreatedBy() {
+	public UserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(AccountProfile createdBy) {
+	public void setCreatedBy(UserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public AccountProfile getLastModifiedBy() {
+	public UserInfo getLastModifiedBy() {
 		return lastModifiedBy;
 	}
 
-	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+	public void setLastModifiedBy(UserInfo lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
@@ -69,11 +69,11 @@ public class SalesforceConnector extends Resource {
 		this.organization = organization;
 	}
 
-	public AccountProfile getOwner() {
+	public UserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(AccountProfile owner) {
+	public void setOwner(UserInfo owner) {
 		this.owner = owner;
 	}
 

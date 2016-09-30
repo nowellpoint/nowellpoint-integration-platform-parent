@@ -11,12 +11,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
+import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
@@ -63,10 +63,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public void createScheduledJob(ScheduledJob scheduledJob) {
 		if (isNull(scheduledJob.getOwner())) {
-			scheduledJob.setOwner(new AccountProfile(getSubject()));
+			scheduledJob.setOwner(new UserInfo(getSubject()));
 		}
 		
-		AccountProfile createdBy = new AccountProfile(getSubject());
+		UserInfo createdBy = new UserInfo(getSubject());
 		
 		scheduledJob.setCreatedBy(createdBy);
 		scheduledJob.setLastModifiedBy(createdBy);
@@ -127,7 +127,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setNotificationEmail(original.getNotificationEmail());
 		}
 				
-		scheduledJob.setLastModifiedBy(new AccountProfile(getSubject()));
+		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
 		setupScheduledJob(scheduledJob);
 		
 		super.updateScheduledJob(scheduledJob);

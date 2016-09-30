@@ -13,8 +13,8 @@ import org.modelmapper.convention.MatchingStrategies;
 
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;
@@ -50,11 +50,11 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<UserRef,AccountProfile>() {
+		modelMapper.addConverter(new AbstractConverter<UserRef,UserInfo>() {
 
 			@Override
-			protected AccountProfile convert(UserRef source) {
-				AccountProfile accountProfile = new AccountProfile();
+			protected UserInfo convert(UserRef source) {
+				UserInfo userInfo = new UserInfo();
 				if (source != null && source.getIdentity() != null) {
 					
 					com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
@@ -63,21 +63,22 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
 							.first();
 					
-					accountProfile = modelMapper.map(document, AccountProfile.class );
+					userInfo = modelMapper.map(document, UserInfo.class );
 				}
 				
-				return accountProfile; 
+				return userInfo; 
 			}			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<AccountProfile,UserRef>() {
+		modelMapper.addConverter(new AbstractConverter<UserInfo,UserRef>() {
 
 			@Override
-			protected UserRef convert(AccountProfile source) {				
+			protected UserRef convert(UserInfo source) {
+				System.out.println(source.getId());
 				UserRef user = new UserRef();
 				if (source != null) {		
 					String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
-					ObjectId id = new ObjectId( source.getId().toString() );
+					ObjectId id = new ObjectId( source.getId() );
 
 					DBRef reference = new DBRef( collectionName, id );
 					user.setIdentity(reference);

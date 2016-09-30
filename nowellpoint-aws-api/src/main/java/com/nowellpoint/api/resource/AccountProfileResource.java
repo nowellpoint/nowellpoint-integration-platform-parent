@@ -115,30 +115,9 @@ public class AccountProfileResource {
     		@FormParam("languageSidKey") String languageSidKey,
     		@FormParam("timeZoneSidKey") String timeZoneSidKey,
     		@FormParam("enableSalesforceLogin") Boolean enableSalesforceLogin) {
-				
-		String subject = securityContext.getUserPrincipal().getName();
-				
+		
 		//
 		// update account
-		//
-		
-		
-		Account account = new Account();
-		account.setGivenName(firstName);
-		account.setMiddleName(null);
-		account.setSurname(lastName);
-		account.setEmail(email);
-		account.setUsername(email);
-		account.setHref(subject.split("-")[0]);
-
-		try {
-			identityProviderService.updateAccount(account);
-		} catch (HttpRequestException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
-		
-		//
-		// update identity
 		//
 		
 		AccountProfile accountProfile = new AccountProfile();
@@ -159,6 +138,24 @@ public class AccountProfileResource {
 		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
 		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
+				
+		//
+		// update identity
+		//
+		
+		Account account = new Account();
+		account.setGivenName(firstName);
+		account.setMiddleName(null);
+		account.setSurname(lastName);
+		account.setEmail(email);
+		account.setUsername(email);
+		account.setHref(accountProfile.getHref());
+
+		try {
+			identityProviderService.updateAccount(account);
+		} catch (HttpRequestException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		return Response.ok(accountProfile)
 				.build();

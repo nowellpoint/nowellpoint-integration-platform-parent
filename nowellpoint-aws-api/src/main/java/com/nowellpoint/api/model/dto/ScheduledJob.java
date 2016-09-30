@@ -15,11 +15,11 @@ public class ScheduledJob extends AbstractResource {
 	
 	private static final long serialVersionUID = -1699588438360478864L;
 	
-	private AccountProfile createdBy;
+	private UserInfo createdBy;
 	
-	private AccountProfile lastModifiedBy;
+	private UserInfo lastModifiedBy;
 	
-	private AccountProfile owner;
+	private UserInfo owner;
 	
 	private String environmentKey;
 	
@@ -58,27 +58,27 @@ public class ScheduledJob extends AbstractResource {
 		
 	}
 
-	public AccountProfile getCreatedBy() {
+	public UserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(AccountProfile createdBy) {
+	public void setCreatedBy(UserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public AccountProfile getLastModifiedBy() {
+	public UserInfo getLastModifiedBy() {
 		return lastModifiedBy;
 	}
 
-	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+	public void setLastModifiedBy(UserInfo lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
-	public AccountProfile getOwner() {
+	public UserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(AccountProfile owner) {
+	public void setOwner(UserInfo owner) {
 		this.owner = owner;
 	}
 
