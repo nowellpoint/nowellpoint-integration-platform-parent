@@ -21,6 +21,18 @@ public class AccountProfile extends AbstractResource {
 	 * 
 	 */
 	
+	private AccountProfile createdBy;
+	
+	/**
+	 * 
+	 */
+	
+	private AccountProfile lastModifiedBy;
+	
+	/**
+	 * 
+	 */
+	
 	@JsonIgnore
 	private String leadId;
 
@@ -201,6 +213,22 @@ public class AccountProfile extends AbstractResource {
 	
 	public AccountProfile(String id) {
 		super(id);
+	}
+
+	public AccountProfile getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(AccountProfile createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public AccountProfile getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public String getLeadId() {

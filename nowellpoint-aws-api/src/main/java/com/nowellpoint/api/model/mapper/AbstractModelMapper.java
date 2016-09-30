@@ -12,7 +12,7 @@ import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
 import com.mongodb.DBRef;
-import com.nowellpoint.api.model.document.User;
+import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.util.UserContext;
@@ -50,10 +50,10 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<User,AccountProfile>() {
+		modelMapper.addConverter(new AbstractConverter<UserRef,AccountProfile>() {
 
 			@Override
-			protected AccountProfile convert(User source) {
+			protected AccountProfile convert(UserRef source) {
 				AccountProfile accountProfile = new AccountProfile();
 				if (source != null && source.getIdentity() != null) {
 					
@@ -70,11 +70,11 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 			}			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<AccountProfile,User>() {
+		modelMapper.addConverter(new AbstractConverter<AccountProfile,UserRef>() {
 
 			@Override
-			protected User convert(AccountProfile source) {				
-				User user = new User();
+			protected UserRef convert(AccountProfile source) {				
+				UserRef user = new UserRef();
 				if (source != null) {		
 					String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 					ObjectId id = new ObjectId( source.getId().toString() );

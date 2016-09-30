@@ -5,6 +5,18 @@ import java.util.Date;
 import java.util.List;
 
 public class AccountProfile extends Resource {
+	
+	/**
+	 * 
+	 */
+	
+	private AccountProfile createdBy;
+	
+	/**
+	 * 
+	 */
+	
+	private AccountProfile lastModifiedBy;
 
 	/**
 	 * 
@@ -163,6 +175,22 @@ public class AccountProfile extends Resource {
 	public AccountProfile(String id) {
 		this();
 		this.setId(id);
+	}
+
+	public AccountProfile getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(AccountProfile createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public AccountProfile getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public String getUsername() {

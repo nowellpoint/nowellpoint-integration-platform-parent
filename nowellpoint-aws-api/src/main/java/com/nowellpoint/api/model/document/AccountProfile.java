@@ -24,173 +24,85 @@ public class AccountProfile extends MongoDocument {
 	 */
 
 	private static final long serialVersionUID = 3163086585922281575L;
-
-	/**
-	 * 
-	 */
+	
+	private UserRef createdBy;
+	
+	private UserRef lastModifiedBy;
 
 	private String username;
 
-	/**
-	 * 
-	 */
-
 	private String lastName;
-
-	/**
-	 * 
-	 */
 
 	private String firstName;
 
-	/**
-	 * 
-	 */
-
 	private String name;
-
-	/**
-	 * 
-	 */
 
 	private String company;
 
-	/**
-	 * 
-	 */
-
 	private String division;
-
-	/**
-	 * 
-	 */
 
 	private String department;
 
-	/**
-	 * 
-	 */
-
 	private String title;
-
-	/**
-	 * 
-	 */
 
 	private String email;
 
-	/**
-	 * 
-	 */
-
 	private String phone;
-
-	/**
-	 * 
-	 */
 
 	private String extension;
 
-	/**
-	 * 
-	 */
-
 	private String fax;
-
-	/**
-	 * 
-	 */
 
 	private String mobilePhone;
 
-	/**
-	 * 
-	 */
-
 	private Boolean isActive;
-
-	/**
-	 * 
-	 */
 
 	private String timeZoneSidKey;
 	
-	/**
-	 * 
-	 */
-	
 	private String languageSidKey;
-
-	/**
-	 * 
-	 */
 
 	private String localeSidKey;
 
-	/**
-	 * 
-	 */
-
 	private String emailEncodingKey;
-
-	/**
-	 * 
-	 */
 
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastLoginDate;
 	
-	/**
-	 * 
-	 */
-	
 	private Address address;
 
-	/**
-	 * 
-	 */
-
 	private String href;
-
-	/**
-	 * 
-	 */
 	
 	private Photos photos;
 	
-	/**
-	 * 
-	 */
-	
 	private String leadId;
-	
-	/**
-	 * 
-	 */
 	
 	private Set<CreditCard> creditCards;
 	
-	/**
-	 * 
-	 */
-	
 	private Set<SystemReference> systemReferences;
 	
-	/**
-	 * 
-	 */
-	
 	private Boolean hasFullAccess;
-	
-	/**
-	 * 
-	 */
 	
 	private Boolean enableSalesforceLogin;
 	
 	public AccountProfile() {
 		setHasFullAccess(Boolean.FALSE);
+	}
+
+	public UserRef getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserRef createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserRef getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(UserRef lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public String getUsername() {

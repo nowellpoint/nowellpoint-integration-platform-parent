@@ -21,7 +21,11 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private static final long serialVersionUID = -3438714915624952119L;
 	
-	private User owner;
+	private UserRef createdBy;
+	
+	private UserRef lastModifiedBy;
+	
+	private UserRef owner;
 	
 	private Identity identity;
 	
@@ -37,11 +41,27 @@ public class SalesforceConnector extends MongoDocument {
 		
 	}
 
-	public User getOwner() {
+	public UserRef getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserRef createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserRef getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(UserRef lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public UserRef getOwner() {
 		return owner;
 	}
 
-	public void setOwner(User owner) {
+	public void setOwner(UserRef owner) {
 		this.owner = owner;
 	}
 

@@ -121,6 +121,11 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		photos.setProfilePicture("/images/person-generic.jpg");
 
 		accountProfile.setPhotos(photos);
+		
+		AccountProfile createdBy = new AccountProfile(getSubject());
+		
+		accountProfile.setCreatedBy(createdBy);
+		accountProfile.setLastModifiedBy(createdBy);
 
 		super.createAccountProfile(accountProfile);
 	}
@@ -135,6 +140,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	public void updateAccountProfile(Id id, AccountProfile accountProfile) {
 		AccountProfile original = findAccountProfile( id );
+		
 		accountProfile.setId( id );
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 		accountProfile.setCreatedById(original.getCreatedById());
@@ -175,6 +181,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		if (isNull(accountProfile.getCreditCards())) {
 			accountProfile.setCreditCards(original.getCreditCards());
 		}
+		
+		accountProfile.setLastModifiedBy(new AccountProfile(getSubject()));
 		
 		super.updateAccountProfile(accountProfile);
 	}

@@ -152,6 +152,11 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		resource.addEnvironment(environment);
 		
+		AccountProfile createdBy = new AccountProfile(getSubject());
+		
+		resource.setCreatedBy(createdBy);
+		resource.setLastModifiedBy(createdBy);
+		
 		super.createSalesforceConnector( resource );
 		
 		List<UserProperty> properties = new ArrayList<UserProperty>();
@@ -197,6 +202,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		salesforceConnector.setCreatedDate(original.getCreatedDate());
 		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
 		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
+		
+		salesforceConnector.setLastModifiedBy(new AccountProfile(getSubject()));
 		
 		super.updateSalesforceConnector(salesforceConnector);
 	}

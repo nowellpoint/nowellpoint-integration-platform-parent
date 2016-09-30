@@ -202,13 +202,13 @@
                         <div class="col-md-6">
                             <dl class="dl-vertical">
                                 <dt>${messages["created.on"]}</dt>
-                                <dd>${accountProfile.createdDate?date?string.iso!} ${accountProfile.createdDate?time?string.medium!}</dd>
+                                <dd>${accountProfile.createdBy.name}, ${accountProfile.createdDate?date?string.long!} ${accountProfile.createdDate?time?string.medium!}</dd>
                             </dl>
                         </div>
                         <div class="col-md-6">
                             <dl class="dl-vertical">
                                 <dt>${messages["last.modified.on"]}</dt>
-                                <dd>${accountProfile.lastModifiedDate?date?string.iso!} ${accountProfile.lastModifiedDate?time?string.medium!}</dd>
+                                <dd>${accountProfile.lastModifiedBy.name}, ${accountProfile.lastModifiedDate?date?string.long!} ${accountProfile.lastModifiedDate?time?string.medium!}</dd>
                             </dl>
                         </div>
                     </div>

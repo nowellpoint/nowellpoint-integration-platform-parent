@@ -2,15 +2,13 @@ package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.mongodb.DBRef;
 import com.nowellpoint.mongodb.document.DBRefDeserializer;
 import com.nowellpoint.mongodb.document.DBRefSerializer;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements Serializable {
+public class UserRef implements Serializable {
 
 	/**
 	 * 
@@ -22,7 +20,7 @@ public class User implements Serializable {
 	@JsonDeserialize(using=DBRefDeserializer.class)
 	private DBRef identity;
 	
-	public User() {
+	public UserRef() {
 		
 	}
 

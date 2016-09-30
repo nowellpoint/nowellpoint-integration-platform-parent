@@ -10,6 +10,10 @@ public class SalesforceConnector extends AbstractResource {
 
 	private static final long serialVersionUID = -6847034908687287362L;
 	
+	private AccountProfile createdBy;
+	
+	private AccountProfile lastModifiedBy;
+	
 	private AccountProfile owner;
 
 	private Identity identity;
@@ -28,6 +32,22 @@ public class SalesforceConnector extends AbstractResource {
 	
 	public SalesforceConnector(String id) {
 		super(id);
+	}
+
+	public AccountProfile getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(AccountProfile createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public AccountProfile getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(AccountProfile lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public AccountProfile getOwner() {
