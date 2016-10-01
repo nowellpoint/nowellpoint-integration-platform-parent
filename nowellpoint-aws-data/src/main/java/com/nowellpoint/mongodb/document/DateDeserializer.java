@@ -27,7 +27,6 @@ public class DateDeserializer extends JsonDeserializer<Date> {
 		
         if (node.get("$date") != null) {
         	JsonNode field = node.get("$date");
-        	value = new Date(field.asLong());
         	if (field.isLong()) {
         		value = new Date(field.asLong());
         	} else {
@@ -38,7 +37,6 @@ public class DateDeserializer extends JsonDeserializer<Date> {
     			}
         	}
         }
-        
         return value;
 	}	
 }

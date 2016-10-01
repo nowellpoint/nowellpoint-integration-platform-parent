@@ -2,6 +2,7 @@ package com.nowellpoint.api;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -33,6 +34,12 @@ public class Main {
         //
 
         Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+        
+        //
+        // set timezone to UTC
+        //
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         
         //
         // create the JAX-RS deployment archive

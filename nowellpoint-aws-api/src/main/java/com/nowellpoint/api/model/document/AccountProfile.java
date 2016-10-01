@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.model.codec.AccountProfileCodec;
@@ -14,7 +12,6 @@ import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="account.profiles", codec=AccountProfileCodec.class)
 public class AccountProfile extends MongoDocument {

@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 
@@ -53,6 +55,12 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	protected Set<ScheduledJob> findAllByOwner() {
 		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = findAllByOwner(getSubject());
 		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(scheduledJobs));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return scheduledJobs;
 	}
 	

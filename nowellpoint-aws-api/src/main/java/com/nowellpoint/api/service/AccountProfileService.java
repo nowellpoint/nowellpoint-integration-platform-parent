@@ -2,6 +2,7 @@ package com.nowellpoint.api.service;
 
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNotNull;
+import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNotEqual;
 
 import java.io.IOException;
@@ -151,6 +152,60 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setIsActive(original.getIsActive());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
 		accountProfile.setCreatedBy(original.getCreatedBy());
+		
+		if (isNull(accountProfile.getDivision())) {
+			accountProfile.setDivision(original.getDivision());
+		} else if (isEmpty(accountProfile.getDivision())) {
+			accountProfile.setDivision(null);
+		}
+		
+		if (isNull(accountProfile.getFirstName())) {
+			accountProfile.setFirstName(original.getFirstName());
+		} else if (isEmpty(accountProfile.getFirstName())) {
+			accountProfile.setFirstName(null);
+		}
+		
+		if (isNull(accountProfile.getCompany())) {
+			accountProfile.setCompany(original.getCompany());
+		} else if (isEmpty(accountProfile.getCompany())) {
+			accountProfile.setCompany(null);
+		}
+		
+		if (isNull(accountProfile.getDepartment())) {
+			accountProfile.setDepartment(original.getDepartment());
+		} else if (isEmpty(accountProfile.getDepartment())) {
+			accountProfile.setDepartment(null);
+		}
+		
+		if (isNull(accountProfile.getTitle())) {
+			accountProfile.setTitle(original.getTitle());
+		} else if (isEmpty(accountProfile.getTitle())) {
+			accountProfile.setTitle(null);
+		}
+		
+		if (isNull(accountProfile.getFax())) {
+			accountProfile.setFax(original.getFax());
+		} else if (isEmpty(accountProfile.getFax())) {
+			accountProfile.setFax(null);
+		}
+		
+		if (isNull(accountProfile.getMobilePhone())) {
+			accountProfile.setMobilePhone(original.getMobilePhone());
+		} else if (isEmpty(accountProfile.getMobilePhone())) {
+			accountProfile.setMobilePhone(null);
+		}
+		
+		if (isNull(accountProfile.getPhone())) {
+			accountProfile.setPhone(original.getPhone());
+		} else if (isEmpty(accountProfile.getPhone())) {
+			accountProfile.setPhone(null);
+		}
+		
+		if (isNull(accountProfile.getExtension())) {
+			accountProfile.setExtension(original.getExtension());
+		} else if (isEmpty(accountProfile.getExtension())) {
+			accountProfile.setExtension(null);
+		}
 		
 		if (isNull(accountProfile.getLocaleSidKey())) {
 			accountProfile.setLocaleSidKey(original.getLocaleSidKey());

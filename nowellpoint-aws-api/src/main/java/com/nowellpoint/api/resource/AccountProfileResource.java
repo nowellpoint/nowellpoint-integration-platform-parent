@@ -106,14 +106,14 @@ public class AccountProfileResource {
     		@FormParam("division") String division,
     		@FormParam("department") String department,
     		@FormParam("title") String title,
-    		@FormParam("email") @Email String email,
+    		@FormParam("email") @Email @NotEmpty String email,
     		@FormParam("fax") String fax,
     		@FormParam("mobilePhone") String mobilePhone,
     		@FormParam("phone") String phone,
     		@FormParam("extension") String extension,
-    		@FormParam("localeSidKey") String localeSidKey,
-    		@FormParam("languageSidKey") String languageSidKey,
-    		@FormParam("timeZoneSidKey") String timeZoneSidKey,
+    		@FormParam("localeSidKey") @NotEmpty String localeSidKey,
+    		@FormParam("languageSidKey") @NotEmpty String languageSidKey,
+    		@FormParam("timeZoneSidKey") @NotEmpty String timeZoneSidKey,
     		@FormParam("enableSalesforceLogin") Boolean enableSalesforceLogin) {
 		
 		//

@@ -126,6 +126,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		if (isNullOrEmpty(scheduledJob.getNotificationEmail())) {
 			scheduledJob.setNotificationEmail(original.getNotificationEmail());
 		}
+		
+		if (isNull(scheduledJob.getRunHistories())) {
+			scheduledJob.setRunHistories(original.getRunHistories());
+		}
 				
 		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
 		setupScheduledJob(scheduledJob);

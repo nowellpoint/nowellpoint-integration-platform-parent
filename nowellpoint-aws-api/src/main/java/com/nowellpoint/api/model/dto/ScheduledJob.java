@@ -5,8 +5,6 @@ import java.util.Set;
 
 import org.hibernate.validator.constraints.Email;
 
-import com.nowellpoint.api.model.document.RunHistory;
-
 public class ScheduledJob extends AbstractResource {
 
 	/**

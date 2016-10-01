@@ -56,6 +56,9 @@
                         <div class="col-md-4">
 
                             <dl class="dl-vertical">
+                                <dt>${labels["owner"]}</dt>
+                                <dd>${(scheduledJob.owner.name)!}</dd>
+                                <hr>
                                 <dt>${labels["connector.type"]}</dt>
                                 <dd><a href="${connectorHref!}">${(scheduledJob.connectorType)!}</a>&emsp;</dd>
                                 <hr>
@@ -101,6 +104,9 @@
                                 <dt>${labels["last.run.date"]}</dt>
                                 <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
                                 <hr>
+                                <dt>&emsp;</dt>
+                                <dd>&emsp;</dd>
+                                <hr>
                             </dl>
                         </div>
 
@@ -133,7 +139,7 @@
                             <div class="hr-divider"></div>
                             <br>
                             <div class="content table-responsive">
-                                <table id="environments-table" class="table table-hover">
+                                <table id="run-history-table" class="table table-hover">
                                     <thead>
                                         <th class="col-xs-2">${labels["instance.id"]}</th>
                                         <th class="col-xs-2">${labels["fire.time"]}</th>
@@ -143,7 +149,7 @@
                                     </thead>
                                     <tbody>
                                         <#list scheduledJob.runHistories?sort_by( "fireTime") as runHistory>
-                                            <td>${(runHistory.instanceId)!}</td>
+                                            <td>${(runHistory.fireInstanceId)!}</td>
                                             <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
                                             <td>${(runHistory.jobRunTime)!}</td>
                                             <td>${(runHistory.status)!}</td>
@@ -182,12 +188,8 @@
                             </dl>
                         </div>
                     </div>
-
-
                 </div>
-
             </div>
-
         </div>
 
         <#include "spinner.html"/>

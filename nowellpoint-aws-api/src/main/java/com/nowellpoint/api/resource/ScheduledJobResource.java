@@ -5,7 +5,6 @@ import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +28,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
@@ -60,15 +57,7 @@ public class ScheduledJobResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
-		System.out.println("get scheduled Jobs");
 		Set<ScheduledJob> resources = scheduledJobService.findAllByOwner();
-		System.out.println("schedule job count: " + resources.size());
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(resources));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return Response.ok(resources).build();
     }
 	
@@ -137,7 +126,6 @@ public class ScheduledJobResource {
 		scheduledJob.setDescription(description);
 		scheduledJob.setStatus(status);
 		try {
-			TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
 		} catch (Exception e) {
@@ -188,7 +176,7 @@ public class ScheduledJobResource {
 		scheduledJob.setStatus(isNotNullOrEmpty(status) ? status : null);
 		if (isNotNullOrEmpty(scheduleDate)) {
 			try {
-				TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+				//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 				scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
 			} catch (Exception e) {
