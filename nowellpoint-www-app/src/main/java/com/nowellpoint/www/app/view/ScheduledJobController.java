@@ -286,13 +286,17 @@ public class ScheduledJobController extends AbstractController {
 				.getScheduledJobResource()
 				.getScheduledJob(id);
 		
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getLastModifiedBy().getId());
+		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", scheduledJob);
+		model.put("createdByHref", createdByHref);
+		model.put("lastModifiedByHref", lastModifiedByHref);
 		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnectorId()));
 		model.put("successMessage", getValue(token, "success.message"));
 		
 		if (model.get("successMessage") != null) {
-			System.out.println("" + model.get("successMessage"));
 			removeValue(token, "success.message");
 		}
 		

@@ -21,7 +21,6 @@ public class SalesforceException extends RuntimeException {
 	}
 	
 	public SalesforceException(int statusCode, ArrayNode node) {
-		//[{"message":"TotalRequests Limit exceeded.","errorCode":"REQUEST_LIMIT_EXCEEDED"}]
 		super();
 		this.statusCode = statusCode;
 		this.error = node.get(0).get("errorCode").asText();
@@ -39,5 +38,4 @@ public class SalesforceException extends RuntimeException {
 	public String getErrorDescription() {
 		return errorDescription;
 	}
-
 }

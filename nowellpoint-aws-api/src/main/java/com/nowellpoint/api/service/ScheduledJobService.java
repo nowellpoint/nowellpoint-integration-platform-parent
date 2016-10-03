@@ -132,6 +132,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		}
 				
 		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
+		
 		setupScheduledJob(scheduledJob);
 		
 		super.updateScheduledJob(scheduledJob);

@@ -74,7 +74,6 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 
 			@Override
 			protected UserRef convert(UserInfo source) {
-				System.out.println(source.getId());
 				UserRef user = new UserRef();
 				if (source != null) {		
 					String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );

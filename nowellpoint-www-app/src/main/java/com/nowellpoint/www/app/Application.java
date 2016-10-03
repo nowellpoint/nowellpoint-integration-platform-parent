@@ -199,6 +199,7 @@ public class Application implements SparkApplication {
         get(Path.Route.ADMINISTRATION.concat("/properties"), administrationController.showManageProperties);	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
         
+		get(Path.Route.ACCOUNT_PROFILE_ME, accountProfileController.getMyAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
@@ -328,15 +329,4 @@ public class Application implements SparkApplication {
 		response.status(200);
     	return "";
 	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws JsonParseException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	
-	
 }

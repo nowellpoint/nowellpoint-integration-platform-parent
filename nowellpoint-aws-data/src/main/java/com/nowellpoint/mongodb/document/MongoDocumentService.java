@@ -39,6 +39,18 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	/**
 	 * 
 	 * 
+	 * @return 
+	 * 
+	 * 
+	 */
+	
+	protected String getCollectionName() {
+		return MongoDatastore.getCollectionName( documentClass );
+	}
+	
+	/**
+	 * 
+	 * 
 	 * @param query
 	 * @return
 	 * 
@@ -112,12 +124,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 * @param subject
 	 * @param document
-	 * @return
 	 * 
 	 * 
 	 */
 	
-	protected T create(String subject, T document) {	
+	protected void create(String subject, T document) {	
 		Date now = Date.from(Instant.now());
 		
 		document.setId(new ObjectId());
@@ -139,15 +150,16 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		} catch (MongoException e) {
 			LOGGER.error( "Create Document exception", e.getCause());
 			throw e;
-		}
-		
-		return document;		
+		}		
 	}
 	
 	/**
 	 * 
+	 * 
 	 * @param document
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	protected void create(T document) {	
@@ -161,7 +173,9 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 			document.setCreatedDate(now);
 			document.setLastModifiedDate(now);
 		}
-
+		
+		set(document.getId().toString(), document);
+		
 		try {
 			MongoDatastore.insertOne( document );
 		} catch (MongoException e) {
@@ -175,12 +189,11 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 * @param subject
 	 * @param document
-	 * @return
 	 * 
 	 * 
 	 */
 	
-	protected T replace(String subject, T document) {
+	protected void replace(String subject, T document) {
 		Date now = Date.from(Instant.now());
 		
 		document.setLastModifiedById(subject);
@@ -196,17 +209,13 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 			LOGGER.error( "Update Document exception", e.getCause());
 			throw e;
 		}
-		
-		return document;
 	}
 	
 	/**
 	 * 
 	 * 
-	 * @param subject
 	 * @param filter
 	 * @param document
-	 * @return T
 	 * 
 	 * 
 	 */
@@ -214,8 +223,9 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	protected void replace(Bson filter, T document) {
 		Date now = Date.from(Instant.now());
 		
-		document.setLastModifiedDate(now);
 		document.setSystemModifiedDate(now);
+		
+		set(document.getId().toString(), document);
 		
 		try {
 			MongoDatastore.replaceOne( filter, document );

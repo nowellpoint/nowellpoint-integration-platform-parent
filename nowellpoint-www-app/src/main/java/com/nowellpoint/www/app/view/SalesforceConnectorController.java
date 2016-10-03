@@ -530,9 +530,14 @@ public class SalesforceConnectorController extends AbstractController {
 				.getSalesforceConnectorResource()
 				.getSalesforceConnector(id);
 		
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getLastModifiedBy().getId());
+		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
     	model.put("successMessage", request.cookie("successMessage"));
+    	model.put("createdByHref", createdByHref);
+    	model.put("lastModifiedByHref", lastModifiedByHref);
 		
     	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
 	};

@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.SalesforceConnectionCodec;
 import com.nowellpoint.api.model.sforce.Identity;
 import com.nowellpoint.api.model.sforce.Organization;
-import com.nowellpoint.mongodb.annotation.Audited;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends MongoDocument {

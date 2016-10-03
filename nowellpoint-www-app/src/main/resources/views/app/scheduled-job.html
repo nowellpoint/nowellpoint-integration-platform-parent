@@ -33,7 +33,7 @@
                         <div class="flextable-item">
                             <!--  <#if scheduledJob.status == "Stopped"> -->
                             <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
-                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-primary">${labels["start.scheduled.job"]}</button>
+                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-success">${labels["start.scheduled.job"]}</button>
                             </form>
                             <!-- </#if> -->
                             <!--  <#if scheduledJob.status == "Scheduled"> -->
@@ -72,7 +72,8 @@
                                     <!--  <#if scheduledJob.status == "Scheduled"> -->
                                     <dd class="text-success">
                                         <!-- </#if> -->
-                                        ${(scheduledJob.status)!}&emsp;</dd>
+                                        ${(scheduledJob.status)!}&emsp;
+                                </dd>
                                     <hr>
                                     <dt>${labels["notification.email"]}</dt>
                                     <dd>${(scheduledJob.notificationEmail)!}&emsp;</dd>
@@ -92,21 +93,21 @@
                                 <dt>${labels["last.run.status"]}</dt>
                                 <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
                                 <dd class="text-danger">
-                                <!-- </#if> -->
-                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
-                                <dd class="text-success">
-                                <!-- </#if> -->
-                                ${(scheduledJob.lastRunStatus)!}&emsp;
-                                <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->    
-                                    <a href="#" data-toggle="popover" data-placement="top" data-content="${scheduledJob.lastRunFailureMessage!}"><span class="icon icon-squared-cross"></span></a></dd>
-                                <!-- </#if> -->
-                                <hr>
-                                <dt>${labels["last.run.date"]}</dt>
-                                <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
-                                <hr>
-                                <dt>&emsp;</dt>
-                                <dd>&emsp;</dd>
-                                <hr>
+                                    <!-- </#if> -->
+                                    <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                                    <dd class="text-success">
+                                        <!-- </#if> -->
+                                        ${(scheduledJob.lastRunStatus)!}&emsp;
+                                        <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                                        <a href="#" data-toggle="popover" data-placement="top" data-content="${scheduledJob.lastRunFailureMessage!}"><span class="icon icon-squared-cross"></span></a></dd>
+                                    <!-- </#if> -->
+                                    <hr>
+                                    <dt>${labels["last.run.date"]}</dt>
+                                    <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
+                                    <hr>
+                                    <dt>&emsp;</dt>
+                                    <dd>&emsp;</dd>
+                                    <hr>
                             </dl>
                         </div>
 
@@ -124,10 +125,10 @@
                         </div>
 
                     </div>
-                    
+
                     <br>
                     <br>
-                    
+
                     <div id="runHistories" class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="flextable">
@@ -140,20 +141,23 @@
                             <br>
                             <div class="content table-responsive">
                                 <table id="run-history-table" class="table table-hover">
+
                                     <thead>
                                         <th class="col-xs-2">${labels["instance.id"]}</th>
                                         <th class="col-xs-2">${labels["fire.time"]}</th>
-                                        <th class="col-xs-2">${labels["run.time"]}</th>
-                                        <th class="col-xs-2">${labels["status"]}</th>
-                                        <th class="col-xs-2">${labels["error.message"]}</th>
+                                        <th class="col-xs-1 text-right">${labels["run.time"]}</th>
+                                        <th class="col-xs-2 text-center">${labels["status"]}</th>
+                                        <th class="col-xs-5">${labels["error.message"]}</th>
                                     </thead>
                                     <tbody>
                                         <#list scheduledJob.runHistories?sort_by( "fireTime") as runHistory>
-                                            <td>${(runHistory.fireInstanceId)!}</td>
-                                            <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
-                                            <td>${(runHistory.jobRunTime)!}</td>
-                                            <td>${(runHistory.status)!}</td>
-                                            <td>${(runHistory.failureMessage)!}</td>
+                                            <tr>
+                                                <td>${(runHistory.fireInstanceId)!}</td>
+                                                <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
+                                                <td class="text-right">${(runHistory.jobRunTime)!}</td>
+                                                <td class="text-center">${(runHistory.status)!}</td>
+                                                <td>${(runHistory.failureMessage)!}</td>
+                                            </tr>
                                         </#list>
                                     </tbody>
                                 </table>
@@ -178,13 +182,13 @@
                         <div class="col-md-6">
                             <dl class="dl-vertical">
                                 <dt>${labels["created.by"]}</dt>
-                                <dd>${(scheduledJob.createdBy.name)!}, ${scheduledJob.createdDate?date?string.long!} ${scheduledJob.createdDate?time?string.medium!}</dd>
+                                <dd><a href="${createdByHref}">${(scheduledJob.createdBy.name)!}</a>, ${scheduledJob.createdDate?date?string.long!} ${scheduledJob.createdDate?time?string.medium!}</dd>
                             </dl>
                         </div>
                         <div class="col-md-6">
                             <dl class="dl-vertical">
                                 <dt>${labels["last.modified.by"]}</dt>
-                                <dd>${(scheduledJob.lastModifiedBy.name)!}, ${scheduledJob.lastModifiedDate?date?string.long!} ${scheduledJob.lastModifiedDate?time?string.medium!}</dd>
+                                <dd><a href="${lastModifiedByHref}">${(scheduledJob.lastModifiedBy.name)!}</a>, ${scheduledJob.lastModifiedDate?date?string.long!} ${scheduledJob.lastModifiedDate?time?string.medium!}</dd>
                             </dl>
                         </div>
                     </div>

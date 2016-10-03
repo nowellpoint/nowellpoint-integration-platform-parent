@@ -1,34 +1,37 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.api.model.codec.ScheduledJobCodec;
+import com.nowellpoint.api.model.codec.ScheduledJobRequestCodec;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.mongodb.document.ObjectIdDeserializer;
+import com.nowellpoint.mongodb.document.ObjectIdSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="scheduled.jobs", codec=ScheduledJobCodec.class)
-public class ScheduledJob extends MongoDocument {
-
+@Document(collectionName="scheduled.job.requests", codec=ScheduledJobRequestCodec.class)
+public class ScheduledJobRequest extends MongoDocument {
+	
 	/**
 	 * 
 	 */
 	
-	private static final long serialVersionUID = 4880299116047933778L;
+	private static final long serialVersionUID = -8426321555023081859L;
+	
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	@JsonDeserialize(using = ObjectIdDeserializer.class)
+	private ObjectId scheduledJobId;
 	
 	private UserRef createdBy;
 	
 	private UserRef lastModifiedBy;
-	
-	private UserRef owner;
 	
 	private String environmentKey;
 	
@@ -51,23 +54,43 @@ public class ScheduledJob extends MongoDocument {
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date scheduleDate;
+
+	private String fireInstanceId;
 	
-	private String status;
+	private String groupName;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	private Date lastRunDate;
+	private String jobName;
 	
-	private String lastRunStatus;
-	
-	private String lastRunFailureMessage;
+	private Long jobRunTime;
 	
 	private String notificationEmail;
 	
-	private Set<RunHistory> runHistories;
+	private Integer year;
 	
-	public ScheduledJob() {
+	private Integer month;
+	
+	private Integer day;
+	
+	private Integer hour;
+	
+	private Integer minute;
+	
+	private Integer second;
+	
+	private String status;
+	
+	private String failureMessage;
+
+	public ScheduledJobRequest() {
 		
+	}
+
+	public ObjectId getScheduledJobId() {
+		return scheduledJobId;
+	}
+
+	public void setScheduledJobId(ObjectId scheduledJobId) {
+		this.scheduledJobId = scheduledJobId;
 	}
 
 	public UserRef getCreatedBy() {
@@ -84,14 +107,6 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setLastModifiedBy(UserRef lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public UserRef getOwner() {
-		return owner;
-	}
-
-	public void setOwner(UserRef owner) {
-		this.owner = owner;
 	}
 
 	public String getEnvironmentKey() {
@@ -174,36 +189,36 @@ public class ScheduledJob extends MongoDocument {
 		this.scheduleDate = scheduleDate;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getFireInstanceId() {
+		return fireInstanceId;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setFireInstanceId(String fireInstanceId) {
+		this.fireInstanceId = fireInstanceId;
 	}
 
-	public Date getLastRunDate() {
-		return lastRunDate;
+	public String getGroupName() {
+		return groupName;
 	}
 
-	public void setLastRunDate(Date lastRunDate) {
-		this.lastRunDate = lastRunDate;
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
-	public String getLastRunStatus() {
-		return lastRunStatus;
+	public String getJobName() {
+		return jobName;
 	}
 
-	public void setLastRunStatus(String lastRunStatus) {
-		this.lastRunStatus = lastRunStatus;
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
 	}
 
-	public String getLastRunFailureMessage() {
-		return lastRunFailureMessage;
+	public Long getJobRunTime() {
+		return jobRunTime;
 	}
 
-	public void setLastRunFailureMessage(String lastRunFailureMessage) {
-		this.lastRunFailureMessage = lastRunFailureMessage;
+	public void setJobRunTime(Long jobRunTime) {
+		this.jobRunTime = jobRunTime;
 	}
 
 	public String getNotificationEmail() {
@@ -214,21 +229,67 @@ public class ScheduledJob extends MongoDocument {
 		this.notificationEmail = notificationEmail;
 	}
 
-	public Set<RunHistory> getRunHistories() {
-		return runHistories;
+	public Integer getYear() {
+		return year;
 	}
 
-	public void setRunHistories(Set<RunHistory> runHistories) {
-		this.runHistories = runHistories;
+	public void setYear(Integer year) {
+		this.year = year;
 	}
-	
-	public void addRunHistory(RunHistory runHistory) {
-		if (runHistories == null) {
-			runHistories = new HashSet<RunHistory>();
-		}
-		if (runHistories.size() == 10) {
-			runHistories.stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList()).remove(0);
-		}
-		runHistories.add(runHistory);
+
+	public Integer getMonth() {
+		return month;
+	}
+
+	public void setMonth(Integer month) {
+		this.month = month;
+	}
+
+	public Integer getDay() {
+		return day;
+	}
+
+	public void setDay(Integer day) {
+		this.day = day;
+	}
+
+	public Integer getHour() {
+		return hour;
+	}
+
+	public void setHour(Integer hour) {
+		this.hour = hour;
+	}
+
+	public Integer getMinute() {
+		return minute;
+	}
+
+	public void setMinute(Integer minute) {
+		this.minute = minute;
+	}
+
+	public Integer getSecond() {
+		return second;
+	}
+
+	public void setSecond(Integer second) {
+		this.second = second;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getFailureMessage() {
+		return failureMessage;
+	}
+
+	public void setFailureMessage(String failureMessage) {
+		this.failureMessage = failureMessage;
 	}
 }

@@ -72,7 +72,6 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public UpdateScheduledJobResult updateScheduledJob(UpdateScheduledJobRequest updateScheduledJobRequest) {
-		System.out.println(updateScheduledJobRequest.getScheduleDate());
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)

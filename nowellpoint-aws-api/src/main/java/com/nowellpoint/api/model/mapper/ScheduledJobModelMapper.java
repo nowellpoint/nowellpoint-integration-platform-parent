@@ -1,16 +1,26 @@
 package com.nowellpoint.api.model.mapper;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
 import org.modelmapper.TypeToken;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DBRef;
+import com.mongodb.client.model.UpdateOptions;
+import com.nowellpoint.api.model.document.ScheduledJobRequest;
+import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
+import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 
 /**
  * 
@@ -40,27 +50,21 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	
 	protected void createScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
-		parseScheduledDate(document);
 		create(getSubject(), document);
+		submitScheduledJobRequest(document);
 		modelMapper.map(document, scheduledJob);
 	}
 	
 	protected void updateScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
-		parseScheduledDate(document);
 		replace(getSubject(), document);
+		submitScheduledJobRequest(document);
 		modelMapper.map(document, scheduledJob);
 	}
 	
 	protected Set<ScheduledJob> findAllByOwner() {
 		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = findAllByOwner(getSubject());
 		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(scheduledJobs));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return scheduledJobs;
 	}
 	
@@ -69,13 +73,49 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		delete(getSubject(), document);
 	}
 	
-	private void parseScheduledDate(com.nowellpoint.api.model.document.ScheduledJob document) {
-		ZonedDateTime dateTime = ZonedDateTime.ofInstant(document.getScheduleDate().toInstant(), ZoneId.of("UTC"));
-		document.setYear(dateTime.getYear());
-		document.setMonth(dateTime.getMonth().getValue());
-		document.setDay(dateTime.getDayOfMonth());
-		document.setHour(dateTime.getHour());
-		document.setMinute(dateTime.getMinute());
-		document.setSecond(dateTime.getSecond());
+	private void submitScheduledJobRequest(com.nowellpoint.api.model.document.ScheduledJob scheduledJob) {
+		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
+		Date now = Date.from(Instant.now());
+		
+		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
+
+		DBRef reference = new DBRef( collectionName, id );
+		
+		UserRef userRef = new UserRef();
+		userRef.setIdentity(reference);
+
+		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest();
+		scheduledJobRequest.setScheduledJobId(scheduledJob.getId());
+		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
+		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
+		scheduledJobRequest.setCreatedDate(now);
+		scheduledJobRequest.setCreatedBy(userRef);
+		scheduledJobRequest.setDescription(scheduledJob.getDescription());
+		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
+		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
+		scheduledJobRequest.setIsSandbox(scheduledJob.getIsSandbox());
+		scheduledJobRequest.setJobTypeCode(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
+		scheduledJobRequest.setLastModifiedDate(now);
+		scheduledJobRequest.setLastModifiedBy(userRef);
+		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
+		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
+		scheduledJobRequest.setStatus(scheduledJob.getStatus());
+		scheduledJobRequest.setSystemCreationDate(now);
+		scheduledJobRequest.setSystemModifiedDate(now);
+		scheduledJobRequest.setYear(dateTime.getYear());
+		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
+		scheduledJobRequest.setDay(dateTime.getDayOfMonth());
+		scheduledJobRequest.setHour(dateTime.getHour());
+		scheduledJobRequest.setMinute(dateTime.getMinute());
+		scheduledJobRequest.setSecond(dateTime.getSecond());
+		
+		MongoDatastore.getCollection( ScheduledJobRequest.class ).replaceOne( and ( 
+				eq ( "scheduledJobId", scheduledJob.getId().toString() ), 
+				eq ( "status", "Scheduled" )), 
+				scheduledJobRequest, 
+				new UpdateOptions().upsert(true));
 	}
 }

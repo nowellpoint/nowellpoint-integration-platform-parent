@@ -1,5 +1,8 @@
 package com.nowellpoint.api.service;
 
+import static com.nowellpoint.util.Assert.isEmpty;
+import static com.nowellpoint.util.Assert.isNull;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -202,6 +205,12 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		salesforceConnector.setCreatedDate(original.getCreatedDate());
 		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
 		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
+		
+		if (isNull(salesforceConnector.getTag())) {
+			salesforceConnector.setTag(original.getTag());
+		} else if (isEmpty(salesforceConnector.getTag())) {
+			salesforceConnector.setTag(null);
+		}
 		
 		salesforceConnector.setLastModifiedBy(new UserInfo(getSubject()));
 		

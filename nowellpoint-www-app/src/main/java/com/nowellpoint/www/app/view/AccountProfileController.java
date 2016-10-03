@@ -17,11 +17,14 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.ExceptionResponse;
+import com.nowellpoint.client.model.GetAccountProfileRequest;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -43,13 +46,16 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getAccountProfile
+	 * getMyAccountProfile
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route getAccountProfile = (Request request, Response response) -> {
+	public Route getMyAccountProfile = (Request request, Response response) -> {
 		AccountProfile account = getAccount(request);
+		
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", account.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", account.getLastModifiedBy().getId());
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
@@ -57,6 +63,42 @@ public class AccountProfileController extends AbstractController {
 		model.put("successMessage", request.cookie("successMessage"));
 		model.put("locales", getLocales(account));
 		model.put("languages", getSupportedLanguages());
+		model.put("createdByHref", createdByHref);
+		model.put("lastModifiedByHref", lastModifiedByHref);
+
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_ME);
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getAccountProfile
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route getAccountProfile = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		GetAccountProfileRequest getAccountProfileRequest = new GetAccountProfileRequest()
+				.withId(id);
+		
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+				.getAccountProfileResource()
+				.getAccountProfile(getAccountProfileRequest);
+		
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastModifiedBy().getId());
+		
+		Map<String, Object> model = getModel();
+		model.put("accountProfile", accountProfile);
+		model.put("locales", getLocales(accountProfile));
+		model.put("languages", getSupportedLanguages());
+		model.put("createdByHref", createdByHref);
+		model.put("lastModifiedByHref", lastModifiedByHref);
 
 		return render(request, model, Path.Template.ACCOUNT_PROFILE);
 	};

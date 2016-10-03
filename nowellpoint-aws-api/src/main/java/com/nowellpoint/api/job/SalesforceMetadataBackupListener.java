@@ -1,23 +1,21 @@
 package com.nowellpoint.api.job;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.jboss.logging.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
-import static com.mongodb.client.model.Filters.eq;
-
-import com.nowellpoint.api.model.document.ScheduledJobRunDetail;
-import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.aws.data.LogManager;
 
 public class SalesforceMetadataBackupListener implements JobListener {
 	
 	private static final Logger LOG = Logger.getLogger(SalesforceMetadataBackupListener.class);
 	private static final String LISTENER_NAME = SalesforceMetadataBackupListener.class.getName();
-	
-	private ScheduledJobRunDetailService service = new ScheduledJobRunDetailService(); 
 
 	@Override
 	public String getName() {
@@ -27,19 +25,6 @@ public class SalesforceMetadataBackupListener implements JobListener {
 	@Override
 	public void jobToBeExecuted(JobExecutionContext context) {
 
-		String jobName = context.getJobDetail().getKey().getName();
-		String groupName = context.getJobDetail().getKey().getGroup();
-		
-		LOG.info(String.format("JobToBeExecuted: %s with Id: %s", jobName, context.getFireInstanceId()));
-		
-		ScheduledJobRunDetail scheduledJobRunDetail = new ScheduledJobRunDetail();
-		scheduledJobRunDetail.setFireInstanceId(context.getFireInstanceId());
-		scheduledJobRunDetail.setJobName(jobName);
-		scheduledJobRunDetail.setGroupName(groupName);
-		scheduledJobRunDetail.setCreatedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-		scheduledJobRunDetail.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-
-		service.create(scheduledJobRunDetail);
 	}
 
 	@Override
@@ -50,47 +35,23 @@ public class SalesforceMetadataBackupListener implements JobListener {
 	@Override
 	public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
 		
-		String jobName = context.getJobDetail().getKey().getName();
-		
-		LOG.info(String.format("JobWasExecuted: %s with Id: %s", jobName, context.getFireInstanceId()));
-		
-		ScheduledJobRunDetail scheduledJobRunDetail = null;
+		String hostname = null;
 		try {
-			scheduledJobRunDetail = service.findByFireInstanceId(context.getFireInstanceId());
-		} catch (DocumentNotFoundException e) {
+			hostname = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
 			LOG.error(e);
-			return;
 		}
 		
-		scheduledJobRunDetail.setJobRunTime(context.getJobRunTime());
-		scheduledJobRunDetail.setLastModifiedById(System.getProperty(Properties.DEFAULT_SUBJECT));
-
-		if (jobException != null) {
-			scheduledJobRunDetail.setStatus("Error");
-			scheduledJobRunDetail.setErrorMessage(jobException.getMessage());
-		} else {
-			scheduledJobRunDetail.setStatus("Success");
-		}
+		ObjectNode node = JsonNodeFactory.instance.objectNode()
+				.put("hostname", hostname)
+				.put("firstInstanceId", context.getFireInstanceId())
+				.put("fireTime", context.getFireTime().getTime())
+				.put("jobRunTime", context.getJobRunTime())
+				.put("jobName", context.getJobDetail().getKey().getName())
+				.put("groupName", context.getJobDetail().getKey().getGroup())
+				.put("result", context.getResult() != null ? context.getResult().toString() : null)
+				.put("exception", jobException != null ? jobException.getMessage() : null);
 		
-		service.replace(scheduledJobRunDetail);
-	}
-}
-
-class ScheduledJobRunDetailService extends MongoDocumentService<ScheduledJobRunDetail> {
-
-	public ScheduledJobRunDetailService() {
-		super(ScheduledJobRunDetail.class);
-	}
-	
-	public ScheduledJobRunDetail findByFireInstanceId(String fireInstanceId) {
-		return super.findOne( eq ( "fireInstanceId", fireInstanceId ) );
-	}
-	
-	public void create(ScheduledJobRunDetail scheduledJobRunDetail) {
-		super.create(scheduledJobRunDetail);
-	}
-	
-	public void replace(ScheduledJobRunDetail scheduledJobRunDetail) {
-		super.replace(eq ( "_id", scheduledJobRunDetail.getId() ), scheduledJobRunDetail);
+		LogManager.writeLogEntry("job", node.toString());
 	}
 }
