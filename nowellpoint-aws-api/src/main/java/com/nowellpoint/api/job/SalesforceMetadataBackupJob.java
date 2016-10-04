@@ -297,7 +297,6 @@ public class SalesforceMetadataBackupJob implements Job {
 	    Mail mail = new Mail();
 	    mail.setFrom(from);
 	    mail.addContent(content);
-	    mail.setTemplateId("3e2b0449-2ff8-40cb-86eb-32cad32886de");
 	    mail.addPersonalization(personalization);
 	    
 	    Request request = new Request();
