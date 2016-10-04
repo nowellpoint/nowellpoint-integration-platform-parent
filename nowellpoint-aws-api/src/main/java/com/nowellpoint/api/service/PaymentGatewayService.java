@@ -30,7 +30,7 @@ public class PaymentGatewayService {
 		gateway.clientToken().generate();
 	}
 	
-	public Customer getCustomer(String id) {
+	public Customer addCreditCard(String id) {
 		Customer customer = null;
 		try {
 			customer = gateway.customer().find(id);
@@ -38,6 +38,14 @@ public class PaymentGatewayService {
 			LOGGER.warn(e.getMessage());
 		}
 		return customer;
+	}
+	
+	public void updateCreditCard() {
+		
+	}
+	
+	public void deleteCreditCard() {
+		
 	}
 	
 	public void submitTransaction(String paymentMethodToken, BigDecimal amount) {

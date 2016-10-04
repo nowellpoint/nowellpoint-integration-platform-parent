@@ -40,7 +40,7 @@ import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.document.SystemReference;
 import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.CreditCardDTO;
+import com.nowellpoint.api.model.dto.CreditCard;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
@@ -324,10 +324,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	public CreditCardDTO getCreditCard(Id id, String token) {
+	public CreditCard getCreditCard(Id id, String token) {
 		AccountProfile resource = findAccountProfile(id);
 		
-		Optional<CreditCardDTO> creditCard = resource.getCreditCards()
+		Optional<CreditCard> creditCard = resource.getCreditCards()
 				.stream()
 				.filter(c -> token.equals(c.getToken()))
 				.findFirst();
@@ -336,7 +336,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 	}
 	
-	public void addCreditCard(Id id, CreditCardDTO creditCard) {
+	public void addCreditCard(Id id, CreditCard creditCard) {
 		AccountProfile resource = findAccountProfile(id);
 		
 		CustomerRequest customerRequest = new CustomerRequest()
@@ -349,32 +349,32 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		Result<Customer> customerResult = null;
 		
-		if (isNotNull(resource.getSystemReferences())) {
-			
-			Optional<SystemReference> optional = resource.getSystemReferences()
-					.stream()
-					.filter(s -> "BRAINTREE".equals(s.getSystem()))
-					.findFirst();
-			
-			if (optional.isPresent()) {
-				try {
-					Customer customer = gateway.customer().find(optional.get().getSystemReference());
-					customerResult = gateway.customer().update(customer.getId(), customerRequest);
-				} catch (NotFoundException e) {
-					LOGGER.warn(e.getMessage());
-				}
-			}
-		}
-		
-		if (isNull(customerResult)) {
-			customerResult = gateway.customer().create(customerRequest);
-			
-			SystemReference systemReference = new SystemReference();
-			systemReference.setSystem("BRAINTREE");
-			systemReference.setSystemReference(customerResult.getTarget().getId());
-			
-			resource.addSystemReference(systemReference);
-		}
+//		if (isNotNull(resource.getSystemReferences())) {
+//			
+//			Optional<SystemReference> optional = resource.getSystemReferences()
+//					.stream()
+//					.filter(s -> "BRAINTREE".equals(s.getSystem()))
+//					.findFirst();
+//			
+//			if (optional.isPresent()) {
+//				try {
+//					Customer customer = gateway.customer().find(optional.get().getSystemReference());
+//					customerResult = gateway.customer().update(customer.getId(), customerRequest);
+//				} catch (NotFoundException e) {
+//					LOGGER.warn(e.getMessage());
+//				}
+//			}
+//		}
+//		
+//		if (isNull(customerResult)) {
+//			customerResult = gateway.customer().create(customerRequest);
+//			
+//			SystemReference systemReference = new SystemReference();
+//			systemReference.setSystem("BRAINTREE");
+//			systemReference.setSystemReference(customerResult.getTarget().getId());
+//			
+//			resource.addSystemReference(systemReference);
+//		}
 		
 		AddressRequest addressRequest = new AddressRequest()
 				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
@@ -431,7 +431,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	public void updateCreditCard(Id id, String token, CreditCardDTO creditCard) {
+	public void updateCreditCard(Id id, String token, CreditCard creditCard) {
 		AccountProfile resource = findAccountProfile(id);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
@@ -466,7 +466,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				});			
 			}
 			
-			CreditCardDTO original = resource.getCreditCards()
+			CreditCard original = resource.getCreditCards()
 					.stream()
 					.filter(c -> token.equals(c.getToken()))
 					.findFirst()
@@ -493,9 +493,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	public CreditCardDTO updateCreditCard(Id id, String token, MultivaluedMap<String,String> parameters) {
+	public CreditCard updateCreditCard(Id id, String token, MultivaluedMap<String,String> parameters) {
 		
-		CreditCardDTO creditCard = getCreditCard(id, token);
+		CreditCard creditCard = getCreditCard(id, token);
 		
 		if (parameters.containsKey("cardholderName")) {
 			creditCard.setCardholderName(parameters.getFirst("cardholderName"));

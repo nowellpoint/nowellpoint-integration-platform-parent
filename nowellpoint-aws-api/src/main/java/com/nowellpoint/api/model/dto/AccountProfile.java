@@ -7,7 +7,6 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
-import com.nowellpoint.api.model.document.SystemReference;
 
 public class AccountProfile extends AbstractResource {
 	
@@ -186,14 +185,7 @@ public class AccountProfile extends AbstractResource {
 	 * 
 	 */
 	
-	private Set<CreditCardDTO> creditCards;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonIgnore
-	private Set<SystemReference> systemReferences;
+	private Set<CreditCard> creditCards;
 	
 	/**
 	 * 
@@ -431,34 +423,19 @@ public class AccountProfile extends AbstractResource {
 		this.photos = photos;
 	}	
 	
-	public Set<CreditCardDTO> getCreditCards() {
+	public Set<CreditCard> getCreditCards() {
 		return creditCards;
 	}
 
-	public void setCreditCards(Set<CreditCardDTO> creditCards) {
+	public void setCreditCards(Set<CreditCard> creditCards) {
 		this.creditCards = creditCards;
 	}
-	
-	public Set<SystemReference> getSystemReferences() {
-		return systemReferences;
-	}
 
-	public void setSystemReferences(Set<SystemReference> systemReferences) {
-		this.systemReferences = systemReferences;
-	}
-
-	public void addCreditCard(CreditCardDTO creditCard) {
+	public void addCreditCard(CreditCard creditCard) {
 		if (this.getCreditCards() == null) {
-			this.creditCards = new HashSet<CreditCardDTO>();
+			this.creditCards = new HashSet<CreditCard>();
 		}
 		this.creditCards.add(creditCard);
-	}
-	
-	public void addSystemReference(SystemReference systemReference) {
-		if (this.getSystemReferences() == null) {
-			this.systemReferences = new HashSet<SystemReference>();
-		}
-		this.systemReferences.add(systemReference);
 	}
 
 	public Boolean getHasFullAccess() {

@@ -1,12 +1,18 @@
 package com.nowellpoint.api.service.payment;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.braintreegateway.Address;
+import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.CreditCard;
+import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
+import com.braintreegateway.exceptions.NotFoundException;
 import com.braintreegateway.Result;
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -29,7 +35,15 @@ public class TestPaymentService {
 	}
 	
 	@Test
-	public void testCreateCustomer() {
+	public void addCreditCard() {
+		
+		Customer customer = null;
+		
+		try {		
+			customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
+		} catch (NotFoundException e) {
+			
+		}
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.id("56c7f2b33004ea79702df8d4")
@@ -39,10 +53,47 @@ public class TestPaymentService {
 				.lastName("Herson")
 				.phone("6787730798");
 		
-		//Result<Customer> customerResult = gateway.customer().create(customerRequest);
+		AddressRequest addressRequest = new AddressRequest()
+				.countryCodeAlpha2("US")
+				.firstName("John")
+				.lastName("Herson")
+				.locality("Raleigh")
+				.region("North Carolina")
+				.postalCode("27601")
+				.streetAddress("300 W. Hargett Unit 415");
 		
+		if (customer == null) {
+			Result<Customer> customerResult = gateway.customer().create(customerRequest);
+			customer = customerResult.getTarget();
+		} else {
+			Result<Customer> customerResult = gateway.customer().update(customer.getId(), customerRequest);
+			customer = customerResult.getTarget();
+		}
+		
+		Result<Address> addressResult = gateway.address().create(customer.getId(), addressRequest);
+		
+		System.out.println(addressResult.getTarget().getId());
+		
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.cardholderName("John Herson")
+				.expirationMonth("12")
+				.expirationYear("2018")
+				.number("4111111111111111")
+				.customerId(customer.getId())
+				.billingAddressId(customer.getAddresses().get(0).getId());
+		
+		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+		
+		System.out.println(creditCardResult.getTarget().getToken());
+		
+		gateway.address().update(customer.getId(), addressResult.getTarget().getId(), addressRequest);
+		
+		gateway.creditCard().update(creditCardResult.getTarget().getToken(), creditCardRequest);
+		
+	}
+	
+	@AfterClass
+	public static void afterClass() {
 		gateway.customer().delete("56c7f2b33004ea79702df8d4");
-		
-		//System.out.println(customerResult.getMessage());
 	}
 }

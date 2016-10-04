@@ -76,8 +76,6 @@ public class AccountProfile extends MongoDocument {
 	
 	private Set<CreditCard> creditCards;
 	
-	private Set<SystemReference> systemReferences;
-	
 	private Boolean hasFullAccess;
 	
 	private Boolean enableSalesforceLogin;
@@ -292,14 +290,6 @@ public class AccountProfile extends MongoDocument {
 
 	public void setCreditCards(Set<CreditCard> creditCards) {
 		this.creditCards = creditCards;
-	}
-
-	public Set<SystemReference> getSystemReferences() {
-		return systemReferences;
-	}
-
-	public void setSystemReferences(Set<SystemReference> systemReferences) {
-		this.systemReferences = systemReferences;
 	}
 
 	public Boolean getHasFullAccess() {

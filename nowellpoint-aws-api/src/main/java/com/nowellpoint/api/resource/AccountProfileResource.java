@@ -34,7 +34,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.CreditCardDTO;
+import com.nowellpoint.api.model.dto.CreditCard;
 import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -220,7 +220,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		CreditCardDTO resource = accountProfileService.getCreditCard( new Id( id ), token);
+		CreditCard resource = accountProfileService.getCreditCard( new Id( id ), token);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
@@ -235,7 +235,7 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO creditCard) {
+	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		
 		try {
 			accountProfileService.addCreditCard( new Id( id ), creditCard);
@@ -254,7 +254,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, MultivaluedMap<String, String> parameters) {
 		
-		CreditCardDTO resource = null;
+		CreditCard resource = null;
 		try {
 			resource = accountProfileService.updateCreditCard( new Id( id ), token, parameters);
 		} catch (ServiceException e) {
@@ -270,7 +270,7 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO creditCard) {
+	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		
 		try {
 			accountProfileService.updateCreditCard( new Id( id ), token, creditCard);

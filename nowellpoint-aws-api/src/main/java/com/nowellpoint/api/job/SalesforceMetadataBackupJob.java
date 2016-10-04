@@ -120,7 +120,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			scheduledJobService.replace(scheduledJob);
 			    	
 			    		//
-			    		// get environment assoicated with the ScheduledJob
+			    		// get environment associated with the ScheduledJob
 			    		//
 			    		
 			    		Environment environment = salesforceConnectorService.getEnvironment(scheduledJobRequest.getConnectorId(), scheduledJobRequest.getEnvironmentKey());
@@ -203,7 +203,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    		message = String.format("Scheduled Job: %s failed with exception: %s", scheduledJobRequest.getJobName(), e.getMessage());
 			    	} 
 		    		
-		    		sendNotification(scheduledJobRequest.getNotificationEmail(), message);
+		    		sendNotification(scheduledJobRequest.getNotificationEmail(), "Scheduled Job Request Complete", message);
 		    		
 		    		RunHistory runHistory = new RunHistory();
 			    	runHistory.setFireInstanceId(context.getFireInstanceId());
@@ -277,7 +277,7 @@ public class SalesforceMetadataBackupJob implements Job {
 	 * 
 	 */
 	
-	private void sendNotification(String email, String body) throws IOException {
+	private void sendNotification(String email, String subject, String body) throws IOException {
 		Email from = new Email();
 		from.setEmail("administrator@nowellpoint.com");
 		from.setName("Nowellpoint Support");
@@ -293,6 +293,7 @@ public class SalesforceMetadataBackupJob implements Job {
 	    
 	    Personalization personalization = new Personalization();
 	    personalization.addTo(to);
+	    personalization.setSubject(subject);
 	    
 	    Mail mail = new Mail();
 	    mail.setFrom(from);

@@ -5,7 +5,7 @@ import java.util.Date;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
 
-public class CreditCardDTO {
+public class CreditCard {
 
 	/**
 	 * 
@@ -89,7 +89,7 @@ public class CreditCardDTO {
 	 * 
 	 */
 
-	public CreditCardDTO() {
+	public CreditCard() {
 		
 	}
 
