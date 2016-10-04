@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ TYPE })
 @Retention(RUNTIME)
-public @interface SimpleQueueListener {
+public @interface QueueListener {
 	String queueName();
 }

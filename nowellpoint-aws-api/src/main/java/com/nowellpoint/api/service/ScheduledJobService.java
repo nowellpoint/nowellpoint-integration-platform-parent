@@ -4,6 +4,7 @@ import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
@@ -28,6 +29,9 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
+	
+	@Inject
+	private PaymentGatewayService paymentGatewayService;
 	
 	/**
 	 * 
@@ -73,7 +77,11 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setStatus("Scheduled");
 		
 		setupScheduledJob(scheduledJob);
-
+		
+		if (! scheduledJob.getIsSandbox()) {
+			paymentGatewayService.submitTransaction("dqtjvb", new BigDecimal(3.33));
+		}
+		
 		super.createScheduledJob(scheduledJob);
 	}
 	
@@ -134,6 +142,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		setupScheduledJob(scheduledJob);
+		
+		if (! scheduledJob.getIsSandbox()) {
+			paymentGatewayService.addMonthlyRecurringPlan("dqtjvb", new BigDecimal("7.00"));
+		}
 		
 		super.updateScheduledJob(scheduledJob);
 	}

@@ -365,7 +365,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			}
 		}
 		
-		if (customerResult == null) {
+		if (isNull(customerResult)) {
 			customerResult = gateway.customer().create(customerRequest);
 			
 			SystemReference systemReference = new SystemReference();

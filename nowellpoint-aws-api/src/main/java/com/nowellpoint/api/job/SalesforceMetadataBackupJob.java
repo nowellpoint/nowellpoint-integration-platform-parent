@@ -5,6 +5,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Instant;
@@ -57,6 +58,13 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.MongoDocumentService;
+import com.sendgrid.Content;
+import com.sendgrid.Email;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Personalization;
+import com.sendgrid.Request;
+import com.sendgrid.SendGrid;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
@@ -89,6 +97,8 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		
 		    		ScheduledJob scheduledJob = null;
 		    		
+		    		String message = null;
+		    		
 		    		try {
 		    			
 		    			//
@@ -106,7 +116,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			//
 		    			
 		    			scheduledJob = scheduledJobService.findById(scheduledJobRequest.getScheduledJobId());
-		    			scheduledJob.setStatus("Running");
+		    			scheduledJob.setStatus(scheduledJobRequest.getStatus());
 		    			scheduledJobService.replace(scheduledJob);
 			    	
 			    		//
@@ -181,10 +191,19 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	
 				    	scheduledJobRequest.setStatus("Success");
 				    	
+				    	//
+				    	//
+				    	//
+				    	
+				    	message = String.format("Scheduled Job: %s was completed successfully at %s", scheduledJobRequest.getJobName(), Date.from(Instant.now()).toString());
+				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");
 			    		scheduledJobRequest.setFailureMessage(e.getMessage());
+			    		message = String.format("Scheduled Job: %s failed with exception: %s", scheduledJobRequest.getJobName(), e.getMessage());
 			    	} 
+		    		
+		    		sendNotification(scheduledJobRequest.getNotificationEmail(), message);
 		    		
 		    		RunHistory runHistory = new RunHistory();
 			    	runHistory.setFireInstanceId(context.getFireInstanceId());
@@ -194,6 +213,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - fireTime.getTime());
 			    	scheduledJob.addRunHistory(runHistory);
 			    	
+			    	scheduledJob.setStatus(scheduledJobRequest.getStatus());
 			    	scheduledJob.setScheduleDate(scheduledJobRequest.getScheduleDate());
 			    	scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 		    		scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
@@ -245,6 +265,46 @@ public class SalesforceMetadataBackupJob implements Job {
     	Identity identity = client.getIdentity(getIdentityRequest);
     	
     	return identity;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param email
+	 * @param name
+	 * @param body
+	 * @throws IOException
+	 * 
+	 */
+	
+	private void sendNotification(String email, String body) throws IOException {
+		Email from = new Email();
+		from.setEmail("administrator@nowellpoint.com");
+		from.setName("Nowellpoint Support");
+	    
+	    Email to = new Email();
+	    to.setEmail(email);
+	    
+	    Content content = new Content();
+	    content.setType("text/plain");
+	    content.setValue(body);
+	    
+	    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
+	    
+	    Personalization personalization = new Personalization();
+	    personalization.addTo(to);
+	    
+	    Mail mail = new Mail();
+	    mail.setFrom(from);
+	    mail.addContent(content);
+	    mail.setTemplateId("3e2b0449-2ff8-40cb-86eb-32cad32886de");
+	    mail.addPersonalization(personalization);
+	    
+	    Request request = new Request();
+	    request.method = Method.POST;
+    	request.endpoint = "mail/send";
+    	request.body = mail.build();
+    	sendgrid.api(request);
 	}
 	
 	/**

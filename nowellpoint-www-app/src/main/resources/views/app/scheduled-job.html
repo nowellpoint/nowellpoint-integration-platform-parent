@@ -75,20 +75,14 @@
                                         ${(scheduledJob.status)!}&emsp;
                                 </dd>
                                     <hr>
-                                    <dt>${labels["notification.email"]}</dt>
-                                    <dd>${(scheduledJob.notificationEmail)!}&emsp;</dd>
-                                    <hr>
                             </dl>
                         </div>
 
                         <div class="col-md-4">
 
                             <dl class="dl-vertical">
-                                <dt>${labels["scheduled.date"]}</dt>
-                                <dd>${(scheduledJob.scheduleDate?date?string.iso)!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["scheduled.time"]}</dt>
-                                <dd>${(scheduledJob.scheduleDate?time?string["HH:mm"])!}&emsp;</dd>
+                                <dt>${labels["next.run.date"]}</dt>
+                                <dd>${(scheduledJob.scheduleDate?date?string.iso)!} ${(scheduledJob.scheduleDate?time?string["HH:mm"])!}&emsp;</dd>
                                 <hr>
                                 <dt>${labels["last.run.status"]}</dt>
                                 <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
@@ -103,10 +97,10 @@
                                     <!-- </#if> -->
                                     <hr>
                                     <dt>${labels["last.run.date"]}</dt>
-                                    <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm:ss"])!}&emsp;</dd>
+                                    <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm"])!}&emsp;</dd>
                                     <hr>
-                                    <dt>&emsp;</dt>
-                                    <dd>&emsp;</dd>
+                                    <dt>${labels["notification.email"]}</dt>
+                                    <dd>${(scheduledJob.notificationEmail)!}&emsp;</dd>
                                     <hr>
                             </dl>
                         </div>
