@@ -340,6 +340,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		AccountProfile resource = findAccountProfile(id);
 		
 		CustomerRequest customerRequest = new CustomerRequest()
+				.id(resource.getId().toString())
 				.company(resource.getCompany())
 				.email(resource.getEmail())
 				.firstName(resource.getFirstName())
