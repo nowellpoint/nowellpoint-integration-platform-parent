@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 
 /**
@@ -39,8 +38,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	protected SalesforceConnector findSalesforceConnector(Id id) {
-		com.nowellpoint.api.model.document.SalesforceConnector document = findById(id.toString());
+	protected SalesforceConnector findSalesforceConnector(String id) {
+		com.nowellpoint.api.model.document.SalesforceConnector document = findById(id);
 		return modelMapper.map(document, SalesforceConnector.class);
 	}
 	

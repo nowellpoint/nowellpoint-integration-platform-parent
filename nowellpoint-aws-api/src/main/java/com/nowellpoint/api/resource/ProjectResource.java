@@ -20,7 +20,6 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.Project;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.ProjectService;
@@ -66,7 +65,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getProject(@PathParam("id") String id) {
 
-		Project project = projectService.findProject( new Id( id ) );
+		Project project = projectService.findProject( id );
 		
 		return Response.ok(project)
 				.build();
@@ -83,7 +82,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteProject(@PathParam("id") String id) {
 		
-		projectService.deleteProject( new Id( id ) );
+		projectService.deleteProject( id );
 		
 		return Response.noContent()
 				.build();
@@ -128,7 +127,7 @@ public class ProjectResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(@PathParam("id") String id, Project project) {
 		
-		projectService.updateProject( new Id(id), project );
+		projectService.updateProject( id, project );
 		
 		return Response.ok(project)
 				.build();

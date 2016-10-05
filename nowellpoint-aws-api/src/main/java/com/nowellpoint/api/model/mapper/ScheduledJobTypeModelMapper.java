@@ -6,7 +6,6 @@ import java.util.Set;
 import org.modelmapper.TypeToken;
 
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
 
 /**
@@ -36,8 +35,8 @@ public class ScheduledJobTypeModelMapper extends AbstractModelMapper<com.nowellp
 		return scheduledJobTypes;
 	}
 
-	protected ScheduledJobType findScheduedJobTypeById(Id id) {
-		com.nowellpoint.api.model.document.ScheduledJobType document = findById(id.toString());
+	protected ScheduledJobType findScheduedJobTypeById(String id) {
+		com.nowellpoint.api.model.document.ScheduledJobType document = findById(id);
 		return modelMapper.map(document, ScheduledJobType.class);
 	}
 	

@@ -529,6 +529,7 @@ public class AccountProfileController extends AbstractController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
+		String cvv = request.queryParams("cvv");
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCard creditCard = new CreditCard()
@@ -545,6 +546,7 @@ public class AccountProfileController extends AbstractController {
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
 				.withNumber(number)
+				.withCardholderName(cvv)
 				.withPrimary(primary);
 		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
@@ -601,6 +603,7 @@ public class AccountProfileController extends AbstractController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
+		String cvv = request.queryParams("cvv");
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCard creditCard = new CreditCard()
@@ -616,6 +619,7 @@ public class AccountProfileController extends AbstractController {
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
+				.withCardholderName(cvv)
 				.withPrimary(primary);
 		
 		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)

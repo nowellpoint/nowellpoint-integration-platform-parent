@@ -20,6 +20,12 @@ public class CreditCard {
 	 * 
 	 */
 	
+	private String cvv;
+	
+	/**
+	 * 
+	 */
+	
 	private String number;
 	
 	/**
@@ -104,6 +110,14 @@ public class CreditCard {
 
 	public void setCardholderName(String cardholderName) {
 		this.cardholderName = cardholderName;
+	}
+
+	public String getCvv() {
+		return cvv;
+	}
+
+	public void setCvv(String cvv) {
+		this.cvv = cvv;
 	}
 
 	public String getNumber() {
@@ -196,6 +210,11 @@ public class CreditCard {
 	
 	public CreditCard withCardholderName(String cardholderName) {
 		setCardholderName(cardholderName);
+		return this;
+	}
+	
+	public CreditCard withCvv(String cvv) {
+		setCvv(cvv);
 		return this;
 	}
 	

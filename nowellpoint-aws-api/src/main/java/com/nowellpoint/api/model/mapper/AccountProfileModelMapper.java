@@ -3,7 +3,6 @@ package com.nowellpoint.api.model.mapper;
 import static com.mongodb.client.model.Filters.eq;
 
 import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Id;
 
 /**
  * 
@@ -36,8 +35,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	protected AccountProfile findAccountProfile(Id id) {
-		com.nowellpoint.api.model.document.AccountProfile document = findById(id.toString());
+	protected AccountProfile findAccountProfile(String id) {
+		com.nowellpoint.api.model.document.AccountProfile document = findById(id);
 		return modelMapper.map(document, AccountProfile.class);
 	}	
 	
@@ -77,7 +76,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * 
 	 */
 	
-	protected void deleteApplication(AccountProfile accountProfile) {
+	protected void deleteAccountProfile(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
 		delete(getSubject(), document);
 	}

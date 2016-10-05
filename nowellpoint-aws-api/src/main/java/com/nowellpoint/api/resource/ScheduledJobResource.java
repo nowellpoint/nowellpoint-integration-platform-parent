@@ -28,7 +28,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
 
@@ -71,7 +70,7 @@ public class ScheduledJobResource {
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getScheduledJob(@PathParam("id") String id) {
-		ScheduledJob scheduledJob = scheduledJobService.findScheduledJobById( new Id( id ) );
+		ScheduledJob scheduledJob = scheduledJobService.findScheduledJobById( id );
 		
 		if (scheduledJob == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", ScheduledJob.class.getSimpleName(), id ) );
@@ -91,7 +90,7 @@ public class ScheduledJobResource {
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteScheduledJob(@PathParam("id") String id) {
-		scheduledJobService.deleteScheduledJob( new Id(id) );
+		scheduledJobService.deleteScheduledJob( id );
 		return Response.noContent().build();
 	}
 	
@@ -185,7 +184,7 @@ public class ScheduledJobResource {
 			}
 		}
 		
-		scheduledJobService.updateScheduledJob(new Id(id), scheduledJob);
+		scheduledJobService.updateScheduledJob(id, scheduledJob);
 		
 		return Response.ok()
 				.entity(scheduledJob)

@@ -20,7 +20,6 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
 import com.nowellpoint.api.service.ScheduledJobTypeService;
 
@@ -47,7 +46,7 @@ public class ScheduledJobTypeResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getServiceProvider(@PathParam("id") String id) {		
-		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById( new Id( id ) );		
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( id );		
 		return Response.ok(scheduledJobType)
 				.build();
 	}
@@ -73,7 +72,7 @@ public class ScheduledJobTypeResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteServiceProvider(@PathParam("id") String id) {
-		scheduledJobTypeService.deleteScheduledJobType(new Id( id ));		
+		scheduledJobTypeService.deleteScheduledJobType(id);		
 		return Response.noContent().build();
 	}
 	
@@ -82,7 +81,7 @@ public class ScheduledJobTypeResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceProvider(@PathParam("id") String id, ScheduledJobType scheduledJobType) {
-		scheduledJobTypeService.updateScheduledJobType(new Id(id), scheduledJobType);
+		scheduledJobTypeService.updateScheduledJobType(id, scheduledJobType);
 		return Response.ok(scheduledJobType).build();
 	}
 }

@@ -213,7 +213,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - fireTime.getTime());
 			    	scheduledJob.addRunHistory(runHistory);
 			    	
-			    	scheduledJob.setStatus(scheduledJobRequest.getStatus());
+			    	scheduledJob.setStatus("Scheduled");
 			    	scheduledJob.setScheduleDate(scheduledJobRequest.getScheduleDate());
 			    	scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 		    		scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());

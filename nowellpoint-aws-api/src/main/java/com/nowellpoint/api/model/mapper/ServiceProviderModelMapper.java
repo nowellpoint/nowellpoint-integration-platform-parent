@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ServiceProvider;
 
 /**
@@ -40,7 +39,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	 * 
 	 */
 	
-	protected ServiceProvider findServiceProvider(Id id) {
+	protected ServiceProvider findServiceProvider(String id) {
 		com.nowellpoint.api.model.document.ServiceProvider document = findById(id.toString());
 		ServiceProvider serviceProvider = modelMapper.map(document, ServiceProvider.class);
 		return serviceProvider;

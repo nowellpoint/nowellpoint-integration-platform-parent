@@ -9,8 +9,6 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
@@ -27,9 +25,7 @@ public abstract class AbstractResource implements Serializable {
 	 */
 	
 	@Null
-	@JsonSerialize(using = IdSerializer.class)
-	@JsonDeserialize(using = IdDeserializer.class)
-	private Id id;
+	private String id;
 	
 	/**
 	 * 
@@ -73,18 +69,14 @@ public abstract class AbstractResource implements Serializable {
 	}
 	
 	public AbstractResource(String id) {
-		setId(new Id(id));
-	}
-	
-	public AbstractResource(Id id) {
 		setId(id);
 	}
 
-	public Id getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Id id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

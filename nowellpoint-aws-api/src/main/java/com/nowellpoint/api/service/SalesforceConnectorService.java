@@ -32,7 +32,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.document.SimpleStorageService;
 import com.nowellpoint.api.model.document.Targets;
 import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.model.dto.UserInfo;
@@ -197,7 +196,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 *
 	 *************************************************************************************************************************/
 	
-	public void updateSalesforceConnector(Id id, SalesforceConnector salesforceConnector) {		
+	public void updateSalesforceConnector(String id, SalesforceConnector salesforceConnector) {		
 		SalesforceConnector original = findSalesforceConnector(id);
 		
 		salesforceConnector.setId(original.getId());
@@ -225,7 +224,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void deleteSalesforceConnector(Id id) {
+	public void deleteSalesforceConnector(String id) {
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
 		super.deleteSalesforceConnector(resource);
@@ -283,7 +282,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public SalesforceConnector findSalesforceConnector(Id id) {		
+	public SalesforceConnector findSalesforceConnector(String id) {		
 		return super.findSalesforceConnector(id);
 	}
 	
@@ -296,7 +295,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public Set<Environment> getEnvironments(Id id) {
+	public Set<Environment> getEnvironments(String id) {
 		SalesforceConnector salesforceConnector = findSalesforceConnector(id);
 		return salesforceConnector.getEnvironments();
 	}
@@ -311,7 +310,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public Environment getEnvironment(Id id, String key) {
+	public Environment getEnvironment(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		Environment environment = resource.getEnvironments()
@@ -334,7 +333,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public void addEnvironment(Id id, Environment environment) throws ServiceException {
+	public void addEnvironment(String id, Environment environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -383,7 +382,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public void updateEnvironment(Id id, String key, Environment environment) {
+	public void updateEnvironment(String id, String key, Environment environment) {
 		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
 		
 		environment.setKey(key);
@@ -468,7 +467,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public Environment updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
+	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
@@ -507,7 +506,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public void removeEnvironment(Id id, String key) {
+	public void removeEnvironment(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		Environment environment = resource.getEnvironments()
@@ -535,7 +534,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
+	public ServiceInstanceDTO getServiceInstance(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
@@ -560,7 +559,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
+	public ServiceInstanceDTO addServiceInstance(String id, String key) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
@@ -591,7 +590,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
+	public void updateServiceInstance(String id, String key, ServiceInstanceDTO serviceInstance) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
@@ -664,7 +663,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
+	public ServiceInstanceDTO updateServiceInstance(String id, String key, MultivaluedMap<String, String> parameters) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		if (resource.getServiceInstances() == null) {
@@ -699,7 +698,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public SalesforceConnector removeServiceInstance(Id id, String key) {		
+	public SalesforceConnector removeServiceInstance(String id, String key) {		
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));

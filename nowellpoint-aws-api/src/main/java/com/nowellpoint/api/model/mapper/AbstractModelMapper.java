@@ -13,7 +13,6 @@ import org.modelmapper.convention.MatchingStrategies;
 
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -34,19 +33,19 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 	private void configureModelMapper() {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
-		modelMapper.addConverter(new AbstractConverter<Id, ObjectId>() {
+		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
 			
 			@Override
-			protected ObjectId convert(Id source) {
-				return source == null ? null : new ObjectId(source.toString());
+			protected ObjectId convert(String source) {
+				return source == null ? null : new ObjectId(source);
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<ObjectId, Id>() {		
+		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {		
 			
 			@Override
-			protected Id convert(ObjectId source) {
-				return source == null ? null : new Id(source.toString());
+			protected String convert(ObjectId source) {
+				return source == null ? null : source.toString();
 			}
 		});
 		
