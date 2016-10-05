@@ -1,9 +1,12 @@
 package com.nowellpoint.api.service.payment;
 
+import java.math.BigDecimal;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.braintreegateway.AddModificationRequest;
 import com.braintreegateway.Address;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
@@ -12,8 +15,12 @@ import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
+import com.braintreegateway.ModificationRequest;
+import com.braintreegateway.ModificationsRequest;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.braintreegateway.Result;
+import com.braintreegateway.Subscription;
+import com.braintreegateway.SubscriptionRequest;
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class TestPaymentService {
@@ -41,6 +48,7 @@ public class TestPaymentService {
 		
 		try {		
 			customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
+			//gateway.customer().delete("56c7f2b33004ea79702df8d4");
 		} catch (NotFoundException e) {
 			
 		}
@@ -80,7 +88,7 @@ public class TestPaymentService {
 				.expirationYear("2018")
 				.number("4111111111111111")
 				.customerId(customer.getId())
-				.billingAddressId(customer.getAddresses().get(0).getId());
+				.billingAddressId(addressResult.getTarget().getId());
 		
 		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
 		
@@ -90,10 +98,20 @@ public class TestPaymentService {
 		
 		gateway.creditCard().update(creditCardResult.getTarget().getToken(), creditCardRequest);
 		
+		customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
+		
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+			    .paymentMethodToken(customer.getDefaultPaymentMethod().getToken())
+			    .planId("RECURRING_MONTHLY_PLAN")
+			    .price(new BigDecimal("0.00"));
+
+		Result<Subscription> subscriptionResult = gateway.subscription().create(subscriptionRequest);
+		
+		System.out.println(subscriptionResult.getTarget().getId());		
 	}
 	
 	@AfterClass
 	public static void afterClass() {
-		gateway.customer().delete("56c7f2b33004ea79702df8d4");
+		//gateway.customer().delete("56c7f2b33004ea79702df8d4");
 	}
 }

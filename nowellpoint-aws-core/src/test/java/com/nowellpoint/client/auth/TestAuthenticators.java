@@ -15,8 +15,9 @@ import org.junit.Test;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
-import com.nowellpoint.client.model.DeleteScheduledJobRequest;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
 
@@ -34,8 +35,8 @@ public class TestAuthenticators {
 					.withJobTypeId("57d7e6ccb55f01245754d0af")
 					.withScheduleDate(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)));
 			
-			ScheduledJob scheduledJob = client.getScheduledJobResource()
-					.createScheduledJob(createScheduledJobRequest)
+			ScheduledJob scheduledJob = client.scheduledJob()
+					.create(createScheduledJobRequest)
 					.getScheduledJob();
 			
 			assertNotNull(scheduledJob);
@@ -45,9 +46,9 @@ public class TestAuthenticators {
 			
 			assertEquals(scheduledJob.getEnvironmentKey(), "40799dbbe97b479baa0772eb4e6ba8cb");
 			
-			scheduledJob = client.getScheduledJobResource().getScheduledJob(scheduledJob.getId());
+			Result<ScheduledJob> scheduledJobResult = client.scheduledJob().find(scheduledJob.getId());
 			
-			assertNotNull(scheduledJob);
+			assertNotNull(scheduledJobResult.getTarget());
 			
 			UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
 					.withId(scheduledJob.getId())
@@ -55,8 +56,8 @@ public class TestAuthenticators {
 					.withDescription("My scheduled job description with update")
 					.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse("2016-10-01".concat("T").concat("16:00:00")));
 			
-			scheduledJob = client.getScheduledJobResource()
-					.updateScheduledJob(updateScheduledJobRequest)
+			scheduledJob = client.scheduledJob()
+					.update(updateScheduledJobRequest)
 					.getScheduledJob();
 			
 			assertNotNull(scheduledJob);
@@ -64,10 +65,9 @@ public class TestAuthenticators {
 			
 			System.out.println(scheduledJob.getId());
 			
-			DeleteScheduledJobRequest deleteScheduledJobRequest = new DeleteScheduledJobRequest()
-					.withId(scheduledJob.getId());
+			DeleteResult deleteResult = client.scheduledJob().delete(scheduledJob.getId());
 			
-			client.getScheduledJobResource().deleteScheduledJob(deleteScheduledJobRequest);
+			assertEquals(deleteResult.getIsSuccess(), Boolean.TRUE);
 			
 			client.logout();
 			

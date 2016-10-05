@@ -87,7 +87,7 @@ public class AccountProfileController extends AbstractController {
 				.withId(id);
 		
 		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
-				.getAccountProfileResource()
+				.accountProfile()
 				.getAccountProfile(getAccountProfileRequest);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());

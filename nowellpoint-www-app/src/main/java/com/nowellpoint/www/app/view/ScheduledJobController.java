@@ -12,6 +12,7 @@ import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.CreateScheduledJobResult;
 import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
@@ -45,7 +46,7 @@ public class ScheduledJobController extends AbstractController {
 		Token token = getToken(request);
 		
 		List<ScheduledJob> scheduledJobs = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource()
+				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
@@ -68,7 +69,7 @@ public class ScheduledJobController extends AbstractController {
 		AccountProfile accountProfile = getAccount(request);
 		
 		List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobTypeResource()
+				.scheduledJobType()
 				.getScheduledJobTypesByLanguage(accountProfile.getLanguageSidKey());
 		
 		Map<String, Object> model = getModel();
@@ -93,7 +94,7 @@ public class ScheduledJobController extends AbstractController {
 		String jobTypeId = request.queryParams("job-type-id");
 		
 		ScheduledJobType scheduledJobType = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobTypeResource()
+				.scheduledJobType()
 				.getById(jobTypeId);
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
@@ -112,7 +113,7 @@ public class ScheduledJobController extends AbstractController {
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
 			List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
-					.getSalesforceConnectorResource()
+					.salesforceConnector()
 					.getSalesforceConnectors();
 
 	    	model.put("salesforceConnectorsList", salesforceConnectors);
@@ -148,7 +149,7 @@ public class ScheduledJobController extends AbstractController {
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
 			List<Environment> environments = new NowellpointClient(new TokenCredentials(token))
-					.getSalesforceConnectorResource()
+					.salesforceConnector()
 					.getEnvironments(connectorId);
 			
 			model.put("environments", environments);
@@ -175,7 +176,7 @@ public class ScheduledJobController extends AbstractController {
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
 		Environment environment = new NowellpointClient(new TokenCredentials(token))
-				.getSalesforceConnectorResource()
+				.salesforceConnector()
 				.getEnvironment(scheduledJob.getConnectorId(), environmentKey);
 		
 		scheduledJob.setNotificationEmail(environment.getEmail());
@@ -241,8 +242,8 @@ public class ScheduledJobController extends AbstractController {
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 		
 		CreateScheduledJobResult createScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource()
-				.createScheduledJob(createScheduledJobRequest);
+				.scheduledJob()
+				.create(createScheduledJobRequest);
 		
 		if (! createScheduledJobResult.getIsSuccess()) {
 			
@@ -282,18 +283,18 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource()
-				.getScheduledJob(id);
+		Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+				.scheduledJob()
+				.find(id);
 		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getLastModifiedBy().getId());
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", result.getTarget().getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", result.getTarget().getLastModifiedBy().getId());
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJob", scheduledJob);
+		model.put("scheduledJob", result.getTarget());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
-		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnectorId()));
+		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", result.getTarget().getConnectorId()));
 		model.put("successMessage", getValue(token, "success.message"));
 		
 		if (model.get("successMessage") != null) {
@@ -318,12 +319,12 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource()
-				.getScheduledJob(id);
+		Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+				.scheduledJob()
+				.find(id);
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJob", scheduledJob);
+		model.put("scheduledJob", result.getTarget());
 		model.put("mode", "edit");
 		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 		
@@ -351,8 +352,8 @@ public class ScheduledJobController extends AbstractController {
 		String id = request.params(":id");
 		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource() 
-				.startScheduledJob(id)
+				.scheduledJob() 
+				.start(id)
 				.getScheduledJob();
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "activate.scheduled.job.success"));
@@ -377,8 +378,8 @@ public class ScheduledJobController extends AbstractController {
 		String id = request.params(":id");
 		
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource() 
-				.stopScheduledJob(id)
+				.scheduledJob() 
+				.stop(id)
 				.getScheduledJob();
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
@@ -415,14 +416,14 @@ public class ScheduledJobController extends AbstractController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
-					.getScheduledJobResource()
-					.getScheduledJob(id);
+			Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+					.scheduledJob()
+					.find(id);
 			
 			String view = request.queryParams("view");
 			
 			Map<String, Object> model = getModel();
-			model.put("scheduledJob", scheduledJob);
+			model.put("scheduledJob", result.getTarget());
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 			model.put("errorMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "unparseable.date.time"));
@@ -442,19 +443,19 @@ public class ScheduledJobController extends AbstractController {
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 
 		UpdateScheduledJobResult updateScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
-				.getScheduledJobResource() 
-				.updateScheduledJob(updateScheduledJobRequest);
+				.scheduledJob() 
+				.update(updateScheduledJobRequest);
 		
 		if (! updateScheduledJobResult.getIsSuccess()) {
 			
-			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
-					.getScheduledJobResource()
-					.getScheduledJob(id);
+			Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+					.scheduledJob()
+					.find(id);
 			
 			String view = request.queryParams("view");
 			
 			Map<String, Object> model = getModel();
-			model.put("scheduledJob", scheduledJob);
+			model.put("scheduledJob", result.getTarget());
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 			model.put("errorMessage", updateScheduledJobResult.getErrorMessage());

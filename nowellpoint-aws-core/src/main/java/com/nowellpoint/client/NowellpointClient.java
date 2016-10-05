@@ -42,23 +42,23 @@ public class NowellpointClient {
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
 	}
 	
-	public ApplicationResource getApplicationResource() {
+	public ApplicationResource application() {
 		return new ApplicationResource(token);
 	}
 	
-	public ScheduledJobResource getScheduledJobResource() {
+	public ScheduledJobResource scheduledJob() {
 		return new ScheduledJobResource(token);
 	}
 	
-	public SalesforceConnectorResource getSalesforceConnectorResource() {
+	public SalesforceConnectorResource salesforceConnector() {
 		return new SalesforceConnectorResource(token);
 	}
 	
-	public ScheduledJobTypeResource getScheduledJobTypeResource() {
+	public ScheduledJobTypeResource scheduledJobType() {
 		return new ScheduledJobTypeResource(token);
 	}
 	
-	public AccountProfileResource getAccountProfileResource() {
+	public AccountProfileResource accountProfile() {
 		return new AccountProfileResource(token);
 	}
 }

@@ -87,7 +87,7 @@ public class ApplicationController extends AbstractController {
 		String id = request.queryParams("id");
 		
 		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
-				.getSalesforceConnectorResource()
+				.salesforceConnector()
 				.getSalesforceConnector(id);
 		
 		Map<String, Object> model = getModel();
@@ -144,7 +144,7 @@ public class ApplicationController extends AbstractController {
 		Token token = getToken(request);
 		
 		Application application = new NowellpointClient(new TokenCredentials(token))
-				.getApplicationResource()
+				.application()
 				.getApplication(id);
 		
 		Map<String, Object> model = getModel();
@@ -274,7 +274,7 @@ public class ApplicationController extends AbstractController {
 		Token token = request.attribute("token");
 		
 		NowellpointClient client = new NowellpointClient(new TokenCredentials(token));
-		client.getApplicationResource().deleteApplication(id);
+		client.application().deleteApplication(id);
 		
 		return "";	
 	};

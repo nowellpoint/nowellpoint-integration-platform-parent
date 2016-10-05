@@ -527,7 +527,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		
 		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
-				.getSalesforceConnectorResource()
+				.salesforceConnector()
 				.getSalesforceConnector(id);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getCreatedBy().getId());
@@ -557,7 +557,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String view = request.queryParams("view");
     	
 		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
-				.getSalesforceConnectorResource()
+				.salesforceConnector()
 				.getSalesforceConnector(id);
 		
 		Map<String, Object> model = getModel();

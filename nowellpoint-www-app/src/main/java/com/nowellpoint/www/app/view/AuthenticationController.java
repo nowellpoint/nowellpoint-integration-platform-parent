@@ -161,7 +161,7 @@ public class AuthenticationController extends AbstractController {
     		request.attribute(AUTH_TOKEN, token);
     		
     		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
-    				.getAccountProfileResource()
+    				.accountProfile()
     				.getMyAccountProfile();
     		
     		request.attribute("account", accountProfile);
