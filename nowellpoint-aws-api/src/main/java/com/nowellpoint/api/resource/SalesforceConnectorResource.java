@@ -25,7 +25,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.service.SalesforceConnectorService;
@@ -85,7 +84,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id(id) );
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( id );
 		
 		if (salesforceConnector == null){
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
@@ -100,10 +99,10 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {	
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id(id) );
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( id );
 		salesforceConnector.setTag(tag);
 		
-		salesforceConnectorService.updateSalesforceConnector(new Id(id), salesforceConnector);
+		salesforceConnectorService.updateSalesforceConnector( id, salesforceConnector);
 		
 		return Response.ok()
 				.entity(salesforceConnector)
@@ -114,7 +113,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {		
 
-		salesforceConnectorService.deleteSalesforceConnector(new Id(id));
+		salesforceConnectorService.deleteSalesforceConnector(id);
 
 		return Response.noContent()
 				.build(); 
@@ -125,7 +124,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironments(@PathParam(value="id") String id) {	
 		
-		Set<Environment> environments = salesforceConnectorService.getEnvironments(new Id ( id ));
+		Set<Environment> environments = salesforceConnectorService.getEnvironments(id);
 		
 		return Response.ok()
 				.entity(environments)
@@ -137,7 +136,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		Environment environment = salesforceConnectorService.getEnvironment(new Id(id), key);
+		Environment environment = salesforceConnectorService.getEnvironment(id, key);
 		
 		if (environment == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
@@ -154,7 +153,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addEnvironment(@PathParam(value="id") String id, Environment resource) {
 		
-		salesforceConnectorService.addEnvironment(new Id(id), resource);
+		salesforceConnectorService.addEnvironment(id, resource);
 		
 		return Response.ok()
 				.entity(resource)
@@ -167,7 +166,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Environment environment) {
 		
-		salesforceConnectorService.updateEnvironment(new Id(id), key, environment);
+		salesforceConnectorService.updateEnvironment(id, key, environment);
 		
 		return Response.ok()
 				.entity(environment)
@@ -179,7 +178,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		salesforceConnectorService.removeEnvironment(new Id(id), key);
+		salesforceConnectorService.removeEnvironment(id, key);
 		
 		return Response.ok()
 				.build(); 
@@ -191,7 +190,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		Environment environment = salesforceConnectorService.updateEnvironment(new Id(id), key, parameters);
+		Environment environment = salesforceConnectorService.updateEnvironment(id, key, parameters);
 		
 		return Response.ok()
 				.entity(environment)
@@ -204,7 +203,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addServiceInstance(@PathParam(value="id") String id, @FormParam(value="key") String key) {
 		
-		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.addServiceInstance( new Id(id), key);
+		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.addServiceInstance( id, key);
 		
 		if ( salesforceInstance == null ) {
 			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", "Service", key ) );
@@ -221,7 +220,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.getServiceInstance( new Id(id), key );
+		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.getServiceInstance( id, key );
 		
 		return Response.ok()
 				.entity(salesforceInstance)
@@ -234,7 +233,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, ServiceInstanceDTO salesforceInstance) {
 		
-		salesforceConnectorService.updateServiceInstance( new Id(id), key, salesforceInstance);
+		salesforceConnectorService.updateServiceInstance( id, key, salesforceInstance);
 		
 		return Response.ok()
 				.entity(salesforceInstance)
@@ -255,7 +254,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.updateServiceInstance( new Id(id), key, parameters);
+		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.updateServiceInstance( id, key, parameters);
 		
 		return Response.ok()
 				.entity(salesforceInstance)
@@ -274,7 +273,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.removeServiceInstance( new Id(id), key);
+		SalesforceConnector salesforceConnector = salesforceConnectorService.removeServiceInstance( id, key);
 		
 		return Response.ok()
 				.entity(salesforceConnector)

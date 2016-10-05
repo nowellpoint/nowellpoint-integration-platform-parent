@@ -2,7 +2,6 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ServiceProvider;
 import com.nowellpoint.api.model.mapper.ServiceProviderModelMapper;
 
@@ -73,7 +72,7 @@ public class ServiceProviderService extends ServiceProviderModelMapper {
 	 * 
 	 */
 	
-	public void updateServiceProvider(Id id, ServiceProvider serviceProvider) {
+	public void updateServiceProvider(String id, ServiceProvider serviceProvider) {
 		ServiceProvider original = getServiceProvider( id );
 		serviceProvider.setCreatedById(original.getCreatedById());
 		serviceProvider.setCreatedDate(original.getCreatedDate());
@@ -89,7 +88,7 @@ public class ServiceProviderService extends ServiceProviderModelMapper {
 	 * 
 	 */
 	
-	public void deleteServiceProvider(Id id) {		
+	public void deleteServiceProvider(String id) {		
 		ServiceProvider serviceProvider = getServiceProvider( id );
 		super.deleteServiceProvider(serviceProvider);
 	}
@@ -101,7 +100,7 @@ public class ServiceProviderService extends ServiceProviderModelMapper {
 	 * @return
 	 */
 	
-	public ServiceProvider getServiceProvider(Id id) {
+	public ServiceProvider getServiceProvider(String id) {
 		return super.findServiceProvider(id);
 	}
 }

@@ -14,7 +14,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -35,7 +34,6 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.ServiceException;
@@ -64,8 +62,8 @@ public class AccountProfileResource {
 	public Response getAccountProfile() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject ) );
-		
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( subject );
+				
 		return Response.ok(accountProfile)
 				.build();
 	}
@@ -76,7 +74,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfileAddress(@PathParam("id") String id) {
 		
-		Address address = accountProfileService.getAccountProfileAddress( new Id( id ) );
+		Address address = accountProfileService.getAccountProfileAddress( id );
 		
 		return Response.ok(address)
 				.build();
@@ -88,7 +86,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateAccountProfileAddress(@PathParam("id") String id, Address address) {
 		
-		accountProfileService.updateAccountProfileAddress( new Id( id ), address);
+		accountProfileService.updateAccountProfileAddress( id, address);
 		
 		return Response.ok(address)
 				.build();
@@ -137,7 +135,7 @@ public class AccountProfileResource {
 		accountProfile.setTimeZoneSidKey(timeZoneSidKey);
 		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
-		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
+		accountProfileService.updateAccountProfile(id, accountProfile);
 				
 		//
 		// update identity
@@ -166,7 +164,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfile resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile resource = accountProfileService.findAccountProfile( id );
 		
 		return Response.ok(resource)
 				.build();
@@ -193,7 +191,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response udpateAccountProfile(@PathParam("id") String id, AccountProfile accountProfile) {
 		
-		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
+		accountProfileService.updateAccountProfile(id, accountProfile);
 		
 		return Response.ok(accountProfile).build();
 	}
@@ -204,7 +202,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response disableAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfile resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile resource = accountProfileService.findAccountProfile( id );
 		
 		try {
 			identityProviderService.disableAccount(resource.getHref());
@@ -220,7 +218,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		CreditCard resource = accountProfileService.getCreditCard( new Id( id ), token);
+		CreditCard resource = accountProfileService.getCreditCard( id, token);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
@@ -238,7 +236,7 @@ public class AccountProfileResource {
 	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		
 		try {
-			accountProfileService.addCreditCard( new Id( id ), creditCard);
+			accountProfileService.addCreditCard( id, creditCard);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -256,7 +254,7 @@ public class AccountProfileResource {
 		
 		CreditCard resource = null;
 		try {
-			resource = accountProfileService.updateCreditCard( new Id( id ), token, parameters);
+			resource = accountProfileService.updateCreditCard( id, token, parameters);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -273,7 +271,7 @@ public class AccountProfileResource {
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		
 		try {
-			accountProfileService.updateCreditCard( new Id( id ), token, creditCard);
+			accountProfileService.updateCreditCard( id, token, creditCard);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -288,7 +286,7 @@ public class AccountProfileResource {
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
 		try {
-			accountProfileService.removeCreditCard( new Id( id ), token);
+			accountProfileService.removeCreditCard( id, token);
 		} catch (ServiceException e) {
 			throw new BadRequestException(e.getMessage());
 		}
@@ -298,26 +296,13 @@ public class AccountProfileResource {
 				.build();
 	}
 	
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAccountProfileBySubject(@QueryParam("subject") String subject) {		
-		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref( subject );
-		
-		if (accountProfile == null) {
-			throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
-		}
-		
-		return Response.ok(accountProfile)
-				.build();
-	}
-	
 	@DELETE
 	@Path("{id}/photo")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture(@PathParam("id") String id) {
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( id );
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
@@ -330,7 +315,7 @@ public class AccountProfileResource {
 		
 		accountProfile.setPhotos(photos);
 		
-		accountProfileService.updateAccountProfile( new Id( id ), accountProfile);
+		accountProfileService.updateAccountProfile( id, accountProfile);
 		
 		return Response.ok(accountProfile)
 				.build();

@@ -17,7 +17,6 @@ import com.mongodb.DBRef;
 import com.mongodb.client.model.UpdateOptions;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;
@@ -43,8 +42,8 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		super(com.nowellpoint.api.model.document.ScheduledJob.class);
 	}
 
-	protected ScheduledJob findScheduedJobById(Id id) {
-		com.nowellpoint.api.model.document.ScheduledJob document = findById(id.toString());
+	protected ScheduledJob findScheduedJobById(String id) {
+		com.nowellpoint.api.model.document.ScheduledJob document = findById(id);
 		return modelMapper.map(document, ScheduledJob.class);
 	}
 	

@@ -13,7 +13,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
@@ -94,7 +93,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public void updateScheduledJob(Id id, ScheduledJob scheduledJob) {
+	public void updateScheduledJob(String id, ScheduledJob scheduledJob) {
 		ScheduledJob original = findScheduledJobById(id);
 		
 		scheduledJob.setId(id);
@@ -158,7 +157,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public void deleteScheduledJob(Id id) {
+	public void deleteScheduledJob(String id) {
 		super.deleteScheduledJob(findScheduledJobById(id));
 	}
 	
@@ -171,7 +170,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 
-	public ScheduledJob findScheduledJobById(Id id) {
+	public ScheduledJob findScheduledJobById(String id) {
 		return super.findScheduedJobById(id);
 	}
 	
@@ -193,12 +192,12 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		
-		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(new Id(scheduledJob.getJobTypeId()));
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( scheduledJob.getJobTypeId() );
 
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
 			SalesforceConnector salesforceConnector = null;
 			try {
-				salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id( scheduledJob.getConnectorId() ) );
+				salesforceConnector = salesforceConnectorService.findSalesforceConnector( scheduledJob.getConnectorId() );
 			} catch (DocumentNotFoundException e) {
 				throw new ServiceException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}

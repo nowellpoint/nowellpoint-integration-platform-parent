@@ -18,7 +18,6 @@ import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Application;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
@@ -86,7 +85,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		application.setStatus("WORK_IN_PROGRESS");
 		
-		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
+		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(connectorId);
 		
 		if (importSandboxes) {
 			application.setEnvironments(connector.getEnvironments());
@@ -109,7 +108,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * @return
 	 */
 	
-	public void updateApplication(Id id, Application application) {
+	public void updateApplication(String id, Application application) {
 		Application original = findApplication( id );
 		
 		application.setId(id);
@@ -152,7 +151,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * @param eventSource
 	 */
 	
-	public void deleteApplication(Id id) {		
+	public void deleteApplication(String id) {		
 		Application resource = findApplication(id);
 		super.deleteApplication(resource);
 	}
@@ -164,7 +163,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * @return
 	 */
 	
-	public Application findApplication(Id id) {
+	public Application findApplication(String id) {
 		return super.findApplication(id);
 	}	
 	
@@ -179,7 +178,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 */
 	
-	public void updateEnvironment(Id id, String key, Environment environment) {
+	public void updateEnvironment(String id, String key, Environment environment) {
 		Application application = findApplication( id );
 		
 		environment.setKey(key);
@@ -198,7 +197,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 */
 	
-	public Environment updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
+	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
 		Application application = findApplication( id );
 		
@@ -238,7 +237,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public Environment getEnvironment(Id id, String key) {
+	public Environment getEnvironment(String id, String key) {
 		Application resource = findApplication(id);
 		
 		Environment environment = resource.getEnvironments()
@@ -260,7 +259,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void addEnvironment(Id id, Environment environment) throws ServiceException {
+	public void addEnvironment(String id, Environment environment) throws ServiceException {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
 		Application resource = findApplication(id);
@@ -357,7 +356,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
+	public ServiceInstanceDTO addServiceInstance(String id, String key) {		
 		Application resource = findApplication(id);
 		
 		if (resource.getServiceInstances() == null) {
@@ -386,7 +385,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void removeEnvironment(Id id, String key) {
+	public void removeEnvironment(String id, String key) {
 		Application resource = findApplication(id);
 		
 		Environment environment = resource.getEnvironments()
@@ -414,7 +413,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 **************************************************************************************************************************/
 	
-	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
+	public ServiceInstanceDTO getServiceInstance(String id, String key) {
 		Application resource = findApplication(id);
 		
 		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
@@ -438,7 +437,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
+	public void updateServiceInstance(String id, String key, ServiceInstanceDTO serviceInstance) {		
 		Application resource = findApplication(id);
 
 		if (resource.getServiceInstances() == null) {
@@ -490,7 +489,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	 * 
 	 *************************************************************************************************************************/
 	
-	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
+	public ServiceInstanceDTO updateServiceInstance(String id, String key, MultivaluedMap<String, String> parameters) {		
 		Application resource = findApplication(id);
 		
 		if (resource.getServiceInstances() == null) {
@@ -513,15 +512,5 @@ public class ApplicationService extends ApplicationModelMapper {
 		updateServiceInstance(id, key, serviceInstance);
 		
 		return serviceInstance;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
-	public Set<ScheduledJob> getBatchJobs(Id id) {
-		return null;
 	}
 }

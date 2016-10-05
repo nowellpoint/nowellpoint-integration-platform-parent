@@ -1,9 +1,8 @@
 package com.nowellpoint.api.service;
 
-import static com.nowellpoint.util.Assert.isNull;
-import static com.nowellpoint.util.Assert.isNotNull;
 import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNotEqual;
+import static com.nowellpoint.util.Assert.isNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,43 +26,28 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.braintreegateway.AddressRequest;
-import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCardRequest;
-import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
-import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
-import com.nowellpoint.api.model.document.SystemReference;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.aws.model.admin.Properties;
 
 public class AccountProfileService extends AccountProfileModelMapper {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
 	@Inject
+	private PaymentGatewayService paymentGatewayService;
+	
+	@Inject
 	private IsoCountryService isoCountryService;
-	
-	private static BraintreeGateway gateway = new BraintreeGateway(
-			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
-			System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
-			System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
-			System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
-	);
-	
-	static {
-		gateway.clientToken().generate();
-	}
 	
 	public AccountProfileService() {
 		super();
@@ -80,9 +64,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void loggedInEvent(@Observes Token token) {		
 		UserContext.setUserContext(token.getAccessToken());
 		
-		String subject = UserContext.getPrincipal().getName();
-		
-		Id id = new Id( subject );
+		String id = UserContext.getPrincipal().getName();
 		
 		AccountProfile accountProfile = findAccountProfile( id );
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
@@ -140,7 +122,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * @return the updated Identity resource
 	 */
 	
-	public void updateAccountProfile(Id id, AccountProfile accountProfile) {
+	public void updateAccountProfile(String id, AccountProfile accountProfile) {
 		AccountProfile original = findAccountProfile( id );
 		
 		accountProfile.setId( id );
@@ -252,7 +234,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * @return
 	 */
 	
-	public void updateAccountProfileAddress(Id id, Address address) {
+	public void updateAccountProfileAddress(String id, Address address) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		
 		if (isNotEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
@@ -272,7 +254,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * @return
 	 */
 	
-	public Address getAccountProfileAddress(Id id) {
+	public Address getAccountProfileAddress(String id) {
 		AccountProfile resource = findAccountProfile( id );
 		return resource.getAddress();
 	}
@@ -283,7 +265,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * @return Identity resource for id
 	 */
 	
-	public AccountProfile findAccountProfile(Id id) {		
+	public AccountProfile findAccountProfile(String id) {	
 		return super.findAccountProfile(id);
 	}
 	
@@ -324,7 +306,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	public CreditCard getCreditCard(Id id, String token) {
+	public CreditCard getCreditCard(String id, String token) {
 		AccountProfile resource = findAccountProfile(id);
 		
 		Optional<CreditCard> creditCard = resource.getCreditCards()
@@ -336,45 +318,18 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 	}
 	
-	public void addCreditCard(Id id, CreditCard creditCard) {
-		AccountProfile resource = findAccountProfile(id);
+	public void addCreditCard(String id, CreditCard creditCard) {
+		AccountProfile accountProfile = findAccountProfile(id);
 		
 		CustomerRequest customerRequest = new CustomerRequest()
-				.id(resource.getId().toString())
-				.company(resource.getCompany())
-				.email(resource.getEmail())
-				.firstName(resource.getFirstName())
-				.lastName(resource.getLastName())
-				.phone(resource.getPhone());
+				.id(accountProfile.getId())
+				.company(accountProfile.getCompany())
+				.email(accountProfile.getEmail())
+				.firstName(accountProfile.getFirstName())
+				.lastName(accountProfile.getLastName())
+				.phone(accountProfile.getPhone());
 		
-		Result<Customer> customerResult = null;
-		
-//		if (isNotNull(resource.getSystemReferences())) {
-//			
-//			Optional<SystemReference> optional = resource.getSystemReferences()
-//					.stream()
-//					.filter(s -> "BRAINTREE".equals(s.getSystem()))
-//					.findFirst();
-//			
-//			if (optional.isPresent()) {
-//				try {
-//					Customer customer = gateway.customer().find(optional.get().getSystemReference());
-//					customerResult = gateway.customer().update(customer.getId(), customerRequest);
-//				} catch (NotFoundException e) {
-//					LOGGER.warn(e.getMessage());
-//				}
-//			}
-//		}
-//		
-//		if (isNull(customerResult)) {
-//			customerResult = gateway.customer().create(customerRequest);
-//			
-//			SystemReference systemReference = new SystemReference();
-//			systemReference.setSystem("BRAINTREE");
-//			systemReference.setSystemReference(customerResult.getTarget().getId());
-//			
-//			resource.addSystemReference(systemReference);
-//		}
+		Result<com.braintreegateway.Customer> customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
 		
 		AddressRequest addressRequest = new AddressRequest()
 				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
@@ -385,24 +340,25 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				.postalCode(creditCard.getBillingAddress().getPostalCode())
 				.streetAddress(creditCard.getBillingAddress().getStreet());
 		
-		Result<com.braintreegateway.Address> addressResult = gateway.address().create(customerResult.getTarget().getId(), addressRequest);
+		Result<com.braintreegateway.Address> addressResult = paymentGatewayService.createAddress(customerResult.getTarget().getId(), addressRequest);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
 				.expirationMonth(creditCard.getExpirationMonth())
 				.expirationYear(creditCard.getExpirationYear())
 				.number(creditCard.getNumber())
-				.customerId(customerResult.getTarget().getId())
+				.cvv(creditCard.getCvv())
+				.customerId(accountProfile.getId())
 				.billingAddressId(addressResult.getTarget().getId());
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayService.createCreditCard(creditCardRequest);
 		
 		if (creditCardResult.isSuccess()) {
 			
-			if (resource.getCreditCards() == null || resource.getCreditCards().size() == 0) {
+			if (accountProfile.getCreditCards() == null || accountProfile.getCreditCards().size() == 0) {
 				creditCard.setPrimary(Boolean.TRUE);
 			} else if (creditCard.getPrimary()) {
-				resource.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
+				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
 					if (c.getPrimary()) {
 						c.setPrimary(Boolean.FALSE);
 					}
@@ -421,9 +377,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			
 			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
 			
-			resource.addCreditCard(creditCard);
+			accountProfile.addCreditCard(creditCard);
 			
-			updateAccountProfile(id, resource);
+			updateAccountProfile(id, accountProfile);
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
@@ -431,7 +387,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	public void updateCreditCard(Id id, String token, CreditCard creditCard) {
+	public void updateCreditCard(String id, String token, CreditCard creditCard) {
 		AccountProfile resource = findAccountProfile(id);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
@@ -440,7 +396,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				.expirationYear(creditCard.getExpirationYear())
 				.number(creditCard.getNumber());
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
+		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayService.updateCreditCard(token, creditCardRequest);
 		
 		if (creditCardResult.isSuccess()) {
 			
@@ -453,7 +409,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 					.postalCode(creditCard.getBillingAddress().getPostalCode())
 					.streetAddress(creditCard.getBillingAddress().getStreet());
 			
-			Result<com.braintreegateway.Address> addressResult = gateway.address().update(
+			Result<com.braintreegateway.Address> addressResult = paymentGatewayService.updateAddress(
 					creditCardResult.getTarget().getCustomerId(), 
 					creditCardResult.getTarget().getBillingAddress().getId(), 
 					addressRequest);
@@ -493,7 +449,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	public CreditCard updateCreditCard(Id id, String token, MultivaluedMap<String,String> parameters) {
+	public CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
 		
 		CreditCard creditCard = getCreditCard(id, token);
 		
@@ -518,15 +474,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		return creditCard;
 	}
 	
-	public void removeCreditCard(Id id, String token) {
+	public void removeCreditCard(String id, String token) {
 		AccountProfile resource = findAccountProfile(id);
 		
-		com.braintreegateway.CreditCard creditCard = gateway.creditCard().find(token);
+		com.braintreegateway.CreditCard creditCard = paymentGatewayService.findCreditCard(token);
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().delete(token);
+		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayService.deleteCreditCard(token);
 		
 		if (creditCardResult.isSuccess()) {
-			gateway.address().delete(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
+			paymentGatewayService.deleteAddress(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
 			
 			resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 			

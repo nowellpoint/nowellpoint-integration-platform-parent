@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.Project;
 
 /**
@@ -31,8 +30,8 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 		super(com.nowellpoint.api.model.document.Project.class);
 	}
 	
-	protected Project findServiceProvider(Id id) {
-		com.nowellpoint.api.model.document.Project document = findById(id.toString());
+	protected Project findServiceProvider(String id) {
+		com.nowellpoint.api.model.document.Project document = findById(id);
 		return modelMapper.map(document, Project.class);
 	}	
 	

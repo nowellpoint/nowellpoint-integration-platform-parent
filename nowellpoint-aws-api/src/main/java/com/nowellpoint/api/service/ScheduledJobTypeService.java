@@ -2,7 +2,6 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
 import com.nowellpoint.api.model.mapper.ScheduledJobTypeModelMapper;
 
@@ -12,7 +11,7 @@ public class ScheduledJobTypeService extends ScheduledJobTypeModelMapper {
 		
 	}
 	
-	public ScheduledJobType findById(Id id) {
+	public ScheduledJobType findScheduedJobTypeById(String id) {
 		return super.findScheduedJobTypeById(id);
 	}
 	
@@ -24,13 +23,13 @@ public class ScheduledJobTypeService extends ScheduledJobTypeModelMapper {
 		super.createScheduledJobType(scheduledJobType);
 	}
 	
-	public void updateScheduledJobType(Id id, ScheduledJobType scheduledJobType) {
+	public void updateScheduledJobType(String id, ScheduledJobType scheduledJobType) {
 		scheduledJobType.setId(id);
 		super.updateScheduledJobType(scheduledJobType);
 	}
 	
-	public void deleteScheduledJobType(Id id) {
-		ScheduledJobType scheduledJobType = findById(id);
+	public void deleteScheduledJobType(String id) {
+		ScheduledJobType scheduledJobType = findScheduedJobTypeById(id);
 		super.deleteScheduledJob(scheduledJobType);
 	}
 }

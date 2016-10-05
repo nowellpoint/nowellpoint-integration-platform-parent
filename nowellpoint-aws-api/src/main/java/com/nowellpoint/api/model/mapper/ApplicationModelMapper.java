@@ -6,7 +6,6 @@ import java.util.Set;
 import org.modelmapper.TypeToken;
 
 import com.nowellpoint.api.model.dto.Application;
-import com.nowellpoint.api.model.dto.Id;
 
 /**
  * 
@@ -31,8 +30,8 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 		super(com.nowellpoint.api.model.document.Application.class);
 	}
 	
-	protected Application findApplication(Id id) {
-		com.nowellpoint.api.model.document.Application document = findById(id.toString());
+	protected Application findApplication(String id) {
+		com.nowellpoint.api.model.document.Application document = findById(id);
 		return modelMapper.map(document, Application.class);
 	}	
 	

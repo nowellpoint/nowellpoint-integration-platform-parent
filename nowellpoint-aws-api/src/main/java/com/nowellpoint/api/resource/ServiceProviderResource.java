@@ -20,7 +20,6 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.ServiceProvider;
 import com.nowellpoint.api.service.ServiceProviderService;
 
@@ -50,7 +49,7 @@ public class ServiceProviderResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getServiceProvider(@PathParam("id") String id) {		
-		ServiceProvider serviceProvider = serviceProviderService.getServiceProvider( new Id( id ) );		
+		ServiceProvider serviceProvider = serviceProviderService.getServiceProvider( id );		
 		
 		return Response.ok(serviceProvider)
 				.build();
@@ -77,7 +76,7 @@ public class ServiceProviderResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteServiceProvider(@PathParam("id") String id) {
-		serviceProviderService.deleteServiceProvider(new Id( id ));		
+		serviceProviderService.deleteServiceProvider(id);		
 		return Response.noContent().build();
 	}
 	
@@ -86,7 +85,7 @@ public class ServiceProviderResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateServiceProvider(@PathParam("id") String id, ServiceProvider serviceProvider) {
-		serviceProviderService.updateServiceProvider(new Id(id), serviceProvider);
+		serviceProviderService.updateServiceProvider(id, serviceProvider);
 		return Response.ok(serviceProvider).build();
 	}
 }

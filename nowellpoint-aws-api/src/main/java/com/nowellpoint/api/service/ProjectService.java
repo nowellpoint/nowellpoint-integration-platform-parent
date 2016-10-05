@@ -2,7 +2,6 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.model.dto.Id;
 import com.nowellpoint.api.model.dto.Project;
 import com.nowellpoint.api.model.mapper.ProjectModelMapper;
 
@@ -42,7 +41,7 @@ public class ProjectService extends ProjectModelMapper {
 	 * @return
 	 */
 
-	public void updateProject(Id id, Project project) {
+	public void updateProject(String id, Project project) {
 		Project original = findProject( id );
 		project.setId(id);
 		project.setCreatedById(original.getCreatedById());
@@ -58,7 +57,7 @@ public class ProjectService extends ProjectModelMapper {
 	 * @param eventSource
 	 */
 	
-	public void deleteProject(Id id) {
+	public void deleteProject(String id) {
 		Project project = findProject(id);
 		super.deleteServiceProvider(project);
 	}
@@ -70,7 +69,7 @@ public class ProjectService extends ProjectModelMapper {
 	 * @return
 	 */
 	
-	public Project findProject(Id id) {
+	public Project findProject(String id) {
 		Project project = super.findServiceProvider(id);
 		return project;
 	}

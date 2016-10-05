@@ -23,6 +23,12 @@ public class CreditCard {
 	 * 
 	 */
 	
+	private String cvv;
+	
+	/**
+	 * 
+	 */
+	
 	private String number;
 	
 	/**
@@ -107,6 +113,14 @@ public class CreditCard {
 
 	public void setCardholderName(String cardholderName) {
 		this.cardholderName = cardholderName;
+	}
+
+	public String getCvv() {
+		return cvv;
+	}
+
+	public void setCvv(String cvv) {
+		this.cvv = cvv;
 	}
 
 	public String getNumber() {
