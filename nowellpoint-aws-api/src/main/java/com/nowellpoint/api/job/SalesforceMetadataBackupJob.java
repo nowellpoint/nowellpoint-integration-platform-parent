@@ -106,9 +106,10 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			//
 		    			
 		    			scheduledJobRequest.setStatus("Running");
+		    			scheduledJobRequest.setFireInstanceId(context.getFireInstanceId());
 		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
 		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
-		    			scheduledJobRequestService.replace(scheduledJobRequest);
+		    			scheduledJobRequestService.replace(scheduledJobRequest.getId(), scheduledJobRequest);
 		    			
 		    			//
 		    			// update ScheduledJob
@@ -204,6 +205,9 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		
 		    		sendNotification(scheduledJobRequest.getNotificationEmail(), "Scheduled Job Request Complete", message);
 		    		
+		    		scheduledJobRequest.setJobRunTime(fireTime.getTime() - System.currentTimeMillis());
+			    	scheduledJobRequestService.replace( scheduledJobRequest.getId(), scheduledJobRequest );
+		    		
 		    		RunHistory runHistory = new RunHistory();
 			    	runHistory.setFireInstanceId(context.getFireInstanceId());
 			    	runHistory.setFireTime(fireTime);
@@ -220,9 +224,6 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJob.setSystemModifiedDate(Date.from(Instant.now()));		    	
 			    	scheduledJobService.replace(scheduledJob);
 			    	
-			    	scheduledJobRequest.setJobRunTime(fireTime.getTime() - System.currentTimeMillis());
-			    	scheduledJobRequestService.replace(scheduledJobRequest);
-			    	
 			    	//
 			    	// setup the next schedule job
 			    	//
@@ -230,6 +231,10 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 			    	
 			    	scheduledJobRequest.setId(new ObjectId());
+			    	scheduledJobRequest.setFireInstanceId(null);
+			    	scheduledJobRequest.setJobRunTime(null);
+			    	scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
+			    	scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
 			    	scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
 			    	scheduledJobRequest.setYear(dateTime.getYear());
 			    	scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
@@ -516,8 +521,8 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 		super.create(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
 	}
 	
-	public void replace(ScheduledJobRequest scheduledJobRequest) {
-		super.replace(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
+	public void replace(ObjectId id, ScheduledJobRequest scheduledJobRequest) {
+		super.replace(System.getProperty(Properties.DEFAULT_SUBJECT), id, scheduledJobRequest);
 	}
 	
 	public Set<ScheduledJobRequest> getScheduledJobRequests() {

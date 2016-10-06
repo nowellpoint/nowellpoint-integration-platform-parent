@@ -86,6 +86,20 @@ public class MongoDatastore implements ServletContextListener {
 		});
 	}
 	
+	public static void replaceOne(ObjectId id, MongoDocument document) {	
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getCollection( document ).replaceOne( Filters.eq ( "_id", id ), document );
+				} catch (MongoException e) {
+					publish(e);
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public static void replaceOne(Bson filter, MongoDocument document) {	
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override

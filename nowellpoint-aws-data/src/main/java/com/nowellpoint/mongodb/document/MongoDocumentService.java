@@ -214,6 +214,33 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	/**
 	 * 
 	 * 
+	 * @param subject
+	 * @param document
+	 * 
+	 * 
+	 */
+	
+	protected void replace(String subject, ObjectId id, T document) {
+		Date now = Date.from(Instant.now());
+		
+		document.setLastModifiedById(subject);
+		document.setLastModifiedDate(now);
+		document.setSystemModifiedDate(now);
+		
+		set(document.getId().toString(), document);
+		hset(encode(subject), document);
+		
+		try {
+			MongoDatastore.replaceOne( id, document );
+		} catch (MongoException e) {
+			LOGGER.error( "Update Document exception", e.getCause());
+			throw e;
+		}
+	}
+	
+	/**
+	 * 
+	 * 
 	 * @param filter
 	 * @param document
 	 * 
