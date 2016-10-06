@@ -2,6 +2,7 @@ package com.nowellpoint.api.model.mapper;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -113,7 +114,7 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		
 		MongoDatastore.getCollection( ScheduledJobRequest.class ).replaceOne( and ( 
 				eq ( "scheduledJobId", scheduledJob.getId().toString() ), 
-				eq ( "status", "Scheduled" )), 
+				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" ))), 
 				scheduledJobRequest, 
 				new UpdateOptions().upsert(true));
 	}

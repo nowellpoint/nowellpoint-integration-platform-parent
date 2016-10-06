@@ -108,7 +108,6 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			scheduledJobRequest.setStatus("Running");
 		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
 		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
-		    			scheduledJobRequest.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJobRequest.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 		    			scheduledJobRequestService.replace(scheduledJobRequest);
 		    			
 		    			//
@@ -195,7 +194,7 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	//
 				    	//
 				    	
-				    	message = String.format("Scheduled Job: %s was completed successfully at %s", scheduledJobRequest.getJobName(), Date.from(Instant.now()).toString());
+				    	message = String.format("Scheduled Job: %s was completed successfully on %s", scheduledJobRequest.getJobName(), Date.from(Instant.now()).toString());
 				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");
@@ -214,16 +213,24 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJob.addRunHistory(runHistory);
 			    	
 			    	scheduledJob.setStatus("Scheduled");
-			    	scheduledJob.setScheduleDate(scheduledJobRequest.getScheduleDate());
+			    	scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 			    	scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 		    		scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
 			    	scheduledJob.setLastRunDate(fireTime);
 			    	scheduledJob.setSystemModifiedDate(Date.from(Instant.now()));		    	
 			    	scheduledJobService.replace(scheduledJob);
-			    				    	
-			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJobRequest.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 			    	
 			    	scheduledJobRequest.setJobRunTime(fireTime.getTime() - System.currentTimeMillis());
+			    	scheduledJobRequestService.replace(scheduledJobRequest);
+			    	
+			    	//
+			    	// setup the next schedule job
+			    	//
+			    	
+			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
+			    	
+			    	scheduledJobRequest.setId(new ObjectId());
+			    	scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
 			    	scheduledJobRequest.setYear(dateTime.getYear());
 			    	scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
 			    	scheduledJobRequest.setDay(dateTime.getDayOfMonth());
@@ -231,7 +238,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJobRequest.setMinute(dateTime.getMinute());
 			    	scheduledJobRequest.setSecond(dateTime.getSecond());
 			    	scheduledJobRequest.setStatus("Scheduled");
-			    	scheduledJobRequestService.replace(scheduledJobRequest);
+			    	scheduledJobRequestService.create(scheduledJobRequest);
 			    	
 			    	return null;
 		    	});
@@ -279,7 +286,7 @@ public class SalesforceMetadataBackupJob implements Job {
 	
 	private void sendNotification(String email, String subject, String body) throws IOException {
 		Email from = new Email();
-		from.setEmail("administrator@nowellpoint.com");
+		from.setEmail("support@nowellpoint.com");
 		from.setName("Nowellpoint Support");
 	    
 	    Email to = new Email();
@@ -503,6 +510,10 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 
 	public ScheduledJobRequestService() {
 		super(ScheduledJobRequest.class);
+	}
+	
+	public void create(ScheduledJobRequest scheduledJobRequest) {
+		super.create(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
 	}
 	
 	public void replace(ScheduledJobRequest scheduledJobRequest) {

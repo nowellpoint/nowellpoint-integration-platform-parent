@@ -12,7 +12,6 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.NowellpointServiceException;
-import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
@@ -130,7 +129,32 @@ public class ScheduledJobResource extends AbstractResource {
 		return updateScheduledJobResult;
 	}
 	
-	public UpdateScheduledJobResult start(String id) {
+	public UpdateResult<ScheduledJob> terminate(String id) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.parameter("status", "Terminated")
+				.execute();
+		
+		UpdateResult<ScheduledJob> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
+			result = new UpdateResultImpl<ScheduledJob>(scheduledJob);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<ScheduledJob>(error);
+		}
+		
+		return result;
+	}
+	
+	public UpdateResult<ScheduledJob> start(String id) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -142,38 +166,36 @@ public class ScheduledJobResource extends AbstractResource {
 		
 		UpdateResult<ScheduledJob> result = null;
 		
-		UpdateScheduledJobResult updateScheduledJobResult = new UpdateScheduledJobResult();
-		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
 			result = new UpdateResultImpl<ScheduledJob>(scheduledJob);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			updateScheduledJobResult.setError(error.getCode());
-			updateScheduledJobResult.setErrorMessage(error.getMessage());
-			updateScheduledJobResult.setIsSuccess(Boolean.FALSE);
+			result = new UpdateResultImpl<ScheduledJob>(error);
 		}
 		
-		return updateScheduledJobResult;
+		return result;
 	}
 	
-	public Result<ScheduledJob> find(String id) {
+	public UpdateResult<ScheduledJob> find(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
 		
-		Result<ScheduledJob> result = null;
+		UpdateResult<ScheduledJob> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
-			result = new ResultImpl<ScheduledJob>(scheduledJob);
+			result = new UpdateResultImpl<ScheduledJob>(scheduledJob);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new ResultImpl<ScheduledJob>(error);
+			result = new UpdateResultImpl<ScheduledJob>(error);
 		}
 		
 		return result;

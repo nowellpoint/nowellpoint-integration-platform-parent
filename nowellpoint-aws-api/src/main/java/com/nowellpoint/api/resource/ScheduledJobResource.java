@@ -175,7 +175,6 @@ public class ScheduledJobResource {
 		scheduledJob.setStatus(isNotNullOrEmpty(status) ? status : null);
 		if (isNotNullOrEmpty(scheduleDate)) {
 			try {
-				//TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 				scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
 			} catch (Exception e) {

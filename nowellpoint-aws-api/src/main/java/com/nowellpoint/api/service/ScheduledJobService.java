@@ -96,6 +96,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	public void updateScheduledJob(String id, ScheduledJob scheduledJob) {
 		ScheduledJob original = findScheduledJobById(id);
 		
+		if ("Terminated".equals(original.getStatus())) {
+			throw new ServiceException( Status.FORBIDDEN, "Scheduled Job has been terminated and cannot be altered" );
+		}
+		
 		scheduledJob.setId(id);
 		scheduledJob.setJobTypeId(original.getJobTypeId());
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
@@ -142,10 +146,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		
 		setupScheduledJob(scheduledJob);
 		
-		if (! scheduledJob.getIsSandbox()) {
-			paymentGatewayService.addMonthlyRecurringPlan("dqtjvb", new BigDecimal("7.00"));
-		}
-		
 		super.updateScheduledJob(scheduledJob);
 	}
 	
@@ -188,13 +188,14 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ServiceException(Status.BAD_REQUEST, "Schedule Date cannot be before current date");
 		}
 		
-		if (! ("Scheduled".equals(scheduledJob.getStatus()) || "Stopped".equals(scheduledJob.getStatus()))) {
+		if (! ("Scheduled".equals(scheduledJob.getStatus()) || "Stopped".equals(scheduledJob.getStatus())) || "Terminated".equals(scheduledJob.getStatus())) {
 			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		
 		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( scheduledJob.getJobTypeId() );
 
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
+			
 			SalesforceConnector salesforceConnector = null;
 			try {
 				salesforceConnector = salesforceConnectorService.findSalesforceConnector( scheduledJob.getConnectorId() );

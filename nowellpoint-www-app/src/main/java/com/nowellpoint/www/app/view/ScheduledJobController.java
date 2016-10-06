@@ -16,6 +16,7 @@ import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
+import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
 import com.nowellpoint.client.model.UpdateScheduledJobResult;
 import com.nowellpoint.client.model.idp.Token;
@@ -351,14 +352,13 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob() 
-				.start(id)
-				.getScheduledJob();
+				.start(id);
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "activate.scheduled.job.success"));
 		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
 	};
@@ -385,6 +385,31 @@ public class ScheduledJobController extends AbstractController {
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
+		
+		return "";
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * terminateScheduledJob
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route terminateScheduledJob = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.scheduledJob() 
+				.terminate(id);
+		
+		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "terminate.scheduled.job.success"));
+		
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
 	};

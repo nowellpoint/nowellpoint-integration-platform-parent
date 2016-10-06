@@ -31,25 +31,37 @@
                             <h3 class="dashhead-title">${labels["scheduled.job"]}</h3>
                         </div>
                         <div class="flextable-item">
-                            <!--  <#if scheduledJob.status == "Stopped"> -->
-                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
-                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-success">${labels["start.scheduled.job"]}</button>
-                            </form>
-                            <!-- </#if> -->
-                            <!--  <#if scheduledJob.status == "Scheduled"> -->
-                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/stop">
-                                <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-danger">${labels["stop.scheduled.job"]}</button>
-                            </form>
-                            <!-- </#if> -->
-                        </div>
-                        <div class="flextable-item">
                             <a id="edit-scheduled-job" href="${labels['base.path']}/${scheduledJob.id!}/edit" class="btn btn-primary" role="button">${labels["edit.scheduled.job"]}</a>
                         </div>
                     </div>
 
                     <br>
                     <div class="hr-divider"></div>
+
+                        <br>
+
+                        <div class = "btn-toolbar" role = "toolbar">
+                             <div class="btn-group">
+                            <!--  <#if scheduledJob.status == "Stopped"> -->
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
+                                <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-default">${labels["start.scheduled.job"]}</button>
+                            </form>
+                            <!-- </#if> -->
+                            <!--  <#if scheduledJob.status == "Scheduled"> -->
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/stop">
+                                <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-default">${labels["stop.scheduled.job"]}</button>
+                            </form>     
+                            <!-- </#if> -->
+                            </div>
+                             <div class="btn-group">
+                            <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/terminate">
+                                <button type="submit" name="terminate-scheduled-job" id="terminate-scheduled-job" class="btn btn-default">${labels["terminate.scheduled.job"]}</button>
+                            </form>
+                            </div>     
+                        </div>
+
                     <div class="row">
+                        
                         <br>
                         <br>
 
@@ -73,7 +85,7 @@
                                     <dd class="text-success">
                                         <!-- </#if> -->
                                         ${(scheduledJob.status)!}&emsp;
-                                </dd>
+                                    </dd>
                                     <hr>
                             </dl>
                         </div>
@@ -106,20 +118,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            
-                            <div class="pull-right">
-                                <div class="dropdown">
-  <button class="btn btn-default pull-left dropdown-toggle" type="button" data-toggle="dropdown">
-  <span class="icon icon-chevron-down fa-2x"></span></button>
-  <ul class="dropdown-menu">
-    <li><a href="#">${labels["stop.scheduled.job"]}</a></li>
-    <li><a href="#" class="disabled">${labels["start.scheduled.job"]}</a></li>
-  </ul>
-</div>
-                                
-                                
-                            </div>    
-                            
+
                         </div>
 
                         <div class="col-md-8">
