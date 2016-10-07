@@ -1,6 +1,8 @@
 package com.nowellpoint.client.model;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class RunHistory {
 
@@ -14,8 +16,10 @@ public class RunHistory {
 	
 	private String failureMessage;
 	
+	private List<Backup> backups;
+	
 	public RunHistory() {
-		
+		setBackups(Collections.emptyList());
 	}
 
 	public String getFireInstanceId() {
@@ -56,5 +60,13 @@ public class RunHistory {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	public List<Backup> getBackups() {
+		return backups;
+	}
+
+	public void setBackups(List<Backup> backups) {
+		this.backups = backups;
 	}
 }

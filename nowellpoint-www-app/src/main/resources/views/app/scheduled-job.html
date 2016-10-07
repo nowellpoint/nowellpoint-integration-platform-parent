@@ -24,10 +24,8 @@
                 </div>
 
                 <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                    <div class="flextable">
+                    <div class="flextable p-t">
                         <div class="flextable-item flextable-primary">
-                            <img class="media-object" src="/images/clock.png">
                             <h3 class="dashhead-title">${labels["scheduled.job"]}</h3>
                         </div>
                         <div class="flextable-item">
@@ -35,13 +33,12 @@
                         </div>
                     </div>
 
+
+
                     <br>
-                    <div class="hr-divider"></div>
 
-                        <br>
-
-                        <div class = "btn-toolbar" role = "toolbar">
-                             <div class="btn-group">
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group">
                             <!--  <#if scheduledJob.status == "Stopped"> -->
                             <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
                                 <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-default">${labels["start.scheduled.job"]}</button>
@@ -50,21 +47,21 @@
                             <!--  <#if scheduledJob.status == "Scheduled"> -->
                             <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/stop">
                                 <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-default">${labels["stop.scheduled.job"]}</button>
-                            </form>     
+                            </form>
                             <!-- </#if> -->
-                            </div>
-                             <div class="btn-group">
+                        </div>
+                        <div class="btn-group">
                             <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/terminate">
                                 <button type="submit" name="terminate-scheduled-job" id="terminate-scheduled-job" class="btn btn-default">${labels["terminate.scheduled.job"]}</button>
                             </form>
-                            </div>     
                         </div>
+                    </div>
 
                     <div class="row">
-                        
-                        <br>
-                        <br>
 
+                        <br>
+                        <br>
+                        
                         <div class="col-md-4">
 
                             <dl class="dl-vertical">

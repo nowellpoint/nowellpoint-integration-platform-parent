@@ -1,6 +1,8 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
 
@@ -80,6 +82,8 @@ public class ScheduledJobRequest extends MongoDocument {
 	private String status;
 	
 	private String failureMessage;
+	
+	private Set<Backup> backups;
 
 	public ScheduledJobRequest() {
 		
@@ -291,5 +295,20 @@ public class ScheduledJobRequest extends MongoDocument {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	public Set<Backup> getBackups() {
+		return backups;
+	}
+
+	public void setBackups(Set<Backup> backups) {
+		this.backups = backups;
+	}
+	
+	public void addBackup(Backup backup) {
+		if (this.backups == null) {
+			this.backups = new HashSet<Backup>();
+		}
+		this.backups.add(backup);
 	}
 }

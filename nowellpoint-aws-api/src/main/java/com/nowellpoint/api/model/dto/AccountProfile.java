@@ -453,4 +453,9 @@ public class AccountProfile extends AbstractResource {
 	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
 		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
+	
+	@JsonIgnore
+	public CreditCard getPrimaryCreditCard() {
+		return creditCards.stream().filter(c -> c.getPrimary()).findFirst().get();
+	}
 }

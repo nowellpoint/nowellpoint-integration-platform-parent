@@ -2,6 +2,7 @@ package com.nowellpoint.api.job;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.nowellpoint.util.Assert.isNotNull;
 import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.io.ByteArrayInputStream;
@@ -34,8 +35,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Environment;
 import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
@@ -97,8 +100,6 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		
 		    		ScheduledJob scheduledJob = null;
 		    		
-		    		String message = null;
-		    		
 		    		try {
 		    			
 		    			//
@@ -109,7 +110,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			scheduledJobRequest.setFireInstanceId(context.getFireInstanceId());
 		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
 		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
-		    			scheduledJobRequestService.replace(scheduledJobRequest.getId(), scheduledJobRequest);
+		    			scheduledJobRequestService.replace( scheduledJobRequest );
 		    			
 		    			//
 		    			// update ScheduledJob
@@ -165,7 +166,13 @@ public class SalesforceMetadataBackupJob implements Job {
 						// write the result to S3
 						//
 				    	
-				    	putObject(keyName, describeGlobalSobjectsResult);
+				    	PutObjectResult result = putObject(keyName, describeGlobalSobjectsResult);
+				    	
+				    	//
+				    	// add Backup reference to ScheduledJobRequest
+				    	//
+				    	
+				    	scheduledJobRequest.addBackup(new Backup("DescribeGlobal", keyName, result.getMetadata().getContentLength()));
 				    	
 				    	//
 				    	// DescribeSobjectResult
@@ -183,7 +190,13 @@ public class SalesforceMetadataBackupJob implements Job {
 						// write the result to S3
 						//
 				    	
-				    	putObject(keyName, describeSobjectResults);
+				    	result = putObject(keyName, describeSobjectResults);
+				    	
+				    	//
+				    	// add Backup reference to ScheduledJobRequest
+				    	//
+				    	
+				    	scheduledJobRequest.addBackup(new Backup("DescribeSobjects", keyName, result.getMetadata().getContentLength()));
 				    	
 				    	// 
 				    	// set status
@@ -191,30 +204,53 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	
 				    	scheduledJobRequest.setStatus("Success");
 				    	
-				    	//
-				    	//
-				    	//
-				    	
-				    	message = String.format("Scheduled Job: %s was completed successfully on %s", scheduledJobRequest.getJobName(), Date.from(Instant.now()).toString());
-				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");
 			    		scheduledJobRequest.setFailureMessage(e.getMessage());
-			    		message = String.format("Scheduled Job: %s failed with exception: %s", scheduledJobRequest.getJobName(), e.getMessage());
 			    	} 
+		    		
+		    		//
+		    		// compile and send notification
+		    		//
+		    		
+		    		String message = new StringBuilder().append("Scheduled Job: ")
+		    				.append(scheduledJobRequest.getJobName())
+		    				.append(System.getProperty("line.separator"))
+		    				.append("Date: ")
+		    				.append(Date.from(Instant.now()))
+		    				.append(System.getProperty("line.separator"))
+		    				.append("Status: ")
+		    				.append(scheduledJobRequest.getStatus())
+		    				.append(System.getProperty("line.separator"))
+		    				.append("Exception: " )
+		    				.append(isNotNull(scheduledJobRequest.getFailureMessage()) ? scheduledJobRequest.getFailureMessage() : "")
+		    				.toString();
 		    		
 		    		sendNotification(scheduledJobRequest.getNotificationEmail(), "Scheduled Job Request Complete", message);
 		    		
+		    		//
+		    		// update ScheduledJobRequest
+		    		//
+		    		
 		    		scheduledJobRequest.setJobRunTime(fireTime.getTime() - System.currentTimeMillis());
-			    	scheduledJobRequestService.replace( scheduledJobRequest.getId(), scheduledJobRequest );
+			    	scheduledJobRequestService.replace( scheduledJobRequest );
+			    	
+			    	//
+			    	// create and add RunHistory
+			    	//
 		    		
 		    		RunHistory runHistory = new RunHistory();
 			    	runHistory.setFireInstanceId(context.getFireInstanceId());
 			    	runHistory.setFireTime(fireTime);
 			    	runHistory.setStatus(scheduledJobRequest.getStatus());
+			    	runHistory.setBackups(scheduledJobRequest.getBackups());
 			    	runHistory.setFailureMessage(scheduledJobRequest.getFailureMessage());
 			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - fireTime.getTime());
 			    	scheduledJob.addRunHistory(runHistory);
+			    	
+			    	//
+			    	// update ScheduledJob
+			    	//
 			    	
 			    	scheduledJob.setStatus("Scheduled");
 			    	scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
@@ -225,7 +261,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJobService.replace(scheduledJob);
 			    	
 			    	//
-			    	// setup the next schedule job
+			    	// setup the next scheduled job
 			    	//
 			    	
 			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
@@ -408,7 +444,7 @@ public class SalesforceMetadataBackupJob implements Job {
 	 * 
 	 */
 	
-	private void putObject(String keyName, Object object) throws JsonProcessingException {
+	private PutObjectResult putObject(String keyName, Object object) throws JsonProcessingException {
 		byte[] bytes = objectMapper.writeValueAsBytes(object);
 		
 		ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -416,11 +452,13 @@ public class SalesforceMetadataBackupJob implements Job {
 		
 		AmazonS3 s3client = new AmazonS3Client();
 		
-		s3client.putObject(new PutObjectRequest(
+		PutObjectResult result = s3client.putObject(new PutObjectRequest(
 				bucketName,
 				keyName,
 				new ByteArrayInputStream(bytes),
 				objectMetadata));
+		
+		return result;
 	}
 	
 	/**
@@ -521,8 +559,8 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 		super.create(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
 	}
 	
-	public void replace(ObjectId id, ScheduledJobRequest scheduledJobRequest) {
-		super.replace(System.getProperty(Properties.DEFAULT_SUBJECT), id, scheduledJobRequest);
+	public void replace(ScheduledJobRequest scheduledJobRequest) {
+		super.replace(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
 	}
 	
 	public Set<ScheduledJobRequest> getScheduledJobRequests() {

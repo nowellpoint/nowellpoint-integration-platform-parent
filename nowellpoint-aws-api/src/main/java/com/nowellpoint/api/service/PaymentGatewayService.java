@@ -104,7 +104,7 @@ public class PaymentGatewayService {
 		System.out.println(result.getMessage());
 	}
 	
-	public void addMonthlyRecurringPlan(String paymentMethodToken, BigDecimal price) {
+	public Result<Subscription> addMonthlyRecurringPlan(String paymentMethodToken, BigDecimal price) {
 		SubscriptionRequest request = new SubscriptionRequest()
 			    .paymentMethodToken(paymentMethodToken)
 			    .planId("RECURRING_MONTHLY_PLAN")
@@ -112,6 +112,6 @@ public class PaymentGatewayService {
 
 		Result<Subscription> result = gateway.subscription().create(request);
 		
-		System.out.println(result.getMessage());
+		return result;
 	}
 }

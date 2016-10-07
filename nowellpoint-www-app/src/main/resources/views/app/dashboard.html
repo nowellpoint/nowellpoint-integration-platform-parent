@@ -21,25 +21,31 @@
                     <div class="row">
                         <div class="col-sm-3">
                             <div class="hr-divider">
-                                <h3 class="hr-divider-content hr-divider-heading">
-    Salesforce Metadata Backups
-  </h3>
+                                <h3 class="hr-divider-content hr-divider-heading">${labels["salesforce.metadata.backups"]}</h3>
                             </div>
                             <br>
 
                             <div class="footer">
                                 <div class="legend">
-                                    <i class="fa fa-circle text-success"></i> Production
+                                    <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
+                                        <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                                        <i class="fa fa-circle text-success"></i>
+                                        <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                                        <i class="fa fa-circle text-danger"></i>
+                                        <!-- <#else> -->
+                                        <i class="fa fa-circle text-warning"></i>
+                                        <!-- </#if> -->
+                                        &emsp;<a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.environmentName}</a>
+                                    </#list>
                                 </div>
                                 <hr>
                                 <div class="stats">
-                                    <i class="fa fa-clock-o"></i> 
+                                    <!-- <#assign refreshTime = .now> -->
+                                    <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.long!} ${refreshTime?time?string.medium!}
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
