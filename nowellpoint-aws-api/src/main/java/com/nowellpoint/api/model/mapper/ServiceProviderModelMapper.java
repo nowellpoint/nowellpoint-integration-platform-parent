@@ -55,7 +55,8 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	
 	protected void createServiceProvider(ServiceProvider serviceProvider) {
 		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, serviceProvider);
 	}
 	
@@ -69,7 +70,8 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	
 	protected void updateServiceProvider(ServiceProvider serviceProvider) {
 		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, serviceProvider);
 	}
 	

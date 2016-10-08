@@ -74,7 +74,6 @@ public class ServiceProviderService extends ServiceProviderModelMapper {
 	
 	public void updateServiceProvider(String id, ServiceProvider serviceProvider) {
 		ServiceProvider original = getServiceProvider( id );
-		serviceProvider.setCreatedById(original.getCreatedById());
 		serviceProvider.setCreatedDate(original.getCreatedDate());
 		
 		super.updateServiceProvider(serviceProvider);

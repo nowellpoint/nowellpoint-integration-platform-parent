@@ -1,6 +1,6 @@
 package com.nowellpoint.api.service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +16,6 @@ import com.nowellpoint.api.model.document.SimpleStorageService;
 import com.nowellpoint.api.model.document.Targets;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Application;
-import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
@@ -112,7 +111,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		Application original = findApplication( id );
 		
 		application.setId(id);
-		application.setCreatedById(original.getCreatedById());
 		application.setCreatedDate(original.getCreatedDate());
 		application.setSystemCreationDate(original.getSystemCreationDate());
 		application.setSystemModifiedDate(original.getSystemModifiedDate());

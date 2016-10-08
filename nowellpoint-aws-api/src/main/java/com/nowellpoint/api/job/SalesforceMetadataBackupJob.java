@@ -557,11 +557,13 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 	}
 	
 	public void create(ScheduledJobRequest scheduledJobRequest) {
-		super.create(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
+		super.create(scheduledJobRequest);
+		hset(encode(System.getProperty(Properties.DEFAULT_SUBJECT)), scheduledJobRequest);
 	}
 	
 	public void replace(ScheduledJobRequest scheduledJobRequest) {
-		super.replace(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
+		super.replace(scheduledJobRequest);
+		hset(encode(System.getProperty(Properties.DEFAULT_SUBJECT)), scheduledJobRequest);
 	}
 	
 	public Set<ScheduledJobRequest> getScheduledJobRequests() {

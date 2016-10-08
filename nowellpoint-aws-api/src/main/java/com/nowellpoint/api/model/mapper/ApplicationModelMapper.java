@@ -37,13 +37,15 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 	
 	protected void createApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, application);
 	}
 	
 	protected void updateApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, application);
 	}
 	

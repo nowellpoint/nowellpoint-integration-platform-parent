@@ -4,20 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AccountProfile extends Resource {
+public class AccountProfile extends AbstractResource {
 	
-	/**
-	 * 
-	 */
-	
-	private UserInfo createdBy;
-	
-	/**
-	 * 
-	 */
-	
-	private UserInfo lastModifiedBy;
-
 	/**
 	 * 
 	 */
@@ -175,22 +163,6 @@ public class AccountProfile extends Resource {
 	public AccountProfile(String id) {
 		this();
 		this.setId(id);
-	}
-
-	public UserInfo getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UserInfo createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UserInfo getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(UserInfo lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public String getUsername() {

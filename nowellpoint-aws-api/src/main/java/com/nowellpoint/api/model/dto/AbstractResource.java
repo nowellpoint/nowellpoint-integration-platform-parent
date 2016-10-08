@@ -31,18 +31,6 @@ public abstract class AbstractResource implements Serializable {
 	 * 
 	 */
 	
-	private String createdById;
-	
-	/**
-	 * 
-	 */
-	
-	private String lastModifiedById;
-	
-	/**
-	 * 
-	 */
-	
 	private Date createdDate;
 	
 	/**
@@ -79,23 +67,7 @@ public abstract class AbstractResource implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getCreatedById() {
-		return createdById;
-	}
-
-	public void setCreatedById(String createdById) {
-		this.createdById = createdById;
-	}
-
-	public String getLastModifiedById() {
-		return lastModifiedById;
-	}
-
-	public void setLastModifiedById(String lastModifiedById) {
-		this.lastModifiedById = lastModifiedById;
-	}
-
+	
 	public Date getCreatedDate() {
 		return createdDate;
 	}

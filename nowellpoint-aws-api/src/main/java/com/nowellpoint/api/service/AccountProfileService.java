@@ -127,7 +127,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		accountProfile.setId( id );
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		accountProfile.setCreatedById(original.getCreatedById());
 		accountProfile.setCreatedDate(original.getCreatedDate());
 		accountProfile.setHref(original.getHref());
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());

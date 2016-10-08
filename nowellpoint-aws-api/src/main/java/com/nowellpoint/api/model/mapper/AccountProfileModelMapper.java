@@ -50,7 +50,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	protected void createAccountProfile(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, accountProfile);
 	}
 	
@@ -64,7 +65,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	protected void updateAccountProfile(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, accountProfile);
 	}
 	

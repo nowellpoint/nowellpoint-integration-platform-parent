@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 import java.util.List;
 
-public class ServiceProvider extends Resource {
+public class ServiceProvider extends AbstractResource {
 	
 	private String type;
 	

@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public class Project extends Resource {
+public class Project extends AbstractResource {
 
 	private String name;
 	

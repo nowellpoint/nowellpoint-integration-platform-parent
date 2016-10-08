@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public class IsoCountry extends Resource {
+public class IsoCountry extends AbstractResource {
 	
 	private String language;
 	

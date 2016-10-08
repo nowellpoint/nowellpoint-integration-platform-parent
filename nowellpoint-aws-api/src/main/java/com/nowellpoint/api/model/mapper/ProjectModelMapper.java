@@ -37,13 +37,15 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 	
 	protected void createServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, project);
 	}
 	
 	protected void updateServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, project);
 	}
 	

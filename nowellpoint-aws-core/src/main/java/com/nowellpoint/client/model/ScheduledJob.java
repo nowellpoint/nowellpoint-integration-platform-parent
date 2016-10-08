@@ -4,11 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class ScheduledJob extends Resource {
-	
-	private UserInfo createdBy;
-	
-	private UserInfo lastModifiedBy;
+public class ScheduledJob extends AbstractResource {
 	
 	private UserInfo owner;
 	
@@ -46,22 +42,6 @@ public class ScheduledJob extends Resource {
 	
 	public ScheduledJob() {
 		setRunHistories(Collections.emptyList());
-	}
-
-	public UserInfo getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UserInfo createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UserInfo getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(UserInfo lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	public UserInfo getOwner() {

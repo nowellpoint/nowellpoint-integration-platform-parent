@@ -67,7 +67,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	
 	protected void createSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, salesforceConnector);
 	}
 	
@@ -81,7 +82,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	
 	protected void updateSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, salesforceConnector);
 	}
 	

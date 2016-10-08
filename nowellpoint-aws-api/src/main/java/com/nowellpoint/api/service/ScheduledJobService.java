@@ -73,10 +73,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setOwner(new UserInfo(getSubject()));
 		}
 		
-		UserInfo createdBy = new UserInfo(getSubject());
-		
-		scheduledJob.setCreatedBy(createdBy);
-		scheduledJob.setLastModifiedBy(createdBy);
 		scheduledJob.setStatus("Scheduled");
 		
 		setupScheduledJob(scheduledJob);
@@ -109,7 +105,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setJobTypeId(original.getJobTypeId());
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
 		scheduledJob.setJobTypeName(original.getJobTypeName());
-		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
 		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
 		scheduledJob.setLastRunDate(original.getLastRunDate());
@@ -146,8 +141,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		if (isNull(scheduledJob.getRunHistories())) {
 			scheduledJob.setRunHistories(original.getRunHistories());
 		}
-				
-		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		setupScheduledJob(scheduledJob);
 		

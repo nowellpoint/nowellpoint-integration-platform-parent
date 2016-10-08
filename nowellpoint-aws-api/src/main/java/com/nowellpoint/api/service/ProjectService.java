@@ -44,7 +44,6 @@ public class ProjectService extends ProjectModelMapper {
 	public void updateProject(String id, Project project) {
 		Project original = findProject( id );
 		project.setId(id);
-		project.setCreatedById(original.getCreatedById());
 		project.setCreatedDate(original.getCreatedDate());
 		
 		super.updateServiceProvider(project);

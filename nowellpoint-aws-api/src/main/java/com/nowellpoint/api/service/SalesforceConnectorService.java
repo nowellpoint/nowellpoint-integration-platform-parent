@@ -186,21 +186,19 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		return resource;
 	}
 	
-	/**************************************************************************************************************************
-	 *
+	/**
+	 * 
 	 * 
 	 * @param id
-	 * @param resource
-	 * @return the modified SalesforceConnectorDTO
+	 * @param salesforceConnector
 	 * 
-	 *
-	 *************************************************************************************************************************/
+	 * 
+	 */
 	
 	public void updateSalesforceConnector(String id, SalesforceConnector salesforceConnector) {		
 		SalesforceConnector original = findSalesforceConnector(id);
 		
 		salesforceConnector.setId(original.getId());
-		salesforceConnector.setCreatedById(original.getCreatedById());
 		salesforceConnector.setCreatedDate(original.getCreatedDate());
 		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
 		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
@@ -216,13 +214,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		super.updateSalesforceConnector(salesforceConnector);
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
 	 * 
 	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void deleteSalesforceConnector(String id) {
 		SalesforceConnector resource = findSalesforceConnector( id );

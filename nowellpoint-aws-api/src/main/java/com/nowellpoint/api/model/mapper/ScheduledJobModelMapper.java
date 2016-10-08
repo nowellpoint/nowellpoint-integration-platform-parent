@@ -19,6 +19,7 @@ import com.mongodb.client.model.UpdateOptions;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dto.ScheduledJob;
+import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 
@@ -49,15 +50,20 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	}
 	
 	protected void createScheduledJob(ScheduledJob scheduledJob) {
+		scheduledJob.setCreatedBy(new UserInfo(getSubject()));
+		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		submitScheduledJobRequest(document);
 		modelMapper.map(document, scheduledJob);
 	}
 	
 	protected void updateScheduledJob(ScheduledJob scheduledJob) {
+		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		submitScheduledJobRequest(document);
 		modelMapper.map(document, scheduledJob);
 	}

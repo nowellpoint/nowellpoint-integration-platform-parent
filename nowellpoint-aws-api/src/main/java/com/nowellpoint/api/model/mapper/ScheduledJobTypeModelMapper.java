@@ -42,13 +42,15 @@ public class ScheduledJobTypeModelMapper extends AbstractModelMapper<com.nowellp
 	
 	protected void createScheduledJobType(ScheduledJobType scheduledJobType) {
 		com.nowellpoint.api.model.document.ScheduledJobType document = modelMapper.map(scheduledJobType, com.nowellpoint.api.model.document.ScheduledJobType.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, scheduledJobType);
 	}
 	
 	protected void updateScheduledJobType(ScheduledJobType scheduledJobType) {
 		com.nowellpoint.api.model.document.ScheduledJobType document = modelMapper.map(scheduledJobType, com.nowellpoint.api.model.document.ScheduledJobType.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, scheduledJobType);
 	}
 	

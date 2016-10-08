@@ -122,38 +122,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	/**
 	 * 
 	 * 
-	 * @param subject
-	 * @param document
-	 * 
-	 * 
-	 */
-	
-	protected void create(String subject, T document) {	
-		Date now = Date.from(Instant.now());
-		
-		document.setId(new ObjectId());
-		document.setSystemCreationDate(now);
-		document.setSystemModifiedDate(now);
-		
-		if (document.getCreatedDate() == null) {
-			document.setCreatedDate(now);
-			document.setLastModifiedDate(now);
-		}
-		
-		set(document.getId().toString(), document);
-		hset(encode(subject), document);
-
-		try {
-			MongoDatastore.insertOne( document );
-		} catch (MongoException e) {
-			LOGGER.error( "Create Document exception", e.getCause());
-			throw e;
-		}		
-	}
-	
-	/**
-	 * 
-	 * 
 	 * @param document
 	 * @return
 	 * 
@@ -191,14 +159,13 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected void replace(String subject, T document) {
+	protected void replace(T document) {
 		Date now = Date.from(Instant.now());
 		
 		document.setLastModifiedDate(now);
 		document.setSystemModifiedDate(now);
 		
 		set(document.getId().toString(), document);
-		hset(encode(subject), document);
 		
 		try {
 			MongoDatastore.replaceOne( document );

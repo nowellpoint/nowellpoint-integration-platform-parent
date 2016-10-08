@@ -3,7 +3,7 @@ package com.nowellpoint.client.model;
 import java.util.Collections;
 import java.util.List;
 
-public class Application extends Resource {
+public class Application extends AbstractResource {
 	
 	private AccountProfile owner;
 	

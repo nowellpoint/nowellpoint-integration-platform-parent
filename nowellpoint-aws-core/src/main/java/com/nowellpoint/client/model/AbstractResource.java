@@ -8,25 +8,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class Resource {
+public abstract class AbstractResource {
 
 	/**
 	 * 
 	 */
 	
 	private String id;
-	
-	/**
-	 * 
-	 */
-	
-	private String createdById;
-	
-	/**
-	 * 
-	 */
-	
-	private String lastModifiedById;
 	
 	/**
 	 * 
@@ -39,8 +27,21 @@ public abstract class Resource {
 	 */
 	
 	private Date lastModifiedDate;
+	
+	/**
+	 * 
+	 */
+	
+	private UserInfo createdBy;
+	
+	/**
+	 * 
+	 */
+	
+	private UserInfo lastModifiedBy;
 
-	public Resource() {
+
+	public AbstractResource() {
 		
 	}
 
@@ -50,22 +51,6 @@ public abstract class Resource {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getCreatedById() {
-		return createdById;
-	}
-
-	public void setCreatedById(String createdById) {
-		this.createdById = createdById;
-	}
-
-	public String getLastModifiedById() {
-		return lastModifiedById;
-	}
-
-	public void setLastModifiedById(String lastModifiedById) {
-		this.lastModifiedById = lastModifiedById;
 	}
 
 	public Date getCreatedDate() {
@@ -82,5 +67,21 @@ public abstract class Resource {
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+	
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(UserInfo lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 }
