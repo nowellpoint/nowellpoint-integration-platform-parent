@@ -232,7 +232,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		// update ScheduledJobRequest
 		    		//
 		    		
-		    		scheduledJobRequest.setJobRunTime(fireTime.getTime() - System.currentTimeMillis());
+		    		scheduledJobRequest.setJobRunTime(System.currentTimeMillis() - fireTime.getTime());
 			    	scheduledJobRequestService.replace( scheduledJobRequest );
 			    	
 			    	//
@@ -245,7 +245,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	runHistory.setStatus(scheduledJobRequest.getStatus());
 			    	runHistory.setBackups(scheduledJobRequest.getBackups());
 			    	runHistory.setFailureMessage(scheduledJobRequest.getFailureMessage());
-			    	runHistory.setJobRunTime(Date.from(Instant.now()).getTime() - fireTime.getTime());
+			    	runHistory.setJobRunTime(scheduledJobRequest.getJobRunTime());
 			    	scheduledJob.addRunHistory(runHistory);
 			    	
 			    	//
@@ -269,6 +269,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJobRequest.setId(new ObjectId());
 			    	scheduledJobRequest.setFireInstanceId(null);
 			    	scheduledJobRequest.setJobRunTime(null);
+			    	scheduledJobRequest.setBackups(null);
 			    	scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
 			    	scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
 			    	scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());

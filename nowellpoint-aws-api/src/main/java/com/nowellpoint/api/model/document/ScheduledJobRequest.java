@@ -35,6 +35,8 @@ public class ScheduledJobRequest extends MongoDocument {
 	
 	private UserRef lastModifiedBy;
 	
+	private UserRef owner;
+	
 	private String environmentKey;
 	
 	private String environmentName;
@@ -111,6 +113,14 @@ public class ScheduledJobRequest extends MongoDocument {
 
 	public void setLastModifiedBy(UserRef lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public UserRef getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserRef owner) {
+		this.owner = owner;
 	}
 
 	public String getEnvironmentKey() {

@@ -89,6 +89,7 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		scheduledJobRequest.setScheduledJobId(scheduledJob.getId());
 		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
 		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
+		scheduledJobRequest.setOwner(scheduledJob.getOwner());
 		scheduledJobRequest.setCreatedDate(now);
 		scheduledJobRequest.setCreatedBy(userRef);
 		scheduledJobRequest.setDescription(scheduledJob.getDescription());
