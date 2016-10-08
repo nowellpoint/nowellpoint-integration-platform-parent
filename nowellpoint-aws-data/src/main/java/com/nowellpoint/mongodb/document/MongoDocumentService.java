@@ -132,8 +132,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		Date now = Date.from(Instant.now());
 		
 		document.setId(new ObjectId());
-		document.setCreatedById(subject);
-		document.setLastModifiedById(subject);
 		document.setSystemCreationDate(now);
 		document.setSystemModifiedDate(now);
 		
@@ -196,7 +194,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	protected void replace(String subject, T document) {
 		Date now = Date.from(Instant.now());
 		
-		document.setLastModifiedById(subject);
 		document.setLastModifiedDate(now);
 		document.setSystemModifiedDate(now);
 		

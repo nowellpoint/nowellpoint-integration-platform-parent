@@ -29,20 +29,6 @@ public abstract class MongoDocument implements Serializable {
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	private ObjectId id;
-
-	/**
-	 * 
-	 */
-	
-	@JsonInclude(Include.NON_NULL)
-	private String createdById;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonInclude(Include.NON_NULL)
-	private String lastModifiedById;
 	
 	/**
 	 * 
@@ -90,22 +76,6 @@ public abstract class MongoDocument implements Serializable {
 
 	public void setId(ObjectId id) {
 		this.id = id;
-	}
-
-	public String getCreatedById() {
-		return createdById;
-	}
-
-	public void setCreatedById(String createdById) {
-		this.createdById = createdById;
-	}
-
-	public String getLastModifiedById() {
-		return lastModifiedById;
-	}
-
-	public void setLastModifiedById(String lastModifiedById) {
-		this.lastModifiedById = lastModifiedById;
 	}
 
 	public Date getCreatedDate() {
