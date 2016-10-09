@@ -72,6 +72,8 @@ public class AccountProfile extends MongoDocument {
 	
 	private Photos photos;
 	
+	private Subscription subscription;
+	
 	private String leadId;
 	
 	private Set<CreditCard> creditCards;
@@ -274,6 +276,14 @@ public class AccountProfile extends MongoDocument {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 
 	public String getLeadId() {

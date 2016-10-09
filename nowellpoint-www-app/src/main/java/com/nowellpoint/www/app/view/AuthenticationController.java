@@ -27,6 +27,7 @@ import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.ExceptionHandler;
 import spark.Filter;
@@ -36,6 +37,7 @@ import spark.Route;
 
 public class AuthenticationController extends AbstractController {
 	
+	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
 	private static final String REDIRECT_URL = "com.nowellpoint.redirect.url";
 	
@@ -103,7 +105,7 @@ public class AuthenticationController extends AbstractController {
     		response.redirect(request.cookie(REDIRECT_URL));
     		response.removeCookie(REDIRECT_URL);
     	} else {
-    		response.redirect(Path.Route.START);
+    		response.redirect(Path.Route.DASHBOARD);
     	}
     		
     	return "";
@@ -165,6 +167,12 @@ public class AuthenticationController extends AbstractController {
     				.getMyAccountProfile();
     		
     		request.attribute("account", accountProfile);
+    		
+    		//if (accountProfile.getSubscription() == null && ! Path.Route.PLANS.equals(request.pathInfo())) {
+    		//	response.redirect(Path.Route.PLANS.replace(":id", accountProfile.getId());
+    		//	halt();
+    		//}
+    		
     	} else {
     		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);
     		response.redirect(Path.Route.LOGIN);

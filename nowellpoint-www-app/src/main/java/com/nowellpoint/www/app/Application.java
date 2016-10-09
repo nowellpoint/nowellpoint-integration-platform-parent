@@ -199,14 +199,14 @@ public class Application implements SparkApplication {
         get(Path.Route.ADMINISTRATION.concat("/properties"), administrationController.showManageProperties);	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
         
-		get(Path.Route.ACCOUNT_PROFILE_ME, accountProfileController.getMyAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
+        get(Path.Route.PLANS, accountProfileController.editSubscription);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.confirmDeactivateAccountProfile);
         delete(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.deactivateAccountProfile);
         delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), accountProfileController.removeProfilePicture);
-        get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAccountProfileAddress);
+        get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAddress);
         post(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.updateAccountProfileAddress);
         get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), accountProfileController.getCreditCard);
         get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), accountProfileController.newCreditCard);

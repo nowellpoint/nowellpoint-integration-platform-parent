@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 
@@ -154,6 +155,12 @@ public class AccountProfile extends AbstractResource {
 	 */
 	
 	private Address address;
+	
+	/**
+	 * 
+	 */
+	
+	private Subscription subscription;
 
 	/**
 	 * 
@@ -173,30 +180,27 @@ public class AccountProfile extends AbstractResource {
 	 * 
 	 */
 	
-	private String picture;
-	
-	/**
-	 * 
-	 */
-	
 	private Photos photos;
 	
 	/**
 	 * 
 	 */
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<CreditCard> creditCards;
 	
 	/**
 	 * 
 	 */
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean hasFullAccess;
 	
 	/**
 	 * 
 	 */
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean enableSalesforceLogin;
 	
 	public AccountProfile() {
@@ -391,6 +395,14 @@ public class AccountProfile extends AbstractResource {
 		this.address = address;
 	}
 
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
 	public String getHref() {
 		return href;
 	}
@@ -405,14 +417,6 @@ public class AccountProfile extends AbstractResource {
 
 	public void setEmailVerificationToken(String emailVerificationToken) {
 		this.emailVerificationToken = emailVerificationToken;
-	}
-
-	public String getPicture() {
-		return picture;
-	}
-
-	public void setPicture(String picture) {
-		this.picture = picture;
 	}
 
 	public Photos getPhotos() {

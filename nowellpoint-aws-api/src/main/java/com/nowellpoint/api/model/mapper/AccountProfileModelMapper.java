@@ -80,7 +80,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	protected void deleteAccountProfile(AccountProfile accountProfile) {
 		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 	
 	/**

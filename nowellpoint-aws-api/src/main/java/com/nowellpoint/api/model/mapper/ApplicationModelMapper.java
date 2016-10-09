@@ -57,6 +57,7 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 	
 	protected void deleteApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 }

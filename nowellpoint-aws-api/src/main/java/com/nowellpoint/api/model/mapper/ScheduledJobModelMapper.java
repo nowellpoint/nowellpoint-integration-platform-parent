@@ -76,7 +76,8 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	
 	protected void deleteScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 	
 	private void submitScheduledJobRequest(com.nowellpoint.api.model.document.ScheduledJob scheduledJob) {

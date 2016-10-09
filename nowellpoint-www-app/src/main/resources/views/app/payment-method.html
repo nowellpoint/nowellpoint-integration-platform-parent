@@ -170,7 +170,7 @@
 
                                 <div class="form-group col-md-12">
                                     <div class="pull-right">
-                                        <a href="${labels['base.path']}/me#payment-methods" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
+                                        <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button" tabindex="14">${labels["cancel"]}</a>
                                         <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
                                     </div>
                                 </div>
@@ -235,7 +235,7 @@
 
                             <div class="col-md-12">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/me#payment-methods" class="btn btn-default" role="button">${labels["back"]}</a>
+                                    <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button">${labels["back"]}</a>
                                     <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-default" role="button">${labels["edit"]}</a>
                                     <#if ! creditCard.primary>
                                         <a href="#" class="confirm-delete btn btn-danger" role="button" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}">${labels["delete"]}</a></#if>

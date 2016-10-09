@@ -97,6 +97,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	
 	protected void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 }

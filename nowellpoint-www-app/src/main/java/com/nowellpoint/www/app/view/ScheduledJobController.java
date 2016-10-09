@@ -23,12 +23,15 @@ import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 public class ScheduledJobController extends AbstractController {
+	
+	private static final Logger LOGGER = Logger.getLogger(ScheduledJobController.class.getName());
 
 	public ScheduledJobController(Configuration configuration) {
 		super(ScheduledJobController.class, configuration);

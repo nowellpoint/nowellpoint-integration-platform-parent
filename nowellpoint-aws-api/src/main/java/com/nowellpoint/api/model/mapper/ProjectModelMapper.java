@@ -57,6 +57,6 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 	
 	protected void deleteServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
-		delete(getSubject(), document);
+		hdel(encode(getSubject()), document);
 	}
 }

@@ -30,16 +30,15 @@ import spark.Request;
 
 abstract class AbstractController {
 	
+	private static final Logger LOGGER = Logger.getLogger(AbstractController.class.getName());
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	private Class<?> controllerClass;
 	private Configuration configuration;
-	protected static Logger LOGGER;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
 		this.controllerClass = controllerClass;
 		this.configuration = configuration;
-		LOGGER = Logger.getLogger(controllerClass.getName());
 	}
 	
 	protected Map<String, Object> getModel() {

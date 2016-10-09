@@ -34,6 +34,7 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
+import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.ServiceException;
@@ -55,7 +56,6 @@ public class AccountProfileResource {
 	@Context 
 	private SecurityContext securityContext;
 	
-	
 	@GET
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -69,12 +69,48 @@ public class AccountProfileResource {
 	}
 	
 	@GET
+	@Path("{id}/subscription")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSubscription(@PathParam("id") String id) {
+		
+		Subscription subscription = accountProfileService.getSubscription( id );
+		
+		return Response.ok(subscription)
+				.build();
+	}
+	
+	@POST
+	@Path("{id}/subscription")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addSubscription(@PathParam("id") String id, Subscription subscription) {
+		
+		accountProfileService.addSubscription( id, subscription );
+		
+		return Response.ok(subscription)
+				.build();
+	}
+	
+	@PUT
+	@Path("{id}/subscription")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateSubscription(@PathParam("id") String id, Subscription subscription) {
+		
+		accountProfileService.updateSubscription( id, subscription );
+		
+		return Response.ok(subscription)
+				.build();
+	}
+	
+	@GET
 	@Path("{id}/address")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAccountProfileAddress(@PathParam("id") String id) {
+	public Response getAddress(@PathParam("id") String id) {
 		
-		Address address = accountProfileService.getAccountProfileAddress( id );
+		Address address = accountProfileService.getAddress( id );
 		
 		return Response.ok(address)
 				.build();
@@ -84,9 +120,9 @@ public class AccountProfileResource {
 	@Path("{id}/address")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateAccountProfileAddress(@PathParam("id") String id, Address address) {
+	public Response updateAddress(@PathParam("id") String id, Address address) {
 		
-		accountProfileService.updateAccountProfileAddress( id, address);
+		accountProfileService.updateAddress( id, address);
 		
 		return Response.ok(address)
 				.build();
@@ -165,6 +201,14 @@ public class AccountProfileResource {
     public Response getAccountProfile(@PathParam("id") String id) {
 		
 		AccountProfile resource = accountProfileService.findAccountProfile( id );
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		if (! subject.equals(resource.getId())) {
+			resource.setCreditCards(null);
+			resource.setHasFullAccess(null);
+			resource.setEnableSalesforceLogin(null);
+		} 
 		
 		return Response.ok(resource)
 				.build();

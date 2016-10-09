@@ -1,0 +1,98 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container">
+            <div class="row">
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h6 class="dashhead-subtitle"></h6>
+                            <h2 class="dashhead-title">${labels["plans"]}</h2>
+                        </div>
+                        <div class="dashhead-toolbar">
+                            <!-- <#if accountProfile.subscription.planCode ??> -->
+                            <p class="pull-right">
+                                <a id="cancel" href="${labels['base.path']}/${accountProfile.id}#subscription" class="btn btn-primary-outline" role="button"><span class="icon icon-back"></span></a>
+                            </p>
+                            <!--  </#if> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+            </div>
+            <br>
+
+            <div class="row">
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+            </div>
+
+            <div class="row">
+
+                <ul class="nav nav-stacked">
+
+                    <li>
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <br>
+                                <h4 class="text-primary">Developer</h4>
+                                <ul>
+                                    <li>
+                                        <h4><small>Unlimited backups of pre-production instances</small></h4></li>
+                                </ul>
+                                <br>
+                                <!-- <#if accountProfile.subscription.planCode == "DEVELOPER"> -->
+                                <p class="text-right text-success">${labels["current.subscription"]}</p>
+                                <!--  <#else> -->
+                                <form method="POST" action="${labels['base.path']}/${accountProfile.id!}/subscription">
+                                <p class="pull-right">
+                                    <button type="submit" id="add-plan" class="btn btn-primary">${labels["add.plan"]}</button>
+                                </p>
+                                </form>        
+                                <!--  </#if> -->
+                            </div>
+                        </div>
+
+                    </li>
+
+                    <li>
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <br>
+                                <h4 class="text-primary">Standard</h4>
+                                <ul>
+                                    <li>
+                                        <h4><small>Daily backups of production instances</small></h4></li>
+                                    <li>
+                                        <h4><small>Unlimited backups of pre-production instances</small></h4></li>
+                                </ul>
+                                <br>
+                                <!-- <#if accountProfile.subscription.planCode == "BASIC"> -->
+                                <p class="text-right text-success">${labels["current.subscription"]}</p>
+                                <!-- <#else> -->
+                                <form method="POST" action="${labels['base.path']}/${accountProfile.id!}/subscription">
+                                <p class="pull-right">
+                                    <button type="submit" id="add-plan" class="btn btn-primary">${labels["add.plan"]}</button>
+                                </p>
+                                    </form>     
+                                <!-- </#if> -->
+                            </div>
+                        </div>
+
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+    </@t.page>

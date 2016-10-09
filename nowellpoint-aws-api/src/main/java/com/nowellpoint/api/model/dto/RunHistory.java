@@ -1,6 +1,7 @@
 package com.nowellpoint.api.model.dto;
 
 import java.util.Date;
+import java.util.Set;
 
 public class RunHistory {
 
@@ -13,6 +14,8 @@ public class RunHistory {
 	private String status;
 	
 	private String failureMessage;
+	
+	private Set<Backup> backups;
 	
 	public RunHistory() {
 		
@@ -56,5 +59,13 @@ public class RunHistory {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	public Set<Backup> getBackups() {
+		return backups;
+	}
+
+	public void setBackups(Set<Backup> backups) {
+		this.backups = backups;
 	}
 }

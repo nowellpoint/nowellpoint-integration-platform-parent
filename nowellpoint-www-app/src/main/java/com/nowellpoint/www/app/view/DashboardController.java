@@ -23,6 +23,9 @@ public class DashboardController extends AbstractController {
 	public Route showStartPage = (Request request, Response response) -> {
     	Map<String,Object> model = getModel();
     	model.put("account", getAccount(request));
+    	
+    	
+    	
     	return render(request, model, Path.Template.START);
 	};
 	

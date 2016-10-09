@@ -45,6 +45,8 @@ public class Path {
 		public static final String APPLICATION_SERVICE_UPDATE = String.format(APPLICATION_CONTEXT, "applications/:id/services/:key");
 		public static final String PROJECTS = String.format(APPLICATION_CONTEXT, "projects");
 		public static final String PROVIDERS = String.format(APPLICATION_CONTEXT, "providers");
+		
+		public static final String PLANS = String.format(APPLICATION_CONTEXT, "account-profile/:id/subscription");
 		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce");
 		public static final String CONNECTORS_SALESFORCE_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/edit");
@@ -63,7 +65,6 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_SERVICE_ADD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/services");
 		public static final String CONNECTORS_SALESFORCE_SERVICE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/services/:key");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
-		public static final String ACCOUNT_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile/me");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
 		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "account-profile/:id/address");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
@@ -103,6 +104,8 @@ public class Path {
 		public static final String SERVICE_CATALOG = String.format(APPLICATION_CONTEXT, "service-catalog.html");
 		public static final String REVIEW_SERVICE_PLANS = String.format(APPLICATION_CONTEXT, "review-service-plans.html");
 		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "query-edit.html");
+		
+		public static final String PLAN_SELECT = String.format(APPLICATION_CONTEXT, "plans-select.html");
 		public static final String SALESFORCE_OUTBOUND_MESSAGE = String.format(APPLICATION_CONTEXT, "salesforce-outbound-messages.html");
 		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
 		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");

@@ -38,12 +38,14 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Environment;
 import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
 import com.nowellpoint.api.model.document.ScheduledJob;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
+import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -60,6 +62,7 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.mongodb.document.MongoDocumentService;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -262,25 +265,23 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	
 			    	//
 			    	// setup the next scheduled job
-			    	//
+			    	//			    	
 			    	
-			    	ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
-			    	
-			    	scheduledJobRequest.setId(new ObjectId());
-			    	scheduledJobRequest.setFireInstanceId(null);
-			    	scheduledJobRequest.setJobRunTime(null);
-			    	scheduledJobRequest.setBackups(null);
-			    	scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
-			    	scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
-			    	scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
-			    	scheduledJobRequest.setYear(dateTime.getYear());
-			    	scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
-			    	scheduledJobRequest.setDay(dateTime.getDayOfMonth());
-			    	scheduledJobRequest.setHour(dateTime.getHour());
-			    	scheduledJobRequest.setMinute(dateTime.getMinute());
-			    	scheduledJobRequest.setSecond(dateTime.getSecond());
-			    	scheduledJobRequest.setStatus("Scheduled");
-			    	scheduledJobRequestService.create(scheduledJobRequest);
+//			    	scheduledJobRequest.setId(new ObjectId());
+//			    	scheduledJobRequest.setFireInstanceId(null);
+//			    	scheduledJobRequest.setJobRunTime(null);
+//			    	scheduledJobRequest.setBackups(null);
+//			    	scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
+//			    	scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
+//			    	scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
+//			    	scheduledJobRequest.setYear(dateTime.getYear());
+//			    	scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
+//			    	scheduledJobRequest.setDay(dateTime.getDayOfMonth());
+//			    	scheduledJobRequest.setHour(dateTime.getHour());
+//			    	scheduledJobRequest.setMinute(dateTime.getMinute());
+//			    	scheduledJobRequest.setSecond(dateTime.getSecond());
+//			    	scheduledJobRequest.setStatus("Scheduled");
+			    	scheduledJobRequestService.create(setupNextScheduledJobRequest(scheduledJob));
 			    	
 			    	return null;
 		    	});
@@ -294,6 +295,48 @@ public class SalesforceMetadataBackupJob implements Job {
 				throw new JobExecutionException(e.getMessage());
 			}
 		}
+	}
+	
+	private ScheduledJobRequest setupNextScheduledJobRequest(ScheduledJob scheduledJob) {
+		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
+		
+		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
+    	
+    	DBRef reference = new DBRef( collectionName, id );
+		
+		UserRef userRef = new UserRef();
+		userRef.setIdentity(reference);
+    	
+		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest();
+		scheduledJobRequest.setScheduledJobId(scheduledJob.getId());
+		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
+		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
+		scheduledJobRequest.setOwner(scheduledJob.getOwner());
+		scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
+		scheduledJobRequest.setCreatedBy(userRef);
+		scheduledJobRequest.setDescription(scheduledJob.getDescription());
+		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
+		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
+		scheduledJobRequest.setIsSandbox(scheduledJob.getIsSandbox());
+		scheduledJobRequest.setJobTypeCode(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
+		scheduledJobRequest.setStatus(scheduledJob.getStatus());
+		scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
+		scheduledJobRequest.setLastModifiedBy(userRef);
+		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
+		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
+		scheduledJobRequest.setSystemCreationDate(Date.from(Instant.now()));
+		scheduledJobRequest.setSystemModifiedDate(Date.from(Instant.now()));
+		scheduledJobRequest.setYear(dateTime.getYear());
+		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
+		scheduledJobRequest.setDay(dateTime.getDayOfMonth());
+		scheduledJobRequest.setHour(dateTime.getHour());
+		scheduledJobRequest.setMinute(dateTime.getMinute());
+		scheduledJobRequest.setSecond(dateTime.getSecond());
+		
+		return scheduledJobRequest;
 	}
 	
 	/**

@@ -208,24 +208,9 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected void delete(String subject, T document) {
+	protected void delete(T document) {
 		del(document.getId().toString());
-		hdel(encode(subject), document);
 		
-		try {
-			MongoDatastore.deleteOne( document );
-		} catch (MongoException e) {
-			LOGGER.error( "Delete Document exception", e.getCause() );
-			throw e;
-		}
-	}
-	
-	/**
-	 * 
-	 * @param document
-	 */
-	
-	protected void delete(T document) {		
 		try {
 			MongoDatastore.deleteOne( document );
 		} catch (MongoException e) {

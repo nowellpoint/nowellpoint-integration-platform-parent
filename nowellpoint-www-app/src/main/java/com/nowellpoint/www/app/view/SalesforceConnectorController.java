@@ -633,15 +633,19 @@ public class SalesforceConnectorController extends AbstractController {
 		try {
 			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
 		} catch (BadRequestException e) {
-			message = e.getMessage();
+			
+			Map<String, Object> model = getModel();
+	    	model.put("salesforceConnector", salesforceConnector);
+	    	model.put("successMessage", request.cookie("successMessage"));
+	    	model.put("errorMessage", message);
+			
+	    	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
+			
 		}
 		
-		Map<String, Object> model = getModel();
-    	model.put("salesforceConnector", salesforceConnector);
-    	model.put("successMessage", request.cookie("successMessage"));
-    	model.put("errorMessage", message);
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", salesforceConnector.getId()));
 		
-    	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
+		return "";
 	};
 
 	/**

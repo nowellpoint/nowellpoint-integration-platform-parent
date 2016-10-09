@@ -35,6 +35,7 @@ import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
+import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
@@ -227,13 +228,16 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
+	 * 
 	 * @param subject
 	 * @param id
 	 * @param address
 	 * @return
+	 * 
+	 * 
 	 */
 	
-	public void updateAccountProfileAddress(String id, Address address) {
+	public void updateAddress(String id, Address address) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		
 		if (isNotEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
@@ -246,22 +250,66 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		super.updateAccountProfile(accountProfile);
 	}
 	
+	public Subscription getSubscription(String id) {
+		AccountProfile accountProfile = findAccountProfile( id );
+		return accountProfile.getSubscription();
+	}
+	
 	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param subscription
+	 * 
+	 * 
+	 */
+	
+	public void addSubscription(String id, Subscription subscription) {
+		AccountProfile accountProfile = findAccountProfile( id );
+		subscription.setAddedOn(Date.from(Instant.now()));
+		subscription.setUpdatedOn(Date.from(Instant.now()));
+		accountProfile.setSubscription(subscription);
+		super.updateAccountProfile(accountProfile);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param subscription
+	 * 
+	 * 
+	 */
+	
+	public void updateSubscription(String id, Subscription subscription) {
+		AccountProfile accountProfile = findAccountProfile( id );
+		subscription.setUpdatedOn(Date.from(Instant.now()));
+		accountProfile.setSubscription(subscription);
+		super.updateAccountProfile(accountProfile);
+	}
+	
+	/**
+	 * 
 	 * 
 	 * @param subject
 	 * @param id
 	 * @return
+	 * 
+	 * 
 	 */
 	
-	public Address getAccountProfileAddress(String id) {
+	public Address getAddress(String id) {
 		AccountProfile resource = findAccountProfile( id );
 		return resource.getAddress();
 	}
 	
 	/**
 	 * 
+	 * 
 	 * @param id
 	 * @return Identity resource for id
+	 * 
+	 * 
 	 */
 	
 	public AccountProfile findAccountProfile(String id) {	
@@ -270,17 +318,38 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * @param subject
-	 * @return Identity resource for subject
+	 * 
+	 * @param href
+	 * @return AccountProfile resource for subject
+	 * 
+	 * 
 	 */
 	
 	public AccountProfile findAccountProfileByHref(String href) {
 		return super.findAccountProfileByHref(href);
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param username
+	 * @return AccountProfile resource for subject
+	 * 
+	 * 
+	 */
+	
 	public AccountProfile findAccountProfileByUsername(String username) {
 		return super.findAccountProfileByUsername(username);
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param userId
+	 * @param profileHref
+	 * 
+	 * 
+	 */
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
 		

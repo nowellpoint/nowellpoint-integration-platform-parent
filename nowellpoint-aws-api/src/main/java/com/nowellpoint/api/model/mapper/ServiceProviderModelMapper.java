@@ -123,6 +123,7 @@ public class ServiceProviderModelMapper extends AbstractModelMapper<com.nowellpo
 	
 	protected void deleteServiceProvider(ServiceProvider serviceProvider) {
 		com.nowellpoint.api.model.document.ServiceProvider document = modelMapper.map(serviceProvider, com.nowellpoint.api.model.document.ServiceProvider.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 }

@@ -136,6 +136,12 @@ public class AccountProfile extends AbstractResource {
 	 * 
 	 */
 	
+	private Subscription subscription;
+	
+	/**
+	 * 
+	 */
+	
 	private List<CreditCard> creditCards;
 	
 	/**
@@ -157,6 +163,7 @@ public class AccountProfile extends AbstractResource {
 	public AccountProfile() {
 		address = new Address();
 		photos = new Photos();
+		subscription = new Subscription();
 		creditCards = new ArrayList<CreditCard>();
 	}
 	
@@ -331,6 +338,14 @@ public class AccountProfile extends AbstractResource {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 
 	public List<CreditCard> getCreditCards() {

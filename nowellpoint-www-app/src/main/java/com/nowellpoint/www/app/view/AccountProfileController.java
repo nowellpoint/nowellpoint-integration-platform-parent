@@ -46,32 +46,6 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getMyAccountProfile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route getMyAccountProfile = (Request request, Response response) -> {
-		AccountProfile account = getAccount(request);
-		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", account.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", account.getLastModifiedBy().getId());
-		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", account);
-		model.put("successMessage", request.cookie("successMessage"));
-		model.put("locales", getLocales(account));
-		model.put("languages", getSupportedLanguages());
-		model.put("createdByHref", createdByHref);
-		model.put("lastModifiedByHref", lastModifiedByHref);
-
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_ME);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
 	 * getAccountProfile
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -99,8 +73,12 @@ public class AccountProfileController extends AbstractController {
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
+		
+		if (accountProfile.getCreditCards().isEmpty()) {
+			return render(request, model, Path.Template.ACCOUNT_PROFILE);
+		}
 
-		return render(request, model, Path.Template.ACCOUNT_PROFILE);
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_ME);
 	};
 	
 	/**
@@ -127,12 +105,69 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editAccountProfileAddress
+	 * editPlan
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route editAccountProfileAddress = (Request request, Response response) -> {		
+	public Route editSubscription = (Request request, Response response) -> {		
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		model.put("accountProfile", account);
+		
+		return render(request, model, Path.Template.PLAN_SELECT);
+	};	
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * addPlan
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route addSubscription = (Request request, Response response) -> {		
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		model.put("id", account.getId());
+		
+		return render(request, model, Path.Template.PLAN_SELECT);
+	};	
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * updatePlan
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route updateSubscription = (Request request, Response response) -> {		
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		model.put("id", account.getId());
+		
+		return render(request, model, Path.Template.PLAN_SELECT);
+	};	
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * editAddress
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route editAddress = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
