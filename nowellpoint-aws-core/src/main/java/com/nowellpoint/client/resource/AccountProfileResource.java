@@ -65,7 +65,7 @@ public class AccountProfileResource extends AbstractResource {
 		return new SubscriptionResource(token);
 	}
 	
-	class SubscriptionResource extends AbstractResource {
+	public class SubscriptionResource extends AbstractResource {
 		
 		public SubscriptionResource(Token token) {
 			super(token);

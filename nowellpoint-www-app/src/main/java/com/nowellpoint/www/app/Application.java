@@ -36,7 +36,6 @@ import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.ScheduledJobController;
-import com.nowellpoint.www.app.view.ServiceProviderController;
 import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.VerifyEmailController;
@@ -127,7 +126,6 @@ public class Application implements SparkApplication {
         ContactUsController contactUsController = new ContactUsController(cfg);
         ApplicationController applicationController = new ApplicationController(cfg);
         ProjectController projectController = new ProjectController(cfg);
-        ServiceProviderController serviceProviderController = new ServiceProviderController(cfg);
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
         ScheduledJobController scheduledJobsController = new ScheduledJobController(cfg);
         
@@ -185,10 +183,6 @@ public class Application implements SparkApplication {
 		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
 		post(Path.Route.PROJECTS, projectController.saveProject);
 		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
-		
-		get(Path.Route.PROVIDERS, serviceProviderController.getServiceProviders);
-        get(Path.Route.PROVIDERS.concat("/:id"), serviceProviderController.getServiceProvider);
-        delete(Path.Route.PROVIDERS.concat("/:id"), serviceProviderController.deleteServiceProvider);
         
         get(Path.Route.SALESFORCE_OAUTH, salesforceOauthController.oauth);
         get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), salesforceOauthController.callback);

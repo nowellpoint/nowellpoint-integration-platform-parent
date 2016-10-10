@@ -2,6 +2,10 @@ package com.nowellpoint.api.model.dto;
 
 public class Plan {
 	
+	private String localeSidKey;
+	
+	private String languageLocaleKey;
+	
 	private String planName;
 	
 	private String code;
@@ -26,6 +30,22 @@ public class Plan {
 	
 	public Plan() {
 		
+	}
+
+	public String getLocaleSidKey() {
+		return localeSidKey;
+	}
+
+	public void setLocaleSidKey(String localeSidKey) {
+		this.localeSidKey = localeSidKey;
+	}
+
+	public String getLanguageLocaleKey() {
+		return languageLocaleKey;
+	}
+
+	public void setLanguageLocaleKey(String languageLocaleKey) {
+		this.languageLocaleKey = languageLocaleKey;
 	}
 
 	public String getPlanName() {

@@ -20,11 +20,16 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.AddResult;
+import com.nowellpoint.client.model.AddSubscriptionRequest;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.GetAccountProfileRequest;
+import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.model.UpdateSubscriptionRequest;
+import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -115,6 +120,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
+		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", account);
 		
@@ -134,8 +140,24 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
+		String currencyIsoCode = request.queryParams("currencyIsoCode");
+		String planCode = request.queryParams("planCode");
+		Double unitPrice = Double.valueOf(request.queryParams("unitPrice"));
+		
+		AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest()
+				.withAccountProfileId(account.getId())
+				.withCurrencyIsoCode(currencyIsoCode)
+				.withPlanCode(planCode)
+				.withUnitPrice(unitPrice);
+		
+		AddResult<Subscription> addResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.subscription()
+				.add(addSubscriptionRequest);
+		
 		Map<String, Object> model = getModel();
 		model.put("id", account.getId());
+		model.put("subscription", addResult.getTarget());
 		
 		return render(request, model, Path.Template.PLAN_SELECT);
 	};	
@@ -153,8 +175,24 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
+		String currencyIsoCode = request.queryParams("currencyIsoCode");
+		String planCode = request.queryParams("planCode");
+		Double unitPrice = Double.valueOf(request.queryParams("unitPrice"));
+		
+		UpdateSubscriptionRequest updateSubscriptionRequest = new UpdateSubscriptionRequest()
+				.withAccountProfileId(account.getId())
+				.withCurrencyIsoCode(currencyIsoCode)
+				.withPlanCode(planCode)
+				.withUnitPrice(unitPrice);
+		
+		UpdateResult<Subscription> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.subscription()
+				.update(updateSubscriptionRequest);
+		
 		Map<String, Object> model = getModel();
 		model.put("id", account.getId());
+		model.put("subscription", updateResult.getTarget());
 		
 		return render(request, model, Path.Template.PLAN_SELECT);
 	};	

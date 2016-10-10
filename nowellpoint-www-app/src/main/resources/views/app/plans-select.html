@@ -53,9 +53,12 @@
                                 <p class="text-right text-success">${labels["current.subscription"]}</p>
                                 <!--  <#else> -->
                                 <form method="POST" action="${labels['base.path']}/${accountProfile.id!}/subscription">
-                                <p class="pull-right">
-                                    <button type="submit" id="add-plan" class="btn btn-primary">${labels["add.plan"]}</button>
-                                </p>
+                                    <input type="hidden" name="currencyIsoCode" id="currencyIsoCode" value="USD" />
+                                    <input type="hidden" name="planCode" id="planCode" value="DEVELOPER" />
+                                    <input type="hidden" name="unitPrice" id="unitPrice" value="0.00" />
+                                    <p class="pull-right">
+                                        <button type="submit" id="add-plan" class="btn btn-primary">${labels["add.plan"]}</button>
+                                    </p>
                                 </form>        
                                 <!--  </#if> -->
                             </div>
@@ -80,6 +83,9 @@
                                 <p class="text-right text-success">${labels["current.subscription"]}</p>
                                 <!-- <#else> -->
                                 <form method="POST" action="${labels['base.path']}/${accountProfile.id!}/subscription">
+                                    <input type="hidden" name="currencyIsoCode" id="currencyIsoCode" value="USD" />
+                                    <input type="hidden" name="planCode" id="planCode" value="BASIC" />
+                                    <input type="hidden" name="unitPrice" id="unitPrice" value="7.00" />
                                 <p class="pull-right">
                                     <button type="submit" id="add-plan" class="btn btn-primary">${labels["add.plan"]}</button>
                                 </p>

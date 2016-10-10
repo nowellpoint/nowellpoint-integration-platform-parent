@@ -10,6 +10,10 @@ public class Plan implements Serializable {
 	
 	private static final long serialVersionUID = -7569793449815113870L;
 	
+	private String localeSidKey;
+	
+	private String languageLocaleKey;
+	
 	private String planName;
 	
 	private String code;
@@ -36,6 +40,22 @@ public class Plan implements Serializable {
 	
 	public Plan() {
 		
+	}
+
+	public String getLocaleSidKey() {
+		return localeSidKey;
+	}
+
+	public void setLocaleSidKey(String localeSidKey) {
+		this.localeSidKey = localeSidKey;
+	}
+
+	public String getLanguageLocaleKey() {
+		return languageLocaleKey;
+	}
+
+	public void setLanguageLocaleKey(String languageLocaleKey) {
+		this.languageLocaleKey = languageLocaleKey;
 	}
 
 	public String getPlanName() {
