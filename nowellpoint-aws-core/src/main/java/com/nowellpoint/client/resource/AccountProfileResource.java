@@ -5,14 +5,12 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.AddResult;
-import com.nowellpoint.client.model.AddSubscriptionRequest;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetAccountProfileRequest;
-import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.Subscription;
-import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UpdateSubscriptionRequest;
+import com.nowellpoint.client.model.SetResult;
+import com.nowellpoint.client.model.SetSubscriptionRequest;
 import com.nowellpoint.client.model.idp.Token;
 
 public class AccountProfileResource extends AbstractResource {
@@ -23,7 +21,7 @@ public class AccountProfileResource extends AbstractResource {
 		super(token);
 	}
 	
-	public AccountProfile getMyAccountProfile() {
+	public GetResult<AccountProfile> get() {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
@@ -31,34 +29,42 @@ public class AccountProfileResource extends AbstractResource {
 				.path("me")
 				.execute();
 		
-		AccountProfile accountProfile = null;
+		GetResult<AccountProfile> result = null;
     	
-    	if (httpResponse.getStatusCode() == 200) {
-    		accountProfile = httpResponse.getEntity(AccountProfile.class);
-    	} else {
-    		throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+    		result = new GetResultImpl<AccountProfile>(accountProfile); 
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+    		Error error = httpResponse.getEntity(Error.class);
+			result = new GetResultImpl<AccountProfile>(error);
     	}
     	
-    	return accountProfile;
+    	return result;
 	} 
 	
-	public AccountProfile getAccountProfile(GetAccountProfileRequest getAccountProfileRequest) {
+	public GetResult<AccountProfile> get(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
-				.path(getAccountProfileRequest.getId())
+				.path(id)
 				.execute();
 		
-		AccountProfile accountProfile = null;
+		GetResult<AccountProfile> result = null;
     	
-		if (httpResponse.getStatusCode() == Status.OK) {
-			accountProfile = httpResponse.getEntity(AccountProfile.class);
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+    		result = new GetResultImpl<AccountProfile>(accountProfile); 
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
-		}
+    		Error error = httpResponse.getEntity(Error.class);
+			result = new GetResultImpl<AccountProfile>(error);
+    	}
     	
-    	return accountProfile;
+    	return result;
 	} 
 	
 	public SubscriptionResource subscription() {
@@ -71,51 +77,27 @@ public class AccountProfileResource extends AbstractResource {
 			super(token);
 		}
 		
-		public UpdateResult<Subscription> update(UpdateSubscriptionRequest updateSubscriptionRequest) {
-			HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+		public SetResult<Subscription> set(SetSubscriptionRequest setSubscriptionRequest) {
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
-					.path(updateSubscriptionRequest.getAccountProfileId())
+					.path(setSubscriptionRequest.getAccountProfileId())
 					.path("subscription")
-					.parameter("currencyIsoCode", updateSubscriptionRequest.getCurrencyIsoCode())
-					.parameter("planCode", updateSubscriptionRequest.getPlanCode())
-					.parameter("unitPrice", String.valueOf(updateSubscriptionRequest.getUnitPrice()))
+					.parameter("currencyIsoCode", setSubscriptionRequest.getCurrencyIsoCode())
+					.parameter("planCode", setSubscriptionRequest.getPlanCode())
+					.parameter("unitPrice", String.valueOf(setSubscriptionRequest.getUnitPrice()))
 					.execute();
 			
-			UpdateResult<Subscription> result = null;
+			SetResult<Subscription> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
 				Subscription subscription = httpResponse.getEntity(Subscription.class);
-				result = new UpdateResultImpl<Subscription>(subscription);
+				result = new SetResultImpl<Subscription>(subscription);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Subscription>(error);
-			}
-			
-			return result;
-		}
-		
-		public AddResult<Subscription> add(AddSubscriptionRequest addSubscriptionRequest) {
-			HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-					.path(addSubscriptionRequest.getAccountProfileId())
-					.path("subscription")
-					.parameter("currencyIsoCode", addSubscriptionRequest.getCurrencyIsoCode())
-					.parameter("planCode", addSubscriptionRequest.getPlanCode())
-					.parameter("unitPrice", String.valueOf(addSubscriptionRequest.getUnitPrice()))
-					.execute();
-			
-			AddResult<Subscription> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Subscription subscription = httpResponse.getEntity(Subscription.class);
-				result = new AddResultImpl<Subscription>(subscription);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new AddResultImpl<Subscription>(error);
+				result = new SetResultImpl<Subscription>(error);
 			}
 			
 			return result;

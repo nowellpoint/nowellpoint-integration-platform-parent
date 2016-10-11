@@ -549,38 +549,6 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 * 
 	 * @param id
-	 * @param serviceProviderId
-	 * @param serviceType
-	 * @param code
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	public ServiceInstanceDTO addServiceInstance(String id, String key) {		
-		SalesforceConnector resource = findSalesforceConnector(id);
-		
-		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptySet());
-		}
-		
-		ServiceInstanceDTO serviceInstance = commonFunctions.buildServiceInstance(key);
-		
-		resource.getServiceInstances().stream().filter(s -> s.getServiceType().equals(serviceInstance.getServiceType())).findFirst().ifPresent( s-> {
-			throw new ServiceException(String.format("Unable to add new environment. Service has already been added with type: %s", s.getServiceName()));
-		});
-		
-		resource.addServiceInstance(serviceInstance);
-		
-		updateSalesforceConnector(id, resource);
-		
-		return serviceInstance;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
 	 * @param key
 	 * @param serviceInstance
 	 * @return

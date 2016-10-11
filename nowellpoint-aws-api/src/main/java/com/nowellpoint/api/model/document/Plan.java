@@ -1,8 +1,15 @@
 package com.nowellpoint.api.model.document;
 
-import java.io.Serializable;
+import java.util.Set;
 
-public class Plan implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.api.model.codec.PlanCodec;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.MongoDocument;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collectionName="plans", codec=PlanCodec.class)
+public class Plan extends MongoDocument {
 
 	/**
 	 * 
@@ -16,7 +23,7 @@ public class Plan implements Serializable {
 	
 	private String planName;
 	
-	private String code;
+	private String planCode;
 	
 	private String currencyIsoCode;
 	
@@ -34,9 +41,9 @@ public class Plan implements Serializable {
 	
 	private Double proratedDailyUnitPrice;
 	
-	private Integer transactions;
+	private Boolean isActive;
 	
-	private String support;
+	private Set<String> features;
 	
 	public Plan() {
 		
@@ -66,12 +73,12 @@ public class Plan implements Serializable {
 		this.planName = planName;
 	}
 
-	public String getCode() {
-		return code;
+	public String getPlanCode() {
+		return planCode;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setPlanCode(String planCode) {
+		this.planCode = planCode;
 	}
 
 	public String getCurrencyIsoCode() {
@@ -138,19 +145,19 @@ public class Plan implements Serializable {
 		this.proratedDailyUnitPrice = proratedDailyUnitPrice;
 	}
 
-	public Integer getTransactions() {
-		return transactions;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setTransactions(Integer transactions) {
-		this.transactions = transactions;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public String getSupport() {
-		return support;
+	public Set<String> getFeatures() {
+		return features;
 	}
 
-	public void setSupport(String support) {
-		this.support = support;
+	public void setFeatures(Set<String> features) {
+		this.features = features;
 	}	
 }

@@ -26,7 +26,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
-import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -195,89 +194,5 @@ public class SalesforceConnectorResource {
 		return Response.ok()
 				.entity(environment)
 				.build(); 
-	}
-	
-	@POST
-	@Path("salesforce/{id}/service")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addServiceInstance(@PathParam(value="id") String id, @FormParam(value="key") String key) {
-		
-		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.addServiceInstance( id, key);
-		
-		if ( salesforceInstance == null ) {
-			throw new NotFoundException( String.format( "%s Key: %s does not exist or you do not have access to view", "Service", key ) );
-		}
-		
-		return Response.ok()
-				.entity(salesforceInstance)
-				.build(); 	
-	}
-	
-	@GET
-	@Path("salesforce/{id}/service/{key}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
-		
-		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.getServiceInstance( id, key );
-		
-		return Response.ok()
-				.entity(salesforceInstance)
-				.build(); 	
-	}
-	
-	@PUT
-	@Path("salesforce/{id}/service/{key}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, ServiceInstanceDTO salesforceInstance) {
-		
-		salesforceConnectorService.updateServiceInstance( id, key, salesforceInstance);
-		
-		return Response.ok()
-				.entity(salesforceInstance)
-				.build(); 	
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param parameters
-	 * @return
-	 */
-	
-	@POST
-	@Path("salesforce/{id}/service/{key}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
-		
-		ServiceInstanceDTO salesforceInstance = salesforceConnectorService.updateServiceInstance( id, key, parameters);
-		
-		return Response.ok()
-				.entity(salesforceInstance)
-				.build(); 	
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 */
-	
-	@DELETE
-	@Path("salesforce/{id}/service/{key}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeServiceInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
-		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.removeServiceInstance( id, key);
-		
-		return Response.ok()
-				.entity(salesforceConnector)
-				.build(); 
-		
 	}
 }

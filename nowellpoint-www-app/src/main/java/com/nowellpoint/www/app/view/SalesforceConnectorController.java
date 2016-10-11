@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
-import com.nowellpoint.client.model.ServiceProvider;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -457,65 +455,6 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * addServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route addServiceInstance = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String serviceKey = request.queryParams("serviceKey");
-		
-		System.out.println(serviceKey);
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.path("connectors")
-    			.path("salesforce")
-				.path(id)
-				.path("service")
-				.parameter("key", serviceKey)
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			
-			List<ServiceProvider> providers = Collections.emptyList();
-			
-			httpResponse = RestResource.get(API_ENDPOINT)
-					.bearerAuthorization(token.getAccessToken())
-					.path("providers")
-					.queryParameter("localeSidKey", "en_US")
-					.queryParameter("languageLocaleKey", "en_US")
-					.execute();
-				
-			if (httpResponse.getStatusCode() == Status.OK) {
-				providers = httpResponse.getEntityList(ServiceProvider.class);
-			} else {
-				throw new BadRequestException(httpResponse.getAsString());
-			}
-			
-			Map<String, Object> model = getModel();
-			model.put("id", id);
-			model.put("serviceProviders", providers);
-			model.put("errorMessage", error.getMessage());
-	    	
-			return render(request, model, Path.Template.SERVICE_CATALOG);
-		}
-		
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.service.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
-		
-		return "";		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
 	 * getSalesforceConnector
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -669,43 +608,6 @@ public class SalesforceConnectorController extends AbstractController {
 		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
 		
 		return "";
-	};
-
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * newServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route newServiceInstance = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		List<ServiceProvider> providers = Collections.emptyList();
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("providers")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageLocaleKey", "en_US")
-				.execute();
-			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			providers = httpResponse.getEntityList(ServiceProvider.class);
-		} else {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-    	
-		Map<String, Object> model = getModel();
-		model.put("serviceProviders", providers);
-		model.put("id", id);
-		model.put("mode", "add");
-    	
-		return render(request, model, Path.Template.SERVICE_CATALOG);
 	};
 	
 	/**

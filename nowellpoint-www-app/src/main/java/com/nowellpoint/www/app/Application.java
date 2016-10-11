@@ -27,16 +27,16 @@ import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
-import com.nowellpoint.www.app.view.ApplicationController;
+//import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ContactUsController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.NotificationController;
-import com.nowellpoint.www.app.view.ProjectController;
+//import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.ScheduledJobController;
-import com.nowellpoint.www.app.view.SetupController;
+//import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.VerifyEmailController;
 
@@ -121,18 +121,20 @@ public class Application implements SparkApplication {
         AdministrationController administrationController = new AdministrationController(cfg);
         SignUpController signUpController = new SignUpController(cfg);
         NotificationController notificationController = new NotificationController(cfg);
-        SetupController setupController = new SetupController(cfg);
+        //SetupController setupController = new SetupController(cfg);
         SalesforceOauthController salesforceOauthController = new SalesforceOauthController(cfg);
         ContactUsController contactUsController = new ContactUsController(cfg);
-        ApplicationController applicationController = new ApplicationController(cfg);
-        ProjectController projectController = new ProjectController(cfg);
+        //ApplicationController applicationController = new ApplicationController(cfg);
+        //ProjectController projectController = new ProjectController(cfg);
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
         ScheduledJobController scheduledJobsController = new ScheduledJobController(cfg);
         
+        //
         // setup routes
+        //
         
         before("/app/*", AuthenticationController.verify);
-        
+
         get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
         
         get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
@@ -156,33 +158,33 @@ public class Application implements SparkApplication {
         
         get(Path.Route.NOTIFICATIONS, notificationController.showNotifications);
         
-        get(Path.Route.SETUP, setupController.showSetup);
+       // get(Path.Route.SETUP, setupController.showSetup);
         
-        get(Path.Route.APPLICATION_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
-        get(Path.Route.APPLICATION_EDIT, applicationController.editApplication);
-        get(Path.Route.APPLICATION_NEW, applicationController.newApplication);
-		get(Path.Route.APPLICATION_VIEW, applicationController.viewApplication);
-		get(Path.Route.APPLICATION_LIST, applicationController.getApplications);
-		delete(Path.Route.APPLICATION_DELETE, applicationController.deleteApplication);
-		post(Path.Route.APPLICATION_CREATE, applicationController.createApplication);
-		post(Path.Route.APPLICATION_UPDATE, applicationController.updateApplication);
-		post(Path.Route.APPLICATION_ENVIRONMENT_TEST, applicationController.testConnection);   
-		get(Path.Route.APPLICATION_ENVIRONMENT_VIEW, applicationController.viewEnvironment);
-		get(Path.Route.APPLICATION_ENVIRONMENT_EDIT, applicationController.editEnvironment);
-		get(Path.Route.APPLICATION_ENVIRONMENT_NEW, applicationController.newEnvironment);
-		post(Path.Route.APPLICATION_ENVIRONMENT_ADD, applicationController.addEnvironment);
-		post(Path.Route.APPLICATION_ENVIRONMENT_UPDATE, applicationController.updateEnvironment);
-		delete(Path.Route.APPLICATION_ENVIRONMENT_REMOVE, applicationController.removeEnvironment);
-		get(Path.Route.APPLICATION_SERVICE_VIEW, applicationController.viewServiceInstance);
-		get(Path.Route.APPLICATION_SERVICE_EDIT, applicationController.editServiceInstance);
-		get(Path.Route.APPLICATION_SERVICE_NEW, applicationController.newServiceInstance);  
-		post(Path.Route.APPLICATION_SERVICE_ADD, applicationController.addServiceInstance);
-		post(Path.Route.APPLICATION_SERVICE_UPDATE, applicationController.updateServiceInstance);  
+//        get(Path.Route.APPLICATION_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
+//        get(Path.Route.APPLICATION_EDIT, applicationController.editApplication);
+//        get(Path.Route.APPLICATION_NEW, applicationController.newApplication);
+//		get(Path.Route.APPLICATION_VIEW, applicationController.viewApplication);
+//		get(Path.Route.APPLICATION_LIST, applicationController.getApplications);
+//		delete(Path.Route.APPLICATION_DELETE, applicationController.deleteApplication);
+//		post(Path.Route.APPLICATION_CREATE, applicationController.createApplication);
+//		post(Path.Route.APPLICATION_UPDATE, applicationController.updateApplication);
+//		post(Path.Route.APPLICATION_ENVIRONMENT_TEST, applicationController.testConnection);   
+//		get(Path.Route.APPLICATION_ENVIRONMENT_VIEW, applicationController.viewEnvironment);
+//		get(Path.Route.APPLICATION_ENVIRONMENT_EDIT, applicationController.editEnvironment);
+//		get(Path.Route.APPLICATION_ENVIRONMENT_NEW, applicationController.newEnvironment);
+//		post(Path.Route.APPLICATION_ENVIRONMENT_ADD, applicationController.addEnvironment);
+//		post(Path.Route.APPLICATION_ENVIRONMENT_UPDATE, applicationController.updateEnvironment);
+//		delete(Path.Route.APPLICATION_ENVIRONMENT_REMOVE, applicationController.removeEnvironment);
+//		get(Path.Route.APPLICATION_SERVICE_VIEW, applicationController.viewServiceInstance);
+//		get(Path.Route.APPLICATION_SERVICE_EDIT, applicationController.editServiceInstance);
+//		get(Path.Route.APPLICATION_SERVICE_NEW, applicationController.newServiceInstance);  
+//		post(Path.Route.APPLICATION_SERVICE_ADD, applicationController.addServiceInstance);
+//		post(Path.Route.APPLICATION_SERVICE_UPDATE, applicationController.updateServiceInstance);  
 		
-		get(Path.Route.PROJECTS, projectController.getProjects);
-		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
-		post(Path.Route.PROJECTS, projectController.saveProject);
-		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
+//		get(Path.Route.PROJECTS, projectController.getProjects);
+//		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
+//		post(Path.Route.PROJECTS, projectController.saveProject);
+//		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
         
         get(Path.Route.SALESFORCE_OAUTH, salesforceOauthController.oauth);
         get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), salesforceOauthController.callback);
@@ -194,7 +196,8 @@ public class Application implements SparkApplication {
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
         
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
-        get(Path.Route.PLANS, accountProfileController.editSubscription);
+        get(Path.Route.ACCOUNT_PROFILE_SUBSCRIPTION_PLANS, accountProfileController.selectPlan);
+        post(Path.Route.ACCOUNT_PROFILE_SUBSCRIPTION_PLANS, accountProfileController.setSubscription);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.confirmDeactivateAccountProfile);
@@ -222,11 +225,6 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE, salesforceConnectorController.updateEnvironment);
         delete(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE, salesforceConnectorController.removeEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, salesforceConnectorController.testConnection);  
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_EDIT, salesforceConnectorController.editServiceInstance);
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_NEW, salesforceConnectorController.newServiceInstance);       
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_VIEW, salesforceConnectorController.viewServiceInstance);
-        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, salesforceConnectorController.addServiceInstance);
-        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_UPDATE, salesforceConnectorController.updateServiceInstance);
         
         get(Path.Route.SCHEDULED_JOBS_LIST, scheduledJobsController.getScheduledJobs);
         get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, scheduledJobsController.selectType);
@@ -263,6 +261,11 @@ public class Application implements SparkApplication {
         
         exception(InternalServerErrorException.class, (exception, request, response) -> {
             response.status(500);
+            response.body(exception.getMessage());
+        });
+        
+        exception(Exception.class, (exception, request, response) -> {
+        	response.status(500);
             response.body(exception.getMessage());
         });
 	}

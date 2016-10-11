@@ -460,6 +460,9 @@ public class AccountProfile extends AbstractResource {
 	
 	@JsonIgnore
 	public CreditCard getPrimaryCreditCard() {
+		if (creditCards == null || creditCards.isEmpty()) {
+			return null;
+		}
 		return creditCards.stream().filter(c -> c.getPrimary()).findFirst().get();
 	}
 }

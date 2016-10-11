@@ -5,6 +5,7 @@ import static com.nowellpoint.util.Assert.isNotEqual;
 import static com.nowellpoint.util.Assert.isNull;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Date;
@@ -29,12 +30,14 @@ import com.braintreegateway.AddressRequest;
 import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
+import com.braintreegateway.SubscriptionRequest;
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
+import com.nowellpoint.api.model.dto.Plan;
 import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
@@ -49,6 +52,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	@Inject
 	private IsoCountryService isoCountryService;
+	
+	@Inject
+	private PlanService planService;
 	
 	public AccountProfileService() {
 		super();
@@ -113,6 +119,20 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setLastModifiedBy(userInfo);
 
 		super.createAccountProfile(accountProfile);
+		
+		CustomerRequest customerRequest = new CustomerRequest()
+				.id(accountProfile.getId())
+				.company(accountProfile.getCompany())
+				.email(accountProfile.getEmail())
+				.firstName(accountProfile.getFirstName())
+				.lastName(accountProfile.getLastName())
+				.phone(accountProfile.getPhone());
+		
+		Result<com.braintreegateway.Customer> customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		
+		if (! customerResult.isSuccess()) {
+			LOGGER.error(customerResult.getMessage());
+		}
 	}
 	
 	/**
@@ -224,6 +244,20 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		super.updateAccountProfile(accountProfile);
+		
+		CustomerRequest customerRequest = new CustomerRequest()
+				.id(accountProfile.getId())
+				.company(accountProfile.getCompany())
+				.email(accountProfile.getEmail())
+				.firstName(accountProfile.getFirstName())
+				.lastName(accountProfile.getLastName())
+				.phone(accountProfile.getPhone());
+		
+		Result<com.braintreegateway.Customer> customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		
+		if (! customerResult.isSuccess()) {
+			LOGGER.error(customerResult.getMessage());
+		}
 	}
 	
 	/**
@@ -250,6 +284,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		super.updateAccountProfile(accountProfile);
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	public Subscription getSubscription(String id) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		return accountProfile.getSubscription();
@@ -264,26 +307,53 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * 
 	 */
 	
-	public void addSubscription(String id, Subscription subscription) {
+	public void setSubscription(String id, Subscription subscription) {
 		AccountProfile accountProfile = findAccountProfile( id );
-		subscription.setAddedOn(Date.from(Instant.now()));
-		subscription.setUpdatedOn(Date.from(Instant.now()));
-		accountProfile.setSubscription(subscription);
-		super.updateAccountProfile(accountProfile);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param subscription
-	 * 
-	 * 
-	 */
-	
-	public void updateSubscription(String id, Subscription subscription) {
-		AccountProfile accountProfile = findAccountProfile( id );
-		subscription.setUpdatedOn(Date.from(Instant.now()));
+		
+		if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
+			throw new ServiceException("Unable to process subscription request because there is no credit card associated with the account profile");
+		}
+		
+		Date now = Date.from(Instant.now());
+		
+		Result<com.braintreegateway.Subscription> subscriptionResult = null;
+		
+		if (accountProfile.getSubscription() == null) {
+			
+			SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
+				    .planId(subscription.getPlanCode())
+				    .price(new BigDecimal(subscription.getUnitPrice()));
+
+			subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
+			
+			subscription.setAddedOn(now);
+		} else {
+			
+			SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
+				    .planId(subscription.getPlanCode())
+				    .price(new BigDecimal(subscription.getUnitPrice()));
+
+			subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+		}
+		
+		if (! subscriptionResult.isSuccess()) {
+			LOGGER.error(subscriptionResult.getMessage());
+		}
+		
+		Plan plan = planService.findByPlanCode(subscription.getPlanCode());
+		
+		subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
+		subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
+		subscription.setUpdatedOn(now);
+		subscription.setCurrencySymbol(plan.getCurrencySymbol());
+		subscription.setPlanName(plan.getPlanName());
+		subscription.setBillingFrequency(plan.getBillingFrequency());
+		subscription.setBillingFrequencyPer(plan.getBillingFrequencyPer());
+		subscription.setBillingFrequencyQuantity(plan.getBillingFrequencyQuantity());
+		subscription.setBillingFrequencyUnit(plan.getBillingFrequencyUnit());
+		
 		accountProfile.setSubscription(subscription);
 		super.updateAccountProfile(accountProfile);
 	}
@@ -389,16 +459,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void addCreditCard(String id, CreditCard creditCard) {
 		AccountProfile accountProfile = findAccountProfile(id);
 		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.id(accountProfile.getId())
-				.company(accountProfile.getCompany())
-				.email(accountProfile.getEmail())
-				.firstName(accountProfile.getFirstName())
-				.lastName(accountProfile.getLastName())
-				.phone(accountProfile.getPhone());
-		
-		Result<com.braintreegateway.Customer> customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
-		
 		AddressRequest addressRequest = new AddressRequest()
 				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
 				.firstName(creditCard.getBillingContact().getFirstName())
@@ -408,7 +468,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				.postalCode(creditCard.getBillingAddress().getPostalCode())
 				.streetAddress(creditCard.getBillingAddress().getStreet());
 		
-		Result<com.braintreegateway.Address> addressResult = paymentGatewayService.createAddress(customerResult.getTarget().getId(), addressRequest);
+		Result<com.braintreegateway.Address> addressResult = paymentGatewayService.createAddress(accountProfile.getId(), addressRequest);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -543,7 +603,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public void removeCreditCard(String id, String token) {
-		AccountProfile resource = findAccountProfile(id);
+		
+		AccountProfile accountProfile = findAccountProfile(id);
+		
+		if (token.equals(accountProfile.getPrimaryCreditCard().getToken())) {
+			throw new ServiceException(Status.BAD_REQUEST, "Unable to delete credit card because it has been set as the primary card for the account profile.");
+		}
 		
 		com.braintreegateway.CreditCard creditCard = paymentGatewayService.findCreditCard(token);
 		
@@ -551,13 +616,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		if (creditCardResult.isSuccess()) {
 			paymentGatewayService.deleteAddress(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
-			
-			resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
-			
-			updateAccountProfile(id, resource);
+			accountProfile.getCreditCards().removeIf(c -> token.equals(c.getToken()));
+			updateAccountProfile( id, accountProfile );
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
-			throw new ServiceException(creditCardResult.getMessage());
 		}
 	}
 }

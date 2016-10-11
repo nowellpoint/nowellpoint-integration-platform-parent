@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -249,11 +250,18 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	runHistory.setBackups(scheduledJobRequest.getBackups());
 			    	runHistory.setFailureMessage(scheduledJobRequest.getFailureMessage());
 			    	runHistory.setJobRunTime(scheduledJobRequest.getJobRunTime());
-			    	scheduledJob.addRunHistory(runHistory);
 			    	
 			    	//
 			    	// update ScheduledJob
 			    	//
+			    	
+			    	if (scheduledJob.getRunHistories() == null) {
+						scheduledJob.setRunHistories(new HashSet<RunHistory>());
+					} else if (scheduledJob.getRunHistories().size() == 10) {
+						scheduledJob.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList()).remove(0);
+					}
+			    	
+			    	scheduledJob.getRunHistories().add(runHistory);
 			    	
 			    	scheduledJob.setStatus("Scheduled");
 			    	scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
@@ -267,20 +275,6 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	// setup the next scheduled job
 			    	//			    	
 			    	
-//			    	scheduledJobRequest.setId(new ObjectId());
-//			    	scheduledJobRequest.setFireInstanceId(null);
-//			    	scheduledJobRequest.setJobRunTime(null);
-//			    	scheduledJobRequest.setBackups(null);
-//			    	scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
-//			    	scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
-//			    	scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
-//			    	scheduledJobRequest.setYear(dateTime.getYear());
-//			    	scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
-//			    	scheduledJobRequest.setDay(dateTime.getDayOfMonth());
-//			    	scheduledJobRequest.setHour(dateTime.getHour());
-//			    	scheduledJobRequest.setMinute(dateTime.getMinute());
-//			    	scheduledJobRequest.setSecond(dateTime.getSecond());
-//			    	scheduledJobRequest.setStatus("Scheduled");
 			    	scheduledJobRequestService.create(setupNextScheduledJobRequest(scheduledJob));
 			    	
 			    	return null;
@@ -302,33 +296,32 @@ public class SalesforceMetadataBackupJob implements Job {
 		
 		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
-    	
-    	DBRef reference = new DBRef( collectionName, id );
-		
-		UserRef userRef = new UserRef();
-		userRef.setIdentity(reference);
+    	DBRef reference = new DBRef( collectionName, id );		
+		UserRef userRef = new UserRef(reference);
+
+		Date now = Date.from(Instant.now());
     	
 		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest();
 		scheduledJobRequest.setScheduledJobId(scheduledJob.getId());
 		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
 		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
 		scheduledJobRequest.setOwner(scheduledJob.getOwner());
-		scheduledJobRequest.setCreatedDate(Date.from(Instant.now()));
+		scheduledJobRequest.setCreatedDate(now);
 		scheduledJobRequest.setCreatedBy(userRef);
 		scheduledJobRequest.setDescription(scheduledJob.getDescription());
 		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
 		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
 		scheduledJobRequest.setIsSandbox(scheduledJob.getIsSandbox());
 		scheduledJobRequest.setJobTypeCode(scheduledJob.getJobTypeCode());
-		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeId());
 		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
 		scheduledJobRequest.setStatus(scheduledJob.getStatus());
-		scheduledJobRequest.setLastModifiedDate(Date.from(Instant.now()));
+		scheduledJobRequest.setLastModifiedDate(now);
 		scheduledJobRequest.setLastModifiedBy(userRef);
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
-		scheduledJobRequest.setSystemCreationDate(Date.from(Instant.now()));
-		scheduledJobRequest.setSystemModifiedDate(Date.from(Instant.now()));
+		scheduledJobRequest.setSystemCreationDate(now);
+		scheduledJobRequest.setSystemModifiedDate(now);
 		scheduledJobRequest.setYear(dateTime.getYear());
 		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
 		scheduledJobRequest.setDay(dateTime.getDayOfMonth());
@@ -501,6 +494,8 @@ public class SalesforceMetadataBackupJob implements Job {
 				keyName,
 				new ByteArrayInputStream(bytes),
 				objectMetadata));
+		
+		result.getMetadata().setContentLength(bytes.length);
 		
 		return result;
 	}

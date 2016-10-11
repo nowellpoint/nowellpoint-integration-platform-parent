@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import org.jboss.logging.Logger;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
@@ -22,7 +20,6 @@ import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
-import com.nowellpoint.client.model.ServiceProvider;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -621,205 +618,5 @@ public class ApplicationController extends AbstractController {
 		System.out.println(serviceInstance.getConfigurationPage());
 		
 		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * newServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route newServiceInstance = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		List<ServiceProvider> providers = Collections.emptyList();
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("providers")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageLocaleKey", "en_US")
-				.execute();
-			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			providers = httpResponse.getEntityList(ServiceProvider.class);
-		} else {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-    	
-		Map<String, Object> model = getModel();
-		model.put("serviceProviders", providers);
-		model.put("id", id);
-		model.put("mode", "add");
-    	
-		return render(request, model, Path.Template.SERVICE_CATALOG);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * addServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route addServiceInstance = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String serviceKey = request.queryParams("serviceKey");
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.path("applications")
-				.path(id)
-				.path("service")
-				.parameter("key", serviceKey)
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			
-			List<ServiceProvider> providers = Collections.emptyList();
-			
-			httpResponse = RestResource.get(API_ENDPOINT)
-					.bearerAuthorization(token.getAccessToken())
-					.path("providers")
-					.queryParameter("localeSidKey", "en_US")
-					.queryParameter("languageLocaleKey", "en_US")
-					.execute();
-				
-			if (httpResponse.getStatusCode() == Status.OK) {
-				providers = httpResponse.getEntityList(ServiceProvider.class);
-			} else {
-				throw new BadRequestException(httpResponse.getAsString());
-			}
-			
-			Map<String, Object> model = getModel();
-			model.put("id", id);
-			model.put("serviceProviders", providers);
-			model.put("errorMessage", error.getMessage());
-	    	
-			return render(request, model, Path.Template.SERVICE_CATALOG);
-		}
-		
-		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.service.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
-		
-		return "";		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * editServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route editServiceInstance = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("service")
-    			.path(key)
-    			.execute();
-		
-		ServiceInstance serviceInstance = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			serviceInstance = httpResponse.getEntity(ServiceInstance.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "edit");
-		model.put("action", String.format("/app/applications/%s/services/%s", id, key));
-		model.put("serviceInstance", serviceInstance);
-		model.put("errorMessage", request.cookie("errorMessage"));
-		
-		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * updateServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route updateServiceInstance = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		String name = request.queryParams("name");
-		String tag = request.queryParams("tag");
-		String bucketName = request.queryParams("bucketName");
-		String awsAccessKey = request.queryParams("awsAccessKey");
-		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
-		
-		PostRequest httpRequest = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-				.path(id)
-				.path("service")
-				.path(key);
-		
-		if (name != null) {
-			httpRequest.parameter("name", name);
-		}
-		
-		if (tag != null) {
-			httpRequest.parameter("tag", tag);
-		}
-		
-		if (bucketName != null) {
-			httpRequest.parameter("bucketName", bucketName);
-		}
-		
-		if (awsAccessKey != null) {
-			httpRequest.parameter("awsAccessKey", awsAccessKey);
-		}
-		
-		if (awsSecretAccessKey != null) {
-			httpRequest.parameter("awsSecretAccessKey", awsSecretAccessKey);
-		}
-				
-		HttpResponse httpResponse = httpRequest.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			response.cookie("errorMessage", error.getMessage(), 3, Boolean.FALSE);
-			response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id).concat("/services/:key/edit".replace(":key", key)));
-			return "";
-		}
-
-		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.service.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
-		
-		return "";		
 	};
 }

@@ -70,7 +70,6 @@ public class AccountProfileResource {
 	
 	@GET
 	@Path("{id}/subscription")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSubscription(@PathParam("id") String id) {
 		
@@ -82,23 +81,19 @@ public class AccountProfileResource {
 	
 	@POST
 	@Path("{id}/subscription")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addSubscription(@PathParam("id") String id, Subscription subscription) {
+	public Response setSubscription(@PathParam("id") String id, 
+			@FormParam(value = "currencyIsoCode") String currencyIsoCode, 
+			@FormParam(value="planCode") String planCode, 
+			@FormParam(value="unitPrice") Double unitPrice) {
 		
-		accountProfileService.addSubscription( id, subscription );
+		Subscription subscription = new Subscription();
+		subscription.setCurrencyIsoCode(currencyIsoCode);
+		subscription.setPlanCode(planCode);
+		subscription.setUnitPrice(unitPrice);
 		
-		return Response.ok(subscription)
-				.build();
-	}
-	
-	@PUT
-	@Path("{id}/subscription")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSubscription(@PathParam("id") String id, Subscription subscription) {
-		
-		accountProfileService.updateSubscription( id, subscription );
+		accountProfileService.setSubscription( id, subscription );
 		
 		return Response.ok(subscription)
 				.build();

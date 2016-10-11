@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public class UpdateSubscriptionRequest {
+public class SetSubscriptionRequest {
 	
 	private String accountProfileId;
 	
@@ -10,7 +10,7 @@ public class UpdateSubscriptionRequest {
 	
 	private Double unitPrice;
 	
-	public UpdateSubscriptionRequest() {
+	public SetSubscriptionRequest() {
 		
 	}
 
@@ -46,22 +46,22 @@ public class UpdateSubscriptionRequest {
 		this.unitPrice = unitPrice;
 	}
 	
-	public UpdateSubscriptionRequest withAccountProfileId(String accountProfileId) {
+	public SetSubscriptionRequest withAccountProfileId(String accountProfileId) {
 		setAccountProfileId(accountProfileId);
 		return this;
 	}
 	
-	public UpdateSubscriptionRequest withPlanCode(String planCode) {
+	public SetSubscriptionRequest withPlanCode(String planCode) {
 		setPlanCode(planCode);
 		return this;
 	}
 	
-	public UpdateSubscriptionRequest withCurrencyIsoCode(String currencyIsoCode) {
+	public SetSubscriptionRequest withCurrencyIsoCode(String currencyIsoCode) {
 		setCurrencyIsoCode(currencyIsoCode);
 		return this;
 	}
 	
-	public UpdateSubscriptionRequest withUnitPrice(Double unitPrice) {
+	public SetSubscriptionRequest withUnitPrice(Double unitPrice) {
 		setUnitPrice(unitPrice);
 		return this;
 	}

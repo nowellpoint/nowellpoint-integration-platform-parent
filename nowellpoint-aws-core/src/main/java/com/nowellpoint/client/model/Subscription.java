@@ -3,6 +3,9 @@ package com.nowellpoint.client.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Subscription implements Serializable {
 
 	/**
@@ -10,6 +13,8 @@ public class Subscription implements Serializable {
 	 */
 	
 	private static final long serialVersionUID = -7569793449815113870L;
+	
+	private String subscriptionId;
 	
 	private Date addedOn;
 	
@@ -37,6 +42,14 @@ public class Subscription implements Serializable {
 	
 	public Subscription() {
 		
+	}
+
+	public String getSubscriptionId() {
+		return subscriptionId;
+	}
+
+	public void setSubscriptionId(String subscriptionId) {
+		this.subscriptionId = subscriptionId;
 	}
 
 	public Date getAddedOn() {

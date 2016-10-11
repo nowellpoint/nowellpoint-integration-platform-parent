@@ -12,7 +12,7 @@ import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.CreateScheduledJobResult;
 import com.nowellpoint.client.model.Environment;
-import com.nowellpoint.client.model.Result;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
@@ -287,9 +287,9 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
-				.find(id);
+				.get(id);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", result.getTarget().getCreatedBy().getId());
 		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", result.getTarget().getLastModifiedBy().getId());
@@ -323,9 +323,9 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
-				.find(id);
+				.get(id);
 		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", result.getTarget());
@@ -444,9 +444,9 @@ public class ScheduledJobController extends AbstractController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+			GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
 					.scheduledJob()
-					.find(id);
+					.get(id);
 			
 			String view = request.queryParams("view");
 			
@@ -476,9 +476,9 @@ public class ScheduledJobController extends AbstractController {
 		
 		if (! updateScheduledJobResult.getIsSuccess()) {
 			
-			Result<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+			GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
 					.scheduledJob()
-					.find(id);
+					.get(id);
 			
 			String view = request.queryParams("view");
 			

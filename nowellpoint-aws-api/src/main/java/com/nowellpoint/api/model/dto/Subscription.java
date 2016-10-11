@@ -11,6 +11,8 @@ public class Subscription implements Serializable {
 	
 	private static final long serialVersionUID = -7569793449815113870L;
 	
+	private String subscriptionId;
+	
 	private Date addedOn;
 	
 	private Date updatedOn;
@@ -37,6 +39,14 @@ public class Subscription implements Serializable {
 	
 	public Subscription() {
 		
+	}
+
+	public String getSubscriptionId() {
+		return subscriptionId;
+	}
+
+	public void setSubscriptionId(String subscriptionId) {
+		this.subscriptionId = subscriptionId;
 	}
 
 	public Date getAddedOn() {

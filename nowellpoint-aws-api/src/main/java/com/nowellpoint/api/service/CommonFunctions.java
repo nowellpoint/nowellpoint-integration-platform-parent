@@ -5,18 +5,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MultivaluedMap;
 
-import com.nowellpoint.api.model.document.Service;
 import com.nowellpoint.api.model.document.SimpleStorageService;
 import com.nowellpoint.api.model.document.Targets;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.model.dto.ServiceProvider;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
@@ -36,9 +33,6 @@ public class CommonFunctions {
 	
 	@Inject
 	private SalesforceService salesforceService;
-	
-	@Inject
-	private ServiceProviderService serviceProviderService;
 	
 	private static final String IS_ACTIVE = "isActive";
 	private static final String API_VERSION = "apiVersion";
@@ -277,29 +271,5 @@ public class CommonFunctions {
 		properties.add(awsSecretAccessKey);
 		
 		UserProperties.batchSave(properties);
-	}
-	
-	public ServiceInstanceDTO buildServiceInstance(String key) {
-		ServiceProvider serviceProvider = serviceProviderService.findByServiceKey(key);
-		
-		Service service = serviceProvider.getServices()
-				.stream()
-				.filter(s -> key.equals(s.getKey()))
-				.findFirst()
-				.get();
-		
-		ServiceInstanceDTO serviceInstance = new ServiceInstanceDTO();
-		serviceInstance.setKey(UUID.randomUUID().toString().replace("-", ""));
-		serviceInstance.setServiceType(service.getType());
-		serviceInstance.setConfigurationPage(service.getConfigurationPage());
-		serviceInstance.setProviderName(serviceProvider.getName());
-		serviceInstance.setServiceName(service.getServiceName());
-		serviceInstance.setProviderType(serviceProvider.getType());
-		serviceInstance.setIsActive(Boolean.FALSE);
-		serviceInstance.setAddedOn(Date.from(Instant.now()));
-		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
-		//serviceInstance.setPlan(plan);
-		
-		return serviceInstance;
 	}
 }

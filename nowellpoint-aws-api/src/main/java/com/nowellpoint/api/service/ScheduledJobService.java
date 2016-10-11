@@ -4,7 +4,6 @@ import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
@@ -12,7 +11,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ScheduledJob;
@@ -25,16 +23,10 @@ import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	@Inject
-	private AccountProfileService accountProfileService;
-	
-	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
-	
-	@Inject
-	private PaymentGatewayService paymentGatewayService;
 	
 	/**
 	 * 
@@ -76,11 +68,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setStatus("Scheduled");
 		
 		setupScheduledJob(scheduledJob);
-		
-		if (! scheduledJob.getIsSandbox()) {
-			AccountProfile accountProfile = accountProfileService.findAccountProfile(getSubject());
-			paymentGatewayService.addMonthlyRecurringPlan(accountProfile.getPrimaryCreditCard().getToken(), new BigDecimal("7.00"));
-		}
 		
 		super.createScheduledJob(scheduledJob);
 	}

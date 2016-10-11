@@ -1,7 +1,5 @@
 package com.nowellpoint.api.service;
 
-import java.math.BigDecimal;
-
 import org.jboss.logging.Logger;
 
 import com.braintreegateway.SubscriptionRequest;
@@ -15,8 +13,6 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.braintreegateway.Transaction;
-import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.aws.model.admin.Properties;
 
@@ -90,28 +86,13 @@ public class PaymentGatewayService {
 		return creditCardResult;
 	}
 	
-	public void submitTransaction(String paymentMethodToken, BigDecimal amount) {
-		
-		TransactionRequest request = new TransactionRequest()
-				.amount(amount)
-				.paymentMethodToken(paymentMethodToken)
-				.options()
-				.submitForSettlement(true)
-				.done();
-		
-		Result<Transaction> result = gateway.transaction().sale(request);
-		
-		System.out.println(result.getMessage());
+	public Result<Subscription> createSubscription(SubscriptionRequest subscriptionRequest) {
+		Result<Subscription> result = gateway.subscription().create(subscriptionRequest);
+		return result;
 	}
 	
-	public Result<Subscription> addMonthlyRecurringPlan(String paymentMethodToken, BigDecimal price) {
-		SubscriptionRequest request = new SubscriptionRequest()
-			    .paymentMethodToken(paymentMethodToken)
-			    .planId("RECURRING_MONTHLY_PLAN")
-			    .price(price);
-
-		Result<Subscription> result = gateway.subscription().create(request);
-		
+	public Result<Subscription> updateSubscription(String id, SubscriptionRequest subscriptionRequest) {
+		Result<Subscription> result = gateway.subscription().update(id, subscriptionRequest);
 		return result;
 	}
 }

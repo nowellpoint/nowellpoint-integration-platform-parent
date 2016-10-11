@@ -23,6 +23,7 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -162,11 +163,17 @@ public class AuthenticationController extends AbstractController {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
     		request.attribute(AUTH_TOKEN, token);
     		
-    		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+    		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
     				.accountProfile()
-    				.getMyAccountProfile();
+    				.get();
+    		    		
+    		if (getResult.isSuccess()) {
+    			request.attribute("account", getResult.getTarget());
+    		} else {
+    			throw new NotAuthorizedException(getResult.getErrorMessage());
+    		}
     		
-    		request.attribute("account", accountProfile);
+    		
     		
     		//if (accountProfile.getSubscription() == null && ! Path.Route.PLANS.equals(request.pathInfo())) {
     		//	response.redirect(Path.Route.PLANS.replace(":id", accountProfile.getId());

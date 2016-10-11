@@ -282,56 +282,7 @@
                             </div>
                         </div>
                     </div>
-<!--
-                    <br>
-                    <br>
-
-                    <div id="services" class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="flextable">
-                                <div class="flextable-item flextable-primary">
-                                    <h3 class="dashhead-title">${labels["services"]}</h3>
-                                </div>
-                                <div class="flextable-item">
-                                    <a href="${labels['base.path']}/${salesforceConnector.id}/services/catalog" id="add-service" class="btn btn-primary-outline" role="button">${labels["add.service"]}</a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="hr-divider"></div>
-                            <br>
-                            <div class="content table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <th class="col-xs-2">${labels["name"]}</th>
-                                        <th class="col-xs-3">${labels["service.name"]}</th>
-                                        <th class="col-xs-3">${labels["tag"]}</th>
-                                        <th class="col-xs-1 text-center">${labels["active"]}</th>
-                                        <th class="col-xs-3">${labels["action"]}</th>
-                                    </thead>
-                                    <tbody>
-                                        <#list salesforceConnector.serviceInstances?sort_by( "key") as service>
-                                            <tr id="${service.key}">
-                                                <td><a href="${labels['base.path']}/${salesforceConnector.id}/services/${service.key}/view">${service.name!service.key}</a></td>
-                                                <td>${service.serviceName!}</td>
-                                                <td>${service.tag!}</td>
-                                                <td class="text-center">
-                                                    <#if service.isActive>
-                                                        ${messages["yes"]}
-                                                    </#if>
-                                                    <#if ! service.isActive>
-                                                        ${messages["no"]}
-                                                    </#if>
-                                                </td>
-                                                <td><a href="${labels['base.path']}/${salesforceConnector.id}/services/${(service.key)!}/edit"><span class="icon icon-edit"></span>${messages["edit"]}</a>
-                                                </td>
-                                            </tr>
-                                        </#list>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
--->
+                    
                     <br>
                     <br>
 

@@ -1,5 +1,10 @@
 package com.nowellpoint.client.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Plan {
 	
 	private String localeSidKey;
@@ -8,7 +13,7 @@ public class Plan {
 
 	private String planName;
 	
-	private String code;
+	private String planCode;
 	
 	private String currencyIsoCode;
 	
@@ -24,9 +29,7 @@ public class Plan {
 	
 	private String billingFrequencyQuantity;
 	
-	private Integer transactions;
-	
-	private String support;
+	private List<String> features;
 	
 	public Plan() {
 		
@@ -56,12 +59,12 @@ public class Plan {
 		this.planName = planName;
 	}
 
-	public String getCode() {
-		return code;
+	public String getPlanCode() {
+		return planCode;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setPlanCode(String planCode) {
+		this.planCode = planCode;
 	}
 
 	public String getCurrencyIsoCode() {
@@ -120,19 +123,11 @@ public class Plan {
 		this.billingFrequencyQuantity = billingFrequencyQuantity;
 	}
 
-	public Integer getTransactions() {
-		return transactions;
+	public List<String> getFeatures() {
+		return features;
 	}
 
-	public void setTransactions(Integer transactions) {
-		this.transactions = transactions;
-	}
-
-	public String getSupport() {
-		return support;
-	}
-
-	public void setSupport(String support) {
-		this.support = support;
+	public void setFeatures(List<String> features) {
+		this.features = features;
 	}	
 }

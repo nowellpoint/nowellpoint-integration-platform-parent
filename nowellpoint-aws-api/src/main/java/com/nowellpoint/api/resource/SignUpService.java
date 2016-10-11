@@ -1,5 +1,7 @@
 package com.nowellpoint.api.resource;
 
+import static com.nowellpoint.util.Assert.isNull;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -208,10 +210,10 @@ public class SignUpService {
 			
 			accountProfile.setAddress(address);
 			
-			if (accountProfile.getId() != null) {			
-				accountProfileService.updateAccountProfile( accountProfile.getId(), accountProfile );
-			} else {
+			if (isNull(accountProfile.getId())) {			
 				accountProfileService.createAccountProfile( accountProfile );
+			} else {
+				accountProfileService.updateAccountProfile( accountProfile.getId(), accountProfile );
 			}
 			
 			return accountProfile;

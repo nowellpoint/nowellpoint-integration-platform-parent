@@ -10,6 +10,7 @@ import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.CreateScheduledJobResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.ScheduledJob;
@@ -179,23 +180,23 @@ public class ScheduledJobResource extends AbstractResource {
 		return result;
 	}
 	
-	public UpdateResult<ScheduledJob> find(String id) {
+	public GetResult<ScheduledJob> get(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
 		
-		UpdateResult<ScheduledJob> result = null;
+		GetResult<ScheduledJob> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
-			result = new UpdateResultImpl<ScheduledJob>(scheduledJob);
+			result = new GetResultImpl<ScheduledJob>(scheduledJob);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<ScheduledJob>(error);
+			result = new GetResultImpl<ScheduledJob>(error);
 		}
 		
 		return result;

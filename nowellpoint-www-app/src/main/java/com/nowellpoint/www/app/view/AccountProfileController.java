@@ -20,15 +20,14 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.AddResult;
-import com.nowellpoint.client.model.AddSubscriptionRequest;
+import com.nowellpoint.client.model.SetSubscriptionRequest;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.ExceptionResponse;
-import com.nowellpoint.client.model.GetAccountProfileRequest;
-import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UpdateSubscriptionRequest;
+import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.Plan;
+import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
@@ -62,24 +61,21 @@ public class AccountProfileController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		GetAccountProfileRequest getAccountProfileRequest = new GetAccountProfileRequest()
-				.withId(id);
-		
-		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
-				.getAccountProfile(getAccountProfileRequest);
+				.get(id);
 		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastModifiedBy().getId());
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getLastModifiedBy().getId());
 		
 		Map<String, Object> model = getModel();
-		model.put("accountProfile", accountProfile);
-		model.put("locales", getLocales(accountProfile));
+		model.put("accountProfile", getResult.getTarget());
+		model.put("locales", getLocales(getResult.getTarget()));
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
 		
-		if (accountProfile.getCreditCards().isEmpty()) {
+		if (getResult.getTarget().getCreditCards().isEmpty()) {
 			return render(request, model, Path.Template.ACCOUNT_PROFILE);
 		}
 
@@ -110,19 +106,32 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editPlan
+	 * selectPlan
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route editSubscription = (Request request, Response response) -> {		
+	public Route selectPlan = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
 		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("plans")
+				.queryParameter("localeSidKey", account.getLocaleSidKey())
+				.queryParameter("languageLocaleKey", account.getLanguageSidKey())
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new NotFoundException(httpResponse.getAsString());
+		}
+		
+		List<Plan> plans = httpResponse.getEntityList(Plan.class);
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", account);
+		model.put("plans", plans);
 		
 		return render(request, model, Path.Template.PLAN_SELECT);
 	};	
@@ -130,71 +139,47 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * addPlan
+	 * setSubscription
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route addSubscription = (Request request, Response response) -> {		
+	public Route setSubscription = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		AccountProfile accountProfile = getAccount(request);
 		
 		String currencyIsoCode = request.queryParams("currencyIsoCode");
 		String planCode = request.queryParams("planCode");
 		Double unitPrice = Double.valueOf(request.queryParams("unitPrice"));
 		
-		AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest()
-				.withAccountProfileId(account.getId())
+		SetSubscriptionRequest setSubscriptionRequest = new SetSubscriptionRequest()
+				.withAccountProfileId(accountProfile.getId())
 				.withCurrencyIsoCode(currencyIsoCode)
 				.withPlanCode(planCode)
 				.withUnitPrice(unitPrice);
 		
-		AddResult<Subscription> addResult = new NowellpointClient(new TokenCredentials(token))
+		SetResult<Subscription> setResult = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.subscription()
-				.add(addSubscriptionRequest);
+				.set(setSubscriptionRequest);
 		
-		Map<String, Object> model = getModel();
-		model.put("id", account.getId());
-		model.put("subscription", addResult.getTarget());
+		if (! setResult.isSuccess()) {
+			
+			Map<String, Object> model = getModel();
+			model.put("account", accountProfile);
+			model.put("accountProfile", accountProfile);
+			model.put("errorMessage", setResult.getErrorMessage());
+			
+			String output = render(request, model, Path.Template.PLAN_SELECT);
+			
+			throw new BadRequestException(output);	
+		}
 		
-		return render(request, model, Path.Template.PLAN_SELECT);
-	};	
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * updatePlan
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route updateSubscription = (Request request, Response response) -> {		
-		Token token = getToken(request);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "subscription.plan.update.success"), 3);
+		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
-		AccountProfile account = getAccount(request);
-		
-		String currencyIsoCode = request.queryParams("currencyIsoCode");
-		String planCode = request.queryParams("planCode");
-		Double unitPrice = Double.valueOf(request.queryParams("unitPrice"));
-		
-		UpdateSubscriptionRequest updateSubscriptionRequest = new UpdateSubscriptionRequest()
-				.withAccountProfileId(account.getId())
-				.withCurrencyIsoCode(currencyIsoCode)
-				.withPlanCode(planCode)
-				.withUnitPrice(unitPrice);
-		
-		UpdateResult<Subscription> updateResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.subscription()
-				.update(updateSubscriptionRequest);
-		
-		Map<String, Object> model = getModel();
-		model.put("id", account.getId());
-		model.put("subscription", updateResult.getTarget());
-		
-		return render(request, model, Path.Template.PLAN_SELECT);
+		return "";	
 	};	
 	
 	/**

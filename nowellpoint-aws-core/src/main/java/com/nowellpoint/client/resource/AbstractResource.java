@@ -6,7 +6,9 @@ import java.util.Locale;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Result;
+import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.idp.Token;
 
@@ -55,7 +57,7 @@ public class AbstractResource {
 		}
 	}
 	
-	class GetResultImpl <T> extends ResultImpl <T> implements UpdateResult <T> {
+	class GetResultImpl <T> extends ResultImpl <T> implements GetResult <T> {
 		
 		public GetResultImpl(T target) {
 			super(target);
@@ -84,6 +86,17 @@ public class AbstractResource {
 		}
 		
 		public AddResultImpl(Error error) {
+			super(error);
+		}
+	}
+	
+	class SetResultImpl <T> extends ResultImpl <T>	implements SetResult <T> {
+		
+		public SetResultImpl(T target) {
+			super(target);
+		}
+		
+		public SetResultImpl(Error error) {
 			super(error);
 		}
 	}
@@ -121,7 +134,7 @@ public class AbstractResource {
 		}
 
 		@Override
-		public Boolean getIsSuccess() {
+		public Boolean isSuccess() {
 			return isSuccess;
 		}
 

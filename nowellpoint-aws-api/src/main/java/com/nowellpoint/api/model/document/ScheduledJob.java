@@ -1,9 +1,7 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -220,15 +218,5 @@ public class ScheduledJob extends MongoDocument {
 
 	public void setRunHistories(Set<RunHistory> runHistories) {
 		this.runHistories = runHistories;
-	}
-	
-	public void addRunHistory(RunHistory runHistory) {
-		if (runHistories == null) {
-			runHistories = new HashSet<RunHistory>();
-		}
-		if (runHistories.size() == 10) {
-			runHistories.stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList()).remove(0);
-		}
-		runHistories.add(runHistory);
 	}
 }

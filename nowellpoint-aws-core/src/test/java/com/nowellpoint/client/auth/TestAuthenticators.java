@@ -16,8 +16,8 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.DeleteResult;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
-import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
 
@@ -46,7 +46,7 @@ public class TestAuthenticators {
 			
 			assertEquals(scheduledJob.getEnvironmentKey(), "40799dbbe97b479baa0772eb4e6ba8cb");
 			
-			Result<ScheduledJob> scheduledJobResult = client.scheduledJob().find(scheduledJob.getId());
+			GetResult<ScheduledJob> scheduledJobResult = client.scheduledJob().get(scheduledJob.getId());
 			
 			assertNotNull(scheduledJobResult.getTarget());
 			
