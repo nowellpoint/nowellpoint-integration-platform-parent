@@ -50,6 +50,27 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * setupAccountProfile
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route setupAccountProfile = (Request request, Response response) -> {
+		AccountProfile account = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", account);
+		model.put("locales", new TreeMap<String, String>(getLocales(account)));
+		model.put("languages", getSupportedLanguages());
+		model.put("timeZones", getTimeZones());
+			
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
 	 * getAccountProfile
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------

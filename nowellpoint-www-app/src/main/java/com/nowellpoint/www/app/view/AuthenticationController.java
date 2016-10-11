@@ -166,19 +166,25 @@ public class AuthenticationController extends AbstractController {
     		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
     				.accountProfile()
     				.get();
+    		
+    		AccountProfile accountProfile = null;
     		    		
     		if (getResult.isSuccess()) {
-    			request.attribute("account", getResult.getTarget());
+    			accountProfile = getResult.getTarget();
     		} else {
     			throw new NotAuthorizedException(getResult.getErrorMessage());
     		}
     		
+    		request.attribute("account", accountProfile);
     		
+    		System.out.println(request.pathInfo());
+    		System.out.println(Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()));
     		
-    		//if (accountProfile.getSubscription() == null && ! Path.Route.PLANS.equals(request.pathInfo())) {
-    		//	response.redirect(Path.Route.PLANS.replace(":id", accountProfile.getId());
-    		//	halt();
-    		//}
+    		//if (accountProfile.getSubscription() == null && ! Path.Route.ACCOUNT_PROFILE_SETUP.equals(request.pathInfo())) {
+    		if (! Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()).equals(request.pathInfo())) {
+    			response.redirect(Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()));
+    			halt();
+    		}
     		
     	} else {
     		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);
