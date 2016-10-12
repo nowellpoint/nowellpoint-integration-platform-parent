@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -282,7 +283,7 @@ public class SignUpService {
 		try {
 			executor.awaitTermination(30, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+			throw new InternalServerErrorException(e.getMessage());
 		}
 		
 		/**
@@ -308,7 +309,7 @@ public class SignUpService {
 			accountProfileService.updateAccountProfile(accountProfile.getId(), accountProfile);
 			
 		} catch (InterruptedException | ExecutionException e) {
-			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+			throw new InternalServerErrorException(e.getMessage());
 		}
 		
 		/**

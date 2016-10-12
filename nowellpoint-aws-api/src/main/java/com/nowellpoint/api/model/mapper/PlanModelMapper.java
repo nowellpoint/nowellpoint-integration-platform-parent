@@ -56,7 +56,6 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	protected void createPlan(Plan plan) {
 		com.nowellpoint.api.model.document.Plan document = modelMapper.map(plan, com.nowellpoint.api.model.document.Plan.class);
 		create(document);
-		hset(encode(getSubject()), document);
 		modelMapper.map(document, plan);
 	}
 	
@@ -71,7 +70,6 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	protected void updatePlan(Plan plan) {
 		com.nowellpoint.api.model.document.Plan document = modelMapper.map(plan, com.nowellpoint.api.model.document.Plan.class);
 		replace(document);
-		hset(encode(getSubject()), document);
 		modelMapper.map(document, plan);
 	}
 	
@@ -124,6 +122,5 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	protected void deletePlan(Plan plan) {
 		com.nowellpoint.api.model.document.Plan document = modelMapper.map(plan, com.nowellpoint.api.model.document.Plan.class);
 		delete(document);
-		hdel(encode(getSubject()), document);
 	}
 }

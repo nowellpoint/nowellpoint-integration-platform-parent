@@ -177,9 +177,6 @@ public class AuthenticationController extends AbstractController {
     		
     		request.attribute("account", accountProfile);
     		
-    		System.out.println(request.pathInfo());
-    		System.out.println(Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()));
-    		
     		//if (accountProfile.getSubscription() == null && ! Path.Route.ACCOUNT_PROFILE_SETUP.equals(request.pathInfo())) {
     		if (! Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()).equals(request.pathInfo())) {
     			response.redirect(Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()));

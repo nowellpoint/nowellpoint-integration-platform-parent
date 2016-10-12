@@ -347,12 +347,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
 		subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
 		subscription.setUpdatedOn(now);
-		subscription.setCurrencySymbol(plan.getCurrencySymbol());
+		subscription.setCurrencySymbol("$");
 		subscription.setPlanName(plan.getPlanName());
 		subscription.setBillingFrequency(plan.getBillingFrequency());
-		subscription.setBillingFrequencyPer(plan.getBillingFrequencyPer());
-		subscription.setBillingFrequencyQuantity(plan.getBillingFrequencyQuantity());
-		subscription.setBillingFrequencyUnit(plan.getBillingFrequencyUnit());
 		
 		accountProfile.setSubscription(subscription);
 		super.updateAccountProfile(accountProfile);

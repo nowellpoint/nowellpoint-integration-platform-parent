@@ -15,21 +15,11 @@ public class Plan {
 	
 	private String planCode;
 	
-	private String currencyIsoCode;
-	
-	private String currencySymbol;
-	
-	private Double unitPrice;
-	
 	private String billingFrequency;
 	
-	private String billingFrequencyPer;
+	private Price price;
 	
-	private String billingFrequencyUnit;
-	
-	private String billingFrequencyQuantity;
-	
-	private List<String> features;
+	private List<Feature> features;
 	
 	public Plan() {
 		
@@ -67,30 +57,6 @@ public class Plan {
 		this.planCode = planCode;
 	}
 
-	public String getCurrencyIsoCode() {
-		return currencyIsoCode;
-	}
-
-	public void setCurrencyIsoCode(String currencyIsoCode) {
-		this.currencyIsoCode = currencyIsoCode;
-	}
-
-	public String getCurrencySymbol() {
-		return currencySymbol;
-	}
-
-	public void setCurrencySymbol(String currencySymbol) {
-		this.currencySymbol = currencySymbol;
-	}
-
-	public Double getUnitPrice() {
-		return unitPrice;
-	}
-
-	public void setUnitPrice(Double unitPrice) {
-		this.unitPrice = unitPrice;
-	}
-
 	public String getBillingFrequency() {
 		return billingFrequency;
 	}
@@ -99,35 +65,19 @@ public class Plan {
 		this.billingFrequency = billingFrequency;
 	}
 
-	public String getBillingFrequencyPer() {
-		return billingFrequencyPer;
+	public Price getPrice() {
+		return price;
 	}
 
-	public void setBillingFrequencyPer(String billingFrequencyPer) {
-		this.billingFrequencyPer = billingFrequencyPer;
+	public void setPrice(Price price) {
+		this.price = price;
 	}
 
-	public String getBillingFrequencyUnit() {
-		return billingFrequencyUnit;
-	}
-
-	public void setBillingFrequencyUnit(String billingFrequencyUnit) {
-		this.billingFrequencyUnit = billingFrequencyUnit;
-	}
-
-	public String getBillingFrequencyQuantity() {
-		return billingFrequencyQuantity;
-	}
-
-	public void setBillingFrequencyQuantity(String billingFrequencyQuantity) {
-		this.billingFrequencyQuantity = billingFrequencyQuantity;
-	}
-
-	public List<String> getFeatures() {
+	public List<Feature> getFeatures() {
 		return features;
 	}
 
-	public void setFeatures(List<String> features) {
+	public void setFeatures(List<Feature> features) {
 		this.features = features;
 	}	
 }

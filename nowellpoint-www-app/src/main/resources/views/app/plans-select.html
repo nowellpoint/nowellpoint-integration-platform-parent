@@ -37,6 +37,9 @@
             <div class="row">
 
                 <ul class="nav nav-stacked">
+                    
+                    
+                    
 
                     <#list plans?sort_by( "unitPrice") as plan>
                         <li>
@@ -44,15 +47,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <br>
-                                    <h4 class="text-primary">${plan.planName}</h4>
-                                    <#if plan.features?? >
-                                    <ul>
-                                        <#list plan.features as feature>
-                                        <li>
-                                            <h4><small>${feature}</small></h4></li>
-                                            </#list>    
-                                    </ul>
-                                    </#if>    
+                                    <h4 class="text-primary">${plan.planName}</h4>   
                                     <br>
                                     <!-- <#if accountProfile.subscription.planCode == plan.planCode> -->
                                     <p class="text-right text-success">${labels["current.subscription"]}</p>
