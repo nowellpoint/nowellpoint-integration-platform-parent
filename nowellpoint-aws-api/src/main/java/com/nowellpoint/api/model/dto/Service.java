@@ -1,14 +1,16 @@
 package com.nowellpoint.api.model.dto;
 
-public class Feature {
+import java.util.Set;
+
+public class Service {
 	
 	private String code;
 	
 	private String name;
 	
-	private Boolean enabled;
-
-	public Feature() {
+	private Set<Feature> features; 
+	
+	public Service() {
 		
 	}
 
@@ -28,11 +30,12 @@ public class Feature {
 		this.name = name;
 	}
 
-	public Boolean getEnabled() {
-		return enabled;
+	public Set<Feature> getFeatures() {
+		return features;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
+	public void setFeatures(Set<Feature> features) {
+		this.features = features;
 	}
+
 }

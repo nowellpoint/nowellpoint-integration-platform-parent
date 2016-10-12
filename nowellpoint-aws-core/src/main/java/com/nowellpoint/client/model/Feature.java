@@ -2,24 +2,14 @@ package com.nowellpoint.client.model;
 
 public class Feature {
 	
-	private String key;
-	
 	private String code;
 	
-	private String value;
+	private String name;
 	
 	private Boolean enabled;
 
 	public Feature() {
 		
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
 	}
 
 	public String getCode() {
@@ -30,12 +20,12 @@ public class Feature {
 		this.code = code;
 	}
 
-	public String getValue() {
-		return value;
+	public String getName() {
+		return name;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Boolean getEnabled() {

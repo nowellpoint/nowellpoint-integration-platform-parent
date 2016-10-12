@@ -16,7 +16,7 @@ public class Plan {
 	
 	private Price price;
 	
-	private Set<Feature> features;
+	private Set<Service> services;
 	
 	public Plan() {
 		
@@ -62,12 +62,12 @@ public class Plan {
 		this.billingFrequency = billingFrequency;
 	}
 
-	public Set<Feature> getFeatures() {
-		return features;
+	public Set<Service> getServices() {
+		return services;
 	}
 
-	public void setFeatures(Set<Feature> features) {
-		this.features = features;
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 
 	public Price getPrice() {

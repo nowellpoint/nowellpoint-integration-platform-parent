@@ -19,7 +19,7 @@ public class Plan {
 	
 	private Price price;
 	
-	private List<Feature> features;
+	private List<Service> services;
 	
 	public Plan() {
 		
@@ -73,11 +73,11 @@ public class Plan {
 		this.price = price;
 	}
 
-	public List<Feature> getFeatures() {
-		return features;
+	public List<Service> getServices() {
+		return services;
 	}
 
-	public void setFeatures(List<Feature> features) {
-		this.features = features;
+	public void setServices(List<Service> services) {
+		this.services = services;
 	}	
 }
