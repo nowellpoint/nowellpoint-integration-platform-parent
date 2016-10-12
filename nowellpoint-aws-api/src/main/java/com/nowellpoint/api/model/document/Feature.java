@@ -10,6 +10,8 @@ public class Feature {
 	private String code;
 	
 	private String value;
+	
+	private Boolean enabled;
 
 	public Feature() {
 		
@@ -37,5 +39,13 @@ public class Feature {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 }
