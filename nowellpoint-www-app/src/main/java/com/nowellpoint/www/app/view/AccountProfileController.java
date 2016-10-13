@@ -93,23 +93,23 @@ public class AccountProfileController extends AbstractController {
 		model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", getDefaultLocale(account)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 	    model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(AccountProfileController.class.getName(), getDefaultLocale(account)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 		
-		Template template = configuration.getTemplate(Path.Template.ACCOUNT_PROFILE_SETUP);
-		String html = template.toString().replace("${planTable}", planTable);
+		//Template template = configuration.getTemplate(Path.Template.ACCOUNT_PROFILE_SETUP);
+		//String html = template.toString().replace("${planTable}", planTable);
 		
-		Template t = new Template("templateName", new StringReader(html), configuration);
+		//Template t = new Template("templateName", new StringReader(html), configuration);
 
-		Writer output = new StringWriter();
-		t.process(model, output);
+		//Writer output = new StringWriter();
+		//t.process(model, output);
 
 		//Environment environment = template.createProcessingEnvironment(model, output);
 		//environment.setLocale(getDefaultLocale(account));
 		//environment.setTimeZone(getDefaultTimeZone(account));
 		//environment.process();
-		output.flush();
+		//output.flush();
 		
-		return output.toString();
+		//return output.toString();
 			
-		//return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
 	};
 	
 	/**
