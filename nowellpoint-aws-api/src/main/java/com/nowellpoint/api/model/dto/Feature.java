@@ -6,6 +6,8 @@ public class Feature {
 	
 	private String name;
 	
+	private String description;
+	
 	private Boolean enabled;
 
 	public Feature() {
@@ -26,6 +28,14 @@ public class Feature {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Boolean getEnabled() {

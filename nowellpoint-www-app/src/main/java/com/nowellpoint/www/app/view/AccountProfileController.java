@@ -1,11 +1,15 @@
 package com.nowellpoint.www.app.view;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -33,8 +37,12 @@ import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
+import freemarker.core.Environment;
+import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.Template;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -56,16 +64,52 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	public Route setupAccountProfile = (Request request, Response response) -> {
+		Token token = getToken(request);
+		
 		AccountProfile account = getAccount(request);
 		
+		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("plans")
+				.queryParameter("localeSidKey", account.getLocaleSidKey())
+				.queryParameter("languageLocaleKey", account.getLanguageSidKey())
+				.execute();
+		
+		if (httpResponse.getStatusCode() != Status.OK) {
+			throw new BadRequestException(httpResponse.getAsString());
+		}
+		
+		List<Plan> plans = httpResponse.getEntityList(Plan.class);
+		
+		String planTable = buildPlanTable(plans);
+		
 		Map<String, Object> model = getModel();
+		//model.put("planTable", planTable);
 		model.put("account", account);
 		model.put("accountProfile", account);
 		model.put("locales", new TreeMap<String, String>(getLocales(account)));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
+		model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", getDefaultLocale(account)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+	    model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(AccountProfileController.class.getName(), getDefaultLocale(account)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		
+		Template template = configuration.getTemplate(Path.Template.ACCOUNT_PROFILE_SETUP);
+		String html = template.toString().replace("${planTable}", planTable);
+		
+		Template t = new Template("templateName", new StringReader(html), configuration);
+
+		Writer output = new StringWriter();
+		t.process(model, output);
+
+		//Environment environment = template.createProcessingEnvironment(model, output);
+		//environment.setLocale(getDefaultLocale(account));
+		//environment.setTimeZone(getDefaultTimeZone(account));
+		//environment.process();
+		output.flush();
+		
+		return output.toString();
 			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
+		//return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
 	};
 	
 	/**
@@ -145,7 +189,7 @@ public class AccountProfileController extends AbstractController {
 				.execute();
 		
 		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
+			throw new BadRequestException(httpResponse.getAsString());
 		}
 		
 		List<Plan> plans = httpResponse.getEntityList(Plan.class);
@@ -829,5 +873,56 @@ public class AccountProfileController extends AbstractController {
 	
 	private List<String> getTimeZones() {
 		return Arrays.asList(TimeZone.getAvailableIDs());
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param plans
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	private static String buildPlanTable(List<Plan> plans) {
+		StringBuilder html = new StringBuilder();
+		html.append("<div class='content table-responsive'>");
+		html.append("<table id='plan-comparison' class='table table-hover'>");
+		html.append("<thead><th class='col-xs-4'>Features</th>");
+		plans.stream().forEach(p -> {
+			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "</th>");
+		});
+		html.append("</thead>");
+		html.append("<tbody>");
+		html.append("<tr>");
+		html.append("<td class='text-center active' colspan='3'>" + plans.get(0).getServices().get(0).getName() + "</td>");
+		html.append("</tr>");
+		plans.stream().forEach(p -> {
+			p.getServices().forEach(s -> {
+				html.append("<tr>");
+				html.append("<td>" + s.getFeatures().get(0).getName() + "</td>");
+				s.getFeatures().stream().forEach(f -> {
+					if (f.getEnabled()) {
+						html.append("<td class='text-center text-success'><span class='icon icon-check'></span></td>");
+					} else {
+						html.append("<td class='text-center text-danger'><span class='icon icon-cross'></span></td>");
+					}
+					
+				});
+				html.append("</tr>");
+			});
+		});
+		html.append("</tbody>");
+		html.append("</table>");
+		html.append("</div>");
+		html.append("<div class='col-xs-4'></div>");
+		html.append("<div class='col-xs-4 text-center'>");
+		html.append("<button type='submit' id='add-plan' class='btn btn-primary'>Select</button>");
+		html.append("</div>");
+		html.append("<div class='col-xs-4 text-center'>");
+		html.append("<button type='submit' id='add-plan' class='btn btn-primary'>Select</button>");
+		html.append("</div>");
+		
+		return html.toString();
 	}
 }

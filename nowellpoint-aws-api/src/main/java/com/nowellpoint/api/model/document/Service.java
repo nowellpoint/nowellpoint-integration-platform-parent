@@ -8,6 +8,8 @@ public class Service {
 	
 	private String name;
 	
+	private String description;
+	
 	private Set<Feature> features; 
 	
 	public Service() {
@@ -30,6 +32,14 @@ public class Service {
 		this.name = name;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Set<Feature> getFeatures() {
 		return features;
 	}
@@ -37,5 +47,4 @@ public class Service {
 	public void setFeatures(Set<Feature> features) {
 		this.features = features;
 	}
-
 }

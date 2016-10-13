@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-import java.util.Set;
+import java.util.List;
 
 public class Service {
 	
@@ -8,7 +8,9 @@ public class Service {
 	
 	private String name;
 	
-	private Set<Feature> features; 
+	private String description;
+	
+	private List<Feature> features; 
 	
 	public Service() {
 		
@@ -30,11 +32,19 @@ public class Service {
 		this.name = name;
 	}
 
-	public Set<Feature> getFeatures() {
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<Feature> getFeatures() {
 		return features;
 	}
 
-	public void setFeatures(Set<Feature> features) {
+	public void setFeatures(List<Feature> features) {
 		this.features = features;
 	}
 

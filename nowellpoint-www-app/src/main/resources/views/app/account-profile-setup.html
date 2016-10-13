@@ -166,42 +166,9 @@
 
                     </div>
 
-                    
-
                     <div id="plans" class="tab-pane fade">
 
-                        <div class="content table-responsive">
-                            <table id="plan-comparison" class="table table-hover">
-                                <thead>
-                                    <th class="col-xs-4">Features</th>
-                                    <th class="col-xs-4 text-center">${plans?0}</th>
-                                    <th class="col-xs-4 text-center">${plans?1}</th>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-center active" colspan="3">Salesforce Metadata Backup</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Unlimited backups of pre-production instances</td>
-                                        <td class="text-center text-success"><span class="icon icon-check"></span></td>
-                                        <td class="text-center text-success"><span class="icon icon-check"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Daily backups of production instances</td>
-                                        <td class="text-center text-danger"><span class="icon icon-cross"></span></td>
-                                        <td class="text-center text-success"><span class="icon icon-check"></span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="col-xs-4"></div>
-                        <div class="col-xs-4 text-center">
-                            <button type="submit" id="add-plan" class="btn btn-primary">${labels["select"]}</button>
-                        </div>
-                        <div class="col-xs-4 text-center">
-                            <button type="submit" id="add-plan" class="btn btn-primary">${labels["select"]}</button>
-                        </div>
+                        ${planTable}
 
                     </div>
 

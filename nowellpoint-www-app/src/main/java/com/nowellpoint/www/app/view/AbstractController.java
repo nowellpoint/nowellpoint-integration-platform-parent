@@ -34,7 +34,7 @@ abstract class AbstractController {
 	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	private Class<?> controllerClass;
-	private Configuration configuration;
+	protected Configuration configuration;
 	
 	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
 		this.controllerClass = controllerClass;
