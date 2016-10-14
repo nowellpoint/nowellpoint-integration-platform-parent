@@ -1,8 +1,7 @@
 package com.nowellpoint.www.app.view;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import static j2html.TagCreator.*;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -24,7 +24,6 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.SetSubscriptionRequest;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
@@ -32,17 +31,15 @@ import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.SetResult;
+import com.nowellpoint.client.model.SetSubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
-import freemarker.core.Environment;
-import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapperBuilder;
-import freemarker.template.Template;
+import j2html.tags.ContainerTag;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -81,33 +78,13 @@ public class AccountProfileController extends AbstractController {
 		
 		List<Plan> plans = httpResponse.getEntityList(Plan.class);
 		
-		String planTable = buildPlanTable(plans);
-		
 		Map<String, Object> model = getModel();
-		//model.put("planTable", planTable);
+		model.put("planTable", buildPlanTable(account, plans));
 		model.put("account", account);
 		model.put("accountProfile", account);
 		model.put("locales", new TreeMap<String, String>(getLocales(account)));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
-		model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", getDefaultLocale(account)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-	    model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(AccountProfileController.class.getName(), getDefaultLocale(account)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-		
-		//Template template = configuration.getTemplate(Path.Template.ACCOUNT_PROFILE_SETUP);
-		//String html = template.toString().replace("${planTable}", planTable);
-		
-		//Template t = new Template("templateName", new StringReader(html), configuration);
-
-		//Writer output = new StringWriter();
-		//t.process(model, output);
-
-		//Environment environment = template.createProcessingEnvironment(model, output);
-		//environment.setLocale(getDefaultLocale(account));
-		//environment.setTimeZone(getDefaultTimeZone(account));
-		//environment.process();
-		//output.flush();
-		
-		//return output.toString();
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
 	};
@@ -884,43 +861,101 @@ public class AccountProfileController extends AbstractController {
 	 * 
 	 */
 	
-	private static String buildPlanTable(List<Plan> plans) {
+	private static String buildPlanTable(AccountProfile accountProfile, List<Plan> plans) {
+//		ContainerTag tag = div()
+//				.withClass("content table-responsive")
+//				.with(table()
+//						.withId("plan-comparison")
+//						.withClass("table table-hover")
+//						.with(thead()
+//								.with(th()
+//										.withClass("col-xs-4")
+//										.withText(ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("features"))
+//										.with(plans.stream().map(p -> th()
+//												.withClass("text-center")
+//												.withText(p.getPlanName()))
+//												.collect(Collectors.toList())).with(
+//														tbody()
+//														.with(tr()
+//																.with(td()
+//																		.withClass("text-center active")
+//																		.attr("colspan", String.valueOf(1 + plans.size()))
+//																		.withText(plans.get(0).getServices().get(0).getName())))
+//														.with(tr()
+//																.with(td()
+//																		.withText(plans.get(0).getServices().get(0).getFeatures().get(0).getName()))
+//																.with(plans.stream().map(p -> td().with(p.getServices().map(s -> 
+//																				
+//																				.with(s.getFeatures().stream().map(f -> td()
+//																						.withClass("text-center text-success")
+//																						.with(span()
+//																								.withClass(f.getEnabled() ? "icon icon-check" : "icon icon-cross")))
+//																						.collect(Collectors.toList()));
+//																			}).collect(Collectors.toList());
+//																		})   
+//																				
+//																))))));
+//												
+//		
+//		
+//		
+//		
+//		
+//		tag.with(div().withClass("col-xs-4"));
+//		
+//		plans.stream().forEach(p -> {
+//			tag.with(div()
+//					.withClass("text-center")
+//					.with(button()
+//							.withId("add-plan-".concat(p.getPlanCode()))
+//							.withClass("btn btn-primary")
+//							.withText(ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("select"))
+//							.withType("submit")));
+//		});		
+				
+				
+		//System.out.println(tag.render());
+		
+		//return tag.render();
+		
+		
 		StringBuilder html = new StringBuilder();
 		html.append("<div class='content table-responsive'>");
-		html.append("<table id='plan-comparison' class='table table-hover'>");
-		html.append("<thead><th class='col-xs-4'>Features</th>");
+		html.append("<table id='plan-comparison' class='table'>");
+		html.append("<thead><th class='col-xs-4'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("features") + "</th>");
 		plans.stream().forEach(p -> {
 			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "</th>");
 		});
 		html.append("</thead>");
 		html.append("<tbody>");
 		html.append("<tr>");
-		html.append("<td class='text-center active' colspan='3'>" + plans.get(0).getServices().get(0).getName() + "</td>");
+		html.append("<td class='active' colspan='" + String.valueOf(1 + plans.size()) + "'><h4>" + plans.get(0).getServices().get(0).getName() + "</h4></td>");
 		html.append("</tr>");
 		plans.stream().forEach(p -> {
 			p.getServices().forEach(s -> {
 				html.append("<tr>");
-				html.append("<td>" + s.getFeatures().get(0).getName() + "</td>");
+				AtomicLong column = new AtomicLong(0);
 				s.getFeatures().stream().forEach(f -> {
-					if (f.getEnabled()) {
-						html.append("<td class='text-center text-success'><span class='icon icon-check'></span></td>");
-					} else {
-						html.append("<td class='text-center text-danger'><span class='icon icon-cross'></span></td>");
+					if (column.get() == 0) {
+						html.append("<td>" + f.getName() + "</td>");
+						column.set(1);
 					}
-					
+					html.append("<td class='text-center "  + (f.getEnabled() ? "text-success" : "text-danger") + "'><span class='icon " + (f.getEnabled() ? "icon icon-check" : "icon icon-cross") + "'></span></td>");
 				});
 				html.append("</tr>");
 			});
 		});
+		html.append("<tr>");
+		
+		html.append("<td></td>");
+		plans.stream().forEach(p -> {
+			html.append("<td class='text-center'>");
+			html.append("<button type='submit' class='btn btn-primary' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("select") + "</button>");
+			html.append("</td>");
+		});
+		html.append("</tr>");
 		html.append("</tbody>");
 		html.append("</table>");
-		html.append("</div>");
-		html.append("<div class='col-xs-4'></div>");
-		html.append("<div class='col-xs-4 text-center'>");
-		html.append("<button type='submit' id='add-plan' class='btn btn-primary'>Select</button>");
-		html.append("</div>");
-		html.append("<div class='col-xs-4 text-center'>");
-		html.append("<button type='submit' id='add-plan' class='btn btn-primary'>Select</button>");
 		html.append("</div>");
 		
 		return html.toString();
