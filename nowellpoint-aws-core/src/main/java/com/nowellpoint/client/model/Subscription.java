@@ -16,6 +16,8 @@ public class Subscription implements Serializable {
 	
 	private String subscriptionId;
 	
+	private String planId;
+	
 	private Date addedOn;
 	
 	private Date updatedOn;
@@ -42,6 +44,14 @@ public class Subscription implements Serializable {
 	
 	public Subscription() {
 		
+	}
+
+	public String getPlanId() {
+		return planId;
+	}
+
+	public void setPlanId(String planId) {
+		this.planId = planId;
 	}
 
 	public String getSubscriptionId() {

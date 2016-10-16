@@ -18,6 +18,8 @@ public class Subscription implements Serializable {
 	
 	private String subscriptionId;
 	
+	private String planId;
+	
 	private String planName;
 	
 	private String planCode;
@@ -58,6 +60,14 @@ public class Subscription implements Serializable {
 		this.subscriptionId = subscriptionId;
 	}
 
+	public String getPlanId() {
+		return planId;
+	}
+	
+	public void setPlanId(String planId) {
+		this.planId = planId;
+	}
+	
 	public String getPlanName() {
 		return planName;
 	}

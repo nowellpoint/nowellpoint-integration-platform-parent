@@ -49,12 +49,12 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		List<ScheduledJob> scheduledJobs = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<ScheduledJob>> getResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", scheduledJobs);
+		model.put("scheduledJobList", getResult.getTarget());
 
 		return render(request, model, Path.Template.SCHEDULED_JOBS_LIST);
 	};

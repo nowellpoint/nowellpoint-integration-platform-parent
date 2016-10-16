@@ -27,6 +27,9 @@
 
                             <div class="footer">
                                 <div class="legend">
+                                    <#if scheduledJobList?size==0>
+                                        <p class="text-center">${labels["no.records"]}</p>
+                                    </#if>
                                     <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
                                         <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
                                         <i class="fa fa-circle text-success"></i>

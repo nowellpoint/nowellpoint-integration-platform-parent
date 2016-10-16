@@ -10,6 +10,7 @@ import com.nowellpoint.client.auth.UsernamePasswordCredentials;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
 import com.nowellpoint.client.resource.ApplicationResource;
+import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.ScheduledJobResource;
 import com.nowellpoint.client.resource.ScheduledJobTypeResource;
@@ -44,6 +45,10 @@ public class NowellpointClient {
 	
 	public ApplicationResource application() {
 		return new ApplicationResource(token);
+	}
+	
+	public PlanResource plan() {
+		return new PlanResource(token);
 	}
 	
 	public ScheduledJobResource scheduledJob() {

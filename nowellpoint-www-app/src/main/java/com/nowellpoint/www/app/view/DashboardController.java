@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.Path;
@@ -32,12 +33,12 @@ public class DashboardController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		List<ScheduledJob> scheduledJobs = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<ScheduledJob>> getResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", scheduledJobs);
+		model.put("scheduledJobList", getResult.getTarget());
 		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
     	model.put("account", getAccount(request));
     	return render(request, model, Path.Template.DASHBOARD);

@@ -1,7 +1,6 @@
 package com.nowellpoint.www.app.view;
 
-import static j2html.TagCreator.*;
-
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -28,8 +26,11 @@ import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.ExceptionResponse;
+import com.nowellpoint.client.model.Feature;
+import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Plan;
+import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SetSubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
@@ -39,7 +40,6 @@ import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import j2html.tags.ContainerTag;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -65,18 +65,15 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("plans")
-				.queryParameter("localeSidKey", account.getLocaleSidKey())
-				.queryParameter("languageLocaleKey", account.getLanguageSidKey())
-				.execute();
+		GetPlansRequest getPlansRequest = new GetPlansRequest()
+				.withLanguageSidKey(account.getLanguageSidKey())
+				.withLocaleSidKey(account.getLocaleSidKey());
 		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		GetResult<List<Plan>> getResult = new NowellpointClient(new TokenCredentials(token))
+				.plan()
+				.getPlans(getPlansRequest);
 		
-		List<Plan> plans = httpResponse.getEntityList(Plan.class);
+		List<Plan> plans = getResult.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("planTable", buildPlanTable(account, plans));
@@ -158,18 +155,15 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("plans")
-				.queryParameter("localeSidKey", account.getLocaleSidKey())
-				.queryParameter("languageLocaleKey", account.getLanguageSidKey())
-				.execute();
+		GetPlansRequest getPlansRequest = new GetPlansRequest()
+				.withLanguageSidKey(account.getLanguageSidKey())
+				.withLocaleSidKey(account.getLocaleSidKey());
 		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		GetResult<List<Plan>> getResult = new NowellpointClient(new TokenCredentials(token))
+				.plan()
+				.getPlans(getPlansRequest);
 		
-		List<Plan> plans = httpResponse.getEntityList(Plan.class);
+		List<Plan> plans = getResult.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", account);
@@ -862,95 +856,57 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	private static String buildPlanTable(AccountProfile accountProfile, List<Plan> plans) {
-//		ContainerTag tag = div()
-//				.withClass("content table-responsive")
-//				.with(table()
-//						.withId("plan-comparison")
-//						.withClass("table table-hover")
-//						.with(thead()
-//								.with(th()
-//										.withClass("col-xs-4")
-//										.withText(ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("features"))
-//										.with(plans.stream().map(p -> th()
-//												.withClass("text-center")
-//												.withText(p.getPlanName()))
-//												.collect(Collectors.toList())).with(
-//														tbody()
-//														.with(tr()
-//																.with(td()
-//																		.withClass("text-center active")
-//																		.attr("colspan", String.valueOf(1 + plans.size()))
-//																		.withText(plans.get(0).getServices().get(0).getName())))
-//														.with(tr()
-//																.with(td()
-//																		.withText(plans.get(0).getServices().get(0).getFeatures().get(0).getName()))
-//																.with(plans.stream().map(p -> td().with(p.getServices().map(s -> 
-//																				
-//																				.with(s.getFeatures().stream().map(f -> td()
-//																						.withClass("text-center text-success")
-//																						.with(span()
-//																								.withClass(f.getEnabled() ? "icon icon-check" : "icon icon-cross")))
-//																						.collect(Collectors.toList()));
-//																			}).collect(Collectors.toList());
-//																		})   
-//																				
-//																))))));
-//												
-//		
-//		
-//		
-//		
-//		
-//		tag.with(div().withClass("col-xs-4"));
-//		
-//		plans.stream().forEach(p -> {
-//			tag.with(div()
-//					.withClass("text-center")
-//					.with(button()
-//							.withId("add-plan-".concat(p.getPlanCode()))
-//							.withClass("btn btn-primary")
-//							.withText(ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("select"))
-//							.withType("submit")));
-//		});		
-				
-				
-		//System.out.println(tag.render());
 		
-		//return tag.render();
-		
+		plans = plans.stream()
+				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
+				.collect(Collectors.toList());
 		
 		StringBuilder html = new StringBuilder();
 		html.append("<div class='content table-responsive'>");
 		html.append("<table id='plan-comparison' class='table'>");
 		html.append("<thead><th class='col-xs-4'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("features") + "</th>");
 		plans.stream().forEach(p -> {
-			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "</th>");
+			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + NumberFormat.getInstance(Locale.getDefault()).format(p.getPrice().getUnitPrice()) + "</th>");
 		});
 		html.append("</thead>");
 		html.append("<tbody>");
-		html.append("<tr>");
-		html.append("<td class='active' colspan='" + String.valueOf(1 + plans.size()) + "'><h4>" + plans.get(0).getServices().get(0).getName() + "</h4></td>");
-		html.append("</tr>");
-		plans.stream().forEach(p -> {
-			p.getServices().forEach(s -> {
-				html.append("<tr>");
-				AtomicLong column = new AtomicLong(0);
-				s.getFeatures().stream().forEach(f -> {
-					if (column.get() == 0) {
-						html.append("<td>" + f.getName() + "</td>");
-						column.set(1);
-					}
-					html.append("<td class='text-center "  + (f.getEnabled() ? "text-success" : "text-danger") + "'><span class='icon " + (f.getEnabled() ? "icon icon-check" : "icon icon-cross") + "'></span></td>");
-				});
-				html.append("</tr>");
-			});
-		});
-		html.append("<tr>");
 		
+		for (int j = 0; j < plans.get(0).getServices().size(); j++) {
+			
+			boolean newService = true;
+			
+			for (int k = 0; k < plans.get(0).getServices().get(0).getFeatures().size(); k++) {
+				
+				for (int i = 0; i < plans.size(); i++) {
+					
+					Service service = plans.get(i).getServices().stream().sorted((s1, s2) -> s1.getName().compareTo(s2.getName())).collect(Collectors.toList()).get(j);
+					
+					if (newService) {
+						html.append("<tr>");
+						html.append("<td class='active' colspan='" + String.valueOf(1 + plans.size()) + "'><h4>" + service.getName() + ": " + service.getDescription() + "</h4></td>");
+						html.append("</tr>");
+						newService = false;
+					}
+					
+					Feature feature = service.getFeatures().stream().sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(Collectors.toList()).get(k);
+					
+					if (i == 0) {
+						html.append("<tr>");
+						html.append("<td>" + feature.getName() + "</td>");
+					}
+					
+					html.append("<td class='text-center "  + (feature.getEnabled() ? "text-success" : "text-danger") + "'><span class='icon " + (feature.getEnabled() ? "icon icon-check" : "icon icon-cross") + "'></span></td>");
+				}
+			}
+			
+			html.append("</tr>");	
+		}
+		
+		html.append("<tr>");
 		html.append("<td></td>");
 		plans.stream().forEach(p -> {
-			html.append("<td class='text-center'>");
-			html.append("<button type='submit' class='btn btn-primary' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("select") + "</button>");
+			html.append("<td class='text-center p-a'>");
+			html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("select") + "</a>");
 			html.append("</td>");
 		});
 		html.append("</tr>");

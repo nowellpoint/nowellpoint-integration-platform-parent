@@ -12,7 +12,6 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
-import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
@@ -27,21 +26,25 @@ public class ScheduledJobResource extends AbstractResource {
 		super(token);
 	}
 
-	public List<ScheduledJob> getScheduledJobs() {
+	public GetResult<List<ScheduledJob>> getScheduledJobs() {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.execute();
 		
-		List<ScheduledJob> scheduledJobs = null;
+		GetResult<List<ScheduledJob>> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			scheduledJobs = httpResponse.getEntityList(ScheduledJob.class);
+			List<ScheduledJob> scheduledJobs = httpResponse.getEntityList(ScheduledJob.class);
+			result = new GetResultImpl<List<ScheduledJob>>(scheduledJobs);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			result = new GetResultImpl<List<ScheduledJob>>(error);
 		}
 		
-		return scheduledJobs;
+		return result;
 	}
 	
 	public CreateScheduledJobResult create(CreateScheduledJobRequest createScheduledJobRequest) {		

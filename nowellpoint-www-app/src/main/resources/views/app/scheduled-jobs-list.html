@@ -38,7 +38,15 @@
                     <br>
 
                     <div class="row">
+
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <#if scheduledJobList?size==0>
+                                <div class="panel panel-default">
+                                    <div class="panel-body"><p class="text-center">${labels["no.records"]}</p></div>
+                                </div>
+                            </#if>
+
                             <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
                                 <div class="panel panel-default">
                                     <div class="panel-body">
