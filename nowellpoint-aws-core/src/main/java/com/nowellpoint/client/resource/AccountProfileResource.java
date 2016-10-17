@@ -5,6 +5,11 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.AddCreditCardRequest;
+import com.nowellpoint.client.model.AddResult;
+import com.nowellpoint.client.model.Address;
+import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
@@ -71,6 +76,10 @@ public class AccountProfileResource extends AbstractResource {
 		return new SubscriptionResource(token);
 	}
 	
+	public CreditCardResource creditCard() {
+		return new CreditCardResource(token);
+	}
+	
 	public class SubscriptionResource extends AbstractResource {
 		
 		public SubscriptionResource(Token token) {
@@ -85,9 +94,7 @@ public class AccountProfileResource extends AbstractResource {
 					.path(RESOURCE_CONTEXT)
 					.path(setSubscriptionRequest.getAccountProfileId())
 					.path("subscription")
-					.parameter("currencyIsoCode", setSubscriptionRequest.getCurrencyIsoCode())
-					.parameter("planCode", setSubscriptionRequest.getPlanCode())
-					.parameter("unitPrice", String.valueOf(setSubscriptionRequest.getUnitPrice()))
+					.parameter("planId", setSubscriptionRequest.getPlanId())
 					.execute();
 			
 			SetResult<Subscription> result = null;
@@ -98,6 +105,55 @@ public class AccountProfileResource extends AbstractResource {
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
 				result = new SetResultImpl<Subscription>(error);
+			}
+			
+			return result;
+		}
+	}
+	
+	public class CreditCardResource extends AbstractResource {
+		
+		public CreditCardResource(Token token) {
+			super(token);
+		}
+		
+		public AddResult<CreditCard> add(AddCreditCardRequest addCreditCardRequest) {
+			
+			CreditCard creditCard = new CreditCard()
+					.withBillingAddress(new Address()
+							.withCity(addCreditCardRequest.getCity())
+							.withCountryCode(addCreditCardRequest.getCountryCode())
+							.withPostalCode(addCreditCardRequest.getPostalCode())
+							.withState(addCreditCardRequest.getState())
+							.withStreet(addCreditCardRequest.getStreet()))
+					.withBillingContact(new Contact()
+							.withFirstName(addCreditCardRequest.getFirstName())
+							.withLastName(addCreditCardRequest.getLastName()))
+					.withCardholderName(addCreditCardRequest.getCardholderName())
+					.withExpirationMonth(addCreditCardRequest.getExpirationMonth())
+					.withExpirationYear(addCreditCardRequest.getExpirationYear())
+					.withNumber(addCreditCardRequest.getNumber())
+					.withCardholderName(addCreditCardRequest.getCvv())
+					.withPrimary(addCreditCardRequest.getPrimary());
+			
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account-profile")
+					.path(addCreditCardRequest.getAccountProfileId())
+					.path("credit-card")
+					.body(creditCard)
+					.execute();
+			
+			AddResult<CreditCard> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				CreditCard subscription = httpResponse.getEntity(CreditCard.class);
+				result = new AddResultImpl<CreditCard>(subscription);
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new AddResultImpl<CreditCard>(error);
 			}
 			
 			return result;

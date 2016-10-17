@@ -36,8 +36,9 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
-		public static final String ACCOUNT_PROFILE_SETUP = String.format(APPLICATION_CONTEXT, "account-profile/:id/setup");
-		public static final String ACCOUNT_PROFILE_SUBSCRIPTION_PLANS = String.format(APPLICATION_CONTEXT, "account-profile/:id/subscription/plans");
+		
+		public static final String ACCOUNT_PROFILE_LIST_PLANS = String.format(APPLICATION_CONTEXT, "account-profile/:id/plans");
+		public static final String ACCOUNT_PROFILE_PLAN = String.format(APPLICATION_CONTEXT, "account-profile/:id/plans/:planId");
 		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "account-profile/:id/address");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
@@ -55,7 +56,6 @@ public class Path {
 		public static final String SCHEDULED_JOB_STOP = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/stop");
 		public static final String SCHEDULED_JOB_TERMINATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/terminate");
 		
-		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
 		public static final String APPLICATION_LIST = String.format(APPLICATION_CONTEXT, "applications");
 		public static final String APPLICATION_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id");
 		public static final String APPLICATION_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "applications/select");
@@ -93,9 +93,6 @@ public class Path {
 		public static final String PROJECT_LIST = String.format(APPLICATION_CONTEXT, "project-list.html");
 		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "query-edit.html");
 		public static final String SALESFORCE_OUTBOUND_MESSAGE = String.format(APPLICATION_CONTEXT, "salesforce-outbound-messages.html");
-		
-		public static final String PLAN_SELECT = String.format(APPLICATION_CONTEXT, "plans-select.html");
-		
 		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
 		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
 		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
@@ -108,7 +105,7 @@ public class Path {
 		public static final String PROPERTY_MANAGER = String.format(APPLICATION_CONTEXT, "properties-list.html");
 		public static final String ACCOUNT_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile-me.html");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile.html");
-		public static final String ACCOUNT_PROFILE_SETUP = String.format(APPLICATION_CONTEXT, "account-profile-setup.html");
+		public static final String ACCOUNT_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "account-profile-plans.html");
 		public static final String ACCOUNT_PROFILE_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-edit.html");
 		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-address-edit.html");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile-deactivate.html");

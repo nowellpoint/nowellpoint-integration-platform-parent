@@ -258,7 +258,9 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	if (scheduledJob.getRunHistories() == null) {
 						scheduledJob.setRunHistories(new HashSet<RunHistory>());
 					} else if (scheduledJob.getRunHistories().size() == 10) {
-						scheduledJob.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList()).remove(0);
+						List<RunHistory> runHistories = scheduledJob.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList());
+						runHistories.remove(0);
+						scheduledJob.setRunHistories(new HashSet<RunHistory>(runHistories));
 					}
 			    	
 			    	scheduledJob.getRunHistories().add(runHistory);

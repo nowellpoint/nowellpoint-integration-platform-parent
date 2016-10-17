@@ -37,7 +37,6 @@ import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
-import com.nowellpoint.api.model.dto.Plan;
 import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
@@ -52,9 +51,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	@Inject
 	private IsoCountryService isoCountryService;
-	
-	@Inject
-	private PlanService planService;
 	
 	public AccountProfileService() {
 		super();
@@ -336,22 +332,19 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				    .price(new BigDecimal(subscription.getUnitPrice()));
 
 			subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+			
+			subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
 		}
 		
 		if (! subscriptionResult.isSuccess()) {
 			LOGGER.error(subscriptionResult.getMessage());
 		}
 		
-		Plan plan = planService.findByPlanCode(subscription.getPlanCode());
-		
 		subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
-		subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
 		subscription.setUpdatedOn(now);
-		subscription.setCurrencySymbol("$");
-		subscription.setPlanName(plan.getPlanName());
-		subscription.setBillingFrequency(plan.getBillingFrequency());
 		
 		accountProfile.setSubscription(subscription);
+		
 		super.updateAccountProfile(accountProfile);
 	}
 	

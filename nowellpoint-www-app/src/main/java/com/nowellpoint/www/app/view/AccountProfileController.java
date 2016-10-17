@@ -22,6 +22,8 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.AddCreditCardRequest;
+import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
@@ -37,6 +39,7 @@ import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.util.Assert;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -55,12 +58,13 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * setupAccountProfile
+	 * listPlans
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route setupAccountProfile = (Request request, Response response) -> {
+	public Route listPlans = (Request request, Response response) -> {
+		
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -74,16 +78,47 @@ public class AccountProfileController extends AbstractController {
 				.getPlans(getPlansRequest);
 		
 		List<Plan> plans = getResult.getTarget();
-		
+
 		Map<String, Object> model = getModel();
-		model.put("planTable", buildPlanTable(account, plans));
 		model.put("account", account);
 		model.put("accountProfile", account);
+		model.put("action", "listPlans");
+		model.put("planTable", buildPlanTable(account, plans));
 		model.put("locales", new TreeMap<String, String>(getLocales(account)));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_SETUP);		
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);		
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * reviewPlan
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route reviewPlan = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		String planId = request.params(":planId");
+		
+		Plan plan = new NowellpointClient(new TokenCredentials(token))
+				.plan()
+				.get(planId)
+				.getTarget();
+
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", account);
+		model.put("action", "reviewPlan");
+		model.put("plan", plan);
+			
+		return render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);		
 	};
 	
 	/**
@@ -145,55 +180,92 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * selectPlan
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route selectPlan = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
-		
-		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguageSidKey(account.getLanguageSidKey())
-				.withLocaleSidKey(account.getLocaleSidKey());
-		
-		GetResult<List<Plan>> getResult = new NowellpointClient(new TokenCredentials(token))
-				.plan()
-				.getPlans(getPlansRequest);
-		
-		List<Plan> plans = getResult.getTarget();
-		
-		Map<String, Object> model = getModel();
-		model.put("accountProfile", account);
-		model.put("plans", plans);
-		
-		return render(request, model, Path.Template.PLAN_SELECT);
-	};	
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
 	 * setSubscription
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route setSubscription = (Request request, Response response) -> {		
+	public Route setPlan = (Request request, Response response) -> {		
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
 		
-		String currencyIsoCode = request.queryParams("currencyIsoCode");
-		String planCode = request.queryParams("planCode");
-		Double unitPrice = Double.valueOf(request.queryParams("unitPrice"));
+		String planId = request.params(":planId");
+		
+		String cardholderName = request.queryParams("cardholderName");
+		String number = request.queryParams("number");
+		String expirationMonth = request.queryParams("expirationMonth");
+		String expirationYear = request.queryParams("expirationYear");
+		String city = request.queryParams("city");
+		String countryCode = request.queryParams("countryCode");
+		String postalCode = request.queryParams("postalCode");
+		String state = request.queryParams("state");
+		String street = request.queryParams("street");
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
+		String cvv = request.queryParams("cvv");
+		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
+		
+		Map<String, Object> model = getModel();
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		
+		if (Assert.isNotNull(cardholderName) || Assert.isNotNull(number) || Assert.isNotNull(expirationMonth) || Assert.isNotNull(expirationYear) ||
+				Assert.isNotNull(expirationYear) || Assert.isNotNull(city) || Assert.isNotNull(countryCode) || Assert.isNotNull(postalCode) ||
+				Assert.isNotNull(state) || Assert.isNotNull(firstName) || Assert.isNotNull(lastName) || Assert.isNotNull(primary)) {
+			
+			AddCreditCardRequest addCreditCardRequest = new AddCreditCardRequest()
+					.withCardholderName(cardholderName)
+					.withExpirationMonth(expirationMonth)
+					.withExpirationYear(expirationYear)
+					.withNumber(number)
+					.withCardholderName(cvv)
+					.withPrimary(primary)
+					.withCity(city)
+					.withCountryCode(countryCode)
+					.withPostalCode(postalCode)
+					.withState(state)
+					.withStreet(street)
+					.withFirstName(firstName)
+					.withLastName(lastName);
+			
+			AddResult<CreditCard> addResult = new NowellpointClient(new TokenCredentials(token))
+					.accountProfile()
+					.creditCard()
+					.add(addCreditCardRequest);
+				
+			if (! addResult.isSuccess()) {
+				
+				CreditCard creditCard = new CreditCard()
+						.withBillingAddress(new Address()
+								.withCity(city)
+								.withCountryCode(countryCode)
+								.withPostalCode(postalCode)
+								.withState(state)
+								.withStreet(street))
+						.withBillingContact(new Contact()
+								.withFirstName(firstName)
+								.withLastName(lastName))
+						.withCardholderName(cardholderName)
+						.withExpirationMonth(expirationMonth)
+						.withExpirationYear(expirationYear)
+						.withNumber(number)
+						.withCardholderName(cvv)
+						.withPrimary(primary);
+				
+				model.put("creditCard", creditCard);
+				model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
+				model.put("mode", "add");
+				model.put("errorMessage", addResult.getErrorMessage());
+				
+				String output = render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);
+				
+				throw new BadRequestException(output);	
+			}
+		}
 		
 		SetSubscriptionRequest setSubscriptionRequest = new SetSubscriptionRequest()
 				.withAccountProfileId(accountProfile.getId())
-				.withCurrencyIsoCode(currencyIsoCode)
-				.withPlanCode(planCode)
-				.withUnitPrice(unitPrice);
+				.withPlanId(planId);
 		
 		SetResult<Subscription> setResult = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
@@ -202,12 +274,11 @@ public class AccountProfileController extends AbstractController {
 		
 		if (! setResult.isSuccess()) {
 			
-			Map<String, Object> model = getModel();
 			model.put("account", accountProfile);
 			model.put("accountProfile", accountProfile);
 			model.put("errorMessage", setResult.getErrorMessage());
 			
-			String output = render(request, model, Path.Template.PLAN_SELECT);
+			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);
 			
 			throw new BadRequestException(output);	
 		}
@@ -626,49 +697,58 @@ public class AccountProfileController extends AbstractController {
 		String cvv = request.queryParams("cvv");
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
-		CreditCard creditCard = new CreditCard()
-				.withBillingAddress(new Address()
-						.withCity(city)
-						.withCountryCode(countryCode)
-						.withPostalCode(postalCode)
-						.withState(state)
-						.withStreet(street))
-				.withBillingContact(new Contact()
-						.withFirstName(firstName)
-						.withLastName(lastName))
+		AddCreditCardRequest addCreditCardRequest = new AddCreditCardRequest()
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
 				.withNumber(number)
 				.withCardholderName(cvv)
-				.withPrimary(primary);
+				.withPrimary(primary)
+				.withCity(city)
+				.withCountryCode(countryCode)
+				.withPostalCode(postalCode)
+				.withState(state)
+				.withStreet(street)
+				.withFirstName(firstName)
+				.withLastName(lastName);
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("credit-card")
-				.body(creditCard)
-				.execute();
+		AddResult<CreditCard> addResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.creditCard()
+				.add(addCreditCardRequest);
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			creditCard = httpResponse.getEntity(CreditCard.class);
+		if (addResult.isSuccess()) {
+			CreditCard creditCard = addResult.getTarget();
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
 			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "add.credit.card.success"));
-		} else {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+		} else {	
+			
+			CreditCard creditCard = new CreditCard()
+					.withBillingAddress(new Address()
+							.withCity(city)
+							.withCountryCode(countryCode)
+							.withPostalCode(postalCode)
+							.withState(state)
+							.withStreet(street))
+					.withBillingContact(new Contact()
+							.withFirstName(firstName)
+							.withLastName(lastName))
+					.withCardholderName(cardholderName)
+					.withExpirationMonth(expirationMonth)
+					.withExpirationYear(expirationYear)
+					.withNumber(number)
+					.withCardholderName(cvv)
+					.withPrimary(primary);
 			
 			model.put("creditCard", creditCard);
 			model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 			model.put("mode", "add");
-			model.put("errorMessage", error.getMessage());
+			model.put("errorMessage", addResult.getErrorMessage());
 		}
 		
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
@@ -856,6 +936,8 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	private static String buildPlanTable(AccountProfile accountProfile, List<Plan> plans) {
+
+		ResourceBundle bundle = ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault());
 		
 		plans = plans.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
@@ -864,13 +946,13 @@ public class AccountProfileController extends AbstractController {
 		StringBuilder html = new StringBuilder();
 		html.append("<div class='content table-responsive'>");
 		html.append("<table id='plan-comparison' class='table'>");
-		html.append("<thead><th class='col-xs-4'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("features") + "</th>");
+		html.append("<thead><th class='col-xs-4'>" + bundle.getString("features") + "</th>");
 		plans.stream().forEach(p -> {
-			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + NumberFormat.getInstance(Locale.getDefault()).format(p.getPrice().getUnitPrice()) + "</th>");
+			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + "&nbsp;" + NumberFormat.getInstance(Locale.getDefault()).format(p.getPrice().getUnitPrice()) + "</th>");
 		});
 		html.append("</thead>");
 		html.append("<tbody>");
-		
+
 		for (int j = 0; j < plans.get(0).getServices().size(); j++) {
 			
 			boolean newService = true;
@@ -906,14 +988,19 @@ public class AccountProfileController extends AbstractController {
 		html.append("<td></td>");
 		plans.stream().forEach(p -> {
 			html.append("<td class='text-center p-a'>");
-			html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_SETUP.replace(":id", accountProfile.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault()).getString("select") + "</a>");
+			if (accountProfile.getSubscription() != null && p.getId().equals(accountProfile.getSubscription().getPlanId())) {
+				html.append("<p class='text-center text-success'>" + bundle.getString("current.subscription") + "</p>");
+			} else {
+				html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_PLAN.replace(":id", accountProfile.getId()).replace(":planId", p.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + bundle.getString("select") + "</a>");
+			}
 			html.append("</td>");
 		});
+		
 		html.append("</tr>");
 		html.append("</tbody>");
 		html.append("</table>");
 		html.append("</div>");
-		
+
 		return html.toString();
 	}
 }

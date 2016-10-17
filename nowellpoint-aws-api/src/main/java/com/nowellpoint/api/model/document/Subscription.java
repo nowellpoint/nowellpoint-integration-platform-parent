@@ -32,14 +32,6 @@ public class Subscription implements Serializable {
 	
 	private String billingFrequency;
 	
-	private String billingFrequencyPer;
-	
-	private String billingFrequencyUnit;
-	
-	private String billingFrequencyQuantity;
-	
-	private Double proratedDailyUnitPrice;
-	
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date addedOn;
@@ -130,37 +122,5 @@ public class Subscription implements Serializable {
 
 	public void setBillingFrequency(String billingFrequency) {
 		this.billingFrequency = billingFrequency;
-	}
-
-	public String getBillingFrequencyPer() {
-		return billingFrequencyPer;
-	}
-
-	public void setBillingFrequencyPer(String billingFrequencyPer) {
-		this.billingFrequencyPer = billingFrequencyPer;
-	}
-
-	public String getBillingFrequencyUnit() {
-		return billingFrequencyUnit;
-	}
-
-	public void setBillingFrequencyUnit(String billingFrequencyUnit) {
-		this.billingFrequencyUnit = billingFrequencyUnit;
-	}
-
-	public String getBillingFrequencyQuantity() {
-		return billingFrequencyQuantity;
-	}
-
-	public void setBillingFrequencyQuantity(String billingFrequencyQuantity) {
-		this.billingFrequencyQuantity = billingFrequencyQuantity;
-	}
-
-	public Double getProratedDailyUnitPrice() {
-		return proratedDailyUnitPrice;
-	}
-
-	public void setProratedDailyUnitPrice(Double proratedDailyUnitPrice) {
-		this.proratedDailyUnitPrice = proratedDailyUnitPrice;
 	}
 }

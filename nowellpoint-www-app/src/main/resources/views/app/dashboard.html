@@ -30,26 +30,45 @@
                                     <#if scheduledJobList?size==0>
                                         <p class="text-center">${labels["no.records"]}</p>
                                     </#if>
-                                    <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
-                                        <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
-                                        <i class="fa fa-circle text-success"></i>
-                                        <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
-                                        <i class="fa fa-circle text-danger"></i>
-                                        <!-- <#else> -->
-                                        <i class="fa fa-circle text-warning"></i>
-                                        <!-- </#if> -->
-                                        &emsp;<a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.environmentName}</a>
-                                    </#list>
-                                </div>
-                                <hr>
-                                <div class="stats">
-                                    <!-- <#assign refreshTime = .now> -->
-                                    <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.long!} ${refreshTime?time?string.medium!}
+                                    <div class="content table-responsive">
+                                        <table id="salesforce-metadata-backup-status">
+                                            <thead>
+                                                <th class="col-xs-2">${labels["status"]}</th>
+                                                <th class="col-xs-6">${labels["instance"]}</th>
+                                                <th class="col-xs-4 text-right">${labels["last.run.date"]}</th>
+                                            </thead>
+                                            <tbody>
+                                                <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                                                            <i class="fa fa-circle text-success"></i>
+                                                            <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                                                            <i class="fa fa-circle text-danger"></i>
+                                                            <!-- <#else> -->
+                                                            <i class="fa fa-circle text-warning"></i>
+                                                            <!-- </#if> -->
+                                                        </td>
+                                                        <td>
+                                                            &emsp;<a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.environmentName}</a>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            &emsp;${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm"])!}
+                                                        </td>
+                                                    </tr>
+                                                </#list>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr>
+                                    <div class="stats">
+                                        <!-- <#assign refreshTime = .now> -->
+                                        <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.long!} ${refreshTime?time?string.medium!}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </@t.page>

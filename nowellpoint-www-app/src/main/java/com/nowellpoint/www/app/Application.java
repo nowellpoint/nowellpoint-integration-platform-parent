@@ -195,10 +195,10 @@ public class Application implements SparkApplication {
         get(Path.Route.ADMINISTRATION.concat("/properties"), administrationController.showManageProperties);	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
         
-		get(Path.Route.ACCOUNT_PROFILE_SETUP, accountProfileController.setupAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
-        get(Path.Route.ACCOUNT_PROFILE_SUBSCRIPTION_PLANS, accountProfileController.selectPlan);
-        post(Path.Route.ACCOUNT_PROFILE_SUBSCRIPTION_PLANS, accountProfileController.setSubscription);
+        get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, accountProfileController.listPlans);
+        get(Path.Route.ACCOUNT_PROFILE_PLAN, accountProfileController.reviewPlan);
+        post(Path.Route.ACCOUNT_PROFILE_PLAN, accountProfileController.setPlan);
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.confirmDeactivateAccountProfile);

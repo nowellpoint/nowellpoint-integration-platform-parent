@@ -2,8 +2,14 @@ package com.nowellpoint.api.model.dto;
 
 import java.util.Set;
 
-public class Plan {
+public class Plan extends AbstractResource {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 7197168560685144490L;
+
 	private String localeSidKey;
 	
 	private String languageLocaleKey;

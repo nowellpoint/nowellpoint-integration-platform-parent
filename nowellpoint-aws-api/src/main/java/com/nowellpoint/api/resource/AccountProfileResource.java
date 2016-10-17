@@ -34,9 +34,11 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
+import com.nowellpoint.api.model.dto.Plan;
 import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.api.service.ServiceException;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.client.model.idp.Account;
@@ -49,6 +51,9 @@ public class AccountProfileResource {
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
+	
+	@Inject
+	private PlanService planService;
 
 	@Context
 	private UriInfo uriInfo;
@@ -83,15 +88,18 @@ public class AccountProfileResource {
 	@Path("{id}/subscription")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response setSubscription(@PathParam("id") String id, 
-			@FormParam(value = "currencyIsoCode") String currencyIsoCode, 
-			@FormParam(value="planCode") String planCode, 
-			@FormParam(value="unitPrice") Double unitPrice) {
+	public Response setSubscription(@PathParam("id") String id, @FormParam(value = "planId") String planId) {
+		
+		Plan plan = planService.findPlan(planId);
 		
 		Subscription subscription = new Subscription();
-		subscription.setCurrencyIsoCode(currencyIsoCode);
-		subscription.setPlanCode(planCode);
-		subscription.setUnitPrice(unitPrice);
+		subscription.setPlanId(planId);
+		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
+		subscription.setPlanCode(plan.getPlanCode());
+		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
+		subscription.setPlanName(plan.getPlanName());
+		subscription.setBillingFrequency(plan.getBillingFrequency());
+		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
 		
 		accountProfileService.setSubscription( id, subscription );
 		

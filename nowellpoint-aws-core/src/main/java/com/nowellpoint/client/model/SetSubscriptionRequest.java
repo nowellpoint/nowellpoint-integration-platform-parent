@@ -4,11 +4,7 @@ public class SetSubscriptionRequest {
 	
 	private String accountProfileId;
 	
-	private String planCode;
-	
-	private String currencyIsoCode;
-	
-	private Double unitPrice;
+	private String planId;
 	
 	public SetSubscriptionRequest() {
 		
@@ -22,28 +18,12 @@ public class SetSubscriptionRequest {
 		this.accountProfileId = accountProfileId;
 	}
 
-	public String getPlanCode() {
-		return planCode;
+	public String getPlanId() {
+		return planId;
 	}
 
-	public void setPlanCode(String planCode) {
-		this.planCode = planCode;
-	}
-
-	public String getCurrencyIsoCode() {
-		return currencyIsoCode;
-	}
-
-	public void setCurrencyIsoCode(String currencyIsoCode) {
-		this.currencyIsoCode = currencyIsoCode;
-	}
-
-	public Double getUnitPrice() {
-		return unitPrice;
-	}
-
-	public void setUnitPrice(Double unitPrice) {
-		this.unitPrice = unitPrice;
+	public void setPlanId(String planId) {
+		this.planId = planId;
 	}
 	
 	public SetSubscriptionRequest withAccountProfileId(String accountProfileId) {
@@ -51,18 +31,8 @@ public class SetSubscriptionRequest {
 		return this;
 	}
 	
-	public SetSubscriptionRequest withPlanCode(String planCode) {
-		setPlanCode(planCode);
-		return this;
-	}
-	
-	public SetSubscriptionRequest withCurrencyIsoCode(String currencyIsoCode) {
-		setCurrencyIsoCode(currencyIsoCode);
-		return this;
-	}
-	
-	public SetSubscriptionRequest withUnitPrice(Double unitPrice) {
-		setUnitPrice(unitPrice);
+	public SetSubscriptionRequest withPlanId(String planId) {
+		setPlanId(planId);
 		return this;
 	}
 }
