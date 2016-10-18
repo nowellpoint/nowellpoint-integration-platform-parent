@@ -23,12 +23,13 @@
                             <h6 class="dashhead-subtitle">&emsp;</h6>
                             <h2 class="dashhead-title">${labels["scheduled.jobs"]}</h2>
                         </div>
-
-                        <div class="dashhead-toolbar">
-                            <p class="pull-right">
-                                <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
-                            </p>
-                        </div>
+                        <#if scheduledJobList?size gt 0>
+                            <div class="dashhead-toolbar">
+                                <p class="pull-right">
+                                    <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+                                </p>
+                            </div>
+                        </#if>
                     </div>
 
                     <br>
@@ -40,13 +41,17 @@
                     <div class="row">
 
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                            <#if scheduledJobList?size==0>
-                                <div class="panel panel-default">
-                                    <div class="panel-body"><p class="text-center">${labels["no.records"]}</p></div>
-                                </div>
+                            <#if scheduledJobList?size == 0>
+                                <br>
+                                <br>
+                                <br>
+                                <img class="media-object center-block" src="/images/clock.png">
+                                <br>
+                                <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+                                <p class="text-center">
+                                    <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+                                </p>
                             </#if>
-
                             <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
                                 <div class="panel panel-default">
                                     <div class="panel-body">

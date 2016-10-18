@@ -35,7 +35,7 @@
                                             <thead>
                                                 <th class="col-xs-2">${labels["status"]}</th>
                                                 <th class="col-xs-6">${labels["instance"]}</th>
-                                                <th class="col-xs-4 text-right">${labels["last.run.date"]}</th>
+                                                <th class="col-xs-4 text-right">${labels["run.date"]}</th>
                                             </thead>
                                             <tbody>
                                                 <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
@@ -45,15 +45,22 @@
                                                             <i class="fa fa-circle text-success"></i>
                                                             <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
                                                             <i class="fa fa-circle text-danger"></i>
-                                                            <!-- <#else> -->
+                                                            <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Stopped"> -->
                                                             <i class="fa fa-circle text-warning"></i>
+                                                            <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Terminated"> -->
+                                                            <i class="fa fa-circle text-info"></i>
                                                             <!-- </#if> -->
                                                         </td>
                                                         <td>
                                                             &emsp;<a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.environmentName}</a>
-                                                        </td>
+                                                        </td>  
                                                         <td class="text-right">
-                                                            &emsp;${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm"])!}
+                                                            &emsp;
+                                                            <!--  <#if scheduledJob.lastRunDate??> -->
+                                                            ${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm"])!}
+                                                            <!--  <#else> -->
+                                                            ${(scheduledJob.scheduleDate?date?string.iso)!} ${(scheduledJob.scheduleDate?time?string["HH:mm"])!}
+                                                            <!-- </#if> -->
                                                         </td>
                                                     </tr>
                                                 </#list>
@@ -62,8 +69,14 @@
                                     </div>
                                     <hr>
                                     <div class="stats">
+                                        <i class="fa fa-circle text-success"></i>&nbsp;${labels["success"]}&emsp;
+                                        <i class="fa fa-circle text-danger"></i>&nbsp;${labels["fail"]}&emsp;
+                                        <i class="fa fa-circle text-warning"></i>&nbsp;${labels["stopped"]}&emsp;
+                                        <i class="fa fa-circle text-info"></i>&nbsp;${labels["terminated"]}
+                                    </div>    
+                                    <div class="stats">
                                         <!-- <#assign refreshTime = .now> -->
-                                        <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.long!} ${refreshTime?time?string.medium!}
+                                        <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.iso} ${refreshTime?time?string["HH:mm:ss"]}
                                     </div>
                                 </div>
                             </div>

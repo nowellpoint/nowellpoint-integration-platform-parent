@@ -190,6 +190,8 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile accountProfile = getAccount(request);
 		
+		Boolean newAccount = Assert.isNull(accountProfile.getSubscription()); 
+		
 		String planId = request.params(":planId");
 		
 		String cardholderName = request.queryParams("cardholderName");
@@ -283,8 +285,12 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "subscription.plan.update.success"), 3);
-		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
+		if (newAccount) {
+			response.redirect(Path.Route.START);
+		} else {
+			response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "subscription.plan.update.success"), 3);
+			response.redirect(Path.Route.ACCOUNT_PROFILE.replace(":id", request.params(":id")));
+		}
 		
 		return "";	
 	};	

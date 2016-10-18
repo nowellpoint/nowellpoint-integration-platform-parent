@@ -217,20 +217,16 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		// compile and send notification
 		    		//
 		    		
-		    		String message = new StringBuilder().append("Scheduled Job: ")
-		    				.append(scheduledJobRequest.getJobName())
-		    				.append(System.getProperty("line.separator"))
-		    				.append("Date: ")
-		    				.append(Date.from(Instant.now()))
-		    				.append(System.getProperty("line.separator"))
-		    				.append("Status: ")
-		    				.append(scheduledJobRequest.getStatus())
-		    				.append(System.getProperty("line.separator"))
-		    				.append("Exception: " )
-		    				.append(isNotNull(scheduledJobRequest.getFailureMessage()) ? scheduledJobRequest.getFailureMessage() : "")
+		    		String format = "%-20s%s%n";
+		    		
+		    		String message = new StringBuilder()
+		    				.append(String.format(format, "Scheduled Job:", scheduledJobRequest.getJobName()))
+		    				.append(String.format(format, "Date:", Date.from(Instant.now()).toString()))
+		    				.append(String.format(format, "Status:", scheduledJobRequest.getStatus()))
+		    				.append(isNotNull(scheduledJobRequest.getFailureMessage()) ? String.format(format, "Exception:", scheduledJobRequest.getFailureMessage()) : "")
 		    				.toString();
 		    		
-		    		sendNotification(scheduledJobRequest.getNotificationEmail(), "Scheduled Job Request Complete", message);
+		    		sendNotification(scheduledJobRequest.getNotificationEmail(), String.format("[%s] Scheduled Job Request Complete", scheduledJobRequest.getEnvironmentName()), message);
 		    		
 		    		//
 		    		// update ScheduledJobRequest

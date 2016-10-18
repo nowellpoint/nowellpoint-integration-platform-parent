@@ -15,22 +15,15 @@
                 <br>
                 <br>
 
-                <div class="statcard statcard-primary p-a-md m-b">
+                <div>
                     <h2>${messages["welcome"]}</h2>
-                    <h4>${messages["welcome.text"]}</h4>
+                    <h4 class="text-muted">${messages["welcome.text"]}</h4>
                 </div>
 
                 <div class="row">
 
                     <div class="col-lg-4 col-md-4 text-center p-a-lg">
-                        <a href="/app/dashboard" style="text-decoration:none;">
-                            <img class="media-object center-block" src="/images/dashboard.png">
-                            <h3>${messages["dashboard"]}</h3>
-                            <p class="text-muted">${messages["dashboard.headline"]}</p>
-                        </a>
-                    </div>
-
-                    <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                        <h4><b>${messages["step1"]}</b></h4>
                         <a href="/app/connectors/salesforce" style="text-decoration:none;">
                             <img class="media-object center-block" src="/images/connection.png">
                             <h3>${messages["connectors"]}</h3>
@@ -39,10 +32,20 @@
                     </div>
                     
                     <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                        <h4><b>${messages["step2"]}</b></h4>
                         <a href="/app/scheduled-jobs" style="text-decoration:none;">
                             <img class="media-object center-block" src="/images/clock.png">
                             <h3>${messages["scheduled.jobs"]}</h3>
                             <p class="text-muted">${messages["scheduled.jobs.headline"]}</p>
+                        </a>
+                    </div>
+                    
+                     <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                        <h4><b>${messages["step3"]}</b></h4>
+                        <a href="/app/dashboard" style="text-decoration:none;">
+                            <img class="media-object center-block" src="/images/dashboard.png">
+                            <h3>${messages["dashboard"]}</h3>
+                            <p class="text-muted">${messages["dashboard.headline"]}</p>
                         </a>
                     </div>
 
