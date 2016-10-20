@@ -283,6 +283,7 @@ public class SignUpService {
 		try {
 			executor.awaitTermination(30, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
+			e.printStackTrace();
 			throw new InternalServerErrorException(e.getMessage());
 		}
 		
@@ -309,6 +310,7 @@ public class SignUpService {
 			accountProfileService.updateAccountProfile(accountProfile.getId(), accountProfile);
 			
 		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
 			throw new InternalServerErrorException(e.getMessage());
 		}
 		

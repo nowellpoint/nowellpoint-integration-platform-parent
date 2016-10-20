@@ -65,6 +65,7 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.mongodb.document.MongoDocumentService;
+import com.nowellpoint.util.Assert;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -217,16 +218,21 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		// compile and send notification
 		    		//
 		    		
-		    		String format = "%-20s%s%n";
-		    		
-		    		String message = new StringBuilder()
-		    				.append(String.format(format, "Scheduled Job:", scheduledJobRequest.getJobName()))
-		    				.append(String.format(format, "Date:", Date.from(Instant.now()).toString()))
-		    				.append(String.format(format, "Status:", scheduledJobRequest.getStatus()))
-		    				.append(isNotNull(scheduledJobRequest.getFailureMessage()) ? String.format(format, "Exception:", scheduledJobRequest.getFailureMessage()) : "")
-		    				.toString();
-		    		
-		    		sendNotification(scheduledJobRequest.getNotificationEmail(), String.format("[%s] Scheduled Job Request Complete", scheduledJobRequest.getEnvironmentName()), message);
+		    		if (Assert.isNotNull(scheduledJobRequest.getNotificationEmail())) {
+		    			
+		    			String format = "%-20s%s%n";
+			    		
+			    		String subject = String.format("[%s] Scheduled Job Request Complete", scheduledJobRequest.getEnvironmentName());
+			    		
+			    		String message = new StringBuilder()
+			    				.append(String.format(format, "Scheduled Job:", scheduledJobRequest.getJobTypeName()))
+			    				.append(String.format(format, "Completion Date:", Date.from(Instant.now()).toString()))
+			    				.append(String.format(format, "Status:", scheduledJobRequest.getStatus()))
+			    				.append(isNotNull(scheduledJobRequest.getFailureMessage()) ? String.format(format, "Exception:", scheduledJobRequest.getFailureMessage()) : "")
+			    				.toString();
+			    		
+			    		sendNotification(scheduledJobRequest.getNotificationEmail(), subject, message);
+		    		}
 		    		
 		    		//
 		    		// update ScheduledJobRequest

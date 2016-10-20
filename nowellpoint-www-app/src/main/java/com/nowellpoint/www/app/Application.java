@@ -7,6 +7,7 @@ import static spark.Spark.get;
 import static spark.Spark.halt;
 import static spark.Spark.post;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,9 +20,9 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.IsoCountry;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.www.app.util.Path;
@@ -277,19 +278,17 @@ public class Application implements SparkApplication {
 	 */
 	
 	private static List<IsoCountry> loadCountries() {
-		try {
-			HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
-					.path("iso-countries")
-					.execute();
-			
-			return httpResponse.getEntityList(IsoCountry.class);
-			
-		} catch (HttpRequestException e) {
-			e.printStackTrace();
-			halt();
+		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+				.path("iso-countries")
+				.execute();
+		
+		List<IsoCountry> countries = Collections.emptyList();
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			countries = httpResponse.getEntityList(IsoCountry.class);
 		}
 		
-		return null;
+		return countries;
 	}
 	
 	/**

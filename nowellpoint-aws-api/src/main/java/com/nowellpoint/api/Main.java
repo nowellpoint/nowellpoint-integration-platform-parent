@@ -1,10 +1,10 @@
 package com.nowellpoint.api;
 
-import java.io.File;
 import java.util.Optional;
 import java.util.TimeZone;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
@@ -22,6 +22,8 @@ public class Main {
 		//
 		
 		System.setProperty("swarm.http.port", getPort());
+		//System.setProperty("swarm.https.port", "9443");
+		//System.setProperty("swarm.https.certificate.generate", "");
 
 		//
 		// build and start the container
@@ -47,9 +49,9 @@ public class Main {
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class, "nowellpoint-api.war")
         		.addPackages(true, Package.getPackage("com.nowellpoint.api"))
-        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-        		.addAsWebInfResource(new File("src/main/resources/WEB-INF/web.xml"), "web.xml")
-        		.addAsWebResource(new File("src/main/resources/ValidationMessages.properties"));
+        		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
+        		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties")
+        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         
         deployment.addAllDependencies();
         
