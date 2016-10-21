@@ -5,9 +5,6 @@ import java.util.Optional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
@@ -22,8 +19,6 @@ import spark.Response;
 import spark.Route;
 
 public class SalesforceOauthController extends AbstractController {
-	
-	private final static Logger LOG = LoggerFactory.getLogger(SalesforceOauthController.class.getName());
 	
 	public SalesforceOauthController(Configuration configuration) {
 		super(SalesforceOauthController.class, configuration);
@@ -44,8 +39,6 @@ public class SalesforceOauthController extends AbstractController {
     			.path("oauth")
     			.queryParameter("state", request.queryParams("id"))
     			.execute();
-    	
-    	LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL() + " : " + httpResponse.getHeaders().get("Location"));
 		
 		response.redirect(httpResponse.getHeaders().get("Location").get(0));		
 		

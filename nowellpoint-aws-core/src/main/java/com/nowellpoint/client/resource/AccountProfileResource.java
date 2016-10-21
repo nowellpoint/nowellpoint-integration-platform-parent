@@ -133,7 +133,7 @@ public class AccountProfileResource extends AbstractResource {
 					.withExpirationMonth(addCreditCardRequest.getExpirationMonth())
 					.withExpirationYear(addCreditCardRequest.getExpirationYear())
 					.withNumber(addCreditCardRequest.getNumber())
-					.withCardholderName(addCreditCardRequest.getCvv())
+					.withCvv(addCreditCardRequest.getCvv())
 					.withPrimary(addCreditCardRequest.getPrimary());
 			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)

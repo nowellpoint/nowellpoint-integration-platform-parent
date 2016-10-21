@@ -149,11 +149,11 @@ public class AccountProfileController extends AbstractController {
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
 		
-		if (getResult.getTarget().getCreditCards().isEmpty()) {
-			return render(request, model, Path.Template.ACCOUNT_PROFILE);
+		if (getResult.getTarget().getId().equals(id)) {
+			return render(request, model, Path.Template.ACCOUNT_PROFILE_ME);
 		}
 
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_ME);
+		return render(request, model, Path.Template.ACCOUNT_PROFILE);
 	};
 	
 	/**
@@ -190,10 +190,11 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile accountProfile = getAccount(request);
 		
-		Boolean newAccount = Assert.isNull(accountProfile.getSubscription()); 
+		Boolean newAccount = Assert.isNull(accountProfile.getSubscription().getPlanId()); 
 		
 		String planId = request.params(":planId");
 		
+		String id = request.params(":id");
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
 		String expirationMonth = request.queryParams("expirationMonth");
@@ -209,13 +210,14 @@ public class AccountProfileController extends AbstractController {
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		Map<String, Object> model = getModel();
-		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		model.put("accountProfile", new AccountProfile(id));
 		
 		if (Assert.isNotNull(cardholderName) || Assert.isNotNull(number) || Assert.isNotNull(expirationMonth) || Assert.isNotNull(expirationYear) ||
 				Assert.isNotNull(expirationYear) || Assert.isNotNull(city) || Assert.isNotNull(countryCode) || Assert.isNotNull(postalCode) ||
-				Assert.isNotNull(state) || Assert.isNotNull(firstName) || Assert.isNotNull(lastName) || Assert.isNotNull(primary)) {
+				Assert.isNotNull(state) || Assert.isNotNull(firstName) || Assert.isNotNull(lastName)) {
 			
 			AddCreditCardRequest addCreditCardRequest = new AddCreditCardRequest()
+					.withAccountProfileId(id)
 					.withCardholderName(cardholderName)
 					.withExpirationMonth(expirationMonth)
 					.withExpirationYear(expirationYear)
@@ -286,7 +288,7 @@ public class AccountProfileController extends AbstractController {
 		}
 		
 		if (newAccount) {
-			response.redirect(Path.Route.START);
+			response.redirect(Path.Route.SCHEDULED_JOB_SELECT_TYPE);
 		} else {
 			response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "subscription.plan.update.success"), 3);
 			response.redirect(Path.Route.ACCOUNT_PROFILE.replace(":id", request.params(":id")));
@@ -943,7 +945,7 @@ public class AccountProfileController extends AbstractController {
 	
 	private static String buildPlanTable(AccountProfile accountProfile, List<Plan> plans) {
 
-		ResourceBundle bundle = ResourceBundle.getBundle(AccountProfileController.class.getName(), Locale.getDefault());
+		ResourceBundle bundle = ResourceBundle.getBundle(AccountProfileController.class.getName(), new Locale("en_US"));
 		
 		plans = plans.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
@@ -954,7 +956,7 @@ public class AccountProfileController extends AbstractController {
 		html.append("<table id='plan-comparison' class='table'>");
 		html.append("<thead><th class='col-xs-4'>" + bundle.getString("features") + "</th>");
 		plans.stream().forEach(p -> {
-			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + "&nbsp;" + NumberFormat.getInstance(Locale.getDefault()).format(p.getPrice().getUnitPrice()) + "</th>");
+			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + "&nbsp;" + NumberFormat.getInstance(new Locale("en_US")).format(p.getPrice().getUnitPrice()) + "</th>");
 		});
 		html.append("</thead>");
 		html.append("<tbody>");

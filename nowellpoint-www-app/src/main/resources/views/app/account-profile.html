@@ -109,7 +109,7 @@
                             <br>
                             <address>
                             ${accountProfile.address.street!}<br>
-                            ${accountProfile.address.city!}, ${accountProfile.address.state!} ${accountProfile.address.postalCode!}<br>
+                            ${accountProfile.address.city!}<#if accountProfile.address.city??>,</#if> ${accountProfile.address.state!} ${accountProfile.address.postalCode!}<br>
                             ${accountProfile.address.country!}<br>
                         </address>
                         </div>

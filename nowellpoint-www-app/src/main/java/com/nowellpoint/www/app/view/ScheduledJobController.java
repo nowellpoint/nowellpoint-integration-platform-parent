@@ -1,5 +1,7 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.halt;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -71,6 +73,11 @@ public class ScheduledJobController extends AbstractController {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
+		
+		if (accountProfile.getSubscription().getPlanId() == null) {
+			response.redirect(Path.Route.ACCOUNT_PROFILE_LIST_PLANS.replace(":id", accountProfile.getId()));
+			halt();
+		}
 		
 		List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJobType()

@@ -106,7 +106,7 @@ public class AuthenticationController extends AbstractController {
     		response.redirect(request.cookie(REDIRECT_URL));
     		response.removeCookie(REDIRECT_URL);
     	} else {
-    		response.redirect(Path.Route.DASHBOARD);
+    		response.redirect(Path.Route.START);
     	}
     		
     	return "";
@@ -176,12 +176,6 @@ public class AuthenticationController extends AbstractController {
     		}
     		
     		request.attribute("account", accountProfile);
-    		
-    		if (accountProfile.getSubscription() == null && ! Path.Route.ACCOUNT_PROFILE_LIST_PLANS.equals(request.pathInfo())) {
-    		//if (! Path.Route.ACCOUNT_PROFILE_PLANS.replace(":id", accountProfile.getId()).equals(request.pathInfo())) {
-    			response.redirect(Path.Route.ACCOUNT_PROFILE_LIST_PLANS.replace(":id", accountProfile.getId()));
-    			halt();
-    		}
     		
     	} else {
     		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);

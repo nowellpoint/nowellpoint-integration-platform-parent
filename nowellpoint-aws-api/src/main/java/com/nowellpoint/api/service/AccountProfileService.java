@@ -150,10 +150,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
 		accountProfile.setCreatedBy(original.getCreatedBy());
 		
-		if (isNull(accountProfile.getHref())) {
-			accountProfile.setHref(original.getHref());
-		}
-		
 		if (isNull(accountProfile.getDivision())) {
 			accountProfile.setDivision(original.getDivision());
 		} else if (isEmpty(accountProfile.getDivision())) {
@@ -206,6 +202,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setExtension(original.getExtension());
 		} else if (isEmpty(accountProfile.getExtension())) {
 			accountProfile.setExtension(null);
+		}
+		
+		if (isNull(accountProfile.getHref())) {
+			accountProfile.setHref(original.getHref());
 		}
 		
 		if (isNull(accountProfile.getLocaleSidKey())) {
@@ -309,41 +309,48 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void setSubscription(String id, Subscription subscription) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		
-		if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
-			throw new ServiceException("Unable to process subscription request because there is no credit card associated with the account profile");
-		}
-		
 		Date now = Date.from(Instant.now());
 		
-		Result<com.braintreegateway.Subscription> subscriptionResult = null;
-		
-		if (accountProfile.getSubscription() == null) {
-			
-			SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-				    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
-				    .planId(subscription.getPlanCode())
-				    .price(new BigDecimal(subscription.getUnitPrice()));
-
-			subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
-			
+		if (subscription.getUnitPrice() == 0 && accountProfile.getSubscription() == null) {
 			subscription.setAddedOn(now);
 		} else {
 			
-			SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-				    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
-				    .planId(subscription.getPlanCode())
-				    .price(new BigDecimal(subscription.getUnitPrice()));
-
-			subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+			if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
+				throw new ServiceException("Unable to process subscription request because there is no credit card associated with the account profile");
+			}
 			
-			subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
+			Result<com.braintreegateway.Subscription> subscriptionResult = null;
+			
+			if (accountProfile.getSubscription() == null) {
+				
+				SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+					    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
+					    .planId(subscription.getPlanCode())
+					    .price(new BigDecimal(subscription.getUnitPrice()));
+
+				subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
+				
+				subscription.setAddedOn(now);
+				
+			} else {
+				
+				SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+					    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
+					    .planId(subscription.getPlanCode())
+					    .price(new BigDecimal(subscription.getUnitPrice()));
+
+				subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+				
+				subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
+			}
+			
+			if (! subscriptionResult.isSuccess()) {
+				LOGGER.error(subscriptionResult.getMessage());
+			}
+			
+			subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
 		}
 		
-		if (! subscriptionResult.isSuccess()) {
-			LOGGER.error(subscriptionResult.getMessage());
-		}
-		
-		subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
 		subscription.setUpdatedOn(now);
 		
 		accountProfile.setSubscription(subscription);

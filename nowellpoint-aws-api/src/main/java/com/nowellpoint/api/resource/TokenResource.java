@@ -65,8 +65,6 @@ public class TokenResource {
 
 		String[] params = basicToken.split(":");
 		
-		System.out.println("1");
-		
 		//
 		// throw exception if params are not equal to 2
 		//
@@ -74,7 +72,7 @@ public class TokenResource {
 		if (params.length != 2) {
 			throw new BadRequestException("Invalid Request - Missing email and/or password");
 		}
-		System.out.println("2");
+
 		//
 		// call the identity service provider to authenticate
 		//
@@ -86,7 +84,7 @@ public class TokenResource {
 		//
 		
 		params = null;
-		System.out.println("3");
+
 		//
 		// fire event for handling login functions
 		//
@@ -96,7 +94,7 @@ public class TokenResource {
 		//
 		// return the Response with the token
 		//
-		System.out.println("4");
+
 		return Response.ok()
 				.entity(token)
 				.type(MediaType.APPLICATION_JSON)

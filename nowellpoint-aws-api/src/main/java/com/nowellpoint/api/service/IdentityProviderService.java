@@ -445,8 +445,6 @@ public class IdentityProviderService {
 				.execute();
 		
 		ObjectNode response = httpResponse.getEntity(ObjectNode.class);
-		
-		System.out.println(httpResponse.getStatusCode());
 
 		if (httpResponse.getStatusCode() != Status.OK) {
 			ErrorDTO error = new ErrorDTO(response.get("code").asInt(), response.get("developerMessage").asText());

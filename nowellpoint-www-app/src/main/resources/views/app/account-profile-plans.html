@@ -18,8 +18,14 @@
                     <div class="dashhead m-t-md">
                         <div class="dashhead">
                             <div class="dashhead-titles">
+                                <h2 class="dashhead-title">&nbsp;</h2>
                                 <h6 class="dashhead-subtitle">${labels["select.plan"]}</h6>
                             </div>
+                            <div class="dashhead-toolbar">
+                                <p class="pull-right">
+                                    <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                </p>
+                            </div> 
                         </div>
                     </div>
                     <div class="hr-divider"></div>
@@ -65,7 +71,7 @@
 
                     </div>
 
-                    <#if ! accountProfile.creditCards?? && plan.unitPrice> 0 >
+                    <#if accountProfile.creditCards?size == 0 && plan.price.unitPrice gt 0 >
 
                         <div class="row">
 
@@ -82,7 +88,6 @@
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        
                                         <input type="text" class="form-control" name="cardholderName" id="cardholderName" placeholder="${labels['name.on.card']}" autofocus="" tabindex="2" />
                                     </div>
 
@@ -91,69 +96,46 @@
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="number">${labels["number"]}</label>
-                                        <input type="text" class="form-control" name="number" id="number" tabindex="3">
+                                        <input type="text" class="form-control" name="number" id="number" placeholder="${labels['number']}" tabindex="3">
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="lastName">${labels["last.name"]}</label>
-                                        <input type="text" class="form-control" name="lastName" id="lastName" tabindex="9" />
+                                        <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" tabindex="9" />
                                     </div>
 
                                     <div class="form-group col-md-1">
-                                        <label class="control-label" for="cvv">${labels["cvv"]}</label>
-                                        <input type="text" class="form-control" name="cvv" id="cvv" tabindex="4" />
+                                        <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" tabindex="4" />
                                     </div>
 
                                     <div class="form-group col-md-1">
-                                        <label class="control-label" for="expirationMonth">${labels["month"]}</label>
-                                        <div class="input-group">
-                                            <select class="form-control" name="expirationMonth" id="expirationMonth" tabindex="5">
-                                                <#assign x=12 />
-                                                <#list 1..x as month>
-                                                    <option value="${month?c}">${month?c}</option>
-                                                </#list>
-                                            </select>
-                                        </div>
+                                        <input type="text" class="form-control" name="expirationMonth" id="expirationMonth" placeholder="${labels['mm']}" tabindex="5" />
                                     </div>
 
                                     <div class="form-group col-md-2">
-                                        <label class="control-label" for="expirationYear">${labels["year"]}</label>
-                                        <div class="input-group">
-                                            <select class="form-control" name="expirationYear" id="expirationYear" tabindex="6">
-                                                <#assign x=.now?string[ "yyyy"]?number + 19/>
-                                                <#list .now?string[ "yyyy"]?number..x as year>
-                                                    <option value="${year?c}">${year?c}</option>
-                                                </#list>
-                                            </select>
-                                        </div>
+                                        <input type="text" class="form-control" name="expirationYear" id="expirationYear" placeholder="${labels['yy']}" tabindex="6" />
                                     </div>
 
                                     <div class="form-group col-md-2"></div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="street">${labels["street"]}</label>
-                                        <input type="text" class="form-control" name="street" id="street" tabindex="10" />
+                                        <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" tabindex="10" />
                                     </div>
 
                                     <div class="form-group col-md-6"></div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="city">${labels["city"]}</label>
-                                        <input type="text" class="form-control" name="city" id="city" tabindex="11" />
+                                        <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" tabindex="11" />
                                     </div>
 
                                     <div class="form-group col-md-6"></div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="state">${labels["state"]}</label>
-                                        <input type="text" class="form-control" name="state" id="state" tabindex="12" />
+                                        <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" tabindex="12" />
                                     </div>
 
                                     <div class="form-group col-md-6"></div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="countryCode">${labels["country"]}*</label>
                                         <select id="countryCode" name="countryCode" class="form-control" tabindex="13" required>
                                             <option value="">${labels["select.one"]}</option>
                                             <#list countryList as country>
@@ -165,8 +147,7 @@
                                     <div class="form-group col-md-6"></div>
 
                                     <div class="form-group col-md-6">
-                                        <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
-                                        <input type="text" class="form-control" name="postalCode" id="postalCode" tabindex="14" />
+                                        <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" tabindex="14" />
                                     </div>
 
                                 </div>
