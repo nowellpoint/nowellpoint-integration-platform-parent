@@ -945,7 +945,7 @@ public class AccountProfileController extends AbstractController {
 	
 	private static String buildPlanTable(AccountProfile accountProfile, List<Plan> plans) {
 
-		ResourceBundle bundle = ResourceBundle.getBundle(AccountProfileController.class.getName(), new Locale("en_US"));
+		//ResourceBundle bundle = ResourceBundle.getBundle(AccountProfileController.class.getName(), new Locale("en_US"));
 		
 		plans = plans.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
@@ -954,7 +954,8 @@ public class AccountProfileController extends AbstractController {
 		StringBuilder html = new StringBuilder();
 		html.append("<div class='content table-responsive'>");
 		html.append("<table id='plan-comparison' class='table'>");
-		html.append("<thead><th class='col-xs-4'>" + bundle.getString("features") + "</th>");
+		//html.append("<thead><th class='col-xs-4'>" + bundle.getString("features") + "</th>");
+		html.append("<thead><th class='col-xs-4'>Features</th>");
 		plans.stream().forEach(p -> {
 			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + "&nbsp;" + NumberFormat.getInstance(new Locale("en_US")).format(p.getPrice().getUnitPrice()) + "</th>");
 		});
@@ -997,9 +998,11 @@ public class AccountProfileController extends AbstractController {
 		plans.stream().forEach(p -> {
 			html.append("<td class='text-center p-a'>");
 			if (accountProfile.getSubscription() != null && p.getId().equals(accountProfile.getSubscription().getPlanId())) {
-				html.append("<p class='text-center text-success'>" + bundle.getString("current.subscription") + "</p>");
+				//html.append("<p class='text-center text-success'>" + bundle.getString("current.subscription") + "</p>");
+				html.append("<p class='text-center text-success'>Current Subscription</p>");
 			} else {
-				html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_PLAN.replace(":id", accountProfile.getId()).replace(":planId", p.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + bundle.getString("select") + "</a>");
+				//html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_PLAN.replace(":id", accountProfile.getId()).replace(":planId", p.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + bundle.getString("select") + "</a>");
+				html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_PLAN.replace(":id", accountProfile.getId()).replace(":planId", p.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>Select</a>");
 			}
 			html.append("</td>");
 		});
