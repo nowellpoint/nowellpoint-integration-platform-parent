@@ -27,9 +27,6 @@
 
                             <div class="footer">
                                 <div class="legend">
-                                    <#if scheduledJobList?size==0>
-                                        <p class="text-center">${labels["no.records"]}</p>
-                                    </#if>
                                     <div class="content table-responsive">
                                         <table id="salesforce-metadata-backup-status">
                                             <thead>
@@ -37,7 +34,12 @@
                                                 <th class="col-xs-6">${labels["instance"]}</th>
                                                 <th class="col-xs-4 text-right">${labels["run.date"]}</th>
                                             </thead>
-                                            <tbody>
+                                            <tbody>         
+                                                <#if scheduledJobList?size==0>
+                                                    <tr>
+                                                        <td class="text-center" colspan="3">&nbsp;</td>
+                                                    </tr>    
+                                                </#if>
                                                 <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
                                                     <tr>
                                                         <td class="text-center">

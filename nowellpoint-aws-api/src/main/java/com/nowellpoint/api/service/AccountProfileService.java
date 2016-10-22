@@ -451,6 +451,16 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param token
+	 * @return CreditCard
+	 * 
+	 * 
+	 */
+	
 	public CreditCard getCreditCard(String id, String token) {
 		AccountProfile resource = findAccountProfile(id);
 		
@@ -462,6 +472,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		return creditCard.get();
 		
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param creditCard
+	 * 
+	 * 
+	 */
 	
 	public void addCreditCard(String id, CreditCard creditCard) {
 		AccountProfile accountProfile = findAccountProfile(id);
@@ -543,6 +562,16 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param token
+	 * @param creditCard
+	 * 
+	 * 
+	 */
+	
 	public void updateCreditCard(String id, String token, CreditCard creditCard) {
 		AccountProfile resource = findAccountProfile(id);
 		
@@ -605,6 +634,17 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param token
+	 * @param parameters
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	public CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
 		
 		CreditCard creditCard = getCreditCard(id, token);
@@ -629,6 +669,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		return creditCard;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param token
+	 * 
+	 * 
+	 */
 	
 	public void removeCreditCard(String id, String token) {
 		
