@@ -4,6 +4,7 @@ import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.util.Optional;
 
+import javax.validation.ValidationException;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 
@@ -85,7 +86,7 @@ public class SalesforceService extends AbstractCacheService {
 		} catch (ConnectionException e) {
 			if (e instanceof LoginFault) {
 				LoginFault loginFault = (LoginFault) e;
-				throw new ServiceException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+				throw new ValidationException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
 			} else {
 				throw new InternalServerErrorException(e.getMessage());
 			}

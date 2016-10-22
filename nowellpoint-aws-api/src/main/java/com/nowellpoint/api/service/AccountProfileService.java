@@ -1,13 +1,15 @@
 package com.nowellpoint.api.service;
 
 import static com.nowellpoint.util.Assert.isEmpty;
-import static com.nowellpoint.util.Assert.isNotEqual;
 import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isEqual;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import java.util.TimeZone;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
+import javax.validation.ValidationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
@@ -41,6 +44,7 @@ import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.util.Assert;
 
 public class AccountProfileService extends AccountProfileModelMapper {
 	
@@ -273,7 +277,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void updateAddress(String id, Address address) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		
-		if (isNotEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
+		
+		if (isEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
+			address.setCountry(accountProfile.getAddress().getCountry());
+		} else {
 			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
 			address.setCountry(isoCountry.getDescription());
 		}
@@ -316,7 +323,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		} else {
 			
 			if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
-				throw new ServiceException("Unable to process subscription request because there is no credit card associated with the account profile");
+				throw new ValidationException("Unable to process subscription request because there is no credit card associated with the account profile");
 			}
 			
 			Result<com.braintreegateway.Subscription> subscriptionResult = null;
@@ -459,6 +466,27 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void addCreditCard(String id, CreditCard creditCard) {
 		AccountProfile accountProfile = findAccountProfile(id);
 		
+		if (! Assert.isNumber(creditCard.getExpirationMonth())) {
+			throw new ValidationException("Unable to process credit card because it has an invalid month: " + creditCard.getExpirationMonth()); 
+		}
+		
+		if (! Assert.isNumber(creditCard.getExpirationYear())) {
+			throw new ValidationException("Unable to process credit card because it has an invalid year: " + creditCard.getExpirationYear()); 
+		}
+		
+		Integer month = Integer.valueOf(creditCard.getExpirationMonth());
+		Integer year = Integer.valueOf(creditCard.getExpirationYear());
+		
+		if (month < 1 || month > 12) {
+			throw new ValidationException("Unable to process credit card because it has an invalid month: " + creditCard.getExpirationMonth()); 
+		}
+		
+		ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("UTC"));
+		
+		if (year < dateTime.getYear()) {
+			throw new ValidationException("Unable to process credit card because it has an invalid year: " + year);
+		}
+		
 		AddressRequest addressRequest = new AddressRequest()
 				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
 				.firstName(creditCard.getBillingContact().getFirstName())
@@ -511,7 +539,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
-			throw new ServiceException(creditCardResult.getMessage());
+			throw new ValidationException(creditCardResult.getMessage());
 		}
 	}
 	
@@ -573,7 +601,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
-			throw new ServiceException(creditCardResult.getMessage());
+			throw new ValidationException(creditCardResult.getMessage());
 		}
 	}
 	
@@ -607,7 +635,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		AccountProfile accountProfile = findAccountProfile(id);
 		
 		if (token.equals(accountProfile.getPrimaryCreditCard().getToken())) {
-			throw new ServiceException(Status.BAD_REQUEST, "Unable to delete credit card because it has been set as the primary card for the account profile.");
+			throw new ValidationException("Unable to delete credit card because it has been set as the primary card for the account profile.");
 		}
 		
 		com.braintreegateway.CreditCard creditCard = paymentGatewayService.findCreditCard(token);

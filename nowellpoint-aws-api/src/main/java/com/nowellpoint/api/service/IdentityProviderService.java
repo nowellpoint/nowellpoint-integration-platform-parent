@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 
 import org.jboss.logging.Logger;
 
@@ -290,7 +291,7 @@ public class IdentityProviderService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() != 200) {
-			throw new ServiceException(httpResponse.getAsString());
+			throw new ValidationException(httpResponse.getAsString());
 		}
 	}
 	
@@ -448,7 +449,7 @@ public class IdentityProviderService {
 
 		if (httpResponse.getStatusCode() != Status.OK) {
 			ErrorDTO error = new ErrorDTO(response.get("code").asInt(), response.get("developerMessage").asText());
-			throw new ServiceException(error); 
+			throw new ValidationException(error.getMessage()); 
 		}
 		
 		return response.get("href").asText();

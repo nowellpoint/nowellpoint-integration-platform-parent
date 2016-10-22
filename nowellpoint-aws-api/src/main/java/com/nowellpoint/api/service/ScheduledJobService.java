@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
@@ -17,7 +18,6 @@ import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
@@ -85,7 +85,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		ScheduledJob original = findScheduledJobById(id);
 		
 		if ("Terminated".equals(original.getStatus())) {
-			throw new ServiceException( Status.FORBIDDEN, "Scheduled Job has been terminated and cannot be altered" );
+			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
 		}
 		
 		scheduledJob.setId(id);
@@ -170,11 +170,11 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	private void setupScheduledJob(ScheduledJob scheduledJob) {
 		
 		if (scheduledJob.getScheduleDate().before(Date.from(Instant.now()))) {
-			throw new ServiceException(Status.BAD_REQUEST, "Schedule Date cannot be before current date");
+			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
 		
 		if (! ("Scheduled".equals(scheduledJob.getStatus()) || "Stopped".equals(scheduledJob.getStatus())) || "Terminated".equals(scheduledJob.getStatus())) {
-			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
+			throw new ValidationException( String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		
 		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( scheduledJob.getJobTypeId() );
@@ -185,7 +185,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			try {
 				salesforceConnector = salesforceConnectorService.findSalesforceConnector( scheduledJob.getConnectorId() );
 			} catch (DocumentNotFoundException e) {
-				throw new ServiceException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
+				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}
 
 			Optional<Environment> environment = null;
@@ -196,7 +196,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 						.findFirst();
 				
 				if (! environment.isPresent()) {
-					throw new ServiceException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
+					throw new ValidationException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
 				}
 				
 			} else {

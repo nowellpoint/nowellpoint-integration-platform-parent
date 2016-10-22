@@ -73,4 +73,13 @@ public class Assert {
 			return Boolean.FALSE;
 		}
 	}
+	
+	public static Boolean isNumber(String value) {
+		try {
+			Integer.valueOf(value);
+			return Boolean.TRUE;
+		} catch (NumberFormatException e) {
+			return Boolean.FALSE;
+		}
+	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.nowellpoint.api.model.document.SimpleStorageService;
@@ -154,9 +155,9 @@ public class CommonFunctions {
 		} catch (OauthException e) {
 			environment.setIsValid(Boolean.FALSE);
 			environment.setTestMessage(e.getErrorDescription());
-		} catch (ServiceException e) {
+		} catch (ValidationException e) {
 			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getError().getMessage());
+			environment.setTestMessage(e.getMessage());
 		} catch (Exception e) {
 			environment.setIsValid(Boolean.FALSE);
 			environment.setTestMessage(e.getMessage());

@@ -3,7 +3,6 @@ package com.nowellpoint.api.resource;
 import java.net.URI;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -39,7 +38,6 @@ import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PlanService;
-import com.nowellpoint.api.service.ServiceException;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.client.model.idp.Account;
 
@@ -251,11 +249,7 @@ public class AccountProfileResource {
 		
 		AccountProfile resource = accountProfileService.findAccountProfile( id );
 		
-		try {
-			identityProviderService.disableAccount(resource.getHref());
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		identityProviderService.disableAccount(resource.getHref());
 		
 		return Response.ok().build();
 	}
@@ -282,11 +276,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		
-		try {
-			accountProfileService.addCreditCard( id, creditCard);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		accountProfileService.addCreditCard( id, creditCard);
 		
 		return Response
 				.ok(creditCard)
@@ -299,12 +289,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, MultivaluedMap<String, String> parameters) {
 		
-		CreditCard resource = null;
-		try {
-			resource = accountProfileService.updateCreditCard( id, token, parameters);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		CreditCard resource = accountProfileService.updateCreditCard( id, token, parameters );
 		
 		return Response
 				.ok(resource)
@@ -317,11 +302,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		
-		try {
-			accountProfileService.updateCreditCard( id, token, creditCard);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		accountProfileService.updateCreditCard( id, token, creditCard );
 		
 		return Response
 				.ok(creditCard)
@@ -332,11 +313,7 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		try {
-			accountProfileService.removeCreditCard( id, token);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		accountProfileService.removeCreditCard( id, token );
 		
 		return Response
 				.ok()

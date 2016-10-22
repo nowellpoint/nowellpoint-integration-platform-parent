@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -691,6 +690,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile accountProfile = getAccount(request);
 		
+		String id = request.params(":id");
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
 		String expirationMonth = request.queryParams("expirationMonth");
@@ -706,11 +706,12 @@ public class AccountProfileController extends AbstractController {
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		AddCreditCardRequest addCreditCardRequest = new AddCreditCardRequest()
+				.withAccountProfileId(id)
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
 				.withNumber(number)
-				.withCardholderName(cvv)
+				.withCvv(cvv)
 				.withPrimary(primary)
 				.withCity(city)
 				.withCountryCode(countryCode)

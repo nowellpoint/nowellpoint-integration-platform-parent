@@ -19,7 +19,7 @@ $("#use-contact-info").change(function () {
         $("#state").val('');
         $("#postalCode").val('');
         $("#countryCode").val('');
-        $("#cardholderName").focus();
+        $("#countryCode").focus();
     }
 });
 
