@@ -102,7 +102,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		AccountProfile accountProfile = getAccount(request);
 		
 		String planId = request.params(":planId");
 		
@@ -110,10 +110,20 @@ public class AccountProfileController extends AbstractController {
 				.plan()
 				.get(planId)
 				.getTarget();
+		
+		Address address = new Address();
+		address.setCountryCode(accountProfile.getAddress().getCountryCode());
+		
+		CreditCard creditCard = new CreditCard();
+		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
+		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
+		creditCard.setBillingAddress(address);
+		creditCard.setBillingContact(new Contact());
 
 		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", account);
+		model.put("account", accountProfile);
+		model.put("accountProfile", accountProfile);
+		model.put("creditCard", creditCard);
 		model.put("action", "reviewPlan");
 		model.put("plan", plan);
 			
@@ -221,7 +231,7 @@ public class AccountProfileController extends AbstractController {
 					.withExpirationMonth(expirationMonth)
 					.withExpirationYear(expirationYear)
 					.withNumber(number)
-					.withCardholderName(cvv)
+					.withCvv(cvv)
 					.withPrimary(primary)
 					.withCity(city)
 					.withCountryCode(countryCode)
@@ -238,6 +248,11 @@ public class AccountProfileController extends AbstractController {
 				
 			if (! addResult.isSuccess()) {
 				
+				Plan plan = new NowellpointClient(new TokenCredentials(token))
+						.plan()
+						.get(planId)
+						.getTarget();
+				
 				CreditCard creditCard = new CreditCard()
 						.withBillingAddress(new Address()
 								.withCity(city)
@@ -251,18 +266,16 @@ public class AccountProfileController extends AbstractController {
 						.withCardholderName(cardholderName)
 						.withExpirationMonth(expirationMonth)
 						.withExpirationYear(expirationYear)
-						.withNumber(number)
-						.withCardholderName(cvv)
 						.withPrimary(primary);
 				
+				model.put("account", accountProfile);
+				model.put("accountProfile", accountProfile);
+				model.put("plan", plan);
 				model.put("creditCard", creditCard);
-				model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
-				model.put("mode", "add");
+				model.put("action", "reviewPlan");
 				model.put("errorMessage", addResult.getErrorMessage());
 				
-				String output = render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);
-				
-				throw new BadRequestException(output);	
+				return render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);
 			}
 		}
 		
@@ -619,10 +632,13 @@ public class AccountProfileController extends AbstractController {
 			
 		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
 		
+		Address address = new Address();
+		address.setCountryCode(accountProfile.getAddress().getCountryCode());
+		
 		CreditCard creditCard = new CreditCard();
 		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
 		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingAddress(new Address());
+		creditCard.setBillingAddress(address);
 		creditCard.setBillingContact(new Contact());
 			
 		Map<String, Object> model = getModel();
@@ -750,13 +766,11 @@ public class AccountProfileController extends AbstractController {
 					.withCardholderName(cardholderName)
 					.withExpirationMonth(expirationMonth)
 					.withExpirationYear(expirationYear)
-					.withNumber(number)
-					.withCardholderName(cvv)
 					.withPrimary(primary);
 			
 			model.put("creditCard", creditCard);
 			model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
-			model.put("mode", "add");
+			model.put("mode", "new");
 			model.put("errorMessage", addResult.getErrorMessage());
 		}
 		

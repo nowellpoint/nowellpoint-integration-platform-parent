@@ -31,20 +31,20 @@
                             <a id="edit-user-profile" href="${labels['base.path']}/${accountProfile.id}/edit" class="btn btn-primary-outline" role="button">${labels["edit.user.profile"]}</a>
                         </div>
                     </div>
-                    
+
                     <br>
-                    
+
                     <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group">
                             <a href="${labels['base.path']}/${accountProfile.id}/deactivate" class="btn btn-default" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
                         </div>
                     </div>
-                    
+
                     <br>
-                    
+
                     <div class="row">
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
 
                             <dl class="dl-vertical">
                                 <dt>${labels["name"]}</dt>
@@ -71,7 +71,7 @@
                             </dl>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
 
                             <dl class="dl-vertical">
                                 <dt>${labels["department"]}</dt>
@@ -94,22 +94,34 @@
                                 <hr>
                             </dl>
                         </div>
+                        
+                        <div class="col-md-1">
+                            <div class="verticalLine"></div>
+                        </div>    
 
-                        <div class="col-md-4">
+                        <div class="col-md-2">
 
-                            <div>
-                                <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
-                            </div>
-                            <br>
-                            <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
-                                <div class="text-center">
-                                    <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
-                                    </a>
-                                </div>
-                            </#if>
 
+
+                                    <dl class="dl-vertical">
+                                        <dt>${labels["plan.name"]}</dt>
+                                        <dd>${(accountProfile.subscription.planName)!}</dd>
+                                        <br>
+                                        <dt>${labels["price"]}</dt>
+                                        <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}</dd>
+                                        <br>
+                                        <dt>${labels["billed"]}</dt>
+                                        <dd>${(accountProfile.subscription.billingFrequency)!}
+                                            <br>
+                                    </dl>
+                                    
+                                <a href="${labels['base.path']}/${accountProfile.id}/plans" id="update-subscription" class="btn btn-success" role="button">${labels["change.subscription"]}</a>
+                                    
                         </div>
-
+                        
+                         <div class="col-md-3">
+                             
+                        </div>     
                     </div>
 
                     <br>
@@ -135,45 +147,6 @@
                             ${(accountProfile.address.country)!}<br>
                         </address>
                         </div>
-                    </div>
-
-                    <br>
-                    <br>
-
-                    <div id="subscription" class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="flextable">
-                                <div class="flextable-item flextable-primary">
-                                    <h3 class="dashhead-title">${labels["subscription"]}</h3>
-                                </div>
-                                <div class="flextable-item">
-                                    <a href="${labels['base.path']}/${accountProfile.id}/plans" id="update-subscription" class="btn btn-primary-outline" role="button">${labels["update.subscription"]}</a>
-                                </div>
-                            </div>
-                        <br>
-                        <div class="hr-divider"></div>
-                        <br>
-                        </div>    
-                        <div class="col-md-2">
-                            <dl class="dl-vertical">
-                                <dt>${labels["plan.name"]}</dt>
-                                <dd>${(accountProfile.subscription.planName)!}</dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-2">
-                            <dl class="dl-vertical">
-                                <dt>${labels["price"]}</dt>
-                                <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}</dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-2">
-                            <dl class="dl-vertical">
-                                <dt>${labels["billed"]}</dt>
-                                <dd>${(accountProfile.subscription.billingFrequency)!}
-                                    <dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-6"></div>
                     </div>
 
                     <br>
@@ -216,7 +189,7 @@
                                                     <#if ! creditCard.primary>
                                                         &emsp;
                                                         <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a> &emsp;
-                                                        <a href="" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
+                                                        <a href="#" data-target="#confirm-dialog" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-backdrop="static" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
                                                 </td>
                                             </tr>
                                         </#list>

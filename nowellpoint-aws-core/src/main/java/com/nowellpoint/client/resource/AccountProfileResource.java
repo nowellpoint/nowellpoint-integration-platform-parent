@@ -149,8 +149,8 @@ public class AccountProfileResource extends AbstractResource {
 			AddResult<CreditCard> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				CreditCard subscription = httpResponse.getEntity(CreditCard.class);
-				result = new AddResultImpl<CreditCard>(subscription);
+				creditCard = httpResponse.getEntity(CreditCard.class);
+				result = new AddResultImpl<CreditCard>(creditCard);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
 				result = new AddResultImpl<CreditCard>(error);

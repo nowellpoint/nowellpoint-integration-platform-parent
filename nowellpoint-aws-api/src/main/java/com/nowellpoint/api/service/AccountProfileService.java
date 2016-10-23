@@ -34,6 +34,7 @@ import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
+import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.IsoCountry;
@@ -128,7 +129,13 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				.lastName(accountProfile.getLastName())
 				.phone(accountProfile.getPhone());
 		
-		Result<com.braintreegateway.Customer> customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		Result<com.braintreegateway.Customer> customerResult = null;
+		
+		try {
+			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		} catch (NotFoundException e) {
+			throw new ValidationException(e.getMessage());
+		}
 		
 		if (! customerResult.isSuccess()) {
 			LOGGER.error(customerResult.getMessage());
@@ -256,7 +263,13 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				.lastName(accountProfile.getLastName())
 				.phone(accountProfile.getPhone());
 		
-		Result<com.braintreegateway.Customer> customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		Result<com.braintreegateway.Customer> customerResult = null;
+		
+		try {
+			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		} catch (NotFoundException e) {
+			throw new ValidationException(e.getMessage());
+		}
 		
 		if (! customerResult.isSuccess()) {
 			LOGGER.error(customerResult.getMessage());
@@ -328,7 +341,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			
 			Result<com.braintreegateway.Subscription> subscriptionResult = null;
 			
-			if (accountProfile.getSubscription() == null) {
+			if (Assert.isNull(accountProfile.getSubscription()) || Assert.isNull(accountProfile.getSubscription().getSubscriptionId())) {
 				
 				SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 					    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
@@ -346,13 +359,18 @@ public class AccountProfileService extends AccountProfileModelMapper {
 					    .planId(subscription.getPlanCode())
 					    .price(new BigDecimal(subscription.getUnitPrice()));
 
-				subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+				try {
+					subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+				} catch (NotFoundException e) {
+					throw new ValidationException(e.getMessage());
+				}
 				
 				subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
 			}
 			
 			if (! subscriptionResult.isSuccess()) {
 				LOGGER.error(subscriptionResult.getMessage());
+				throw new ValidationException(subscriptionResult.getMessage());
 			}
 			
 			subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
@@ -581,7 +599,13 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				.expirationYear(creditCard.getExpirationYear())
 				.number(creditCard.getNumber());
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayService.updateCreditCard(token, creditCardRequest);
+		Result<com.braintreegateway.CreditCard> creditCardResult = null;
+		
+		try {
+			creditCardResult = paymentGatewayService.updateCreditCard(token, creditCardRequest);
+		} catch (NotFoundException e) {
+			throw new ValidationException(e.getMessage());
+		}
 		
 		if (creditCardResult.isSuccess()) {
 			
@@ -594,10 +618,16 @@ public class AccountProfileService extends AccountProfileModelMapper {
 					.postalCode(creditCard.getBillingAddress().getPostalCode())
 					.streetAddress(creditCard.getBillingAddress().getStreet());
 			
-			Result<com.braintreegateway.Address> addressResult = paymentGatewayService.updateAddress(
-					creditCardResult.getTarget().getCustomerId(), 
-					creditCardResult.getTarget().getBillingAddress().getId(), 
-					addressRequest);
+			Result<com.braintreegateway.Address> addressResult = null;
+			
+			try {
+				addressResult = paymentGatewayService.updateAddress(
+						creditCardResult.getTarget().getCustomerId(), 
+						creditCardResult.getTarget().getBillingAddress().getId(), 
+						addressRequest);
+			} catch (NotFoundException e) {
+				throw new ValidationException(e.getMessage());
+			}
 			
 			if (creditCard.getPrimary()) {
 				resource.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
