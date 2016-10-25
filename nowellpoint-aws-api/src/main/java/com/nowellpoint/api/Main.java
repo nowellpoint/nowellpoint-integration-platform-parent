@@ -36,6 +36,7 @@ public class Main {
 		//
 		
 		System.setProperty("swarm.https.port", getPort());
+		System.setProperty("swarm.https.certificate.generate", "true");
 		
 		//
 		// configure the management fraction
@@ -44,10 +45,10 @@ public class Main {
 		ManagementFraction management = new ManagementFraction()
 				.securityRealm(new SecurityRealm("SSLRealm")
 						.sslServerIdentity(new SslServerIdentity<>()
-								.keystorePath("my.jks")
-								.keystorePassword("secret")
-								.alias("mycert")
-								.keyPassword("secret")));
+								.keystorePath("target/keystore.jks") //System.getProperty("javax.net.ssl.keyStore"))
+								.keystorePassword("password") //System.getProperty("javax.net.ssl.keyStorePassword"))
+								.alias("swarm")
+								.keyPassword("password"))); //System.getProperty("javax.net.ssl.keyStorePassword"))));
 		
 		//
 		// configure the undertow fraction
@@ -72,7 +73,7 @@ public class Main {
 		// build and start the container
 		//
 		
-        Swarm container = new Swarm().fraction(management).fraction(undertow);
+        Swarm container = new Swarm().fraction(undertow);
  
         
 		//
