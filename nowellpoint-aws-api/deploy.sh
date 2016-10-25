@@ -1,4 +1,5 @@
-#mvn clean package
+mvn clean package
+cp $JBOSS_HOME/standalone/configuration/my.jks target/keystore.jks
 rm distributions/nowellpoint-api.zip
-zip distributions/nowellpoint-api.zip Procfile keystore.jks target/nowellpoint-aws-api-swarm.jar
+zip -j distributions/nowellpoint-api.zip Procfile target/nowellpoint-aws-api-swarm.jar target/keystore.jks
 eb deploy

@@ -1,1 +1,1 @@
-web: java -jar target/nowellpoint-aws-api-swarm.jar
+web: java -jar nowellpoint-aws-api-swarm.jar

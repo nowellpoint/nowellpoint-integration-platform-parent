@@ -35,8 +35,8 @@ public class Main {
 		// set system properties
 		//
 		
-		System.setProperty("swarm.https.port", getPort());
-		System.setProperty("swarm.https.certificate.generate", "true");
+		System.setProperty("swarm.http.port", getHttpPort());
+		System.setProperty("swarm.https.port", getHttpsPort());
 		
 		//
 		// configure the management fraction
@@ -45,10 +45,10 @@ public class Main {
 		ManagementFraction management = new ManagementFraction()
 				.securityRealm(new SecurityRealm("SSLRealm")
 						.sslServerIdentity(new SslServerIdentity<>()
-								.keystorePath("target/keystore.jks") //System.getProperty("javax.net.ssl.keyStore"))
-								.keystorePassword("password") //System.getProperty("javax.net.ssl.keyStorePassword"))
-								.alias("swarm")
-								.keyPassword("password"))); //System.getProperty("javax.net.ssl.keyStorePassword"))));
+								.keystorePath("keystore.jks") //System.getProperty("javax.net.ssl.keyStore"))
+								.keystorePassword("secret") //System.getProperty("javax.net.ssl.keyStorePassword"))
+								.alias("mycert")
+								.keyPassword("secret"))); //System.getProperty("javax.net.ssl.keyStorePassword"))));
 		
 		//
 		// configure the undertow fraction
@@ -73,9 +73,8 @@ public class Main {
 		// build and start the container
 		//
 		
-        Swarm container = new Swarm().fraction(undertow);
+        Swarm container = new Swarm().fraction(management).fraction(undertow);
  
-        
 		//
         // set system properties from configuration
         //
@@ -107,7 +106,11 @@ public class Main {
         container.fraction(LoggingFraction.createDefaultLoggingFraction()).start().deploy(deployment);
     }
 	
-	private static String getPort() {
+	public static String getHttpPort() {
+		return Optional.ofNullable(System.getenv().get("PORT")).orElse("9090");
+	}
+	
+	private static String getHttpsPort() {
 		return Optional.ofNullable(System.getenv().get("PORT")).orElse("9443");
 	}
 }
