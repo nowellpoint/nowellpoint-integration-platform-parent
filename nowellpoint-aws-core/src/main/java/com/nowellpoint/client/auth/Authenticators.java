@@ -13,7 +13,7 @@ import com.nowellpoint.client.model.idp.Token;
 
 public class Authenticators {
 	
-	private static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
+	private static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
 	
 	public static final PasswordGrantResponseFactory PASSWORD_GRANT_AUTHENTICATOR = new PasswordGrantResponseFactory();
 	public static final RevokeTokenResponseFactory REVOKE_TOKEN_INVALIDATOR = new RevokeTokenResponseFactory();

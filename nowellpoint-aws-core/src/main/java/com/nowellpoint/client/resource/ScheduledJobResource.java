@@ -12,6 +12,7 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
+import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UpdateScheduledJobRequest;
@@ -35,8 +36,8 @@ public class ScheduledJobResource extends AbstractResource {
 		GetResult<List<ScheduledJob>> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			List<ScheduledJob> scheduledJobs = httpResponse.getEntityList(ScheduledJob.class);
-			result = new GetResultImpl<List<ScheduledJob>>(scheduledJobs);
+			List<ScheduledJob> resources = httpResponse.getEntityList(ScheduledJob.class);
+			result = new GetResultImpl<List<ScheduledJob>>(resources);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
@@ -193,8 +194,8 @@ public class ScheduledJobResource extends AbstractResource {
 		GetResult<ScheduledJob> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
-			result = new GetResultImpl<ScheduledJob>(scheduledJob);
+			ScheduledJob resource = httpResponse.getEntity(ScheduledJob.class);
+			result = new GetResultImpl<ScheduledJob>(resource);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
@@ -224,5 +225,40 @@ public class ScheduledJobResource extends AbstractResource {
 		}
 		
 		return result;
+	}
+	
+	public RunHistoryResource runHistory() {
+		return new RunHistoryResource(token);
+	}
+	
+	public class RunHistoryResource extends AbstractResource {
+
+		public RunHistoryResource(Token token) {
+			super(token);
+		}
+		
+		public GetResult<RunHistory> get(String scheduledJobId, String fireInstanceId) {
+			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path(RESOURCE_CONTEXT)
+					.path(scheduledJobId)
+					.path("run-history")
+					.path(fireInstanceId)
+					.execute();
+			
+			GetResult<RunHistory> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				RunHistory resource = httpResponse.getEntity(RunHistory.class);
+				result = new GetResultImpl<RunHistory>(resource);
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new GetResultImpl<RunHistory>(error);
+			}
+			
+			return result;
+		}
 	}
 }

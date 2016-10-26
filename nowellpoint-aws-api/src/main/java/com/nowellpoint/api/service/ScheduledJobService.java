@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 
 import com.nowellpoint.api.model.dto.Environment;
+import com.nowellpoint.api.model.dto.RunHistory;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.model.dto.ScheduledJobType;
@@ -157,6 +158,27 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 
 	public ScheduledJob findScheduledJobById(String id) {
 		return super.findScheduedJobById(id);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param fireInstanceId
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public RunHistory findRunHistory(String id, String fireInstanceId) {
+		ScheduledJob scheduledJob = findScheduledJobById( id );
+		
+		Optional<RunHistory> filter = scheduledJob.getRunHistories()
+				.stream()
+				.filter(r -> r.getFireInstanceId().equals(fireInstanceId))
+				.findFirst();
+		
+		return filter.get();
 	}
 	
 	/**

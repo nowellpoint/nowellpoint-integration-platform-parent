@@ -31,7 +31,7 @@ import spark.Request;
 abstract class AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractController.class.getName());
-	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
+	protected static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	private Class<?> controllerClass;
 	protected Configuration configuration;

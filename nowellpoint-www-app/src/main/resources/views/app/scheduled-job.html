@@ -147,7 +147,7 @@
                                         <th class="col-xs-2">${labels["fire.time"]}</th>
                                         <th class="col-xs-1 text-right">${labels["run.time"]}</th>
                                         <th class="col-xs-2 text-center">${labels["status"]}</th>
-                                        <th class="col-xs-5">${labels["result"]}</th>
+                                        <th class="col-xs-5"></th>
                                     </thead>
                                     <tbody>
                                         <#list scheduledJob.runHistories?sort_by( "fireTime") as runHistory>
@@ -156,7 +156,8 @@
                                                 <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
                                                 <td class="text-right">${(runHistory.jobRunTime)!}</td>
                                                 <td class="text-center">${(runHistory.status)!}</td>
-                                                <td><#if runHistory.failureMessage??>${(runHistory.failureMessage)!}</#if><#if runHistory.backups??><#list runHistory.backups as backup>${(backup.type)!}<br></#list></#if></td>
+                                                <td><#if runHistory.failureMessage??>${(runHistory.failureMessage)!}</#if><#if runHistory.backups??>
+                                                    <a id="view-run-history" href="${labels['base.path']}/${scheduledJob.id!}/run-history/${(runHistory.fireInstanceId)!}"><span class="icon icon-folder"></span></a></#if></td>
                                             </tr>
                                         </#list>
                                     </tbody>

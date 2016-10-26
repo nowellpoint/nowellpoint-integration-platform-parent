@@ -14,7 +14,7 @@ import com.nowellpoint.client.model.idp.Token;
 
 public class AbstractResource {
 	
-	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
+	protected static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
 	protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 	
 	protected Token token;

@@ -23,7 +23,6 @@ import org.wildfly.swarm.logging.LoggingFraction;
 import org.wildfly.swarm.management.ManagementFraction;
 import org.wildfly.swarm.undertow.UndertowFraction;
 
-
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class Main {
@@ -36,7 +35,7 @@ public class Main {
 		//
 		
 		System.setProperty("swarm.http.port", getHttpPort());
-		System.setProperty("swarm.https.port", getHttpsPort());
+		System.setProperty("swarm.https.port", String.valueOf(Integer.valueOf(getHttpPort()) + 100));
 		
 		//
 		// configure the management fraction
@@ -45,10 +44,10 @@ public class Main {
 		ManagementFraction management = new ManagementFraction()
 				.securityRealm(new SecurityRealm("SSLRealm")
 						.sslServerIdentity(new SslServerIdentity<>()
-								.keystorePath("keystore.jks") //System.getProperty("javax.net.ssl.keyStore"))
-								.keystorePassword("secret") //System.getProperty("javax.net.ssl.keyStorePassword"))
+								.keystorePath("keystore.jks") 
+								.keystorePassword("secret")
 								.alias("mycert")
-								.keyPassword("secret"))); //System.getProperty("javax.net.ssl.keyStorePassword"))));
+								.keyPassword("secret")));
 		
 		//
 		// configure the undertow fraction
@@ -108,9 +107,5 @@ public class Main {
 	
 	public static String getHttpPort() {
 		return Optional.ofNullable(System.getenv().get("PORT")).orElse("9090");
-	}
-	
-	private static String getHttpsPort() {
-		return Optional.ofNullable(System.getenv().get("PORT")).orElse("9443");
 	}
 }

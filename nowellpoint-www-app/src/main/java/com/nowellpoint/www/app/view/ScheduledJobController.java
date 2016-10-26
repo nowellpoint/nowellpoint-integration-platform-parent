@@ -15,6 +15,7 @@ import com.nowellpoint.client.model.CreateScheduledJobRequest;
 import com.nowellpoint.client.model.CreateScheduledJobResult;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
@@ -506,4 +507,32 @@ public class ScheduledJobController extends AbstractController {
 		
 		return "";
 	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * getRunHistory
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route getRunHistory = (Request request, Response response) -> {
+		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String fireInstanceId = request.params(":fireInstanceId");
+		
+		GetResult<RunHistory> getResult = new NowellpointClient(new TokenCredentials(token))
+				.scheduledJob()
+				.runHistory()
+				.get(id, fireInstanceId);
+		
+		
+		Map<String, Object> model = getModel();
+		model.put("scheduledJob", new ScheduledJob(id));
+		model.put("runHistory", getResult.getTarget());
+		
+		return render(request, model, Path.Template.SCHEDULE_JOB_RUN_HISTORY);
+	};		
 }

@@ -101,18 +101,16 @@
 
                         <div class="col-md-2">
 
-
-
                                     <dl class="dl-vertical">
                                         <dt>${labels["plan.name"]}</dt>
-                                        <dd>${(accountProfile.subscription.planName)!}</dd>
+                                        <dd>${(accountProfile.subscription.planName)!}&emsp;</dd>
                                         <br>
                                         <dt>${labels["price"]}</dt>
-                                        <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}</dd>
+                                        <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}&emsp;</dd>
                                         <br>
-                                        <dt>${labels["billed"]}</dt>
+                                        <dt>${labels["billed"]}&emsp;</dt>
                                         <dd>${(accountProfile.subscription.billingFrequency)!}
-                                            <br>
+                                        <br>
                                     </dl>
                                     
                                 <a href="${labels['base.path']}/${accountProfile.id}/plans" id="update-subscription" class="btn btn-success" role="button">${labels["change.subscription"]}</a>

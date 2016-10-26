@@ -28,6 +28,7 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.api.model.dto.RunHistory;
 import com.nowellpoint.api.model.dto.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
 
@@ -188,5 +189,21 @@ public class ScheduledJobResource {
 		return Response.ok()
 				.entity(scheduledJob)
 				.build();	
+	}
+	
+	@GET
+	@Path("{id}/run-history/{fireInstanceId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRunHistory(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId) {
+		
+		RunHistory resource = scheduledJobService.findRunHistory(id, fireInstanceId);
+		
+		if (resource == null) {
+			throw new NotFoundException(String.format("Run History for Scheduled Job: %s with Instance Id: %s was not found", id, fireInstanceId));
+		}
+		
+		return Response
+				.ok(resource)
+				.build();
 	}
 }

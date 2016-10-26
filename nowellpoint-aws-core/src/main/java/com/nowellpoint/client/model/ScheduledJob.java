@@ -46,6 +46,10 @@ public class ScheduledJob extends AbstractResource {
 	public ScheduledJob() {
 		setRunHistories(Collections.emptyList());
 	}
+	
+	public ScheduledJob(String id) {
+		setId(id);
+	}
 
 	public UserInfo getOwner() {
 		return owner;

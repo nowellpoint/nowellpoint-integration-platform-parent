@@ -239,6 +239,7 @@ public class Application implements SparkApplication {
         post(Path.Route.SCHEDULED_JOB_UPDATE, scheduledJobsController.updateScheduledJob);
         post(Path.Route.SCHEDULED_JOB_START, scheduledJobsController.startScheduledJob);
         post(Path.Route.SCHEDULED_JOB_STOP, scheduledJobsController.stopScheduledJob);
+        get(Path.Route.SCHEDULED_JOB_RUN_HISTORY, scheduledJobsController.getRunHistory);
         
         //
         // exception handlers
@@ -278,7 +279,7 @@ public class Application implements SparkApplication {
 	 */
 	
 	private static List<IsoCountry> loadCountries() {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NCS_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.get(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 				.path("iso-countries")
 				.execute();
 		

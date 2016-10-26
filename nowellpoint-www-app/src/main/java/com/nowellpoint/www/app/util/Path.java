@@ -54,6 +54,7 @@ public class Path {
 		public static final String SCHEDULED_JOB_START = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/start");
 		public static final String SCHEDULED_JOB_STOP = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/stop");
 		public static final String SCHEDULED_JOB_TERMINATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/terminate");
+		public static final String SCHEDULED_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId");
 		
 		public static final String APPLICATION_LIST = String.format(APPLICATION_CONTEXT, "applications");
 		public static final String APPLICATION_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id");
@@ -114,6 +115,7 @@ public class Path {
 		public static final String SCHEDULED_JOB_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-create.html");
 		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
 		public static final String SCHEDULED_JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
+		public static final String SCHEDULE_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-job-run-history.html");
 		public static final String SCHEDULE = String.format(APPLICATION_CONTEXT, "schedule.html");
 	}
 }
