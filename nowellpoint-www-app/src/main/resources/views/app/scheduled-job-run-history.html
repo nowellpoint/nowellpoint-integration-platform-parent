@@ -25,14 +25,14 @@
                         <div class="content table-responsive">
                             <table id="run-history-table" class="table table-hover">
                                 <thead>
-                                    <th class="col-md-7">${labels["file.name"]}</th>
+                                    <th class="col-md-7"></th>
                                     <th class="col-md-3">${labels["type"]}</th>
                                     <th class="col-md-2 text-right">${labels["file.size"]}</th>
                                 </thead>
                                 <tbody>
                                     <#list runHistory.backups?sort_by( "filename") as backup>
                                         <tr>
-                                            <td>${(backup.filename)!}</td>
+                                            <td><a href="${labels['base.path']}/${scheduledJob.id!}/run-history/${(runHistory.fireInstanceId)!}/download/${(backup.type)!}" download="${(backup.filename)!}.json">${(backup.filename)!}</a></td>
                                             <td>${(backup.type)!}</td>
                                             <td class="text-right">${(backup.filesize)!}</td>
                                         </tr>

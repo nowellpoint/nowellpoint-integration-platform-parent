@@ -2,6 +2,7 @@ package com.nowellpoint.api.resource;
 
 import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Set;
@@ -191,6 +192,13 @@ public class ScheduledJobResource {
 				.build();	
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @param fireInstanceId
+	 * @return
+	 */
+	
 	@GET
 	@Path("{id}/run-history/{fireInstanceId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -205,5 +213,25 @@ public class ScheduledJobResource {
 		return Response
 				.ok(resource)
 				.build();
+	}
+	
+	@GET
+	@Path("{id}/run-history/{fireInstanceId}/file/{filename}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getFile(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId, @PathParam("filename") String filename) {
+
+		String content = null;
+		
+		try {
+			content = scheduledJobService.getFile(id, fireInstanceId, filename);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok()
+				.header("Content-Disposition", String.format("attachment; filename=\"%s.json\"", filename))
+				.entity(content)
+				.build();	
 	}
 }

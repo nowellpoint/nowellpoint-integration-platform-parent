@@ -240,6 +240,7 @@ public class Application implements SparkApplication {
         post(Path.Route.SCHEDULED_JOB_START, scheduledJobsController.startScheduledJob);
         post(Path.Route.SCHEDULED_JOB_STOP, scheduledJobsController.stopScheduledJob);
         get(Path.Route.SCHEDULED_JOB_RUN_HISTORY, scheduledJobsController.getRunHistory);
+        get(Path.Route.SCHEDULED_JOB_DOWNLOAD_FILE, scheduledJobsController.downloadFile);
         
         //
         // exception handlers

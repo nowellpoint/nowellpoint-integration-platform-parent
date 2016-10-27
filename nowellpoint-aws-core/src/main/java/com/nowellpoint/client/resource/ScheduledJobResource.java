@@ -260,5 +260,31 @@ public class ScheduledJobResource extends AbstractResource {
 			
 			return result;
 		}
+		
+		public GetResult<String> getFile(String scheduledJobId, String fireInstanceId, String filename) {
+			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path(RESOURCE_CONTEXT)
+					.path(scheduledJobId)
+					.path("run-history")
+					.path(fireInstanceId)
+					.path("file")
+					.path(filename)
+					.execute();
+			
+			GetResult<String> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				String resource = httpResponse.getAsString();
+				result = new GetResultImpl<String>(resource);
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new GetResultImpl<String>(error);
+			}
+			
+			return result;
+		}
 	}
 }

@@ -4,6 +4,7 @@ import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
@@ -12,6 +13,12 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+import com.nowellpoint.api.model.dto.Backup;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.RunHistory;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
@@ -20,8 +27,11 @@ import com.nowellpoint.api.model.dto.ScheduledJobType;
 import com.nowellpoint.api.model.dto.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.nowellpoint.util.Assert;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
+	
+	private static final String bucketName = "nowellpoint-metadata-backups";
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -179,6 +189,41 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 				.findFirst();
 		
 		return filter.get();
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 * 
+	 * 
+	 */
+	
+	public String getFile(String id, String fireInstanceId, String filename) throws IOException {
+		RunHistory runHistory = findRunHistory(id, fireInstanceId);
+		
+		Backup backup = null;
+		
+		if (Assert.isNotNull(runHistory)) {
+			Optional<Backup> filter = runHistory.getBackups()
+					.stream()
+					.filter(r -> r.getType().equals(filename))
+					.findFirst();
+			
+			if (filter.isPresent()) {
+				backup = filter.get();
+			}
+		}
+		
+		AmazonS3 s3client = new AmazonS3Client();
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, backup.getFilename());
+    	
+    	S3Object s3Object = s3client.getObject(getObjectRequest);
+    	
+    	return IOUtils.toString(s3Object.getObjectContent());
 	}
 	
 	/**

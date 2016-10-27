@@ -528,11 +528,34 @@ public class ScheduledJobController extends AbstractController {
 				.runHistory()
 				.get(id, fireInstanceId);
 		
-		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", new ScheduledJob(id));
 		model.put("runHistory", getResult.getTarget());
 		
 		return render(request, model, Path.Template.SCHEDULE_JOB_RUN_HISTORY);
-	};		
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
+	 * downloadFile
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route downloadFile = (Request request, Response response) -> {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String fireInstanceId = request.params(":fireInstanceId");
+		String filename = request.params(":filename");
+		
+		GetResult<String> getResult = new NowellpointClient(new TokenCredentials(token))
+				.scheduledJob()
+				.runHistory()
+				.getFile(id, fireInstanceId, filename);
+		
+		return getResult.getTarget();
+		
+	};
 }

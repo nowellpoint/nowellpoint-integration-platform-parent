@@ -55,6 +55,7 @@ public class Path {
 		public static final String SCHEDULED_JOB_STOP = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/stop");
 		public static final String SCHEDULED_JOB_TERMINATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/terminate");
 		public static final String SCHEDULED_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId");
+		public static final String SCHEDULED_JOB_DOWNLOAD_FILE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId/download/:filename");
 		
 		public static final String APPLICATION_LIST = String.format(APPLICATION_CONTEXT, "applications");
 		public static final String APPLICATION_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id");
