@@ -46,12 +46,12 @@
                         <div class="col-md-2"></div>
 
                         <div class="col-md-4">
-                            <label class="control-label" for="cardholderName">${labels["billing.address"]}</label>
+                            <label class="control-label">${labels["billing.address"]}</label>
                         </div>
                         <div class="col-md-4">
 
                             <div class="form-group">
-                                <select id="countryCode" name="countryCode" class="form-control" required>
+                                <select class="form-control" id="countryCode" name="countryCode" autofocus="" required>
                                     <option value="">${labels["select.one"]}</option>
                                     <#list countryList as country>
                                         <#if creditCard.billingAddress.countryCode??>
@@ -96,7 +96,7 @@
 
 
                         <div class="col-md-4">
-                            <label class="control-label" for="cardholderName">${labels["billing.contact"]}</label>
+                            <label class="control-label">${labels["billing.contact"]}</label>
                         </div>
 
                         <div class="col-md-4">
@@ -116,7 +116,7 @@
                         <div class="col-md-2"></div>
 
                         <div class="col-md-4">
-                            <label class="control-label" for="cardholderName">${labels["credit.card"]}</label>
+                            <label class="control-label">${labels["credit.card"]}</label>
                         </div>
 
                         <div class="col-md-4">

@@ -21,7 +21,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.AddCreditCardRequest;
+import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
@@ -35,6 +35,7 @@ import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SetSubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
+import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -225,7 +226,7 @@ public class AccountProfileController extends AbstractController {
 				Assert.isNotNull(expirationYear) || Assert.isNotNull(city) || Assert.isNotNull(countryCode) || Assert.isNotNull(postalCode) ||
 				Assert.isNotNull(state) || Assert.isNotNull(firstName) || Assert.isNotNull(lastName)) {
 			
-			AddCreditCardRequest addCreditCardRequest = new AddCreditCardRequest()
+			CreditCardRequest creditCardRequest = new CreditCardRequest()
 					.withAccountProfileId(id)
 					.withCardholderName(cardholderName)
 					.withExpirationMonth(expirationMonth)
@@ -244,7 +245,7 @@ public class AccountProfileController extends AbstractController {
 			AddResult<CreditCard> addResult = new NowellpointClient(new TokenCredentials(token))
 					.accountProfile()
 					.creditCard()
-					.add(addCreditCardRequest);
+					.add(creditCardRequest);
 				
 			if (! addResult.isSuccess()) {
 				
@@ -721,7 +722,7 @@ public class AccountProfileController extends AbstractController {
 		String cvv = request.queryParams("cvv");
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
-		AddCreditCardRequest addCreditCardRequest = new AddCreditCardRequest()
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.withAccountProfileId(id)
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
@@ -740,7 +741,7 @@ public class AccountProfileController extends AbstractController {
 		AddResult<CreditCard> addResult = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.creditCard()
-				.add(addCreditCardRequest);
+				.add(creditCardRequest);
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
@@ -790,6 +791,9 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile accountProfile = getAccount(request);
 		
+		String accountProfileId = request.params(":id");
+		String creditCardToken = request.params(":token");
+		
 		String cardholderName = request.queryParams("cardholderName");
 		String expirationMonth = request.queryParams("expirationMonth");
 		String expirationYear = request.queryParams("expirationYear");
@@ -803,49 +807,56 @@ public class AccountProfileController extends AbstractController {
 		String cvv = request.queryParams("cvv");
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
-		CreditCard creditCard = new CreditCard()
-				.withBillingAddress(new Address()
-						.withCity(city)
-						.withCountryCode(countryCode)
-						.withPostalCode(postalCode)
-						.withState(state)
-						.withStreet(street))
-				.withBillingContact(new Contact()
-						.withFirstName(firstName)
-						.withLastName(lastName))
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.withAccountProfileId(accountProfileId)
+				.withToken(creditCardToken)
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
-				.withCardholderName(cvv)
-				.withPrimary(primary);
+				.withCvv(cvv)
+				.withPrimary(primary)
+				.withCity(city)
+				.withCountryCode(countryCode)
+				.withPostalCode(postalCode)
+				.withState(state)
+				.withStreet(street)
+				.withFirstName(firstName)
+				.withLastName(lastName);
 		
-		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("credit-card")
-				.path(request.params(":token"))
-				.body(creditCard)
-				.execute();
+		UpdateResult<CreditCard> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.creditCard()
+				.update(creditCardRequest);
 		
 		Map<String, Object> model = getModel();
-		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		model.put("accountProfile", new AccountProfile(accountProfileId));
 			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			creditCard = httpResponse.getEntity(CreditCard.class);
+		if (updateResult.isSuccess()) {
+			CreditCard creditCard = updateResult.getTarget();
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
 			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.credit.card.success"));
 		} else {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+			CreditCard creditCard = new CreditCard()
+					.withBillingAddress(new Address()
+							.withCity(city)
+							.withCountryCode(countryCode)
+							.withPostalCode(postalCode)
+							.withState(state)
+							.withStreet(street))
+					.withBillingContact(new Contact()
+							.withFirstName(firstName)
+							.withLastName(lastName))
+					.withCardholderName(cardholderName)
+					.withExpirationMonth(expirationMonth)
+					.withExpirationYear(expirationYear)
+					.withPrimary(primary);
 			
 			model.put("creditCard", creditCard);
-			model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
+			model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", accountProfileId, creditCardToken));
 			model.put("mode", "edit");
-			model.put("errorMessage", error.getMessage());
+			model.put("errorMessage", updateResult.getErrorMessage());
 		}
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);

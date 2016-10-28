@@ -1,8 +1,10 @@
 package com.nowellpoint.client.model;
 
-public class AddCreditCardRequest {
+public class CreditCardRequest {
 	
 	private String accountProfileId;
+	
+	private String token;
 	
 	private String cardholderName;
 	
@@ -30,7 +32,7 @@ public class AddCreditCardRequest {
 
 	private String countryCode;
 	
-	public AddCreditCardRequest() {
+	public CreditCardRequest() {
 		
 	}
 
@@ -42,6 +44,14 @@ public class AddCreditCardRequest {
 		this.accountProfileId = accountProfileId;
 	}
 	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	public String getCardholderName() {
 		return cardholderName;
 	}
@@ -146,72 +156,77 @@ public class AddCreditCardRequest {
 		this.countryCode = countryCode;
 	}
 
-	public AddCreditCardRequest withAccountProfileId(String accountProfileId) {
+	public CreditCardRequest withAccountProfileId(String accountProfileId) {
 		setAccountProfileId(accountProfileId);
 		return this;
 	}
 	
-	public AddCreditCardRequest withCardholderName(String cardholderName) {
+	public CreditCardRequest withCardholderName(String cardholderName) {
 		setCardholderName(cardholderName);
 		return this;
 	}
+	
+	public CreditCardRequest withToken(String token) {
+		setToken(token);
+		return this;
+	}
 
-	public AddCreditCardRequest withNumber(String number) {
+	public CreditCardRequest withNumber(String number) {
 		setNumber(number);
 		return this;
 	}
 	
-	public AddCreditCardRequest withCvv(String cvv) {
+	public CreditCardRequest withCvv(String cvv) {
 		setCvv(cvv);
 		return this;
 	}
 	
-	public AddCreditCardRequest withExpirationMonth(String expirationMonth) {
+	public CreditCardRequest withExpirationMonth(String expirationMonth) {
 		setExpirationMonth(expirationMonth);
 		return this;
 	}
 	
-	public AddCreditCardRequest withExpirationYear(String expirationYear) {
+	public CreditCardRequest withExpirationYear(String expirationYear) {
 		setExpirationYear(expirationYear);
 		return this;
 	}
 
-	public AddCreditCardRequest withPrimary(Boolean primary) {
+	public CreditCardRequest withPrimary(Boolean primary) {
 		setPrimary(primary);
 		return this;
 	}
 	
-	public AddCreditCardRequest withStreet(String steet) {
+	public CreditCardRequest withStreet(String street) {
 		setStreet(street);
 		return this;
 	}
 	
-	public AddCreditCardRequest withCity(String city) {
+	public CreditCardRequest withCity(String city) {
 		setCity(city);
 		return this;
 	}
 	
-	public AddCreditCardRequest withState(String state) {
+	public CreditCardRequest withState(String state) {
 		setState(state);
 		return this;
 	}
 	
-	public AddCreditCardRequest withPostalCode(String postalCode) {
+	public CreditCardRequest withPostalCode(String postalCode) {
 		setPostalCode(postalCode);
 		return this;
 	}
 	
-	public AddCreditCardRequest withCountryCode(String countryCode) {
+	public CreditCardRequest withCountryCode(String countryCode) {
 		setCountryCode(countryCode);
 		return this;
 	}
 	
-	public AddCreditCardRequest withFirstName(String firstName) {
+	public CreditCardRequest withFirstName(String firstName) {
 		setFirstName(firstName);
 		return this;
 	}
 	
-	public AddCreditCardRequest withLastName(String lastName) {
+	public CreditCardRequest withLastName(String lastName) {
 		setLastName(lastName);
 		return this;
 	}
