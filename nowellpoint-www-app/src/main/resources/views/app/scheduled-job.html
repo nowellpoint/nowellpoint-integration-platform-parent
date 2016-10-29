@@ -146,7 +146,8 @@
                                         <th class="col-xs-2">${labels["instance.id"]}</th>
                                         <th class="col-xs-2">${labels["fire.time"]}</th>
                                         <th class="col-xs-1 text-right">${labels["run.time"]}</th>
-                                        <th class="col-xs-2 text-center">${labels["status"]}</th>
+                                        <th class="col-xs-1 text-center">${labels["status"]}</th>
+                                        <th class="col-xs-1 text-center">${labels["files"]}</th>
                                         <th class="col-xs-5"></th>
                                     </thead>
                                     <tbody>
@@ -156,8 +157,9 @@
                                                 <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
                                                 <td class="text-right">${(runHistory.jobRunTime)!}</td>
                                                 <td class="text-center">${(runHistory.status)!}</td>
-                                                <td><#if runHistory.failureMessage??>${(runHistory.failureMessage)!}</#if><#if runHistory.backups??>
+                                                <td class="text-center"><#if runHistory.backups??>
                                                     <a id="view-run-history" href="${labels['base.path']}/${scheduledJob.id!}/run-history/${(runHistory.fireInstanceId)!}"><span class="icon icon-folder"></span></a></#if></td>
+                                                <td>${(runHistory.failureMessage)!}</td>
                                             </tr>
                                         </#list>
                                     </tbody>

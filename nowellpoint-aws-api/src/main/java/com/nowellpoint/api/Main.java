@@ -106,6 +106,6 @@ public class Main {
     }
 	
 	public static String getHttpPort() {
-		return Optional.ofNullable(System.getenv().get("PORT")).orElse("9090");
+		return Optional.ofNullable(System.getenv().get("PORT")).orElse("5000");
 	}
 }

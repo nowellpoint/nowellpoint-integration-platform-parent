@@ -555,7 +555,7 @@ public class ScheduledJobController extends AbstractController {
 				.runHistory()
 				.getFile(id, fireInstanceId, filename);
 		
-		response.header("Content-Disposition", String.format("attachment; filename=\"%s.json\"", filename));
+		//response.header("Content-Disposition", String.format("attachment; filename=\"%s.json\"", filename));
 		
 		return getResult.getTarget();
 		
