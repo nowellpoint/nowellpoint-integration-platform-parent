@@ -1,19 +1,9 @@
 package com.nowellpoint.data;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.aws.model.admin.Properties;
 
 import redis.clients.jedis.JedisPool;
@@ -47,21 +37,5 @@ public class CacheTest {
         System.out.println(jedisPool.getResource().info());
         
         jedisPool.close();
-	}
-	
-	@Test
-	public void testMongoClusterConnect() {
-		MongoClientOptions.Builder builder = MongoClientOptions.builder()
-                .sslEnabled(true)
-                .sslInvalidHostNameAllowed(true);
-		
-		MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_CLIENT_URI"));
-		List<ServerAddress> hosts = uri.getHosts().stream().map(p-> new ServerAddress(p)).collect(Collectors.toList());
-		List<MongoCredential> credentials = Arrays.asList(uri.getCredentials());
-		MongoClient mongoClient = new MongoClient(hosts, credentials, builder.build());
-		MongoDatabase database = mongoClient.getDatabase(uri.getDatabase());
-		System.out.println(database.getName());
-		System.out.println(database.getCollection("account.profiles").count());
-		mongoClient.close();
 	}
 }

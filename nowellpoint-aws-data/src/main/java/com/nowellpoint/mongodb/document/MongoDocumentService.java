@@ -132,7 +132,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		Date now = Date.from(Instant.now());
 		
 		document.setId(new ObjectId());
-		document.setSystemCreationDate(now);
+		document.setSystemCreatedDate(now);
 		document.setSystemModifiedDate(now);
 		
 		if (document.getCreatedDate() == null) {

@@ -156,6 +156,7 @@ public class AccountProfileResource {
 		//
 		
 		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setId(id);
 		accountProfile.setFirstName(firstName);
 		accountProfile.setLastName(lastName);
 		accountProfile.setEmail(email);
@@ -172,7 +173,7 @@ public class AccountProfileResource {
 		accountProfile.setTimeZoneSidKey(timeZoneSidKey);
 		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
-		accountProfileService.updateAccountProfile(id, accountProfile);
+		accountProfileService.updateAccountProfile( accountProfile );
 				
 		//
 		// update identity
@@ -236,7 +237,8 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response udpateAccountProfile(@PathParam("id") String id, AccountProfile accountProfile) {
 		
-		accountProfileService.updateAccountProfile(id, accountProfile);
+		accountProfile.setId(id);
+		accountProfileService.updateAccountProfile( accountProfile );
 		
 		return Response.ok(accountProfile).build();
 	}
@@ -339,7 +341,7 @@ public class AccountProfileResource {
 		
 		accountProfile.setPhotos(photos);
 		
-		accountProfileService.updateAccountProfile( id, accountProfile);
+		accountProfileService.updateAccountProfile( accountProfile );
 		
 		return Response.ok(accountProfile)
 				.build();

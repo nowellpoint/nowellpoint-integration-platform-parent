@@ -200,7 +200,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		salesforceConnector.setId(original.getId());
 		salesforceConnector.setCreatedDate(original.getCreatedDate());
-		salesforceConnector.setSystemCreationDate(original.getSystemCreationDate());
+		salesforceConnector.setSystemCreatedDate(original.getSystemCreatedDate());
 		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
 		
 		if (isNull(salesforceConnector.getTag())) {

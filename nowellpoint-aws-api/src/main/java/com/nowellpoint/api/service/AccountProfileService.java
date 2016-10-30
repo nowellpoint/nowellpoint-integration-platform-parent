@@ -74,10 +74,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		String id = UserContext.getPrincipal().getName();
 		
-		AccountProfile accountProfile = findAccountProfile( id );
+		AccountProfile accountProfile = new AccountProfile( id );
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
-		updateAccountProfile( id, accountProfile);
+		updateAccountProfile( accountProfile );
 	}
 	
 	/**
@@ -150,16 +150,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * @return the updated Identity resource
 	 */
 	
-	public void updateAccountProfile(String id, AccountProfile accountProfile) {
-		AccountProfile original = findAccountProfile( id );
+	public void updateAccountProfile(AccountProfile accountProfile) {
+		AccountProfile original = findAccountProfile( accountProfile.getId() );
 		
-		accountProfile.setId( id );
-		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		accountProfile.setCreatedDate(original.getCreatedDate());
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
-		accountProfile.setIsActive(original.getIsActive());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
 		accountProfile.setCreatedBy(original.getCreatedBy());
+		accountProfile.setCreatedDate(original.getCreatedDate());
+		accountProfile.setSystemCreatedDate(original.getSystemCreatedDate());
+		accountProfile.setLeadId(original.getLeadId());
 		
 		if (isNull(accountProfile.getDivision())) {
 			accountProfile.setDivision(original.getDivision());
@@ -215,6 +214,14 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setExtension(null);
 		}
 		
+		if (isNull(accountProfile.getLastName())) {
+			accountProfile.setLastName(original.getLastName());
+		}
+		
+		if (isNull(accountProfile.getEmail())) {
+			accountProfile.setEmail(original.getEmail());
+		}
+		
 		if (isNull(accountProfile.getHref())) {
 			accountProfile.setHref(original.getHref());
 		}
@@ -251,6 +258,20 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setCreditCards(original.getCreditCards());
 		}
 		
+		if (isNull(accountProfile.getIsActive())) {
+			accountProfile.setIsActive(original.getIsActive());
+		}
+		
+		if (isNull(accountProfile.getSubscription())) {
+			accountProfile.setSubscription(original.getSubscription());
+		}
+		
+		if (isNull(accountProfile.getHasFullAccess())) {
+			accountProfile.setHasFullAccess(original.getHasFullAccess());
+		}
+		
+		accountProfile.setUsername(accountProfile.getEmail());
+		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		super.updateAccountProfile(accountProfile);
@@ -572,7 +593,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			
 			accountProfile.addCreditCard(creditCard);
 			
-			updateAccountProfile(id, accountProfile);
+			updateAccountProfile( accountProfile );
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
@@ -591,7 +612,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 */
 	
 	public void updateCreditCard(String id, String token, CreditCard creditCard) {
-		AccountProfile resource = findAccountProfile(id);
+		AccountProfile accountProfile = findAccountProfile(id);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -630,14 +651,14 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			}
 			
 			if (creditCard.getPrimary()) {
-				resource.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
+				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
 					if (c.getPrimary()) {
 						c.setPrimary(Boolean.FALSE);
 					}
 				});			
 			}
 			
-			CreditCard original = resource.getCreditCards()
+			CreditCard original = accountProfile.getCreditCards()
 					.stream()
 					.filter(c -> token.equals(c.getToken()))
 					.findFirst()
@@ -652,11 +673,11 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			creditCard.setUpdatedOn(Date.from(Instant.now()));
 			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
 			
-			resource.getCreditCards().removeIf(c -> token.equals(c.getToken()));
+			accountProfile.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 			
-			resource.addCreditCard(creditCard);
+			accountProfile.addCreditCard(creditCard);
 			
-			updateAccountProfile(id, resource);
+			updateAccountProfile( accountProfile );
 			
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
@@ -724,7 +745,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		if (creditCardResult.isSuccess()) {
 			paymentGatewayService.deleteAddress(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
 			accountProfile.getCreditCards().removeIf(c -> token.equals(c.getToken()));
-			updateAccountProfile( id, accountProfile );
+			updateAccountProfile( accountProfile );
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
 		}

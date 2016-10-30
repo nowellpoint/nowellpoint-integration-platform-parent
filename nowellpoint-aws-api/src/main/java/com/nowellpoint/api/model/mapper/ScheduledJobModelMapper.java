@@ -111,7 +111,7 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
 		scheduledJobRequest.setStatus(scheduledJob.getStatus());
-		scheduledJobRequest.setSystemCreationDate(now);
+		scheduledJobRequest.setSystemCreatedDate(now);
 		scheduledJobRequest.setSystemModifiedDate(now);
 		scheduledJobRequest.setYear(dateTime.getYear());
 		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());

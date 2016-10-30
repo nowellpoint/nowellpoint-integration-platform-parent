@@ -104,7 +104,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
 		scheduledJob.setJobTypeName(original.getJobTypeName());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
-		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
+		scheduledJob.setSystemCreatedDate(original.getSystemCreatedDate());
 		scheduledJob.setLastRunDate(original.getLastRunDate());
 		scheduledJob.setLastRunStatus(original.getLastRunStatus());
 		scheduledJob.setLastRunFailureMessage(original.getLastRunFailureMessage());

@@ -324,7 +324,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		scheduledJobRequest.setLastModifiedBy(userRef);
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
-		scheduledJobRequest.setSystemCreationDate(now);
+		scheduledJobRequest.setSystemCreatedDate(now);
 		scheduledJobRequest.setSystemModifiedDate(now);
 		scheduledJobRequest.setYear(dateTime.getYear());
 		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());

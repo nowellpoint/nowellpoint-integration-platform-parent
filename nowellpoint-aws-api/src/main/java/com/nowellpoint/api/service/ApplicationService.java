@@ -112,7 +112,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		application.setId(id);
 		application.setCreatedDate(original.getCreatedDate());
-		application.setSystemCreationDate(original.getSystemCreationDate());
+		application.setSystemCreatedDate(original.getSystemCreatedDate());
 		application.setSystemModifiedDate(original.getSystemModifiedDate());
 		
 		if (application.getName() == null) {

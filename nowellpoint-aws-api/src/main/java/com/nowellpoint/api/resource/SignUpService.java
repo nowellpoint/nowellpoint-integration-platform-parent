@@ -214,7 +214,7 @@ public class SignUpService {
 			if (isNull(accountProfile.getId())) {			
 				accountProfileService.createAccountProfile( accountProfile );
 			} else {
-				accountProfileService.updateAccountProfile( accountProfile.getId(), accountProfile );
+				accountProfileService.updateAccountProfile( accountProfile );
 			}
 			
 			return accountProfile;
@@ -307,7 +307,7 @@ public class SignUpService {
 			accountProfile.setLeadId(lead.getId());
 			accountProfile.setHref(account.getHref());
 			
-			accountProfileService.updateAccountProfile(accountProfile.getId(), accountProfile);
+			accountProfileService.updateAccountProfile( accountProfile );
 			
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
