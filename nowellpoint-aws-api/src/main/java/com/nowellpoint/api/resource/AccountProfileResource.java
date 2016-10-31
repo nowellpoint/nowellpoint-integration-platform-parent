@@ -2,6 +2,7 @@ package com.nowellpoint.api.resource;
 
 import java.net.URI;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,6 +34,7 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
+import com.nowellpoint.api.model.dto.Disable;
 import com.nowellpoint.api.model.dto.Plan;
 import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
@@ -52,6 +54,10 @@ public class AccountProfileResource {
 	
 	@Inject
 	private PlanService planService;
+	
+	@Inject
+	@Disable
+	private Event<AccountProfile> deactivateEvent;
 
 	@Context
 	private UriInfo uriInfo;
@@ -247,11 +253,12 @@ public class AccountProfileResource {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response disableAccountProfile(@PathParam("id") String id) {
+    public Response deactivateAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfile resource = accountProfileService.findAccountProfile( id );
+		AccountProfile resource = new AccountProfile(id);
+		accountProfileService.deactivateAccountProfile( resource );
 		
-		identityProviderService.disableAccount(resource.getHref());
+		deactivateEvent.fire( resource );
 		
 		return Response.ok().build();
 	}

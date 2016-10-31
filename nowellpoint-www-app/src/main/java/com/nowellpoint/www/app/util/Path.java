@@ -22,6 +22,7 @@ public class Path {
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
+		public static final String CONNECTORS_SALESFORCE_NEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/new");
 		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce");
 		public static final String CONNECTORS_SALESFORCE_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/edit");
@@ -97,6 +98,7 @@ public class Path {
 		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
 		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
 		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
+		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
 		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connectors-list.html");
 		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");

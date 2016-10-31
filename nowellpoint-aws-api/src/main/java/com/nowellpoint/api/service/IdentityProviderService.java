@@ -5,6 +5,7 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
@@ -13,6 +14,7 @@ import org.jboss.logging.Logger;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.dto.Disable;
 import com.nowellpoint.api.model.dto.ErrorDTO;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -278,11 +280,11 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public void disableAccount(String href) {
+	public void deactivateAccount(@Observes @Disable AccountProfile accountProfile) {
 		Account account = new Account();
 		account.setStatus("DISABLED");
 		
-		HttpResponse httpResponse = RestResource.post(href)
+		HttpResponse httpResponse = RestResource.post(accountProfile.getHref())
 				.contentType(MediaType.APPLICATION_JSON)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.body(account)
@@ -313,10 +315,11 @@ public class IdentityProviderService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		Account account = null;
+		
 		if (httpResponse.getStatusCode() == 200) {
 			account = httpResponse.getEntity(Account.class);
 		} else {
-			LOGGER.error(httpResponse.getAsString());
+			throw new ValidationException(httpResponse.getAsString());
 		}
 		
 		return account;
@@ -418,8 +421,6 @@ public class IdentityProviderService {
 				.path("accessTokens")
 				.path(claims.getBody().getId())
 				.execute();
-		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
 			ObjectNode response = httpResponse.getEntity(ObjectNode.class);

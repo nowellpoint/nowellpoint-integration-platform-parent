@@ -32,7 +32,7 @@
 
                 <#if mode=="new" || mode=="edit">
 
-                    <form id="payment-method-form" name="payment-method-form" class="form-vertical" method="post" action="${action}">
+                    <form name="payment-method-form" class="form-vertical" method="post" action="${action}">
 
                         <div class="col-md-6"></div>
 
@@ -188,7 +188,7 @@
                         <div class="col-md-10">
                             <div class="pull-right">
                                 <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button">${labels["cancel"]}</a>
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                             </div>
                         </div>
 

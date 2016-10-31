@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
@@ -18,7 +19,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Backup;
+import com.nowellpoint.api.model.dto.Disable;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.RunHistory;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
@@ -31,7 +34,10 @@ import com.nowellpoint.util.Assert;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
 	
-	private static final String bucketName = "nowellpoint-metadata-backups";
+	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
+	private static final String SCHEDULED = "Scheduled";
+	private static final String STOPPED = "Stopped";
+	private static final String TERMINATED = "Terminated";
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -59,8 +65,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public Set<ScheduledJob> findAllByOwner() {
-		return super.findAllByOwner();
+	public Set<ScheduledJob> findByOwner() {
+		return super.findByOwner();
 	}
 	
 	/**
@@ -76,7 +82,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setOwner(new UserInfo(getSubject()));
 		}
 		
-		scheduledJob.setStatus("Scheduled");
+		scheduledJob.setStatus(SCHEDULED);
 		
 		setupScheduledJob(scheduledJob);
 		
@@ -95,7 +101,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	public void updateScheduledJob(String id, ScheduledJob scheduledJob) {
 		ScheduledJob original = findScheduledJobById(id);
 		
-		if ("Terminated".equals(original.getStatus())) {
+		if (TERMINATED.equals(original.getStatus())) {
 			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
 		}
 		
@@ -219,11 +225,27 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		
 		AmazonS3 s3client = new AmazonS3Client();
 		
-		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, backup.getFilename());
+		GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, backup.getFilename());
     	
     	S3Object s3Object = s3client.getObject(getObjectRequest);
     	
     	return IOUtils.toString(s3Object.getObjectContent());
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param accountProfile
+	 * 
+	 * 
+	 */
+	
+	public void terminateAllJobs(@Observes @Disable AccountProfile accountProfile) {
+		Set<ScheduledJob> scheduledJobs = findByOwner(accountProfile.getId());
+		scheduledJobs.stream().forEach(scheduledJob -> {
+			scheduledJob.setStatus(TERMINATED);
+			updateScheduledJob(scheduledJob);
+		});
 	}
 	
 	/**
@@ -240,7 +262,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
 		
-		if (! ("Scheduled".equals(scheduledJob.getStatus()) || "Stopped".equals(scheduledJob.getStatus())) || "Terminated".equals(scheduledJob.getStatus())) {
+		if (! (SCHEDULED.equals(scheduledJob.getStatus()) || STOPPED.equals(scheduledJob.getStatus())) || TERMINATED.equals(scheduledJob.getStatus())) {
 			throw new ValidationException( String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		

@@ -74,7 +74,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		String id = UserContext.getPrincipal().getName();
 		
-		AccountProfile accountProfile = new AccountProfile( id );
+		AccountProfile accountProfile = new AccountProfile(id);
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
 		updateAccountProfile( accountProfile );
@@ -140,6 +140,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		if (! customerResult.isSuccess()) {
 			LOGGER.error(customerResult.getMessage());
 		}
+	}
+	
+	public void deactivateAccountProfile(AccountProfile accountProfile) {
+		accountProfile.setIsActive(Boolean.FALSE);
+		
+		updateAccountProfile( accountProfile );
 	}
 	
 	/**

@@ -203,7 +203,7 @@ public class Application implements SparkApplication {
         post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.confirmDeactivateAccountProfile);
-        delete(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.deactivateAccountProfile);
+        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.deactivateAccountProfile);
         delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), accountProfileController.removeProfilePicture);
         get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAddress);
         post(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.updateAccountProfileAddress);
@@ -216,6 +216,7 @@ public class Application implements SparkApplication {
         delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
         get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
+        get(Path.Route.CONNECTORS_SALESFORCE_NEW, salesforceConnectorController.newSalesforceConnector);
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, salesforceConnectorController.viewSalesforceConnector);
         post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, salesforceConnectorController.updateSalesforceConnector);
         delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, salesforceConnectorController.deleteSalesforceConnector);

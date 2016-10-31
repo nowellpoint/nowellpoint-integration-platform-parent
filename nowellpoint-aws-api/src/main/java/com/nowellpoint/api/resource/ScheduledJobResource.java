@@ -58,7 +58,7 @@ public class ScheduledJobResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
-		Set<ScheduledJob> resources = scheduledJobService.findAllByOwner();
+		Set<ScheduledJob> resources = scheduledJobService.findByOwner();
 		return Response.ok(resources).build();
     }
 	

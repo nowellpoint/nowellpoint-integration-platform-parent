@@ -22,6 +22,7 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreditCardRequest;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
@@ -347,7 +348,7 @@ public class AccountProfileController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * deleteAccountProfile
+	 * deactivateAccountProfile
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
@@ -355,35 +356,15 @@ public class AccountProfileController extends AbstractController {
 	public Route deactivateAccountProfile = (Request request, Response response) -> {	
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.execute();
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
+		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.deactivate(request.params(":id"));
+		
+		if (! deleteResult.getIsSuccess()) {
+			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
 		
-		httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-    			.path("oauth")
-    			.path("token")
-    			.execute();
-    	
-    	int statusCode = httpResponse.getStatusCode();
-    	
-    	if (statusCode != Status.NO_CONTENT) {
-    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
-    	}
-    	
-    	response.removeCookie("com.nowellpoint.oauth.token"); 
-    	
-    	request.session().invalidate();
-    	
-    	response.redirect("/");
+    	response.redirect(Path.Route.LOGOUT);
 		
 		return "";	
 	};

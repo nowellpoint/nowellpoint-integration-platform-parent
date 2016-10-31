@@ -6,6 +6,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreditCardRequest;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.Contact;
@@ -72,6 +73,25 @@ public class AccountProfileResource extends AbstractResource {
     	
     	return result;
 	} 
+	
+	public DeleteResult deactivate(String id) {
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("account-profile")
+				.path(id)
+				.execute();
+		
+		DeleteResult result = null;
+			
+		if (httpResponse.getStatusCode() == Status.OK) {
+			result = new DeleteResultImpl();
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new DeleteResultImpl(error);
+		}
+		
+		return result;
+	}
 	
 	public SubscriptionResource subscription() {
 		return new SubscriptionResource(token);
