@@ -9,19 +9,15 @@
             <#if action=="listPlans">
 
                 <div class="row">
-
+                    
                     <br>
-
+                    
+                    <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['back.to.account.profile']}" role="button"><span class="icon icon-back fa fa-1x"></span></a>
+                    
                     <div class="dashhead m-t-md">
                         <div class="dashhead">
                             <div class="dashhead-titles">
-                                <h2 class="dashhead-title">&nbsp;</h2>
-                                <h6 class="dashhead-subtitle">${labels["select.plan"]}</h6>
-                            </div>
-                            <div class="dashhead-toolbar">
-                                <p class="pull-right">
-                                    <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-                                </p>
+                                <h2 class="dashhead-title">${labels["select.plan"]}</h2>
                             </div>
                         </div>
                     </div>
@@ -41,7 +37,7 @@
                     <div class="dashhead m-t-md">
                         <div class="dashhead">
                             <div class="dashhead-titles">
-                                <h6 class="dashhead-subtitle">${labels["payment.method"]}</h6>
+                                <h2 class="dashhead-title">${labels["payment.method"]}</h2>
                             </div>
                         </div>
                     </div>
@@ -68,6 +64,14 @@
                     <form id="payment-method-form" name="payment-method-form" class="form-vertical" method="post" action="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}">
 
                         <div class="col-md-9">
+                            
+                            <#if plan.price.unitPrice == 0>
+                                
+                                <h4 class="text-success">${labels["no.payment.method.required"]}</h4>
+                                
+                            </#if>
+                            
+                            <#if plan.price.unitPrice gt 0 >
 
                             <div class="row">
 
@@ -213,6 +217,8 @@
                                 <div class="col-md-2"></div>
 
                             </div>
+                            
+                            </#if>
 
                         </div>
 
@@ -226,13 +232,13 @@
 
                                         <dl class="dl-vertical">
                                             <dt>${labels["plan.name"]}</dt>
-                                            <dd>${(accountProfile.subscription.planName)!}</dd>
+                                            <dd>${(plan.planName)!}</dd>
                                             <br>
                                             <dt>${labels["price"]}</dt>
-                                            <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}</dd>
+                                            <dd>${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.##"])!}</dd>
                                             <br>
                                             <dt>${labels["billed"]}</dt>
-                                            <dd>${(accountProfile.subscription.billingFrequency)!}
+                                            <dd>${(plan.billingFrequency)!}
                                                 <br>
                                         </dl>
                                     </div>

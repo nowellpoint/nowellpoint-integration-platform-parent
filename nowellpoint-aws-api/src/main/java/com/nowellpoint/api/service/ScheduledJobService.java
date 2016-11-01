@@ -21,7 +21,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Backup;
-import com.nowellpoint.api.model.dto.Disable;
+import com.nowellpoint.api.model.dto.Deactivate;
 import com.nowellpoint.api.model.dto.Environment;
 import com.nowellpoint.api.model.dto.RunHistory;
 import com.nowellpoint.api.model.dto.SalesforceConnector;
@@ -240,7 +240,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public void terminateAllJobs(@Observes @Disable AccountProfile accountProfile) {
+	public void terminateAllJobs(@Observes @Deactivate AccountProfile accountProfile) {
 		Set<ScheduledJob> scheduledJobs = findByOwner(accountProfile.getId());
 		scheduledJobs.stream().forEach(scheduledJob -> {
 			scheduledJob.setStatus(TERMINATED);

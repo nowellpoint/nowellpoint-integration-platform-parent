@@ -14,7 +14,7 @@ import org.jboss.logging.Logger;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Disable;
+import com.nowellpoint.api.model.dto.Deactivate;
 import com.nowellpoint.api.model.dto.ErrorDTO;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -23,8 +23,6 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.model.idp.Account;
-import com.nowellpoint.client.model.idp.Group;
-import com.nowellpoint.client.model.idp.Groups;
 import com.nowellpoint.client.model.idp.SearchResult;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
@@ -35,6 +33,7 @@ import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
+import com.stormpath.sdk.oauth.OAuthClientCredentialsGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
@@ -71,6 +70,55 @@ public class IdentityProviderService {
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
 	}
 	
+	public Token authenticate(ApiKey apiKey) {
+		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
+				.builder()
+				.setApiKeyId(apiKey.getId())
+				.setApiKeySecret(apiKey.getSecret())
+				.build();
+		
+		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST_AUTHENTICATOR
+				.forApplication(application)
+				.authenticate(request);
+		
+		AccessToken accessToken = result.getAccessToken();
+        
+//        Account account = new Account();
+//        account.setEmail(accessToken.getAccount().getEmail());
+//        account.setFullName(accessToken.getAccount().getFullName());
+//        account.setGivenName(accessToken.getAccount().getGivenName());
+//        account.setHref(accessToken.getAccount().getHref());
+//        account.setMiddleName(accessToken.getAccount().getMiddleName());
+//        account.setSurname(accessToken.getAccount().getSurname());
+//        account.setStatus(accessToken.getAccount().getStatus().name());
+//        account.setUsername(accessToken.getAccount().getUsername());
+//        
+//        Groups groups = new Groups();
+//        groups.setHref(accessToken.getAccount().getGroups().getHref());
+//        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
+//        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
+//        groups.setSize(accessToken.getAccount().getGroups().getSize());
+//        
+//        account.setGroups(groups);
+//        
+//        if (accessToken.getAccount().getGroups().getSize() > 0) {
+//        	Set<Group> items = new HashSet<Group>();
+//            accessToken.getAccount().getGroups().forEach(g -> {
+//            	Group group = new Group();
+//            	group.setHref(g.getHref());
+//            	group.setName(g.getName());
+//            	items.add(group);
+//            });
+//            account.getGroups().setItems(items);
+//        }
+        
+        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
+        
+        Token token = createToken(result, accountProfile.getId());
+        
+        return token;
+	}
+	
 	/**
 	 * 
 	 * @param username
@@ -91,36 +139,36 @@ public class IdentityProviderService {
         
         AccessToken accessToken = result.getAccessToken();
         
-        Account account = new Account();
-        account.setEmail(accessToken.getAccount().getEmail());
-        account.setFullName(accessToken.getAccount().getFullName());
-        account.setGivenName(accessToken.getAccount().getGivenName());
-        account.setHref(accessToken.getAccount().getHref());
-        account.setMiddleName(accessToken.getAccount().getMiddleName());
-        account.setSurname(accessToken.getAccount().getSurname());
-        account.setStatus(accessToken.getAccount().getStatus().name());
-        account.setUsername(accessToken.getAccount().getUsername());
+//        Account account = new Account();
+//        account.setEmail(accessToken.getAccount().getEmail());
+//        account.setFullName(accessToken.getAccount().getFullName());
+//        account.setGivenName(accessToken.getAccount().getGivenName());
+//        account.setHref(accessToken.getAccount().getHref());
+//        account.setMiddleName(accessToken.getAccount().getMiddleName());
+//        account.setSurname(accessToken.getAccount().getSurname());
+//        account.setStatus(accessToken.getAccount().getStatus().name());
+//        account.setUsername(accessToken.getAccount().getUsername());
+//        
+//        Groups groups = new Groups();
+//        groups.setHref(accessToken.getAccount().getGroups().getHref());
+//        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
+//        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
+//        groups.setSize(accessToken.getAccount().getGroups().getSize());
+//        
+//        account.setGroups(groups);
+//        
+//        if (accessToken.getAccount().getGroups().getSize() > 0) {
+//        	Set<Group> items = new HashSet<Group>();
+//            accessToken.getAccount().getGroups().forEach(g -> {
+//            	Group group = new Group();
+//            	group.setHref(g.getHref());
+//            	group.setName(g.getName());
+//            	items.add(group);
+//            });
+//            account.getGroups().setItems(items);
+//        }
         
-        Groups groups = new Groups();
-        groups.setHref(accessToken.getAccount().getGroups().getHref());
-        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
-        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
-        groups.setSize(accessToken.getAccount().getGroups().getSize());
-        
-        account.setGroups(groups);
-        
-        if (accessToken.getAccount().getGroups().getSize() > 0) {
-        	Set<Group> items = new HashSet<Group>();
-            accessToken.getAccount().getGroups().forEach(g -> {
-            	Group group = new Group();
-            	group.setHref(g.getHref());
-            	group.setName(g.getName());
-            	items.add(group);
-            });
-            account.getGroups().setItems(items);
-        }
-        
-        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(account.getHref());
+        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
         
         Token token = createToken(result, accountProfile.getId());
         
@@ -280,7 +328,7 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public void deactivateAccount(@Observes @Disable AccountProfile accountProfile) {
+	public void deactivateAccount(@Observes @Deactivate AccountProfile accountProfile) {
 		Account account = new Account();
 		account.setStatus("DISABLED");
 		

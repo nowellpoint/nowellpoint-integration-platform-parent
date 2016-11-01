@@ -34,7 +34,7 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.CreditCard;
-import com.nowellpoint.api.model.dto.Disable;
+import com.nowellpoint.api.model.dto.Deactivate;
 import com.nowellpoint.api.model.dto.Plan;
 import com.nowellpoint.api.model.dto.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
@@ -56,7 +56,7 @@ public class AccountProfileResource {
 	private PlanService planService;
 	
 	@Inject
-	@Disable
+	@Deactivate
 	private Event<AccountProfile> deactivateEvent;
 
 	@Context

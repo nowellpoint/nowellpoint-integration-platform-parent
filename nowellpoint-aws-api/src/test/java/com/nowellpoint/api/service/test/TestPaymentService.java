@@ -1,4 +1,4 @@
-package com.nowellpoint.api.service.payment;
+package com.nowellpoint.api.service.test;
 
 import java.math.BigDecimal;
 
@@ -6,7 +6,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.braintreegateway.AddModificationRequest;
 import com.braintreegateway.Address;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
@@ -15,12 +14,10 @@ import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
-import com.braintreegateway.ModificationRequest;
-import com.braintreegateway.ModificationsRequest;
-import com.braintreegateway.exceptions.NotFoundException;
 import com.braintreegateway.Result;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.SubscriptionRequest;
+import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class TestPaymentService {
@@ -48,7 +45,6 @@ public class TestPaymentService {
 		
 		try {		
 			customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
-			//gateway.customer().delete("56c7f2b33004ea79702df8d4");
 		} catch (NotFoundException e) {
 			
 		}
@@ -112,6 +108,6 @@ public class TestPaymentService {
 	
 	@AfterClass
 	public static void afterClass() {
-		//gateway.customer().delete("56c7f2b33004ea79702df8d4");
+		gateway.customer().delete("56c7f2b33004ea79702df8d4");
 	}
 }

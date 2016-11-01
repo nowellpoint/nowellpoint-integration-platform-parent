@@ -353,8 +353,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * 
 	 */
 	
-	public void setSubscription(String id, Subscription subscription) {
-		AccountProfile accountProfile = findAccountProfile( id );
+	public void setSubscription(String accountProfileId, Subscription subscription) {
+		AccountProfile accountProfile = findAccountProfile( accountProfileId );
 		
 		Date now = Date.from(Instant.now());
 		
@@ -396,7 +396,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			}
 			
 			if (! subscriptionResult.isSuccess()) {
-				LOGGER.error(subscriptionResult.getMessage());
+				LOGGER.error(subscriptionResult.getErrors().forIndex(0).toString());
 				throw new ValidationException(subscriptionResult.getMessage());
 			}
 			

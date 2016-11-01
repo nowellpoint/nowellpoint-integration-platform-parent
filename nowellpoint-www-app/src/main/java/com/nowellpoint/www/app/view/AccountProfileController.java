@@ -223,9 +223,7 @@ public class AccountProfileController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", new AccountProfile(id));
 		
-		if (Assert.isNotNull(cardholderName) || Assert.isNotNull(number) || Assert.isNotNull(expirationMonth) || Assert.isNotNull(expirationYear) ||
-				Assert.isNotNull(expirationYear) || Assert.isNotNull(city) || Assert.isNotNull(countryCode) || Assert.isNotNull(postalCode) ||
-				Assert.isNotNull(state) || Assert.isNotNull(firstName) || Assert.isNotNull(lastName)) {
+		if (Assert.isNotNull(cardholderName) || Assert.isNotNull(number)) {
 			
 			CreditCardRequest creditCardRequest = new CreditCardRequest()
 					.withAccountProfileId(id)
