@@ -1,5 +1,7 @@
 package com.nowellpoint.api;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -36,6 +38,11 @@ public class Main {
 		
 		System.setProperty("swarm.http.port", getHttpPort());
 		System.setProperty("swarm.https.port", String.valueOf(Integer.valueOf(getHttpPort()) + 100));
+		try {
+			System.setProperty("hostname", InetAddress.getLocalHost().getHostName());
+		} catch (UnknownHostException e) {
+			
+		}
 		
 		//
 		// configure the management fraction

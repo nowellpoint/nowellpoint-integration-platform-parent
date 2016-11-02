@@ -2,8 +2,6 @@ package com.nowellpoint.api.resource;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -44,8 +42,6 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		
-		long start = System.currentTimeMillis();
 		
 		Method method = resourceInfo.getResourceMethod();
 		
@@ -91,9 +87,6 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 					.orElseThrow(() -> new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource"));
 			}
 		}
-		
-		System.out.println(System.currentTimeMillis() - start);
-		System.out.println(System.currentTimeMillis());
 	}
 
 	@Override
@@ -110,12 +103,8 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 		
 		System.out.println(System.currentTimeMillis() - start);
 		
-		String hostname = null;
-		try {
-			hostname = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			LOG.error(e);
-		}
+		String hostname = System.getProperty("hostname");
+		
 		
 		System.out.println(System.currentTimeMillis() - start);
 		
