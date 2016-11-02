@@ -16,6 +16,7 @@ public class Authenticators {
 	private static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
 	
 	public static final PasswordGrantResponseFactory PASSWORD_GRANT_AUTHENTICATOR = new PasswordGrantResponseFactory();
+	public static final ClientCredentialsGrantResponseFactory CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR = new ClientCredentialsGrantResponseFactory();
 	public static final RevokeTokenResponseFactory REVOKE_TOKEN_INVALIDATOR = new RevokeTokenResponseFactory();
 	
 	public static class PasswordGrantResponseFactory {
@@ -26,9 +27,41 @@ public class Authenticators {
 			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 	    			.accept(MediaType.APPLICATION_JSON)
+	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	    			.path("oauth")
 	    			.path("token")
 	    			.basicAuthorization(passwordGrantRequest.getUsername(), passwordGrantRequest.getPassword())
+	    			.parameter("grant_type", "password")
+	    			.execute();
+	    			
+	    	int statusCode = httpResponse.getStatusCode();
+	    			
+	    	if (statusCode != Status.OK) {
+	    		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
+	    		throw new OauthException(error.get("code").asInt(), error.get("message").asText());
+	    	}
+	    			
+	    	Token token = httpResponse.getEntity(Token.class);
+	    	
+	    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
+	    	
+	    	return response;
+		}
+	}
+	
+	public static class ClientCredentialsGrantResponseFactory {
+		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
+			
+			Optional.of(grantRequest.getApiKeyId()).orElseThrow(() -> new IllegalArgumentException("missing username"));
+			Optional.of(grantRequest.getApiKeySecret()).orElseThrow(() -> new IllegalArgumentException("missing password"));
+			
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+	    			.accept(MediaType.APPLICATION_JSON)
+	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+	    			.path("oauth")
+	    			.path("token")
+	    			.basicAuthorization(grantRequest.getApiKeyId(), grantRequest.getApiKeySecret())
+	    			.parameter("grant_type", "client_credentials")
 	    			.execute();
 	    			
 	    	int statusCode = httpResponse.getStatusCode();

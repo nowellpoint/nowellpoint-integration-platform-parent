@@ -78,7 +78,7 @@ public class Main {
         // set system properties from configuration
         //
 
-        Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+        Properties.setSystemProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
         
         //
         // set timezone to UTC

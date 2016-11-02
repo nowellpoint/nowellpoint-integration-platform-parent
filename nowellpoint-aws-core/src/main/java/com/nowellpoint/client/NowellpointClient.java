@@ -31,8 +31,8 @@ public class NowellpointClient {
 		token = oauthAuthenticationResponse.getToken();
 	}
 	
-	public NowellpointClient(TokenCredentials tokenCredentials) {
-		token = tokenCredentials.getToken();
+	public NowellpointClient(TokenCredentials credentials) {
+		token = credentials.getToken();
 	}
 	
 	public void logout() {

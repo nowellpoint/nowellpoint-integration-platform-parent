@@ -16,7 +16,6 @@ import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Deactivate;
 import com.nowellpoint.api.model.dto.ErrorDTO;
-import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -38,7 +37,6 @@ import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRequests;
-import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -70,6 +68,13 @@ public class IdentityProviderService {
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
 	}
 	
+	/**
+	 * 
+	 * @param apiKey
+	 * @return the Authentication token
+	 * 
+	 */
+	
 	public Token authenticate(ApiKey apiKey) {
 		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
 				.builder()
@@ -83,35 +88,6 @@ public class IdentityProviderService {
 		
 		AccessToken accessToken = result.getAccessToken();
         
-//        Account account = new Account();
-//        account.setEmail(accessToken.getAccount().getEmail());
-//        account.setFullName(accessToken.getAccount().getFullName());
-//        account.setGivenName(accessToken.getAccount().getGivenName());
-//        account.setHref(accessToken.getAccount().getHref());
-//        account.setMiddleName(accessToken.getAccount().getMiddleName());
-//        account.setSurname(accessToken.getAccount().getSurname());
-//        account.setStatus(accessToken.getAccount().getStatus().name());
-//        account.setUsername(accessToken.getAccount().getUsername());
-//        
-//        Groups groups = new Groups();
-//        groups.setHref(accessToken.getAccount().getGroups().getHref());
-//        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
-//        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
-//        groups.setSize(accessToken.getAccount().getGroups().getSize());
-//        
-//        account.setGroups(groups);
-//        
-//        if (accessToken.getAccount().getGroups().getSize() > 0) {
-//        	Set<Group> items = new HashSet<Group>();
-//            accessToken.getAccount().getGroups().forEach(g -> {
-//            	Group group = new Group();
-//            	group.setHref(g.getHref());
-//            	group.setName(g.getName());
-//            	items.add(group);
-//            });
-//            account.getGroups().setItems(items);
-//        }
-        
         AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
         
         Token token = createToken(result, accountProfile.getId());
@@ -124,9 +100,10 @@ public class IdentityProviderService {
 	 * @param username
 	 * @param password
 	 * @return the Authentication token
+	 * 
 	 */
 	
-	public Token authenticate(String username, String password) throws ResourceException {			
+	public Token authenticate(String username, String password) {			
 		OAuthPasswordGrantRequestAuthentication request = OAuthRequests.OAUTH_PASSWORD_GRANT_REQUEST
 				.builder()
 				.setLogin(username)
@@ -139,35 +116,6 @@ public class IdentityProviderService {
         
         AccessToken accessToken = result.getAccessToken();
         
-//        Account account = new Account();
-//        account.setEmail(accessToken.getAccount().getEmail());
-//        account.setFullName(accessToken.getAccount().getFullName());
-//        account.setGivenName(accessToken.getAccount().getGivenName());
-//        account.setHref(accessToken.getAccount().getHref());
-//        account.setMiddleName(accessToken.getAccount().getMiddleName());
-//        account.setSurname(accessToken.getAccount().getSurname());
-//        account.setStatus(accessToken.getAccount().getStatus().name());
-//        account.setUsername(accessToken.getAccount().getUsername());
-//        
-//        Groups groups = new Groups();
-//        groups.setHref(accessToken.getAccount().getGroups().getHref());
-//        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
-//        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
-//        groups.setSize(accessToken.getAccount().getGroups().getSize());
-//        
-//        account.setGroups(groups);
-//        
-//        if (accessToken.getAccount().getGroups().getSize() > 0) {
-//        	Set<Group> items = new HashSet<Group>();
-//            accessToken.getAccount().getGroups().forEach(g -> {
-//            	Group group = new Group();
-//            	group.setHref(g.getHref());
-//            	group.setName(g.getName());
-//            	items.add(group);
-//            });
-//            account.getGroups().setItems(items);
-//        }
-        
         AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
         
         Token token = createToken(result, accountProfile.getId());
@@ -177,10 +125,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param username
 	 * @return
-	 * 
 	 * 
 	 */
 	
@@ -209,10 +155,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @return
-	 * 
 	 * 
 	 */
 	
@@ -515,14 +459,18 @@ public class IdentityProviderService {
 	 */
 	
 	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {
-		String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
 		
-		Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
+		Jws<Claims> claims = Jwts.parser()
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+				.parseClaimsJws(result.getAccessTokenString()); 
+		
+		String id = claims.getBody().getId();
+		Date expiration = claims.getBody().getExpiration();
 		
 		Set<String> groups = new HashSet<String>();
-		result.getAccessToken().getAccount().getGroups().forEach(g -> {
-			groups.add(g.getName());
-        });
+		result.getAccessToken().getAccount().getGroups().forEach(g -> 
+			groups.add(g.getName())
+        );
 		
 		String jwt = Jwts.builder()
         		.setId(id)
@@ -531,7 +479,7 @@ public class IdentityProviderService {
         		.setSubject(subject)
         		.setIssuedAt(new Date(System.currentTimeMillis()))
         		.setExpiration(expiration)
-        		.signWith(SignatureAlgorithm.HS256, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+        		.signWith(SignatureAlgorithm.HS512, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
         		.claim("groups", groups.toArray(new String[groups.size()]))
         		.compact();	 
 		

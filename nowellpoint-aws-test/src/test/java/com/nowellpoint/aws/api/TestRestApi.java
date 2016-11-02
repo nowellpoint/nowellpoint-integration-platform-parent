@@ -57,7 +57,6 @@ public class TestRestApi {
 			assertNotNull(token.getAccessToken());
 			assertNotNull(token.getExpiresIn());
 			assertNotNull(token.getRefreshToken());
-			assertNotNull(token.getStormpathAccessTokenHref());
 			assertNotNull(token.getTokenType());
 			
 			httpResponse = RestResource.get(NCS_API_ENDPOINT)

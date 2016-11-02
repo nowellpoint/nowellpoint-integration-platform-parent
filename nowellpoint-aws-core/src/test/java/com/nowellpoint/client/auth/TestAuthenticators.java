@@ -1,83 +1,144 @@
 package com.nowellpoint.client.auth;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Locale;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.CreateScheduledJobRequest;
-import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
-import com.nowellpoint.client.model.ScheduledJob;
-import com.nowellpoint.client.model.UpdateScheduledJobRequest;
+import com.nowellpoint.client.model.idp.Token;
 
 public class TestAuthenticators {
+	
+	@BeforeClass
+	public static void before() {
+		System.setProperty("javax.net.ssl.trustStore", "/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/security/keystore.jks");
+		System.setProperty("javax.net.ssl.trustStorePassword", "secret");
+	}
+	
+	@Test
+	public void testClientCredentialsGrantAuthentication() {
+		
+		try {	
+			
+			long start = System.currentTimeMillis();
+			
+			ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
+					.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
+					.setApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
+					.build();
+			
+			OauthAuthenticationResponse response = Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR
+					.authenticate(request);
+			
+			Token token = response.getToken();
+			
+			System.out.println("testClientCredentialsGrantAuthentication: " + (System.currentTimeMillis() - start));
+			
+			assertNotNull(token);
+			assertNotNull(token.getExpiresIn());
+			assertNotNull(token.getTokenType());
+			
+			System.out.println(token.getAccessToken());
+			
+			RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+					.setAccessToken(token.getAccessToken())
+					.build();
+			
+			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
+			
+			System.out.println("testClientCredentialsGrantAuthentication: " + (System.currentTimeMillis() - start));
+			
+		} catch (OauthException e) {
+			System.out.println(e.getCode());
+			System.out.println(e.getMessage());
+		} 
+	}
 	
 	@Test
 	public void testPasswordGrantAuthentication() {
 		
 		try {			
-			NowellpointClient client = new NowellpointClient(new EnvironmentVariablesCredentials());
 			
-			CreateScheduledJobRequest createScheduledJobRequest = new CreateScheduledJobRequest()
-					.withConnectorId("57df3e22019362745462305c")
-					.withDescription("My scheduled job description")
-					.withJobTypeId("57d7e6ccb55f01245754d0af")
-					.withScheduleDate(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)));
+			long start = System.currentTimeMillis();
 			
-			ScheduledJob scheduledJob = client.scheduledJob()
-					.create(createScheduledJobRequest)
-					.getScheduledJob();
+			PasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+					.setUsername(System.getenv("NOWELLPOINT_USERNAME"))
+					.setPassword(System.getenv("NOWELLPOINT_PASSWORD"))
+					.build();
+		
+			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
+						.authenticate(request);
 			
-			assertNotNull(scheduledJob);
-			assertNotNull(scheduledJob.getId());
+			Token token = response.getToken();
 			
-			System.out.println(scheduledJob.getId());
+			System.out.println("testPasswordGrantAuthentication: " + (System.currentTimeMillis() - start));
 			
-			assertEquals(scheduledJob.getEnvironmentKey(), "40799dbbe97b479baa0772eb4e6ba8cb");
+			assertNotNull(token);
+			assertNotNull(token.getExpiresIn());
+			assertNotNull(token.getRefreshToken());
+			assertNotNull(token.getTokenType());
 			
-			GetResult<ScheduledJob> scheduledJobResult = client.scheduledJob().get(scheduledJob.getId());
+			System.out.println(token.getAccessToken());
 			
-			assertNotNull(scheduledJobResult.getTarget());
+			RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+					.setAccessToken(token.getAccessToken())
+					.build();
 			
-			UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
-					.withId(scheduledJob.getId())
-					.withConnectorId("57df3e22019362745462305c")
-					.withDescription("My scheduled job description with update")
-					.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse("2016-10-01".concat("T").concat("16:00:00")));
+			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
 			
-			scheduledJob = client.scheduledJob()
-					.update(updateScheduledJobRequest)
-					.getScheduledJob();
+			System.out.println("testPasswordGrantAuthentication: " + (System.currentTimeMillis() - start));
 			
-			assertNotNull(scheduledJob);
-			assertEquals(scheduledJob.getDescription(), "My scheduled job description with update");
-			
-			System.out.println(scheduledJob.getId());
-			
-			DeleteResult deleteResult = client.scheduledJob().delete(scheduledJob.getId());
-			
-			assertEquals(deleteResult.getIsSuccess(), Boolean.TRUE);
-			
-			client.logout();
+//			NowellpointClient client = new NowellpointClient(new EnvironmentVariablesCredentials());
+//			
+//			CreateScheduledJobRequest createScheduledJobRequest = new CreateScheduledJobRequest()
+//					.withConnectorId("57df3e22019362745462305c")
+//					.withDescription("My scheduled job description")
+//					.withJobTypeId("57d7e6ccb55f01245754d0af")
+//					.withScheduleDate(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)));
+//			
+//			ScheduledJob scheduledJob = client.scheduledJob()
+//					.create(createScheduledJobRequest)
+//					.getScheduledJob();
+//			
+//			assertNotNull(scheduledJob);
+//			assertNotNull(scheduledJob.getId());
+//			
+//			System.out.println(scheduledJob.getId());
+//			
+//			assertEquals(scheduledJob.getEnvironmentKey(), "40799dbbe97b479baa0772eb4e6ba8cb");
+//			
+//			GetResult<ScheduledJob> scheduledJobResult = client.scheduledJob().get(scheduledJob.getId());
+//			
+//			assertNotNull(scheduledJobResult.getTarget());
+//			
+//			UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
+//					.withId(scheduledJob.getId())
+//					.withConnectorId("57df3e22019362745462305c")
+//					.withDescription("My scheduled job description with update")
+//					.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse("2016-10-01".concat("T").concat("16:00:00")));
+//			
+//			scheduledJob = client.scheduledJob()
+//					.update(updateScheduledJobRequest)
+//					.getScheduledJob();
+//			
+//			assertNotNull(scheduledJob);
+//			assertEquals(scheduledJob.getDescription(), "My scheduled job description with update");
+//			
+//			System.out.println(scheduledJob.getId());
+//			
+//			DeleteResult deleteResult = client.scheduledJob().delete(scheduledJob.getId());
+//			
+//			assertEquals(deleteResult.getIsSuccess(), Boolean.TRUE);
+//			
+//			client.logout();
 			
 		} catch (OauthException e) {
 			System.out.println(e.getCode());
 			System.out.println(e.getMessage());
 		} catch (NowellpointServiceException e) {
 			System.out.println(e.getMessage());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 }

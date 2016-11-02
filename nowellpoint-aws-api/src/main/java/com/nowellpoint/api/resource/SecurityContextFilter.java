@@ -45,6 +45,8 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		
+		long start = System.currentTimeMillis();
+		
 		Method method = resourceInfo.getResourceMethod();
 		
 		if (! method.isAnnotationPresent(PermitAll.class)) {
@@ -89,10 +91,16 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 					.orElseThrow(() -> new NotAuthorizedException("Unauthorized: your account is not authorized to access this resource"));
 			}
 		}
+		
+		System.out.println(System.currentTimeMillis() - start);
+		System.out.println(System.currentTimeMillis());
 	}
 
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+		
+		System.out.println(System.currentTimeMillis());
+		long start = System.currentTimeMillis();
 		
 		final String subject = UserContext.getSecurityContext() != null ? UserContext.getSecurityContext().getUserPrincipal().getName() : null;
 		final String path = httpRequest.getPathInfo().concat(httpRequest.getQueryString() != null ? "?".concat(httpRequest.getQueryString()) : "");
@@ -100,12 +108,16 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 		final String statusInfo = responseContext.getStatusInfo().toString();
 		final String requestMethod = requestContext.getMethod();
 		
+		System.out.println(System.currentTimeMillis() - start);
+		
 		String hostname = null;
 		try {
 			hostname = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
 			LOG.error(e);
 		}
+		
+		System.out.println(System.currentTimeMillis() - start);
 		
 		ObjectNode node = JsonNodeFactory.instance.objectNode()
 				.put("hostname", hostname)
@@ -116,10 +128,16 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				.put("statusCode", statusCode)
 				.put("statusInfo", statusInfo);
 		
+		System.out.println(System.currentTimeMillis() - start);
+		
 		LogManager.writeLogEntry("api", node.toString());
+		
+		System.out.println(System.currentTimeMillis() - start);
 		
 		if (UserContext.getSecurityContext() != null) {
 			UserContext.clear();
 		}
+		
+		System.out.println(System.currentTimeMillis() - start);
 	}
 }
