@@ -6,8 +6,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.CreateScheduledJobRequest;
-import com.nowellpoint.client.model.CreateScheduledJobResult;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
@@ -15,8 +14,7 @@ import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UpdateScheduledJobRequest;
-import com.nowellpoint.client.model.UpdateScheduledJobResult;
+import com.nowellpoint.client.model.ScheduledJobRequest;
 import com.nowellpoint.client.model.idp.Token;
 
 public class ScheduledJobResource extends AbstractResource {
@@ -48,67 +46,65 @@ public class ScheduledJobResource extends AbstractResource {
 		return result;
 	}
 	
-	public CreateScheduledJobResult create(CreateScheduledJobRequest createScheduledJobRequest) {		
+	public CreateResult<ScheduledJob> create(ScheduledJobRequest scheduledJobRequest) {		
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.parameter("environmentKey", createScheduledJobRequest.getEnvironmentKey())
-				.parameter("notificationEmail", createScheduledJobRequest.getNotificationEmail())
-				.parameter("description", createScheduledJobRequest.getDescription())
-				.parameter("connectorId", createScheduledJobRequest.getConnectorId())
-				.parameter("jobTypeId", createScheduledJobRequest.getJobTypeId())
-				.parameter("scheduleDate", dateFormat.format(createScheduledJobRequest.getScheduleDate()))
+				.parameter("environmentKey", scheduledJobRequest.getEnvironmentKey())
+				.parameter("notificationEmail", scheduledJobRequest.getNotificationEmail())
+				.parameter("description", scheduledJobRequest.getDescription())
+				.parameter("connectorId", scheduledJobRequest.getConnectorId())
+				.parameter("jobTypeId", scheduledJobRequest.getJobTypeId())
+				.parameter("scheduleDate", dateFormat.format(scheduledJobRequest.getScheduleDate()))
 				.execute();
 		
-		CreateScheduledJobResult createScheduledJobResult = new CreateScheduledJobResult();
+		CreateResult<ScheduledJob> result = null;
 		
-		if (httpResponse.getStatusCode() == Status.CREATED) {
-			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
-			createScheduledJobResult.setScheduledJob(scheduledJob);
-			createScheduledJobResult.setIsSuccess(Boolean.TRUE);
+		if (httpResponse.getStatusCode() == Status.OK) {
+			ScheduledJob resource = httpResponse.getEntity(ScheduledJob.class);
+			result = new CreateResultImpl<ScheduledJob>(resource);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			createScheduledJobResult.setError(error.getCode());
-			createScheduledJobResult.setErrorMessage(error.getMessage());
-			createScheduledJobResult.setIsSuccess(Boolean.FALSE);
+			result = new CreateResultImpl<ScheduledJob>(error);
 		}
 		
-		return createScheduledJobResult;
+		return result;
 	}
 	
-	public UpdateScheduledJobResult update(UpdateScheduledJobRequest updateScheduledJobRequest) {
+	public UpdateResult<ScheduledJob> update(ScheduledJobRequest scheduledJobRequest) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.path(updateScheduledJobRequest.getId())
-				.parameter("environmentKey", updateScheduledJobRequest.getEnvironmentKey())
-				.parameter("notificationEmail", updateScheduledJobRequest.getNotificationEmail())
-				.parameter("description", updateScheduledJobRequest.getDescription())
-				.parameter("connectorId", updateScheduledJobRequest.getConnectorId())
-				.parameter("scheduleDate", dateFormat.format(updateScheduledJobRequest.getScheduleDate()))
+				.path(scheduledJobRequest.getId())
+				.parameter("environmentKey", scheduledJobRequest.getEnvironmentKey())
+				.parameter("notificationEmail", scheduledJobRequest.getNotificationEmail())
+				.parameter("description", scheduledJobRequest.getDescription())
+				.parameter("connectorId", scheduledJobRequest.getConnectorId())
+				.parameter("scheduleDate", dateFormat.format(scheduledJobRequest.getScheduleDate()))
 				.execute();
 		
-		UpdateScheduledJobResult updateScheduledJobResult = new UpdateScheduledJobResult();
+		UpdateResult<ScheduledJob> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
-			updateScheduledJobResult.setScheduledJob(scheduledJob);
-			updateScheduledJobResult.setIsSuccess(Boolean.TRUE);
+			result = new UpdateResultImpl<ScheduledJob>(scheduledJob);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			updateScheduledJobResult.setError(error.getCode());
-			updateScheduledJobResult.setErrorMessage(error.getMessage());
-			updateScheduledJobResult.setIsSuccess(Boolean.FALSE);
+			result = new UpdateResultImpl<ScheduledJob>(error);
 		}
 		
-		return updateScheduledJobResult;
+		return result;
 	}
 	
-	public UpdateScheduledJobResult stop(String id) {
+	public UpdateResult<ScheduledJob> stop(String id) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -118,20 +114,19 @@ public class ScheduledJobResource extends AbstractResource {
 				.parameter("status", "Stopped")
 				.execute();
 		
-		UpdateScheduledJobResult updateScheduledJobResult = new UpdateScheduledJobResult();
+		UpdateResult<ScheduledJob> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			ScheduledJob scheduledJob = httpResponse.getEntity(ScheduledJob.class);
-			updateScheduledJobResult.setScheduledJob(scheduledJob);
-			updateScheduledJobResult.setIsSuccess(Boolean.TRUE);
+			result = new UpdateResultImpl<ScheduledJob>(scheduledJob);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			updateScheduledJobResult.setError(error.getCode());
-			updateScheduledJobResult.setErrorMessage(error.getMessage());
-			updateScheduledJobResult.setIsSuccess(Boolean.FALSE);
+			result = new UpdateResultImpl<ScheduledJob>(error);
 		}
 		
-		return updateScheduledJobResult;
+		return result;
 	}
 	
 	public UpdateResult<ScheduledJob> terminate(String id) {

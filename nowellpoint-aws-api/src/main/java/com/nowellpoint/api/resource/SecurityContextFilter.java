@@ -92,21 +92,13 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		
-		System.out.println(System.currentTimeMillis());
-		long start = System.currentTimeMillis();
-		
 		final String subject = UserContext.getSecurityContext() != null ? UserContext.getSecurityContext().getUserPrincipal().getName() : null;
 		final String path = httpRequest.getPathInfo().concat(httpRequest.getQueryString() != null ? "?".concat(httpRequest.getQueryString()) : "");
 		final Integer statusCode = responseContext.getStatus();
 		final String statusInfo = responseContext.getStatusInfo().toString();
 		final String requestMethod = requestContext.getMethod();
 		
-		System.out.println(System.currentTimeMillis() - start);
-		
 		String hostname = System.getProperty("hostname");
-		
-		
-		System.out.println(System.currentTimeMillis() - start);
 		
 		ObjectNode node = JsonNodeFactory.instance.objectNode()
 				.put("hostname", hostname)
@@ -117,16 +109,10 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				.put("statusCode", statusCode)
 				.put("statusInfo", statusInfo);
 		
-		System.out.println(System.currentTimeMillis() - start);
-		
 		LogManager.writeLogEntry("api", node.toString());
-		
-		System.out.println(System.currentTimeMillis() - start);
 		
 		if (UserContext.getSecurityContext() != null) {
 			UserContext.clear();
 		}
-		
-		System.out.println(System.currentTimeMillis() - start);
 	}
 }

@@ -151,6 +151,12 @@ public class AccountProfile extends AbstractResource {
 	 * 
 	 */
 	
+	private CreditCard primaryCreditCard;
+	
+	/**
+	 * 
+	 */
+	
 	private Boolean hasFullAccess;
 	
 	/**
@@ -363,6 +369,14 @@ public class AccountProfile extends AbstractResource {
 		this.getCreditCards().add(creditCard);
 	}
 	
+	public CreditCard getPrimaryCreditCard() {
+		return primaryCreditCard;
+	}
+
+	public void setPrimaryCreditCard(CreditCard primaryCreditCard) {
+		this.primaryCreditCard = primaryCreditCard;
+	}
+
 	public Boolean getHasFullAccess() {
 		return hasFullAccess;
 	}

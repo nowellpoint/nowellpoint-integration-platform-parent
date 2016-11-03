@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import com.nowellpoint.client.model.AddResult;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
@@ -68,7 +69,7 @@ public class AbstractResource {
 		}	
 	}	
 	
-	class CreateResultImpl <T> extends ResultImpl <T> implements UpdateResult <T> {
+	class CreateResultImpl <T> extends ResultImpl <T> implements CreateResult <T> {
 		
 		public CreateResultImpl(T target) {
 			super(target);

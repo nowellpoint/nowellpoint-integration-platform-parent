@@ -353,7 +353,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * 
 	 */
 	
-	public void setSubscription(String accountProfileId, Subscription subscription) {
+	public void setSubscription(String accountProfileId, String paymentMethodToken, Subscription subscription) {
 		AccountProfile accountProfile = findAccountProfile( accountProfileId );
 		
 		Date now = Date.from(Instant.now());
@@ -371,7 +371,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			if (Assert.isNull(accountProfile.getSubscription()) || Assert.isNull(accountProfile.getSubscription().getSubscriptionId())) {
 				
 				SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-					    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
+					    .paymentMethodToken(paymentMethodToken)
 					    .planId(subscription.getPlanCode())
 					    .price(new BigDecimal(subscription.getUnitPrice()));
 
@@ -382,7 +382,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			} else {
 				
 				SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-					    .paymentMethodToken(accountProfile.getPrimaryCreditCard().getToken())
+					    .paymentMethodToken(paymentMethodToken)
 					    .planId(subscription.getPlanCode())
 					    .price(new BigDecimal(subscription.getUnitPrice()));
 

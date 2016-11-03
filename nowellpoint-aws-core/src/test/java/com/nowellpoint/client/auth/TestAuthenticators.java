@@ -3,9 +3,13 @@ package com.nowellpoint.client.auth;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
+import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.idp.Token;
 
@@ -50,6 +54,16 @@ public class TestAuthenticators {
 			
 			System.out.println("testClientCredentialsGrantAuthentication: " + (System.currentTimeMillis() - start));
 			
+			start = System.currentTimeMillis();
+			
+			GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+					.accountProfile()
+					.get();
+			
+			System.out.println("testClientCredentialsGrantAuthentication: " + (System.currentTimeMillis() - start));
+			
+			System.out.println(getResult.getTarget().getName());
+			
 		} catch (OauthException e) {
 			System.out.println(e.getCode());
 			System.out.println(e.getMessage());
@@ -57,6 +71,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void testPasswordGrantAuthentication() {
 		
 		try {			

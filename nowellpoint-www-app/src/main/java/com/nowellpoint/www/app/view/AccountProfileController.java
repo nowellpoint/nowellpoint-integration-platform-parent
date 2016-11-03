@@ -34,7 +34,7 @@ import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.SetResult;
-import com.nowellpoint.client.model.SetSubscriptionRequest;
+import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.idp.Token;
@@ -206,6 +206,7 @@ public class AccountProfileController extends AbstractController {
 		String planId = request.params(":planId");
 		
 		String id = request.params(":id");
+		String paymentMethodToken = request.queryParams("paymentMethodToken");
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
 		String expirationMonth = request.queryParams("expirationMonth");
@@ -246,7 +247,9 @@ public class AccountProfileController extends AbstractController {
 					.creditCard()
 					.add(creditCardRequest);
 				
-			if (! addResult.isSuccess()) {
+			if (addResult.isSuccess()) {
+				paymentMethodToken = addResult.getTarget().getToken();
+			} else { 
 				
 				Plan plan = new NowellpointClient(new TokenCredentials(token))
 						.plan()
@@ -279,14 +282,15 @@ public class AccountProfileController extends AbstractController {
 			}
 		}
 		
-		SetSubscriptionRequest setSubscriptionRequest = new SetSubscriptionRequest()
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.withAccountProfileId(accountProfile.getId())
+				.withPaymentMethodToken(paymentMethodToken)
 				.withPlanId(planId);
 		
 		SetResult<Subscription> setResult = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.subscription()
-				.set(setSubscriptionRequest);
+				.set(subscriptionRequest);
 		
 		if (! setResult.isSuccess()) {
 			

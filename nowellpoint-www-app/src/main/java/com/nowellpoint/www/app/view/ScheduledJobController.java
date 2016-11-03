@@ -11,8 +11,7 @@ import java.util.UUID;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.CreateScheduledJobRequest;
-import com.nowellpoint.client.model.CreateScheduledJobResult;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.RunHistory;
@@ -20,8 +19,7 @@ import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UpdateScheduledJobRequest;
-import com.nowellpoint.client.model.UpdateScheduledJobResult;
+import com.nowellpoint.client.model.ScheduledJobRequest;
 import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -245,7 +243,7 @@ public class ScheduledJobController extends AbstractController {
 
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
-		CreateScheduledJobRequest createScheduledJobRequest = new CreateScheduledJobRequest()
+		ScheduledJobRequest createScheduledJobRequest = new ScheduledJobRequest()
 				.withConnectorId(scheduledJob.getConnectorId())
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
@@ -253,11 +251,11 @@ public class ScheduledJobController extends AbstractController {
 				.withJobTypeId(scheduledJob.getJobTypeId())
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 		
-		CreateScheduledJobResult createScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
+		CreateResult<ScheduledJob> createScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
 				.create(createScheduledJobRequest);
 		
-		if (! createScheduledJobResult.getIsSuccess()) {
+		if (! createScheduledJobResult.isSuccess()) {
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			
@@ -276,7 +274,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		removeValue(token, id);
 		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createScheduledJobResult.getScheduledJob().getId()));
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createScheduledJobResult.getTarget().getId()));
 		
 		return "";
 	};
@@ -391,7 +389,7 @@ public class ScheduledJobController extends AbstractController {
 		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob() 
 				.stop(id)
-				.getScheduledJob();
+				.getTarget();
 		
 		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
 		
@@ -471,18 +469,18 @@ public class ScheduledJobController extends AbstractController {
 			return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
 		}	
 		
-		UpdateScheduledJobRequest updateScheduledJobRequest = new UpdateScheduledJobRequest()
+		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest()
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
 				.withEnvironmentKey(environmentKey)
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 
-		UpdateScheduledJobResult updateScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob() 
-				.update(updateScheduledJobRequest);
+				.update(scheduledJobRequest);
 		
-		if (! updateScheduledJobResult.getIsSuccess()) {
+		if (! updateResult.isSuccess()) {
 			
 			GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
 					.scheduledJob()
@@ -494,7 +492,7 @@ public class ScheduledJobController extends AbstractController {
 			model.put("scheduledJob", result.getTarget());
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
-			model.put("errorMessage", updateScheduledJobResult.getErrorMessage());
+			model.put("errorMessage", updateResult.getErrorMessage());
 			if (view != null && view.equals("1")) {
 				model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
 			} else {
@@ -503,7 +501,7 @@ public class ScheduledJobController extends AbstractController {
 			return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
 		}
 		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateScheduledJobResult.getScheduledJob().getId()));
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
 	};

@@ -458,7 +458,6 @@ public class AccountProfile extends AbstractResource {
 		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
 	
-	@JsonIgnore
 	public CreditCard getPrimaryCreditCard() {
 		if (creditCards == null || creditCards.isEmpty()) {
 			return null;

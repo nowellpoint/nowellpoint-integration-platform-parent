@@ -17,7 +17,7 @@ import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.SetResult;
-import com.nowellpoint.client.model.SetSubscriptionRequest;
+import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.idp.Token;
 
 public class AccountProfileResource extends AbstractResource {
@@ -107,15 +107,16 @@ public class AccountProfileResource extends AbstractResource {
 			super(token);
 		}
 		
-		public SetResult<Subscription> set(SetSubscriptionRequest setSubscriptionRequest) {
+		public SetResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
-					.path(setSubscriptionRequest.getAccountProfileId())
+					.path(subscriptionRequest.getAccountProfileId())
 					.path("subscription")
-					.parameter("planId", setSubscriptionRequest.getPlanId())
+					.parameter("planId", subscriptionRequest.getPlanId())
+					.parameter("paymentMethodToken", subscriptionRequest.getPaymentMethodToken())
 					.execute();
 			
 			SetResult<Subscription> result = null;

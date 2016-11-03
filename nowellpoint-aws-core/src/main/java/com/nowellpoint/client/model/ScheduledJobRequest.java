@@ -2,9 +2,11 @@ package com.nowellpoint.client.model;
 
 import java.util.Date;
 
-public class UpdateScheduledJobRequest {
+public class ScheduledJobRequest {
 	
 	private String id;
+	
+	private String jobTypeId;
 	
 	private String environmentKey;
 	
@@ -16,7 +18,7 @@ public class UpdateScheduledJobRequest {
 	
 	private Date scheduleDate;
 	
-	public UpdateScheduledJobRequest() {
+	public ScheduledJobRequest() {
 		
 	}
 
@@ -51,6 +53,14 @@ public class UpdateScheduledJobRequest {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public String getJobTypeId() {
+		return jobTypeId;
+	}
+
+	public void setJobTypeId(String jobTypeId) {
+		this.jobTypeId = jobTypeId;
+	}
 
 	public String getConnectorId() {
 		return connectorId;
@@ -68,32 +78,37 @@ public class UpdateScheduledJobRequest {
 		this.scheduleDate = scheduleDate;
 	}
 	
-	public UpdateScheduledJobRequest withId(String id) {
+	public ScheduledJobRequest withId(String id) {
 		setId(id);
 		return this;
 	}
 	
-	public UpdateScheduledJobRequest withEnvironmentKey(String environmentKey) {
+	public ScheduledJobRequest withEnvironmentKey(String environmentKey) {
 		setEnvironmentKey(environmentKey);
 		return this;
 	}
 	
-	public UpdateScheduledJobRequest withNotificationEmail(String notificationEmail) {
+	public ScheduledJobRequest withNotificationEmail(String notificationEmail) {
 		setNotificationEmail(notificationEmail);
 		return this;
 	}
 	
-	public UpdateScheduledJobRequest withDescription(String description) {
+	public ScheduledJobRequest withDescription(String description) {
 		setDescription(description);
 		return this;
 	}
 	
-	public UpdateScheduledJobRequest withConnectorId(String connectorId) {
+	public ScheduledJobRequest withJobTypeId(String jobTypeId) {
+		setJobTypeId(jobTypeId);
+		return this;
+	}
+	
+	public ScheduledJobRequest withConnectorId(String connectorId) {
 		setConnectorId(connectorId);
 		return this;
 	}
 	
-	public UpdateScheduledJobRequest withScheduleDate(Date scheduleDate) {
+	public ScheduledJobRequest withScheduleDate(Date scheduleDate) {
 		setScheduleDate(scheduleDate);
 		return this;
 	}

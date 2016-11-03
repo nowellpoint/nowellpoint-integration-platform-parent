@@ -92,7 +92,7 @@ public class AccountProfileResource {
 	@Path("{id}/subscription")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response setSubscription(@PathParam("id") String id, @FormParam(value = "planId") String planId) {
+	public Response setSubscription(@PathParam("id") String id, @FormParam(value = "planId") String planId, @FormParam(value = "paymentMethodToken") String paymentMethodToken) {
 		
 		Plan plan = planService.findPlan(planId);
 		
@@ -105,7 +105,7 @@ public class AccountProfileResource {
 		subscription.setBillingFrequency(plan.getBillingFrequency());
 		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
 		
-		accountProfileService.setSubscription( id, subscription );
+		accountProfileService.setSubscription( id, paymentMethodToken, subscription );
 		
 		return Response.ok(subscription)
 				.build();
