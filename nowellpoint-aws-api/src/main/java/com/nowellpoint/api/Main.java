@@ -1,6 +1,6 @@
 package com.nowellpoint.api;
 
-import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -28,8 +28,21 @@ import com.nowellpoint.aws.model.admin.Properties;
 
 public class Main {
 	
-	@SuppressWarnings("rawtypes")
+	//@SuppressWarnings("rawtypes")
 	public static void main(String[] args) throws Exception {
+		
+		//
+		// set system properties from command line args
+		//
+		
+		if (args != null && args.length > 0) {
+			Arrays.asList(args).stream().forEach(a -> {
+				if (a.startsWith("-D")) {
+					String[] param = a.replace("-D", "").split("=");
+					System.setProperty(param[0], param[1]);
+				}
+			});
+		}
 		
 		//
 		// set default system properties
@@ -37,53 +50,56 @@ public class Main {
 		
 		System.setProperty("swarm.http.port", getHttpPort());
 		System.setProperty("swarm.https.port", String.valueOf(Integer.valueOf(getHttpPort()) + 100));
-		System.setProperty("hostname", InetAddress.getLocalHost().getHostName());
+		System.setProperty("swarm.https.certificate.generate", "true");
 		
 		//
 		// configure the management fraction
 		//
 		
-		ManagementFraction management = new ManagementFraction()
-				.securityRealm(new SecurityRealm("SSLRealm")
-						.sslServerIdentity(new SslServerIdentity<>()
-								.keystorePath("keystore.jks") 
-								.keystorePassword("secret")
-								.alias("mycert")
-								.keyPassword("secret")));
-		
+//		ManagementFraction management = new ManagementFraction()
+//				.securityRealm(new SecurityRealm("SSLRealm")
+//						.sslServerIdentity(new SslServerIdentity<>()
+//								.keystorePath(System.getProperty("javax.net.ssl.keyStore")) 
+//								.keystorePassword(System.getProperty("javax.net.ssl.keyStorePassword"))
+//								.alias("mycert")
+//								.keyPassword(System.getProperty("javax.net.ssl.keyStorePassword"))));
+//		
 		//
 		// configure the undertow fraction
 		//
 		
-		UndertowFraction undertow = new UndertowFraction()
-        		.server(new Server("default-server")
-        				.httpListener(new HTTPListener("http")
-        						.redirectSocket("https")
-        						.socketBinding("http"))
-        				.httpsListener(new HttpsListener("https")
-        						.securityRealm("SSLRealm")
-        						.socketBinding("https"))
-        				.host(new Host("default-host")))
-        		.bufferCache(new BufferCache("default"))
-        		.servletContainer(new ServletContainer("default")
-        				.websocketsSetting(new WebsocketsSetting())
-        				.jspSetting(new JSPSetting()))
-        		.handlerConfiguration(new HandlerConfiguration());
+//		UndertowFraction undertow = new UndertowFraction()
+//        		.server(new Server("default-server")
+//        				.httpListener(new HTTPListener("http")
+//        						.redirectSocket("https")
+//        						.socketBinding("http"))
+//        				.httpsListener(new HttpsListener("https")
+//        						.securityRealm("SSLRealm")
+//        						.socketBinding("https"))
+//        				.host(new Host("default-host")))
+//        		.bufferCache(new BufferCache("default"))
+//        		.servletContainer(new ServletContainer("default")
+//        				.websocketsSetting(new WebsocketsSetting())
+//        				.jspSetting(new JSPSetting()))
+//        		.handlerConfiguration(new HandlerConfiguration());
 
 		//
-		// build and start the container
+		// build the container
 		//
 		
-        Swarm container = new Swarm().fraction(management).fraction(undertow);
+        Swarm container = new Swarm(); //.fraction(management).fraction(undertow);
  
 		//
         // set system properties from configuration
         //
 
-        Properties.setSystemProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+        Properties.setSystemProperties(container
+                .stageConfig()
+                .resolve("propertyStore.name")
+                .getValue());
         
         //
-        // set timezone to UTC
+        // set default timezone to UTC
         //
         
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -105,6 +121,8 @@ public class Main {
         //
 
         container.fraction(LoggingFraction.createDefaultLoggingFraction()).start().deploy(deployment);
+        
+        System.out.println(System.getProperty("swarm.consul.url"));
     }
 	
 	public static String getHttpPort() {

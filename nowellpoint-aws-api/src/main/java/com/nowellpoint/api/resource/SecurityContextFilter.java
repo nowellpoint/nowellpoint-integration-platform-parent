@@ -98,10 +98,8 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 		final String statusInfo = responseContext.getStatusInfo().toString();
 		final String requestMethod = requestContext.getMethod();
 		
-		String hostname = System.getProperty("hostname");
-		
 		ObjectNode node = JsonNodeFactory.instance.objectNode()
-				.put("hostname", hostname)
+				.put("hostname", httpRequest.getLocalAddr())
 				.put("subject", subject)
 				.put("date", System.currentTimeMillis())
 				.put("method", requestMethod)
