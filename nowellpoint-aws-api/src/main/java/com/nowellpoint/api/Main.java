@@ -49,7 +49,7 @@ public class Main {
 		//
 		
 		System.setProperty("swarm.http.port", getHttpPort());
-		System.setProperty("swarm.https.port", String.valueOf(Integer.valueOf(getHttpPort()) + 100));
+		System.setProperty("swarm.https.port", getHttpsPort());
 		System.setProperty("swarm.https.certificate.generate", "true");
 		
 		//

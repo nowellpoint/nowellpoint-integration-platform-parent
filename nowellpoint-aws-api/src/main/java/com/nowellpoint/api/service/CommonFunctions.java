@@ -20,6 +20,8 @@ import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
+import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
@@ -29,6 +31,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 
 public class CommonFunctions {
 	
@@ -119,6 +122,22 @@ public class CommonFunctions {
 				environment.setOrganizationName(loginResult.getOrganizationName());
 				environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 				
+				Client client = new Client();
+				
+				GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+						.setAccessToken(loginResult.getSessionId())
+						.setId(loginResult.getId());
+				
+				Identity identity = client.getIdentity(getIdentityRequest);
+				
+				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
+						.setAccessToken(loginResult.getSessionId())
+						.setSobjectsUrl(identity.getUrls().getSobjects());
+				
+				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+				
+				environment.setSobjectCount(describeGlobalSobjectsResult.getSobjects().size());
+				
 			} else {
 				
 				String refreshToken = properties.containsKey(REFRESH_TOKEN_PROPERTY) ? properties.get(REFRESH_TOKEN_PROPERTY).getValue() : null;
@@ -150,6 +169,14 @@ public class CommonFunctions {
 				environment.setServiceEndpoint(token.getInstanceUrl());
 				environment.setIsValid(Boolean.TRUE);
 				
+				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
+						.setAccessToken(token.getAccessToken())
+						.setSobjectsUrl(identity.getUrls().getSobjects());
+				
+				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+				
+				environment.setSobjectCount(describeGlobalSobjectsResult.getSobjects().size());
+				
 			}
 			environment.setIsValid(Boolean.TRUE);
 		} catch (OauthException e) {
@@ -161,8 +188,7 @@ public class CommonFunctions {
 		} catch (Exception e) {
 			environment.setIsValid(Boolean.FALSE);
 			environment.setTestMessage(e.getMessage());
-		}
-		
+		}		
 	}
 
 	/**************************************************************************************************************************

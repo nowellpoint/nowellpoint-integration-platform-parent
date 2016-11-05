@@ -37,195 +37,127 @@
                     <br>
 
                     <div class="row">
-                        <div class="col-md-12">
 
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a data-toggle="tab" href="#identity">${labels["identity"]}</a></li>
-                                <li><a data-toggle="tab" href="#organization">${labels["organization"]}</a></li>
-                                <li><a data-toggle="tab" href="#urls">${labels["instance.urls"]}</a></li>
-                            </ul>
+                        <br>
 
-                            <br>
+                        <div class="col-md-3">
 
-                            <div class="tab-content">
+                            <dl class="dl-vertical">
 
-                                <div id="identity" class="tab-pane fade in active">
+                                <dt>${labels["name"]}</dt>
+                                <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
+                                <hr>
 
-                                    <div class="col-md-3">
+                                <dt>${labels["phone"]}</dt>
+                                <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
+                                <hr>
 
-                                        <dl class="dl-vertical">
+                                <dt>${labels["primary.contact"]}</dt>
+                                <dd>${(salesforceConnector.organization.primaryContact)!}&emsp;</dd>
+                                <hr>
 
-                                            <dt>${labels["name"]}</dt>
-                                            <dd>${(salesforceConnector.identity.displayName)!}&emsp;</dd>
-                                            <hr>
+                                <dt>${labels["organization.type"]}</dt>
+                                <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
+                                <hr>
 
-                                            <dt>${labels["username"]}</dt>
-                                            <dd>${(salesforceConnector.identity.username)!}&emsp;</dd>
-                                            <hr>
+                                <dt>${labels["division"]}</dt>
+                                <dd>${(salesforceConnector.organization.division)!}&emsp;</dd>
+                                <hr>
 
-                                            <dt>${labels["email"]}</dt>
-                                            <dd>${(salesforceConnector.identity.email)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["mobile.phone"]}</dt>
-                                            <dd>${(salesforceConnector.identity.mobilePhone)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["user.type"]}</dt>
-                                            <dd>${(salesforceConnector.identity.userType)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["language.key"]}</dt>
-                                            <dd>${(salesforceConnector.identity.language)!}&emsp;</dd>
-
-                                        </dl>
-
-                                    </div>
-
-                                    <div class="col-md-3">
-
-                                        <dl class="dl-vertical">
-
-                                            <dt>${labels["street"]}</dt>
-                                            <dd>${(salesforceConnector.identity.addrStreet)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["city"]}</dt>
-                                            <dd>${(salesforceConnector.identity.addrCity)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["country"]}</dt>
-                                            <dd>${(salesforceConnector.identity.addrCountry)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["state"]}</dt>
-                                            <dd>${(salesforceConnector.identity.addrState)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["zip.postal.code"]}</dt>
-                                            <dd>${(salesforceConnector.identity.addrZip)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["locale.key"]}</dt>
-                                            <dd>${(salesforceConnector.identity.locale)!}&emsp;</dd>
-
-                                        </dl>
-
-                                    </div>
-
-                                    <div class="col-md-6">
-
-                                    </div>
-
-                                </div>
-
-                                <div id="organization" class="tab-pane fade">
-
-                                    <div class="col-md-3">
-
-                                        <dl class="dl-vertical">
-
-                                            <dt>${labels["name"]}</dt>
-                                            <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["phone"]}</dt>
-                                            <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["primary.contact"]}</dt>
-                                            <dd>${(salesforceConnector.organization.primaryContact)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["organization.type"]}</dt>
-                                            <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["division"]}</dt>
-                                            <dd>${(salesforceConnector.organization.division)!}&emsp;</dd>
-
-                                        </dl>
-
-                                    </div>
-
-                                    <div class="col-md-3">
-
-                                        <dl class="dl-vertical">
-
-                                            <dt>${labels["instance.name"]}</dt>
-                                            <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["fiscal.year.start.month"]}</dt>
-                                            <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["default.locale.sid.key"]}</dt>
-                                            <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["language.key"]}</dt>
-                                            <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["organization.id"]}</dt>
-                                            <dd>${(salesforceConnector.organization.id)!}&emsp;</dd>
-
-                                        </dl>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-
-                                    </div>
-
-                                </div>
-
-                                <div id="urls" class="tab-pane fade">
-
-                                    <div class="col-md-6">
-
-                                        <dl class="dl-vertical">
-
-                                            <dt>${labels["identity"]}</dt>
-                                            <dd>${(salesforceConnector.identity.id)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["metadata"]}</dt>
-                                            <dd>${(salesforceConnector.identity.urls.metadata)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["partner"]}</dt>
-                                            <dd>${(salesforceConnector.identity.urls.partner)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["rest"]}</dt>
-                                            <dd>${(salesforceConnector.identity.urls.rest)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["sobjects"]}</dt>
-                                            <dd>${(salesforceConnector.identity.urls.sobjects)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["profile"]}</dt>
-                                            <dd>${(salesforceConnector.identity.urls.profile)!}&emsp;</dd>
-                                            <hr>
-
-                                            <dt>${labels["query"]}</dt>
-                                            <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
-
-                                        </dl>
-
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-
-                                    </div>
-
-                                </div>
-
-                            </div>
+                            </dl>
 
                         </div>
+
+                        <div class="col-md-3">
+
+                            <dl class="dl-vertical">
+
+                                <dt>${labels["instance.name"]}</dt>
+                                <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["fiscal.year.start.month"]}</dt>
+                                <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["default.locale.sid.key"]}</dt>
+                                <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["language.key"]}</dt>
+                                <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["organization.id"]}</dt>
+                                <dd>${(salesforceConnector.organization.id)!}&emsp;</dd>
+                                <hr>
+
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+
+                        </div>
+                        
+                    </div>
+                    
+
+                        
+                        <br>
+                    
+                    <div class="flextable-item flextable-primary">
+                                    <h3 class="dashhead-title">${labels["instance.urls"]}</h3>
+                                </div>
+                    
+                    <div class="row">
+
+                        
+
+                        <div class="col-md-3">
+
+                            <dl class="dl-vertical">
+
+                                <dt>${labels["identity"]}</dt>
+                                <dd>${(salesforceConnector.identity.id)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["metadata"]}</dt>
+                                <dd>${(salesforceConnector.identity.urls.metadata)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["partner"]}</dt>
+                                <dd>${(salesforceConnector.identity.urls.partner)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["rest"]}</dt>
+                                <dd>${(salesforceConnector.identity.urls.rest)!}&emsp;</dd>
+                                <hr>
+
+                            </dl>
+
+                        </div>
+
+                        <div class="col-md-3">
+                            
+                            <dl class="dl-vertical">
+
+                                <dt>${labels["sobjects"]}</dt>
+                                <dd>${(salesforceConnector.identity.urls.sobjects)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["profile"]}</dt>
+                                <dd>${(salesforceConnector.identity.urls.profile)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["query"]}</dt>
+                                <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
+
+                            </dl>
+
+
+                        </div>
+
+
 
                         <div class="col-md-6"></div>
 
@@ -290,7 +222,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <br>
                     <br>
 

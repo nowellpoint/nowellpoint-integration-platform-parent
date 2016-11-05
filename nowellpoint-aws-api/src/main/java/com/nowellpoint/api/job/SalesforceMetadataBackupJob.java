@@ -180,16 +180,10 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	scheduledJobRequest.addBackup(new Backup("DescribeGlobal", keyName, result.getMetadata().getContentLength()));
 				    	
 				    	//
-				    	// add full describe for first run
-				    	//
-				    	
-				    	List<DescribeSobjectResult> describeSobjectResults = null;
-				    	
-				    	//
 				    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
 				    	//
 				    	
-				    	describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
+				    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
 				    	
 				    	//
 				    	// create keyName
@@ -214,6 +208,12 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	//
 				    	
 				    	scheduledJobRequest.setStatus("Success");
+				    	
+				    	//
+				    	// udpate environment statistics
+				    	//
+				    	
+				    	environment.setSobjectCount(describeGlobalSobjectsResult.getSobjects().size());
 				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");

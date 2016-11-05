@@ -46,6 +46,8 @@ public class Environment {
 	
 	private String email;
 	
+	private Integer sobjectCount;
+	
 	public Environment() {
 
 	}
@@ -216,5 +218,13 @@ public class Environment {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public Integer getSobjectCount() {
+		return sobjectCount;
+	}
+
+	public void setSobjectCount(Integer sobjectCount) {
+		this.sobjectCount = sobjectCount;
 	}
 }

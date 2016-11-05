@@ -157,6 +157,9 @@
                                     <dt>${labels["service.endpoint"]}</dt>
                                     <dd>${(environment.serviceEndpoint)!}&emsp;</dd>
                                     <hr>
+                                    <dt>${labels["sobject.count"]}</dt>
+                                    <dd>${(environment.sobjectCount)!}&emsp;</dd>
+                                    <hr>
                                     <dt>${messages["added.on"]}</dt>
                                     <dd>${(environment.addedOn?date?string.iso)!} ${environment.addedOn?time?string.medium!}</dd>
                                 </dl>
@@ -176,6 +179,9 @@
                                     <hr>
                                     <dt>${labels["api.version"]}</dt>
                                     <dd>${(environment.apiVersion)!}&emsp;</dd>
+                                    <hr>
+                                    <dt>&nbsp;</dt>
+                                    <dd>&emsp;</dd>
                                     <hr>
                                     <dt>${messages["updated.on"]}</dt>
                                     <dd>${(environment.updatedOn?date?string.iso)!} ${environment.updatedOn?time?string.medium!}</dd>
