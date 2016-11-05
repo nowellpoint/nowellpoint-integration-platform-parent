@@ -180,10 +180,20 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	scheduledJobRequest.addBackup(new Backup("DescribeGlobal", keyName, result.getMetadata().getContentLength()));
 				    	
 				    	//
-				    	// DescribeSobjectResult
+				    	// add full describe for first run
 				    	//
 				    	
-				    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult);
+				    	List<DescribeSobjectResult> describeSobjectResults = null;
+				    	
+				    	//
+				    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
+				    	//
+				    	
+				    	if (Assert.isNull(scheduledJob.getLastRunDate())) {
+				    		describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult);
+				    	} else {
+					    	describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
+				    	}
 				    	
 				    	//
 				    	// create keyName
@@ -567,6 +577,41 @@ public class SalesforceMetadataBackupJob implements Job {
 		
 		for (Future<DescribeSobjectResult> task : tasks) {
 			describeResults.add(task.get());
+		}
+		
+		return describeResults;
+	}
+	
+	private List<DescribeSobjectResult> describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, Date modifiedSince) throws InterruptedException, ExecutionException, JsonProcessingException {
+		
+		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
+		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
+				
+		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
+		
+		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
+			Future<DescribeSobjectResult> task = executor.submit(() -> {
+				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+						.withAccessToken(accessToken)
+						.withSobjectsUrl(sobjectsUrl)
+						.withSobject(sobject.getName())
+						.withIfModifiedSince(modifiedSince);
+
+				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+
+				return describeSobjectResult;
+			});
+			
+			tasks.add(task);
+		}
+		
+		executor.shutdown();
+		executor.awaitTermination(30, TimeUnit.SECONDS);
+		
+		for (Future<DescribeSobjectResult> task : tasks) {
+			if (Assert.isNotNull(task.get())) {
+				describeResults.add(task.get());
+			}
 		}
 		
 		return describeResults;

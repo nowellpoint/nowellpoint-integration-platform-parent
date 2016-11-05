@@ -148,8 +148,6 @@ public class Client {
 		
 		DescribeSobjectResult result = null;
 		
-		System.out.println(httpResponse.getStatusCode());
-		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeSobjectResult.class);
 		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {

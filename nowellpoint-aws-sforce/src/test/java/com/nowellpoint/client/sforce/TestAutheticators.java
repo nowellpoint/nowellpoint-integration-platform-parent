@@ -2,15 +2,13 @@ package com.nowellpoint.client.sforce;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.time.Instant;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
@@ -18,7 +16,6 @@ import com.nowellpoint.client.sforce.model.sobject.Sobject;
 
 public class TestAutheticators {
 	
-	private static ObjectMapper objectMapper = new ObjectMapper();
 	private static Client client = new Client();
 	
 	@BeforeClass
@@ -53,18 +50,19 @@ public class TestAutheticators {
 			
 			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 			
+			Calendar modifiedDate = new GregorianCalendar();
+			modifiedDate.set(2016, 10, 4, 00, 00, 00);
+			
 			for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
 				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
 						.withAccessToken(response.getToken().getAccessToken())
 						.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
 						.withSobject(sobject.getName())
-						.withIfModifiedSince(Date.from(Instant.now()));
+						.withIfModifiedSince(modifiedDate.getTime());
 				
 				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 				
-				if (describeSobjectResult != null) {
-					System.out.println(objectMapper.writeValueAsString(describeSobjectResult));
-				}
+				
 			}
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
@@ -79,8 +77,6 @@ public class TestAutheticators {
 			System.out.println(e.getStatusCode());
 		} catch (AmazonClientException e) {
 	    	System.out.println(e.getMessage());
-	    } catch (JsonProcessingException e) {
-	    	System.out.println(e.getMessage());
-		}
+	    } 
 	}
 }
