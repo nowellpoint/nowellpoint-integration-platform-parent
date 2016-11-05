@@ -236,7 +236,7 @@ public class SignUpService {
 			lead.setEmail(email);
 			lead.setCountryCode(countryCode);
 
-			UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
+			UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 					.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 					.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 					.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
@@ -244,7 +244,7 @@ public class SignUpService {
 					.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
 					.build();
 			
-			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
+			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
 			
 			Token token = response.getToken();

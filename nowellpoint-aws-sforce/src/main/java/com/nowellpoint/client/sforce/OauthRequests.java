@@ -2,13 +2,13 @@ package com.nowellpoint.client.sforce;
 
 import com.nowellpoint.client.sforce.impl.AuthorizationGrantAuthorizerBuilderImpl;
 import com.nowellpoint.client.sforce.impl.RefreshTokenGrantAuthorizerBuilderImpl;
-import com.nowellpoint.client.sforce.impl.UsernamePasswordGrantAuthorizerBuilderImpl;
+import com.nowellpoint.client.sforce.impl.PasswordGrantAuthorizerBuilderImpl;
 
 public class OauthRequests {
 	
 	public static final AuthorizationGrantRequestFactory AUTHORIZATION_GRANT_REQUEST = new AuthorizationGrantRequestFactory();
 	public static final RefreshTokenGrantRequestFactory REFRESH_TOKEN_GRANT_REQUEST = new RefreshTokenGrantRequestFactory();
-	public static final UsernamePasswordGrantRequestFactory USERNAME_PASSWORD_GRANT_REQUEST = new UsernamePasswordGrantRequestFactory();
+	public static final PasswordGrantRequestFactory PASSWORD_GRANT_REQUEST = new PasswordGrantRequestFactory();
 	
 	public static class AuthorizationGrantRequestFactory {
 		public AuthorizationGrantAuthorizerBuilder builder() {
@@ -24,9 +24,9 @@ public class OauthRequests {
 		}
 	}
 	
-	public static class UsernamePasswordGrantRequestFactory {
-		public UsernamePasswordGrantAuthorizerBuilder builder() {
-			UsernamePasswordGrantAuthorizerBuilder builder = new UsernamePasswordGrantAuthorizerBuilderImpl();
+	public static class PasswordGrantRequestFactory {
+		public PasswordGrantAuthorizerBuilder builder() {
+			PasswordGrantAuthorizerBuilder builder = new PasswordGrantAuthorizerBuilderImpl();
 			return builder;
 		}
 	}

@@ -51,7 +51,7 @@ public class TestSObjectToCSV {
 	@Test
 	public void testCreateCSV() {
 		
-		UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
+		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
 				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
 				.setUsername(System.getenv("SALESFORCE_USERNAME"))
@@ -60,7 +60,7 @@ public class TestSObjectToCSV {
 				.build();
 		
 		try {
-			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
+			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
 			
 			assertNotNull(response.getToken());

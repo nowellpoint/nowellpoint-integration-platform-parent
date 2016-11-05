@@ -1,9 +1,9 @@
 package com.nowellpoint.client.sforce.impl;
 
-import com.nowellpoint.client.sforce.UsernamePasswordGrantAuthorizerBuilder;
+import com.nowellpoint.client.sforce.PasswordGrantAuthorizerBuilder;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 
-public class UsernamePasswordGrantAuthorizerBuilderImpl implements UsernamePasswordGrantAuthorizerBuilder {
+public class PasswordGrantAuthorizerBuilderImpl implements PasswordGrantAuthorizerBuilder {
 	
 	private String clientId;
 	 
@@ -16,31 +16,31 @@ public class UsernamePasswordGrantAuthorizerBuilderImpl implements UsernamePassw
 	private String securityToken;
 
 	@Override
-	public UsernamePasswordGrantAuthorizerBuilder setClientId(String clientId) {
+	public PasswordGrantAuthorizerBuilder setClientId(String clientId) {
 		this.clientId = clientId;
 		return this;
 	}
 
 	@Override
-	public UsernamePasswordGrantAuthorizerBuilder setClientSecret(String clientSecret) {
+	public PasswordGrantAuthorizerBuilder setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
 		return this;
 	}
 
 	@Override
-	public UsernamePasswordGrantAuthorizerBuilder setUsername(String username) {
+	public PasswordGrantAuthorizerBuilder setUsername(String username) {
 		this.username = username;
 		return this;
 	}
 
 	@Override
-	public UsernamePasswordGrantAuthorizerBuilder setPassword(String password) {
+	public PasswordGrantAuthorizerBuilder setPassword(String password) {
 		this.password = password;
 		return this;
 	}
 
 	@Override
-	public UsernamePasswordGrantAuthorizerBuilder setSecurityToken(String securityToken) {
+	public PasswordGrantAuthorizerBuilder setSecurityToken(String securityToken) {
 		this.securityToken = securityToken;
 		return this;
 	}

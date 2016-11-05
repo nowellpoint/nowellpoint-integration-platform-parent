@@ -1,6 +1,7 @@
 package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.aws.http.HttpResponse;
@@ -129,9 +130,6 @@ public class Client {
 		
 		DescribeGlobalSobjectsResult result = null;
 		
-		//System.out.println(httpResponse.getStatusCode());
-		//System.out.println(httpResponse.getAsString());
-		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeGlobalSobjectsResult.class);
 		} else {
@@ -143,14 +141,19 @@ public class Client {
 	
 	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
 		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
+				.header("If-Modified-Since", request.getIfModifiedSince() != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()) : null)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(request.getAccessToken())
 				.execute();
 		
 		DescribeSobjectResult result = null;
 		
+		System.out.println(httpResponse.getStatusCode());
+		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeSobjectResult.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {
+			return null;
 		} else {
 			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
