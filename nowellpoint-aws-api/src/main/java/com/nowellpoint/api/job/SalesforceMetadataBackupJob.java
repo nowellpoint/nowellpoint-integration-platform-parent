@@ -189,11 +189,7 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
 				    	//
 				    	
-				    	if (Assert.isNull(scheduledJob.getLastRunDate())) {
-				    		describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult);
-				    	} else {
-					    	describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
-				    	}
+				    	describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
 				    	
 				    	//
 				    	// create keyName
@@ -542,7 +538,8 @@ public class SalesforceMetadataBackupJob implements Job {
 	 * @param accessToken
 	 * @param sobjectsUrl
 	 * @param describeGlobalSobjectsResult
-	 * @return
+	 * @param modifiedSince
+	 * @return list of DescribeSobjectResult
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws JsonProcessingException
@@ -550,40 +547,8 @@ public class SalesforceMetadataBackupJob implements Job {
 	 * 
 	 */
 	
-	private List<DescribeSobjectResult> describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult) throws InterruptedException, ExecutionException, JsonProcessingException {
-		
-		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
-		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
-				
-		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
-		
-		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			Future<DescribeSobjectResult> task = executor.submit(() -> {
-				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-						.withAccessToken(accessToken)
-						.withSobjectsUrl(sobjectsUrl)
-						.withSobject(sobject.getName());
-
-				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
-
-				return describeSobjectResult;
-			});
-			
-			tasks.add(task);
-		}
-		
-		executor.shutdown();
-		executor.awaitTermination(30, TimeUnit.SECONDS);
-		
-		for (Future<DescribeSobjectResult> task : tasks) {
-			describeResults.add(task.get());
-		}
-		
-		return describeResults;
-	}
-	
 	private List<DescribeSobjectResult> describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, Date modifiedSince) throws InterruptedException, ExecutionException, JsonProcessingException {
-		
+		System.out.println("getting last modified since: " + modifiedSince);
 		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
 		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
 				
