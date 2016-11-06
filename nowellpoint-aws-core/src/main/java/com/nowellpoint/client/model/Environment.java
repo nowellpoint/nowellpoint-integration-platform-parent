@@ -1,5 +1,6 @@
 package com.nowellpoint.client.model;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class Environment {
 	public Environment() {
 		setIsReadOnly(Boolean.FALSE);
 		setIsActive(Boolean.FALSE);
+		setSobjects(Collections.emptyList());
 	}
 
 	public String getKey() {
