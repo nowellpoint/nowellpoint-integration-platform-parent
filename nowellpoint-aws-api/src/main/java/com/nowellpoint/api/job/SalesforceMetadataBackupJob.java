@@ -186,22 +186,30 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
 				    	
 				    	//
-				    	// create keyName
+				    	// if describeSobjectResults is not empty then save to S3
 				    	//
 				    	
-				    	keyName = String.format("%s/DescribeSobjectResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-				    	
-				    	//
-						// write the result to S3
-						//
-				    	
-				    	result = putObject(keyName, describeSobjectResults);
-				    	
-				    	//
-				    	// add Backup reference to ScheduledJobRequest
-				    	//
-				    	
-				    	scheduledJobRequest.addBackup(new Backup("DescribeSobjects", keyName, result.getMetadata().getContentLength()));
+				    	if (! describeSobjectResults.isEmpty()) {
+				    		
+				    		//
+					    	// create keyName
+					    	//
+					    	
+					    	keyName = String.format("%s/DescribeSobjectResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+					    	
+					    	//
+							// write the result to S3
+							//
+					    	
+					    	result = putObject(keyName, describeSobjectResults);
+					    	
+					    	//
+					    	// add Backup reference to ScheduledJobRequest
+					    	//
+					    	
+					    	scheduledJobRequest.addBackup(new Backup("DescribeSobjects", keyName, result.getMetadata().getContentLength()));
+				    		
+				    	}
 				    	
 				    	// 
 				    	// set status
@@ -213,7 +221,7 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	// udpate environment statistics
 				    	//
 				    	
-				    	environment.setSobjectCount(describeGlobalSobjectsResult.getSobjects().size());
+				    	environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");

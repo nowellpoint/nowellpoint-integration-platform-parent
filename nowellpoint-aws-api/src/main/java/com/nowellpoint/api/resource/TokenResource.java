@@ -53,9 +53,7 @@ public class TokenResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = "Authenticate with the API", notes = "Returns the OAuth Token", response = Token.class)
 	public Response authenticate(@ApiParam(value = "basic authorization header", required = true) @HeaderParam("Authorization") String authorization, @FormParam("grant_type") String grantType) {
-		
-		long start = System.currentTimeMillis();
-		
+
 		//
 		// ensure that the authorization header has a basic token
 		//
@@ -119,7 +117,6 @@ public class TokenResource {
 		// return the Response with the token
 		//
 
-		System.out.println(System.currentTimeMillis() - start);
 		return Response.ok()
 				.entity(token)
 				.type(MediaType.APPLICATION_JSON)

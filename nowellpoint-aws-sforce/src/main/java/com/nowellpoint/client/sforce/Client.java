@@ -140,6 +140,7 @@ public class Client {
 	}
 	
 	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
+		System.out.println(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()));
 		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
 				.header("If-Modified-Since", request.getIfModifiedSince() != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()) : null)
 				.accept(MediaType.APPLICATION_JSON)

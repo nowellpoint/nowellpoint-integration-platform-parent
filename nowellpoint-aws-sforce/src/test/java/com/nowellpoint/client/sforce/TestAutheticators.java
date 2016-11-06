@@ -50,8 +50,10 @@ public class TestAutheticators {
 			
 			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 			
+			//Sat Nov 05 08:00:00 UTC 2016
+			
 			Calendar modifiedDate = new GregorianCalendar();
-			modifiedDate.set(2016, 10, 4, 00, 00, 00);
+			modifiedDate.set(2016, 10, 5, 00, 00, 00);
 			
 			for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
 				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
@@ -62,7 +64,9 @@ public class TestAutheticators {
 				
 				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 				
-				
+				if (describeSobjectResult != null) {
+					System.out.println(describeSobjectResult.getName());
+				}
 			}
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));

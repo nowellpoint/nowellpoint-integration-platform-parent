@@ -6,7 +6,7 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["environment.detail"]}</h6>
+                            <h3 class="dashhead-title">${labels["environment.detail"]}</h3>
                         </div>
                     </div>
                 </div>
@@ -15,7 +15,7 @@
             <div class="row">
 
                 <br>
-                
+
                 <div id="message"></div>
 
                 <#if errorMessage??>
@@ -157,9 +157,6 @@
                                     <dt>${labels["service.endpoint"]}</dt>
                                     <dd>${(environment.serviceEndpoint)!}&emsp;</dd>
                                     <hr>
-                                    <dt>${labels["sobject.count"]}</dt>
-                                    <dd>${(environment.sobjectCount)!}&emsp;</dd>
-                                    <hr>
                                     <dt>${messages["added.on"]}</dt>
                                     <dd>${(environment.addedOn?date?string.iso)!} ${environment.addedOn?time?string.medium!}</dd>
                                 </dl>
@@ -180,9 +177,6 @@
                                     <dt>${labels["api.version"]}</dt>
                                     <dd>${(environment.apiVersion)!}&emsp;</dd>
                                     <hr>
-                                    <dt>&nbsp;</dt>
-                                    <dd>&emsp;</dd>
-                                    <hr>
                                     <dt>${messages["updated.on"]}</dt>
                                     <dd>${(environment.updatedOn?date?string.iso)!} ${environment.updatedOn?time?string.medium!}</dd>
                                 </dl>
@@ -193,9 +187,9 @@
 
                             <div class="form-group col-md-12">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
-                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
-                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a> 
+                                    <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-default" role="button">${labels["back"]}</a>
+                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
                                     <#if environment.isSandbox>
                                         <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                                     </#if>
@@ -204,6 +198,42 @@
 
                         </div>
                         <div class="col-md-3"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                ${labels["sobjects"]}<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse"><i class="indicator glyphicon glyphicon-chevron-down pull-right"></i></a>
+                            </h4>
+                            </div>
+                            <div id="collapse" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="content table-responsive">
+                                        <table id="sobjects-table" class="table table-hover">
+                                            <thead>
+                                                <th class="col-md-4">${labels["name"]}</th>
+                                                <th class="col-md-5">${labels["label"]}</th>
+                                                <th class="col-md-1 text-center">${labels["create"]}</th>
+                                                <th class="col-md-1 text-center">${labels["update"]}</th>
+                                                <th class="col-md-1 text-center">${labels["delete"]}</th>
+                                            </thead>
+                                            <tbody>
+                                                <#list environment.sobjects?sort_by( "name") as sobject>
+                                                    <tr>
+                                                        <td>${(sobject.name)!}</td>
+                                                        <td>${(sobject.label)!}</td>
+                                                        <td class="text-center ${sobject.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.createable?then('icon-check', 'icon-cross')}"></span></td>
+                                                        <td class="text-center ${sobject.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.updateable?then('icon-check', 'icon-cross')}"></span></td>
+                                                        <td class="text-center ${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></td>
+                                                    </tr>
+                                                </#list>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </#if>
             </div>
@@ -218,9 +248,9 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    data: $( "#enviroment-form" ).serialize(),
+                    data: $("#enviroment-form").serialize(),
                     url: "${labels['base.path']}/${id}/environments/${(environment.key)!}/test",
-                    success: function (response) {
+                    success: function(response) {
                         var environment = response;
                         if (environment.isValid) {
                             $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + environment.testMessage + '</div></div>');
@@ -230,7 +260,6 @@
                     }
                 });
             });
-
         </script>
 
         <script src="/js/environment.js"></script>

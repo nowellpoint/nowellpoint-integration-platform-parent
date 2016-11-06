@@ -1,10 +1,12 @@
 package com.nowellpoint.client.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.nowellpoint.client.model.sforce.Sobject;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
@@ -52,7 +54,7 @@ public class Environment {
 	
 	private String email;
 	
-	private Integer sobjectCount;
+	private List<Sobject> sobjects;
 	
 	public Environment() {
 		setIsReadOnly(Boolean.FALSE);
@@ -227,12 +229,12 @@ public class Environment {
 		this.email = email;
 	}
 
-	public Integer getSobjectCount() {
-		return sobjectCount;
+	public List<Sobject> getSobjects() {
+		return sobjects;
 	}
 
-	public void setSobjectCount(Integer sobjectCount) {
-		this.sobjectCount = sobjectCount;
+	public void setSobjects(List<Sobject> sobjects) {
+		this.sobjects = sobjects;
 	}
 
 	public Environment withEnvironmentName(String environmentName) {

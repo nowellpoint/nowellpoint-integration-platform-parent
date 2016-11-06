@@ -1,10 +1,12 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
 
@@ -55,7 +57,7 @@ public class Environment {
 	
 	private String email;
 	
-	private Integer sobjectCount;
+	private Set<Sobject> sobjects;
 	
 	public Environment() {
 
@@ -227,11 +229,11 @@ public class Environment {
 		this.email = email;
 	}
 
-	public Integer getSobjectCount() {
-		return sobjectCount;
+	public Set<Sobject> getSobjects() {
+		return sobjects;
 	}
 
-	public void setSobjectCount(Integer sobjectCount) {
-		this.sobjectCount = sobjectCount;
+	public void setSobjects(Set<Sobject> sobjects) {
+		this.sobjects = sobjects;
 	}
 }

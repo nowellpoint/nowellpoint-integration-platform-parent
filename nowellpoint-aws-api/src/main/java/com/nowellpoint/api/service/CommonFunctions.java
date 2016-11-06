@@ -136,7 +136,7 @@ public class CommonFunctions {
 				
 				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 				
-				environment.setSobjectCount(describeGlobalSobjectsResult.getSobjects().size());
+				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				
 			} else {
 				
@@ -175,7 +175,7 @@ public class CommonFunctions {
 				
 				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 				
-				environment.setSobjectCount(describeGlobalSobjectsResult.getSobjects().size());
+				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				
 			}
 			environment.setIsValid(Boolean.TRUE);
