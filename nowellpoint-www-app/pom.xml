@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>aws-parent</artifactId>
-		<version>0.5.0-SNAPSHOT</version>
+		<version>0.6.0-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -62,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>nowellpoint-aws-core</artifactId>
+			<artifactId>nowellpoint-aws-sdk</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

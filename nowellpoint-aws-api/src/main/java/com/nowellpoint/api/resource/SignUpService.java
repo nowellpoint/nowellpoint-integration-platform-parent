@@ -47,7 +47,7 @@ import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.model.idp.Account;
+import com.nowellpoint.api.dto.idp.Account;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;

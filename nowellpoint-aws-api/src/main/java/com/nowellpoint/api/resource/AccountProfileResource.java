@@ -30,6 +30,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.nowellpoint.api.dto.idp.Account;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.dto.AccountProfile;
@@ -41,7 +42,6 @@ import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.aws.http.HttpRequestException;
-import com.nowellpoint.client.model.idp.Account;
 
 @Path("account-profile")
 public class AccountProfileResource {

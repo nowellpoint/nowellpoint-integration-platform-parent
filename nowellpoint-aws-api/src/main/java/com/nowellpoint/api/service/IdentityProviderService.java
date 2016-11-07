@@ -12,6 +12,8 @@ import javax.validation.ValidationException;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.api.dto.idp.Account;
+import com.nowellpoint.api.dto.idp.SearchResult;
 import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.dto.AccountProfile;
 import com.nowellpoint.api.model.dto.Deactivate;
@@ -21,8 +23,6 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.model.idp.Account;
-import com.nowellpoint.client.model.idp.SearchResult;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
