@@ -201,11 +201,11 @@ public class MongoDatastore implements ServletContextListener {
 		getCollection( documentClass ).updateOne( Filters.eq ( "_id", id ), Document.parse( json ) );
 	}
 	
-	public static void checkStatus() {
+	public static Document checkStatus() {
 		try {
-			mongoDatabase.runCommand(new Document("serverStatus", "1"));
+			return mongoDatabase.runCommand(new Document("serverStatus", "1"));
 		} catch (MongoCommandException ignore) {
-			
+			return null;
 		}
 	}
 	
