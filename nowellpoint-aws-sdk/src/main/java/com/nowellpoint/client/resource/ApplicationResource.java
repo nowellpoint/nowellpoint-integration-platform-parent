@@ -5,7 +5,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.NowellpointServiceException;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class ApplicationResource extends AbstractResource {
 	

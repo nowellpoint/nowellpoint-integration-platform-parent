@@ -18,7 +18,7 @@ import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class AccountProfileResource extends AbstractResource {
 	

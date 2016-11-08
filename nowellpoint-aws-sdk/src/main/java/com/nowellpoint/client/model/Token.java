@@ -1,4 +1,4 @@
-package com.nowellpoint.client.model.idp;
+package com.nowellpoint.client.model;
 
 import java.io.Serializable;
 

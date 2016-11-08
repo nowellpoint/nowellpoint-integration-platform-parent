@@ -9,7 +9,7 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class Authenticators {
 	

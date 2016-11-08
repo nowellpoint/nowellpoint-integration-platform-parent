@@ -11,7 +11,7 @@ import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class AbstractResource {
 	

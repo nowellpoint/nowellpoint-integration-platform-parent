@@ -15,7 +15,7 @@ import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.ScheduledJobRequest;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class ScheduledJobResource extends AbstractResource {
 	

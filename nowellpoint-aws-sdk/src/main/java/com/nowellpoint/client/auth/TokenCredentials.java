@@ -1,6 +1,6 @@
 package com.nowellpoint.client.auth;
 
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class TokenCredentials implements Credentials {
 	

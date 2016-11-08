@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.api;
+package com.nowellpoint.api.service.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,14 +12,14 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.api.dto.idp.Account;
+import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.model.idp.Account;
-import com.nowellpoint.client.model.idp.Token;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
@@ -30,11 +30,9 @@ import com.nowellpoint.client.sforce.model.Identity;
 
 public class TestRestApi {
 	
-	private static final String NCS_API_ENDPOINT = "http://localhost:9090/rest";
-	
 	@BeforeClass
 	public static void init() {
-		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+		Properties.setSystemProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 	}
 
 	//@Test
@@ -44,7 +42,7 @@ public class TestRestApi {
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+			httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.accept(MediaType.APPLICATION_JSON)
 					.path("oauth/token")
 					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
@@ -59,7 +57,7 @@ public class TestRestApi {
 			assertNotNull(token.getRefreshToken());
 			assertNotNull(token.getTokenType());
 			
-			httpResponse = RestResource.get(NCS_API_ENDPOINT)
+			httpResponse = RestResource.get(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.bearerAuthorization(token.getAccessToken())
 					.path("account")
 					.path("me")
@@ -80,7 +78,7 @@ public class TestRestApi {
 			assertNotNull(account.getUsername());
 			assertEquals(account.getEmail(), "john.d.herson@gmail.com");
 			
-			httpResponse = RestResource.get(NCS_API_ENDPOINT)
+			httpResponse = RestResource.get(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
 					.path("properties")
@@ -88,7 +86,7 @@ public class TestRestApi {
 			
 			assertTrue(httpResponse.getStatusCode() == Status.OK);
 			
-			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
+			httpResponse = RestResource.delete(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.bearerAuthorization(token.getAccessToken())
 					.path("oauth")
 					.path("token")
@@ -119,7 +117,7 @@ public class TestRestApi {
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+			httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.accept(MediaType.APPLICATION_JSON)
 					.path("oauth/token")
 					.basicAuthorization(System.getenv("STORMPATH_USERNAME"), System.getenv("STORMPATH_PASSWORD"))
@@ -129,7 +127,7 @@ public class TestRestApi {
 			
 			Token token = httpResponse.getEntity(Token.class);
 			
-			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+			httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
@@ -151,7 +149,7 @@ public class TestRestApi {
 			assertNotNull(account.getSurname());
 			assertNotNull(account.getUsername());
 			
-			httpResponse = RestResource.delete(NCS_API_ENDPOINT)
+			httpResponse = RestResource.delete(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 					.path("account")
@@ -178,7 +176,7 @@ public class TestRestApi {
 		
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = RestResource.post(NCS_API_ENDPOINT)
+			httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("contact")
@@ -247,7 +245,7 @@ public class TestRestApi {
 			e.printStackTrace();
 		}
 		
-		HttpResponse httpResponse = RestResource.post(NCS_API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("signup")
@@ -270,7 +268,7 @@ public class TestRestApi {
 		
 		System.out.println(httpResponse.getAsString());
 		
-		httpResponse = RestResource.post(NCS_API_ENDPOINT)
+		httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path("signup")
@@ -300,7 +298,7 @@ public class TestRestApi {
 			e.printStackTrace();
 		}
 		
-		HttpResponse httpResponse = RestResource.post(NCS_API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.path("signup")

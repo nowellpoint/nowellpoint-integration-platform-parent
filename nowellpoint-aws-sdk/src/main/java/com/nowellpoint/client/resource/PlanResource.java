@@ -10,7 +10,7 @@ import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 public class PlanResource extends AbstractResource {
 	
