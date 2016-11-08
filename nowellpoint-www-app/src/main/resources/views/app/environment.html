@@ -211,7 +211,7 @@
                                 <div class="panel-body">
                                     <#if ! environment.sobjects??>
                                         <div class="pull-right">
-                                            
+
                                         </div>
                                     </#if>
                                     <#if environment.sobjects??>
@@ -234,8 +234,18 @@
                                                             <td class="text-center ${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></td>
                                                         </tr>
                                                     </#list>
+                                                    <tr>
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div class="pull-right">
+                                            <ul class="pagination pagination-sm">
+                                                <li><a href="#">1</a></li>
+                                                <li><a href="#">2</a></li>
+                                                <li><a href="#">3</a></li>
+                                                <li><a href="#">4</a></li>
+                                                <li><a href="#">5</a></li>
+                                            </ul>
                                         </div>
                                     </#if>
                                 </div>
@@ -267,8 +277,19 @@
                     }
                 });
             });
+
+            $(document).ready(function() {
+                // call the tablesorter plugin
+                $("#sobjects-table").tablesorter({
+                    // Sort on the second column, in ascending order
+                    sortList: [
+                        [1, 0]
+                    ]
+                });
+            });
         </script>
 
         <script src="/js/environment.js"></script>
+        <script src="/js/custom/jquery.tablesorter.js"></script>
 
     </@t.page>
