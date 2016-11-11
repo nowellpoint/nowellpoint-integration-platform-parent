@@ -2,6 +2,7 @@ package com.nowellpoint.client.sforce;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -9,6 +10,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.MediaType;
+import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
@@ -53,21 +57,30 @@ public class TestAutheticators {
 			//Sat Nov 05 08:00:00 UTC 2016
 			
 			Calendar modifiedDate = new GregorianCalendar();
-			modifiedDate.set(2016, 10, 5, 00, 00, 00);
+			modifiedDate.set(2016, 10, 11, 00, 00, 00);
 			
-			for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-						.withAccessToken(response.getToken().getAccessToken())
-						.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
-						.withSobject(sobject.getName())
-						.withIfModifiedSince(modifiedDate.getTime());
-				
-				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
-				
-				if (describeSobjectResult != null) {
-					System.out.println(describeSobjectResult.getName());
-				}
-			}
+//			for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
+//				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+//						.withAccessToken(response.getToken().getAccessToken())
+//						.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
+//						.withSobject(sobject.getName())
+//						.withIfModifiedSince(modifiedDate.getTime());
+//				
+//				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+//				
+//				if (describeSobjectResult != null) {
+//					System.out.println(describeSobjectResult.getName());
+//				}
+//			}
+
+			HttpResponse httpResponse = RestResource.get(response.getIdentity().getUrls().getRest().concat("theme"))
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(response.getToken().getAccessToken())
+					.execute();
+			
+			System.out.println(httpResponse.getAsString());
+
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			
