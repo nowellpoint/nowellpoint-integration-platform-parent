@@ -1,7 +1,9 @@
 package com.nowellpoint.www.app.view;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -18,9 +20,12 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.sforce.ThemeItem;
+import com.nowellpoint.client.model.sforce.Icon;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -91,30 +96,39 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-    			.execute();
+		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.getEnvironment(id, key);
 		
-		Environment environment = null;
+		Environment environment = result.getTarget();
 		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			environment = httpResponse.getEntity(Environment.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		Map<String,String> iconMap = new HashMap<String,String>();
+		
+		environment.getSobjects().stream().forEach(sobject -> {
+			Optional<ThemeItem> item = environment.getTheme()
+					.getThemeItems()
+					.stream()
+					.filter(themeItem -> themeItem.getName().equals(sobject.getName()))
+					.findFirst();
+			
+			if (item.isPresent()) {
+				Optional<Icon> icon = item.get()
+						.getIcons()
+						.stream()
+						.filter(i -> i.getHeight() == 32)
+						.findFirst();
+				
+				if (icon.isPresent()) {
+					iconMap.put(sobject.getName(), icon.get().getUrl());
+				} 
+			}
+		});
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "view");
 		model.put("environment", environment);
+		model.put("icons", iconMap);
 		
 		return render(request, model, Path.Template.ENVIRONMENT);
 	};

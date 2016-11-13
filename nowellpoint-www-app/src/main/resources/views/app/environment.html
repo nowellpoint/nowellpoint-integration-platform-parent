@@ -208,49 +208,45 @@
                             <br>
                             <div class="hr-divider"></div>
                             <br>
-                            <#list environment.sobjects?sort_by( "label") as sobject>
-
-                                    <div class="panel panel-default col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                                        <div class="panel-body">
-                                            <h4>${(sobject.name)!}</h4>
-                                            <span class="statcard-desc">${(sobject.label)!}</span>
+                            <div class="row">
+                                <#list environment.sobjects?sort_by( "label") as sobject>
+                                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="media">
+                                                    <div class="media-left">
+                                                        <#if icons[ "${sobject.name}"]??>
+                                                            <img src="${icons['${sobject.name}']}" />
+                                                        </#if>
+                                                        <#if ! icons[ "${sobject.name}"]??>
+                                                            <img src="/images/salesforce-logo.png" style="height:32px; width=32px" />
+                                                        </#if>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h4 class="media-heading">${(sobject.name)!}</h4> ${(sobject.label)!}
+                                                    </div>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <th class="col-md-1 text-center">${labels["query"]}</th>
+                                                            <th class="col-md-1 text-center">${labels["create"]}</th>
+                                                            <th class="col-md-1 text-center">${labels["update"]}</th>
+                                                            <th class="col-md-1 text-center">${labels["delete"]}</th>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="text-center ${sobject.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobject.queryable?then('icon-check', 'icon-cross')}"></span></td>
+                                                                <td class="text-center ${sobject.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.createable?then('icon-check', 'icon-cross')}"></span></td>
+                                                                <td class="text-center ${sobject.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.updateable?then('icon-check', 'icon-cross')}"></span></td>
+                                                                <td class="text-center ${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                
-
-                            </#list>
-
-                            <!--
-                            <div class="content table-responsive">
-                                <table id="sobjects-table" class="display" cellspacing="0" width="100%">
-                                    <thead>
-                                        <th class="col-md-4">${labels["name"]}</th>
-                                        <th class="col-md-5">${labels["label"]}</th>
-                                        <th class="col-md-1 text-center">${labels["create"]}</th>
-                                        <th class="col-md-1 text-center">${labels["update"]}</th>
-                                        <th class="col-md-1 text-center">${labels["delete"]}</th>
-                                    </thead>
-                                    <tbody>
-                                        <#if ! environment.sobjects??>
-                                            <div class="pull-right">
-
-                                            </div>
-                                        </#if>
-                                        <#if environment.sobjects??>
-                                            <#list environment.sobjects?sort_by( "name") as sobject>
-                                                <tr>
-                                                    <td>${(sobject.name)!}</td>
-                                                    <td>${(sobject.label)!}</td>
-                                                    <td class="text-center ${sobject.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.createable?then('icon-check', 'icon-cross')}"></span></td>
-                                                    <td class="text-center ${sobject.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.updateable?then('icon-check', 'icon-cross')}"></span></td>
-                                                    <td class="text-center ${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></td>
-                                                </tr>
-                                            </#list>
-                                        </#if>
-                                    </tbody>
-                                </table>
+                                </#list>
                             </div>
--->
                         </div>
                     </div>
                 </#if>
@@ -278,7 +274,6 @@
                     }
                 });
             });
-
         </script>
 
         <script src="/js/environment.js"></script>

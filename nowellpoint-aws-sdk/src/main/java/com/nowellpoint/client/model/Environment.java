@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.nowellpoint.client.model.sforce.Sobject;
+import com.nowellpoint.client.model.sforce.Theme;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
@@ -56,6 +57,8 @@ public class Environment {
 	private String email;
 	
 	private List<Sobject> sobjects;
+	
+	private Theme theme;
 	
 	public Environment() {
 		setIsReadOnly(Boolean.FALSE);
@@ -237,6 +240,14 @@ public class Environment {
 
 	public void setSobjects(List<Sobject> sobjects) {
 		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 
 	public Environment withEnvironmentName(String environmentName) {

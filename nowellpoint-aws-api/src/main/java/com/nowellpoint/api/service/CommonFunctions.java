@@ -27,9 +27,11 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
+import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 
@@ -138,6 +140,14 @@ public class CommonFunctions {
 				
 				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				
+				ThemeRequest themeRequest = new ThemeRequest()
+						.withAccessToken(loginResult.getSessionId())
+						.withRestEndpoint(identity.getUrls().getRest());
+				
+				Theme theme = client.getTheme(themeRequest);
+				
+				environment.setTheme(theme);
+				
 			} else {
 				
 				String refreshToken = properties.containsKey(REFRESH_TOKEN_PROPERTY) ? properties.get(REFRESH_TOKEN_PROPERTY).getValue() : null;
@@ -176,6 +186,14 @@ public class CommonFunctions {
 				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 				
 				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+				
+				ThemeRequest themeRequest = new ThemeRequest()
+						.withAccessToken(token.getAccessToken())
+						.withRestEndpoint(identity.getUrls().getRest());
+				
+				Theme theme = client.getTheme(themeRequest);
+				
+				environment.setTheme(theme);
 				
 			}
 			environment.setIsValid(Boolean.TRUE);

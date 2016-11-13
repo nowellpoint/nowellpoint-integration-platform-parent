@@ -5,15 +5,20 @@ import static org.junit.Assert.assertNotNull;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.client.sforce.model.Theme;
+import com.nowellpoint.client.sforce.model.ThemeItem;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
@@ -73,14 +78,20 @@ public class TestAutheticators {
 //				}
 //			}
 
-			HttpResponse httpResponse = RestResource.get(response.getIdentity().getUrls().getRest().concat("theme"))
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(response.getToken().getAccessToken())
-					.execute();
+			ThemeRequest themeRequest = new ThemeRequest()
+					.withAccessToken(response.getToken().getAccessToken())
+					.withRestEndpoint(response.getIdentity().getUrls().getRest());
 			
-			System.out.println(httpResponse.getAsString());
+			Theme theme = client.getTheme(themeRequest);
 
+			assertNotNull(theme.getThemeItems());
+			
+			describeGlobalSobjectsResult.getSobjects().stream().forEach(s -> {
+				Optional<ThemeItem> item = theme.getThemeItems().stream().filter(ti -> ti.getName().equals(s.getName())).findFirst();
+				if (item.isPresent()) {
+					System.out.println(item.get().getName());
+				}
+			});
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			
@@ -94,6 +105,6 @@ public class TestAutheticators {
 			System.out.println(e.getStatusCode());
 		} catch (AmazonClientException e) {
 	    	System.out.println(e.getMessage());
-	    } 
+	    }
 	}
 }

@@ -9,6 +9,9 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.Error;
+import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.NowellpointServiceException;
 
 public class SalesforceConnectorResource extends AbstractResource {
@@ -78,7 +81,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 		return environments;
 	}
 	
-	public Environment getEnvironment(String id, String key) {
+	public GetResult<Environment> getEnvironment(String id, String key) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
@@ -89,14 +92,18 @@ public class SalesforceConnectorResource extends AbstractResource {
     			.path(key)
     			.execute();
 		
-		Environment environment = null;
+		GetResult<Environment> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			environment = httpResponse.getEntity(Environment.class);
-		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Environment resource = httpResponse.getEntity(Environment.class);
+			result = new GetResultImpl<Environment>(resource);  
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new GetResultImpl<Environment>(error);
 		}
 		
-		return environment;
+		return result;
 	}
 }
