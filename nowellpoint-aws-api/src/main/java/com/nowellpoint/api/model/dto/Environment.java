@@ -3,6 +3,7 @@ package com.nowellpoint.api.model.dto;
 import java.util.Date;
 import java.util.Set;
 
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 
 public class Environment {
@@ -50,6 +51,8 @@ public class Environment {
 	private String email;
 	
 	private Set<Sobject> sobjects;
+	
+	private Theme theme;
 	
 	public Environment() {
 
@@ -229,5 +232,13 @@ public class Environment {
 
 	public void setSobjects(Set<Sobject> sobjects) {
 		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

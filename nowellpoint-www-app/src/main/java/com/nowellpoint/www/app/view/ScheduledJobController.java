@@ -20,7 +20,7 @@ import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.ScheduledJobRequest;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -185,13 +185,13 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
-		Environment environment = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.getEnvironment(scheduledJob.getConnectorId(), environmentKey);
 		
-		scheduledJob.setNotificationEmail(environment.getEmail());
-		scheduledJob.setEnvironmentKey(environment.getKey());
-		scheduledJob.setEnvironmentName(environment.getEnvironmentName());
+		scheduledJob.setNotificationEmail(result.getTarget().getEmail());
+		scheduledJob.setEnvironmentKey(result.getTarget().getKey());
+		scheduledJob.setEnvironmentName(result.getTarget().getEnvironmentName());
 		
 		putValue(token, scheduledJob.getId(), objectMapper.writeValueAsString(scheduledJob));
 			

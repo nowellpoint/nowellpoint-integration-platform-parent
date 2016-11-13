@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.jboss.logging.Logger;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.client.model.Application;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
@@ -20,7 +19,7 @@ import spark.Route;
 
 public class NotificationController extends AbstractController {
 	
-	private static final Logger LOGGER = Logger.getLogger(NotificationController.class);
+	private static final Logger LOGGER = Logger.getLogger(NotificationController.class.getName());
 	
 	public NotificationController(Configuration cfg) {
 		super(NotificationController.class, cfg);

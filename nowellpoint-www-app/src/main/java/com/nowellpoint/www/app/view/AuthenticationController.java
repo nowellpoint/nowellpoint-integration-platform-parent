@@ -24,7 +24,7 @@ import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.GetResult;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 

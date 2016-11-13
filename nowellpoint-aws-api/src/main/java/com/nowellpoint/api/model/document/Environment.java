@@ -6,6 +6,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
@@ -58,6 +59,8 @@ public class Environment {
 	private String email;
 	
 	private Set<Sobject> sobjects;
+	
+	private Theme theme;
 	
 	public Environment() {
 
@@ -235,5 +238,13 @@ public class Environment {
 
 	public void setSobjects(Set<Sobject> sobjects) {
 		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

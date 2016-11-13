@@ -37,7 +37,7 @@ import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.util.Assert;

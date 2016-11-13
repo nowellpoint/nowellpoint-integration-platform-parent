@@ -58,7 +58,9 @@ import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
+import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
@@ -211,6 +213,30 @@ public class SalesforceMetadataBackupJob implements Job {
 				    		
 				    	}
 				    	
+				    	//
+				    	// add theme
+				    	//
+				    	
+				    	keyName = String.format("%s/Theme-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+				    	
+				    	//
+				    	// get theme
+				    	//
+				    	
+				    	Theme theme = getTheme(accessToken, identity.getUrls().getRest());
+				    	
+				    	// 
+				    	// write result to S3
+				    	//
+				    	
+				    	result = putObject(keyName, theme);
+				    	
+				    	//
+				    	// add Backup reference to ScheduledJobRequest
+				    	//
+				    	
+				    	scheduledJobRequest.addBackup(new Backup("Theme", keyName, result.getMetadata().getContentLength()));
+				    	
 				    	// 
 				    	// set status
 				    	//
@@ -218,10 +244,11 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	scheduledJobRequest.setStatus("Success");
 				    	
 				    	//
-				    	// udpate environment statistics
+				    	// udpate environment with lastest information
 				    	//
 				    	
 				    	environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+				    	environment.setTheme(theme);
 				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");
@@ -556,7 +583,6 @@ public class SalesforceMetadataBackupJob implements Job {
 	 */
 	
 	private List<DescribeSobjectResult> describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, Date modifiedSince) throws InterruptedException, ExecutionException, JsonProcessingException {
-		System.out.println("getting last modified since: " + modifiedSince);
 		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
 		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
 				
@@ -588,6 +614,20 @@ public class SalesforceMetadataBackupJob implements Job {
 		}
 		
 		return describeResults;
+	}
+	
+	/**
+	 * 
+	 */
+	
+	private Theme getTheme(String accessToken, String restEndpoint) {
+		ThemeRequest themeRequest = new ThemeRequest()
+				.withAccessToken(accessToken)
+				.withRestEndpoint(restEndpoint);
+		
+		Theme theme = client.getTheme(themeRequest);
+		
+		return theme;
 	}
 }
 

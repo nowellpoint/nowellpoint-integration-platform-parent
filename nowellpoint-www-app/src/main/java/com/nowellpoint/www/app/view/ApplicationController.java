@@ -6,8 +6,6 @@ import java.util.Map;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import org.jboss.logging.Logger;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -20,10 +18,11 @@ import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ServiceInstance;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
@@ -31,7 +30,7 @@ import spark.Route;
 
 public class ApplicationController extends AbstractController {
 	
-	private static final Logger LOGGER = Logger.getLogger(ApplicationController.class);
+	private static final Logger LOGGER = Logger.getLogger(ApplicationController.class.getName());
 	
 	public ApplicationController(Configuration configuration) {
 		super(ApplicationController.class, configuration);

@@ -11,6 +11,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
@@ -139,8 +140,13 @@ public class Client {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	
 	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
-		System.out.println(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()));
 		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
 				.header("If-Modified-Since", request.getIfModifiedSince() != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()) : null)
 				.accept(MediaType.APPLICATION_JSON)
@@ -153,6 +159,30 @@ public class Client {
 			result = httpResponse.getEntity(DescribeSobjectResult.class);
 		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {
 			return null;
+		} else {
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	
+	public Theme getTheme(ThemeRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getRestEndpoint().concat("theme"))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(request.getAccessToken())
+				.execute();
+		
+		Theme result = null;
+	
+		if (httpResponse.getStatusCode() == Status.OK) {
+			result = httpResponse.getEntity(Theme.class);
 		} else {
 			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
