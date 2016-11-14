@@ -28,6 +28,7 @@ com/nowellpoint/client/auth/PasswordGrantAuthorizerBuilder.class
 com/nowellpoint/client/model/Subscription.class
 com/nowellpoint/client/model/SubscriptionRequest.class
 com/nowellpoint/client/model/ScheduledJob.class
+com/nowellpoint/client/model/sforce/Icon.class
 com/nowellpoint/client/resource/AbstractResource$UpdateResultImpl.class
 com/nowellpoint/client/auth/Authenticators$ClientCredentialsGrantResponseFactory.class
 com/nowellpoint/client/auth/PasswordGrantRequest.class
@@ -42,6 +43,7 @@ com/nowellpoint/client/model/Price.class
 com/nowellpoint/client/resource/ScheduledJobResource$RunHistoryResource.class
 com/nowellpoint/client/model/UpdateResult.class
 com/nowellpoint/client/auth/impl/OauthException.class
+com/nowellpoint/client/model/sforce/Theme.class
 com/nowellpoint/client/model/AbstractResource.class
 com/nowellpoint/client/resource/ScheduledJobTypeResource.class
 com/nowellpoint/client/model/sforce/Organization.class
@@ -60,6 +62,7 @@ com/nowellpoint/client/auth/OauthRequests$ClientCredentialsGrantRequestFactory.c
 com/nowellpoint/client/auth/Authenticators$RevokeTokenResponseFactory.class
 com/nowellpoint/client/auth/impl/PasswordGrantAuthorizerBuilderImpl.class
 com/nowellpoint/client/model/IsoCountry.class
+com/nowellpoint/client/model/sforce/ThemeItem.class
 com/nowellpoint/client/auth/TokenCredentials.class
 com/nowellpoint/client/resource/ScheduledJobResource.class
 com/nowellpoint/client/auth/Credentials.class
@@ -70,6 +73,7 @@ com/nowellpoint/client/model/ScheduledJobType.class
 com/nowellpoint/client/model/sforce/Urls.class
 com/nowellpoint/client/auth/impl/RevokeTokenRequestImpl.class
 com/nowellpoint/client/model/Feature.class
+com/nowellpoint/client/model/sforce/Color.class
 com/nowellpoint/client/auth/ClientCredentialsGrantRequest.class
 com/nowellpoint/client/resource/AbstractResource$SetResultImpl.class
 com/nowellpoint/client/model/Error.class
