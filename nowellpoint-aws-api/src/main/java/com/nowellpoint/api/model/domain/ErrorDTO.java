@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.dto;
+package com.nowellpoint.api.model.domain;
 
 public class ErrorDTO {
 	

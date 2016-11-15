@@ -19,8 +19,8 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Project;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Project;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.ProjectService;
 

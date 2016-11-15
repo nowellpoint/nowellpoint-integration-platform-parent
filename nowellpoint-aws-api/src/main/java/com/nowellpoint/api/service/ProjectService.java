@@ -2,7 +2,7 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.model.dto.Project;
+import com.nowellpoint.api.model.domain.Project;
 import com.nowellpoint.api.model.mapper.ProjectModelMapper;
 
 public class ProjectService extends ProjectModelMapper {

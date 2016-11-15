@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.dto;
+package com.nowellpoint.api.model.domain;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,8 +16,6 @@ public class Application extends AbstractResource {
 	private String name;
 	
 	private String description;
-	
-	private Set<ServiceInstanceDTO> serviceInstances;
 	
 	private Set<Environment> environments;
 	
@@ -49,21 +47,6 @@ public class Application extends AbstractResource {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Set<ServiceInstanceDTO> getServiceInstances() {
-		return serviceInstances;
-	}
-
-	public void setServiceInstances(Set<ServiceInstanceDTO> serviceInstances) {
-		this.serviceInstances = serviceInstances;
-	}
-	
-	public void addServiceInstance(ServiceInstanceDTO serviceInstance) {
-		if (serviceInstances == null || serviceInstances.isEmpty()) {
-			serviceInstances = new HashSet<ServiceInstanceDTO>();
-		}
-		serviceInstances.add(serviceInstance);
 	}
 
 	public Set<Environment> getEnvironments() {

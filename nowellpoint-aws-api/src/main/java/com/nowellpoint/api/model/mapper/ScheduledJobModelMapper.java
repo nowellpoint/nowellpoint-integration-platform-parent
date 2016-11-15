@@ -18,8 +18,8 @@ import com.mongodb.DBRef;
 import com.mongodb.client.model.UpdateOptions;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dto.ScheduledJob;
-import com.nowellpoint.api.model.dto.UserInfo;
+import com.nowellpoint.api.model.domain.ScheduledJob;
+import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 

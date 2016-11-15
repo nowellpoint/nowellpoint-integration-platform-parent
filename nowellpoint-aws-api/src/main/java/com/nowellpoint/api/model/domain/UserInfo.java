@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.dto;
+package com.nowellpoint.api.model.domain;
 
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;

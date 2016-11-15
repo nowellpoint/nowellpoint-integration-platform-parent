@@ -13,7 +13,7 @@ import org.modelmapper.convention.MatchingStrategies;
 
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dto.UserInfo;
+import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;

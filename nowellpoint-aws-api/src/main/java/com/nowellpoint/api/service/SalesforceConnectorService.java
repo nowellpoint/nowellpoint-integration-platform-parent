@@ -9,11 +9,11 @@ import java.net.URL;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
@@ -29,12 +29,9 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.api.model.document.SimpleStorageService;
-import com.nowellpoint.api.model.document.Targets;
-import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.SalesforceConnector;
-import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
-import com.nowellpoint.api.model.dto.UserInfo;
+import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.SalesforceConnector;
+import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
@@ -61,8 +58,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	private SalesforceService salesforceService;
 	
 	@Inject
-	private CommonFunctions commonFunctions;
+	private EnvironmentService environmentService;
 	
+	private static final String IS_ACTIVE = "isActive";
+	private static final String API_VERSION = "apiVersion";
+	private static final String AUTH_ENDPOINT = "authEndpoint";
+	private static final String USERNAME = "username";
+	private static final String SECURITY_TOKEN_PARAM = "securityToken";
 	private static final String PASSWORD = "password";
 	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
 	private static final String ACCESS_TOKEN_PROPERTY = "access.token";
@@ -161,27 +163,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		super.createSalesforceConnector( resource );
 		
-		List<UserProperty> properties = new ArrayList<UserProperty>();
-		
-		UserProperty accessTokenProperty = new UserProperty()
-				.withSubject(environment.getKey())
-				.withKey(ACCESS_TOKEN_PROPERTY)
-				.withValue(token.getAccessToken())
-				.withLastModifiedBy(getSubject())
-				.withLastModifiedDate(Date.from(Instant.now()));
-		
-		properties.add(accessTokenProperty);
-		
-		UserProperty refreshTokenProperty = new UserProperty()
-				.withSubject(environment.getKey())
-				.withKey(REFRESH_TOKEN_PROPERTY)
-				.withValue(token.getRefreshToken())
-				.withLastModifiedBy(getSubject())
-				.withLastModifiedDate(Date.from(Instant.now()));
-		
-		properties.add(refreshTokenProperty);
-		
-		UserProperties.batchSave(properties);
+		UserProperties.saveAccessToken(getSubject(), environment.getKey(), token);
 		
 		return resource;
 	}
@@ -357,9 +339,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
-		
-		UserProperties.batchSave(properties);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment);
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -442,9 +422,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			environment.setIsValid(Boolean.FALSE);
 		}
 		
-		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
-		
-		UserProperties.batchSave(properties);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment);
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -479,7 +457,44 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			
 			resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 			
-			commonFunctions.testConnection(environment, parameters);
+			UserProperty userProperty = new UserProperty();
+			userProperty.setSubject(environment.getKey());
+			
+			Map<String, UserProperty> properties = UserProperties.query(userProperty)
+					.stream()
+					.collect(Collectors.toMap(UserProperty::getKey, p -> p));
+			
+			if (environment.getIsSandbox()) {
+				if (parameters.containsKey(AUTH_ENDPOINT)) {
+					environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
+				}
+				
+				if (parameters.containsKey(USERNAME)) {
+					environment.setUsername(parameters.getFirst(USERNAME));
+				}
+				
+				if (parameters.containsKey(PASSWORD)) {
+					environment.setPassword(parameters.getFirst(PASSWORD));
+				} else {
+					environment.setPassword(properties.get(PASSWORD).getValue());
+				}
+				
+				if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
+					environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
+				} else {
+					environment.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
+				}
+			} else {
+				if (properties.containsKey(REFRESH_TOKEN_PROPERTY)) {
+					environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
+				}
+			}
+			
+			environmentService.testConnection(environment);
+			
+			environment.setPassword(null);
+			environment.setSecurityToken(null);
+			environment.setRefreshToken(null);
 			
 			resource.addEnvironment(environment);
 			
@@ -487,7 +502,29 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			
 		} else {
 			
-			commonFunctions.updateEnvironment(environment, parameters);
+			if (parameters.containsKey(IS_ACTIVE)) {
+				environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
+			}
+			
+			if (parameters.containsKey(API_VERSION)) {
+				environment.setApiVersion(parameters.getFirst(API_VERSION));
+			}
+			
+			if (parameters.containsKey(AUTH_ENDPOINT)) {
+				environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
+			}
+			
+			if (parameters.containsKey(PASSWORD)) {
+				environment.setPassword(parameters.getFirst(PASSWORD));
+			}
+			
+			if (parameters.containsKey(USERNAME)) {
+				environment.setUsername(parameters.getFirst(USERNAME));
+			}
+			
+			if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
+				environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
+			}
 			
 			updateEnvironment(resource, environment);
 		}
@@ -513,166 +550,12 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				.findFirst()
 				.get();
 		
-		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
-		
-		UserProperties.batchDelete(properties);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment);
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
 		updateSalesforceConnector(id, resource);
 	} 
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	public ServiceInstanceDTO getServiceInstance(String id, String key) {
-		SalesforceConnector resource = findSalesforceConnector(id);
-		
-		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
-				.stream()
-				.filter(s -> key.equals(s.getKey()))
-				.findFirst()
-				.get();
-		
-		return serviceInstance;
-		
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @param serviceInstance
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	public void updateServiceInstance(String id, String key, ServiceInstanceDTO serviceInstance) {		
-		SalesforceConnector resource = findSalesforceConnector(id);
-		
-		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptySet());
-		}
-		
-		Optional<ServiceInstanceDTO> query = resource.getServiceInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst();
-		
-		if (! query.isPresent()) {
-			return;
-		}
-		
-		ServiceInstanceDTO original = query.get();
-		
-		resource.getServiceInstances().removeIf(e -> key.equals(e.getKey()));
-		
-		serviceInstance.setKey(key);
-		serviceInstance.setAddedOn(original.getAddedOn());
-		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
-		
-		/**
-		serviceInstance.setConfigurationPage(original.getConfigurationPage());
-		serviceInstance.setProviderName(original.getProviderName());
-		serviceInstance.setProviderType(original.getProviderType());
-		serviceInstance.setServiceName(original.getServiceName());
-		serviceInstance.setServiceType(original.getServiceType());
-		
-		if (serviceInstance.getIsActive() == null) {
-			serviceInstance.setIsActive(original.getIsActive());
-		}
-		
-		if (serviceInstance.getName() == null || serviceInstance.getName().trim().isEmpty()) {
-			serviceInstance.setName(original.getName());
-		}
-		
-		if (serviceInstance.getStatus() == null) {
-			serviceInstance.setStatus(original.getStatus());
-		}
-		
-		if (serviceInstance.getTag() == null || serviceInstance.getTag().) */
-		
-		Optional<SimpleStorageService> simpleStoreageService = Optional.of(serviceInstance)
-				.map(ServiceInstanceDTO::getTargets)
-				.map(Targets::getSimpleStorageService);
-		
-		if (simpleStoreageService.isPresent()) {
-			
-			commonFunctions.saveAwsCredentials(getSubject(), key, simpleStoreageService.get());
-			
-			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(null);
-			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(null);
-		}
-		
-		resource.addServiceInstance(serviceInstance);
-		
-		updateSalesforceConnector(id, resource);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @param parameters
-	 * @return ServiceInstanceDTO
-	 * 
-	 * 
-	 */
-	
-	public ServiceInstanceDTO updateServiceInstance(String id, String key, MultivaluedMap<String, String> parameters) {		
-		SalesforceConnector resource = findSalesforceConnector(id);
-		
-		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptySet());
-		}
-		
-		Optional<ServiceInstanceDTO> query = resource.getServiceInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst();
-		
-		if (! query.isPresent()) {
-			return null;
-		}
-		
-		ServiceInstanceDTO serviceInstance = query.get();
-		
-		commonFunctions.buildServiceInstance(key, serviceInstance, parameters);
-		
-		updateServiceInstance(id, key, serviceInstance);
-		
-		return serviceInstance;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	public SalesforceConnector removeServiceInstance(String id, String key) {		
-		SalesforceConnector resource = findSalesforceConnector(id);
-		
-		resource.getServiceInstances().removeIf(p -> p.getKey().equals(key));
-
-		updateSalesforceConnector(id, resource);
-		
-		return resource;
-	}
 	
 	/**
 	 * 

@@ -93,12 +93,46 @@ public class AccountProfileResource extends AbstractResource {
 		return result;
 	}
 	
+	public AddressResource address() {
+		return new AddressResource(token);
+	}
+	
 	public SubscriptionResource subscription() {
 		return new SubscriptionResource(token);
 	}
 	
 	public CreditCardResource creditCard() {
 		return new CreditCardResource(token);
+	}
+	
+	public class AddressResource extends AbstractResource {
+		
+		public AddressResource(Token token) {
+			super(token);
+		}
+		
+		public GetResult<Address> get(String accountProfileId) {
+			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account-profile")
+					.path(accountProfileId)
+					.path("address")
+					.execute();
+			
+			GetResult<Address> result = null;
+	    	
+	    	if (httpResponse.getStatusCode() == Status.OK) {
+	    		Address resource = httpResponse.getEntity(Address.class);
+	    		result = new GetResultImpl<Address>(resource); 
+	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+	    		Error error = httpResponse.getEntity(Error.class);
+				result = new GetResultImpl<Address>(error);
+	    	}
+	    	
+	    	return result;
+		}
 	}
 	
 	public class SubscriptionResource extends AbstractResource {

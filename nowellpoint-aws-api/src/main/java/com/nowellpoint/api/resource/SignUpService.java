@@ -38,8 +38,8 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.document.Address;
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.ErrorDTO;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.ErrorDTO;
 import com.nowellpoint.api.model.sforce.Lead;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;

@@ -24,8 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.SalesforceConnector;
+import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 

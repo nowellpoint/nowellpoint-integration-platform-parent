@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.SalesforceConnector;
+import com.nowellpoint.api.model.domain.SalesforceConnector;
 
 /**
  * 

@@ -21,6 +21,7 @@ import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.GetUserRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
@@ -40,7 +41,7 @@ public class SalesforceService extends AbstractCacheService {
 
 	}
 	
-	/************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param authEndpoint
@@ -50,7 +51,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 * 
 	 * 
-	 ***********************************************************************************************************************/
+	 */
 	
 	public LoginResult login(String authEndpoint, String username, String password, String securityToken) {
 		Optional.of(authEndpoint).orElseThrow(() -> new IllegalArgumentException("missing authEndpoint"));
@@ -93,14 +94,14 @@ public class SalesforceService extends AbstractCacheService {
 		}
 	}
 	
-	/************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param id
 	 * @return
 	 * 
 	 * 
-	 ************************************************************************************************************************/
+	 */
 	
 	public DescribeGlobalSobjectsResult describe(String id) {
 		
@@ -121,14 +122,14 @@ public class SalesforceService extends AbstractCacheService {
 		return describe(result.getSessionId(), identity.getUrls().getSobjects());
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param authCode
 	 * @return
 	 * 
 	 * 
-	 ************************************************************************************************************************/
+	 */
 	
 	public OauthAuthenticationResponse authenticate(String code) {		
 		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST.builder()
@@ -144,7 +145,7 @@ public class SalesforceService extends AbstractCacheService {
 		return response;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param accessToken
@@ -153,7 +154,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return
 	 * 
 	 * 
-	 **************************************************************************************************************************/
+	 */
 	
 	public User getUser(String accessToken, String userId, String sobjectUrl) {	
 		GetUserRequest request = new GetUserRequest()
@@ -168,7 +169,7 @@ public class SalesforceService extends AbstractCacheService {
 		return user;
 	}
 	
-	/**************************************************************************************************************************
+	/**
 	 * 
 	 * 
 	 * @param bearerToken
@@ -177,7 +178,7 @@ public class SalesforceService extends AbstractCacheService {
 	 * @return Organization
 	 * 
 	 * 
-	 **************************************************************************************************************************/
+	 */
 	
 	public Organization getOrganization(String accessToken, String organizationId, String sobjectUrl) {		
 		GetOrganizationRequest request = new GetOrganizationRequest()
@@ -191,15 +192,37 @@ public class SalesforceService extends AbstractCacheService {
 		
 		return organization;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param refreshToken
+	 * @return OauthAuthenticationResponse
+	 * 
+	 * 
+	 */
+	
+	public OauthAuthenticationResponse refreshToken(String refreshToken) {
+		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setRefreshToken(refreshToken)
+				.build();
 		
-	/**************************************************************************************************************************
+		OauthAuthenticationResponse authenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		return authenticationResponse;
+	}
+		
+	/**
 	 * 
 	 * 
 	 * @param token
 	 * @return
 	 * 
 	 * 
-	 **************************************************************************************************************************/
+	 */
 	
 	private DescribeGlobalSobjectsResult describe(String accessToken, String sobjectUrl) {
 		DescribeGlobalSobjectsRequest request = new DescribeGlobalSobjectsRequest()

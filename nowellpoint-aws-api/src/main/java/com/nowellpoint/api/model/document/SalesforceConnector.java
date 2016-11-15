@@ -33,8 +33,6 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private Set<Environment> environments;
 	
-	private Set<ServiceInstance> serviceInstances;
-	
 	public SalesforceConnector() {
 		
 	}
@@ -93,13 +91,5 @@ public class SalesforceConnector extends MongoDocument {
 
 	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
-	}
-
-	public Set<ServiceInstance> getServiceInstances() {
-		return serviceInstances;
-	}
-
-	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
-		this.serviceInstances = serviceInstances;
 	}
 }

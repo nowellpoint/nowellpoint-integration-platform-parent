@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.dto;
+package com.nowellpoint.api.model.domain;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +23,6 @@ public class SalesforceConnector extends AbstractResource {
 	private String tag;
 	
 	private Set<Environment> environments;
-	
-	private Set<ServiceInstanceDTO> serviceInstances;
 	
 	public SalesforceConnector() {
 		
@@ -95,20 +93,5 @@ public class SalesforceConnector extends AbstractResource {
 			environments = new HashSet<Environment>();
 		}
 		environments.add(environment);
-	}
-
-	public Set<ServiceInstanceDTO> getServiceInstances() {
-		return serviceInstances;
-	}
-
-	public void setServiceInstances(Set<ServiceInstanceDTO> serviceInstances) {
-		this.serviceInstances = serviceInstances;
-	}
-	
-	public void addServiceInstance(ServiceInstanceDTO serviceInstance) {
-		if (serviceInstances == null || serviceInstances.isEmpty()) {
-			serviceInstances = new HashSet<ServiceInstanceDTO>();
-		}
-		serviceInstances.add(serviceInstance);
 	}
 }

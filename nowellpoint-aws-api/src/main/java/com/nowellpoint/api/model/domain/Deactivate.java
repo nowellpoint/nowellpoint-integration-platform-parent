@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.dto;
+package com.nowellpoint.api.model.domain;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

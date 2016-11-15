@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.dto;
+package com.nowellpoint.api.model.domain;
 
 import java.util.Date;
 import java.util.Set;
@@ -35,6 +35,8 @@ public class Environment {
 	private String password;
 	
 	private String securityToken;
+	
+	private String refreshToken;
 	
 	private Boolean isSandbox;
 	
@@ -184,6 +186,14 @@ public class Environment {
 
 	public void setSecurityToken(String securityToken) {
 		this.securityToken = securityToken;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	public Boolean getIsSandbox() {

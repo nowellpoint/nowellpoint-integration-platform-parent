@@ -17,7 +17,6 @@ import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
-import com.nowellpoint.client.model.ServiceInstance;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -572,50 +571,5 @@ public class ApplicationController extends AbstractController {
 		}
 		
 		return objectMapper.writeValueAsString(environment);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * viewServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route viewServiceInstance = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("service")
-    			.path(key)
-    			.execute();
-		
-		ServiceInstance serviceInstance = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			serviceInstance = httpResponse.getEntity(ServiceInstance.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "view");
-		model.put("serviceInstance", serviceInstance);
-		model.put("successMessage", request.cookie("successMessage"));
-		
-		System.out.println(serviceInstance.getConfigurationPage());
-		
-		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
 	};
 }

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.modelmapper.TypeToken;
 
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.api.model.dto.ScheduledJobType;
+import com.nowellpoint.api.model.domain.ScheduledJobType;
 
 /**
  * 

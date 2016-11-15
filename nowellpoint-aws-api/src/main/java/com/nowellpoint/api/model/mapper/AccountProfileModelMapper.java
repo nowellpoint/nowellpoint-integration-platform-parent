@@ -2,7 +2,7 @@ package com.nowellpoint.api.model.mapper;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import com.nowellpoint.api.model.dto.AccountProfile;
+import com.nowellpoint.api.model.domain.AccountProfile;
 
 /**
  * 

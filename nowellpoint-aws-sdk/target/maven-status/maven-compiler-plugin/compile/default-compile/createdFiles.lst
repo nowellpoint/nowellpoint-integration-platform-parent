@@ -1,7 +1,6 @@
 com/nowellpoint/client/model/Environment.class
 com/nowellpoint/client/resource/AccountProfileResource.class
 com/nowellpoint/client/model/GetPlansRequest.class
-com/nowellpoint/client/model/EnvironmentVariableValue.class
 com/nowellpoint/client/resource/AbstractResource$CreateResultImpl.class
 com/nowellpoint/client/model/Plan.class
 com/nowellpoint/client/auth/RevokeTokenRequest.class
@@ -55,7 +54,6 @@ com/nowellpoint/client/resource/AccountProfileResource$SubscriptionResource.clas
 com/nowellpoint/client/resource/AbstractResource$GetResultImpl.class
 com/nowellpoint/client/model/sforce/Identity.class
 com/nowellpoint/client/model/CreditCardRequest.class
-com/nowellpoint/client/model/EventListener.class
 com/nowellpoint/client/model/sforce/Sobject.class
 com/nowellpoint/client/model/ExceptionResponse.class
 com/nowellpoint/client/auth/OauthRequests$ClientCredentialsGrantRequestFactory.class
@@ -79,8 +77,6 @@ com/nowellpoint/client/resource/AbstractResource$SetResultImpl.class
 com/nowellpoint/client/model/Error.class
 com/nowellpoint/client/model/Targets.class
 com/nowellpoint/client/model/sforce/Attributes.class
-com/nowellpoint/client/model/ServiceInstance.class
-com/nowellpoint/client/model/EnvironmentVariable.class
 com/nowellpoint/client/model/SetResult.class
 com/nowellpoint/client/model/Token.class
 com/nowellpoint/client/model/CreateResult.class
@@ -91,6 +87,7 @@ com/nowellpoint/client/auth/Authenticators$PasswordGrantResponseFactory.class
 com/nowellpoint/client/NowellpointClient.class
 com/nowellpoint/client/model/Photos.class
 com/nowellpoint/client/resource/AbstractResource$ResultImpl.class
+com/nowellpoint/client/resource/AccountProfileResource$AddressResource.class
 com/nowellpoint/client/auth/OauthAuthenticationResponse.class
 com/nowellpoint/client/resource/AbstractResource.class
 com/nowellpoint/client/model/ConnectorType.class

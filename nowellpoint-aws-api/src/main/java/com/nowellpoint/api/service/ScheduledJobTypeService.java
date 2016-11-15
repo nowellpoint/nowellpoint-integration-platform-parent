@@ -2,7 +2,7 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.model.dto.ScheduledJobType;
+import com.nowellpoint.api.model.domain.ScheduledJobType;
 import com.nowellpoint.api.model.mapper.ScheduledJobTypeModelMapper;
 
 public class ScheduledJobTypeService extends ScheduledJobTypeModelMapper {

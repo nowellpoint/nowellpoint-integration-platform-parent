@@ -22,7 +22,6 @@ import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
-import com.nowellpoint.client.model.ServiceInstance;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.sforce.ThemeItem;
 import com.nowellpoint.client.model.sforce.Icon;
@@ -392,95 +391,6 @@ public class SalesforceConnectorController extends AbstractController {
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * viewServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route viewServiceInstance = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("service")
-    			.path(key)
-    			.execute();
-		
-		ServiceInstance serviceInstance = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			serviceInstance = httpResponse.getEntity(ServiceInstance.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "view");
-		model.put("serviceInstance", serviceInstance);
-		model.put("successMessage", request.cookie("successMessage"));
-		
-		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * editServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route editServiceInstance = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("service")
-    			.path(key)
-    			.execute();
-		
-		ServiceInstance serviceInstance = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			serviceInstance = httpResponse.getEntity(ServiceInstance.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "edit");
-		model.put("action", String.format("/app/connectors/salesforce/%s/services/%s", id, key));
-		model.put("serviceInstance", serviceInstance);
-		model.put("errorMessage", request.cookie("errorMessage"));
-		
-		return render(request, model, String.format(Path.APPLICATION_CONTEXT, serviceInstance.getConfigurationPage()));
 	};
 	
 	/**

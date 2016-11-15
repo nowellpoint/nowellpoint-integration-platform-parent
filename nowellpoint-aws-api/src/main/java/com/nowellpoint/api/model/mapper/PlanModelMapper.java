@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Plan;
+import com.nowellpoint.api.model.domain.Plan;
 
 /**
  * 

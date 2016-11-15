@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 
-import com.nowellpoint.api.model.dto.Property;
+import com.nowellpoint.api.model.domain.Property;
 import com.nowellpoint.aws.model.admin.Properties;
 
 public class PropertyService {

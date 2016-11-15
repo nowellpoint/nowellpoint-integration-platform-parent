@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.model.dto.ErrorDTO;
+import com.nowellpoint.api.model.domain.ErrorDTO;
 
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {

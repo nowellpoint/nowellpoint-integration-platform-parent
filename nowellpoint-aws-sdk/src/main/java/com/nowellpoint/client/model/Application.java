@@ -11,14 +11,11 @@ public class Application extends AbstractResource {
 	
 	private String description;
 	
-	private List<ServiceInstance> serviceInstances;
-	
 	private List<Environment> environments;
 	
 	private String status;
 	
 	public Application() {
-		setServiceInstances(Collections.emptyList());
 		setEnvironments(Collections.emptyList());
 	}
 	
@@ -48,14 +45,6 @@ public class Application extends AbstractResource {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public List<ServiceInstance> getServiceInstances() {
-		return serviceInstances;
-	}
-
-	public void setServiceInstances(List<ServiceInstance> serviceInstances) {
-		this.serviceInstances = serviceInstances;
 	}
 
 	public List<Environment> getEnvironments() {

@@ -326,23 +326,15 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("address")
-				.execute();
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-			
-		Address address = httpResponse.getEntity(Address.class);
-			
+		GetResult<Address> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.address()
+				.get(request.params(":id"));
+		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
-		model.put("address", address);
+		model.put("address", getResult.getTarget());
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);		
 	};
