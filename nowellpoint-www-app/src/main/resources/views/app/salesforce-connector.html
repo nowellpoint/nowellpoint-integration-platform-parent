@@ -48,20 +48,20 @@
                                 <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
                                 <hr>
 
-                                <dt>${labels["phone"]}</dt>
-                                <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
-                                <hr>
-
-                                <dt>${labels["primary.contact"]}</dt>
-                                <dd>${(salesforceConnector.organization.primaryContact)!}&emsp;</dd>
-                                <hr>
-
                                 <dt>${labels["organization.type"]}</dt>
                                 <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
                                 <hr>
 
                                 <dt>${labels["division"]}</dt>
                                 <dd>${(salesforceConnector.organization.division)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["default.locale.sid.key"]}</dt>
+                                <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
+                                <hr>
+
+                                <dt>${labels["primary.contact"]}</dt>
+                                <dd>${(salesforceConnector.organization.primaryContact)!}&emsp;</dd>
                                 <hr>
 
                             </dl>
@@ -80,19 +80,20 @@
                                 <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}&emsp;</dd>
                                 <hr>
 
-                                <dt>${labels["default.locale.sid.key"]}</dt>
-                                <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
+                                <dt>${labels["organization.id"]}</dt>
+                                <dd>${(salesforceConnector.organization.id)!}&emsp;</dd>
                                 <hr>
 
                                 <dt>${labels["language.key"]}</dt>
                                 <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
                                 <hr>
-
-                                <dt>${labels["organization.id"]}</dt>
-                                <dd>${(salesforceConnector.organization.id)!}&emsp;</dd>
+                                
+                                <dt>${labels["phone"]}</dt>
+                                <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
                                 <hr>
 
                             </dl>
+                            
                         </div>
 
                         <div class="col-md-6">
@@ -106,12 +107,12 @@
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["instance.endpoints"]}</h3>
                     </div>
-                    
+
                     <br>
 
                     <div class="row">
 
-                        <div class="col-md-3">
+                        <div class="col-md-6">
 
                             <dl class="dl-vertical">
 
@@ -131,14 +132,6 @@
                                 <dd>${(salesforceConnector.identity.urls.rest)!}&emsp;</dd>
                                 <hr>
 
-                            </dl>
-
-                        </div>
-
-                        <div class="col-md-3">
-
-                            <dl class="dl-vertical">
-
                                 <dt>${labels["sobjects"]}</dt>
                                 <dd>${(salesforceConnector.identity.urls.sobjects)!}&emsp;</dd>
                                 <hr>
@@ -149,6 +142,7 @@
 
                                 <dt>${labels["query"]}</dt>
                                 <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
+                                <hr>
 
                             </dl>
 

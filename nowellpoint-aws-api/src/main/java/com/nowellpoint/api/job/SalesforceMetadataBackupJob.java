@@ -247,8 +247,8 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	// udpate environment with lastest information
 				    	//
 				    	
-				    	environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				    	environment.setTheme(theme);
+				    	environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				    	
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");
