@@ -125,9 +125,22 @@ public class AccountProfileResource {
 	
 	@POST
 	@Path("{id}/address")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateAddress(@PathParam("id") String id, Address address) {
+	public Response updateAddress(
+			@PathParam("id") String id, 
+			@FormParam("city") String city,
+			@FormParam("countryCode") String countryCode,
+			@FormParam("postalCode") String postalCode,
+			@FormParam("state") String state,
+			@FormParam("street") String street) {
+		
+		Address address = new Address();
+		address.setCity(city);
+		address.setCountryCode(countryCode);
+		address.setPostalCode(postalCode);
+		address.setState(state);
+		address.setStreet(street);
 		
 		accountProfileService.updateAddress( id, address);
 		

@@ -18,6 +18,7 @@ com/nowellpoint/client/model/Service.class
 com/nowellpoint/client/auth/RevokeTokenInvalidatorBuilder.class
 com/nowellpoint/client/auth/impl/ClientCredentialsGrantRequestImpl.class
 com/nowellpoint/client/model/NowellpointServiceException.class
+com/nowellpoint/client/model/AddressRequest.class
 com/nowellpoint/client/auth/EnvironmentVariablesCredentials.class
 com/nowellpoint/client/model/sforce/Photos.class
 com/nowellpoint/client/auth/impl/ClientCredentialsGrantAuthorizerBuilderImpl.class
@@ -99,3 +100,4 @@ com/nowellpoint/client/model/NotFoundException.class
 com/nowellpoint/client/model/Project.class
 com/nowellpoint/client/auth/UsernamePasswordCredentials.class
 com/nowellpoint/client/model/AccountProfile.class
+com/nowellpoint/client/model/AccountProfileRequest.class

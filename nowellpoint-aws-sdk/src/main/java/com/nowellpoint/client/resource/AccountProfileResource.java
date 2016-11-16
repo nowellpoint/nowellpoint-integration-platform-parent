@@ -5,10 +5,12 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
+import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.Error;
@@ -93,6 +95,43 @@ public class AccountProfileResource extends AbstractResource {
 		return result;
 	}
 	
+	public UpdateResult<AccountProfile> update(String accountProfileId, AccountProfileRequest accountProfileRequest) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("account-profile")
+				.path(accountProfileId)
+				.parameter("firstName", accountProfileRequest.getFirstName())
+				.parameter("lastName", accountProfileRequest.getLastName())
+				.parameter("company", accountProfileRequest.getCompany())
+				.parameter("division", accountProfileRequest.getDivision())
+				.parameter("department", accountProfileRequest.getDepartment())
+				.parameter("title", accountProfileRequest.getTitle())
+				.parameter("email", accountProfileRequest.getEmail())
+				.parameter("fax", accountProfileRequest.getFax())
+				.parameter("mobilePhone", accountProfileRequest.getMobilePhone())
+				.parameter("phone", accountProfileRequest.getPhone())
+				.parameter("extension", accountProfileRequest.getExtension())
+				.parameter("languageSidKey", accountProfileRequest.getLanguageSidKey())
+				.parameter("localeSidKey", accountProfileRequest.getLocaleSidKey())
+				.parameter("timeZoneSidKey", accountProfileRequest.getTimeZoneSidKey())
+				.parameter("enableSalesforceLogin", accountProfileRequest.getEnableSalesforceLogin())
+				.execute();
+		
+		UpdateResult<AccountProfile> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			AccountProfile resource = httpResponse.getEntity(AccountProfile.class);
+			result = new UpdateResultImpl<AccountProfile>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<AccountProfile>(error);
+		}
+		
+		return result;
+	}
+	
 	public AddressResource address() {
 		return new AddressResource(token);
 	}
@@ -132,6 +171,35 @@ public class AccountProfileResource extends AbstractResource {
 	    	}
 	    	
 	    	return result;
+		}
+		
+		public UpdateResult<Address> update(String accountProfileId, AddressRequest addressRequest) {
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+	    			.acceptCharset("UTF-8")
+					.path("account-profile")
+					.path(accountProfileId)
+					.path("address")
+					.parameter("city", addressRequest.getCity())
+					.parameter("countryCode", addressRequest.getCountryCode())
+					.parameter("state", addressRequest.getState())
+					.parameter("postalCode", addressRequest.getPostalCode())
+					.parameter("street", addressRequest.getStreet())
+					.execute();
+			
+			UpdateResult<Address> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				Address resource = httpResponse.getEntity(Address.class);
+				result = new UpdateResultImpl<Address>(resource);
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new UpdateResultImpl<Address>(error);
+			}
+			
+			return result;
 		}
 	}
 	
@@ -256,6 +324,30 @@ public class AccountProfileResource extends AbstractResource {
 			}
 			
 			return result;
+		}
+		
+		public GetResult<CreditCard> get(String accountProfileId, String paymentMethodToken) {
+			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account-profile")
+					.path(accountProfileId)
+					.path("credit-card")
+					.path(paymentMethodToken)
+					.execute();
+			
+			GetResult<CreditCard> result = null;
+	    	
+	    	if (httpResponse.getStatusCode() == Status.OK) {
+	    		CreditCard resource = httpResponse.getEntity(CreditCard.class);
+	    		result = new GetResultImpl<CreditCard>(resource); 
+	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+	    		Error error = httpResponse.getEntity(Error.class);
+				result = new GetResultImpl<CreditCard>(error);
+	    	}
+	    	
+	    	return result;
 		}
 	}
 }

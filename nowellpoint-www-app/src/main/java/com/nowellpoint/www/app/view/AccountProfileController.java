@@ -21,10 +21,12 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
+import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.ExceptionResponse;
@@ -42,15 +44,12 @@ import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.util.Assert;
 
-import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 public class AccountProfileController extends AbstractController {
-	
-	private static final Logger LOGGER = Logger.getLogger(AccountProfileController.class.getName());
 	
 	public AccountProfileController(Configuration configuration) {
 		super(AccountProfileController.class, configuration);
@@ -376,19 +375,13 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.execute();
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
+		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.get(request.params(":id"));
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		model.put("accountProfile", getResult.getTarget());
 			
 		return render(request, model, Path.Template.ACCOUNT_PROFILE_DEACTIVATE);		
 	};
@@ -406,8 +399,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		AccountProfile accountProfile = new AccountProfile()
-				.withId(request.params(":id"))
+		AccountProfileRequest accountProfileRequest = new AccountProfileRequest()
 				.withFirstName(request.queryParams("firstName"))
 				.withLastName(request.queryParams("lastName"))
 				.withCompany(request.queryParams("company"))
@@ -424,45 +416,41 @@ public class AccountProfileController extends AbstractController {
 				.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
 				.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
 
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("account-profile")
-				.path(request.params(":id"))
-				.parameter("firstName", accountProfile.getFirstName())
-				.parameter("lastName", accountProfile.getLastName())
-				.parameter("company", accountProfile.getCompany())
-				.parameter("division", accountProfile.getDivision())
-				.parameter("department", accountProfile.getDepartment())
-				.parameter("title", accountProfile.getTitle())
-				.parameter("email", accountProfile.getEmail())
-				.parameter("fax", accountProfile.getFax())
-				.parameter("mobilePhone", accountProfile.getMobilePhone())
-				.parameter("phone", accountProfile.getPhone())
-				.parameter("extension", accountProfile.getExtension())
-				.parameter("languageSidKey", accountProfile.getLanguageSidKey())
-				.parameter("localeSidKey", accountProfile.getLocaleSidKey())
-				.parameter("timeZoneSidKey", accountProfile.getTimeZoneSidKey())
-				.parameter("enableSalesforceLogin", accountProfile.getEnableSalesforceLogin())
-				.execute();
+		UpdateResult<AccountProfile> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.update(request.params(":id"), accountProfileRequest);
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
-		
-		if (httpResponse.getStatusCode() != Status.OK && httpResponse.getStatusCode() != Status.CREATED) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+		if (! updateResult.isSuccess()) {
 			
+			AccountProfile accountProfile = new AccountProfile()
+					.withId(request.params(":id"))
+					.withFirstName(request.queryParams("firstName"))
+					.withLastName(request.queryParams("lastName"))
+					.withCompany(request.queryParams("company"))
+					.withDivision(request.queryParams("division"))
+					.withDepartment(request.queryParams("department"))
+					.withTitle(request.queryParams("title"))
+					.withEmail(request.queryParams("email"))
+					.withFax(request.queryParams("fax"))
+					.withMobilePhone(request.queryParams("mobilePhone"))
+					.withPhone(request.queryParams("phone"))
+					.withExtension(request.queryParams("extension"))
+					.withLanguageSidKey(request.queryParams("languageSidKey"))
+					.withLocaleSidKey(request.queryParams("localeSidKey"))
+					.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
+					.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
+
 			Map<String, Object> model = getModel();
 			model.put("account", account);
 			model.put("accountProfile", accountProfile);
-			model.put("errorMessage", error.getMessage());
+			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);
 			
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.profile.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(account), "update.profile.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
@@ -481,33 +469,32 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile accountProfile = getAccount(request);
 		
-		Address address = new Address()
+		AddressRequest addressRequest = new AddressRequest()
 				.withCity(request.queryParams("city"))
 				.withCountryCode(request.queryParams("countryCode"))
 				.withPostalCode(request.queryParams("postalCode"))
 				.withState(request.queryParams("state"))
 				.withStreet(request.queryParams("street"));
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.contentType(MediaType.APPLICATION_JSON)
-    			.acceptCharset("UTF-8")
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("address")
-				.body(address)
-				.execute();
+		UpdateResult<Address> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.address()
+				.update(request.params(":id"), addressRequest);
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+		if (! updateResult.isSuccess()) {
+			Address address = new Address()
+					.withCity(request.queryParams("city"))
+					.withCountryCode(request.queryParams("countryCode"))
+					.withPostalCode(request.queryParams("postalCode"))
+					.withState(request.queryParams("state"))
+					.withStreet(request.queryParams("street"));
+
 			
 			Map<String, Object> model = getModel();
 			model.put("account", accountProfile);
 			model.put("accountProfile", new AccountProfile(request.params(":id")));
 			model.put("address", address);
-			model.put("errorMessage", error.getMessage());
+			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);
 			
@@ -562,19 +549,17 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("credit-card")
-				.path(request.params(":token"))
-				.execute();
+		GetResult<CreditCard> getRequest = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.creditCard()
+				.get(request.params(":id"), request.params(":token"));
+		
 			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
+		if (! getRequest.isSuccess()) {
+			throw new NotFoundException(getRequest.getErrorMessage());
 		}
 		
-		CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
+		CreditCard creditCard = getRequest.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
