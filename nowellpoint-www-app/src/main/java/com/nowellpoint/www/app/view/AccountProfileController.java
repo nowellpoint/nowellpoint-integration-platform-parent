@@ -14,10 +14,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
@@ -29,7 +25,6 @@ import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
-import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.Feature;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
@@ -520,18 +515,17 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-    			.bearerAuthorization(token.getAccessToken())
-        		.path("account-profile")
-        		.path(request.params(":id"))
-        		.path("photo")
-        		.execute();
+		UpdateResult<AccountProfile> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.removeProfilePicture(request.params(":id"));
 		
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		if (! updateResult.isSuccess()) {
+			throw new BadRequestException(updateResult.getErrorMessage());
+		}
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("accountProfile", accountProfile);
+		model.put("accountProfile", updateResult.getTarget());
 		
 		return render(request, model, Path.Template.ACCOUNT_PROFILE);
 	};
@@ -554,7 +548,6 @@ public class AccountProfileController extends AbstractController {
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
 		
-			
 		if (! getRequest.isSuccess()) {
 			throw new NotFoundException(getRequest.getErrorMessage());
 		}
@@ -581,17 +574,11 @@ public class AccountProfileController extends AbstractController {
 	public Route newCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.execute();
+		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.get(request.params(":id"));
 			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NotFoundException(httpResponse.getAsString());
-		}
-			
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		AccountProfile accountProfile = getResult.getTarget();
 		
 		Address address = new Address();
 		address.setCountryCode(accountProfile.getAddress().getCountryCode());
@@ -622,28 +609,22 @@ public class AccountProfileController extends AbstractController {
 	public Route editCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("credit-card")
-				.path(request.params(":token"))
-				.execute();
-			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new NotFoundException(error.getMessage());
+		GetResult<CreditCard> creditCardRequest = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.creditCard()
+				.get(request.params(":id"), request.params(":token"));
+		
+		if (! creditCardRequest.isSuccess()) {
+			throw new NotFoundException(creditCardRequest.getErrorMessage());
 		}
 		
-		CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
+		CreditCard creditCard = creditCardRequest.getTarget();
 		
-		httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.execute();
+		GetResult<AccountProfile> accountProfileRequest = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.get(request.params(":id"));
 		
-		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
+		AccountProfile accountProfile = accountProfileRequest.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);
@@ -833,20 +814,13 @@ public class AccountProfileController extends AbstractController {
 	public Route setPrimaryCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("credit-card")
-				.path(request.params(":token"))
-				.parameter("primary", "true")
-				.execute();
+		UpdateResult<CreditCard> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.creditCard()
+				.setPrimary(request.params(":id"), request.params(":token"));
 			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
+		if (! updateResult.isSuccess()) {
+			throw new BadRequestException(updateResult.getErrorMessage());
 		}
 		
 		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "primary.credit.card.set"), 3, Boolean.FALSE);
@@ -865,17 +839,13 @@ public class AccountProfileController extends AbstractController {
 	public Route removeCreditCard = (Request request, Response response) -> {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("account-profile")
-				.path(request.params(":id"))
-				.path("credit-card")
-				.path(request.params(":token"))
-				.execute();
+		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.creditCard()
+				.delete(request.params(":id"), request.params(":token"));
 			
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
+		if (! deleteResult.getIsSuccess()) {
+			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
 		
 		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.credit.card.success"), 3, Boolean.FALSE);

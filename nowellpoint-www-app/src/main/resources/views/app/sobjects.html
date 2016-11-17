@@ -1,0 +1,89 @@
+<#import "template.html" as t>
+    <@t.page>
+        <#include "navbar.html" />
+        <div class="container">
+
+            <div class="row">
+
+                <br>
+
+                <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>
+
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h3 class="dashhead-title">${labels["sobjects"]}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+            </div>
+
+            <div class="row">
+
+                <br>
+
+                <div id="message"></div>
+
+                <#if errorMessage??>
+                    <div id="alert" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div class="text-center">${successMessage!}</div>
+                    </div>
+                </#if>
+
+                <br>
+
+                <div id="sobjects" class="row">
+                    <#list environment.sobjects?sort_by( "label") as sobject>
+                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <#if icons[ "${sobject.name}"]??>
+                                                <img src="${icons['${sobject.name}']}" />
+                                            </#if>
+                                            <#if ! icons[ "${sobject.name}"]??>
+                                                <img src="/images/salesforce-logo.png" style="height:32px; width=32px" />
+                                            </#if>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading">${(sobject.name)!}</h4> ${(sobject.label)!}
+                                        </div>
+                                        <div class="media-right">
+                                            <span class="icon icon-cog pull-right"></span>
+                                        </div>    
+                                        <table class="table">
+                                            <thead>
+                                                <th class="col-md-1 text-center">${labels["query"]}</th>
+                                                <th class="col-md-1 text-center">${labels["create"]}</th>
+                                                <th class="col-md-1 text-center">${labels["update"]}</th>
+                                                <th class="col-md-1 text-center">${labels["delete"]}</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center ${sobject.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobject.queryable?then('icon-check', 'icon-cross')}"></span></td>
+                                                    <td class="text-center ${sobject.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.createable?then('icon-check', 'icon-cross')}"></span></td>
+                                                    <td class="text-center ${sobject.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.updateable?then('icon-check', 'icon-cross')}"></span></td>
+                                                    <td class="text-center ${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </#list>
+                </div>
+            </div>
+        </div>
+
+    </@t.page>

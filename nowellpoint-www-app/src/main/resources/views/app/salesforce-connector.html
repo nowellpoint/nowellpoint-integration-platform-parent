@@ -190,7 +190,13 @@
                                         <#list salesforceConnector.environments?sort_by( "addedOn") as environment>
                                             <tr id="${environment.key}">
                                                 <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/view">${(environment.environmentName)!}</a></td>
-                                                <td>${(environment.serviceEndpoint)!}</td>
+                                                <td>
+                                                <!-- <#if environment.sobjects??> -->
+                                                    <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/sobjects">${(environment.serviceEndpoint)!}</a>
+                                                <!-- <#else> -->
+                                                    ${(environment.serviceEndpoint)!}
+                                                <!-- </#if> -->
+                                                </td>
                                                 <td>${(environment.apiVersion)!}</td>
                                                 <td>
                                                     <#if environment.isValid>

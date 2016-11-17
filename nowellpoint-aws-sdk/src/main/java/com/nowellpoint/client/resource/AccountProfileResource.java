@@ -22,13 +22,25 @@ import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 
+/**
+ * @author jherson
+ *
+ */
 public class AccountProfileResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "account-profile";
 	
+	/**
+	 * @param token
+	 */
+	
 	public AccountProfileResource(Token token) {
 		super(token);
 	}
+	
+	/**
+	 * @return
+	 */
 	
 	public GetResult<AccountProfile> get() {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
@@ -53,6 +65,12 @@ public class AccountProfileResource extends AbstractResource {
     	return result;
 	} 
 	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	
 	public GetResult<AccountProfile> get(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.accept(MediaType.APPLICATION_JSON)
@@ -76,6 +94,12 @@ public class AccountProfileResource extends AbstractResource {
     	return result;
 	} 
 	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	
 	public DeleteResult deactivate(String id) {
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
@@ -94,6 +118,13 @@ public class AccountProfileResource extends AbstractResource {
 		
 		return result;
 	}
+	
+	/**
+	 * 
+	 * @param accountProfileId
+	 * @param accountProfileRequest
+	 * @return
+	 */
 	
 	public UpdateResult<AccountProfile> update(String accountProfileId, AccountProfileRequest accountProfileRequest) {
 		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
@@ -132,23 +163,82 @@ public class AccountProfileResource extends AbstractResource {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param accountProfileId
+	 * @return
+	 */
+	
+	public UpdateResult<AccountProfile> removeProfilePicture(String accountProfileId) {
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+    			.bearerAuthorization(token.getAccessToken())
+        		.path("account-profile")
+        		.path(accountProfileId)
+        		.path("photo")
+        		.execute();
+		
+		UpdateResult<AccountProfile> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			AccountProfile resource = httpResponse.getEntity(AccountProfile.class);
+			result = new UpdateResultImpl<AccountProfile>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<AccountProfile>(error);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	public AddressResource address() {
 		return new AddressResource(token);
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	
 	public SubscriptionResource subscription() {
 		return new SubscriptionResource(token);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	
 	public CreditCardResource creditCard() {
 		return new CreditCardResource(token);
 	}
 	
+	/**
+	 * 
+	 * @author jherson
+	 *
+	 */
+	
 	public class AddressResource extends AbstractResource {
+		
+		/**
+		 * 
+		 * @param token
+		 */
 		
 		public AddressResource(Token token) {
 			super(token);
 		}
+		
+		/**
+		 * 
+		 * @param accountProfileId
+		 * @return
+		 */
 		
 		public GetResult<Address> get(String accountProfileId) {
 			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
@@ -172,6 +262,13 @@ public class AccountProfileResource extends AbstractResource {
 	    	
 	    	return result;
 		}
+		
+		/**
+		 * 
+		 * @param accountProfileId
+		 * @param addressRequest
+		 * @return
+		 */
 		
 		public UpdateResult<Address> update(String accountProfileId, AddressRequest addressRequest) {
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
@@ -203,11 +300,28 @@ public class AccountProfileResource extends AbstractResource {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author jherson
+	 *
+	 */
+	
 	public class SubscriptionResource extends AbstractResource {
+		
+		/**
+		 * 
+		 * @param token
+		 */
 		
 		public SubscriptionResource(Token token) {
 			super(token);
 		}
+		
+		/**
+		 * 
+		 * @param subscriptionRequest
+		 * @return
+		 */
 		
 		public SetResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
@@ -235,11 +349,28 @@ public class AccountProfileResource extends AbstractResource {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author jherson
+	 *
+	 */
+	
 	public class CreditCardResource extends AbstractResource {
+		
+		/**
+		 * 
+		 * @param token
+		 */
 		
 		public CreditCardResource(Token token) {
 			super(token);
 		}
+		
+		/**
+		 * 
+		 * @param creditCardRequest
+		 * @return
+		 */
 		
 		public AddResult<CreditCard> add(CreditCardRequest creditCardRequest) {
 			
@@ -282,6 +413,12 @@ public class AccountProfileResource extends AbstractResource {
 			
 			return result;
 		}
+		
+		/**
+		 * 
+		 * @param creditCardRequest
+		 * @return
+		 */
 		
 		public UpdateResult<CreditCard> update(CreditCardRequest creditCardRequest) {
 			
@@ -326,6 +463,44 @@ public class AccountProfileResource extends AbstractResource {
 			return result;
 		}
 		
+		/**
+		 * 
+		 * @param accountProfileId
+		 * @param paymentMethodToken
+		 * @return
+		 */
+		
+		public UpdateResult<CreditCard> setPrimary(String accountProfileId, String paymentMethodToken) {
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.path("account-profile")
+					.path(accountProfileId)
+					.path("credit-card")
+					.path(paymentMethodToken)
+					.parameter("primary", "true")
+					.execute();
+			
+			UpdateResult<CreditCard> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
+				result = new UpdateResultImpl<CreditCard>(creditCard);
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new UpdateResultImpl<CreditCard>(error);
+			}
+			
+			return result;
+		}
+		
+		/**
+		 * @param accountProfileId
+		 * @param paymentMethodToken
+		 * @return
+		 */
+		
 		public GetResult<CreditCard> get(String accountProfileId, String paymentMethodToken) {
 			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 					.bearerAuthorization(token.getAccessToken())
@@ -348,6 +523,35 @@ public class AccountProfileResource extends AbstractResource {
 	    	}
 	    	
 	    	return result;
+		}
+		
+		/**
+		 * 
+		 * @param accountProfileId
+		 * @param paymentMethodToken
+		 * @return
+		 */
+		
+		public DeleteResult delete(String accountProfileId, String paymentMethodToken) {
+			HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("account-profile")
+					.path(accountProfileId)
+					.path("credit-card")
+					.path(paymentMethodToken)
+					.execute();
+			
+			DeleteResult result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				result = new DeleteResultImpl();
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new DeleteResultImpl(error);
+			}
+			
+			return result;
+			
 		}
 	}
 }

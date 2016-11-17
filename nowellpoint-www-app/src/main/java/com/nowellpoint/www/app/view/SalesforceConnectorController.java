@@ -84,6 +84,56 @@ public class SalesforceConnectorController extends AbstractController {
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
+	 * sobjectsList
+	 * 
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 */
+	
+	public Route sobjectsList = (Request request, Response response) -> {		
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.getEnvironment(id, key);
+		
+		Environment environment = result.getTarget();
+		
+		Map<String,String> icons = new HashMap<String,String>();
+		
+		environment.getSobjects().stream().forEach(sobject -> {
+			Optional<ThemeItem> item = environment.getTheme()
+					.getThemeItems()
+					.stream()
+					.filter(themeItem -> themeItem.getName().equals(sobject.getName()))
+					.findFirst();
+			
+			if (item.isPresent()) {
+				Optional<Icon> icon = item.get()
+						.getIcons()
+						.stream()
+						.filter(i -> i.getHeight() == 32)
+						.findFirst();
+				
+				if (icon.isPresent()) {
+					icons.put(sobject.getName(), icon.get().getUrl());
+				} 
+			}
+		});
+		
+		Map<String, Object> model = getModel();
+		model.put("id", id);
+		model.put("environment", environment);
+		model.put("icons", icons);
+		
+		return render(request, model, Path.Template.SOBJECTS);
+	};
+	
+	/**
+	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * 
 	 * viewEnvironment
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -101,33 +151,10 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Environment environment = result.getTarget();
 		
-		Map<String,String> iconMap = new HashMap<String,String>();
-		
-		environment.getSobjects().stream().forEach(sobject -> {
-			Optional<ThemeItem> item = environment.getTheme()
-					.getThemeItems()
-					.stream()
-					.filter(themeItem -> themeItem.getName().equals(sobject.getName()))
-					.findFirst();
-			
-			if (item.isPresent()) {
-				Optional<Icon> icon = item.get()
-						.getIcons()
-						.stream()
-						.filter(i -> i.getHeight() == 32)
-						.findFirst();
-				
-				if (icon.isPresent()) {
-					iconMap.put(sobject.getName(), icon.get().getUrl());
-				} 
-			}
-		});
-		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "view");
 		model.put("environment", environment);
-		model.put("icons", iconMap);
 		
 		return render(request, model, Path.Template.ENVIRONMENT);
 	};

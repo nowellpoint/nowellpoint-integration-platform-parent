@@ -228,6 +228,7 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE, salesforceConnectorController.updateEnvironment);
         delete(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE, salesforceConnectorController.removeEnvironment);
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, salesforceConnectorController.testConnection);  
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECTS, salesforceConnectorController.sobjectsList);
         
         get(Path.Route.SCHEDULED_JOBS_LIST, scheduledJobsController.getScheduledJobs);
         get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, scheduledJobsController.selectType);
