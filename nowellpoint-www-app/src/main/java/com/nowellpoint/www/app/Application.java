@@ -116,7 +116,7 @@ public class Application implements SparkApplication {
         //
         
         AuthenticationController authenticationController = new AuthenticationController(cfg);
-        AccountProfileController accountProfileController = new AccountProfileController(cfg);
+        AccountProfileController accountProfileController = new AccountProfileController();
         VerifyEmailController verifyEmailController = new VerifyEmailController(cfg);
         DashboardController dashboardController = new DashboardController(cfg);
         AdministrationController administrationController = new AdministrationController(cfg);
@@ -129,6 +129,8 @@ public class Application implements SparkApplication {
         //ProjectController projectController = new ProjectController(cfg);
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
         ScheduledJobController scheduledJobsController = new ScheduledJobController(cfg);
+        
+        accountProfileController.configureRoutes(cfg);
         
         //
         // setup routes
@@ -195,25 +197,6 @@ public class Application implements SparkApplication {
         get(Path.Route.ADMINISTRATION.concat("/cache"), administrationController.showManageCache);	
         get(Path.Route.ADMINISTRATION.concat("/properties"), administrationController.showManageProperties);	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
-        
-        get(Path.Route.ACCOUNT_PROFILE, accountProfileController.getAccountProfile);
-        get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, accountProfileController.listPlans);
-        get(Path.Route.ACCOUNT_PROFILE_PLAN, accountProfileController.reviewPlan);
-        post(Path.Route.ACCOUNT_PROFILE_PLAN, accountProfileController.setPlan);
-        post(Path.Route.ACCOUNT_PROFILE, accountProfileController.updateAccountProfile);
-        get(Path.Route.ACCOUNT_PROFILE.concat("/edit"), accountProfileController.editAccountProfile);
-        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.confirmDeactivateAccountProfile);
-        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, accountProfileController.deactivateAccountProfile);
-        delete(Path.Route.ACCOUNT_PROFILE.concat("/picture"), accountProfileController.removeProfilePicture);
-        get(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.editAddress);
-        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, accountProfileController.updateAccountProfileAddress);
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), accountProfileController.getCreditCard);
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), accountProfileController.newCreditCard);
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), accountProfileController.editCreditCard);
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, accountProfileController.addCreditCard);
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.updateCreditCard);
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), accountProfileController.setPrimaryCreditCard);
-        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), accountProfileController.removeCreditCard);
         
         get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, salesforceConnectorController.newSalesforceConnector);

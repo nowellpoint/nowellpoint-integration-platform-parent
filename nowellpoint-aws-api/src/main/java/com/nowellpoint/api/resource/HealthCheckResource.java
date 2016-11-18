@@ -21,6 +21,6 @@ public class HealthCheckResource {
 	@Path("database")
 	@PermitAll
 	public Response checkDatabase() {
-		return Response.ok(MongoDatastore.checkStatus()).build();
+		return Response.ok(MongoDatastore.checkStatus().toJson()).build();
 	}
 }

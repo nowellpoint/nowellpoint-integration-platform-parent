@@ -1,5 +1,9 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.delete;
+import static spark.Spark.get;
+import static spark.Spark.post;
+
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -42,24 +46,54 @@ import com.nowellpoint.util.Assert;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
-public class AccountProfileController extends AbstractController {
+public class AccountProfileController extends AbstractController2 {
 	
-	public AccountProfileController(Configuration configuration) {
-		super(AccountProfileController.class, configuration);
+	public static class Template {
+		public static final String ACCOUNT_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile-me.html");
+		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile.html");
+		public static final String ACCOUNT_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "account-profile-plans.html");
+		public static final String ACCOUNT_PROFILE_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-edit.html");
+		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-address-edit.html");
+		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile-deactivate.html");
+		public static final String ACCOUNT_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
+	}
+	
+	public AccountProfileController() {
+		super(AccountProfileController.class);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> reviewPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> setPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_EDIT, (request, response) -> editAccountProfile(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> confirmDeactivateAccountProfile(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> deactivateAccountProfile(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> removeProfilePicture(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> editAddress(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> getCreditCard(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), (request, response) -> newCreditCard(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> editCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> addCreditCard(configuration, request, response));  
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> updateCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> setPrimaryCreditCard(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> removeCreditCard(configuration, request, response));
 	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * listPlans
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route listPlans = (Request request, Response response) -> {
-		
+	private String listPlans(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -83,19 +117,52 @@ public class AccountProfileController extends AbstractController {
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);		
-	};
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * reviewPlan
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route reviewPlan = (Request request, Response response) -> {
+	private String getAccountProfile(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
 		
+		String id = request.params(":id");
+		
+		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.get(id);
+		
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getLastModifiedBy().getId());
+		
+		Map<String, Object> model = getModel();
+		model.put("accountProfile", getResult.getTarget());
+		model.put("locales", getLocales(getResult.getTarget()));
+		model.put("languages", getSupportedLanguages());
+		model.put("createdByHref", createdByHref);
+		model.put("lastModifiedByHref", lastModifiedByHref);
+		
+		if (getResult.getTarget().getId().equals(id)) {
+			return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
+		}
+
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE);
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String reviewPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
@@ -123,74 +190,18 @@ public class AccountProfileController extends AbstractController {
 		model.put("action", "reviewPlan");
 		model.put("plan", plan);
 			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);		
-	};
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getAccountProfile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route getAccountProfile = (Request request, Response response) -> {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.get(id);
-		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getLastModifiedBy().getId());
-		
-		Map<String, Object> model = getModel();
-		model.put("accountProfile", getResult.getTarget());
-		model.put("locales", getLocales(getResult.getTarget()));
-		model.put("languages", getSupportedLanguages());
-		model.put("createdByHref", createdByHref);
-		model.put("lastModifiedByHref", lastModifiedByHref);
-		
-		if (getResult.getTarget().getId().equals(id)) {
-			return render(request, model, Path.Template.ACCOUNT_PROFILE_ME);
-		}
-
-		return render(request, model, Path.Template.ACCOUNT_PROFILE);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * editAccountProfile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route editAccountProfile = (Request request, Response response) -> {		
-		AccountProfile account = getAccount(request);
-			
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", account);
-		model.put("locales", new TreeMap<String, String>(getLocales(account)));
-		model.put("languages", getSupportedLanguages());
-		model.put("timeZones", getTimeZones());
-			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * setSubscription
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route setPlan = (Request request, Response response) -> {		
+	private String setPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
@@ -272,7 +283,7 @@ public class AccountProfileController extends AbstractController {
 				model.put("action", "reviewPlan");
 				model.put("errorMessage", addResult.getErrorMessage());
 				
-				return render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);
+				return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
 			}
 		}
 		
@@ -292,7 +303,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("accountProfile", accountProfile);
 			model.put("errorMessage", setResult.getErrorMessage());
 			
-			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_PLANS);
+			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
 			
 			throw new BadRequestException(output);	
 		}
@@ -305,91 +316,17 @@ public class AccountProfileController extends AbstractController {
 		}
 		
 		return "";	
-	};	
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editAddress
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route editAddress = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
-		
-		GetResult<Address> getResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.address()
-				.get(request.params(":id"));
-		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", new AccountProfile(request.params(":id")));
-		model.put("address", getResult.getTarget());
-			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * deactivateAccountProfile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route deactivateAccountProfile = (Request request, Response response) -> {	
-		Token token = getToken(request);
-		
-		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.deactivate(request.params(":id"));
-		
-		if (! deleteResult.getIsSuccess()) {
-			throw new BadRequestException(deleteResult.getErrorMessage());
-		}
-		
-    	response.redirect(Path.Route.LOGOUT);
-		
-		return "";	
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * confirmDeactivateAccountProfile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route confirmDeactivateAccountProfile = (Request request, Response response) -> {	
-		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
-		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.get(request.params(":id"));
-			
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", getResult.getTarget());
-			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_DEACTIVATE);		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * updateAccountProfile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route updateAccountProfile = (Request request, Response response) -> {
+	private String updateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -440,7 +377,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("accountProfile", accountProfile);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_EDIT);
+			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);
 			
 			throw new BadRequestException(output);	
 		}
@@ -449,17 +386,140 @@ public class AccountProfileController extends AbstractController {
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String editAccountProfile(Configuration configuration, Request request, Response response) {
+		AccountProfile account = getAccount(request);
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", account);
+		model.put("locales", new TreeMap<String, String>(getLocales(account)));
+		model.put("languages", getSupportedLanguages());
+		model.put("timeZones", getTimeZones());
+			
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);		
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * updateAccountProfileAddress
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route updateAccountProfileAddress = (Request request, Response response) -> {
+	private String confirmDeactivateAccountProfile(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.get(request.params(":id"));
+			
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", getResult.getTarget());
+			
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_DEACTIVATE);		
+	};
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.deactivate(request.params(":id"));
+		
+		if (! deleteResult.getIsSuccess()) {
+			throw new BadRequestException(deleteResult.getErrorMessage());
+		}
+		
+    	response.redirect(Path.Route.LOGOUT);
+		
+		return "";	
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String removeProfilePicture(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		UpdateResult<AccountProfile> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.removeProfilePicture(request.params(":id"));
+		
+		if (! updateResult.isSuccess()) {
+			throw new BadRequestException(updateResult.getErrorMessage());
+		}
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", updateResult.getTarget());
+		
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE);
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String editAddress(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		AccountProfile account = getAccount(request);
+		
+		GetResult<Address> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.address()
+				.get(request.params(":id"));
+		
+		Map<String, Object> model = getModel();
+		model.put("account", account);
+		model.put("accountProfile", new AccountProfile(request.params(":id")));
+		model.put("address", getResult.getTarget());
+			
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ADDRESS_EDIT);	
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
@@ -491,7 +551,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("address", address);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(request, model, Path.Template.ACCOUNT_PROFILE_ADDRESS_EDIT);
+			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ADDRESS_EDIT);
 			
 			throw new BadRequestException(output);
 		}
@@ -500,45 +560,17 @@ public class AccountProfileController extends AbstractController {
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";		
-	};
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * removeProfilePicture
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route removeProfilePicture = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		AccountProfile account = getAccount(request);
-		
-		UpdateResult<AccountProfile> updateResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.removeProfilePicture(request.params(":id"));
-		
-		if (! updateResult.isSuccess()) {
-			throw new BadRequestException(updateResult.getErrorMessage());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", updateResult.getTarget());
-		
-		return render(request, model, Path.Template.ACCOUNT_PROFILE);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * getCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route getCreditCard = (Request request, Response response) -> {
+	private String getCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -560,18 +592,18 @@ public class AccountProfileController extends AbstractController {
 		model.put("creditCard", creditCard);
 		model.put("mode", "view");
 		
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * newCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route newCreditCard = (Request request, Response response) -> {
+	private String newCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
@@ -595,18 +627,18 @@ public class AccountProfileController extends AbstractController {
 		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 		model.put("mode", "new");
 		
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route editCreditCard = (Request request, Response response) -> {
+	private String editCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		GetResult<CreditCard> creditCardRequest = new NowellpointClient(new TokenCredentials(token))
@@ -632,18 +664,18 @@ public class AccountProfileController extends AbstractController {
 		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
 		model.put("mode", "edit");
 		
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * addCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route addCreditCard = (Request request, Response response) -> {
+	private String addCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
@@ -716,18 +748,18 @@ public class AccountProfileController extends AbstractController {
 			model.put("errorMessage", addResult.getErrorMessage());
 		}
 		
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * updateCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route updateCreditCard = (Request request, Response response) -> {
+	private String updateCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
@@ -800,18 +832,18 @@ public class AccountProfileController extends AbstractController {
 			model.put("errorMessage", updateResult.getErrorMessage());
 		}
 			
-		return render(request, model, Path.Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * setPrimaryCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route setPrimaryCreditCard = (Request request, Response response) -> {
+	private String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		UpdateResult<CreditCard> updateResult = new NowellpointClient(new TokenCredentials(token))
@@ -829,14 +861,14 @@ public class AccountProfileController extends AbstractController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * removeCreditCard
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route removeCreditCard = (Request request, Response response) -> {
+	private String removeCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
