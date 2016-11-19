@@ -311,7 +311,7 @@ public class AccountProfileController extends AbstractController2 {
 		if (newAccount) {
 			response.redirect(Path.Route.SCHEDULED_JOB_SELECT_TYPE);
 		} else {
-			response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "subscription.plan.update.success"), 3);
+			response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "subscription.plan.update.success"), 3);
 			response.redirect(Path.Route.ACCOUNT_PROFILE.replace(":id", request.params(":id")));
 		}
 		
@@ -382,7 +382,7 @@ public class AccountProfileController extends AbstractController2 {
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(account), "update.profile.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.profile.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";	
@@ -556,7 +556,7 @@ public class AccountProfileController extends AbstractController2 {
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.address.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.address.success"), 3);
 		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
 		
 		return "";		
@@ -678,8 +678,6 @@ public class AccountProfileController extends AbstractController2 {
 	private String addCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile accountProfile = getAccount(request);
-		
 		String id = request.params(":id");
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
@@ -724,7 +722,7 @@ public class AccountProfileController extends AbstractController2 {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "add.credit.card.success"));
+			model.put("successMessage", MessageProvider.getMessage(getLocale(request), "add.credit.card.success"));
 		} else {	
 			
 			CreditCard creditCard = new CreditCard()
@@ -761,8 +759,6 @@ public class AccountProfileController extends AbstractController2 {
 	
 	private String updateCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		
-		AccountProfile accountProfile = getAccount(request);
 		
 		String accountProfileId = request.params(":id");
 		String creditCardToken = request.params(":token");
@@ -809,7 +805,7 @@ public class AccountProfileController extends AbstractController2 {
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
-			model.put("successMessage", MessageProvider.getMessage(getDefaultLocale(accountProfile), "update.credit.card.success"));
+			model.put("successMessage", MessageProvider.getMessage(getLocale(request), "update.credit.card.success"));
 		} else {
 			CreditCard creditCard = new CreditCard()
 					.withBillingAddress(new Address()
@@ -855,7 +851,7 @@ public class AccountProfileController extends AbstractController2 {
 			throw new BadRequestException(updateResult.getErrorMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "primary.credit.card.set"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getLocale(request), "primary.credit.card.set"), 3, Boolean.FALSE);
 		
 		return "";
 	};
@@ -880,7 +876,7 @@ public class AccountProfileController extends AbstractController2 {
 			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.credit.card.success"), 3, Boolean.FALSE);
+		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getLocale(request), "remove.credit.card.success"), 3, Boolean.FALSE);
 		
 		return "";
 	};

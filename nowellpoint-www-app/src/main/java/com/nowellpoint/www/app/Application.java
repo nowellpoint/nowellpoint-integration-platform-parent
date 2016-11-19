@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app;
 
-import static spark.Spark.before;
 import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
@@ -13,11 +12,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.aws.http.HttpResponse;
@@ -77,7 +76,8 @@ public class Application implements SparkApplication {
 
         cfg.setClassForTemplateLoading(this.getClass(), "/views");
 		cfg.setDefaultEncoding("UTF-8");
-		cfg.setLocale(Locale.US);
+		cfg.setLocale(Locale.getDefault());
+		cfg.setTimeZone(TimeZone.getDefault());
         
         //
         // load countries list
@@ -115,28 +115,29 @@ public class Application implements SparkApplication {
         //
         //
         
-        AuthenticationController authenticationController = new AuthenticationController(cfg);
+        AuthenticationController authenticationController = new AuthenticationController();
         AccountProfileController accountProfileController = new AccountProfileController();
         VerifyEmailController verifyEmailController = new VerifyEmailController(cfg);
         DashboardController dashboardController = new DashboardController(cfg);
-        AdministrationController administrationController = new AdministrationController(cfg);
+        AdministrationController administrationController = new AdministrationController();
         SignUpController signUpController = new SignUpController(cfg);
         NotificationController notificationController = new NotificationController(cfg);
         //SetupController setupController = new SetupController(cfg);
-        SalesforceOauthController salesforceOauthController = new SalesforceOauthController(cfg);
+        SalesforceOauthController salesforceOauthController = new SalesforceOauthController();
         ContactUsController contactUsController = new ContactUsController(cfg);
         //ApplicationController applicationController = new ApplicationController(cfg);
         //ProjectController projectController = new ProjectController(cfg);
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
         ScheduledJobController scheduledJobsController = new ScheduledJobController(cfg);
         
-        accountProfileController.configureRoutes(cfg);
-        
         //
         // setup routes
         //
         
-        before("/app/*", AuthenticationController.verify);
+        authenticationController.configureRoutes(cfg);
+        accountProfileController.configureRoutes(cfg);
+        administrationController.configureRoutes(cfg);
+        salesforceOauthController.configureRoutes(cfg);
 
         get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
         
@@ -144,9 +145,9 @@ public class Application implements SparkApplication {
         
         get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
-        get(Path.Route.LOGIN, authenticationController.showLoginPage);
-        post(Path.Route.LOGIN, AuthenticationController.login);
-        get(Path.Route.LOGOUT, AuthenticationController.logout);
+//        get(Path.Route.LOGIN, authenticationController.showLoginPage);
+//        post(Path.Route.LOGIN, AuthenticationController.login);
+//        get(Path.Route.LOGOUT, AuthenticationController.logout);
         
         get(Path.Route.CONTACT_US, contactUsController.showContactUs);
 		post(Path.Route.CONTACT_US, contactUsController.contactUs);
@@ -189,15 +190,6 @@ public class Application implements SparkApplication {
 //		post(Path.Route.PROJECTS, projectController.saveProject);
 //		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
         
-        get(Path.Route.SALESFORCE_OAUTH, salesforceOauthController.oauth);
-        get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), salesforceOauthController.callback);
-        get(Path.Route.SALESFORCE_OAUTH.concat("/token"), salesforceOauthController.getSalesforceToken);
-        
-        get(Path.Route.ADMINISTRATION, administrationController.showAdministrationHome);	
-        get(Path.Route.ADMINISTRATION.concat("/cache"), administrationController.showManageCache);	
-        get(Path.Route.ADMINISTRATION.concat("/properties"), administrationController.showManageProperties);	
-		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), administrationController.purgeCache);
-        
         get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, salesforceConnectorController.newSalesforceConnector);
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, salesforceConnectorController.viewSalesforceConnector);
@@ -231,8 +223,6 @@ public class Application implements SparkApplication {
         // exception handlers
         //
         
-        exception(NotAuthorizedException.class, authenticationController.handleNotAuthorizedException);
-        
         exception(NowellpointServiceException.class, (exception, request, response) ->{
         	response.status(((NowellpointServiceException) exception).getStatusCode());
         	response.body(exception.getMessage());
@@ -244,6 +234,7 @@ public class Application implements SparkApplication {
         });
         
         exception(NotFoundException.class, (exception, request, response) -> {
+        	exception.printStackTrace();
             response.status(404);
             response.body(exception.getMessage());
         });

@@ -36,24 +36,14 @@ abstract class AbstractController2 implements Controller {
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	protected static final String APPLICATION_CONTEXT = "/app/%s";
 	private Class<?> controllerClass;
-	protected Configuration configuration;
 	
 	public AbstractController2(Class<?> controllerClass) {		
 		this.controllerClass = controllerClass;
 	}
 	
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
-	
 	protected Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<String, Object>();
 		return model;
-	}
-	
-	protected Token getToken(Request request) {
-		Token token = request.attribute("com.nowellpoint.auth.token");
-		return token;
 	}
 	
 	protected String getValue(Token token, String key) {
@@ -116,74 +106,30 @@ abstract class AbstractController2 implements Controller {
 		return output.toString();
 	}
 	
+	protected Token getToken(Request request) {
+		return request.attribute("com.nowellpoint.auth.token");
+	}
+	
 	protected AccountProfile getAccount(Request request) {
 		return request.attribute("account");
 	}
 	
-	protected Locale getDefaultLocale(AccountProfile accountProfile) {
-		Locale locale = null;
-		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
-			String[] attrs = accountProfile.getLocaleSidKey().split("_");
-			if (attrs.length == 1) {
-				locale = new Locale(attrs[0]);
-			} else if (attrs.length == 2) {
-				locale = new Locale(attrs[0], attrs[1]);
-			} else if (attrs.length == 3) {
-				locale = new Locale(attrs[0], attrs[1], attrs[3]);
-			}
-		} else {
-			locale = configuration.getLocale();
-		}
-		return locale;
+	protected Locale getLocale(Request request) {
+		return request.attribute("com.nowellpoint.default.locale");
 	}
 	
-	protected Locale getDefaultLocale(Configuration configuration, AccountProfile accountProfile) {
-		Locale locale = null;
-		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
-			String[] attrs = accountProfile.getLocaleSidKey().split("_");
-			if (attrs.length == 1) {
-				locale = new Locale(attrs[0]);
-			} else if (attrs.length == 2) {
-				locale = new Locale(attrs[0], attrs[1]);
-			} else if (attrs.length == 3) {
-				locale = new Locale(attrs[0], attrs[1], attrs[3]);
-			}
-		} else {
-			locale = configuration.getLocale();
-		}
-		return locale;
+	protected TimeZone getTimeZone(Request request) {		
+		return request.attribute("com.nowellpoint.default.timezone");
 	}
 	
-	protected TimeZone getDefaultTimeZone(AccountProfile accountProfile) {		
-		TimeZone timeZone = null;
-		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
-			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
-		} else {
-			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
-		}
-		
-		return timeZone;
-	}
-	
-	protected TimeZone getDefaultTimeZone(Configuration configuration, AccountProfile accountProfile) {		
-		TimeZone timeZone = null;
-		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
-			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
-		} else {
-			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
-		}
-		
-		return timeZone;
-	}
-	
-	protected String getLabel(AccountProfile accountProfile, String key) {
-		return ResourceBundle.getBundle(controllerClass.getName(), getDefaultLocale(accountProfile)).getString(key);
+	protected String getLabel(Request request, String key) {
+		return ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)).getString(key);
 	}
 	
 	protected String render(Configuration configuration, Request request, Response response, Map<String,Object> model, String templateName) {	
 		AccountProfile accountProfile = getAccount(request);
-		Locale locale = getDefaultLocale(configuration, accountProfile);
-		TimeZone timeZone = getDefaultTimeZone(configuration, accountProfile);
+		Locale locale = getLocale(request) != null ? getLocale(request) : configuration.getLocale();
+		TimeZone timeZone = getTimeZone(request) != null ? getTimeZone(request) : configuration.getTimeZone();
 		model.put("account", accountProfile);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

@@ -1,5 +1,7 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.get;
+
 import java.util.List;
 import java.util.Map;
 
@@ -17,44 +19,52 @@ import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
-public class AdministrationController extends AbstractController {
+public class AdministrationController extends AbstractController2 {
 	
 	private static final Logger LOGGER = Logger.getLogger(AdministrationController.class.getName());
 	
-	public AdministrationController(Configuration cfg) {
-		super(AdministrationController.class, cfg);
+	public static class Template {
+		public static final String ADMINISTRATION_HOME = String.format(APPLICATION_CONTEXT, "administration-home.html");
+		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "cache.html");
+		public static final String PROPERTY_MANAGER = String.format(APPLICATION_CONTEXT, "properties-list.html");
 	}
 	
-	public void configureRoutes(Configuration cfg) {
-		
-	
+	public AdministrationController() {
+		super(AdministrationController.class);
 	}
 	
-	public Route showAdministrationHome = (Request request, Response response) -> {
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		get(Path.Route.ADMINISTRATION, (request, response) -> showAdministrationHome(configuration, request, response));	
+        get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> showManageCache(configuration, request, response));	
+        get(Path.Route.ADMINISTRATION.concat("/properties"), (request, response) -> showManageProperties(configuration, request, response));	
+		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(configuration, request, response));
+	}
+	
+	private String showAdministrationHome(Configuration configuration, Request request, Response response) {
 		
 		AccountProfile account = getAccount(request);
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
-		return render(request, model, Path.Template.ADMINISTRATION_HOME);
+		return render(configuration, request, response, model, Template.ADMINISTRATION_HOME);
 		
 	};
 	
-	public Route showManageCache = (Request request, Response response) -> {
+	private String showManageCache(Configuration configuration, Request request, Response response) {
 		
 		AccountProfile account = getAccount(request);
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
-		return render(request, model, Path.Template.CACHE_MANAGER);
+		return render(configuration, request, response, model, Template.CACHE_MANAGER);
 		
 	};
 	
-	public Route purgeCache = (Request request, Response response) -> {
+	private String purgeCache(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
@@ -68,10 +78,10 @@ public class AdministrationController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		
-		return render(request, model, Path.Template.CACHE_MANAGER);
+		return render(configuration, request, response, model, Template.CACHE_MANAGER);
 	};
 	
-	public Route showManageProperties = (Request request, Response response) -> {
+	private String showManageProperties(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile account = getAccount(request);
@@ -93,6 +103,6 @@ public class AdministrationController extends AbstractController {
 		model.put("account", account);
 		model.put("propertyList", properties);
 		
-		return render(request, model, Path.Template.PROPERTY_MANAGER);
+		return render(configuration, request, response, model, Template.PROPERTY_MANAGER);
 	};
 }
