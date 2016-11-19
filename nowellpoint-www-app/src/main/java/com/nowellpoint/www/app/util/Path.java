@@ -61,6 +61,8 @@ public class Path {
 		public static final String SCHEDULED_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId");
 		public static final String SCHEDULED_JOB_DOWNLOAD_FILE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId/download/:filename");
 		
+		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
+		
 		public static final String APPLICATION_LIST = String.format(APPLICATION_CONTEXT, "applications");
 		public static final String APPLICATION_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id");
 		public static final String APPLICATION_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "applications/select");
@@ -81,36 +83,10 @@ public class Path {
 
 	public static class Template {
 		public static final String INDEX = "index.html";
-		public static final String SIGN_UP = "signup.html";
 		public static final String CONTACT_US = "contact.html";
 		public static final String SERVICES = "services.html";
-		public static final String VERIFY_EMAIL = "verify-email.html";
 		public static final String START = String.format(APPLICATION_CONTEXT, "start.html");
-		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
-		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup.html");
-		public static final String APPLICATION = String.format(APPLICATION_CONTEXT, "application.html");
-		public static final String APPLICATION_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "application-connector-select.html");
-		public static final String APPLICATION_EDIT = String.format(APPLICATION_CONTEXT, "application-edit.html");
-		public static final String APPLICATION_CREATE = String.format(APPLICATION_CONTEXT, "application.html");
-		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "applications-list.html");
-		public static final String PROJECT = String.format(APPLICATION_CONTEXT, "project.html");
-		public static final String PROJECT_LIST = String.format(APPLICATION_CONTEXT, "project-list.html");
 		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "query-edit.html");
 		public static final String SALESFORCE_OUTBOUND_MESSAGE = String.format(APPLICATION_CONTEXT, "salesforce-outbound-messages.html");
-		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
-		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
-		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobjects.html");
-		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
-		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
-		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
-		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connectors-list.html");
-		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
-		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notification-list.html");
-		public static final String SCHEDULED_JOBS_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs-list.html");
-		public static final String SCHEDULED_JOB_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-create.html");
-		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
-		public static final String SCHEDULED_JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
-		public static final String SCHEDULE_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-job-run-history.html");
-		public static final String SCHEDULE = String.format(APPLICATION_CONTEXT, "schedule.html");
 	}
 }

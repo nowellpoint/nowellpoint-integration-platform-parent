@@ -40,7 +40,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AuthenticationController extends AbstractController2 {
+public class AuthenticationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";

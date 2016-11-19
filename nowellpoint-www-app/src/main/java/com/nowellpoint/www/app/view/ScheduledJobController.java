@@ -1,13 +1,19 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.get;
 import static spark.Spark.halt;
+import static spark.Spark.post;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
@@ -28,25 +34,51 @@ import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 public class ScheduledJobController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ScheduledJobController.class.getName());
+	
+	public static class Template {
+		public static final String SCHEDULED_JOBS_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs-list.html");
+		public static final String SCHEDULED_JOB_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-create.html");
+		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
+		public static final String SCHEDULED_JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
+		public static final String SCHEDULE_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-job-run-history.html");
+		public static final String SCHEDULE = String.format(APPLICATION_CONTEXT, "schedule.html");
+	}
 
-	public ScheduledJobController(Configuration configuration) {
-		super(ScheduledJobController.class, configuration);
+	public ScheduledJobController() {
+		super(ScheduledJobController.class);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
+        get(Path.Route.SCHEDULED_JOBS_LIST, (request, response) -> getScheduledJobs(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, (request, response) -> selectType(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_CREATE, (request, response) -> createScheduledJob(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_VIEW, (request, response) -> viewScheduledJob(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_EDIT, (request, response) -> editScheduledJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_UPDATE, (request, response) -> updateScheduledJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_START, (request, response) -> startScheduledJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_STOP, (request, response) -> stopScheduledJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_TERMINATE, (request, response) -> terminateScheduledJob(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_RUN_HISTORY, (request, response) -> getRunHistory(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_DOWNLOAD_FILE, (request, response) -> downloadFile(configuration, request, response));
 	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getScheduledJobs
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route getScheduledJobs = (Request request, Response response) -> {
+	private String getScheduledJobs(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -57,18 +89,19 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("scheduledJobList", getResult.getTarget());
 
-		return render(request, model, Path.Template.SCHEDULED_JOBS_LIST);
-	};
+		return render(configuration, request, response, model, Template.SCHEDULED_JOBS_LIST);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * selectType
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route selectType = (Request request, Response response) -> {
+	private String selectType(Configuration configuration, Request request, Response response) {
+
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = getAccount(request);
@@ -85,20 +118,22 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("step", "select-type");
     	model.put("scheduledJobTypeList", scheduledJobTypes);
-    	model.put("title", getLabel(accountProfile, "select.scheduled.job.type"));
+    	model.put("title", getLabel(request, "select.scheduled.job.type"));
     	
-    	return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
-	};
+    	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * selectConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws JsonProcessingException
 	 */
 	
-	public Route selectConnector = (Request request, Response response) -> {
+	private String selectConnector(Configuration configuration, Request request, Response response) throws JsonProcessingException {
+
 		Token token = getToken(request);
 		
 		String jobTypeId = request.queryParams("job-type-id");
@@ -118,7 +153,7 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("step", "select-connector");
 		model.put("scheduledJob", scheduledJob);
-    	model.put("title", getLabel(getAccount(request), "select.connector"));
+    	model.put("title", getLabel(request, "select.connector"));
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
@@ -129,18 +164,20 @@ public class ScheduledJobController extends AbstractController {
 	    	model.put("salesforceConnectorsList", salesforceConnectors);
 		}
 		
-    	return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
-	};
+    	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * selectEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
 	 */
 	
-	public Route selectEnvironment = (Request request, Response response) -> {
+	private String selectEnvironment(Configuration configuration, Request request, Response response) throws IOException {
+		
 		Token token = getToken(request);
 		
 		String id = request.queryParams("id");
@@ -154,7 +191,7 @@ public class ScheduledJobController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("step", "select-environment");
 		model.put("scheduledJob", scheduledJob);
-		model.put("title", getLabel(getAccount(request), "select.environment"));
+		model.put("title", getLabel(request, "select.environment"));
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
@@ -165,18 +202,19 @@ public class ScheduledJobController extends AbstractController {
 			model.put("environments", environments);
 		}
 		
-    	return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
-	};
+    	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+	}
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * setSchedule
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
 	 */
 	
-	public Route setSchedule = (Request request, Response response) -> {
+	private String setSchedule(Configuration configuration, Request request, Response response) throws IOException {
 		
 		Token token = getToken(request);
 		
@@ -199,20 +237,24 @@ public class ScheduledJobController extends AbstractController {
 		model.put("step", "set-schedule");
 		model.put("scheduledJob", scheduledJob);
 		model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-		model.put("title", getLabel(getAccount(request), "schedule.job"));
+		model.put("title", getLabel(request, "schedule.job"));
 		
-		return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
-	};
+		return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * createScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 * @throws ParseException
 	 */
 	
-	public Route createScheduledJob = (Request request, Response response) -> {
+	private String createScheduledJob(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		Token token = getToken(request);
 		
@@ -236,9 +278,9 @@ public class ScheduledJobController extends AbstractController {
 			model.put("step", "set-schedule");
 			model.put("scheduledJob", scheduledJob);
 			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-			model.put("title", getLabel(getAccount(request), "schedule.job"));
-			model.put("errorMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "unparseable.date.time"));
-			return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
+			model.put("title", getLabel(request, "schedule.job"));
+			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
+			return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 		}
 
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
@@ -249,7 +291,7 @@ public class ScheduledJobController extends AbstractController {
 				.withDescription(description)
 				.withEnvironmentKey(scheduledJob.getEnvironmentKey())
 				.withJobTypeId(scheduledJob.getJobTypeId())
-				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
+				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getLocale(request)).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 		
 		CreateResult<ScheduledJob> createScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
@@ -267,9 +309,9 @@ public class ScheduledJobController extends AbstractController {
 			model.put("step", "set-schedule");
 			model.put("scheduledJob", scheduledJob);
 			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-			model.put("title", getLabel(getAccount(request), "schedule.job"));
+			model.put("title", getLabel(request, "schedule.job"));
 			model.put("errorMessage", createScheduledJobResult.getErrorMessage());
-			return render(request, model, Path.Template.SCHEDULED_JOB_SELECT);
+			return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 		}
 		
 		removeValue(token, id);
@@ -277,17 +319,17 @@ public class ScheduledJobController extends AbstractController {
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createScheduledJobResult.getTarget().getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * viewScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route viewScheduledJob = (Request request, Response response) -> {
+	private String viewScheduledJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -311,18 +353,18 @@ public class ScheduledJobController extends AbstractController {
 			removeValue(token, "success.message");
 		}
 		
-		return render(request, model, Path.Template.SCHEDULED_JOB);
-	};
+		return render(configuration, request, response, model, Template.SCHEDULED_JOB);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route editScheduledJob = (Request request, Response response) -> {
+	private String editScheduledJob(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		String view = request.queryParams("view");
@@ -344,18 +386,18 @@ public class ScheduledJobController extends AbstractController {
 			model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
 		}
 		
-		return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
-	};
+		return render(configuration, request, response, model, Template.SCHEDULED_JOB_EDIT);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * startScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route startScheduledJob = (Request request, Response response) -> {
+	private String startScheduledJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -365,22 +407,22 @@ public class ScheduledJobController extends AbstractController {
 				.scheduledJob() 
 				.start(id);
 		
-		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "activate.scheduled.job.success"));
+		putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "activate.scheduled.job.success"));
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * stopScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route stopScheduledJob = (Request request, Response response) -> {
+	private String stopScheduledJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -391,22 +433,22 @@ public class ScheduledJobController extends AbstractController {
 				.stop(id)
 				.getTarget();
 		
-		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "deactivate.scheduled.job.success"));
+		putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "deactivate.scheduled.job.success"));
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", scheduledJob.getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * terminateScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route terminateScheduledJob = (Request request, Response response) -> {
+	private String terminateScheduledJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -416,22 +458,23 @@ public class ScheduledJobController extends AbstractController {
 				.scheduledJob() 
 				.terminate(id);
 		
-		putValue(token, "success.message", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "terminate.scheduled.job.success"));
+		putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "terminate.scheduled.job.success"));
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * updateScheduledJob
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ParseException
 	 */
 	
-	public Route updateScheduledJob = (Request request, Response response) -> {
+	private String updateScheduledJob(Configuration configuration, Request request, Response response) throws ParseException {
 		
 		Token token = getToken(request);
 		
@@ -460,13 +503,13 @@ public class ScheduledJobController extends AbstractController {
 			model.put("scheduledJob", result.getTarget());
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
-			model.put("errorMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "unparseable.date.time"));
+			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
 			if (view != null && view.equals("1")) {
 				model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
 			} else {
 				model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
 			}
-			return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+			return render(configuration, request, response, model, Template.SCHEDULED_JOB_EDIT);
 		}	
 		
 		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest()
@@ -474,7 +517,7 @@ public class ScheduledJobController extends AbstractController {
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
 				.withEnvironmentKey(environmentKey)
-				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getDefaultLocale(getAccount(request))).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
+				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getLocale(request)).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 
 		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob() 
@@ -498,23 +541,23 @@ public class ScheduledJobController extends AbstractController {
 			} else {
 				model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
 			}
-			return render(request, model, Path.Template.SCHEDULED_JOB_EDIT);
+			return render(configuration, request, response, model, Template.SCHEDULED_JOB_EDIT);
 		}
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getRunHistory
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route getRunHistory = (Request request, Response response) -> {
+	private String getRunHistory(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -530,18 +573,19 @@ public class ScheduledJobController extends AbstractController {
 		model.put("scheduledJob", new ScheduledJob(id));
 		model.put("runHistory", getResult.getTarget());
 		
-		return render(request, model, Path.Template.SCHEDULE_JOB_RUN_HISTORY);
-	};
+		return render(configuration, request, response, model, Template.SCHEDULE_JOB_RUN_HISTORY);
+	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * downloadFile
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
-	public Route downloadFile = (Request request, Response response) -> {
+	private String downloadFile(Configuration configuration, Request request, Response response) {
+		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -554,5 +598,5 @@ public class ScheduledJobController extends AbstractController {
 				.getFile(id, fireInstanceId, filename);
 		
 		return getResult.getTarget();
-	};
+	}
 }

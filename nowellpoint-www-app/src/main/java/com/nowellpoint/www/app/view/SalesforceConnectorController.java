@@ -1,5 +1,9 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.delete;
+import static spark.Spark.get;
+import static spark.Spark.post;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +15,9 @@ import javax.ws.rs.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.PostRequest;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
@@ -31,14 +35,42 @@ import com.nowellpoint.www.app.util.Path;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 public class SalesforceConnectorController extends AbstractController {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
 	
-	public SalesforceConnectorController(Configuration cfg) {
-		super(SalesforceConnectorController.class, cfg);      
+	public static class Template {
+		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
+		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
+		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
+		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connectors-list.html");
+		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
+		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
+		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobjects.html");
+		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
+	}
+	
+	public SalesforceConnectorController() {
+		super(SalesforceConnectorController.class);      
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> getSalesforceConnectors(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> newSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> viewSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> updateSalesforceConnector(configuration, request, response));
+        delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> deleteSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> editSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_NEW, (request, response) -> newEnvironment(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_VIEW, (request, response) -> viewEnvironment(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_EDIT, (request, response) -> editEnvironment(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_ADD, (request, response) -> addEnvironment(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE, (request, response) -> updateEnvironment(configuration, request, response));
+        delete(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE, (request, response) -> removeEnvironment(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, (request, response) -> testConnection(configuration, request, response));  
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECTS, (request, response) -> sobjectsList(configuration, request, response));
 	}
 	
 	/**
@@ -49,13 +81,13 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route newSalesforceConnector = (Request request, Response response) -> {			
+	private String newSalesforceConnector(Configuration configuration, Request request, Response response) {		
 		String id = request.params(":id");
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		
-		return render(request, model, Path.Template.SALESFORCE_CONNECTOR_NEW);
+		return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR_NEW);
 	};
 	
 	/**
@@ -66,7 +98,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route newEnvironment = (Request request, Response response) -> {			
+	private String newEnvironment(Configuration configuration, Request request, Response response) {	
 		String id = request.params(":id");
 		
 		Environment environment = new Environment();
@@ -78,7 +110,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
 		model.put("environment", environment);
 		
-		return render(request, model, Path.Template.ENVIRONMENT);
+		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
 	
 	/**
@@ -89,7 +121,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route sobjectsList = (Request request, Response response) -> {		
+	private String sobjectsList(Configuration configuration, Request request, Response response) {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -128,7 +160,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("environment", environment);
 		model.put("icons", icons);
 		
-		return render(request, model, Path.Template.SOBJECTS);
+		return render(configuration, request, response, model, Template.SOBJECTS);
 	};
 	
 	/**
@@ -139,7 +171,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route viewEnvironment = (Request request, Response response) -> {		
+	private String viewEnvironment(Configuration configuration, Request request, Response response) {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -156,7 +188,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("mode", "view");
 		model.put("environment", environment);
 		
-		return render(request, model, Path.Template.ENVIRONMENT);
+		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
 
 	/**
@@ -167,7 +199,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route editEnvironment = (Request request, Response response) -> {		
+	private String editEnvironment(Configuration configuration, Request request, Response response) {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -199,7 +231,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
 		model.put("environment", environment);
 		
-		return render(request, model, Path.Template.ENVIRONMENT);
+		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
 
 	/**
@@ -210,7 +242,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route addEnvironment = (Request request, Response response) -> {		
+	private String addEnvironment(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -250,12 +282,12 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("environment", environment);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = render(request, model, Path.Template.ENVIRONMENT);
+			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
 			
 			throw new BadRequestException(output);
 		}
 
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.environment.success"), 3, Boolean.FALSE);
+		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getLocale(request), "add.environment.success"), 3, Boolean.FALSE);
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
@@ -269,7 +301,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route updateEnvironment = (Request request, Response response) -> {		
+	private String updateEnvironment(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -311,12 +343,12 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("environment", environment);
 			model.put("errorMessage", error.getMessage());
 			
-			String output = render(request, model, Path.Template.ENVIRONMENT);
+			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
 			
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.environment.success"), 3);
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";		
@@ -330,7 +362,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route removeEnvironment = (Request request, Response response) -> {		
+	private String removeEnvironment(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -350,74 +382,10 @@ public class SalesforceConnectorController extends AbstractController {
 			throw new BadRequestException(error.getMessage());
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.environment.success"), 3);
+		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "remove.environment.success"), 3);
 		response.header("Location", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * updateServiceInstance
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route updateServiceInstance = (Request request, Response response) -> {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		String name = request.queryParams("name");
-		String tag = request.queryParams("tag");
-		String bucketName = request.queryParams("bucketName");
-		String awsAccessKey = request.queryParams("awsAccessKey");
-		String awsSecretAccessKey = request.queryParams("awsSecretAccessKey");
-		
-		PostRequest httpRequest = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-				.path(id)
-				.path("service")
-				.path(key);
-		
-		if (name != null) {
-			httpRequest.parameter("name", name);
-		}
-		
-		if (tag != null) {
-			httpRequest.parameter("tag", tag);
-		}
-		
-		if (bucketName != null) {
-			httpRequest.parameter("bucketName", bucketName);
-		}
-		
-		if (awsAccessKey != null) {
-			httpRequest.parameter("awsAccessKey", awsAccessKey);
-		}
-		
-		if (awsSecretAccessKey != null) {
-			httpRequest.parameter("awsSecretAccessKey", awsSecretAccessKey);
-		}
-				
-		HttpResponse httpResponse = httpRequest.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			response.cookie("errorMessage", error.getMessage(), 3, Boolean.FALSE);
-			response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id).concat("/services/:key/edit".replace(":key", key)));
-			return "";
-		}
-
-		response.cookie(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.service.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
-		
-		return "";		
 	};
 	
 	/**
@@ -428,7 +396,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route viewSalesforceConnector = (Request request, Response response) -> {
+	private String viewSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -446,7 +414,7 @@ public class SalesforceConnectorController extends AbstractController {
     	model.put("createdByHref", createdByHref);
     	model.put("lastModifiedByHref", lastModifiedByHref);
 		
-    	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
+    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
 	};
 
 	/**
@@ -457,7 +425,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route editSalesforceConnector = (Request request, Response response) -> {
+	private String editSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -476,7 +444,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		}
 		
-    	return render(request, model, Path.Template.SALESFORCE_CONNECTOR_EDIT);
+    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR_EDIT);
 	};
 
 	/**
@@ -487,7 +455,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route getSalesforceConnectors = (Request request, Response response) -> {	
+	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
@@ -507,7 +475,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnectorsList", salesforceConnectors);
     	
-    	return render(request, model, Path.Template.SALESFORCE_CONNECTORS_LIST);
+    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTORS_LIST);
     	
 	};
 
@@ -519,7 +487,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route updateSalesforceConnector = (Request request, Response response) -> {	
+	private String updateSalesforceConnector(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -546,7 +514,7 @@ public class SalesforceConnectorController extends AbstractController {
 	    	model.put("successMessage", request.cookie("successMessage"));
 	    	model.put("errorMessage", message);
 			
-	    	return render(request, model, Path.Template.SALESFORCE_CONNECTOR);
+	    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
 			
 		}
 		
@@ -563,7 +531,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 
-	public Route deleteSalesforceConnector = (Request request, Response response) -> {
+	private String deleteSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
@@ -584,9 +552,10 @@ public class SalesforceConnectorController extends AbstractController {
 	 * testConnection
 	 * 
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @throws JsonProcessingException 
 	 */
 
-	public Route testConnection = (Request request, Response response) -> {	
+	private String testConnection(Configuration configuration, Request request, Response response) throws JsonProcessingException {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -611,9 +580,9 @@ public class SalesforceConnectorController extends AbstractController {
 		Environment environment = httpResponse.getEntity(Environment.class);
 		
 		if (environment.getIsValid()) {
-			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "test.connection.success"));
+			environment.setTestMessage(MessageProvider.getMessage(getLocale(request), "test.connection.success"));
 		} else {
-			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "test.connection.fail"), environment.getTestMessage()));
+			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getLocale(request), "test.connection.fail"), environment.getTestMessage()));
 		}
 		
 		return objectMapper.writeValueAsString(environment);

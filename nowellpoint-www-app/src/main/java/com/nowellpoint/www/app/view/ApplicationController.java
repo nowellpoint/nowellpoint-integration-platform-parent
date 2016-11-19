@@ -1,10 +1,13 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.delete;
+import static spark.Spark.get;
+import static spark.Spark.post;
+
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -12,27 +15,42 @@ import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
-import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Application;
-import com.nowellpoint.client.model.Environment;
-import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 public class ApplicationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(ApplicationController.class.getName());
 	
-	public ApplicationController(Configuration configuration) {
-		super(ApplicationController.class, configuration);
+	public static class Template {
+		public static final String APPLICATION = String.format(APPLICATION_CONTEXT, "application.html");
+		public static final String APPLICATION_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "application-connector-select.html");
+		public static final String APPLICATION_EDIT = String.format(APPLICATION_CONTEXT, "application-edit.html");
+		public static final String APPLICATION_CREATE = String.format(APPLICATION_CONTEXT, "application.html");
+		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "applications-list.html");
+	}
+	
+	public ApplicationController() {
+		super(ApplicationController.class);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		get(Path.Route.APPLICATION_CONNECTOR_SELECT, (request, response) -> selectSalesforceConnector(configuration, request, response));
+		get(Path.Route.APPLICATION_EDIT, (request, response) -> editApplication(configuration, request, response));
+		get(Path.Route.APPLICATION_NEW, (request, response) -> newApplication(configuration, request, response));
+		get(Path.Route.APPLICATION_VIEW, (request, response) -> viewApplication(configuration, request, response));
+		get(Path.Route.APPLICATION_LIST, (request, response) -> getApplications(configuration, request, response));
+		delete(Path.Route.APPLICATION_DELETE, (request, response) -> deleteApplication(configuration, request, response));
+		post(Path.Route.APPLICATION_CREATE, (request, response) -> createApplication(configuration, request, response));
+		post(Path.Route.APPLICATION_UPDATE, (request, response) -> updateApplication(configuration, request, response));
 	}
 	
 	/**
@@ -43,7 +61,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route selectSalesforceConnector = (Request request, Response response) -> {
+	private String selectSalesforceConnector(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -64,8 +82,8 @@ public class ApplicationController extends AbstractController {
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnectorsList", salesforceConnectors);
 		
-		return render(request, model, Path.Template.APPLICATION_CONNECTOR_SELECT);
-	};
+		return render(configuration, request, response, model, Template.APPLICATION_CONNECTOR_SELECT);
+	}
 
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,7 +93,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route newApplication = (Request request, Response response) -> {
+	private String newApplication(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -89,8 +107,8 @@ public class ApplicationController extends AbstractController {
 		model.put("mode", "new");
     	model.put("salesforceConnector", salesforceConnector);
 		
-		return render(request, model, Path.Template.APPLICATION_EDIT);
-	};
+		return render(configuration, request, response, model, Template.APPLICATION_EDIT);
+	}
 	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -100,7 +118,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route viewApplication = (Request request, Response response) -> {
+	private String viewApplication(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -120,8 +138,8 @@ public class ApplicationController extends AbstractController {
 		model.put("application", application);
 		model.put("successMessage", request.cookie("successMessage"));
 		
-		return render(request, model, Path.Template.APPLICATION);
-	};
+		return render(configuration, request, response, model, Template.APPLICATION);
+	}
 	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -131,7 +149,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route editApplication = (Request request, Response response) -> {
+	private String editApplication(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		String view = request.queryParams("view");
@@ -152,8 +170,8 @@ public class ApplicationController extends AbstractController {
 			model.put("cancel", Path.Route.APPLICATION_VIEW.replace(":id", id));
 		}
 		
-		return render(request, model, Path.Template.APPLICATION_EDIT);
-	};
+		return render(configuration, request, response, model, Template.APPLICATION_EDIT);
+	}
 	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -163,7 +181,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route getApplications = (Request request, Response response) -> {
+	private String getApplications(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -185,8 +203,8 @@ public class ApplicationController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("applicationList", applications);
 		
-		return render(request, model, Path.Template.APPLICATIONS_LIST);
-	};
+		return render(configuration, request, response, model, Template.APPLICATIONS_LIST);
+	}
 	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +214,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route createApplication = (Request request, Response response) -> {
+	private String createApplication(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -219,7 +237,7 @@ public class ApplicationController extends AbstractController {
 		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", application.getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -229,7 +247,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route updateApplication = (Request request, Response response) -> {
+	private String updateApplication(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -252,7 +270,7 @@ public class ApplicationController extends AbstractController {
 		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", application.getId()));
 		
 		return "";
-	};
+	}
 	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -262,7 +280,7 @@ public class ApplicationController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	public Route deleteApplication = (Request request, Response response) -> {
+	private String deleteApplication(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -272,304 +290,5 @@ public class ApplicationController extends AbstractController {
 		client.application().deleteApplication(id);
 		
 		return "";	
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * viewEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route viewEnvironment = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-    			.execute();
-		
-		Environment environment = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			environment = httpResponse.getEntity(Environment.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "view");
-		model.put("environment", environment);
-		
-		return render(request, model, Path.Template.ENVIRONMENT);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * editEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route editEnvironment = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-    			.execute();
-		
-		Environment environment = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			environment = httpResponse.getEntity(Environment.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "edit");
-		model.put("action", String.format("/app/applications/%s/environments/%s", id, key));
-		model.put("environment", environment);
-		
-		return render(request, model, Path.Template.ENVIRONMENT);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * newEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route newEnvironment = (Request request, Response response) -> {			
-		String id = request.params(":id");
-		
-		Environment environment = new Environment();
-		environment.setAuthEndpoint("https://test.salesforce.com");
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		model.put("mode", "add");
-		model.put("action", String.format("/app/applications/%s/environments", id));
-		model.put("environment", environment);
-		
-		return render(request, model, Path.Template.ENVIRONMENT);
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * addEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route addEnvironment = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String active = request.queryParams("active");
-		String authEndpoint = request.queryParams("authEndpoint");
-		String name = request.queryParams("environmentName");
-		String password = request.queryParams("password");
-		String username = request.queryParams("username");
-		String securityToken = request.queryParams("securityToken");
-		
-		Environment environment = new Environment()
-				.withIsActive(Boolean.valueOf(active))
-				.withAuthEndpoint(authEndpoint)
-				.withEnvironmentName(name)
-				.withPassword(password)
-				.withUsername(username)
-				.withSecurityToken(securityToken);
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("environment")
-    			.body(environment)
-				.execute();
-
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			
-			Map<String, Object> model = getModel();
-			model.put("id", id);
-			model.put("mode", "add");
-			model.put("action", String.format("/app/applications/%s/environments", id));
-			model.put("environment", environment);
-			model.put("errorMessage", error.getMessage());
-			
-			String output = render(request, model, Path.Template.ENVIRONMENT);
-			
-			throw new BadRequestException(output);
-		}
-
-		response.cookie(Path.Route.APPLICATION_VIEW.replace(":id", id), "successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "add.environment.success"), 3, Boolean.FALSE);
-		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
-		
-		return "";		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * updateEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route updateEnvironment = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		String active = request.queryParams("active");
-		String authEndpoint = request.queryParams("authEndpoint");
-		String environmentName = request.queryParams("environmentName");
-		String password = request.queryParams("password");
-		String username = request.queryParams("username");
-		String securityToken = request.queryParams("securityToken");
-		
-		Environment environment = new Environment()
-				.withIsActive(Boolean.valueOf(active))
-				.withAuthEndpoint(authEndpoint)
-				.withEnvironmentName(environmentName)
-				.withPassword(password)
-				.withUsername(username)
-				.withSecurityToken(securityToken);
-		
-		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-    			.body(environment)
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			
-			Map<String, Object> model = getModel();
-			model.put("id", id);
-			model.put("mode", "edit");
-			model.put("action", String.format("/app/applications/%s/environments/%s", id, key));
-			model.put("environment", environment);
-			model.put("errorMessage", error.getMessage());
-			
-			String output = render(request, model, Path.Template.ENVIRONMENT);
-			
-			throw new BadRequestException(output);
-		}
-		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "update.environment.success"), 3);
-		response.redirect(Path.Route.APPLICATION_VIEW.replace(":id", id));
-		
-		return "";		
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * removeEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-	
-	public Route removeEnvironment = (Request request, Response response) -> {		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("applications")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
-		}
-		
-		response.cookie("successMessage", MessageProvider.getMessage(getDefaultLocale(getAccount(request)), "remove.environment.success"), 3);
-		response.header("Location", Path.Route.APPLICATION_VIEW.replace(":id", id));
-		
-		return "";
-	};
-	
-	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * testConnection
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
-
-	public Route testConnection = (Request request, Response response) -> {	
-		Token token = getToken(request);
-		
-		AccountProfile accountProfile = getAccount(request);
-		
-		String id = request.params(":id");
-		String key = request.params(":key");
-		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-    			.path("applications")
-				.path(id)
-				.path("environment")
-    			.path(key)
-				.parameter("test", Boolean.TRUE.toString())
-    			.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
-		
-		Environment environment = httpResponse.getEntity(Environment.class);
-		
-		if (environment.getIsValid()) {
-			environment.setTestMessage(MessageProvider.getMessage(getDefaultLocale(accountProfile), "test.connection.success"));
-		} else {
-			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getDefaultLocale(accountProfile), "test.connection.fail"), environment.getTestMessage()));
-		}
-		
-		return objectMapper.writeValueAsString(environment);
-	};
+	}
 }

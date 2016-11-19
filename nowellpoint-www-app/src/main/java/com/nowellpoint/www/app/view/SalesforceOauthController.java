@@ -19,7 +19,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class SalesforceOauthController extends AbstractController2 {
+public class SalesforceOauthController extends AbstractController {
 	
 	public static final class Template {
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-callback.html");

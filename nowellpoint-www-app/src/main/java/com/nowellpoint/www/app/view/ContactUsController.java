@@ -1,10 +1,12 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.get;
+import static spark.Spark.post;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -16,30 +18,37 @@ import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 public class ContactUsController extends AbstractController {
 	
 	private static final Logger logger = Logger.getLogger(ContactUsController.class.getName());
 	
-	private ObjectMapper objectMapper = new ObjectMapper();
-	
-	public ContactUsController(Configuration cfg) {
-		super(ContactUsController.class, cfg);
+	public static class Template {
+		
 	}
 	
-	public Route showContactUs = (Request request, Response response) -> {
+	public ContactUsController() {
+		super(ContactUsController.class);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		get(Path.Route.CONTACT_US, (request, response) -> showContactUs(configuration, request, response));
+		post(Path.Route.CONTACT_US, (request, response) -> contactUs(configuration, request, response));
+	}
+	
+	private String showContactUs(Configuration configuration, Request request, Response response) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		return render(request, model, Path.Template.CONTACT_US);
+		return render(configuration, request, response, model, Path.Template.CONTACT_US);
 	};
 	
-	public Route contactUs = (Request request, Response response) -> {
+	private String contactUs(Configuration configuration, Request request, Response response) {
 		ObjectNode body = objectMapper.createObjectNode();
     	request.queryParams().stream().forEach(param -> {
     		body.put(param, request.queryParams(param));
     	});
     	
-    	HttpResponse httpResponse = RestResource.post(System.getenv("NCS_API_ENDPOINT"))
+    	HttpResponse httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
     			.path("contact")
 				.parameter("leadSource", request.queryParams("leadSource"))
@@ -55,6 +64,6 @@ public class ContactUsController extends AbstractController {
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "contactConfirm"));
-    	return render(request, model, Path.Template.CONTACT_US);
+    	return render(configuration, request, response, model, Path.Template.CONTACT_US);
 	};
 }

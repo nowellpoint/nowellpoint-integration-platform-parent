@@ -20,7 +20,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AdministrationController extends AbstractController2 {
+public class AdministrationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AdministrationController.class.getName());
 	
@@ -42,6 +42,14 @@ public class AdministrationController extends AbstractController2 {
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(configuration, request, response));
 	}
 	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private String showAdministrationHome(Configuration configuration, Request request, Response response) {
 		
 		AccountProfile account = getAccount(request);
@@ -53,6 +61,14 @@ public class AdministrationController extends AbstractController2 {
 		
 	};
 	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private String showManageCache(Configuration configuration, Request request, Response response) {
 		
 		AccountProfile account = getAccount(request);
@@ -63,6 +79,14 @@ public class AdministrationController extends AbstractController2 {
 		return render(configuration, request, response, model, Template.CACHE_MANAGER);
 		
 	};
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	
 	private String purgeCache(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
@@ -80,6 +104,14 @@ public class AdministrationController extends AbstractController2 {
 		
 		return render(configuration, request, response, model, Template.CACHE_MANAGER);
 	};
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	
 	private String showManageProperties(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);

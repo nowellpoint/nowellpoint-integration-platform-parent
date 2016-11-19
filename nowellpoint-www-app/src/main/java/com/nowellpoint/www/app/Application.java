@@ -1,10 +1,8 @@
 package com.nowellpoint.www.app;
 
-import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
-import static spark.Spark.post;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,16 +66,16 @@ public class Application implements SparkApplication {
 		// Configure FreeMarker
 		//
         
-        Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
 
 		//
 		// set configuration options
 		//
 
-        cfg.setClassForTemplateLoading(this.getClass(), "/views");
-		cfg.setDefaultEncoding("UTF-8");
-		cfg.setLocale(Locale.getDefault());
-		cfg.setTimeZone(TimeZone.getDefault());
+        configuration.setClassForTemplateLoading(this.getClass(), "/views");
+		configuration.setDefaultEncoding("UTF-8");
+		configuration.setLocale(Locale.getDefault());
+		configuration.setTimeZone(TimeZone.getDefault());
         
         //
         // load countries list
@@ -91,7 +89,7 @@ public class Application implements SparkApplication {
 					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
 					.collect(Collectors.toList());
 			
-			cfg.setSharedVariable("countryList", filteredList);
+			configuration.setSharedVariable("countryList", filteredList);
 			
 		} catch (TemplateModelException e) {
 			e.printStackTrace();
@@ -104,7 +102,7 @@ public class Application implements SparkApplication {
         
         messages.keySet().stream().forEach(message -> {
         	try {
-				cfg.setSharedVariable(message, messages.getString(message));
+				configuration.setSharedVariable(message, messages.getString(message));
 			} catch (TemplateException e) {
 				e.printStackTrace();
 				halt();
@@ -117,107 +115,41 @@ public class Application implements SparkApplication {
         
         AuthenticationController authenticationController = new AuthenticationController();
         AccountProfileController accountProfileController = new AccountProfileController();
-        VerifyEmailController verifyEmailController = new VerifyEmailController(cfg);
-        DashboardController dashboardController = new DashboardController(cfg);
+        VerifyEmailController verifyEmailController = new VerifyEmailController();
+        DashboardController dashboardController = new DashboardController();
         AdministrationController administrationController = new AdministrationController();
-        SignUpController signUpController = new SignUpController(cfg);
-        NotificationController notificationController = new NotificationController(cfg);
+        SignUpController signUpController = new SignUpController();
+        NotificationController notificationController = new NotificationController();
         //SetupController setupController = new SetupController(cfg);
         SalesforceOauthController salesforceOauthController = new SalesforceOauthController();
-        ContactUsController contactUsController = new ContactUsController(cfg);
+        ContactUsController contactUsController = new ContactUsController();
         //ApplicationController applicationController = new ApplicationController(cfg);
         //ProjectController projectController = new ProjectController(cfg);
-        SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController(cfg);
-        ScheduledJobController scheduledJobsController = new ScheduledJobController(cfg);
+        SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController();
+        ScheduledJobController scheduledJobsController = new ScheduledJobController();
         
         //
         // setup routes
         //
         
-        authenticationController.configureRoutes(cfg);
-        accountProfileController.configureRoutes(cfg);
-        administrationController.configureRoutes(cfg);
-        salesforceOauthController.configureRoutes(cfg);
+        authenticationController.configureRoutes(configuration);
+        accountProfileController.configureRoutes(configuration);
+        administrationController.configureRoutes(configuration);
+        salesforceOauthController.configureRoutes(configuration);
+        verifyEmailController.configureRoutes(configuration);
+        dashboardController.configureRoutes(configuration);
+        signUpController.configureRoutes(configuration);
+        notificationController.configureRoutes(configuration);
+        contactUsController.configureRoutes(configuration);
+        salesforceConnectorController.configureRoutes(configuration);
+        scheduledJobsController.configureRoutes(configuration);
 
-        get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(cfg));
+        get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(configuration));
         
-        get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(cfg));
+        get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(configuration));
         
         get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
-//        get(Path.Route.LOGIN, authenticationController.showLoginPage);
-//        post(Path.Route.LOGIN, AuthenticationController.login);
-//        get(Path.Route.LOGOUT, AuthenticationController.logout);
-        
-        get(Path.Route.CONTACT_US, contactUsController.showContactUs);
-		post(Path.Route.CONTACT_US, contactUsController.contactUs);
-        
-        get(Path.Route.SIGN_UP, signUpController.showSignUp);
-		post(Path.Route.SIGN_UP, signUpController.signUp);
-        
-        get(Path.Route.VERIFY_EMAIL, verifyEmailController.verifyEmail);
-        
-        get(Path.Route.START, dashboardController.showStartPage);
-        get(Path.Route.DASHBOARD, dashboardController.showDashboard);
-        
-        get(Path.Route.NOTIFICATIONS, notificationController.showNotifications);
-        
-       // get(Path.Route.SETUP, setupController.showSetup);
-        
-//        get(Path.Route.APPLICATION_CONNECTOR_SELECT, applicationController.selectSalesforceConnector);
-//        get(Path.Route.APPLICATION_EDIT, applicationController.editApplication);
-//        get(Path.Route.APPLICATION_NEW, applicationController.newApplication);
-//		get(Path.Route.APPLICATION_VIEW, applicationController.viewApplication);
-//		get(Path.Route.APPLICATION_LIST, applicationController.getApplications);
-//		delete(Path.Route.APPLICATION_DELETE, applicationController.deleteApplication);
-//		post(Path.Route.APPLICATION_CREATE, applicationController.createApplication);
-//		post(Path.Route.APPLICATION_UPDATE, applicationController.updateApplication);
-//		post(Path.Route.APPLICATION_ENVIRONMENT_TEST, applicationController.testConnection);   
-//		get(Path.Route.APPLICATION_ENVIRONMENT_VIEW, applicationController.viewEnvironment);
-//		get(Path.Route.APPLICATION_ENVIRONMENT_EDIT, applicationController.editEnvironment);
-//		get(Path.Route.APPLICATION_ENVIRONMENT_NEW, applicationController.newEnvironment);
-//		post(Path.Route.APPLICATION_ENVIRONMENT_ADD, applicationController.addEnvironment);
-//		post(Path.Route.APPLICATION_ENVIRONMENT_UPDATE, applicationController.updateEnvironment);
-//		delete(Path.Route.APPLICATION_ENVIRONMENT_REMOVE, applicationController.removeEnvironment);
-//		get(Path.Route.APPLICATION_SERVICE_VIEW, applicationController.viewServiceInstance);
-//		get(Path.Route.APPLICATION_SERVICE_EDIT, applicationController.editServiceInstance);
-//		get(Path.Route.APPLICATION_SERVICE_NEW, applicationController.newServiceInstance);  
-//		post(Path.Route.APPLICATION_SERVICE_ADD, applicationController.addServiceInstance);
-//		post(Path.Route.APPLICATION_SERVICE_UPDATE, applicationController.updateServiceInstance);  
-		
-//		get(Path.Route.PROJECTS, projectController.getProjects);
-//		get(Path.Route.PROJECTS.concat("/:id"), projectController.getProject);
-//		post(Path.Route.PROJECTS, projectController.saveProject);
-//		delete(Path.Route.PROJECTS.concat("/:id"), projectController.deleteProject);
-        
-        get(Path.Route.CONNECTORS_SALESFORCE_LIST, salesforceConnectorController.getSalesforceConnectors);
-        get(Path.Route.CONNECTORS_SALESFORCE_NEW, salesforceConnectorController.newSalesforceConnector);
-        get(Path.Route.CONNECTORS_SALESFORCE_VIEW, salesforceConnectorController.viewSalesforceConnector);
-        post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, salesforceConnectorController.updateSalesforceConnector);
-        delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, salesforceConnectorController.deleteSalesforceConnector);
-        get(Path.Route.CONNECTORS_SALESFORCE_EDIT, salesforceConnectorController.editSalesforceConnector);
-        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_NEW, salesforceConnectorController.newEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_VIEW, salesforceConnectorController.viewEnvironment);
-        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_EDIT, salesforceConnectorController.editEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_ADD, salesforceConnectorController.addEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE, salesforceConnectorController.updateEnvironment);
-        delete(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE, salesforceConnectorController.removeEnvironment);
-        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, salesforceConnectorController.testConnection);  
-        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECTS, salesforceConnectorController.sobjectsList);
-        
-        get(Path.Route.SCHEDULED_JOBS_LIST, scheduledJobsController.getScheduledJobs);
-        get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, scheduledJobsController.selectType);
-        get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, scheduledJobsController.selectConnector);
-        get(Path.Route.SCHEDULED_JOB_SELECT_ENVIRONMENT, scheduledJobsController.selectEnvironment);
-        get(Path.Route.SCHEDULED_JOB_SET_SCHEDULE, scheduledJobsController.setSchedule);
-        post(Path.Route.SCHEDULED_JOB_CREATE, scheduledJobsController.createScheduledJob);
-        get(Path.Route.SCHEDULED_JOB_VIEW, scheduledJobsController.viewScheduledJob);
-        get(Path.Route.SCHEDULED_JOB_EDIT, scheduledJobsController.editScheduledJob);
-        post(Path.Route.SCHEDULED_JOB_UPDATE, scheduledJobsController.updateScheduledJob);
-        post(Path.Route.SCHEDULED_JOB_START, scheduledJobsController.startScheduledJob);
-        post(Path.Route.SCHEDULED_JOB_STOP, scheduledJobsController.stopScheduledJob);
-        get(Path.Route.SCHEDULED_JOB_RUN_HISTORY, scheduledJobsController.getRunHistory);
-        get(Path.Route.SCHEDULED_JOB_DOWNLOAD_FILE, scheduledJobsController.downloadFile);
         
         //
         // exception handlers

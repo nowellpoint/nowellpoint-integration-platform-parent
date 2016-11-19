@@ -1,5 +1,9 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.delete;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,18 +25,25 @@ import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 public class ProjectController extends AbstractController {
 	
 	private static final Logger logger = Logger.getLogger(ProjectController.class.getName());
 	
-	public ProjectController(Configuration cfg) {
-		super(ProjectController.class, cfg);
+	public static class Template {
+		public static final String PROJECT = String.format(APPLICATION_CONTEXT, "project.html");
+		public static final String PROJECT_LIST = String.format(APPLICATION_CONTEXT, "project-list.html");
 	}
 	
-	public void configureRoutes(Configuration cfg) {
-		
+	public ProjectController() {
+		super(ProjectController.class);
+	}
+	
+	public void configureRoutes(Configuration configuration) {
+		get(Path.Route.PROJECTS, (request, response) -> getProjects(configuration, request, response));
+		get(Path.Route.PROJECTS.concat("/:id"), (request, response) -> getProject(configuration, request, response));
+		post(Path.Route.PROJECTS, (request, response) -> saveProject(configuration, request, response));
+		delete(Path.Route.PROJECTS.concat("/:id"), (request, response) -> deleteProject(configuration, request, response));
 	}
 	
 	/**
@@ -43,7 +54,7 @@ public class ProjectController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	public Route getProjects = (Request request, Response response) -> {
+	private String getProjects(Configuration configuration, Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -69,10 +80,10 @@ public class ProjectController extends AbstractController {
 		model.put("project", project);
 		model.put("projectList", projects);
 		
-		return render(request, model, Path.Template.PROJECT_LIST);
-	};
+		return render(configuration, request, response, model, Template.PROJECT_LIST);
+	}
 	
-	public Route getProject = (Request request, Response response) -> {
+	private String getProject(Configuration configuration, Request request, Response response) {
 		
 		String projectId = request.params(":id");
 		
@@ -97,10 +108,10 @@ public class ProjectController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("project", project);
 		
-		return render(request, model, Path.Template.PROJECT);	
-	};
+		return render(configuration, request, response, model, Template.PROJECT);	
+	}
 	
-	public Route saveProject = (Request request, Response response) -> {
+	private String saveProject(Configuration configuration, Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		AccountProfile account = request.attribute("account");
@@ -151,10 +162,10 @@ public class ProjectController extends AbstractController {
 		model.put("account", account);
 		model.put("project", project);
 		
-		return render(request, model, Path.Template.PROJECT);
-	};
+		return render(configuration, request, response, model, Template.PROJECT);
+	}
 	
-	public Route deleteProject = (Request request, Response response) -> {
+	private String deleteProject(Configuration configuration, Request request, Response response) {
 		
 		String projectId = request.params(":id");
 		
@@ -174,5 +185,5 @@ public class ProjectController extends AbstractController {
 		}
 		
 		return "";	
-	};
+	}
 }

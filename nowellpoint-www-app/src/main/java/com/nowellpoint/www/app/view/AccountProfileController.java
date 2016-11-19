@@ -47,7 +47,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AccountProfileController extends AbstractController2 {
+public class AccountProfileController extends AbstractController {
 	
 	public static class Template {
 		public static final String ACCOUNT_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile-me.html");
