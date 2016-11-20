@@ -10,6 +10,8 @@ public class SignUpRequest {
 	
 	private String password;
 	
+	private String confirmPassword;
+	
 	private String countryCode;
 	
 	public SignUpRequest() {
@@ -48,6 +50,14 @@ public class SignUpRequest {
 		this.password = password;
 	}
 	
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
+
 	public String getCountryCode() {
 		return countryCode;
 	}
@@ -73,6 +83,11 @@ public class SignUpRequest {
 	
 	public SignUpRequest withPassword(String password) {
 		setPassword(password);
+		return this;
+	}
+	
+	public SignUpRequest withConfirmPassword(String confirmPassword) {
+		setConfirmPassword(confirmPassword);
 		return this;
 	}
 	

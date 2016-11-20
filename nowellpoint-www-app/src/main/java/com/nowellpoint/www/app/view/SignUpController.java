@@ -43,8 +43,10 @@ public class SignUpController extends AbstractController {
 	 */
 	
 	private String showSignUp(Configuration configuration, Request request, Response response) {
+		SignUpRequest signUpRequest = new SignUpRequest();
+		signUpRequest.setCountryCode("US");
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("signUpRequest", new SignUpRequest());
+		model.put("signUpRequest", signUpRequest);
 		return render(configuration, request, response, model, Template.SIGN_UP);
 	}
 	
@@ -63,24 +65,20 @@ public class SignUpController extends AbstractController {
 				.withLastName(request.queryParams("lastName"))
 				.withEmail(request.queryParams("email"))
 				.withPassword(request.queryParams("password"))
+				.withConfirmPassword(request.queryParams("confirmPassword"))
 				.withCountryCode(request.queryParams("countryCode"));
+		
+		SignUpResult<User> signUpResult = new NowellpointClient()
+				.user()
+				.signUp(signUpRequest);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
     	
-    	if (request.queryParams("password").equals(request.queryParams("confirmPassword"))) {
-    		
-    		SignUpResult<User> signUpResult = new NowellpointClient().user().signUp(signUpRequest);
-        		        	
-        	if (signUpResult.isSuccess()) {
-        		model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
-        	} else {
-        		model.put("signUpRequest", signUpRequest);
-        		model.put("errorMessage", signUpResult.getErrorMessage());
-        	}
-        	
+    	if (signUpResult.isSuccess()) {
+    		model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
     	} else {
     		model.put("signUpRequest", signUpRequest);
-    		model.put("errorMessage", MessageProvider.getMessage(Locale.US, "passwordMismatch"));
+    		model.put("errorMessage", signUpResult.getErrorMessage());
     	}
     	
     	return render(configuration, request, response, model, Template.SIGN_UP);

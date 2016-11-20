@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.nowellpoint</groupId>
+	<artifactId>aws-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>2016-11-0-SNAPSHOT</version>
+	<name>Nowellpoint Integration Platform Parent</name>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<aws.sdk.version>1.11.52</aws.sdk.version>
+		<jackson.version>2.8.3</jackson.version>
+		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
+		<javax.el.version>2.2.4</javax.el.version>
+		<mongodb.driver.version>3.0.4</mongodb.driver.version>
+		<aws.dynamodb.encryption.version>1.11.0</aws.dynamodb.encryption.version>
+		<jedis.version>2.8.1</jedis.version>
+		<junit.version>4.12</junit.version>
+	</properties>
+
+	<modules>
+		<module>nowellpoint-aws-core</module>	
+		<module>nowellpoint-aws-sdk</module> 
+		<module>nowellpoint-aws-data</module>
+		<module>nowellpoint-aws-sforce</module>
+		<module>nowellpoint-aws-admin</module>
+		<module>nowellpoint-sforce-outbound-message-service</module>
+		<module>nowellpoint-aws-api</module>
+        <module>nowellpoint-www-app</module>
+		<module>nowellpoint-aws-test</module>
+	</modules>
+
+</project>

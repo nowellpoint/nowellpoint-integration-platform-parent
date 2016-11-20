@@ -35,6 +35,7 @@ public class UserResource extends AbstractResource {
 					.parameter("email", signUpRequest.getEmail())
 					.parameter("countryCode", signUpRequest.getCountryCode())
 					.parameter("password", URLEncoder.encode(signUpRequest.getPassword(), "UTF-8"))
+					.parameter("confirmPassword", URLEncoder.encode(signUpRequest.getConfirmPassword(), "UTF-8"))
 					.execute();
 			
 			SignUpResult<User> result = null;

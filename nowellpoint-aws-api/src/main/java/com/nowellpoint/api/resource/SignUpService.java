@@ -67,7 +67,21 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one lowercase letter."),
     	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one upper letter."),
     	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
-    	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password) {
+    	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password,
+    		@FormParam("confirmPassword") @NotEmpty(message="Confirmation Password must be filled in") String confirmPassword) {
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 */
+		
+		if (! password.equals(confirmPassword)) {
+			ErrorDTO error = new ErrorDTO(2000, "Password mismatch");
+			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
+			builder.entity(error);
+			throw new WebApplicationException(builder.build());
+		}
 		
 		/**
 		 * 

@@ -77,39 +77,43 @@
             <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <h3><div class="text-center">${signUp}</div></h3>
+                    <h4><div class="text-center">${signUp}</div></h4>
                     <br>
-                    
+
                     <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
                         <div class="form-group">
-                            <label class="control-label" for="firstName">${firstName}</label>
-                            <input class="form-control" name="firstName" id="firstName" autofocus="" value="${signUpRequest.firstName!}">
+                            <!-- <label class="control-label" for="firstName">${firstName}</label> -->
+                            <input class="form-control" name="firstName" id="firstName" placeholder="${firstName}" value="${signUpRequest.firstName!}" autofocus>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="lastName">${lastName}*</label>
-                            <input class="form-control" name="lastName" id="lastName" value="${signUpRequest.lastName!}" required>
+                            <!-- <label class="control-label" for="lastName">${lastName}*</label> -->
+                            <input class="form-control" name="lastName" id="lastName" placeholder="${lastName}" value="${signUpRequest.lastName!}" required>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="email">${email}*</label>
-                            <input type="email" class="form-control" name="email" id="email" value="${signUpRequest.email!}" required>
+                            <!-- <label class="control-label" for="email">${email}*</label> -->
+                            <input type="email" class="form-control" name="email" id="email" placeholder="${email}" value="${signUpRequest.email!}" required>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="password">${password}*</label>
-                            <input type="password" class="form-control" name="password" id="password" value="${signUpRequest.password!}" required autocomplete="off" />
+                            <!-- <label class="control-label" for="password">${password}*</label> -->
+                            <input type="password" class="form-control" name="password" id="password" placeholder="${password}" value="${signUpRequest.password!}" required autocomplete="off" />
                         </div>
                         <div>
                             <p>${passwordPolicy}</p>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="confirmPassword">${retypePassword}*</label>
-                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" required="" autocomplete="off" />
+                            <!-- <label class="control-label" for="confirmPassword">${retypePassword}*</label> -->
+                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="${retypePassword}" required autocomplete="off" />
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="countryCode">${country}*</label>
+                            <!--<label class="control-label" for="countryCode">${country}*</label> -->
                             <select id="countryCode" name="countryCode" class="form-control" required>
-                                <option value="" selected="selected">--- ${selectOne} ---</option>
                                 <#list countryList as country>
-                                    <option value="${country.code}">${country.name}</option>
+                                    <#if country.code==signUpRequest.countryCode>
+                                        <option value="${country.code}" selected="selected">${country.name}</option>
+                                    </#if>
+                                    <#if country.code !=signUpRequest.countryCode>
+                                        <option value="${country.code}">${country.name}</option>
+                                    </#if>
                                 </#list>
                             </select>
                         </div>
@@ -132,10 +136,6 @@
             <div class="row">
                 <div class="col-md-8 col-md-offset-2 text-center">
                     <hr class="primary">
-                    <p>${signUpHeading}</p>
-                </div>
-                <div class="col-md-8 col-md-offset-2 text-center">
-                    <i class="fa fa-sitemap fa-3x wow bounceIn"></i>
                 </div>
             </div>
         </div>
