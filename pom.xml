@@ -29,9 +29,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent</connection>
-        <developerConnection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent</developerConnection>
-        <url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent</url>
+        <connection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent.git</developerConnection>
+        <url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent.git</url>
     </scm>
     
     <developers>
