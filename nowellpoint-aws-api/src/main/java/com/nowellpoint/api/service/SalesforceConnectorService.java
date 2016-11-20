@@ -74,10 +74,6 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * constructor
-	 * 
-	 * 
 	 */
 	
 	public SalesforceConnectorService() {
@@ -85,12 +81,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	}
 	
 	/**
-	 *
-	 * 
-	 * @param subject
-	 * @return all SalesforceConnectorDTO owned by @param subject
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public Set<SalesforceConnector> findAllByOwner() {
@@ -98,12 +89,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	}
 	
 	/**
-	 *
 	 * 
 	 * @param token
-	 * @return the created SalesforceConnectorDTO
-	 * 
-	 *
+	 * @return
 	 */
 	
 	public SalesforceConnector createSalesforceConnector(Token token) {
@@ -170,11 +158,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param salesforceConnector
-	 * 
-	 * 
 	 */
 	
 	public void updateSalesforceConnector(String id, SalesforceConnector salesforceConnector) {		
@@ -198,10 +183,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
-	 * 
-	 * 
 	 */
 	
 	public void deleteSalesforceConnector(String id) {
@@ -255,11 +237,6 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * @param id
-	 * @return
-	 * 
-	 * 
 	 */
 	
 	public SalesforceConnector findSalesforceConnector(String id) {		
@@ -268,11 +245,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Set<Environment> getEnvironments(String id) {
@@ -282,12 +256,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Environment getEnvironment(String id, String key) {
@@ -304,13 +275,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param environment
-	 * @return
-	 * @throws ServiceException
-	 * 
-	 * 
 	 */
 	
 	public void addEnvironment(String id, Environment environment) {
@@ -351,13 +317,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @param environment
-	 * @return
-	 * 
-	 * 
 	 */
 	
 	public void updateEnvironment(String id, String key, Environment environment) {
@@ -371,11 +333,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 
 	/**
 	 * 
-	 * 
 	 * @param resource
 	 * @param environment
-	 * 
-	 * 
 	 */
 	
 	public void updateEnvironment(SalesforceConnector resource, Environment environment) {
@@ -434,13 +393,10 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @param parameters
-	 * @return updated EnvironmentDTO
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
@@ -534,11 +490,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
-	 * 
-	 * 
 	 */
 	
 	public void removeEnvironment(String id, String key) {
@@ -559,12 +512,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param accessToken
 	 * @param imageUrl
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	private String putImage(String accessToken, String imageUrl) {

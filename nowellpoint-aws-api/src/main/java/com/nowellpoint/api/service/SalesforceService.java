@@ -37,20 +37,21 @@ public class SalesforceService extends AbstractCacheService {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = Logger.getLogger(SalesforceService.class);
 	
+	/**
+	 * 
+	 */
+	
 	public SalesforceService() {
 
 	}
 	
 	/**
 	 * 
-	 * 
 	 * @param authEndpoint
 	 * @param username
 	 * @param password
 	 * @param securityToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public LoginResult login(String authEndpoint, String username, String password, String securityToken) {
@@ -96,11 +97,8 @@ public class SalesforceService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public DescribeGlobalSobjectsResult describe(String id) {
@@ -124,11 +122,8 @@ public class SalesforceService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * 
-	 * @param authCode
+	 * @param code
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public OauthAuthenticationResponse authenticate(String code) {		
@@ -147,13 +142,10 @@ public class SalesforceService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * 
 	 * @param accessToken
 	 * @param userId
 	 * @param sobjectUrl
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public User getUser(String accessToken, String userId, String sobjectUrl) {	
@@ -171,13 +163,10 @@ public class SalesforceService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * 
-	 * @param bearerToken
+	 * @param accessToken
 	 * @param organizationId
 	 * @param sobjectUrl
-	 * @return Organization
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public Organization getOrganization(String accessToken, String organizationId, String sobjectUrl) {		
@@ -195,11 +184,8 @@ public class SalesforceService extends AbstractCacheService {
 	
 	/**
 	 * 
-	 * 
 	 * @param refreshToken
-	 * @return OauthAuthenticationResponse
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public OauthAuthenticationResponse refreshToken(String refreshToken) {
@@ -217,11 +203,9 @@ public class SalesforceService extends AbstractCacheService {
 		
 	/**
 	 * 
-	 * 
-	 * @param token
+	 * @param accessToken
+	 * @param sobjectUrl
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	private DescribeGlobalSobjectsResult describe(String accessToken, String sobjectUrl) {

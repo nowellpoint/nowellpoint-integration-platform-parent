@@ -25,14 +25,10 @@ public class EnvironmentService {
 	@Inject
 	private SalesforceService salesforceService;
 	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param environment
-	 * @param parameters
-	 * 
-	 * 
-	 **************************************************************************************************************************/
+	 */
 	
 	public void testConnection(Environment environment) {
 		

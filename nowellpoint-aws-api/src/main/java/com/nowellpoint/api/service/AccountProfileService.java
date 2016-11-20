@@ -142,6 +142,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param accountProfile
+	 * 
+	 */
+	
 	public void deactivateAccountProfile(AccountProfile accountProfile) {
 		accountProfile.setIsActive(Boolean.FALSE);
 		
@@ -150,10 +156,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * @param subject
 	 * @param accountProfile
-	 * @param eventSource
-	 * @return the updated Identity resource
+	 * 
+	 * 
 	 */
 	
 	public void updateAccountProfile(AccountProfile accountProfile) {
@@ -305,11 +310,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * @param subject
 	 * @param id
 	 * @param address
-	 * @return
 	 * 
 	 * 
 	 */
@@ -332,11 +334,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Subscription getSubscription(String id) {
@@ -346,11 +345,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * @param id
+	 * @param accountProfileId
+	 * @param paymentMethodToken
 	 * @param subscription
-	 * 
-	 * 
 	 */
 	
 	public void setSubscription(String accountProfileId, String paymentMethodToken, Subscription subscription) {
@@ -412,12 +409,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * @param subject
 	 * @param id
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Address getAddress(String id) {
@@ -426,12 +419,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @param id
-	 * @return Identity resource for id
-	 * 
-	 * 
 	 */
 	
 	public AccountProfile findAccountProfile(String id) {	
@@ -439,12 +427,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	/**
-	 * 
-	 * 
 	 * @param href
-	 * @return AccountProfile resource for subject
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public AccountProfile findAccountProfileByHref(String href) {
@@ -466,11 +450,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param userId
 	 * @param profileHref
-	 * 
-	 * 
 	 */
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
@@ -498,12 +479,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param token
-	 * @return CreditCard
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public CreditCard getCreditCard(String id, String token) {
@@ -520,11 +498,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param creditCard
-	 * 
-	 * 
 	 */
 	
 	public void addCreditCard(String id, CreditCard creditCard) {
@@ -609,12 +584,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param token
 	 * @param creditCard
-	 * 
-	 * 
 	 */
 	
 	public void updateCreditCard(String id, String token, CreditCard creditCard) {
@@ -693,13 +665,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param token
 	 * @param parameters
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
@@ -729,11 +698,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param token
-	 * 
-	 * 
 	 */
 	
 	public void removeCreditCard(String id, String token) {

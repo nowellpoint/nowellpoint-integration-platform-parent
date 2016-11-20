@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
+//import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -285,7 +285,7 @@ public class TestRestApi {
 					
 	}	
 	
-	@Test
+	//@Test
 	public void testInvalidEmailVerificationToken() {
 		
 		System.out.println("testInvalidEmailVerificationToken");

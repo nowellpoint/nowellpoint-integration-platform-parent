@@ -16,10 +16,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
-	 * constructor
-	 * 
-	 * 
 	 */
 	
 	public AccountProfileModelMapper() {
@@ -28,11 +24,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	protected AccountProfile findAccountProfile(String id) {
@@ -42,10 +35,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
 	 * @param accountProfile
-	 * 
-	 * 
 	 */
 	
 	protected void createAccountProfile(AccountProfile accountProfile) {
@@ -57,10 +47,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
 	 * @param accountProfile
-	 * 
-	 * 
 	 */
 	
 	protected void updateAccountProfile(AccountProfile accountProfile) {
@@ -72,10 +59,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
 	 * @param accountProfile
-	 * 
-	 * 
 	 */
 	
 	protected void deleteAccountProfile(AccountProfile accountProfile) {
@@ -86,11 +70,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
-	 * @param subject
+	 * @param href
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	protected AccountProfile findAccountProfileByHref(String href) {
@@ -101,11 +82,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * 
 	 * @param username
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	protected AccountProfile findAccountProfileByUsername(String username) {

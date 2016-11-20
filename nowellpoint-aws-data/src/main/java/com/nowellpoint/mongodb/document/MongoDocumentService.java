@@ -39,7 +39,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	/**
 	 * 
 	 * 
-	 * @return 
+	 * @return
 	 * 
 	 * 
 	 */
@@ -123,7 +123,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 * 
 	 * @param document
-	 * @return
 	 * 
 	 * 
 	 */
@@ -153,7 +152,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	/**
 	 * 
 	 * 
-	 * @param subject
 	 * @param document
 	 * 
 	 * 
@@ -202,7 +200,6 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	/**
 	 * 
 	 * 
-	 * @param subject
 	 * @param document
 	 * 
 	 * 

@@ -78,8 +78,7 @@ public class IdentityProviderService {
 	/**
 	 * 
 	 * @param apiKey
-	 * @return the Authentication token
-	 * 
+	 * @return
 	 */
 	
 	public Token authenticate(ApiKey apiKey) {
@@ -106,8 +105,7 @@ public class IdentityProviderService {
 	 * 
 	 * @param username
 	 * @param password
-	 * @return the Authentication token
-	 * 
+	 * @return
 	 */
 	
 	public Token authenticate(String username, String password) {			
@@ -134,7 +132,6 @@ public class IdentityProviderService {
 	 * 
 	 * @param username
 	 * @return
-	 * 
 	 */
 	
 	public Boolean isEnabledAccount(String username) {
@@ -164,7 +161,6 @@ public class IdentityProviderService {
 	 * 
 	 * @param id
 	 * @return
-	 * 
 	 */
 	
 	public User getAccount(String id) {
@@ -189,11 +185,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param href
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public User getAccountByHref(String href) {
@@ -217,10 +210,7 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param user
-	 * 
-	 * 
 	 */
 	
 	public void createUser(User user) {	
@@ -240,10 +230,7 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param user
-	 * 
-	 * 
 	 */
 	
 	public void updateUser(User user) {	
@@ -261,10 +248,7 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
-	 * @param href
-	 * 
-	 * 
+	 * @param accountProfile
 	 */
 	
 	public void deactivateUser(@Observes @Deactivate AccountProfile accountProfile) {
@@ -277,11 +261,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param subject
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public User getAccountBySubject(String subject) {		
@@ -305,11 +286,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param bearerToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Token refresh(String bearerToken) {		
@@ -330,11 +308,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param bearerToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public String verify(String bearerToken) {		
@@ -352,11 +327,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param username
-	 * @return the Account associated with the @param username
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public User findByUsername(String username) {
@@ -383,10 +355,7 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param bearerToken
-	 * 
-	 * 
 	 */
 	
 	public void revoke(String bearerToken) {		
@@ -408,11 +377,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param emailVerificationToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public String verifyEmail(String emailVerificationToken) {	
@@ -436,12 +402,9 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param result
-	 * @param key
+	 * @param subject
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {

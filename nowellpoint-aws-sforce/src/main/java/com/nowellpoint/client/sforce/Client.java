@@ -34,9 +34,11 @@ public class Client {
 	
 	/**
 	 * 
-	 * @param id
-	 * @param accessToken
+	 * 
+	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public Identity getIdentity(GetIdentityRequest request) {
@@ -67,8 +69,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public User getUser(GetUserRequest request) {
@@ -93,8 +98,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public Organization getOrganization(GetOrganizationRequest request) {
@@ -119,8 +127,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public DescribeGlobalSobjectsResult describeGlobal(DescribeGlobalSobjectsRequest request) {
@@ -142,8 +153,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
@@ -168,8 +182,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public Theme getTheme(ThemeRequest request) {

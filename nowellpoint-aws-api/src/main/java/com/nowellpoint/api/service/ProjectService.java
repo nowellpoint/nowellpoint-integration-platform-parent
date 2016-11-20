@@ -12,9 +12,7 @@ public class ProjectService extends ProjectModelMapper {
 	}
 	
 	/**
-	 * 
-	 * @param subject
-	 * @return the list of Projects that is associated to the subject
+	 * @return
 	 */
 	
 	public Set<Project> findAllByOwner() {
@@ -23,10 +21,7 @@ public class ProjectService extends ProjectModelMapper {
 
 	/**
 	 * 
-	 * @param subjectId
 	 * @param project
-	 * @param eventSource
-	 * @return the created project
 	 */
 	
 	public void createProject(Project project) {
@@ -35,10 +30,8 @@ public class ProjectService extends ProjectModelMapper {
 	
 	/**
 	 * 
-	 * @param subjectId
+	 * @param id
 	 * @param project
-	 * @param eventSource
-	 * @return
 	 */
 
 	public void updateProject(String id, Project project) {
@@ -51,9 +44,7 @@ public class ProjectService extends ProjectModelMapper {
 	
 	/**
 	 * 
-	 * @param projectId
-	 * @param subjectId
-	 * @param eventSource
+	 * @param id
 	 */
 	
 	public void deleteProject(String id) {
@@ -64,7 +55,6 @@ public class ProjectService extends ProjectModelMapper {
 	/**
 	 * 
 	 * @param id
-	 * @param subject
 	 * @return
 	 */
 	

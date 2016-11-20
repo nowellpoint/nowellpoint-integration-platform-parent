@@ -76,7 +76,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param key
+	 * @param planCode
 	 * @return
 	 * 
 	 * 
@@ -91,6 +91,8 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
+	 * @param localeSidKey
+	 * @param languageLocaleKey
 	 * @return
 	 * 
 	 * 

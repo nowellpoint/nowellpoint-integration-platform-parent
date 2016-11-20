@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -49,6 +50,7 @@ public class TestSObjectToCSV {
 	}
 	
 	@Test
+	@Ignore
 	public void testCreateCSV() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()

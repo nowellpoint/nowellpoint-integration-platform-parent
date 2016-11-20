@@ -36,10 +36,6 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 */
 	
 	public ApplicationService() {
@@ -47,9 +43,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	}
 	
 	/**
-	 * 
-	 * @param subject
-	 * @return
+	 * @return 
 	 */
 	
 	public Set<Application> findAllByOwner() {
@@ -58,11 +52,10 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return
-	 * 
+	 * @param application
+	 * @param connectorId
+	 * @param importSandboxes
+	 * @param importServices
 	 */
 	
 	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {
@@ -87,10 +80,8 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return
+	 * @param id
+	 * @param application
 	 */
 	
 	public void updateApplication(String id, Application application) {
@@ -126,9 +117,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * @param applicationId
-	 * @param subject
-	 * @param eventSource
+	 * @param id
 	 */
 	
 	public void deleteApplication(String id) {		
@@ -138,9 +127,6 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * @param id
-	 * @param subject
-	 * @return
 	 */
 	
 	public Application findApplication(String id) {
@@ -149,13 +135,9 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @param environment
-	 * @return
-	 * 
-	 * 
 	 */
 	
 	public void updateEnvironment(String id, String key, Environment environment) {
@@ -168,13 +150,10 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @param parameters
-	 * @return updated EnvironmentDTO
-	 * 
-	 * 
+	 * @return
 	 */
 	
 	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
@@ -207,15 +186,12 @@ public class ApplicationService extends ApplicationModelMapper {
 		return environment;
 	}
 	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param id
 	 * @param key
 	 * @return
-	 * 
-	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public Environment getEnvironment(String id, String key) {
 		Application resource = findApplication(id);
@@ -229,14 +205,11 @@ public class ApplicationService extends ApplicationModelMapper {
 		return environment;
 	}
 	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param id
 	 * @param environment
-	 * 
-	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void addEnvironment(String id, Environment environment) {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
@@ -269,6 +242,12 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		updateApplication(id, resource);
 	}
+	
+	/**
+	 * 
+	 * @param resource
+	 * @param environment
+	 */
 	
 	public void updateEnvironment(Application resource, Environment environment) {
 		
@@ -319,14 +298,11 @@ public class ApplicationService extends ApplicationModelMapper {
 		updateApplication(resource.getId(), resource);
 	}
 	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param id
 	 * @param key
-	 * 
-	 * 
-	 *************************************************************************************************************************/
+	 */
 	
 	public void removeEnvironment(String id, String key) {
 		Application resource = findApplication(id);

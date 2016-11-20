@@ -40,11 +40,6 @@ public class ApplicationResource {
 	@Context
 	private SecurityContext securityContext;
 	
-	/**
-	 * 
-	 * @return
-	 */
-	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
@@ -53,12 +48,6 @@ public class ApplicationResource {
 		
 		return Response.ok(resources).build();
     }
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
 	
 	@GET
 	@Path("{id}")
@@ -74,12 +63,6 @@ public class ApplicationResource {
 		return Response.ok(application).build();
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
 	@DELETE
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,12 +72,6 @@ public class ApplicationResource {
 		
 		return Response.noContent().build();
 	}
-	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 */
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -121,13 +98,6 @@ public class ApplicationResource {
 				.entity(application)
 				.build();	
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param name
-	 * @return
-	 */
 	
 	@PUT
 	@Path("{id}")

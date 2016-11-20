@@ -39,11 +39,6 @@ public class ProjectResource {
 	@Context
 	private SecurityContext securityContext;
 	
-	/**
-	 * 
-	 * @return
-	 */
-	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
@@ -53,12 +48,6 @@ public class ProjectResource {
 		return Response.ok(projects)
 				.build();
     }
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
 	
 	@GET
 	@Path("/{id}")
@@ -71,12 +60,6 @@ public class ProjectResource {
 				.build();
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
 	@DELETE
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,12 +70,6 @@ public class ProjectResource {
 		return Response.noContent()
 				.build();
 	}
-	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 */
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -114,12 +91,6 @@ public class ProjectResource {
 				.entity(project)
 				.build();
 	}
-	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 */
 	
 	@PUT
 	@Path("/{id}")
