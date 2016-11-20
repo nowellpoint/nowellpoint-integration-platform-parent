@@ -2,7 +2,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nowellpoint</groupId>
-	<artifactId>aws-parent</artifactId>
+	<artifactId>nowellpoint-integration-platform-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>2016-11-0</version>
 	<name>Nowellpoint Integration Platform Parent</name>
@@ -12,6 +12,35 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+	
+	<url>http://www.nowellpoint.com</url>
+
+    <issueManagement>
+        <url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent.git</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent</connection>
+        <developerConnection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent</developerConnection>
+        <url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent</url>
+    </scm>
+    
+    <developers>
+        <developer>
+            <id>jherson</id>
+            <name>John Herson</name>
+            <email>john.d.herson@gmail.com</email>
+        </developer>
+    </developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,10 +68,4 @@
 		<module>nowellpoint-aws-test</module>
 	</modules>
 
-
-  <scm>
-    <connection>scm:svn:http://svn.sonatype.org/spice/tags/aws-parent-2016-11-0</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/spice/tags/aws-parent-2016-11-0</developerConnection>
-    <url>http://svn.sonatype.org/spice/tags/aws-parent-2016-11-0</url>
-  </scm>
 </project>
