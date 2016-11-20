@@ -12,22 +12,25 @@ import javax.validation.ValidationException;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.dto.idp.Account;
-import com.nowellpoint.api.dto.idp.SearchResult;
-import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.ErrorDTO;
+import com.nowellpoint.api.model.domain.idp.SearchResult;
+import com.nowellpoint.api.model.domain.idp.Token;
+import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.model.admin.Properties;
+import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
+import com.stormpath.sdk.directory.Directory;
 import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
@@ -53,6 +56,7 @@ public class IdentityProviderService {
 	private static ApiKey apiKey;
 	private static Client client;
 	private static Application application;
+	private static Directory directory;
 	
 	static {
 		apiKey = ApiKeys.builder()
@@ -66,6 +70,9 @@ public class IdentityProviderService {
 		
 		application = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/applications/")
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
+		
+		directory = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/directories/")
+				.concat(System.getProperty(Properties.STORMPATH_DIRECTORY_ID)), Directory.class);
 	}
 	
 	/**
@@ -145,8 +152,8 @@ public class IdentityProviderService {
 		if (searchResult.getSize() == 0) {
 			return false;
 		} else {
-			Account account = searchResult.getItems().get(0);
-			if ("ENABLED".equals(account.getStatus())) {
+			User user = searchResult.getItems().get(0);
+			if ("ENABLED".equals(user.getStatus())) {
 				return true;
 			}
 			return false;
@@ -160,9 +167,9 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public Account getAccount(String id) {
+	public User getAccount(String id) {
 		
-		Account account = null;
+		User user = null;
 		
 		HttpResponse httpResponse = RestResource.get(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -172,12 +179,12 @@ public class IdentityProviderService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
+			user = httpResponse.getEntity(User.class);
 		} else {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
@@ -189,9 +196,9 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public Account getAccountByHref(String href) {
+	public User getAccountByHref(String href) {
 		
-		Account account = null;
+		User user = null;
 		
 		HttpResponse httpResponse = RestResource.get(href)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -200,68 +207,56 @@ public class IdentityProviderService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
+			user = httpResponse.getEntity(User.class);
 		} else {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
 	 * 
 	 * 
-	 * @param account
+	 * @param user
 	 * 
 	 * 
 	 */
 	
-	public Account createAccount(Account account) {	
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.contentType(MediaType.APPLICATION_JSON)
-				.path("directories")
-				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
-				.path("accounts")
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.body(account)
-				.execute();
-
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+	public void createUser(User user) {	
 		
-		if (httpResponse.getStatusCode() == 201) {
-			account = httpResponse.getEntity(Account.class);
-		} else {
-			LOGGER.error(httpResponse.getAsString());
-		}
+		Account account = client.instantiate(Account.class)
+				.setUsername(user.getUsername())
+			    .setEmail(user.getUsername())
+			    .setGivenName(user.getGivenName())
+			    .setSurname(user.getSurname())
+			    .setStatus(AccountStatus.valueOf(user.getStatus()))
+			    .setPassword(user.getPassword());
 		
-		return account;
+		directory.createAccount(account);
+		
+		user.setHref(account.getHref());
 	}
 	
 	/**
 	 * 
 	 * 
-	 * @param account
+	 * @param user
 	 * 
 	 * 
 	 */
 	
-	public Account updateAccount(Account account) {	
-		HttpResponse httpResponse = RestResource.post(account.getHref())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.body(account)
-				.execute();
+	public void updateUser(User user) {	
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		Account account = client.getResource(user.getHref(), Account.class)
+				.setUsername(user.getUsername())
+			    .setEmail(user.getUsername())
+			    .setGivenName(user.getGivenName())
+			    .setSurname(user.getSurname())
+			    .setPassword(user.getPassword())
+			    .setStatus(AccountStatus.valueOf(user.getStatus()));
 		
-		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
-		} else {
-			LOGGER.error(httpResponse.getAsString());
-		}
-		
-		return account;
+		account.save();
 	}
 	
 	/**
@@ -272,21 +267,12 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public void deactivateAccount(@Observes @Deactivate AccountProfile accountProfile) {
-		Account account = new Account();
-		account.setStatus("DISABLED");
+	public void deactivateUser(@Observes @Deactivate AccountProfile accountProfile) {
 		
-		HttpResponse httpResponse = RestResource.post(accountProfile.getHref())
-				.contentType(MediaType.APPLICATION_JSON)
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.body(account)
-				.execute();
+		Account account = client.getResource(accountProfile.getHref(), Account.class)
+				.setStatus(AccountStatus.DISABLED);
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
-		if (httpResponse.getStatusCode() != 200) {
-			throw new ValidationException(httpResponse.getAsString());
-		}
+		account.save();
 	}
 	
 	/**
@@ -298,7 +284,7 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public Account getAccountBySubject(String subject) {		
+	public User getAccountBySubject(String subject) {		
 		HttpResponse httpResponse = RestResource.get(subject)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.queryParameter("expand","groups")
@@ -306,15 +292,15 @@ public class IdentityProviderService {
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
-		Account account = null;
+		User user = null;
 		
 		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
+			user = httpResponse.getEntity(User.class);
 		} else {
 			throw new ValidationException(httpResponse.getAsString());
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
@@ -373,7 +359,7 @@ public class IdentityProviderService {
 	 * 
 	 */
 	
-	public Account findAccountByUsername(String username) {
+	public User findByUsername(String username) {
 		
 		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -384,15 +370,15 @@ public class IdentityProviderService {
 				.path("?username=".concat(username))
 				.execute();
 		
-		Account account = null;
+		User user = null;
 		
 		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
 		
 		if (searchResult.getSize() == 1) {
-			account = searchResult.getItems().get(0);
+			user = searchResult.getItems().get(0);
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**

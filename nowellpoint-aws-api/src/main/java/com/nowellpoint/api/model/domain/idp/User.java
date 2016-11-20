@@ -1,4 +1,4 @@
-package com.nowellpoint.api.dto.idp;
+package com.nowellpoint.api.model.domain.idp;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
-public class Account implements Serializable {
+public class User implements Serializable {
 
 	/**
 	 * 
@@ -64,7 +64,7 @@ public class Account implements Serializable {
 	@JsonProperty(value="directory")
 	private Directory directory;
 	  
-	public Account() {
+	public User() {
 		
 	}
 

@@ -14,12 +14,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -30,7 +28,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.nowellpoint.api.dto.idp.Account;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.domain.AccountProfile;
@@ -38,10 +35,10 @@ import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
+import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PlanService;
-import com.nowellpoint.aws.http.HttpRequestException;
 
 @Path("account-profile")
 public class AccountProfileResource {
@@ -198,19 +195,15 @@ public class AccountProfileResource {
 		// update identity
 		//
 		
-		Account account = new Account();
-		account.setGivenName(firstName);
-		account.setMiddleName(null);
-		account.setSurname(lastName);
-		account.setEmail(email);
-		account.setUsername(email);
-		account.setHref(accountProfile.getHref());
-
-		try {
-			identityProviderService.updateAccount(account);
-		} catch (HttpRequestException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
+		User user = new User();
+		user.setGivenName(firstName);
+		user.setMiddleName(null);
+		user.setSurname(lastName);
+		user.setEmail(email);
+		user.setUsername(email);
+		user.setHref(accountProfile.getHref());
+		
+		identityProviderService.updateUser(user);
 		
 		return Response.ok(accountProfile)
 				.build();

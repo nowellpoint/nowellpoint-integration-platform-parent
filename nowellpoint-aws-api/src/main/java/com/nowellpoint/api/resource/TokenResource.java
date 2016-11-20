@@ -24,8 +24,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.dto.idp.Token;
 import com.nowellpoint.api.exception.AuthenticationException;
+import com.nowellpoint.api.model.domain.idp.Token;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;

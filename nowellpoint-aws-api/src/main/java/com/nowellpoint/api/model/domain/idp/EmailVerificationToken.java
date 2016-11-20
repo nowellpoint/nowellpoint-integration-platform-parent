@@ -1,10 +1,10 @@
-package com.nowellpoint.api.dto.idp;
+package com.nowellpoint.api.model.domain.idp;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Directory implements Serializable {
+public class EmailVerificationToken implements Serializable {
 
 	/**
 	 * 
@@ -14,7 +14,7 @@ public class Directory implements Serializable {
 	@JsonProperty(value="href")
 	private String href;
 	
-	public Directory() {
+	public EmailVerificationToken() {
 		
 	}
 

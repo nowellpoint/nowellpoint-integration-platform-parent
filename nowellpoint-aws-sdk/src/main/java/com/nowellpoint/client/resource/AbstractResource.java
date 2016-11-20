@@ -10,6 +10,7 @@ import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SetResult;
+import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.Token;
 
@@ -19,6 +20,10 @@ public class AbstractResource {
 	protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 	
 	protected Token token;
+	
+	public AbstractResource() {
+		
+	}
 	
 	public AbstractResource(Token token) {
 		this.token = token;
@@ -109,6 +114,17 @@ public class AbstractResource {
 		}
 		
 		public UpdateResultImpl(Error error) {
+			super(error);
+		}	
+	}	
+	
+	class SignUpResultImpl <T> extends ResultImpl <T> implements SignUpResult <T> {
+		
+		public SignUpResultImpl(T target) {
+			super(target);
+		}
+		
+		public SignUpResultImpl(Error error) {
 			super(error);
 		}	
 	}	

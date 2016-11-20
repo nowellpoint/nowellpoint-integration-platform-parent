@@ -1,4 +1,4 @@
-package com.nowellpoint.api.dto.idp;
+package com.nowellpoint.api.model.domain.idp;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,7 +20,7 @@ public class SearchResult implements Serializable {
 	
 	private String href;
 	
-	private List<Account> items;
+	private List<User> items;
 	
 	public SearchResult() {
 		
@@ -58,11 +58,11 @@ public class SearchResult implements Serializable {
 		this.href = href;
 	}
 
-	public List<Account> getItems() {
+	public List<User> getItems() {
 		return items;
 	}
 
-	public void setItems(List<Account> items) {
+	public void setItems(List<User> items) {
 		this.items = items;
 	}
 }

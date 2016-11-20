@@ -14,10 +14,15 @@ import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.ScheduledJobResource;
 import com.nowellpoint.client.resource.ScheduledJobTypeResource;
+import com.nowellpoint.client.resource.UserResource;
 
 public class NowellpointClient {
 	
 	private static Token token;
+	
+	public NowellpointClient() {
+		
+	}
 	
 	public NowellpointClient(UsernamePasswordCredentials credentials) {
 		PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
@@ -65,5 +70,9 @@ public class NowellpointClient {
 	
 	public AccountProfileResource accountProfile() {
 		return new AccountProfileResource(token);
+	}
+	
+	public UserResource user() {
+		return new UserResource();
 	}
 }

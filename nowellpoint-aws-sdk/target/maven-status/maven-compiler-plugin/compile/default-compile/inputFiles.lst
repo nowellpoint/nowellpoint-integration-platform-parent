@@ -7,6 +7,7 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/SetResult.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/GetResult.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/AbstractResource.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/SignUpResult.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/AccountProfileRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/Environment.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/sforce/Theme.java
@@ -26,6 +27,7 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/ScheduledJobRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/PasswordGrantAuthorizerBuilderImpl.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/ScheduledJob.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/SignUpRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/sforce/Organization.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/ClientCredentialsGrantRequestImpl.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/sforce/Icon.java
@@ -67,6 +69,7 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/GetPlansRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/resource/ApplicationResource.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/ClientCredentialsGrantAuthorizerBuilder.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/resource/UserResource.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/ScheduledJobType.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/RevokeTokenRequestImpl.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/RevokeTokenInvalidatorBuilder.java
@@ -77,6 +80,7 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/sforce/Urls.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/RunHistory.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/Address.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/User.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/OauthAuthenticationResponseImpl.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/SubscriptionRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/IsoCountry.java

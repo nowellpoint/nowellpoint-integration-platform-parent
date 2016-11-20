@@ -24,6 +24,7 @@ com/nowellpoint/client/model/sforce/Photos.class
 com/nowellpoint/client/auth/impl/ClientCredentialsGrantAuthorizerBuilderImpl.class
 com/nowellpoint/client/model/AddResult.class
 com/nowellpoint/client/auth/Authenticators.class
+com/nowellpoint/client/model/SignUpResult.class
 com/nowellpoint/client/auth/PasswordGrantAuthorizerBuilder.class
 com/nowellpoint/client/model/Subscription.class
 com/nowellpoint/client/model/SubscriptionRequest.class
@@ -62,6 +63,7 @@ com/nowellpoint/client/auth/Authenticators$RevokeTokenResponseFactory.class
 com/nowellpoint/client/auth/impl/PasswordGrantAuthorizerBuilderImpl.class
 com/nowellpoint/client/model/IsoCountry.class
 com/nowellpoint/client/model/sforce/ThemeItem.class
+com/nowellpoint/client/model/SignUpRequest.class
 com/nowellpoint/client/auth/TokenCredentials.class
 com/nowellpoint/client/resource/ScheduledJobResource.class
 com/nowellpoint/client/auth/Credentials.class
@@ -78,10 +80,12 @@ com/nowellpoint/client/resource/AbstractResource$SetResultImpl.class
 com/nowellpoint/client/model/Error.class
 com/nowellpoint/client/model/Targets.class
 com/nowellpoint/client/model/sforce/Attributes.class
+com/nowellpoint/client/resource/AbstractResource$SignUpResultImpl.class
 com/nowellpoint/client/model/SetResult.class
 com/nowellpoint/client/model/Token.class
 com/nowellpoint/client/model/CreateResult.class
 com/nowellpoint/client/model/UserInfo.class
+com/nowellpoint/client/resource/UserResource.class
 com/nowellpoint/client/model/Contact.class
 com/nowellpoint/client/model/SystemReference.class
 com/nowellpoint/client/auth/Authenticators$PasswordGrantResponseFactory.class
@@ -91,6 +95,7 @@ com/nowellpoint/client/resource/AbstractResource$ResultImpl.class
 com/nowellpoint/client/resource/AccountProfileResource$AddressResource.class
 com/nowellpoint/client/auth/OauthAuthenticationResponse.class
 com/nowellpoint/client/resource/AbstractResource.class
+com/nowellpoint/client/model/User.class
 com/nowellpoint/client/model/ConnectorType.class
 com/nowellpoint/client/auth/impl/OauthAuthenticationResponseImpl.class
 com/nowellpoint/client/model/sforce/Field.class
