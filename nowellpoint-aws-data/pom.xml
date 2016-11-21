@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>aws-parent</artifactId>
-		<version>2016-11-0</version>
+		<version>2016-11-1-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
