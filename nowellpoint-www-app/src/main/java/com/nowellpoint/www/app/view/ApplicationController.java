@@ -101,7 +101,7 @@ public class ApplicationController extends AbstractController {
 		
 		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.getSalesforceConnector(id);
+				.get(id);
 		
 		Map<String, Object> model = getModel();
 		model.put("mode", "new");

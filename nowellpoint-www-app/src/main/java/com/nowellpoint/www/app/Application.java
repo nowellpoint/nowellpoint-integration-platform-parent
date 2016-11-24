@@ -120,11 +120,11 @@ public class Application implements SparkApplication {
         AdministrationController administrationController = new AdministrationController();
         SignUpController signUpController = new SignUpController();
         NotificationController notificationController = new NotificationController();
-        //SetupController setupController = new SetupController(cfg);
+        //SetupController setupController = new SetupController();
         SalesforceOauthController salesforceOauthController = new SalesforceOauthController();
         ContactUsController contactUsController = new ContactUsController();
-        //ApplicationController applicationController = new ApplicationController(cfg);
-        //ProjectController projectController = new ProjectController(cfg);
+        //ApplicationController applicationController = new ApplicationController();
+        //ProjectController projectController = new ProjectController();
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController();
         ScheduledJobController scheduledJobsController = new ScheduledJobController();
         

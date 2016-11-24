@@ -2,6 +2,8 @@ package com.nowellpoint.client.auth;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,9 +11,12 @@ import org.junit.Test;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 
 public class TestAuthenticators {
 	
@@ -63,6 +68,28 @@ public class TestAuthenticators {
 			System.out.println("testClientCredentialsGrantAuthentication: " + (System.currentTimeMillis() - start));
 			
 			System.out.println(getResult.getTarget().getName());
+			
+			List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+					.salesforceConnector()
+					.getSalesforceConnectors();
+			
+			System.out.println(salesforceConnectors.get(0).getId());
+			System.out.println(salesforceConnectors.get(0).getEnvironments().get(0).getKey());
+			
+			start = System.currentTimeMillis();
+			
+			UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+					.salesforceConnector()
+					.environment()
+					.build(salesforceConnectors.get(0).getId(), salesforceConnectors.get(0).getEnvironments().get(0).getKey());
+			
+			System.out.println(updateResult.isSuccess());
+			System.out.println(updateResult.getErrorMessage());
+			System.out.println("buildEnvironment: " + (System.currentTimeMillis() - start));
+			
+			Environment environment = updateResult.getTarget();
+			
+			System.out.println(environment.getKey());
 			
 		} catch (OauthException e) {
 			System.out.println(e.getCode());

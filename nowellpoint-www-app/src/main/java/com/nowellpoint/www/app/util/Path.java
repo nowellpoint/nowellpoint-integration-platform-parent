@@ -35,6 +35,7 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/edit");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_TEST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/test");
+		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_BUILD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/build");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");

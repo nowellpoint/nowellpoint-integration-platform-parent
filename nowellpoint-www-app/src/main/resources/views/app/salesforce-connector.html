@@ -209,6 +209,7 @@
                                                 </td>
                                                 <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a>&emsp;
                                                     <a href="#" class="test-connection" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}/test" data-id="${environment.key}"><span class="icon icon-flash"></span>${labels["test.connection"]}</a>&emsp;
+                                                    <a href="#" class="build-environment" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}/build" data-id="${environment.key}"><span class="icon icon-cog"></span>${labels["build.environment"]}</a>&emsp;
                                                     <#if environment.isSandbox>
                                                         <a href="#" id="confirm-remove-environment" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}"><span class="icon icon-trash"></span>${labels["delete"]}</a>
                                                     </#if>

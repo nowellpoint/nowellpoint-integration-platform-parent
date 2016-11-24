@@ -197,7 +197,8 @@ public class ScheduledJobController extends AbstractController {
 			
 			List<Environment> environments = new NowellpointClient(new TokenCredentials(token))
 					.salesforceConnector()
-					.getEnvironments(connectorId);
+					.get(connectorId)
+					.getEnvironments();
 			
 			model.put("environments", environments);
 		}
@@ -225,7 +226,8 @@ public class ScheduledJobController extends AbstractController {
 		
 		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.getEnvironment(scheduledJob.getConnectorId(), environmentKey);
+				.environment()
+				.get(scheduledJob.getConnectorId(), environmentKey);
 		
 		scheduledJob.setNotificationEmail(result.getTarget().getEmail());
 		scheduledJob.setEnvironmentKey(result.getTarget().getKey());

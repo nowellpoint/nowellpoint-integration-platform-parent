@@ -58,3 +58,23 @@ $('.test-connection').on('click', function (e) {
         }
     });
 });
+
+$('.build-environment').on('click', function (e) {
+    var id = $(this).data('id');
+    var row = $('#'.concat(id));
+    var href = $(this).data('href');
+    alert(href);
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: href,
+        success: function (response) {
+            var environment = response;
+            if (environment.isValid) {
+                row.find('td:eq(3)').html('<span class="icon icon-check fa-1x text-success">&emsp;' + environment.testMessage + '</span>');
+            } else {
+                row.find('td:eq(3)').html('<span class="icon icon-squared-cross fa-1x text-danger">&emsp;' + environment.testMessage + '</span>');
+            }
+        }
+    });
+});

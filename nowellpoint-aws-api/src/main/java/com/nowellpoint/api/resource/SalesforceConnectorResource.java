@@ -184,6 +184,24 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
+	@Path("salesforce/{id}/environment/{key}/actions/{action}/invoke")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="action") String action) {
+		
+		Environment environment = null;
+		
+		if ("build".equals(action)) {
+			environment = salesforceConnectorService.buildEnvironment(id, key);
+		} else if ("test".equals(action)) {
+			
+		}
+		
+		return Response.ok()
+				.entity(environment)
+				.build(); 
+	}
+	
+	@POST
 	@Path("salesforce/{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)

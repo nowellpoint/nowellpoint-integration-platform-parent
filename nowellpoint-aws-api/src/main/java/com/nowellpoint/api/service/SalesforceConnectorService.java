@@ -44,13 +44,13 @@ import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
 
-/**************************************************************************************************************************
+/**
  * 
  * 
  * @author jherson
  *
  * 
- *************************************************************************************************************************/
+ */
 
 public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
@@ -484,6 +484,67 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			
 			updateEnvironment(resource, environment);
 		}
+		
+		return environment;
+	}
+	
+	public Environment testConnection(String id, String key) {
+		
+		SalesforceConnector resource = findSalesforceConnector( id );
+		
+		Environment environment = resource.getEnvironments()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst()
+				.get();
+		
+		UserProperty userProperty = new UserProperty();
+		userProperty.setSubject(environment.getKey());
+		
+		Map<String, UserProperty> properties = UserProperties.query(userProperty)
+				.stream()
+				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
+		
+		if (environment.getIsSandbox()) {
+			environment.setPassword(properties.get(PASSWORD).getValue());
+			environment.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
+		} else {
+			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
+		}
+		
+		environmentService.testConnection(environment);
+		
+		updateSalesforceConnector( id, resource );
+		
+		return environment;
+	}
+	
+	public Environment buildEnvironment(String id, String key) {
+		SalesforceConnector resource = findSalesforceConnector( id );
+		
+		Environment environment = resource.getEnvironments()
+				.stream()
+				.filter(e -> key.equals(e.getKey()))
+				.findFirst()
+				.get();
+		
+		UserProperty userProperty = new UserProperty();
+		userProperty.setSubject(environment.getKey());
+		
+		Map<String, UserProperty> properties = UserProperties.query(userProperty)
+				.stream()
+				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
+		
+		if (environment.getIsSandbox()) {
+			environment.setPassword(properties.get(PASSWORD).getValue());
+			environment.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
+		} else {
+			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
+		}
+		
+		environmentService.buildEnvironment(environment);
+		
+		updateSalesforceConnector( id, resource );
 		
 		return environment;
 	}

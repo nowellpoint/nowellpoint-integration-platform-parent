@@ -27,6 +27,7 @@ import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.ThemeItem;
 import com.nowellpoint.client.model.sforce.Icon;
 import com.nowellpoint.www.app.util.MessageProvider;
@@ -70,6 +71,7 @@ public class SalesforceConnectorController extends AbstractController {
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_UPDATE, (request, response) -> updateEnvironment(configuration, request, response));
         delete(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_REMOVE, (request, response) -> removeEnvironment(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, (request, response) -> testConnection(configuration, request, response));  
+        post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_BUILD, (request, response) -> buildEnvironment(configuration, request, response));  
         get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECTS, (request, response) -> sobjectsList(configuration, request, response));
 	}
 	
@@ -129,7 +131,8 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.getEnvironment(id, key);
+				.environment()
+				.get(id, key);
 		
 		Environment environment = result.getTarget();
 		
@@ -179,7 +182,8 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.getEnvironment(id, key);
+				.environment()
+				.get(id, key);
 		
 		Environment environment = result.getTarget();
 		
@@ -403,7 +407,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.getSalesforceConnector(id);
+				.get(id);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getCreatedBy().getId());
 		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getLastModifiedBy().getId());
@@ -433,7 +437,7 @@ public class SalesforceConnectorController extends AbstractController {
     	
 		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.getSalesforceConnector(id);
+				.get(id);
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
@@ -448,29 +452,19 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getSalesforceConnectors
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 
 	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.execute();
-		
-		List<SalesforceConnector> salesforceConnectors = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			salesforceConnectors = httpResponse.getEntityList(SalesforceConnector.class);
-		} else {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.getSalesforceConnectors();
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnectorsList", salesforceConnectors);
@@ -546,13 +540,27 @@ public class SalesforceConnectorController extends AbstractController {
 		return "";
 	};
 	
+	private String buildEnvironment(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		
+		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.build(id, key);
+		
+		return "";
+	}
+	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * testConnection
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * @throws JsonProcessingException 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws JsonProcessingException
 	 */
 
 	private String testConnection(Configuration configuration, Request request, Response response) throws JsonProcessingException {

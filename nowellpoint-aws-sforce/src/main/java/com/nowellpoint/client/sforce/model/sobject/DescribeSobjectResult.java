@@ -3,10 +3,33 @@ package com.nowellpoint.client.sforce.model.sobject;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.client.sforce.model.Urls;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DescribeSobjectResult {
+	
+	private String networkScopeFieldName;
+	
+	private Boolean queryable;
+	
+	private Boolean replicateable;
+	
+	private Boolean retrieveable;
+	
+	private Boolean searchLayoutable;
+	
+	private Boolean searchable;
+	
+	private List<SupportedScope> supportedScopes;
+	
+	private Boolean triggerable;
+	
+	private Boolean undeletable;
+	
+	private Boolean updateable;
+    
+    private List<RecordTypeInfo> recordTypeInfos;
+	
+	private List<Field> fields;
 	
 	private List<ActionOverride> actionOverrides;
 	
@@ -47,6 +70,10 @@ public class DescribeSobjectResult {
 	private String name;
 	
 	private List<NamedLayoutInfo> namedLayoutInfos;
+	
+	public DescribeSobjectResult() {
+		
+	}
 	
 	public List<ActionOverride> getActionOverrides() {
 		return actionOverrides;
@@ -272,50 +299,12 @@ public class DescribeSobjectResult {
 		this.updateable = updateable;
 	}
 
-	public Urls getUrls() {
-		return urls;
-	}
-
-	public void setUrls(Urls urls) {
-		this.urls = urls;
-	}
-
 	public List<RecordTypeInfo> getRecordTypeInfos() {
 		return recordTypeInfos;
 	}
 
 	public void setRecordTypeInfos(List<RecordTypeInfo> recordTypeInfos) {
 		this.recordTypeInfos = recordTypeInfos;
-	}
-
-	private String networkScopeFieldName;
-	
-	private Boolean queryable;
-	
-	private Boolean replicateable;
-	
-	private Boolean retrieveable;
-	
-	private Boolean searchLayoutable;
-	
-	private Boolean searchable;
-	
-	private List<SupportedScope> supportedScopes;
-	
-	private Boolean triggerable;
-	
-	private Boolean undeletable;
-	
-	private Boolean updateable;
-	
-	private Urls urls;
-    
-    private List<RecordTypeInfo> recordTypeInfos;
-	
-	private List<Field> fields;
-	
-	public DescribeSobjectResult() {
-		
 	}
 
 	public Boolean getActivateable() {
