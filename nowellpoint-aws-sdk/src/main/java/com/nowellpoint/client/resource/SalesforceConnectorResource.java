@@ -9,6 +9,8 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
@@ -61,6 +63,51 @@ public class SalesforceConnectorResource extends AbstractResource {
     	return salesforceConnector;
 	}
 	
+	public UpdateResult<SalesforceConnector> update(String id, SalesforceConnector salesforceConnector) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.header("Content-Type", "application/x-www-form-urlencoded")
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.parameter("tag", salesforceConnector.getTag())
+    			.execute();
+		
+		UpdateResult<SalesforceConnector> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			SalesforceConnector resource = httpResponse.getEntity(SalesforceConnector.class);
+			result = new UpdateResultImpl<SalesforceConnector>(resource);  
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<SalesforceConnector>(error);
+		}
+		
+		return result;
+	}
+	
+	public DeleteResult delete(String id) {
+		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.path(id)
+    			.execute();
+		
+		DeleteResult deleteResult = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			deleteResult = new DeleteResultImpl();
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			deleteResult = new DeleteResultImpl(error);
+		}
+		
+		return deleteResult;
+	}
+	
 	public EnvironmentResource environment() {
 		return new EnvironmentResource(token);
 	}
@@ -89,9 +136,110 @@ public class SalesforceConnectorResource extends AbstractResource {
 				result = new GetResultImpl<Environment>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
+			} 
+			
+			return result;
+		}
+		
+		public CreateResult<Environment> add(String salesforceConnectorId, Environment environment) {
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.path("connectors")
+	    			.path("salesforce")
+	    			.path(salesforceConnectorId)
+	    			.path("environment")
+	    			.body(environment)
+					.execute();
+			
+			CreateResult<Environment> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				Environment resource = httpResponse.getEntity(Environment.class);
+				result = new CreateResultImpl<Environment>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<Environment>(error);
+				result = new CreateResultImpl<Environment>(error);
+			}
+			
+			return result;
+		}
+		
+		public UpdateResult<Environment> update(String salesforceConnectorId, String key, Environment environment) {
+			HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.path("connectors")
+	    			.path("salesforce")
+	    			.path(salesforceConnectorId)
+	    			.path("environment")
+	    			.path(key)
+	    			.body(environment)
+					.execute();
+			
+			UpdateResult<Environment> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				Environment resource = httpResponse.getEntity(Environment.class);
+				result = new UpdateResultImpl<Environment>(resource);  
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new UpdateResultImpl<Environment>(error);
+			}
+			
+			return result;
+		}
+		
+		public DeleteResult delete(String salesforceConnectorId, String key) {
+			HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+					.bearerAuthorization(token.getAccessToken())
+					.path("connectors")
+	    			.path("salesforce")
+	    			.path(salesforceConnectorId)
+	    			.path("environment")
+	    			.path(key)
+					.execute();
+			
+			DeleteResult deleteResult = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				deleteResult = new DeleteResultImpl();
+			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+				Error error = httpResponse.getEntity(Error.class);
+				deleteResult = new DeleteResultImpl(error);
+			}
+			
+			return deleteResult;
+		}
+		
+		public UpdateResult<Environment> test(String salesforceConnectorId, String key) {
+			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+					.bearerAuthorization(token.getAccessToken())
+					.path(RESOURCE_CONTEXT)
+	    			.path("salesforce")
+	    			.path(salesforceConnectorId)
+	    			.path("environment")
+	    			.path(key)
+	    			.path("actions")
+	    			.path("test")
+	    			.path("invoke")
+	    			.execute();
+			
+			UpdateResult<Environment> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				Environment resource = httpResponse.getEntity(Environment.class);
+				result = new UpdateResultImpl<Environment>(resource);  
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new UpdateResultImpl<Environment>(error);
 			}
 			
 			return result;

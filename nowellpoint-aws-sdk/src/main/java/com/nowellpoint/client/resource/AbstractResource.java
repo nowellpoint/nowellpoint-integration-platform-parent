@@ -48,7 +48,7 @@ public class AbstractResource {
 		}
 
 		@Override
-		public Boolean getIsSuccess() {
+		public Boolean isSuccess() {
 			return isSuccess;
 		}
 

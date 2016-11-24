@@ -73,28 +73,48 @@ public class TestAuthenticators {
 					.salesforceConnector()
 					.getSalesforceConnectors();
 			
-			System.out.println(salesforceConnectors.get(0).getId());
-			System.out.println(salesforceConnectors.get(0).getEnvironments().get(0).getKey());
+			testConnection(token, salesforceConnectors.get(0).getId(), salesforceConnectors.get(0).getEnvironments().get(0).getKey());
 			
-			start = System.currentTimeMillis();
-			
-			UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
-					.salesforceConnector()
-					.environment()
-					.build(salesforceConnectors.get(0).getId(), salesforceConnectors.get(0).getEnvironments().get(0).getKey());
-			
-			System.out.println(updateResult.isSuccess());
-			System.out.println(updateResult.getErrorMessage());
-			System.out.println("buildEnvironment: " + (System.currentTimeMillis() - start));
-			
-			Environment environment = updateResult.getTarget();
-			
-			System.out.println(environment.getKey());
+			buildEnvironment(token, salesforceConnectors.get(0).getId(), salesforceConnectors.get(0).getEnvironments().get(0).getKey());
 			
 		} catch (OauthException e) {
 			System.out.println(e.getCode());
 			System.out.println(e.getMessage());
 		} 
+	}
+	
+	private void buildEnvironment(Token token, String salesforceConnectorId, String enironmentKey) {
+		long start = System.currentTimeMillis();
+		
+		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.build(salesforceConnectorId, enironmentKey);
+		
+		System.out.println(updateResult.isSuccess());
+		System.out.println(updateResult.getErrorMessage());
+		System.out.println("buildEnvironment: " + (System.currentTimeMillis() - start));
+		
+		Environment environment = updateResult.getTarget();
+		
+		System.out.println(environment.getKey());
+	}
+	
+	private void testConnection(Token token, String salesforceConnectorId, String enironmentKey) {
+		long start = System.currentTimeMillis();
+		
+		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.test(salesforceConnectorId, enironmentKey);
+		
+		System.out.println(updateResult.isSuccess());
+		System.out.println(updateResult.getErrorMessage());
+		System.out.println("testConnection: " + (System.currentTimeMillis() - start));
+		
+		Environment environment = updateResult.getTarget();
+		
+		System.out.println(environment.getKey());
 	}
 	
 	@Test

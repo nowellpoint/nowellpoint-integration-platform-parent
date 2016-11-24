@@ -114,7 +114,7 @@ public class SalesforceConnectorResource {
 
 		salesforceConnectorService.deleteSalesforceConnector(id);
 
-		return Response.noContent()
+		return Response.ok()
 				.build(); 
 	}
 	
@@ -193,7 +193,7 @@ public class SalesforceConnectorResource {
 		if ("build".equals(action)) {
 			environment = salesforceConnectorService.buildEnvironment(id, key);
 		} else if ("test".equals(action)) {
-			
+			environment = salesforceConnectorService.testConnection(id, key);
 		}
 		
 		return Response.ok()

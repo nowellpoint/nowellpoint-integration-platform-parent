@@ -1,18 +1,24 @@
 package com.nowellpoint.api.service;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.sql.Date;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -27,8 +33,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.nowellpoint.api.model.document.SObjectDescription;
 import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.UserInfo;
@@ -37,12 +45,23 @@ import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
+import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
+import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 
 /**
  * 
@@ -409,84 +428,41 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				.findFirst()
 				.get();
 		
-		if (parameters.containsKey("test") || Boolean.valueOf(parameters.getFirst("test"))) {
-			
-			resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
-			
-			UserProperty userProperty = new UserProperty();
-			userProperty.setSubject(environment.getKey());
-			
-			Map<String, UserProperty> properties = UserProperties.query(userProperty)
-					.stream()
-					.collect(Collectors.toMap(UserProperty::getKey, p -> p));
-			
-			if (environment.getIsSandbox()) {
-				if (parameters.containsKey(AUTH_ENDPOINT)) {
-					environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
-				}
-				
-				if (parameters.containsKey(USERNAME)) {
-					environment.setUsername(parameters.getFirst(USERNAME));
-				}
-				
-				if (parameters.containsKey(PASSWORD)) {
-					environment.setPassword(parameters.getFirst(PASSWORD));
-				} else {
-					environment.setPassword(properties.get(PASSWORD).getValue());
-				}
-				
-				if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
-					environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
-				} else {
-					environment.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
-				}
-			} else {
-				if (properties.containsKey(REFRESH_TOKEN_PROPERTY)) {
-					environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
-				}
-			}
-			
-			environmentService.testConnection(environment);
-			
-			environment.setPassword(null);
-			environment.setSecurityToken(null);
-			environment.setRefreshToken(null);
-			
-			resource.addEnvironment(environment);
-			
-			updateSalesforceConnector( id, resource );
-			
-		} else {
-			
-			if (parameters.containsKey(IS_ACTIVE)) {
-				environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
-			}
-			
-			if (parameters.containsKey(API_VERSION)) {
-				environment.setApiVersion(parameters.getFirst(API_VERSION));
-			}
-			
-			if (parameters.containsKey(AUTH_ENDPOINT)) {
-				environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
-			}
-			
-			if (parameters.containsKey(PASSWORD)) {
-				environment.setPassword(parameters.getFirst(PASSWORD));
-			}
-			
-			if (parameters.containsKey(USERNAME)) {
-				environment.setUsername(parameters.getFirst(USERNAME));
-			}
-			
-			if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
-				environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
-			}
-			
-			updateEnvironment(resource, environment);
+		if (parameters.containsKey(IS_ACTIVE)) {
+			environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
 		}
+		
+		if (parameters.containsKey(API_VERSION)) {
+			environment.setApiVersion(parameters.getFirst(API_VERSION));
+		}
+		
+		if (parameters.containsKey(AUTH_ENDPOINT)) {
+			environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
+		}
+		
+		if (parameters.containsKey(PASSWORD)) {
+			environment.setPassword(parameters.getFirst(PASSWORD));
+		}
+		
+		if (parameters.containsKey(USERNAME)) {
+			environment.setUsername(parameters.getFirst(USERNAME));
+		}
+		
+		if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
+			environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
+		}
+		
+		updateEnvironment(resource, environment);
 		
 		return environment;
 	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param key
+	 * @return
+	 */
 	
 	public Environment testConnection(String id, String key) {
 		
@@ -542,7 +518,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		environmentService.buildEnvironment(environment);
+		buildEnvironment(environment);
 		
 		updateSalesforceConnector( id, resource );
 		
@@ -605,5 +581,147 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	private void buildEnvironment(Environment environment) {
+
+		try {
+			
+			if (environment.getIsSandbox()) {
+				
+				String authEndpoint = environment.getAuthEndpoint();
+				String username = environment.getUsername();
+				String password = environment.getPassword();
+				String securityToken = environment.getSecurityToken();
+				
+				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
+				environment.setUserId(loginResult.getUserId());
+				environment.setOrganizationId(loginResult.getOrganizationId());
+				environment.setOrganizationName(loginResult.getOrganizationName());
+				environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+				
+				Client client = new Client();
+				
+				GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+						.setAccessToken(loginResult.getSessionId())
+						.setId(loginResult.getId());
+				
+				Identity identity = client.getIdentity(getIdentityRequest);
+				
+				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
+						.setAccessToken(loginResult.getSessionId())
+						.setSobjectsUrl(identity.getUrls().getSobjects());
+				
+				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+				
+				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+				
+				ThemeRequest themeRequest = new ThemeRequest()
+						.withAccessToken(loginResult.getSessionId())
+						.withRestEndpoint(identity.getUrls().getRest());
+				
+				Theme theme = client.getTheme(themeRequest);
+				
+				environment.setTheme(theme);
+				
+				describeSobjects(loginResult.getSessionId(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, environment.getKey());
+				
+			} else {
+				
+				String refreshToken = environment.getRefreshToken();
+				
+				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
+				
+				Token token = authenticationResponse.getToken();
+				Identity identity = authenticationResponse.getIdentity();
+				
+				Client client = new Client();
+
+				GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
+						.setAccessToken(token.getAccessToken())
+						.setOrganizationId(identity.getOrganizationId())
+						.setSobjectUrl(identity.getUrls().getSobjects());
+				
+				Organization organization = client.getOrganization(getOrganizationRequest);
+				
+				environment.setUserId(identity.getUserId());
+				environment.setOrganizationId(identity.getOrganizationId());
+				environment.setOrganizationName(organization.getName());
+				environment.setServiceEndpoint(token.getInstanceUrl());
+				environment.setIsValid(Boolean.TRUE);
+				
+				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
+						.setAccessToken(token.getAccessToken())
+						.setSobjectsUrl(identity.getUrls().getSobjects());
+				
+				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+				
+				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+				
+				ThemeRequest themeRequest = new ThemeRequest()
+						.withAccessToken(token.getAccessToken())
+						.withRestEndpoint(identity.getUrls().getRest());
+				
+				Theme theme = client.getTheme(themeRequest);
+				
+				environment.setTheme(theme);
+				
+				describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, environment.getKey());
+			}
+			environment.setIsValid(Boolean.TRUE);
+		} catch (OauthException e) {
+			environment.setIsValid(Boolean.FALSE);
+			environment.setTestMessage(e.getErrorDescription());
+		} catch (ValidationException e) {
+			environment.setIsValid(Boolean.FALSE);
+			environment.setTestMessage(e.getMessage());
+		} catch (Exception e) {
+			environment.setIsValid(Boolean.FALSE);
+			environment.setTestMessage(e.getMessage());
+		}	
+	}
+	
+	private void describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String environmentKey) throws InterruptedException, ExecutionException, JsonProcessingException {
+		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
+		
+		final Client client = new Client();
+		
+		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
+			executor.submit(() -> {
+				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
+						.withAccessToken(accessToken)
+						.withSobjectsUrl(sobjectsUrl)
+						.withSobject(sobject.getName());
+
+				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+
+				Date now = Date.from(Instant.now());
+				//UserRef user = new UserRef(new DBRef(MongoDatastore.getCollectionName(AccountProfile.class), new ObjectId(UserContext.getSecurityContext().getUserPrincipal().getName())));
+
+				SObjectDescription sobjectDescription = null;
+				try {
+					sobjectDescription = MongoDatastore.findOne(SObjectDescription.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey )));
+				} catch (DocumentNotFoundException e) {
+					sobjectDescription = new SObjectDescription();
+					sobjectDescription.setEnvironmentKey(environmentKey);
+					sobjectDescription.setName(describeSobjectResult.getName());
+					sobjectDescription.setCreatedDate(now);
+					sobjectDescription.setSystemCreatedDate(now);
+					sobjectDescription.setCreatedBy(null);
+				}
+				sobjectDescription.setLastModifiedBy(null);
+				sobjectDescription.setLastModifiedDate(now);
+				sobjectDescription.setSystemModifiedDate(now);
+				sobjectDescription.setResult(describeSobjectResult);
+				if (isNull(sobjectDescription.getId())) {
+					MongoDatastore.insertOne(sobjectDescription);
+				} else {
+					MongoDatastore.replaceOne(sobjectDescription);
+				}
+			});
+		}
+		
+		executor.shutdown();
+		executor.awaitTermination(30, TimeUnit.SECONDS);
 	}
 }

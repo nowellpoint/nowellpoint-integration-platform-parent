@@ -448,7 +448,7 @@ public class AccountProfileController extends AbstractController {
 				.accountProfile()
 				.deactivate(request.params(":id"));
 		
-		if (! deleteResult.getIsSuccess()) {
+		if (! deleteResult.isSuccess()) {
 			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
 		
@@ -872,7 +872,7 @@ public class AccountProfileController extends AbstractController {
 				.creditCard()
 				.delete(request.params(":id"), request.params(":token"));
 			
-		if (! deleteResult.getIsSuccess()) {
+		if (! deleteResult.isSuccess()) {
 			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
 		

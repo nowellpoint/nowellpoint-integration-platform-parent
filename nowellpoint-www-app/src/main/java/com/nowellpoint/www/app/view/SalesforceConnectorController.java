@@ -10,20 +10,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
+import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Environment;
-import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
@@ -38,8 +31,6 @@ import spark.Request;
 import spark.Response;
 
 public class SalesforceConnectorController extends AbstractController {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(SalesforceConnectorController.class.getName());
 	
 	public static class Template {
 		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
@@ -209,25 +200,12 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-    			.execute();
+		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.get(id, key);
 		
-		Environment environment = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			environment = httpResponse.getEntity(Environment.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			throw new BadRequestException(httpResponse.getAsString());
-		}
+		Environment environment = result.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
@@ -265,26 +243,19 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("environment")
-    			.body(environment)
-				.execute();
+		CreateResult<Environment> createResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.add(id, environment);
 
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+		if (! createResult.isSuccess()) {
 			
 			Map<String, Object> model = getModel();
 			model.put("id", id);
 			model.put("mode", "add");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
 			model.put("environment", environment);
-			model.put("errorMessage", error.getMessage());
+			model.put("errorMessage", createResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
 			
@@ -325,27 +296,19 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-    			.body(environment)
-				.execute();
+		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.update(id, key, environment);
 		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
+		if (! updateResult.isSuccess()) {
 			
 			Map<String, Object> model = getModel();
 			model.put("id", id);
 			model.put("mode", "edit");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
 			model.put("environment", environment);
-			model.put("errorMessage", error.getMessage());
+			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
 			
@@ -372,18 +335,13 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.path("environment")
-    			.path(key)
-				.execute();
+		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.delete(id, key);
 		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
+		if (! deleteResult.isSuccess()) {
+			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
 		
 		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "remove.environment.success"), 3);
@@ -474,11 +432,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * updateSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 
 	private String updateSalesforceConnector(Configuration configuration, Request request, Response response) {	
@@ -487,21 +445,16 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String tag = request.queryParams("tag");
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.header("Content-Type", "application/x-www-form-urlencoded")
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(id)
-    			.parameter("tag", tag)
-    			.execute();
+		SalesforceConnector salesforceConnector = new SalesforceConnector();
+		salesforceConnector.setTag(tag);
 		
-		SalesforceConnector salesforceConnector = null;
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.update(id, salesforceConnector);
+		
 		String message = null;
 		
-		try {
-			salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
-		} catch (BadRequestException e) {
+		if (! updateResult.isSuccess()) {
 			
 			Map<String, Object> model = getModel();
 	    	model.put("salesforceConnector", salesforceConnector);
@@ -509,10 +462,9 @@ public class SalesforceConnectorController extends AbstractController {
 	    	model.put("errorMessage", message);
 			
 	    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
-			
 		}
-		
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", salesforceConnector.getId()));
+
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		
 		return "";
 	};
@@ -528,19 +480,29 @@ public class SalesforceConnectorController extends AbstractController {
 	private String deleteSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.path(request.params(":id"))
-    			.execute();
+		String id = request.params(":id");
 		
-		LOG.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + httpResponse.getURL());
+		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.delete(id);
+		
+		if (! deleteResult.isSuccess()) {
+			throw new BadRequestException(deleteResult.getErrorMessage());
+		}
 		
 		return "";
 	};
 	
-	private String buildEnvironment(Configuration configuration, Request request, Response response) {
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	
+	private String buildEnvironment(Configuration configuration, Request request, Response response) throws JsonProcessingException {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -551,7 +513,19 @@ public class SalesforceConnectorController extends AbstractController {
 				.environment()
 				.build(id, key);
 		
-		return "";
+		if (! updateResult.isSuccess()) {
+			throw new BadRequestException(updateResult.getErrorMessage());
+		}
+		
+		Environment environment = updateResult.getTarget();
+		
+		if (environment.getIsValid()) {
+			environment.setTestMessage(MessageProvider.getMessage(getLocale(request), "test.connection.success"));
+		} else {
+			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getLocale(request), "test.connection.fail"), environment.getTestMessage()));
+		}
+		
+		return objectMapper.writeValueAsString(environment);
 	}
 	
 	/**
@@ -569,23 +543,16 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-				.path(id)
-				.path("environment")
-    			.path(key)
-				.parameter("test", Boolean.TRUE.toString())
-    			.execute();
+		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.test(id, key);
 		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new BadRequestException(httpResponse.getAsString());
+		if (! updateResult.isSuccess()) {
+			throw new BadRequestException(updateResult.getErrorMessage());
 		}
 		
-		Environment environment = httpResponse.getEntity(Environment.class);
+		Environment environment = updateResult.getTarget();
 		
 		if (environment.getIsValid()) {
 			environment.setTestMessage(MessageProvider.getMessage(getLocale(request), "test.connection.success"));
