@@ -10,6 +10,8 @@ public class SalesforceConnector extends AbstractResource {
 
 	private static final long serialVersionUID = -6847034908687287362L;
 	
+	public String name;
+	
 	private UserInfo createdBy;
 	
 	private UserInfo lastModifiedBy;
@@ -30,6 +32,14 @@ public class SalesforceConnector extends AbstractResource {
 	
 	public SalesforceConnector(String id) {
 		super(id);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public UserInfo getCreatedBy() {

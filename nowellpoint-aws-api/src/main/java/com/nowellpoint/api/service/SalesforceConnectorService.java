@@ -27,6 +27,9 @@ import javax.validation.ValidationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
+
+import org.bson.types.ObjectId;
+
 import javax.ws.rs.core.UriBuilder;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -34,9 +37,11 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mongodb.DBRef;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.document.SObjectDescription;
+import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.UserInfo;
@@ -75,9 +80,6 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	@Inject
 	private SalesforceService salesforceService;
-	
-	@Inject
-	private EnvironmentService environmentService;
 	
 	private static final String IS_ACTIVE = "isActive";
 	private static final String API_VERSION = "apiVersion";
@@ -488,7 +490,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		environmentService.testConnection(environment);
+		testConnection(environment);
 		
 		updateSalesforceConnector( id, resource );
 		
@@ -696,7 +698,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 
 				Date now = Date.from(Instant.now());
-				//UserRef user = new UserRef(new DBRef(MongoDatastore.getCollectionName(AccountProfile.class), new ObjectId(UserContext.getSecurityContext().getUserPrincipal().getName())));
+				
+				UserRef user = new UserRef();
+				String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+				ObjectId id = new ObjectId( getSubject() );
+
+				DBRef reference = new DBRef( collectionName, id );
+				user.setIdentity(reference);
 
 				SObjectDescription sobjectDescription = null;
 				try {
@@ -707,9 +715,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 					sobjectDescription.setName(describeSobjectResult.getName());
 					sobjectDescription.setCreatedDate(now);
 					sobjectDescription.setSystemCreatedDate(now);
-					sobjectDescription.setCreatedBy(null);
+					sobjectDescription.setCreatedBy(user);
 				}
-				sobjectDescription.setLastModifiedBy(null);
+				sobjectDescription.setLastModifiedBy(user);
 				sobjectDescription.setLastModifiedDate(now);
 				sobjectDescription.setSystemModifiedDate(now);
 				sobjectDescription.setResult(describeSobjectResult);
@@ -723,5 +731,59 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		executor.shutdown();
 		executor.awaitTermination(30, TimeUnit.SECONDS);
+	}
+	
+	private void testConnection(Environment environment) {
+
+		try {
+			
+			if (environment.getIsSandbox()) {
+				
+				String authEndpoint = environment.getAuthEndpoint();
+				String username = environment.getUsername();
+				String password = environment.getPassword();
+				String securityToken = environment.getSecurityToken();
+				
+				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
+				
+				environment.setUserId(loginResult.getUserId());
+				environment.setOrganizationId(loginResult.getOrganizationId());
+				environment.setOrganizationName(loginResult.getOrganizationName());
+				environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+				
+			} else {
+				
+				String refreshToken = environment.getRefreshToken();
+				
+				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
+				
+				Token token = authenticationResponse.getToken();
+				Identity identity = authenticationResponse.getIdentity();
+				
+				Client client = new Client();
+
+				GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
+						.setAccessToken(token.getAccessToken())
+						.setOrganizationId(identity.getOrganizationId())
+						.setSobjectUrl(identity.getUrls().getSobjects());
+				
+				Organization organization = client.getOrganization(getOrganizationRequest);
+				
+				environment.setUserId(identity.getUserId());
+				environment.setOrganizationId(identity.getOrganizationId());
+				environment.setOrganizationName(organization.getName());
+				environment.setServiceEndpoint(token.getInstanceUrl());
+			}
+			environment.setIsValid(Boolean.TRUE);
+		} catch (OauthException e) {
+			environment.setIsValid(Boolean.FALSE);
+			environment.setTestMessage(e.getErrorDescription());
+		} catch (ValidationException e) {
+			environment.setIsValid(Boolean.FALSE);
+			environment.setTestMessage(e.getMessage());
+		} catch (Exception e) {
+			environment.setIsValid(Boolean.FALSE);
+			environment.setTestMessage(e.getMessage());
+		}			
 	}
 }

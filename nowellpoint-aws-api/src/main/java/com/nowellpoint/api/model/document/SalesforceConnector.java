@@ -19,6 +19,8 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private static final long serialVersionUID = -3438714915624952119L;
 	
+	private String name;
+	
 	private UserRef createdBy;
 	
 	private UserRef lastModifiedBy;
@@ -35,6 +37,14 @@ public class SalesforceConnector extends MongoDocument {
 	
 	public SalesforceConnector() {
 		
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public UserRef getCreatedBy() {

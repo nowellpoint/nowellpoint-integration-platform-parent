@@ -10,6 +10,8 @@ import com.nowellpoint.client.model.sforce.Organization;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends AbstractResource {
+	
+	private String name;
 
 	private Identity identity;
 	
@@ -27,6 +29,14 @@ public class SalesforceConnector extends AbstractResource {
 	
 	public SalesforceConnector(String id) {
 		setId(id);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Identity getIdentity() {

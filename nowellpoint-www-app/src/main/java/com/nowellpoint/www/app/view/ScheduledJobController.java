@@ -157,11 +157,11 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+			GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(new TokenCredentials(token))
 					.salesforceConnector()
 					.getSalesforceConnectors();
 
-	    	model.put("salesforceConnectorsList", salesforceConnectors);
+	    	model.put("salesforceConnectorsList", getResult.getTarget());
 		}
 		
     	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
@@ -195,10 +195,13 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			List<Environment> environments = new NowellpointClient(new TokenCredentials(token))
+			GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
 					.salesforceConnector()
-					.get(connectorId)
-					.getEnvironments();
+					.get(id);
+			
+			SalesforceConnector salesforceConnector = getResult.getTarget();
+			
+			List<Environment> environments = salesforceConnector.getEnvironments();
 			
 			model.put("environments", environments);
 		}

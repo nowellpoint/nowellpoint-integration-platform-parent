@@ -31,6 +31,7 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/sforce/Organization.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/ClientCredentialsGrantRequestImpl.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/sforce/Icon.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/EnvironmentRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/Project.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/ClientCredentialsGrantAuthorizerBuilderImpl.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/impl/RevokeTokenInvalidatorBuilderImpl.java
@@ -88,3 +89,4 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/resource/SalesforceConnectorResource.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/CreditCardRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/PasswordGrantRequest.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/SalesforceConnectorRequest.java

@@ -16,6 +16,7 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.Application;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
@@ -99,13 +100,13 @@ public class ApplicationController extends AbstractController {
 		
 		String id = request.queryParams("id");
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.get(id);
 		
 		Map<String, Object> model = getModel();
 		model.put("mode", "new");
-    	model.put("salesforceConnector", salesforceConnector);
+    	model.put("salesforceConnector", getResult.getTarget());
 		
 		return render(configuration, request, response, model, Template.APPLICATION_EDIT);
 	}

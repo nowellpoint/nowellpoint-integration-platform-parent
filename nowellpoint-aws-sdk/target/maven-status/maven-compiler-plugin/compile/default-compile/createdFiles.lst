@@ -17,6 +17,7 @@ com/nowellpoint/client/model/SalesforceConnector.class
 com/nowellpoint/client/model/SimpleStorageService.class
 com/nowellpoint/client/model/Service.class
 com/nowellpoint/client/auth/RevokeTokenInvalidatorBuilder.class
+com/nowellpoint/client/model/EnvironmentRequest.class
 com/nowellpoint/client/auth/impl/ClientCredentialsGrantRequestImpl.class
 com/nowellpoint/client/model/NowellpointServiceException.class
 com/nowellpoint/client/model/AddressRequest.class
@@ -30,6 +31,7 @@ com/nowellpoint/client/auth/PasswordGrantAuthorizerBuilder.class
 com/nowellpoint/client/model/Subscription.class
 com/nowellpoint/client/model/SubscriptionRequest.class
 com/nowellpoint/client/model/ScheduledJob.class
+com/nowellpoint/client/model/SalesforceConnectorRequest.class
 com/nowellpoint/client/model/sforce/Icon.class
 com/nowellpoint/client/resource/AbstractResource$UpdateResultImpl.class
 com/nowellpoint/client/auth/Authenticators$ClientCredentialsGrantResponseFactory.class

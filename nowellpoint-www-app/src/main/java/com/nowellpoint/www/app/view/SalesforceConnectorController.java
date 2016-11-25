@@ -17,8 +17,10 @@ import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.ThemeItem;
@@ -67,11 +69,11 @@ public class SalesforceConnectorController extends AbstractController {
 	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * newSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String newSalesforceConnector(Configuration configuration, Request request, Response response) {		
@@ -84,11 +86,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * newEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String newEnvironment(Configuration configuration, Request request, Response response) {	
@@ -107,11 +109,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * sobjectsList
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String sobjectsList(Configuration configuration, Request request, Response response) {		
@@ -158,11 +160,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * viewEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String viewEnvironment(Configuration configuration, Request request, Response response) {		
@@ -187,11 +189,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 
 	private String editEnvironment(Configuration configuration, Request request, Response response) {		
@@ -217,28 +219,28 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * addEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
-
+	
 	private String addEnvironment(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String active = request.queryParams("active");
 		String authEndpoint = request.queryParams("authEndpoint");
-		String name = request.queryParams("environmentName");
+		String environmentName = request.queryParams("environmentName");
 		String password = request.queryParams("password");
 		String username = request.queryParams("username");
 		String securityToken = request.queryParams("securityToken");
 		
-		Environment environment = new Environment()
+		EnvironmentRequest environmentRequest = new EnvironmentRequest()
 				.withIsActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
-				.withEnvironmentName(name)
+				.withEnvironmentName(environmentName)
 				.withPassword(password)
 				.withUsername(username)
 				.withSecurityToken(securityToken);
@@ -246,9 +248,17 @@ public class SalesforceConnectorController extends AbstractController {
 		CreateResult<Environment> createResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
-				.add(id, environment);
+				.add(id, environmentRequest);
 
 		if (! createResult.isSuccess()) {
+			
+			Environment environment = new Environment()
+					.withIsActive(Boolean.valueOf(active))
+					.withAuthEndpoint(authEndpoint)
+					.withEnvironmentName(environmentName)
+					.withPassword(password)
+					.withUsername(username)
+					.withSecurityToken(securityToken);
 			
 			Map<String, Object> model = getModel();
 			model.put("id", id);
@@ -269,11 +279,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * updateEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 
 	private String updateEnvironment(Configuration configuration, Request request, Response response) {	
@@ -288,7 +298,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String username = request.queryParams("username");
 		String securityToken = request.queryParams("securityToken");
 		
-		Environment environment = new Environment()
+		EnvironmentRequest environmentRequest = new EnvironmentRequest()
 				.withIsActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
 				.withEnvironmentName(environmentName)
@@ -299,9 +309,17 @@ public class SalesforceConnectorController extends AbstractController {
 		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
-				.update(id, key, environment);
+				.update(id, key, environmentRequest);
 		
 		if (! updateResult.isSuccess()) {
+			
+			Environment environment = new Environment()
+					.withIsActive(Boolean.valueOf(active))
+					.withAuthEndpoint(authEndpoint)
+					.withEnvironmentName(environmentName)
+					.withPassword(password)
+					.withUsername(username)
+					.withSecurityToken(securityToken);
 			
 			Map<String, Object> model = getModel();
 			model.put("id", id);
@@ -322,11 +340,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * removeEnvironment
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String removeEnvironment(Configuration configuration, Request request, Response response) {
@@ -351,11 +369,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * getSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	private String viewSalesforceConnector(Configuration configuration, Request request, Response response) {
@@ -363,9 +381,11 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.get(id);
+		
+		SalesforceConnector salesforceConnector = getResult.getTarget();
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getCreatedBy().getId());
 		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", salesforceConnector.getLastModifiedBy().getId());
@@ -380,11 +400,11 @@ public class SalesforceConnectorController extends AbstractController {
 	};
 
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * editSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 
 	private String editSalesforceConnector(Configuration configuration, Request request, Response response) {
@@ -393,9 +413,11 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String view = request.queryParams("view");
     	
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.get(id);
+		
+		SalesforceConnector salesforceConnector = getResult.getTarget();
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
@@ -420,12 +442,12 @@ public class SalesforceConnectorController extends AbstractController {
 	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		Map<String, Object> model = getModel();
-    	model.put("salesforceConnectorsList", salesforceConnectors);
+    	model.put("salesforceConnectorsList", getResult.getTarget());
     	
     	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTORS_LIST);
     	
@@ -445,16 +467,22 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String tag = request.queryParams("tag");
 		
-		SalesforceConnector salesforceConnector = new SalesforceConnector();
-		salesforceConnector.setTag(tag);
+		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
+				.withTag(tag);
 		
 		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.update(id, salesforceConnector);
+				.update(id, salesforceConnectorRequest);
 		
 		String message = null;
 		
 		if (! updateResult.isSuccess()) {
+			
+			GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
+					.salesforceConnector()
+					.get(id);
+			
+			SalesforceConnector salesforceConnector = getResult.getTarget();
 			
 			Map<String, Object> model = getModel();
 	    	model.put("salesforceConnector", salesforceConnector);
@@ -468,13 +496,13 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return "";
 	};
-
+	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * deleteSalesforceConnector
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 
 	private String deleteSalesforceConnector(Configuration configuration, Request request, Response response) {

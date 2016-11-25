@@ -96,9 +96,12 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateSalesforceConnector(@PathParam(value="id") String id, @FormParam(value="tag") String tag) {	
+	public Response updateSalesforceConnector(@PathParam(value="id") String id, 
+			@FormParam(value="name") String name, 
+			@FormParam(value="tag") String tag) {	
 		
 		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( id );
+		salesforceConnector.setName(name);
 		salesforceConnector.setTag(tag);
 		
 		salesforceConnectorService.updateSalesforceConnector( id, salesforceConnector);
@@ -184,6 +187,19 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
+	@Path("salesforce/{id}/environment/{key}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
+		
+		Environment environment = salesforceConnectorService.updateEnvironment(id, key, parameters);
+		
+		return Response.ok()
+				.entity(environment)
+				.build(); 
+	}
+	
+	@POST
 	@Path("salesforce/{id}/environment/{key}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="action") String action) {
@@ -195,19 +211,6 @@ public class SalesforceConnectorResource {
 		} else if ("test".equals(action)) {
 			environment = salesforceConnectorService.testConnection(id, key);
 		}
-		
-		return Response.ok()
-				.entity(environment)
-				.build(); 
-	}
-	
-	@POST
-	@Path("salesforce/{id}/environment/{key}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
-		
-		Environment environment = salesforceConnectorService.updateEnvironment(id, key, parameters);
 		
 		return Response.ok()
 				.entity(environment)
