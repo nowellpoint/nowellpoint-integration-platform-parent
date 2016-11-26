@@ -233,7 +233,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -288,7 +288,7 @@ public class ApplicationService extends ApplicationModelMapper {
 			environment.setIsValid(Boolean.FALSE);
 		}
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -313,7 +313,7 @@ public class ApplicationService extends ApplicationModelMapper {
 				.findFirst()
 				.get();
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		

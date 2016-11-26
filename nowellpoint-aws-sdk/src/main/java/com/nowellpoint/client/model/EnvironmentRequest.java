@@ -97,17 +97,17 @@ public class EnvironmentRequest {
 	}
 	
 	public EnvironmentRequest withUsername(String username) {
-		withUsername(username);
+		setUsername(username);
 		return this;
 	}
 	
 	public EnvironmentRequest withPassword(String password) {
-		withPassword(password);
+		setPassword(password);
 		return this;
 	}
 	
 	public EnvironmentRequest withSecurityToken(String securityToken) {
-		withSecurityToken(securityToken);
+		setSecurityToken(securityToken);
 		return this;
 	}
 }

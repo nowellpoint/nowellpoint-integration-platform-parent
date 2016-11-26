@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.nowellpoint.api.model.document.SimpleStorageService;
-import com.nowellpoint.api.model.domain.Environment;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
@@ -26,23 +25,23 @@ public class UserProperties {
 		dynamoDBMapper.batchDelete(properties);
 	}
 	
-	public static void saveSalesforceCredentials(String userId, Environment environment) {
+	public static void saveSalesforceCredentials(String whoId, String key, String password, String securityToken) {
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
 		UserProperty accessTokenProperty = new UserProperty()
-				.withSubject(environment.getKey())
+				.withSubject(key)
 				.withKey(PASSWORD)
-				.withValue(environment.getPassword())
-				.withLastModifiedBy(userId)
+				.withValue(password)
+				.withLastModifiedBy(whoId)
 				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(accessTokenProperty);
 		
 		UserProperty refreshTokenProperty = new UserProperty()
-				.withSubject(environment.getKey())
+				.withSubject(key)
 				.withKey(SECURITY_TOKEN)
-				.withValue(environment.getSecurityToken())
-				.withLastModifiedBy(userId)
+				.withValue(securityToken)
+				.withLastModifiedBy(whoId)
 				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(refreshTokenProperty);
@@ -50,14 +49,14 @@ public class UserProperties {
 		dynamoDBMapper.batchSave(properties);
 	}
 	
-	public static void saveAccessToken(String userId, String key, Token token) {
+	public static void saveSalesforceTokens(String whoId, String key, Token token) {
 		List<UserProperty> properties = new ArrayList<UserProperty>();
 		
 		UserProperty accessTokenProperty = new UserProperty()
 				.withSubject(key)
 				.withKey(ACCESS_TOKEN)
 				.withValue(token.getAccessToken())
-				.withLastModifiedBy(userId)
+				.withLastModifiedBy(whoId)
 				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(accessTokenProperty);
@@ -66,7 +65,7 @@ public class UserProperties {
 				.withSubject(key)
 				.withKey(REFRESH_TOKEN)
 				.withValue(token.getRefreshToken())
-				.withLastModifiedBy(userId)
+				.withLastModifiedBy(whoId)
 				.withLastModifiedDate(Date.from(Instant.now()));
 		
 		properties.add(refreshTokenProperty);
@@ -96,6 +95,17 @@ public class UserProperties {
 		properties.add(awsSecretAccessKey);
 		
 		dynamoDBMapper.batchSave(properties);
+	}
+	
+	public static void clear(String subject) {
+		List<UserProperty> properties = UserProperties.queryBySubject(subject);
+		UserProperties.batchDelete(properties);
+	}
+	
+	public static List<UserProperty> queryBySubject(String subject) {
+		UserProperty userProperty = new UserProperty();
+		userProperty.setSubject(subject);
+		return query(userProperty);
 	}
 	
 	public static List<UserProperty> query(UserProperty userProperty) {

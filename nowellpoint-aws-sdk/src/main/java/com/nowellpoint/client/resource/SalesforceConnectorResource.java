@@ -158,7 +158,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.withEnvironmentName(environmentRequest.getEnvironmentName())
 					.withPassword(environmentRequest.getPassword())
 					.withUsername(environmentRequest.getUsername())
-					.withSecurityToken(environmentRequest.getUsername());
+					.withSecurityToken(environmentRequest.getSecurityToken());
 			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 					.contentType(MediaType.APPLICATION_JSON)

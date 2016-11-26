@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -15,7 +16,10 @@ import org.junit.Test;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.SalesforceConnector;
@@ -25,6 +29,7 @@ import com.nowellpoint.client.model.UpdateResult;
 
 public class TestAuthenticators {
 	
+	private static Logger LOG = Logger.getLogger(TestAuthenticators.class.getName());
 	private static Token token = null;
 	
 	@BeforeClass
@@ -54,6 +59,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void testUpdateSalesforceConnector() {
 		String name = UUID.randomUUID().toString();
 		
@@ -82,6 +88,68 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	public void createAndDeleteEnvironment() {
+		
+		LOG.info("start createAndDeleteEnvironment");
+		
+		GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.get("5838ae0d25075c7a81115253");
+		
+		SalesforceConnector salesforceConnector = getResult.getTarget();
+		
+		String authEndpoint = "https://login.salesforce.com";
+		String environmentName = "Test Environment";
+		String password = System.getenv("SALESFORCE_PASSWORD");
+		String username = System.getenv("SALESFORCE_USERNAME");
+		String securityToken = System.getenv("SALESFORCE_SECURITY_TOKEN");
+		
+		EnvironmentRequest environmentRequest = new EnvironmentRequest()
+				.withIsActive(Boolean.TRUE)
+				.withAuthEndpoint(authEndpoint)
+				.withEnvironmentName(environmentName)
+				.withPassword(password)
+				.withUsername(username)
+				.withSecurityToken(securityToken);
+		
+		CreateResult<Environment> createResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.add(salesforceConnector.getId(), environmentRequest);
+		
+		System.out.println("Create Result: " + createResult.isSuccess());
+		System.out.println(createResult.getErrorMessage());
+		
+		String environmentKey = createResult.getTarget().getKey();
+		
+		System.out.println(environmentKey);
+		
+		UpdateResult<Environment> testConnection = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.test(salesforceConnector.getId(), environmentKey);
+		
+		System.out.println("Test Result: " + testConnection.isSuccess());
+		System.out.println(testConnection.getErrorMessage());
+		
+		UpdateResult<Environment> buildResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.build(salesforceConnector.getId(), environmentKey);
+		
+		System.out.println("Build Result: " + buildResult.isSuccess());
+		System.out.println(buildResult.getErrorMessage());
+		
+		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.delete(salesforceConnector.getId(), createResult.getTarget().getKey());
+		
+		System.out.println("Delete Result: " + deleteResult.isSuccess());		
+	}
+	
+	@Test
+	@Ignore
 	public void testGetAccountProfile() {
 		
 		long start = System.currentTimeMillis();
@@ -96,6 +164,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void buildEnvironment() {
 		long start = System.currentTimeMillis();
 		
@@ -120,6 +189,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void testConnection() {
 		long start = System.currentTimeMillis();
 		
@@ -144,6 +214,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void testPasswordGrantAuthentication() {
 		
 		try {			

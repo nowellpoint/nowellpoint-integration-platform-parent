@@ -60,6 +60,7 @@ import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
@@ -88,7 +89,6 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	private static final String SECURITY_TOKEN_PARAM = "securityToken";
 	private static final String PASSWORD = "password";
 	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
-	private static final String ACCESS_TOKEN_PROPERTY = "access.token";
 	private static final String REFRESH_TOKEN_PROPERTY = "refresh.token";
 	
 	private static final AmazonS3 s3Client = new AmazonS3Client();
@@ -172,7 +172,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		super.createSalesforceConnector( resource );
 		
-		UserProperties.saveAccessToken(getSubject(), environment.getKey(), token);
+		UserProperties.saveSalesforceTokens(getSubject(), environment.getKey(), token);
 		
 		return resource;
 	}
@@ -205,59 +205,33 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	/**
 	 * 
 	 * @param id
+	 * 
 	 */
 	
 	public void deleteSalesforceConnector(String id) {
-		SalesforceConnector resource = findSalesforceConnector( id );
+		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
 		
-		super.deleteSalesforceConnector(resource);
+		Photos photos = salesforceConnector.getIdentity().getPhotos();
 
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
-		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getPicture().substring(resource.getIdentity().getPhotos().getPicture().lastIndexOf("/") + 1)));
-		keys.add(new KeyVersion(resource.getIdentity().getPhotos().getThumbnail().substring(resource.getIdentity().getPhotos().getThumbnail().lastIndexOf("/") + 1)));
+		keys.add(new KeyVersion(photos.getPicture().substring(photos.getPicture().lastIndexOf("/") + 1)));
+		keys.add(new KeyVersion(photos.getThumbnail().substring(photos.getThumbnail().lastIndexOf("/") + 1)));
 
 		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
 
 		s3Client.deleteObjects(deleteObjectsRequest);
 		
-		List<UserProperty> properties = new ArrayList<UserProperty>();
-		
-		resource.getEnvironments().stream().forEach(e -> {
-			
-			if (e.getIsSandbox()) {
-				UserProperty passwordProperty = new UserProperty()
-						.withSubject(e.getKey())
-						.withKey(PASSWORD);
-				
-				properties.add(passwordProperty);
-				
-				UserProperty securityTokenProperty = new UserProperty()
-						.withSubject(e.getKey())
-						.withKey(SECURITY_TOKEN_PROPERTY);
-				
-				properties.add(securityTokenProperty);
-				
-			} else {
-				UserProperty accessTokenProperty = new UserProperty()
-						.withSubject(resource.getId().toString())
-						.withKey(ACCESS_TOKEN_PROPERTY);
-				
-				properties.add(accessTokenProperty);
-				
-				UserProperty refreshTokenProperty = new UserProperty()
-						.withSubject(resource.getId().toString())
-						.withKey(REFRESH_TOKEN_PROPERTY);
-				
-				properties.add(refreshTokenProperty);
-			}
-			
+		salesforceConnector.getEnvironments().stream().forEach(e -> {
+			removeEnvironment(e);
 		});
 		
-		UserProperties.batchDelete(properties);
+		super.deleteSalesforceConnector( salesforceConnector );
 	}
 	
 	/**
 	 * 
+	 *  @param id
+	 *  
 	 */
 	
 	public SalesforceConnector findSalesforceConnector(String id) {		
@@ -326,7 +300,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -341,6 +315,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @param id
 	 * @param key
 	 * @param environment
+	 * 
 	 */
 	
 	public void updateEnvironment(String id, String key, Environment environment) {
@@ -356,6 +331,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 * @param resource
 	 * @param environment
+	 * 
 	 */
 	
 	public void updateEnvironment(SalesforceConnector resource, Environment environment) {
@@ -402,7 +378,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			environment.setIsValid(Boolean.FALSE);
 		}
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -466,8 +442,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Environment testConnection(String id, String key) {
-		
+	public Environment testConnection(String id, String key) {		
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
 		Environment environment = resource.getEnvironments()
@@ -476,10 +451,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				.findFirst()
 				.get();
 		
-		UserProperty userProperty = new UserProperty();
-		userProperty.setSubject(environment.getKey());
-		
-		Map<String, UserProperty> properties = UserProperties.query(userProperty)
+		Map<String, UserProperty> properties = UserProperties.queryBySubject(environment.getKey())
 				.stream()
 				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
 		
@@ -490,7 +462,11 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		testConnection(environment);
+		testConnection( environment );
+		
+		environment.setPassword(null);
+		environment.setSecurityToken(null);
+		environment.setRefreshToken(null);
 		
 		updateSalesforceConnector( id, resource );
 		
@@ -506,10 +482,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				.findFirst()
 				.get();
 		
-		UserProperty userProperty = new UserProperty();
-		userProperty.setSubject(environment.getKey());
-		
-		Map<String, UserProperty> properties = UserProperties.query(userProperty)
+		Map<String, UserProperty> properties = UserProperties.queryBySubject(environment.getKey())
 				.stream()
 				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
 		
@@ -520,7 +493,11 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		buildEnvironment(environment);
+		buildEnvironment( environment );
+		
+		environment.setPassword(null);
+		environment.setSecurityToken(null);
+		environment.setRefreshToken(null);
 		
 		updateSalesforceConnector( id, resource );
 		
@@ -542,12 +519,22 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				.findFirst()
 				.get();
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment);
+		removeEnvironment(environment);
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
 		updateSalesforceConnector(id, resource);
 	} 
+	
+	/**
+	 * 
+	 * @param environment
+	 */
+	
+	private void removeEnvironment(Environment environment) {
+		UserProperties.clear(environment.getKey());
+		MongoDatastore.deleteMany(MongoDatastore.getCollectionName( SObjectDescription.class ), eq ( "environmentKey", environment.getKey() ) );
+	}
 	
 	/**
 	 * 
@@ -708,7 +695,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 
 				SObjectDescription sobjectDescription = null;
 				try {
-					sobjectDescription = MongoDatastore.findOne(SObjectDescription.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey )));
+					sobjectDescription = MongoDatastore.findOne(SObjectDescription.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
 				} catch (DocumentNotFoundException e) {
 					sobjectDescription = new SObjectDescription();
 					sobjectDescription.setEnvironmentKey(environmentKey);

@@ -142,6 +142,20 @@ public class MongoDatastore implements ServletContextListener {
 		});
 	}
 	
+	public static void deleteMany(String collectionName, Bson query) {
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getDatabase().getCollection( collectionName ).deleteMany( query );
+				} catch (MongoException e) {
+					publish(e);
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public static <T extends MongoDocument> T findOne(Class<T> documentClass, Bson query) {
 		
 		String collectionName = getCollectionName( documentClass );
