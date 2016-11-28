@@ -22,6 +22,7 @@ import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
@@ -117,39 +118,41 @@ public class TestAuthenticators {
 				.environment()
 				.add(salesforceConnector.getId(), environmentRequest);
 		
-		System.out.println("Create Result: " + createResult.isSuccess());
-		System.out.println(createResult.getErrorMessage());
+		assertTrue(createResult.isSuccess());
 		
 		String environmentKey = createResult.getTarget().getKey();
-		
-		System.out.println(environmentKey);
 		
 		UpdateResult<Environment> testConnection = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.test(salesforceConnector.getId(), environmentKey);
 		
-		System.out.println("Test Result: " + testConnection.isSuccess());
-		System.out.println(testConnection.getErrorMessage());
+		assertTrue(testConnection.isSuccess());
 		
 		UpdateResult<Environment> buildResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.build(salesforceConnector.getId(), environmentKey);
 		
-		System.out.println("Build Result: " + buildResult.isSuccess());
-		System.out.println(buildResult.getErrorMessage());
+		assertTrue(buildResult.isSuccess());
+		
+		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.sobjectDetail()
+				.get(salesforceConnector.getId(), environmentKey, "Opportunity");
+		
+		assertTrue(getSobjectDetailResult.isSuccess());
 		
 		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.delete(salesforceConnector.getId(), createResult.getTarget().getKey());
 		
-		System.out.println("Delete Result: " + deleteResult.isSuccess());		
+		assertTrue(deleteResult.isSuccess());		
 	}
 	
 	@Test
-	@Ignore
 	public void testGetAccountProfile() {
 		
 		long start = System.currentTimeMillis();
@@ -158,13 +161,14 @@ public class TestAuthenticators {
 				.accountProfile()
 				.get();
 		
+		assertTrue(getResult.isSuccess());	
+		
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
 		System.out.println(getResult.getTarget().getName());
 	}
 	
 	@Test
-	@Ignore
 	public void buildEnvironment() {
 		long start = System.currentTimeMillis();
 		
@@ -172,7 +176,11 @@ public class TestAuthenticators {
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getTarget().get(0);
+		SalesforceConnector salesforceConnector = salesforceConnectors.getTarget()
+				.stream()
+				.filter(s -> s.getEnvironments() != null || s.getEnvironments().size() > 0)
+				.findFirst()
+				.get();
 		
 		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()

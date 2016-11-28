@@ -6,7 +6,9 @@ public class CountRequest {
 
 	private String queryUrl;
 	
-	private String queryString;
+	private String sobject;
+	
+	private String whereClause;
 	
 	public CountRequest() {
 		
@@ -23,19 +25,35 @@ public class CountRequest {
 	public String getQueryUrl() {
 		return queryUrl;
 	}
-
+	
 	public void setQueryUrl(String queryUrl) {
 		this.queryUrl = queryUrl;
 	}
 
 	public String getQueryString() {
+		String queryString = "Select Count(Id) From ".concat(getSobject());
+		if (getWhereClause() != null && ! getWhereClause().trim().isEmpty()) {
+			queryString.concat(getWhereClause());
+		}
 		return queryString;
 	}
-
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
 	
+	public String getSobject() {
+		return sobject;
+	}
+
+	public void setSobject(String sobject) {
+		this.sobject = sobject;
+	}
+
+	public String getWhereClause() {
+		return whereClause;
+	}
+
+	public void setWhereClause(String whereClause) {
+		this.whereClause = whereClause;
+	}
+
 	public CountRequest withAccessToken(String accessToken) {
 		setAccessToken(accessToken);
 		return this;
@@ -46,8 +64,13 @@ public class CountRequest {
 		return this;
 	}
 	
-	public CountRequest withQueryString(String queryString) {
-		setQueryString(queryString);
+	public CountRequest withSobject(String sobject) {
+		setSobject(sobject);
+		return this;
+	}
+	
+	public CountRequest withWhereClause(String whereClause) {
+		setWhereClause(whereClause);
 		return this;
 	}
 }

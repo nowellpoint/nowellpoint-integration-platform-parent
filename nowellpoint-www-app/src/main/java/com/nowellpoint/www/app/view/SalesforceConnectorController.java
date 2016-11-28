@@ -19,6 +19,7 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
@@ -42,6 +43,7 @@ public class SalesforceConnectorController extends AbstractController {
 		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
 		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
 		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobjects.html");
+		public static final String SOBJECT_DETAIL = String.format(APPLICATION_CONTEXT, "sobject-detail.html");
 		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
 	}
 	
@@ -66,6 +68,7 @@ public class SalesforceConnectorController extends AbstractController {
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_TEST, (request, response) -> testConnection(configuration, request, response));  
         post(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_BUILD, (request, response) -> buildEnvironment(configuration, request, response));  
         get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECTS, (request, response) -> sobjectsList(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECT_DETAIL, (request, response) -> getSobjectDetail(configuration, request, response));
 	}
 	
 	/**
@@ -107,6 +110,37 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String getSobjectDetail(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String key = request.params(":key");
+		String sobjectName = request.params(":sobjectName");
+		
+		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(new TokenCredentials(token))
+				.salesforceConnector()
+				.environment()
+				.sobjectDetail()
+				.get(id, key, sobjectName);
+		
+		SObjectDetail sobjectDetail = getSobjectDetailResult.getTarget();
+		
+		Map<String, Object> model = getModel();
+		model.put("id", id);
+		model.put("key", key);
+		model.put("sobjectDetail", sobjectDetail);
+		
+		return render(configuration, request, response, model, Template.SOBJECT_DETAIL);
+	}
 	
 	/**
 	 * 
@@ -542,18 +576,11 @@ public class SalesforceConnectorController extends AbstractController {
 				.build(id, key);
 		
 		if (! updateResult.isSuccess()) {
-			throw new BadRequestException(updateResult.getErrorMessage());
+			response.status(400);
+			return String.format("%s: %s", MessageProvider.getMessage(getLocale(request), "test.connection.fail"), updateResult.getErrorMessage());
 		}
 		
-		Environment environment = updateResult.getTarget();
-		
-		if (environment.getIsValid()) {
-			environment.setTestMessage(MessageProvider.getMessage(getLocale(request), "test.connection.success"));
-		} else {
-			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getLocale(request), "test.connection.fail"), environment.getTestMessage()));
-		}
-		
-		return objectMapper.writeValueAsString(environment);
+		return "";
 	}
 	
 	/**
@@ -577,17 +604,10 @@ public class SalesforceConnectorController extends AbstractController {
 				.test(id, key);
 		
 		if (! updateResult.isSuccess()) {
-			throw new BadRequestException(updateResult.getErrorMessage());
+			response.status(400);
+			return String.format("%s: %s", MessageProvider.getMessage(getLocale(request), "test.connection.fail"), updateResult.getErrorMessage());
 		}
 		
-		Environment environment = updateResult.getTarget();
-		
-		if (environment.getIsValid()) {
-			environment.setTestMessage(MessageProvider.getMessage(getLocale(request), "test.connection.success"));
-		} else {
-			environment.setTestMessage(String.format("%s: %s", MessageProvider.getMessage(getLocale(request), "test.connection.fail"), environment.getTestMessage()));
-		}
-		
-		return objectMapper.writeValueAsString(environment);
+		return "";
 	};
 }

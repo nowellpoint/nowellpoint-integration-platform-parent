@@ -70,11 +70,13 @@ public class TestAutheticators {
 			CountRequest countRequest = new CountRequest()
 					.withAccessToken(response.getToken().getAccessToken())
 					.withQueryUrl(response.getIdentity().getUrls().getQuery())
-					.withQueryString("Select Count(Id) From Opportunity");
+					.withSobject("Opportunity");
 			
 			Count count = client.getCount(countRequest);
 			
 			assertNotNull(count.getTotalSize());
+			
+			System.out.println(count.getRecords().get(0).getExpr0());
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			

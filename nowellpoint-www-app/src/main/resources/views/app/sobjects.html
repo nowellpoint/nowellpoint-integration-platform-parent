@@ -56,7 +56,7 @@
                                             </#if>
                                         </div>
                                         <div class="media-body">
-                                            <h4 class="media-heading">${(sobject.name)!}</h4> ${(sobject.label)!}
+                                            <h4 class="media-heading"><a href="${labels['base.path']}/${id}/environments/${environment.key}/sobject/${sobject.name}">${(sobject.name)!}</a></h4> ${(sobject.label)!}
                                         </div>
                                         <div class="media-right">
                                             <span class="icon icon-cog pull-right"></span>

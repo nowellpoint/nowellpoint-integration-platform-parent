@@ -9,7 +9,7 @@
             <br>
 
             <#if successMessage??>
-                <div id="success" class="alert alert-success">
+                <div class="alert alert-success">
                     <a class="close" data-dismiss="alert">&times;</a>
                     <div class="text-center">${successMessage!}</div>
                 </div>
@@ -24,6 +24,20 @@
                 </div>
 
                 <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+
+                    <div id="success" class="collapse panel panel-success">
+                        <div class="panel-body">
+                            <div class="text-center">
+                                <span class='icon icon-check fa-3x text-success'></span>&nbsp;
+                                <h4 class="text-success">${labels["success"]}</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="error" class="collapse alert alert-danger">
+                        <a class="close" data-dismiss="alert">&times;</a>
+                        <div id="error-message" class="text-center"></div>
+                    </div>
 
                     <div class="flextable p-t">
                         <div class="flextable-item flextable-primary">
@@ -87,13 +101,13 @@
                                 <dt>${labels["language.key"]}</dt>
                                 <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
                                 <hr>
-                                
+
                                 <dt>${labels["phone"]}</dt>
                                 <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
                                 <hr>
 
                             </dl>
-                            
+
                         </div>
 
                         <div class="col-md-6">
@@ -180,33 +194,23 @@
                             <div class="content table-responsive">
                                 <table id="environments-table" class="table table-hover">
                                     <thead>
-                                        <th class="col-xs-2">${labels["name"]}</th>
+                                        <th class="col-xs-3">${labels["name"]}</th>
                                         <th class="col-xs-3">${labels["service.endpoint"]}</th>
-                                        <th class="col-xs-1">${labels["api.version"]}</th>
-                                        <th class="col-xs-3">${labels["status.message"]}</th>
-                                        <th class="col-xs-3">${labels["action"]}</th>
+                                        <th class="col-xs-2 text-center">${labels["api.version"]}</th>
+                                        <th class="col-xs-4">${labels["action"]}</th>
                                     </thead>
                                     <tbody>
                                         <#list salesforceConnector.environments?sort_by( "addedOn") as environment>
                                             <tr id="${environment.key}">
                                                 <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/view">${(environment.environmentName)!}</a></td>
                                                 <td>
-                                                <!-- <#if environment.sobjects??> -->
+                                                    <!-- <#if environment.sobjects??> -->
                                                     <a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/sobjects">${(environment.serviceEndpoint)!}</a>
-                                                <!-- <#else> -->
+                                                    <!-- <#else> -->
                                                     ${(environment.serviceEndpoint)!}
-                                                <!-- </#if> -->
+                                                    <!-- </#if> -->
                                                 </td>
-                                                <td>${(environment.apiVersion)!}</td>
-                                                <td>
-                                                    <#if environment.isValid>
-                                                        <span class="icon icon-check fa-1x text-success"></span>
-                                                    </#if>
-                                                    <#if ! environment.isValid>
-                                                        <span class="icon icon-squared-cross fa-1x text-danger"></span>
-                                                    </#if>
-                                                    &emsp;${(environment.testMessage)!}
-                                                </td>
+                                                <td class="text-center">${(environment.apiVersion)!}</td>
                                                 <td><a href="${labels['base.path']}/${salesforceConnector.id}/environments/${(environment.key)!}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a>&emsp;
                                                     <a href="#" class="test-connection" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}/test" data-id="${environment.key}"><span class="icon icon-flash"></span>${labels["test.connection"]}</a>&emsp;
                                                     <a href="#" class="build-environment" data-href="${labels['base.path']}/${salesforceConnector.id}/environments/${environment.key}/build" data-id="${environment.key}"><span class="icon icon-cog"></span>${labels["build.environment"]}</a>&emsp;

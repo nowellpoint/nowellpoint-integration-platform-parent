@@ -17,6 +17,7 @@ import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
+import com.nowellpoint.client.model.SObjectDetail;
 
 public class SalesforceConnectorResource extends AbstractResource {
 	
@@ -120,6 +121,38 @@ public class SalesforceConnectorResource extends AbstractResource {
 	
 	public EnvironmentResource environment() {
 		return new EnvironmentResource(token);
+	}
+	
+	public class SObjectDetailResource extends AbstractResource {
+		
+		public SObjectDetailResource(Token token) {
+			super(token);
+		}
+		
+		public GetResult<SObjectDetail> get(String salesforceConnectorId, String key, String sobjectName) {
+			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+					.bearerAuthorization(token.getAccessToken())
+					.path(RESOURCE_CONTEXT)
+	    			.path("salesforce")
+	    			.path(salesforceConnectorId)
+	    			.path("environment")
+	    			.path(key)
+	    			.path("sobject")
+	    			.path(sobjectName)
+	    			.execute();
+			
+			GetResult<SObjectDetail> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				SObjectDetail resource = httpResponse.getEntity(SObjectDetail.class);
+				result = new GetResultImpl<SObjectDetail>(resource);  
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} 
+			
+			return result;
+		}
 	}
 	
 	public class EnvironmentResource extends AbstractResource {
@@ -298,6 +331,10 @@ public class SalesforceConnectorResource extends AbstractResource {
 			}
 			
 			return result;
+		}
+		
+		public SObjectDetailResource sobjectDetail() {
+			return new SObjectDetailResource(token);
 		}
 	}
 }

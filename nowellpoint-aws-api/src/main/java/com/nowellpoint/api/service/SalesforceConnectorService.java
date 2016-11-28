@@ -40,7 +40,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.DBRef;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.api.model.document.SObjectDescription;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
@@ -50,6 +49,7 @@ import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.CountRequest;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
 import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
@@ -57,6 +57,7 @@ import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.ThemeRequest;
+import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
@@ -533,7 +534,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	private void removeEnvironment(Environment environment) {
 		UserProperties.clear(environment.getKey());
-		MongoDatastore.deleteMany(MongoDatastore.getCollectionName( SObjectDescription.class ), eq ( "environmentKey", environment.getKey() ) );
+		MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", environment.getKey() ) );
 	}
 	
 	/**
@@ -613,7 +614,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				environment.setTheme(theme);
 				
-				describeSobjects(loginResult.getSessionId(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, environment.getKey());
+				describeSobjects(loginResult.getSessionId(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, environment.getKey());
 				
 			} else {
 				
@@ -655,7 +656,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				environment.setTheme(theme);
 				
-				describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, environment.getKey());
+				describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, environment.getKey());
 			}
 			environment.setIsValid(Boolean.TRUE);
 		} catch (OauthException e) {
@@ -670,7 +671,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		}	
 	}
 	
-	private void describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String environmentKey) throws InterruptedException, ExecutionException, JsonProcessingException {
+	private void describeSobjects(String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String environmentKey) throws InterruptedException, ExecutionException, JsonProcessingException {
 		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
 		
 		final Client client = new Client();
@@ -683,6 +684,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 						.withSobject(sobject.getName());
 
 				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+				
+				CountRequest countRequest = new CountRequest()
+						.withAccessToken(accessToken)
+						.withQueryUrl(queryUrl)
+						.withSobject(sobject.getName());
+				
+				Count count = client.getCount(countRequest);
 
 				Date now = Date.from(Instant.now());
 				
@@ -690,28 +698,29 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 				ObjectId id = new ObjectId( getSubject() );
 
-				DBRef reference = new DBRef( collectionName, id );
-				user.setIdentity(reference);
+				DBRef dbref = new DBRef( collectionName, id );
+				user.setIdentity(dbref);
 
-				SObjectDescription sobjectDescription = null;
+				com.nowellpoint.api.model.document.SObjectDetail sobjectDetail = null;
 				try {
-					sobjectDescription = MongoDatastore.findOne(SObjectDescription.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
+					sobjectDetail = MongoDatastore.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
 				} catch (DocumentNotFoundException e) {
-					sobjectDescription = new SObjectDescription();
-					sobjectDescription.setEnvironmentKey(environmentKey);
-					sobjectDescription.setName(describeSobjectResult.getName());
-					sobjectDescription.setCreatedDate(now);
-					sobjectDescription.setSystemCreatedDate(now);
-					sobjectDescription.setCreatedBy(user);
+					sobjectDetail = new com.nowellpoint.api.model.document.SObjectDetail();
+					sobjectDetail.setEnvironmentKey(environmentKey);
+					sobjectDetail.setName(describeSobjectResult.getName());
+					sobjectDetail.setCreatedDate(now);
+					sobjectDetail.setSystemCreatedDate(now);
+					sobjectDetail.setCreatedBy(user);
 				}
-				sobjectDescription.setLastModifiedBy(user);
-				sobjectDescription.setLastModifiedDate(now);
-				sobjectDescription.setSystemModifiedDate(now);
-				sobjectDescription.setResult(describeSobjectResult);
-				if (isNull(sobjectDescription.getId())) {
-					MongoDatastore.insertOne(sobjectDescription);
+				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
+				sobjectDetail.setLastModifiedBy(user);
+				sobjectDetail.setLastModifiedDate(now);
+				sobjectDetail.setSystemModifiedDate(now);
+				sobjectDetail.setResult(describeSobjectResult);
+				if (isNull(sobjectDetail.getId())) {
+					MongoDatastore.insertOne(sobjectDetail);
 				} else {
-					MongoDatastore.replaceOne(sobjectDescription);
+					MongoDatastore.replaceOne(sobjectDetail);
 				}
 			});
 		}

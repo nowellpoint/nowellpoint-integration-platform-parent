@@ -1,0 +1,46 @@
+<#import "template.html" as t>
+    <@t.page>
+        <#include "navbar.html" />
+        <div class="container">
+
+            <div class="row">
+
+                <br>
+
+                <a href="${labels['base.path']}/${id}/environments/${key}/sobjects" id="back" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>
+
+                <div class="dashhead m-t-md">
+                    <div class="dashhead">
+                        <div class="dashhead-titles">
+                            <h3 class="dashhead-title">${labels["sobject.detail"]}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+            </div>
+
+            <div class="row">
+                <br>
+                <div id="sobject-detail">
+                    <table class="table">
+                        <thead>
+                            <th>${labels["name"]}</th>
+                            <th>${labels["label"]}</th>
+                            <th class="text-right">${labels["length"]}</th>
+                            <th class="text-center">${labels["unique"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list sobjectDetail.result.fields as field>
+                                <tr>
+                                    <td>${field.name}</td>
+                                    <td>${field.label}</td>
+                                    <td class="text-right">${field.length}</td>
+                                    <td class="text-center ${field.unique?then('text-success', '')}"><span class="icon ${field.unique?then('icon-check', '')}"></span></td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </@t.page>

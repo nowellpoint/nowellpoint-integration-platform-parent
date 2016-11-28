@@ -8,6 +8,7 @@ com/nowellpoint/client/auth/RevokeTokenRequest.class
 com/nowellpoint/client/model/Backup.class
 com/nowellpoint/client/model/Address.class
 com/nowellpoint/client/model/GetResult.class
+com/nowellpoint/client/model/sforce/RecordTypeInfo.class
 com/nowellpoint/client/resource/AbstractResource$AddResultImpl.class
 com/nowellpoint/client/auth/ClientCredentialsGrantAuthorizerBuilder.class
 com/nowellpoint/client/auth/impl/RevokeTokenInvalidatorBuilderImpl.class
@@ -33,11 +34,13 @@ com/nowellpoint/client/model/SubscriptionRequest.class
 com/nowellpoint/client/model/ScheduledJob.class
 com/nowellpoint/client/model/SalesforceConnectorRequest.class
 com/nowellpoint/client/model/sforce/Icon.class
+com/nowellpoint/client/model/sforce/ChildRelationship.class
 com/nowellpoint/client/resource/AbstractResource$UpdateResultImpl.class
 com/nowellpoint/client/auth/Authenticators$ClientCredentialsGrantResponseFactory.class
 com/nowellpoint/client/auth/PasswordGrantRequest.class
 com/nowellpoint/client/model/CreditCard.class
 com/nowellpoint/client/model/RunHistory.class
+com/nowellpoint/client/resource/SalesforceConnectorResource$SObjectDetailResource.class
 com/nowellpoint/client/model/Property.class
 com/nowellpoint/client/auth/OauthRequests$RevokeTokenRequestFactory.class
 com/nowellpoint/client/auth/OauthRequests.class
@@ -60,6 +63,7 @@ com/nowellpoint/client/resource/AbstractResource$GetResultImpl.class
 com/nowellpoint/client/model/sforce/Identity.class
 com/nowellpoint/client/model/CreditCardRequest.class
 com/nowellpoint/client/model/sforce/Sobject.class
+com/nowellpoint/client/model/sforce/DescribeSobjectResult.class
 com/nowellpoint/client/model/ExceptionResponse.class
 com/nowellpoint/client/auth/OauthRequests$ClientCredentialsGrantRequestFactory.class
 com/nowellpoint/client/auth/Authenticators$RevokeTokenResponseFactory.class
@@ -70,6 +74,7 @@ com/nowellpoint/client/model/SignUpRequest.class
 com/nowellpoint/client/auth/TokenCredentials.class
 com/nowellpoint/client/resource/ScheduledJobResource.class
 com/nowellpoint/client/auth/Credentials.class
+com/nowellpoint/client/model/sforce/NamedLayoutInfo.class
 com/nowellpoint/client/model/Result.class
 com/nowellpoint/client/resource/SalesforceConnectorResource.class
 com/nowellpoint/client/resource/AccountProfileResource$CreditCardResource.class
@@ -77,8 +82,10 @@ com/nowellpoint/client/model/ScheduledJobType.class
 com/nowellpoint/client/model/sforce/Urls.class
 com/nowellpoint/client/auth/impl/RevokeTokenRequestImpl.class
 com/nowellpoint/client/model/Feature.class
+com/nowellpoint/client/model/sforce/ActionOverride.class
 com/nowellpoint/client/model/sforce/Color.class
 com/nowellpoint/client/auth/ClientCredentialsGrantRequest.class
+com/nowellpoint/client/model/sforce/RecordTypeInfoUrls.class
 com/nowellpoint/client/resource/AbstractResource$SetResultImpl.class
 com/nowellpoint/client/model/Error.class
 com/nowellpoint/client/model/Targets.class
@@ -86,11 +93,11 @@ com/nowellpoint/client/model/sforce/Attributes.class
 com/nowellpoint/client/resource/AbstractResource$SignUpResultImpl.class
 com/nowellpoint/client/model/SetResult.class
 com/nowellpoint/client/model/Token.class
+com/nowellpoint/client/model/sforce/SupportedScope.class
 com/nowellpoint/client/model/CreateResult.class
 com/nowellpoint/client/model/UserInfo.class
 com/nowellpoint/client/resource/UserResource.class
 com/nowellpoint/client/model/Contact.class
-com/nowellpoint/client/model/SystemReference.class
 com/nowellpoint/client/auth/Authenticators$PasswordGrantResponseFactory.class
 com/nowellpoint/client/NowellpointClient.class
 com/nowellpoint/client/model/Photos.class
@@ -102,6 +109,7 @@ com/nowellpoint/client/model/User.class
 com/nowellpoint/client/model/ConnectorType.class
 com/nowellpoint/client/auth/impl/OauthAuthenticationResponseImpl.class
 com/nowellpoint/client/model/sforce/Field.class
+com/nowellpoint/client/model/SObjectDetail.class
 com/nowellpoint/client/model/ScheduledJobRequest.class
 com/nowellpoint/client/model/Application.class
 com/nowellpoint/client/model/NotFoundException.class

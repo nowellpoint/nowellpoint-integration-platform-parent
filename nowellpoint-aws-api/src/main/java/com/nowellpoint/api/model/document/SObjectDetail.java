@@ -1,14 +1,20 @@
 package com.nowellpoint.api.model.document;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.api.model.codec.SObjectDescriptionCodec;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.api.model.codec.SObjectDetailCodec;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.mongodb.document.ObjectIdDeserializer;
+import com.nowellpoint.mongodb.document.ObjectIdSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="sobject.descriptions", codec=SObjectDescriptionCodec.class)
-public class SObjectDescription extends MongoDocument {
+@Document(collectionName="sobject.details", codec=SObjectDetailCodec.class)
+public class SObjectDetail extends MongoDocument {
 
 	/**
 	 * 
@@ -20,13 +26,19 @@ public class SObjectDescription extends MongoDocument {
 	
 	private UserRef lastModifiedBy;
 	
+	@JsonSerialize(using = ObjectIdSerializer.class)
+	@JsonDeserialize(using = ObjectIdDeserializer.class)
+	private ObjectId connectorId;
+	
 	private String environmentKey;
 	
 	private String name;
 	
+	private Long totalSize;
+	
 	private DescribeSobjectResult result;
 	
-	public SObjectDescription() {
+	public SObjectDetail() {
 		
 	}
 
@@ -60,6 +72,14 @@ public class SObjectDescription extends MongoDocument {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Long getTotalSize() {
+		return totalSize;
+	}
+
+	public void setTotalSize(Long totalSize) {
+		this.totalSize = totalSize;
 	}
 
 	public DescribeSobjectResult getResult() {

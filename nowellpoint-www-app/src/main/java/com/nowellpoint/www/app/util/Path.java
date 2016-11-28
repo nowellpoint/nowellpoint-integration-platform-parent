@@ -29,6 +29,7 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_DELETE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/delete");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECTS = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/sobjects");
+		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_SOBJECT_DETAIL = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/sobject/:sobjectName");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_NEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/new");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key/view");
 		public static final String CONNECTORS_SALESFORCE_ENVIRONMENT_ADD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments");

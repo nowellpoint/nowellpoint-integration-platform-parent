@@ -25,7 +25,9 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.SObjectDetail;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
+import com.nowellpoint.api.service.SObjectDetailService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -34,6 +36,9 @@ public class SalesforceConnectorResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
+	
+	@Inject
+	private SObjectDetailService sobjectDetailService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -196,6 +201,22 @@ public class SalesforceConnectorResource {
 		
 		return Response.ok()
 				.entity(environment)
+				.build(); 
+	}
+	
+	@GET
+	@Path("salesforce/{id}/environment/{key}/sobject/{sobjectName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSObjectDetails(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="sobjectName") String sobjectName) {		
+		
+		SObjectDetail resource = sobjectDetailService.findSObjectDetailByName(key, sobjectName);
+		
+		if (resource == null) {
+			throw new NotFoundException(String.format("SObject for name %s was not found", sobjectName));
+		}
+		
+		return Response.ok()
+				.entity(resource)
 				.build(); 
 	}
 	
