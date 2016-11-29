@@ -94,5 +94,5 @@
 			</build>
 		</profile>
 	</profiles>
-	<version>2016.11.1-SNAPSHOT</version>
+	<version>2016.11.1</version>
 </project>
