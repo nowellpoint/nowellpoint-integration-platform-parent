@@ -89,7 +89,6 @@ public class TestAuthenticators {
 	}
 	
 	@Test
-	@Ignore
 	public void createAndDeleteEnvironment() {
 		
 		LOG.info("start createAndDeleteEnvironment");
