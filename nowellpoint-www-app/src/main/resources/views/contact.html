@@ -47,86 +47,70 @@
             </div>
         </div>
     </nav>
-
     <br>
     <br>
-
-    <section>
-        <div class="container">
-            <div class="row">
+    <div class="container">
+        <div class="row">
+            <br>
+            <br>
+            <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-2 col-md-8 col-md-offset-2">
+                <#if successMessage??>
+                    <div id="alert" class="alert alert-success">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${successMessage}</div>
+                    </div>
+                </#if>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
+                <h4><div class="text-center">${contact}</div></h4>
                 <br>
-                <br>
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
-                    <#if successMessage??>
-                        <div id="alert" class="alert alert-success">
-                            <a class="close" data-dismiss="alert">×</a>
-                            <div class="text-center">${successMessage}</div>
+                <form class="form-horizontal" role="form" method="post" action="/contact">
+                    <input type="hidden" name="leadSource" value="Contact">
+                    <div class="form-group">
+                        <!-- <label class="control-label" for="firstName"></label> -->
+                        <input class="form-control" name="firstName" id="firstName" placeholder="${firstName}" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <!-- <label class="control-label" for="lastName">${lastName}*</label> -->
+                        <input class="form-control" name="lastName" id="lastName" placeholder="${lastName}" required>
+                    </div>
+                    <div class="form-group">
+                        <!-- <label class="control-label" for="email">${email}*</label> -->
+                        <input type="email" class="form-control" name="email" id="email" placeholder="${email}" required>
+                    </div>
+                    <div class="form-group">
+                        <!-- <label class="control-label" for="phone">${phone}</label> -->
+                        <input class="form-control" name="phone" id="phone" placeholder="${phone}">
+                    </div>
+                    <div class="form-group">
+                        <!-- <label class="control-label" for="company">${company}</label> -->
+                        <input class="form-control" name="company" id="company" placeholder="${company}">
+                    </div>
+                    <div class="form-group">
+                        <!-- <label class="control-label" for="description">${howCanWeHelp}*</label> -->
+                        <textarea class="form-control" name="description" id="description" rows="5" placeholder="${howCanWeHelp}" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="pull-right">
+                            <button type="submit" name="submit" id="submit" class="btn btn-primary">${submit}</button>
                         </div>
-                    </#if>
-                </div>
-                <div class="col-md-2"></div>
+                    </div>
+                </form>
             </div>
-
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    <h4><div class="text-center">${contact}</div></h4>
-                    <br>
-
-                    <form class="form-horizontal" role="form" method="post" action="/contact">
-                        <input type="hidden" name="leadSource" value="Contact">
-                        <div class="form-group">
-                            <!-- <label class="control-label" for="firstName"></label> -->
-                            <input class="form-control" name="firstName" id="firstName" placeholder="${firstName}" autofocus>
-                        </div>
-                        <div class="form-group">
-                            <!-- <label class="control-label" for="lastName">${lastName}*</label> -->
-                            <input class="form-control" name="lastName" id="lastName" placeholder="${lastName}" required>
-                        </div>
-                        <div class="form-group">
-                            <!-- <label class="control-label" for="email">${email}*</label> -->
-                            <input type="email" class="form-control" name="email" id="email" placeholder="${email}" required>
-                        </div>
-                        <div class="form-group">
-                            <!-- <label class="control-label" for="phone">${phone}</label> -->
-                            <input class="form-control" name="phone" id="phone" placeholder="${phone}">
-                        </div>
-                        <div class="form-group">
-                            <!-- <label class="control-label" for="company">${company}</label> -->
-                            <input class="form-control" name="company" id="company" placeholder="${company}">
-                        </div>
-                        <div class="form-group">
-                            <!-- <label class="control-label" for="description">${howCanWeHelp}*</label> -->
-                            <textarea class="form-control" name="description" id="description" rows="5" placeholder="${howCanWeHelp}" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <div class="pull-right">
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${submit}</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-4">
-            </div>
-        
-            </div>
-        </div>    
-    </section>
-
-
-
-    <br>
-
-    <section>
+        </div>
+    </div>
+    <hr class="primary">
+    <aside class="bg-light">
         <div class="container">
+            <br>
             <div class="row">
-                <div class="col-md-8 col-md-offset-2 text-center">
-                    <hr class="primary">
-                    <br>
+                <div class="text-center col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
                     <i class="fa fa-phone fa-3x wow bounceIn"></i>
                     <p>1-888-721-6440</p>
-                    <br>
+                </div>
+                <div class="text-center col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
                     <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i>
                     <p>
                         <a href="mailto:administrator@nowellpoint.com">administrator@nowellpoint.com</a>
@@ -134,7 +118,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </aside>
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
