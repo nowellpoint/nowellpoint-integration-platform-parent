@@ -28,23 +28,29 @@
 
         <script src="/js/jquery.js"></script>
         <script src="/dist/toolkit.min.js"></script>
-        
+
         <script src="/js/jquery.js"></script>
 
     </head>
 
-    <body class="with-top-navbar">
+    <body>
 
-        <#nested/>
+        <div id="wrapper">
 
-        <div class="container">
-            <div class="row">
-                &nbsp;
+            <#include "navbar.html" />
+
+            <div id="page-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <#nested/>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <script type="text/javascript">
-            
             $(document)
                 .ajaxStart(function() {
                     $('#spinner').show();
@@ -64,8 +70,7 @@
                         $(this).closest('li').addClass('active');
                     }
                 });
-            });            
-
+            });
         </script>
     </body>
 

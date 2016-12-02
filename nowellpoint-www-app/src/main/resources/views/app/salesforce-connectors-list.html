@@ -2,66 +2,53 @@
 
     <@t.page>
 
-        <#include "navbar.html" />
+        <br>
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="dashhead-subtitle">&nbsp;</h4>
+                        <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
+                    </div>
+                    <#if salesforceConnectorsList?size gt 0>
+                        <div class="dashhead-toolbar">
+                            <p class="pull-right">
+                                <a href="${labels['base.path']}/new" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
+                            </p>
+                        </div>
+                    </#if>
+                </div>
 
-        <div class="container-fluid">
-            <div class="row">
+                <div class="hr-divider"></div>
+
                 <br>
-                <div class="col-xs-3 col-sm-3 col-md-2">
-                    <#include "sidebar.html"/>
-                </div>
-                <div class="col-xs-9 col-sm-9 col-md-10">
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">&emsp;</h6>
-                            <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
-                        </div>
-                        <#if salesforceConnectorsList?size gt 0>
-                            <div class="dashhead-toolbar">
-                                <p class="pull-right">
-                                    <a href="${labels['base.path']}/new" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
-                                </p>
-                            </div>
-                        </#if>
-                    </div>
+
+                <#if salesforceConnectorsList?size==0>
                     <br>
-                    <div class="hr-divider"></div>
                     <br>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12">
-                            <#if salesforceConnectorsList?size==0>
-                                <br>
-                                <br>
-                                <br>
-                                <img class="media-object center-block" src="/images/connection.png">
-                                <br>
-                                <h4 class="text-muted text-center">${labels["no.records"]}</h4>
-                                <p class="text-center">
-                                    <a href="${labels['base.path']}/new" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
-                                </p>
-                            </#if>
-                            <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <div class="media">
-                                            <div class="media-left">
-                                                <img class="media-object" src="/images/connection.png">
-                                            </div>
-                                            <div class="media-body">
-                                                <h4 class="media-heading"><a href="${labels['base.path']}/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></h4>
-                                                <p>${salesforceConnector.organization.instanceName} - ${salesforceConnector.organization.organizationType} (${salesforceConnector.identity.displayName})</p>
-                                            </div>
-                                            <div class="media-right">
-                                                <a href="${labels['base.path']}/${salesforceConnector.id!}/edit?view=1" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <br>
+                    <img class="media-object center-block" src="/images/connection.png">
+                    <br>
+                    <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+                    <p class="text-center">
+                        <a href="${labels['base.path']}/new" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
+                    </p>
+                </#if>
+                <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img class="media-object" src="/images/connection.png">
                                 </div>
-                            </#list>
+                                <div class="media-body">
+                                    <h4 class="media-heading"><a href="${labels['base.path']}/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></h4>
+                                    <p>${salesforceConnector.organization.instanceName} - ${salesforceConnector.organization.organizationType} (${salesforceConnector.identity.displayName})</p>
+                                </div>
+                                <div class="media-right">
+                                    <a href="${labels['base.path']}/${salesforceConnector.id!}/edit?view=1" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </#list>
 
     </@t.page>
