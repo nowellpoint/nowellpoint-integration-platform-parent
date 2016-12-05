@@ -2,51 +2,45 @@
 
     <@t.page>
 
-        <#include "navbar.html" />
+        <div id="status-message"></div>
+        <div class="col-lg-2 col-md-2 col-sm-2">
+            <#include "administration-nav.html" />
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-10">
+            <form class="form-vertical" id="instance-variables-form" role="form">
+                <div class="panel-body">
+                    <div class="content table-responsive">
+                        <table id="properties" class="table table-hover">
+                            <thead>
+                                <th class="col-xs-5">${labels["property.key"]}</th>
+                                <th class="col-xs-6">${labels["property.value"]}</th>
+                                <th class="col-xs-1 text-center"></th>
+                            </thead>
+                            <tbody>
+                                <#list propertyList?sort_by( "key" ) as property>
+                                    <tr>
+                                        <td>
+                                            ${(property.key)!}
+                                        </td>
+                                        <td>
+                                            ${(property.value)!}
+                                        </td>
+                                        <td class="text-center">
 
-        <div class="container-fluid">
-            <br>
-            <div class="row">
-                <div id="status-message"></div>
-                 <div class="col-lg-2 col-md-2 col-sm-2">
-                    <#include "administration-nav.html" />
-                </div>
-                <div class="col-lg-10 col-md-10 col-sm-10">
-                    <form class="form-vertical" id="instance-variables-form" role="form">
-                        <div class="panel-body">
-                            <div class="content table-responsive">
-                                <table id="properties" class="table table-hover">
-                                    <thead>
-                                        <th class="col-xs-5">${labels["property.key"]}</th>
-                                        <th class="col-xs-6">${labels["property.value"]}</th>
-                                        <th class="col-xs-1 text-center"></th>
-                                    </thead>
-                                    <tbody>
-                                        <#list propertyList?sort_by( "key" ) as property>
-                                            <tr>
-                                                <td>
-                                                    ${(property.key)!}
-                                                </td>
-                                                <td>
-                                                    ${(property.value)!}
-                                                </td>
-                                                <td class="text-center">
-
-                                                </td>
-                                        </#list>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--
+                                        </td>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--
                             <div class="pull-right">
                                 <a id="reset" name="reset" role="button">${labels["reset"]}</a>&nbsp;
                                 <a id="addInstanceVariable" name="add" class="btn btn-success" role="button">${labels["add.property"]}</a>&nbsp;
                                 <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                             </div>
 -->
-                        </div>
-                    </form>
                 </div>
-            </div>
+            </form>
         </div>
+
     </@t.page>

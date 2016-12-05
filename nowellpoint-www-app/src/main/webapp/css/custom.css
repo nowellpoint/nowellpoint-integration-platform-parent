@@ -1,20 +1,15 @@
-body {
-  background-color: #f8f8f8;
-}
 #wrapper {
   width: 100%;
 }
 #page-wrapper {
   padding: 0 15px;
   min-height: 100%;
-  background-color: white;
 }
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 250px;
     padding: 0 0;
-    border-left: 1px solid #e7e7e7;
   }
 }
 .navbar-top-links {
@@ -98,8 +93,11 @@ body {
   .sidebar {
     z-index: 1;
     position: absolute;
-    width: 250px;
-    margin-top: 51px;
+    width: 275px;
+    margin-top: 70px;
+    border-radius: 0;
+    position: absolute;top: 0;
+    bottom: 0;
   }
 }
 

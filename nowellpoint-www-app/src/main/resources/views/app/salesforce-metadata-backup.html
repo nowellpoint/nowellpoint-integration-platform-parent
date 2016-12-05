@@ -1,119 +1,113 @@
 <#import "template.html" as t>
     <@t.page>
-        <#include "navbar.html" />
-        <div class="container">
-            <div class="row">
-                <div class="dashhead m-t-md">
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["service.details"]}</h6>
-                        </div>
-                    </div>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead">
+                <div class="dashhead-titles">
+                    <h6 class="dashhead-subtitle">${labels["service.details"]}</h6>
                 </div>
-                <div class="hr-divider"></div>
             </div>
+        </div>
+        <div class="hr-divider"></div>
+
+
+        <br>
+
+        <#if errorMessage??>
+            <div id="alert" class="alert alert-danger">
+                <a class="close" data-dismiss="alert">×</a>
+                <div class="text-center">${errorMessage}</div>
+            </div>
+        </#if>
+
+        <#if mode=="edit">
+
+            <div class="row">
+
+                <form id="service-instance-form" method="post" action="${action}">
+
+                    <div class="row">
+
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label" for="name">${labels["instance.name"]}</label>
+                                <input type="text" class="form-control" name="name" id="name" autofocus="" value="${serviceInstance.name!serviceInstance.key}" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="providerName">${labels["service.provider.name"]}</label>
+                                <input type="text" class="form-control" id="providerName" value="${(serviceInstance.providerName)!}" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="serviceName">${labels["service.name"]}</label>
+                                <input type="text" class="form-control" id="serviceName" value="${(serviceInstance.serviceName)!}" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="tag">${labels["tag"]}</label>
+                                <input type="text" class="form-control" name="tag" id="tag" value="${(serviceInstance.tag)!}" />
+                            </div>
+                            <#include "targets.html" />
+                            <div class="form-group">
+                                <div class="pull-right">
+                                    <a href="${labels['base.path']}/${id}#services" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4"></div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </#if>
+
+        <#if mode=="view">
+
             <div class="row">
 
                 <br>
 
-                <#if errorMessage??>
-                    <div id="alert" class="alert alert-danger">
-                        <a class="close" data-dismiss="alert">×</a>
-                        <div class="text-center">${errorMessage}</div>
-                    </div>
-                </#if>
+                <div class="col-md-4"></div>
 
-                <#if mode=="edit">
+                <div class="col-md-4">
 
-                    <div class="row">
+                    <dl class="dl-vertical">
+                        <dt>${labels["instance.name"]}</dt>
+                        <dd>${serviceInstance.name!serviceInstance.key}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["service.provider.name"]}</dt>
+                        <dd>${(serviceInstance.providerName)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["service.name"]}</dt>
+                        <dd>${(serviceInstance.serviceName)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["tag"]}</dt>
+                        <dd>${(serviceInstance.tag)!}&emsp;</dd>
+                        <#include "targets.html" />
+                        <hr>
+                        <dt>${messages["added.on"]}</dt>
+                        <dd>${(serviceInstance.addedOn?date?string.iso)!} ${serviceInstance.addedOn?time?string.medium!}</dd>
+                        <hr>
+                        <dt>${messages["updated.on"]}</dt>
+                        <dd>${(serviceInstance.updatedOn?date?string.iso)!} ${serviceInstance.updatedOn?time?string.medium!}</dd>
+                    </dl>
 
-                        <form id="service-instance-form" method="post" action="${action}">
+                    <br>
 
-                            <div class="row">
-
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="control-label" for="name">${labels["instance.name"]}</label>
-                                        <input type="text" class="form-control" name="name" id="name" autofocus="" value="${serviceInstance.name!serviceInstance.key}" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="providerName">${labels["service.provider.name"]}</label>
-                                        <input type="text" class="form-control" id="providerName" value="${(serviceInstance.providerName)!}" disabled />
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="serviceName">${labels["service.name"]}</label>
-                                        <input type="text" class="form-control" id="serviceName" value="${(serviceInstance.serviceName)!}" disabled />
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="tag">${labels["tag"]}</label>
-                                        <input type="text" class="form-control" name="tag" id="tag" value="${(serviceInstance.tag)!}" />
-                                    </div>
-                                    <#include "targets.html" />
-                                    <div class="form-group">
-                                        <div class="pull-right">
-                                            <a href="${labels['base.path']}/${id}#services" class="btn btn-default" role="button" >${labels["cancel"]}</a>
-                                            <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4"></div>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-
-                </#if>
-
-                <#if mode=="view">
-
-                    <div class="row">
-
-                        <br>
-
-                        <div class="col-md-4"></div>
-
-                        <div class="col-md-4">
-
-                            <dl class="dl-vertical">
-                                <dt>${labels["instance.name"]}</dt>
-                                <dd>${serviceInstance.name!serviceInstance.key}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["service.provider.name"]}</dt>
-                                <dd>${(serviceInstance.providerName)!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["service.name"]}</dt>
-                                <dd>${(serviceInstance.serviceName)!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["tag"]}</dt>
-                                <dd>${(serviceInstance.tag)!}&emsp;</dd>
-                                <#include "targets.html" />
-                                <hr>
-                                <dt>${messages["added.on"]}</dt>
-                                <dd>${(serviceInstance.addedOn?date?string.iso)!} ${serviceInstance.addedOn?time?string.medium!}</dd>
-                                <hr>
-                                <dt>${messages["updated.on"]}</dt>
-                                <dd>${(serviceInstance.updatedOn?date?string.iso)!} ${serviceInstance.updatedOn?time?string.medium!}</dd>
-                            </dl>
-
-                            <br>
-
-                            <div class="form-group">
-                                <div class="pull-right">
-                                    <a href="${labels['base.path']}/${id}#services" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
-                                    <a href="${labels['base.path']}/${id}/services/${(serviceInstance.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
-                                </div>
-                            </div>
+                    <div class="form-group">
+                        <div class="pull-right">
+                            <a href="${labels['base.path']}/${id}#services" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
+                            <a href="${labels['base.path']}/${id}/services/${(serviceInstance.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
                         </div>
-
-                        <div class="col-md-4"></div>
-
                     </div>
+                </div>
 
-                </#if>
+                <div class="col-md-4"></div>
 
             </div>
-        </div>
+
+        </#if>
     </@t.page>

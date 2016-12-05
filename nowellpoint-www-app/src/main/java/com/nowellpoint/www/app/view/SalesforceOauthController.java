@@ -2,6 +2,7 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 
+import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -73,7 +74,10 @@ public class SalesforceOauthController extends AbstractController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
-    	return render(configuration, request, response, getModel(), Template.SALESFORCE_OAUTH);
+    	Map<String, Object> model = getModel();
+    	model.put("showSidebar", Boolean.FALSE);
+    	
+    	return render(configuration, request, response, model, Template.SALESFORCE_OAUTH);
     };
 	
     /**

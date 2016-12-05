@@ -36,6 +36,7 @@ public class DashboardController extends AbstractController {
 		
     	Map<String,Object> model = getModel();
     	model.put("account", getAccount(request));
+    	model.put("showSidebar", Boolean.FALSE);
     	
     	return render(configuration, request, response, model, Path.Template.START);
 	};
