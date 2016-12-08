@@ -1,7 +1,5 @@
 <#import "template.html" as t>
     <@t.page>
-
-
         <div class="dashhead m-t-md">
             <div class="dashhead">
                 <div class="dashhead-titles">
@@ -10,7 +8,6 @@
             </div>
         </div>
         <div class="hr-divider"></div>
-
         <#if successMessage??>
             <div id="success" class="alert alert-success">
                 <a class="close" data-dismiss="alert">&times;</a>
@@ -23,9 +20,7 @@
                 <div class="text-center">${errorMessage}</div>
             </div>
         </#if>
-
         <br>
-
         <form class="form-vertical" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/address">
 
             <div class="row">
@@ -33,7 +28,6 @@
                     <label class="control-label" for="street">${labels["street"]}</label>
                     <input type="text" class="form-control" name="street" id="street" autofocus="" value="${address.street!}" />
                 </div>
-
                 <div class="col-md-10"></div>
             </div>
 
