@@ -33,11 +33,8 @@ public class DashboardController extends AbstractController {
 	}
 	
 	private String showStartPage(Configuration configuration, Request request, Response response) {
-		
     	Map<String,Object> model = getModel();
     	model.put("account", getAccount(request));
-    	model.put("showSidebar", Boolean.FALSE);
-    	
     	return render(configuration, request, response, model, Path.Template.START);
 	};
 	

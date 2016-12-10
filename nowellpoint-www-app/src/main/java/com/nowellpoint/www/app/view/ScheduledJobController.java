@@ -197,7 +197,7 @@ public class ScheduledJobController extends AbstractController {
 			
 			GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
 					.salesforceConnector()
-					.get(id);
+					.get(connectorId);
 			
 			SalesforceConnector salesforceConnector = getResult.getTarget();
 			

@@ -147,7 +147,7 @@
                             <th class="col-xs-5"></th>
                         </thead>
                         <tbody>
-                            <#list scheduledJob.runHistories?sort_by( "fireTime") as runHistory>
+                            <#list scheduledJob.runHistories?sort_by( "fireTime")?reverse as runHistory>
                                 <tr id="${(runHistory.fireInstanceId)!}">
                                     <td>${(runHistory.fireInstanceId)!}</td>
                                     <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>

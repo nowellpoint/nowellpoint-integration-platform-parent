@@ -75,7 +75,6 @@ public class SalesforceOauthController extends AbstractController {
     	}
     	
     	Map<String, Object> model = getModel();
-    	model.put("showSidebar", Boolean.FALSE);
     	
     	return render(configuration, request, response, model, Template.SALESFORCE_OAUTH);
     };

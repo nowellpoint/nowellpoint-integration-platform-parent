@@ -1,12 +1,10 @@
-<#import "template.html" as t>
+<#import "template-fluid-no-sidebar.html" as t>
     <@t.page>
-        
-        <div class="container-fluid">
-            <div class="row">
-                <br>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
-                </div>
+
+        <div class="row">
+            <br>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
             </div>
         </div>
 

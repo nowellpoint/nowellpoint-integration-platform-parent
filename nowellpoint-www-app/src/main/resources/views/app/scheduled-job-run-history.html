@@ -1,11 +1,9 @@
-<#import "template.html" as t>
+<#import "template-no-sidebar.html" as t>
     <@t.page>
-
         <div class="dashhead m-t-md">
             <div class="dashhead">
                 <div class="dashhead-titles">
                     <h2 class="dashhead-title">${labels["backup.files"]}</h2>
-                    <h6 class="dashhead-subtitle">&nbsp;</h6>
                 </div>
                 <div class="dashhead-toolbar">
                     <p class="pull-right">
@@ -15,34 +13,28 @@
             </div>
         </div>
         <div class="hr-divider"></div>
-
-
         <br>
-
-        <div id="runHistoryFiles" class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <p class="text-success">${labels['download.instruction']}</p>
-                <div class="content table-responsive">
-                    <table id="run-history-table" class="table table-hover">
-                        <thead>
-                            <th class="col-md-7">${labels["file.name"]}</th>
-                            <th class="col-md-2">${labels["type"]}</th>
-                            <th class="col-md-2 text-right">${labels["file.size"]}</th>
-                            <th class="col-md-1 text-center">${labels["download"]}</th>
-                        </thead>
-                        <tbody>
-                            <#list runHistory.backups?sort_by( "filename") as backup>
-                                <tr>
-                                    <td>${(backup.filename)!}</td>
-                                    <td>${(backup.type)!}</td>
-                                    <td class="text-right">${(backup.filesize)!}</td>
-                                    <td class="text-center"><a href="${labels['base.path']}/${scheduledJob.id!}/run-history/${(runHistory.fireInstanceId)!}/download/${(backup.type)!}" download="${(backup.filename)!}.json"><span class="icon icon-download"></span></a></td>
-                                </tr>
-                            </#list>
-                        </tbody>
-                    </table>
-                </div>
+        <div id="runHistoryFiles">
+            <p class="text-success">${labels['download.instruction']}</p>
+            <div class="content table-responsive">
+                <table id="run-history-table" class="table table-hover">
+                    <thead>
+                        <th class="col-md-7">${labels["file.name"]}</th>
+                        <th class="col-md-2">${labels["type"]}</th>
+                        <th class="col-md-2 text-right">${labels["file.size"]}</th>
+                        <th class="col-md-1 text-center">${labels["download"]}</th>
+                    </thead>
+                    <tbody>
+                        <#list runHistory.backups?sort_by( "filename") as backup>
+                            <tr>
+                                <td>${(backup.filename)!}</td>
+                                <td>${(backup.type)!}</td>
+                                <td class="text-right">${(backup.filesize)!}</td>
+                                <td class="text-center"><a href="${labels['base.path']}/${scheduledJob.id!}/run-history/${(runHistory.fireInstanceId)!}/download/${(backup.type)!}" download="${(backup.filename)!}.json"><span class="icon icon-download"></span></a></td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
             </div>
         </div>
-
     </@t.page>

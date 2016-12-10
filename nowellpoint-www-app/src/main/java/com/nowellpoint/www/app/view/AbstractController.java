@@ -43,7 +43,6 @@ abstract class AbstractController implements Controller {
 	
 	protected Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("showSidebar", Boolean.TRUE);
 		return model;
 	}
 	
