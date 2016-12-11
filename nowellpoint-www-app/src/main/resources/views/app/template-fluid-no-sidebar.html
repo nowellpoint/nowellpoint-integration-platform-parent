@@ -28,8 +28,7 @@
 
         <script src="/js/jquery.js"></script>
         <script src="/dist/toolkit.min.js"></script>
-
-        <script src="/js/jquery.js"></script>
+        <script src="/js/common.js"></script>
 
     </head>
 
@@ -37,88 +36,14 @@
 
         <div id="wrapper">
 
-            <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <div class="navbar-brand">
-                        ${messages["application.title"]}
-                    </div>
-                </div>
-
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/app/start">
-                            <span class="icon icon-star"></span>
-                            <span class="iconav-nav-label">${messages["start"]}</span>
-                        </a>
-                    </li>
-                </ul>
-
-                <ul class="nav navbar-top-links navbar-right">
-
-                    <li>
-                        ${(accountProfile.subscription.planName)!}&nbsp;${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}
-                    </li>
-
-                    <#if account.hasFullAccess?? && account.hasFullAccess>
-                        <li>
-                            <a href="/app/administration">
-                                    ${messages["adminsitration"]}
-                        </a>
-                        </li>
-                    </#if>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${(account.name)!} <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="/app/account-profile/${account.id}">
-                               ${messages["account.profile"]}
-                            </a>
-                            </li>
-                            <li>
-                                <a href="/logout">
-                                ${messages["log.out"]}
-                            </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-
-            </nav>
+            <#include "navbar.html" />
 
             <div class="container-fluid">
-                <#nested/>
+                <div class="row p-t-lg">
+                    <#nested/>
+                </div>
             </div>
-
         </div>
-
-        <script type="text/javascript">
-            $(document)
-                .ajaxStart(function() {
-                    $('#spinner').show();
-                })
-                .ajaxStop(function() {
-                    $('#spinner').hide();
-                });
-
-            $(document).ready(function() {
-                var path = window.location.pathname;
-                path = path.replace(/\/$/, "");
-                path = decodeURIComponent(path);
-
-                $(".nav a").each(function() {
-                    var href = $(this).attr('href');
-                    if (path.substring(0, href.length) === href) {
-                        $(this).closest('li').addClass('active');
-                    }
-                });
-            });
-        </script>
     </body>
 
     </html>

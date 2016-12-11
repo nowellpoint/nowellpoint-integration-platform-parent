@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only"></span>
@@ -6,7 +6,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <div class="navbar-brand">
+        <div class="navbar-brand p-l">
             ${messages["application.title"]}
         </div>
     </div>
@@ -18,12 +18,13 @@
                 <span class="iconav-nav-label">${messages["start"]}</span>
             </a>
         </li>
-    </ul>
+    </ul>   
 
-    <ul class="nav navbar-top-links navbar-right">
+    <ul class="nav navbar-nav navbar-right p-r">
 
         <li>
-            ${(accountProfile.subscription.planName)!}&nbsp;${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}
+            <a href="#">
+            ${(accountProfile.subscription.planName)!}&nbsp;${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}</a>
         </li>
 
         <#if account.hasFullAccess?? && account.hasFullAccess>
@@ -49,37 +50,4 @@
             </ul>
         </li>
     </ul>
-
-    <div class="navbar-default sidebar" role="navigation">
-        <div class="sidebar-nav navbar-collapse">
-            <ul class="nav" id="side-menu">
-                <!--
-                    <li>
-                        <a href="#" title="Overview" data-toggle="tooltip" data-placement="right" data-container="body">
-                            <span class="icon icon-home fa fa-2x"></span>&emsp;Overview
-                        </a>
-                    </li> -->
-                <li>
-                    <a href="/app/dashboard" title="${messages['dashboard']}" data-toggle="tooltip" data-placement="right" data-container="body">
-                        <span class="icon icon-gauge fa fa-2x"></span>&emsp;${messages["dashboard"]}
-                    </a>
-                </li>
-                <li>
-                    <a href="/app/connectors/salesforce" title="${messages['connectors']}" data-toggle="tooltip" data-placement="right" data-container="body">
-                        <span class="icon icon-database fa fa-2x"></span>&emsp;${messages["connectors"]}
-                    </a>
-                </li>
-                <li>
-                    <a href="/app/scheduled-jobs" title="${messages['scheduled.jobs']}" data-toggle="tooltip" data-placement="right" data-container="body">
-                        <span class="icon icon-clock fa fa-2x"></span>&emsp;${messages["scheduled.jobs"]}
-                    </a>
-                </li>
-                <li>
-                    <a href="/app/account-profile/${account.id}" title="${messages['account.profile']}" data-toggle="tooltip" data-placement="right" data-container="body">
-                        <span class="icon icon-user fa fa-2x"></span>&emsp;${messages["account.profile"]}
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    </nav>
