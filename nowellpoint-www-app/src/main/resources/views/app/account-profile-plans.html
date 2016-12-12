@@ -1,23 +1,18 @@
-<#import "template-fluid-no-sidebar.html" as t>
+<#import "template.html" as t>
 
     <@t.page>
 
         <#if action=="listPlans">
 
-            <div class="row">
-                <br>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.account.profile"]}
-                </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 m-t-md">
+                <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.account.profile"]}
             </div>
 
             <div class="container">
                 <div class="row">
                     <div class="dashhead m-t-md">
-                        <div class="dashhead">
-                            <div class="dashhead-titles">
-                                <h3 class="dashhead-title">${labels["select.plan"]}</h3>
-                            </div>
+                        <div class="dashhead-titles">
+                            <h3 class="dashhead-title">${labels["select.plan"]}</h3>
                         </div>
                     </div>
                     <div class="hr-divider"></div>
@@ -30,10 +25,8 @@
         <#if action=="reviewPlan">
             <div class="row">
                 <div class="dashhead m-t-md">
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h3 class="dashhead-title">${labels["payment.method"]}</h3>
-                        </div>
+                    <div class="dashhead-titles">
+                        <h3 class="dashhead-title">${labels["payment.method"]}</h3>
                     </div>
                 </div>
                 <div class="hr-divider"></div>

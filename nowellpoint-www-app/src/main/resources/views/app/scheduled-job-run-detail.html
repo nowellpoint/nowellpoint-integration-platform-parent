@@ -1,15 +1,13 @@
-<#import "template-no-sidebar.html" as t>
+<#import "template.html" as t>
     <@t.page>
         <div class="dashhead m-t-md">
-            <div class="dashhead">
-                <div class="dashhead-titles">
-                    <h2 class="dashhead-title">${labels["backup.files"]}</h2>
-                </div>
-                <div class="dashhead-toolbar">
-                    <p class="pull-right">
-                        <a href="${labels['base.path']}/${scheduledJob.id!}" class="btn btn-default" role="button">${labels["back"]}</a>
-                    </p>
-                </div>
+            <div class="dashhead-titles">
+                <h2 class="dashhead-title">${labels["backup.files"]}</h2>
+            </div>
+            <div class="dashhead-toolbar">
+                <p class="pull-right">
+                    <a href="${labels['base.path']}/${scheduledJob.id!}" class="btn btn-default" role="button">${labels["back"]}</a>
+                </p>
             </div>
         </div>
         <div class="hr-divider"></div>

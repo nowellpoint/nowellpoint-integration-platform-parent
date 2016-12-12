@@ -1,15 +1,6 @@
 <#import "template.html" as t>
     <@t.page>
 
-        <br>
-
-        <#if successMessage??>
-            <div id="success" class="alert alert-success">
-                <a class="close" data-dismiss="alert">&times;</a>
-                <div class="text-center">${successMessage!}</div>
-            </div>
-        </#if>
-
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
@@ -18,7 +9,12 @@
                 <a id="edit-user-profile" href="${labels['base.path']}/${accountProfile.id}/edit" class="btn btn-primary-outline" role="button">${labels["edit.user.profile"]}</a>
             </div>
         </div>
-
+        <#if successMessage??>
+            <div id="success" class="alert alert-success">
+                <a class="close" data-dismiss="alert">&times;</a>
+                <div class="text-center">${successMessage!}</div>
+            </div>
+        </#if>
         <br>
 
         <div class="btn-toolbar" role="toolbar">

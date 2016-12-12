@@ -1,10 +1,8 @@
 <#import "template.html" as t>
     <@t.page>
         <div class="dashhead m-t-md">
-            <div class="dashhead">
-                <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["edit.user.profile"]}</h3>
-                </div>
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["edit.user.profile"]}</h3>
             </div>
         </div>
         <div class="hr-divider"></div>
@@ -18,20 +16,20 @@
         <br>
 
         <form class="form-vertical" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}">
-            
+
             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
-            
+
             <div class="row">
                 <div class="form-group col-md-2">
                     <label class="control-label" for="firstName">${labels["first.name"]}</label>
                     <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" autofocus="" value="${accountProfile.firstName!}" />
-                </div>    
+                </div>
                 <div class="col-md-10"></div>
-            </div>    
+            </div>
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="lastName">${labels["last.name"]}</label>
+                    <label class="control-label" for="lastName">${labels["last.name"]}</label>
                     <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${accountProfile.lastName!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -39,7 +37,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="company">${labels["company"]}</label>
+                    <label class="control-label" for="company">${labels["company"]}</label>
                     <input type="text" class="form-control" name="company" id="company" placeholder="${labels['company']}" value="${accountProfile.company!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -47,7 +45,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="division">${labels["division"]}</label>
+                    <label class="control-label" for="division">${labels["division"]}</label>
                     <input type="text" class="form-control" name="division" id="division" placeholder="${labels['division']}" value="${accountProfile.division!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -55,7 +53,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="department">${labels["department"]}</label>
+                    <label class="control-label" for="department">${labels["department"]}</label>
                     <input type="text" class="form-control" name="department" id="department" placeholder="${labels['department']}" value="${accountProfile.department!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -63,7 +61,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="title">${labels["title"]}</label>
+                    <label class="control-label" for="title">${labels["title"]}</label>
                     <input type="text" class="form-control" name="title" id="title" placeholder="${labels['title']}" value="${accountProfile.title!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -77,7 +75,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="email">${labels["email"]}</label>
+                    <label class="control-label" for="email">${labels["email"]}</label>
                     <input type="text" class="form-control" name="email" id="email" placeholder="${labels['email']}" value="${accountProfile.email!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -85,7 +83,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="mobilPhone">${labels["mobile.phone"]}</label>
+                    <label class="control-label" for="mobilPhone">${labels["mobile.phone"]}</label>
                     <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" placeholder="${labels['mobile.phone']}" value="${accountProfile.mobilePhone!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -93,7 +91,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="phone">${labels["phone"]}</label>
+                    <label class="control-label" for="phone">${labels["phone"]}</label>
                     <input type="text" class="form-control" name="phone" id="phone" placeholder="${labels['phone']}" value="${accountProfile.phone!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -101,7 +99,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="extension">${labels["extension"]}</label>
+                    <label class="control-label" for="extension">${labels["extension"]}</label>
                     <input type="text" class="form-control" name="extension" id="extension" placeholder="${labels['extension']}" value="${accountProfile.extension!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -109,7 +107,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="fax">${labels["fax"]}</label>
+                    <label class="control-label" for="fax">${labels["fax"]}</label>
                     <input type="text" class="form-control" name="fax" id="fax" placeholder="${labels['fax']}" value="${accountProfile.fax!}" />
                 </div>
                 <div class="col-md-10"></div>
@@ -123,7 +121,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
+                    <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
                     <select id="languageSidKey" name="languageSidKey" class="form-control" required>
                         <#list languages?keys as key>
                             <#if accountProfile.languageSidKey==key>
@@ -140,7 +138,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
+                    <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
                     <select id="localeSidKey" name="localeSidKey" class="form-control" required>
                         <#list locales?keys as key>
                             <#if accountProfile.localeSidKey==key>
@@ -157,7 +155,7 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
+                    <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
                     <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
                         <#list timeZones as timeZone>
                             <#if accountProfile.timeZoneSidKey==timeZone>
