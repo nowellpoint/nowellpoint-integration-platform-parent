@@ -2,14 +2,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-data</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Nowellpoint Data Services and Model</name>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
-		<artifactId>aws-parent</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<artifactId>parent</artifactId>
+		<version>2016.12.0</version>
 	</parent>
 
 	<dependencies>
@@ -53,6 +52,12 @@
 			<artifactId>jedis</artifactId>
 			<version>${jedis.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 	<profiles>

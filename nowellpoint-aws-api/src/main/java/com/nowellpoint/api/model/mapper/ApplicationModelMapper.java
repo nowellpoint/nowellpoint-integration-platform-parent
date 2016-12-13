@@ -5,8 +5,7 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Application;
-import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.domain.Application;
 
 /**
  * 
@@ -31,20 +30,22 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 		super(com.nowellpoint.api.model.document.Application.class);
 	}
 	
-	protected Application findApplication(Id id) {
-		com.nowellpoint.api.model.document.Application document = findById(id.toString());
+	protected Application findApplication(String id) {
+		com.nowellpoint.api.model.document.Application document = findById(id);
 		return modelMapper.map(document, Application.class);
 	}	
 	
 	protected void createApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, application);
 	}
 	
 	protected void updateApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, application);
 	}
 	
@@ -56,6 +57,7 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 	
 	protected void deleteApplication(Application application) {
 		com.nowellpoint.api.model.document.Application document = modelMapper.map(application, com.nowellpoint.api.model.document.Application.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 }

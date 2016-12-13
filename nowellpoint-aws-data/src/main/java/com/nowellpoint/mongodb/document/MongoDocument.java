@@ -29,20 +29,6 @@ public abstract class MongoDocument implements Serializable {
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	private ObjectId id;
-
-	/**
-	 * 
-	 */
-	
-	@JsonInclude(Include.NON_NULL)
-	private String createdById;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonInclude(Include.NON_NULL)
-	private String lastModifiedById;
 	
 	/**
 	 * 
@@ -69,7 +55,7 @@ public abstract class MongoDocument implements Serializable {
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	@JsonInclude(Include.NON_NULL)
-	private Date systemCreationDate;
+	private Date systemCreatedDate;
 	
 	/**
 	 * 
@@ -92,22 +78,6 @@ public abstract class MongoDocument implements Serializable {
 		this.id = id;
 	}
 
-	public String getCreatedById() {
-		return createdById;
-	}
-
-	public void setCreatedById(String createdById) {
-		this.createdById = createdById;
-	}
-
-	public String getLastModifiedById() {
-		return lastModifiedById;
-	}
-
-	public void setLastModifiedById(String lastModifiedById) {
-		this.lastModifiedById = lastModifiedById;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -124,12 +94,12 @@ public abstract class MongoDocument implements Serializable {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
-	public Date getSystemCreationDate() {
-		return systemCreationDate;
+	public Date getSystemCreatedDate() {
+		return systemCreatedDate;
 	}
 
-	public void setSystemCreationDate(Date systemCreationDate) {
-		this.systemCreationDate = systemCreationDate;
+	public void setSystemCreatedDate(Date systemCreatedDate) {
+		this.systemCreatedDate = systemCreatedDate;
 	}
 
 	public Date getSystemModifiedDate() {

@@ -74,7 +74,7 @@ public class SalesforceResource {
 					.build();
 		}
 		
-		return Response.accepted()
+		return Response.status(Response.Status.ACCEPTED)
 				.header("Location", url)
 				.build();
 	}

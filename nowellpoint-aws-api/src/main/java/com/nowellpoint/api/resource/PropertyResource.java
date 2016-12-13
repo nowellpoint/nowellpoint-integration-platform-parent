@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.dto.Property;
+import com.nowellpoint.api.model.domain.Property;
 import com.nowellpoint.api.service.PropertyService;
 
 @Path("/properties")

@@ -1,13 +1,9 @@
 package com.nowellpoint.api.resource;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.Executors;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -24,11 +20,10 @@ import javax.ws.rs.ext.Provider;
 
 import org.jboss.logging.Logger;
 
-import com.amazonaws.util.IOUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.aws.data.LogManager;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -37,7 +32,7 @@ import io.jsonwebtoken.SignatureException;
 @Provider
 public class SecurityContextFilter implements ContainerRequestFilter, ContainerResponseFilter {
 	
-	private static final Logger LOGGER = Logger.getLogger(SecurityContextFilter.class);
+	private static final Logger LOG = Logger.getLogger(SecurityContextFilter.class);
 	
 	@Context
 	private ResourceInfo resourceInfo;
@@ -68,16 +63,16 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				UserContext.setUserContext(bearerToken);
 				requestContext.setSecurityContext(UserContext.getSecurityContext());
 			} catch (MalformedJwtException e) {
-				LOGGER.error(e);
+				LOG.error(e);
 				throw new NotAuthorizedException("Invalid token. Bearer token is invalid");
 			} catch (SignatureException e) {
-				LOGGER.error(e);
+				LOG.error(e);
 				throw new NotAuthorizedException("Invalid token. Signature is invalid");
 			} catch (ExpiredJwtException e) {
-				LOGGER.error(e);
+				LOG.error(e);
 				throw new NotAuthorizedException("Invalid token. Bearer token has expired");
 			} catch (IllegalArgumentException e) {	
-				LOGGER.error(e);
+				LOG.error(e);
 				throw new NotAuthorizedException("Invalid authorization. Bearer token is missing");
 			}
 			
@@ -98,54 +93,21 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		
 		final String subject = UserContext.getSecurityContext() != null ? UserContext.getSecurityContext().getUserPrincipal().getName() : null;
-		final String address = httpRequest.getLocalName();
 		final String path = httpRequest.getPathInfo().concat(httpRequest.getQueryString() != null ? "?".concat(httpRequest.getQueryString()) : "");
 		final Integer statusCode = responseContext.getStatus();
 		final String statusInfo = responseContext.getStatusInfo().toString();
 		final String requestMethod = requestContext.getMethod();
 		
-		Executors.newSingleThreadExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				
-				ObjectNode node = new ObjectMapper().createObjectNode()
-						.put("subject", subject)
-						.put("date", System.currentTimeMillis())
-						.put("address", address)
-						.put("method", requestMethod)
-						.put("path", path)
-						.put("statusCode", statusCode)
-						.put("statusInfo", statusInfo);
-				
-				HttpURLConnection connection;
-				try {
-					connection = (HttpURLConnection) new URL(System.getProperty(Properties.LOGGLY_API_ENDPOINT)
-							.concat("/")
-							.concat(System.getProperty(Properties.LOGGLY_API_KEY))
-							.concat("/tag")
-							.concat("/api")
-							.concat("/")
-					).openConnection();
-					
-					connection.setRequestMethod("GET");
-					connection.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-					connection.setDoOutput(true);
-					
-					byte[] outputInBytes = node.toString().getBytes("UTF-8");
-					OutputStream os = connection.getOutputStream();
-					os.write( outputInBytes );    
-					os.close();
-					
-					connection.connect();
-					
-					if (connection.getResponseCode() != 200) {
-						LOGGER.error(IOUtils.toString(connection.getErrorStream()));
-					}
-				} catch (IOException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}
-		});
+		ObjectNode node = JsonNodeFactory.instance.objectNode()
+				.put("hostname", httpRequest.getLocalAddr())
+				.put("subject", subject)
+				.put("date", System.currentTimeMillis())
+				.put("method", requestMethod)
+				.put("path", path)
+				.put("statusCode", statusCode)
+				.put("statusInfo", statusInfo);
+		
+		LogManager.writeLogEntry("api", node.toString());
 		
 		if (UserContext.getSecurityContext() != null) {
 			UserContext.clear();

@@ -2,8 +2,7 @@ package com.nowellpoint.api.service;
 
 import java.util.Set;
 
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.Project;
+import com.nowellpoint.api.model.domain.Project;
 import com.nowellpoint.api.model.mapper.ProjectModelMapper;
 
 public class ProjectService extends ProjectModelMapper {
@@ -13,9 +12,7 @@ public class ProjectService extends ProjectModelMapper {
 	}
 	
 	/**
-	 * 
-	 * @param subject
-	 * @return the list of Projects that is associated to the subject
+	 * @return
 	 */
 	
 	public Set<Project> findAllByOwner() {
@@ -24,10 +21,7 @@ public class ProjectService extends ProjectModelMapper {
 
 	/**
 	 * 
-	 * @param subjectId
 	 * @param project
-	 * @param eventSource
-	 * @return the created project
 	 */
 	
 	public void createProject(Project project) {
@@ -36,16 +30,13 @@ public class ProjectService extends ProjectModelMapper {
 	
 	/**
 	 * 
-	 * @param subjectId
+	 * @param id
 	 * @param project
-	 * @param eventSource
-	 * @return
 	 */
 
-	public void updateProject(Id id, Project project) {
+	public void updateProject(String id, Project project) {
 		Project original = findProject( id );
 		project.setId(id);
-		project.setCreatedById(original.getCreatedById());
 		project.setCreatedDate(original.getCreatedDate());
 		
 		super.updateServiceProvider(project);
@@ -53,12 +44,10 @@ public class ProjectService extends ProjectModelMapper {
 	
 	/**
 	 * 
-	 * @param projectId
-	 * @param subjectId
-	 * @param eventSource
+	 * @param id
 	 */
 	
-	public void deleteProject(Id id) {
+	public void deleteProject(String id) {
 		Project project = findProject(id);
 		super.deleteServiceProvider(project);
 	}
@@ -66,11 +55,10 @@ public class ProjectService extends ProjectModelMapper {
 	/**
 	 * 
 	 * @param id
-	 * @param subject
 	 * @return
 	 */
 	
-	public Project findProject(Id id) {
+	public Project findProject(String id) {
 		Project project = super.findServiceProvider(id);
 		return project;
 	}

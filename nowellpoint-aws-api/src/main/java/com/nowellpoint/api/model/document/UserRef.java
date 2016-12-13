@@ -23,6 +23,10 @@ public class UserRef implements Serializable {
 	public UserRef() {
 		
 	}
+	
+	public UserRef(DBRef identity) {
+		this.identity = identity;
+	}
 
 	public DBRef getIdentity() {
 		return identity;

@@ -2,10 +2,10 @@ package com.nowellpoint.api.resource;
 
 import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -29,10 +29,8 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.ScheduledJob;
+import com.nowellpoint.api.model.domain.RunHistory;
+import com.nowellpoint.api.model.domain.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
 
 @Path("scheduled-jobs")
@@ -60,15 +58,7 @@ public class ScheduledJobResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
-		System.out.println("get scheduled Jobs");
-		Set<ScheduledJob> resources = scheduledJobService.findAllByOwner();
-		System.out.println("schedule job count: " + resources.size());
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(resources));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Set<ScheduledJob> resources = scheduledJobService.findByOwner();
 		return Response.ok(resources).build();
     }
 	
@@ -82,7 +72,7 @@ public class ScheduledJobResource {
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getScheduledJob(@PathParam("id") String id) {
-		ScheduledJob scheduledJob = scheduledJobService.findScheduledJobById( new Id( id ) );
+		ScheduledJob scheduledJob = scheduledJobService.findScheduledJobById( id );
 		
 		if (scheduledJob == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", ScheduledJob.class.getSimpleName(), id ) );
@@ -102,7 +92,7 @@ public class ScheduledJobResource {
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteScheduledJob(@PathParam("id") String id) {
-		scheduledJobService.deleteScheduledJob( new Id(id) );
+		scheduledJobService.deleteScheduledJob( id );
 		return Response.noContent().build();
 	}
 	
@@ -137,7 +127,6 @@ public class ScheduledJobResource {
 		scheduledJob.setDescription(description);
 		scheduledJob.setStatus(status);
 		try {
-			TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
 		} catch (Exception e) {
@@ -188,7 +177,6 @@ public class ScheduledJobResource {
 		scheduledJob.setStatus(isNotNullOrEmpty(status) ? status : null);
 		if (isNotNullOrEmpty(scheduleDate)) {
 			try {
-				TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 				scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
 			} catch (Exception e) {
@@ -197,10 +185,53 @@ public class ScheduledJobResource {
 			}
 		}
 		
-		scheduledJobService.updateScheduledJob(new Id(id), scheduledJob);
+		scheduledJobService.updateScheduledJob(id, scheduledJob);
 		
 		return Response.ok()
 				.entity(scheduledJob)
+				.build();	
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @param fireInstanceId
+	 * @return
+	 */
+	
+	@GET
+	@Path("{id}/run-history/{fireInstanceId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRunHistory(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId) {
+		
+		RunHistory resource = scheduledJobService.findRunHistory(id, fireInstanceId);
+		
+		if (resource == null) {
+			throw new NotFoundException(String.format("Run History for Scheduled Job: %s with Instance Id: %s was not found", id, fireInstanceId));
+		}
+		
+		return Response
+				.ok(resource)
+				.build();
+	}
+	
+	@GET
+	@Path("{id}/run-history/{fireInstanceId}/file/{filename}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getFile(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId, @PathParam("filename") String filename) {
+
+		String content = null;
+		
+		try {
+			content = scheduledJobService.getFile(id, fireInstanceId, filename);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok()
+				.header("Content-Disposition", String.format("attachment; filename=\"%s.json\"", filename))
+				.entity(content)
 				.build();	
 	}
 }

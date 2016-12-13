@@ -1,6 +1,7 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,6 +21,8 @@ public class RunHistory {
 	private String status;
 	
 	private String failureMessage;
+	
+	private Set<Backup> backups;
 	
 	public RunHistory() {
 		
@@ -63,5 +66,13 @@ public class RunHistory {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	public Set<Backup> getBackups() {
+		return backups;
+	}
+
+	public void setBackups(Set<Backup> backups) {
+		this.backups = backups;
 	}
 }

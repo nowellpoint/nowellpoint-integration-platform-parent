@@ -11,7 +11,7 @@ public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestExce
 
 	@Override
 	public Response toResponse(BadRequestException exception) {
-		ResponseBuilder builder = Response.status(exception.getResponse().getStatusInfo());
+		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
 		builder.entity(exception.getMessage());
 		return builder.build();
 	}

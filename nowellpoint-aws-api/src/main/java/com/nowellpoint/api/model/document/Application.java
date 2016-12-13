@@ -24,8 +24,6 @@ public class Application extends MongoDocument implements Serializable {
 	
 	private String description;
 	
-	private Set<ServiceInstance> serviceInstances;
-	
 	private Set<Environment> environments;
 	
 	private String status;
@@ -56,14 +54,6 @@ public class Application extends MongoDocument implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Set<ServiceInstance> getServiceInstances() {
-		return serviceInstances;
-	}
-
-	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
-		this.serviceInstances = serviceInstances;
 	}
 
 	public Set<Environment> getEnvironments() {

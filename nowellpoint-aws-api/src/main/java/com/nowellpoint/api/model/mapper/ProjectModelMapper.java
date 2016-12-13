@@ -5,8 +5,7 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.Project;
+import com.nowellpoint.api.model.domain.Project;
 
 /**
  * 
@@ -31,20 +30,22 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 		super(com.nowellpoint.api.model.document.Project.class);
 	}
 	
-	protected Project findServiceProvider(Id id) {
-		com.nowellpoint.api.model.document.Project document = findById(id.toString());
+	protected Project findServiceProvider(String id) {
+		com.nowellpoint.api.model.document.Project document = findById(id);
 		return modelMapper.map(document, Project.class);
 	}	
 	
 	protected void createServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, project);
 	}
 	
 	protected void updateServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, project);
 	}
 	
@@ -56,6 +57,6 @@ public class ProjectModelMapper extends AbstractModelMapper<com.nowellpoint.api.
 	
 	protected void deleteServiceProvider(Project project) {
 		com.nowellpoint.api.model.document.Project document = modelMapper.map(project, com.nowellpoint.api.model.document.Project.class);
-		delete(getSubject(), document);
+		hdel(encode(getSubject()), document);
 	}
 }

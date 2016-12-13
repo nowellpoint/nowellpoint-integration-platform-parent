@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMarshalling;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 @DynamoDBTable(tableName="OutboundMessageHandlerConfigurations")
@@ -14,7 +14,7 @@ public class OutboundMessageHandlerConfiguration {
 	@DynamoDBHashKey(attributeName="OrganizationId")  
 	private String organizationId;
 	
-	@DynamoDBMarshalling(marshallerClass = CallbackMarshaller.class)
+	@DynamoDBTypeConverted(converter = CallbackTypeConverter.class)
 	@DynamoDBAttribute(attributeName="Callbacks")  
 	private List<Callback> callbacks;
 	

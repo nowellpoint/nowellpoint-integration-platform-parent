@@ -1,15 +1,21 @@
 package com.nowellpoint.client.sforce;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
@@ -32,9 +38,11 @@ public class Client {
 	
 	/**
 	 * 
-	 * @param id
-	 * @param accessToken
+	 * 
+	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public Identity getIdentity(GetIdentityRequest request) {
@@ -65,8 +73,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public User getUser(GetUserRequest request) {
@@ -91,8 +102,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public Organization getOrganization(GetOrganizationRequest request) {
@@ -117,8 +131,11 @@ public class Client {
 	
 	/**
 	 * 
+	 * 
 	 * @param request
 	 * @return
+	 * 
+	 * 
 	 */
 	
 	public DescribeGlobalSobjectsResult describeGlobal(DescribeGlobalSobjectsRequest request) {
@@ -129,9 +146,6 @@ public class Client {
 		
 		DescribeGlobalSobjectsResult result = null;
 		
-		//System.out.println(httpResponse.getStatusCode());
-		//System.out.println(httpResponse.getAsString());
-		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeGlobalSobjectsResult.class);
 		} else {
@@ -141,8 +155,18 @@ public class Client {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param request
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
 		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
+				.header("If-Modified-Since", request.getIfModifiedSince() != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()) : null)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(request.getAccessToken())
 				.execute();
@@ -151,10 +175,74 @@ public class Client {
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(DescribeSobjectResult.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {
+			return null;
 		} else {
 			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param request
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public Theme getTheme(ThemeRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getRestEndpoint().concat("theme"))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(request.getAccessToken())
+				.execute();
+		
+		Theme result = null;
+	
+		if (httpResponse.getStatusCode() == Status.OK) {
+			result = httpResponse.getEntity(Theme.class);
+		} else {
+			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param request
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public Count getCount(CountRequest request) {
+		try {
+			HttpResponse httpResponse = RestResource.get(request.getQueryUrl())
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(request.getAccessToken())
+					.queryParameter("q", URLEncoder.encode(request.getQueryString(), "UTF-8"))
+					.execute();
+			
+			Count result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				result = httpResponse.getEntity(Count.class);
+			} else {
+				throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+			}
+			
+			return result;
+			
+		} catch (HttpRequestException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

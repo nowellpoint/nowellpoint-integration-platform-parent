@@ -19,9 +19,8 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.Project;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Project;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.ProjectService;
 
@@ -40,11 +39,6 @@ public class ProjectResource {
 	@Context
 	private SecurityContext securityContext;
 	
-	/**
-	 * 
-	 * @return
-	 */
-	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
@@ -55,45 +49,27 @@ public class ProjectResource {
 				.build();
     }
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
 	@GET
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getProject(@PathParam("id") String id) {
 
-		Project project = projectService.findProject( new Id( id ) );
+		Project project = projectService.findProject( id );
 		
 		return Response.ok(project)
 				.build();
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
 	
 	@DELETE
 	@Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response deleteProject(@PathParam("id") String id) {
 		
-		projectService.deleteProject( new Id( id ) );
+		projectService.deleteProject( id );
 		
 		return Response.noContent()
 				.build();
 	}
-	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 */
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -116,19 +92,13 @@ public class ProjectResource {
 				.build();
 	}
 	
-	/**
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateProject(@PathParam("id") String id, Project project) {
 		
-		projectService.updateProject( new Id(id), project );
+		projectService.updateProject( id, project );
 		
 		return Response.ok(project)
 				.build();

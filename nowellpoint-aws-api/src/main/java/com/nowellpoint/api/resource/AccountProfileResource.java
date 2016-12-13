@@ -2,8 +2,8 @@ package com.nowellpoint.api.resource;
 
 import java.net.URI;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -14,13 +14,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -33,14 +30,15 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.CreditCardDTO;
-import com.nowellpoint.api.model.dto.Id;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.CreditCard;
+import com.nowellpoint.api.model.domain.Deactivate;
+import com.nowellpoint.api.model.domain.Plan;
+import com.nowellpoint.api.model.domain.Subscription;
+import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.api.service.ServiceException;
-import com.nowellpoint.aws.http.HttpRequestException;
-import com.nowellpoint.client.model.idp.Account;
+import com.nowellpoint.api.service.PlanService;
 
 @Path("account-profile")
 public class AccountProfileResource {
@@ -50,6 +48,13 @@ public class AccountProfileResource {
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
+	
+	@Inject
+	private PlanService planService;
+	
+	@Inject
+	@Deactivate
+	private Event<AccountProfile> deactivateEvent;
 
 	@Context
 	private UriInfo uriInfo;
@@ -57,16 +62,49 @@ public class AccountProfileResource {
 	@Context 
 	private SecurityContext securityContext;
 	
-	
 	@GET
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfile() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( subject ) );
-		
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( subject );
+				
 		return Response.ok(accountProfile)
+				.build();
+	}
+	
+	@GET
+	@Path("{id}/subscription")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSubscription(@PathParam("id") String id) {
+		
+		Subscription subscription = accountProfileService.getSubscription( id );
+		
+		return Response.ok(subscription)
+				.build();
+	}
+	
+	@POST
+	@Path("{id}/subscription")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setSubscription(@PathParam("id") String id, @FormParam(value = "planId") String planId, @FormParam(value = "paymentMethodToken") String paymentMethodToken) {
+		
+		Plan plan = planService.findPlan(planId);
+		
+		Subscription subscription = new Subscription();
+		subscription.setPlanId(planId);
+		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
+		subscription.setPlanCode(plan.getPlanCode());
+		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
+		subscription.setPlanName(plan.getPlanName());
+		subscription.setBillingFrequency(plan.getBillingFrequency());
+		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
+		
+		accountProfileService.setSubscription( id, paymentMethodToken, subscription );
+		
+		return Response.ok(subscription)
 				.build();
 	}
 	
@@ -74,9 +112,9 @@ public class AccountProfileResource {
 	@Path("{id}/address")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAccountProfileAddress(@PathParam("id") String id) {
+	public Response getAddress(@PathParam("id") String id) {
 		
-		Address address = accountProfileService.getAccountProfileAddress( new Id( id ) );
+		Address address = accountProfileService.getAddress( id );
 		
 		return Response.ok(address)
 				.build();
@@ -84,11 +122,24 @@ public class AccountProfileResource {
 	
 	@POST
 	@Path("{id}/address")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateAccountProfileAddress(@PathParam("id") String id, Address address) {
+	public Response updateAddress(
+			@PathParam("id") String id, 
+			@FormParam("city") String city,
+			@FormParam("countryCode") String countryCode,
+			@FormParam("postalCode") String postalCode,
+			@FormParam("state") String state,
+			@FormParam("street") String street) {
 		
-		accountProfileService.updateAccountProfileAddress( new Id( id ), address);
+		Address address = new Address();
+		address.setCity(city);
+		address.setCountryCode(countryCode);
+		address.setPostalCode(postalCode);
+		address.setState(state);
+		address.setStreet(street);
+		
+		accountProfileService.updateAddress( id, address);
 		
 		return Response.ok(address)
 				.build();
@@ -106,42 +157,22 @@ public class AccountProfileResource {
     		@FormParam("division") String division,
     		@FormParam("department") String department,
     		@FormParam("title") String title,
-    		@FormParam("email") @Email String email,
+    		@FormParam("email") @Email @NotEmpty String email,
     		@FormParam("fax") String fax,
     		@FormParam("mobilePhone") String mobilePhone,
     		@FormParam("phone") String phone,
     		@FormParam("extension") String extension,
-    		@FormParam("localeSidKey") String localeSidKey,
-    		@FormParam("languageSidKey") String languageSidKey,
-    		@FormParam("timeZoneSidKey") String timeZoneSidKey,
+    		@FormParam("localeSidKey") @NotEmpty String localeSidKey,
+    		@FormParam("languageSidKey") @NotEmpty String languageSidKey,
+    		@FormParam("timeZoneSidKey") @NotEmpty String timeZoneSidKey,
     		@FormParam("enableSalesforceLogin") Boolean enableSalesforceLogin) {
-				
-		String subject = securityContext.getUserPrincipal().getName();
-				
+		
 		//
 		// update account
 		//
 		
-		
-		Account account = new Account();
-		account.setGivenName(firstName);
-		account.setMiddleName(null);
-		account.setSurname(lastName);
-		account.setEmail(email);
-		account.setUsername(email);
-		account.setHref(subject.split("-")[0]);
-
-		try {
-			identityProviderService.updateAccount(account);
-		} catch (HttpRequestException e) {
-			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
-		}
-		
-		//
-		// update identity
-		//
-		
 		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setId(id);
 		accountProfile.setFirstName(firstName);
 		accountProfile.setLastName(lastName);
 		accountProfile.setEmail(email);
@@ -158,7 +189,21 @@ public class AccountProfileResource {
 		accountProfile.setTimeZoneSidKey(timeZoneSidKey);
 		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
-		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
+		accountProfileService.updateAccountProfile( accountProfile );
+				
+		//
+		// update identity
+		//
+		
+		User user = new User();
+		user.setGivenName(firstName);
+		user.setMiddleName(null);
+		user.setSurname(lastName);
+		user.setEmail(email);
+		user.setUsername(email);
+		user.setHref(accountProfile.getHref());
+		
+		identityProviderService.updateUser(user);
 		
 		return Response.ok(accountProfile)
 				.build();
@@ -169,7 +214,15 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfile resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile resource = accountProfileService.findAccountProfile( id );
+		
+		String subject = securityContext.getUserPrincipal().getName();
+		
+		if (! subject.equals(resource.getId())) {
+			resource.setCreditCards(null);
+			resource.setHasFullAccess(null);
+			resource.setEnableSalesforceLogin(null);
+		} 
 		
 		return Response.ok(resource)
 				.build();
@@ -196,7 +249,8 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response udpateAccountProfile(@PathParam("id") String id, AccountProfile accountProfile) {
 		
-		accountProfileService.updateAccountProfile(new Id( id ), accountProfile);
+		accountProfile.setId(id);
+		accountProfileService.updateAccountProfile( accountProfile );
 		
 		return Response.ok(accountProfile).build();
 	}
@@ -205,15 +259,12 @@ public class AccountProfileResource {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response disableAccountProfile(@PathParam("id") String id) {
+    public Response deactivateAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfile resource = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile resource = new AccountProfile(id);
+		accountProfileService.deactivateAccountProfile( resource );
 		
-		try {
-			identityProviderService.disableAccount(resource.getHref());
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		deactivateEvent.fire( resource );
 		
 		return Response.ok().build();
 	}
@@ -223,7 +274,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		CreditCardDTO resource = accountProfileService.getCreditCard( new Id( id ), token);
+		CreditCard resource = accountProfileService.getCreditCard( id, token);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
@@ -238,13 +289,9 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addCreditCard(@PathParam("id") String id, CreditCardDTO creditCard) {
+	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		
-		try {
-			accountProfileService.addCreditCard( new Id( id ), creditCard);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		accountProfileService.addCreditCard( id, creditCard);
 		
 		return Response
 				.ok(creditCard)
@@ -257,12 +304,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, MultivaluedMap<String, String> parameters) {
 		
-		CreditCardDTO resource = null;
-		try {
-			resource = accountProfileService.updateCreditCard( new Id( id ), token, parameters);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		CreditCard resource = accountProfileService.updateCreditCard( id, token, parameters );
 		
 		return Response
 				.ok(resource)
@@ -273,13 +315,9 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCardDTO creditCard) {
+	public Response updateCreditCard(@PathParam("id") String id, @PathParam("token") String token, CreditCard creditCard) {
 		
-		try {
-			accountProfileService.updateCreditCard( new Id( id ), token, creditCard);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		accountProfileService.updateCreditCard( id, token, creditCard );
 		
 		return Response
 				.ok(creditCard)
@@ -290,27 +328,10 @@ public class AccountProfileResource {
 	@Path("{id}/credit-card/{token}")
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		try {
-			accountProfileService.removeCreditCard( new Id( id ), token);
-		} catch (ServiceException e) {
-			throw new BadRequestException(e.getMessage());
-		}
+		accountProfileService.removeCreditCard( id, token );
 		
 		return Response
 				.ok()
-				.build();
-	}
-	
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAccountProfileBySubject(@QueryParam("subject") String subject) {		
-		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref( subject );
-		
-		if (accountProfile == null) {
-			throw new WebApplicationException( String.format( "Account Profile for subject: %s does not exist or you do not have access to view", subject ), Status.NOT_FOUND );
-		}
-		
-		return Response.ok(accountProfile)
 				.build();
 	}
 	
@@ -320,7 +341,7 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture(@PathParam("id") String id) {
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( new Id( id ) );
+		AccountProfile accountProfile = accountProfileService.findAccountProfile( id );
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		
@@ -333,7 +354,7 @@ public class AccountProfileResource {
 		
 		accountProfile.setPhotos(photos);
 		
-		accountProfileService.updateAccountProfile( new Id( id ), accountProfile);
+		accountProfileService.updateAccountProfile( accountProfile );
 		
 		return Response.ok(accountProfile)
 				.build();

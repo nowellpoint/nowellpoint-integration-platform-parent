@@ -10,8 +10,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.model.idp.Account;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -26,7 +26,7 @@ public class EmailService {
 	
 	private static final SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
 	
-	public void sendEmailVerificationMessage(Account account, String emailVerificationToken) {
+	public void sendEmailVerificationMessage(User user, String emailVerificationToken) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -35,8 +35,8 @@ public class EmailService {
 				from.setName("Nowellpoint Support");
 			    
 			    Email to = new Email();
-			    to.setEmail(account.getUsername());
-			    to.setName(account.getFullName());
+			    to.setEmail(user.getUsername());
+			    to.setName(user.getFullName());
 			    
 			    Content content = new Content();
 			    content.setType("text/html");
@@ -50,7 +50,7 @@ public class EmailService {
 			    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", account.getFullName());
+			    personalization.addSubstitution("%name%", user.getFullName());
 			    personalization.addSubstitution("%emailVerificationToken%", emailVerificationUrl.toString());
 			    
 			    Mail mail = new Mail();
@@ -73,7 +73,7 @@ public class EmailService {
 		});
 	}
 	
-	public void sendWelcomeMessage(Account account) {
+	public void sendWelcomeMessage(User user) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -82,8 +82,8 @@ public class EmailService {
 				from.setName("Nowellpoint Support");
 			    
 			    Email to = new Email();
-			    to.setEmail(account.getUsername());
-			    to.setName(account.getFullName());
+			    to.setEmail(user.getUsername());
+			    to.setName(user.getFullName());
 			    
 			    Content content = new Content();
 			    content.setType("text/html");
@@ -91,8 +91,8 @@ public class EmailService {
 			    	    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", account.getFullName());
-			    personalization.addSubstitution("%username%", account.getUsername());
+			    personalization.addSubstitution("%name%", user.getFullName());
+			    personalization.addSubstitution("%username%", user.getUsername());
 			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);

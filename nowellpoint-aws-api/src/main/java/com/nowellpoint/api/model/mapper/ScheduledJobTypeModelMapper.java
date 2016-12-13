@@ -6,8 +6,7 @@ import java.util.Set;
 import org.modelmapper.TypeToken;
 
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.ScheduledJobType;
+import com.nowellpoint.api.model.domain.ScheduledJobType;
 
 /**
  * 
@@ -36,25 +35,28 @@ public class ScheduledJobTypeModelMapper extends AbstractModelMapper<com.nowellp
 		return scheduledJobTypes;
 	}
 
-	protected ScheduledJobType findScheduedJobTypeById(Id id) {
-		com.nowellpoint.api.model.document.ScheduledJobType document = findById(id.toString());
+	protected ScheduledJobType findScheduedJobTypeById(String id) {
+		com.nowellpoint.api.model.document.ScheduledJobType document = findById(id);
 		return modelMapper.map(document, ScheduledJobType.class);
 	}
 	
 	protected void createScheduledJobType(ScheduledJobType scheduledJobType) {
 		com.nowellpoint.api.model.document.ScheduledJobType document = modelMapper.map(scheduledJobType, com.nowellpoint.api.model.document.ScheduledJobType.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, scheduledJobType);
 	}
 	
 	protected void updateScheduledJobType(ScheduledJobType scheduledJobType) {
 		com.nowellpoint.api.model.document.ScheduledJobType document = modelMapper.map(scheduledJobType, com.nowellpoint.api.model.document.ScheduledJobType.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, scheduledJobType);
 	}
 	
 	protected void deleteScheduledJob(ScheduledJobType scheduledJobType) {
 		com.nowellpoint.api.model.document.ScheduledJobType document = modelMapper.map(scheduledJobType, com.nowellpoint.api.model.document.ScheduledJobType.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 }

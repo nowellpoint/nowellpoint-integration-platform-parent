@@ -1,0 +1,16 @@
+logger:
+    level: DEBUG
+---
+project:
+    stage: development
+logger:
+    level: DEBUG
+propertyStore: 
+    name: SANDBOX    
+---
+project:
+    stage: production
+logger:
+    level: INFO
+propertyStore:
+    name: PRODUCTION  

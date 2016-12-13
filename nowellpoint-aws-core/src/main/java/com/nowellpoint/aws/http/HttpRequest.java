@@ -11,13 +11,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Base64;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +34,17 @@ public abstract class HttpRequest {
 	private Map<String,String> parameters;
 	private Map<String,String> queryParameters;
 	private Object body;
+	
+	static {
+		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+			public boolean verify(String hostname, SSLSession sslSession) {
+				if (hostname.equals("localhost")) {
+					return true;
+			    }
+			    return false;
+			}
+		});
+	}
 	
 	public HttpRequest(HttpMethod httpMethod, String target) {
 		this.objectMapper = new ObjectMapper();

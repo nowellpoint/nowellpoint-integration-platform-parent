@@ -8,7 +8,6 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.impl.OauthAuthenticationResponseImpl;
-import com.nowellpoint.client.sforce.OauthConstants;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
@@ -18,7 +17,7 @@ public class Authenticators {
 	private static final String OAUTH_TOKEN_URI = "https://login.salesforce.com/services/oauth2/token";
 	
 	public static final AuthorizationGrantResponseFactory AUTHORIZATION_GRANT_AUTHENTICATOR = new AuthorizationGrantResponseFactory();
-	public static final UsernamePasswordGrantResponseFactory USERNAME_PASSWORD_GRANT_AUTHENTICATOR = new UsernamePasswordGrantResponseFactory();
+	public static final PasswordGrantResponseFactory PASSWORD_GRANT_AUTHENTICATOR = new PasswordGrantResponseFactory();
 	public static final RefreshTokenGrantResponseFactory REFRESH_TOKEN_GRANT_AUTHENTICATOR = new RefreshTokenGrantResponseFactory();
 	
 	public static class AuthorizationGrantResponseFactory {
@@ -55,7 +54,7 @@ public class Authenticators {
 		}
 	}
 	
-	public static class UsernamePasswordGrantResponseFactory {
+	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(UsernamePasswordGrantRequest usernamePasswordGrantRequest) {
 			
 			Optional.of(usernamePasswordGrantRequest.getClientId()).orElseThrow(() -> new IllegalArgumentException("missing clientId"));

@@ -25,15 +25,14 @@
                         <h4>${labels["confirm.deactivate.profile"]}</h4>
                         <h4><small></small></h4>
                         <br>
-                        <p class="pull-right">
-                            <a href="${labels['base.path']}/${(accountProfile.id)!}#settings" class="btn btn-default" role="button">${labels["cancel"]}</a>
-                            <a href="${labels['base.path']}/${accountProfile.id}/deactivate" id="deactivate-account-profile" class="btn btn-danger" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
-                        </p>
-
+                        <form name="deactivate-form" role="form" method="POST" action="${labels['base.path']}/${accountProfile.id}/deactivate">
+                            <p class="pull-right">
+                                <a href="${labels['base.path']}/${(accountProfile.id)!}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                <button type="submit" id="submit" name="submit" class="btn btn-danger" aria-hidden="true">${labels["deactivate.profile"]}</button>  
+                            </p>
+                        </form>      
                     </div>
-
                 </div>
-
             </div>
         </div>
         

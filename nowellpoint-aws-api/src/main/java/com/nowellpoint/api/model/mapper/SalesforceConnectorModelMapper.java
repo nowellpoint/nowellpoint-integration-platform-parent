@@ -5,8 +5,7 @@ import java.util.Set;
 
 import org.modelmapper.TypeToken;
 
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.SalesforceConnector;
+import com.nowellpoint.api.model.domain.SalesforceConnector;
 
 /**
  * 
@@ -39,8 +38,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 * 
 	 */
 	
-	protected SalesforceConnector findSalesforceConnector(Id id) {
-		com.nowellpoint.api.model.document.SalesforceConnector document = findById(id.toString());
+	protected SalesforceConnector findSalesforceConnector(String id) {
+		com.nowellpoint.api.model.document.SalesforceConnector document = findById(id);
 		return modelMapper.map(document, SalesforceConnector.class);
 	}
 	
@@ -68,7 +67,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	
 	protected void createSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
-		create(getSubject(), document);
+		create(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, salesforceConnector);
 	}
 	
@@ -82,7 +82,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	
 	protected void updateSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
-		replace(getSubject(), document);
+		replace(document);
+		hset(encode(getSubject()), document);
 		modelMapper.map(document, salesforceConnector);
 	}
 	
@@ -96,6 +97,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	
 	protected void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = modelMapper.map(salesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector.class);
-		delete(getSubject(), document);
+		delete(document);
+		hdel(encode(getSubject()), document);
 	}
 }

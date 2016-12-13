@@ -11,7 +11,7 @@ public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthoriz
 
 	@Override
 	public Response toResponse(NotAuthorizedException exception) {
-		ResponseBuilder builder = Response.status(exception.getResponse().getStatusInfo());
+		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
 		builder.entity(exception.getMessage());
 		return builder.build();
 	}

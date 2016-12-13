@@ -1,8 +1,15 @@
 package com.nowellpoint.api.model.document;
 
-import java.io.Serializable;
+import java.util.Set;
 
-public class Plan implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.api.model.codec.PlanCodec;
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.document.MongoDocument;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collectionName="plans", codec=PlanCodec.class)
+public class Plan extends MongoDocument {
 
 	/**
 	 * 
@@ -10,32 +17,60 @@ public class Plan implements Serializable {
 	
 	private static final long serialVersionUID = -7569793449815113870L;
 	
+	private UserRef createdBy;
+	
+	private UserRef lastModifiedBy;
+	
+	private String localeSidKey;
+	
+	private String languageLocaleKey;
+	
 	private String planName;
 	
-	private String code;
-	
-	private String currencyIsoCode;
-	
-	private String currencySymbol;
-	
-	private Double unitPrice;
+	private String planCode;
 	
 	private String billingFrequency;
 	
-	private String billingFrequencyPer;
+	private Boolean isActive;
 	
-	private String billingFrequencyUnit;
+	private Price price;
 	
-	private String billingFrequencyQuantity;
-	
-	private Double proratedDailyUnitPrice;
-	
-	private Integer transactions;
-	
-	private String support;
+	private Set<Service> services;
 	
 	public Plan() {
 		
+	}
+
+	public UserRef getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserRef createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserRef getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(UserRef lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public String getLocaleSidKey() {
+		return localeSidKey;
+	}
+
+	public void setLocaleSidKey(String localeSidKey) {
+		this.localeSidKey = localeSidKey;
+	}
+
+	public String getLanguageLocaleKey() {
+		return languageLocaleKey;
+	}
+
+	public void setLanguageLocaleKey(String languageLocaleKey) {
+		this.languageLocaleKey = languageLocaleKey;
 	}
 
 	public String getPlanName() {
@@ -46,36 +81,12 @@ public class Plan implements Serializable {
 		this.planName = planName;
 	}
 
-	public String getCode() {
-		return code;
+	public String getPlanCode() {
+		return planCode;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getCurrencyIsoCode() {
-		return currencyIsoCode;
-	}
-
-	public void setCurrencyIsoCode(String currencyIsoCode) {
-		this.currencyIsoCode = currencyIsoCode;
-	}
-
-	public String getCurrencySymbol() {
-		return currencySymbol;
-	}
-
-	public void setCurrencySymbol(String currencySymbol) {
-		this.currencySymbol = currencySymbol;
-	}
-
-	public Double getUnitPrice() {
-		return unitPrice;
-	}
-
-	public void setUnitPrice(Double unitPrice) {
-		this.unitPrice = unitPrice;
+	public void setPlanCode(String planCode) {
+		this.planCode = planCode;
 	}
 
 	public String getBillingFrequency() {
@@ -86,51 +97,27 @@ public class Plan implements Serializable {
 		this.billingFrequency = billingFrequency;
 	}
 
-	public String getBillingFrequencyPer() {
-		return billingFrequencyPer;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setBillingFrequencyPer(String billingFrequencyPer) {
-		this.billingFrequencyPer = billingFrequencyPer;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public String getBillingFrequencyUnit() {
-		return billingFrequencyUnit;
+	public Price getPrice() {
+		return price;
 	}
 
-	public void setBillingFrequencyUnit(String billingFrequencyUnit) {
-		this.billingFrequencyUnit = billingFrequencyUnit;
+	public void setPrice(Price price) {
+		this.price = price;
 	}
 
-	public String getBillingFrequencyQuantity() {
-		return billingFrequencyQuantity;
+	public Set<Service> getServices() {
+		return services;
 	}
 
-	public void setBillingFrequencyQuantity(String billingFrequencyQuantity) {
-		this.billingFrequencyQuantity = billingFrequencyQuantity;
-	}
-
-	public Double getProratedDailyUnitPrice() {
-		return proratedDailyUnitPrice;
-	}
-
-	public void setProratedDailyUnitPrice(Double proratedDailyUnitPrice) {
-		this.proratedDailyUnitPrice = proratedDailyUnitPrice;
-	}
-
-	public Integer getTransactions() {
-		return transactions;
-	}
-
-	public void setTransactions(Integer transactions) {
-		this.transactions = transactions;
-	}
-
-	public String getSupport() {
-		return support;
-	}
-
-	public void setSupport(String support) {
-		this.support = support;
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}	
 }

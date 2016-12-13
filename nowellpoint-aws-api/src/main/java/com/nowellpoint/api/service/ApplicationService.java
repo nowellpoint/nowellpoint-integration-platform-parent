@@ -1,28 +1,19 @@
 package com.nowellpoint.api.service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 
-import com.nowellpoint.api.model.document.SimpleStorageService;
-import com.nowellpoint.api.model.document.Targets;
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Application;
-import com.nowellpoint.api.model.dto.ScheduledJob;
-import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.SalesforceConnector;
-import com.nowellpoint.api.model.dto.ServiceInstanceDTO;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Application;
+import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
-import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.model.mapper.ApplicationModelMapper;
 import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;
@@ -43,14 +34,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	@Inject
 	private SalesforceService salesforceService;
 	
-	@Inject
-	private CommonFunctions commonFunctions;
-	
 	/**
-	 * 
-	 * 
-	 * 
-	 * 
 	 * 
 	 */
 	
@@ -59,9 +43,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	}
 	
 	/**
-	 * 
-	 * @param subject
-	 * @return
+	 * @return 
 	 */
 	
 	public Set<Application> findAllByOwner() {
@@ -70,11 +52,10 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return
-	 * 
+	 * @param application
+	 * @param connectorId
+	 * @param importSandboxes
+	 * @param importServices
 	 */
 	
 	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {
@@ -86,7 +67,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		application.setStatus("WORK_IN_PROGRESS");
 		
-		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(new Id(connectorId));
+		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(connectorId);
 		
 		if (importSandboxes) {
 			application.setEnvironments(connector.getEnvironments());
@@ -94,28 +75,21 @@ public class ApplicationService extends ApplicationModelMapper {
 			application.addEnvironment(connector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
 		}
 		
-		if (importServices) {
-			application.setServiceInstances(connector.getServiceInstances());
-		}
-		
 		super.createApplication(application);
 	}
 	
 	/**
 	 * 
-	 * @param subject
-	 * @param resource
-	 * @param eventSource
-	 * @return
+	 * @param id
+	 * @param application
 	 */
 	
-	public void updateApplication(Id id, Application application) {
+	public void updateApplication(String id, Application application) {
 		Application original = findApplication( id );
 		
 		application.setId(id);
-		application.setCreatedById(original.getCreatedById());
 		application.setCreatedDate(original.getCreatedDate());
-		application.setSystemCreationDate(original.getSystemCreationDate());
+		application.setSystemCreatedDate(original.getSystemCreatedDate());
 		application.setSystemModifiedDate(original.getSystemModifiedDate());
 		
 		if (application.getName() == null) {
@@ -128,10 +102,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		if (application.getEnvironments() == null || application.getEnvironments().isEmpty()) {
 			application.setEnvironments(original.getEnvironments());
-		}
-		
-		if (application.getServiceInstances() == null || application.getServiceInstances().isEmpty()) {
-			application.setServiceInstances(original.getServiceInstances());
 		}
 		
 		if (application.getStatus() == null) {
@@ -147,39 +117,30 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * @param applicationId
-	 * @param subject
-	 * @param eventSource
+	 * @param id
 	 */
 	
-	public void deleteApplication(Id id) {		
+	public void deleteApplication(String id) {		
 		Application resource = findApplication(id);
 		super.deleteApplication(resource);
 	}
 	
 	/**
 	 * 
-	 * @param id
-	 * @param subject
-	 * @return
 	 */
 	
-	public Application findApplication(Id id) {
+	public Application findApplication(String id) {
 		return super.findApplication(id);
 	}	
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @param environment
-	 * @return
-	 * 
-	 * 
 	 */
 	
-	public void updateEnvironment(Id id, String key, Environment environment) {
+	public void updateEnvironment(String id, String key, Environment environment) {
 		Application application = findApplication( id );
 		
 		environment.setKey(key);
@@ -189,16 +150,13 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @param key
 	 * @param parameters
-	 * @return updated EnvironmentDTO
-	 * 
-	 * 
+	 * @return
 	 */
 	
-	public Environment updateEnvironment(Id id, String key, MultivaluedMap<String, String> parameters) {
+	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
 		Application application = findApplication( id );
 		
@@ -212,7 +170,7 @@ public class ApplicationService extends ApplicationModelMapper {
 			
 			application.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 			
-			commonFunctions.testConnection(environment, parameters);
+			//environmentService.testConnection(environment, parameters);
 			
 			application.addEnvironment(environment);
 			
@@ -220,7 +178,7 @@ public class ApplicationService extends ApplicationModelMapper {
 			
 		} else {
 			
-			commonFunctions.updateEnvironment(environment, parameters);
+			//environmentService.updateEnvironment(environment, parameters);
 			
 			updateEnvironment(application, environment);
 		}
@@ -228,17 +186,14 @@ public class ApplicationService extends ApplicationModelMapper {
 		return environment;
 	}
 	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param id
 	 * @param key
 	 * @return
-	 * 
-	 * 
-	 *************************************************************************************************************************/
+	 */
 	
-	public Environment getEnvironment(Id id, String key) {
+	public Environment getEnvironment(String id, String key) {
 		Application resource = findApplication(id);
 		
 		Environment environment = resource.getEnvironments()
@@ -250,23 +205,19 @@ public class ApplicationService extends ApplicationModelMapper {
 		return environment;
 	}
 	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param id
 	 * @param environment
-	 * @throws ServiceException
-	 * 
-	 * 
-	 *************************************************************************************************************************/
+	 */
 	
-	public void addEnvironment(Id id, Environment environment) throws ServiceException {
+	public void addEnvironment(String id, Environment environment) {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
 
 		Application resource = findApplication(id);
 		
 		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
-			throw new ServiceException(Response.Status.CONFLICT, String.format("Unable to add new environment. Conflict with existing organization: %s with Id: ", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
+			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: ", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
 		}
 		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
@@ -282,9 +233,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		environment.setOrganizationName(loginResult.getOrganizationName());
 		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
-		
-		UserProperties.batchSave(properties);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -293,6 +242,12 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		updateApplication(id, resource);
 	}
+	
+	/**
+	 * 
+	 * @param resource
+	 * @param environment
+	 */
 	
 	public void updateEnvironment(Application resource, Environment environment) {
 		
@@ -317,7 +272,7 @@ public class ApplicationService extends ApplicationModelMapper {
 			if (! loginResult.getOrganizationId().equals(original.getOrganizationId()) 
 					&& resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 				
-				throw new ServiceException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
+				throw new ValidationException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
 			}
 			
 			environment.setUserId(loginResult.getUserId());
@@ -333,9 +288,7 @@ public class ApplicationService extends ApplicationModelMapper {
 			environment.setIsValid(Boolean.FALSE);
 		}
 		
-		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
-		
-		UserProperties.batchSave(properties);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		environment.setPassword(null);
 		environment.setSecurityToken(null);
@@ -345,48 +298,13 @@ public class ApplicationService extends ApplicationModelMapper {
 		updateApplication(resource.getId(), resource);
 	}
 	
-	/**************************************************************************************************************************
-	 * 
-	 * 
-	 * @param id
-	 * @param serviceProviderId
-	 * @param serviceType
-	 * @param code
-	 * @return
-	 * 
-	 * 
-	 *************************************************************************************************************************/
-	
-	public ServiceInstanceDTO addServiceInstance(Id id, String key) {		
-		Application resource = findApplication(id);
-		
-		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptySet());
-		}
-		
-		ServiceInstanceDTO serviceInstance = commonFunctions.buildServiceInstance(key);
-		
-		resource.getServiceInstances().stream().filter(s -> s.getServiceType().equals(serviceInstance.getServiceType())).findFirst().ifPresent( s-> {
-			throw new ServiceException(String.format("Unable to add new environment. Service has already been added with type: %s", s.getServiceName()));
-		});
-		
-		resource.addServiceInstance(serviceInstance);
-		
-		updateApplication(id, resource);
-		
-		return serviceInstance;
-	}
-	
-	/**************************************************************************************************************************
-	 * 
+	/**
 	 * 
 	 * @param id
 	 * @param key
-	 * 
-	 * 
-	 *************************************************************************************************************************/
+	 */
 	
-	public void removeEnvironment(Id id, String key) {
+	public void removeEnvironment(String id, String key) {
 		Application resource = findApplication(id);
 		
 		Environment environment = resource.getEnvironments()
@@ -395,133 +313,10 @@ public class ApplicationService extends ApplicationModelMapper {
 				.findFirst()
 				.get();
 		
-		List<UserProperty> properties = commonFunctions.getEnvironmentUserProperties(getSubject(), environment);
-		
-		UserProperties.batchDelete(properties);
+		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		
 		updateApplication(id, resource);
-	}
-
-	/***************************************************************************************************************************
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 * 
-	 * 
-	 **************************************************************************************************************************/
-	
-	public ServiceInstanceDTO getServiceInstance(Id id, String key) {
-		Application resource = findApplication(id);
-		
-		ServiceInstanceDTO serviceInstance = resource.getServiceInstances()
-				.stream()
-				.filter(s -> key.equals(s.getKey()))
-				.findFirst()
-				.get();
-		
-		return serviceInstance;
-		
-	}
-	
-	/**************************************************************************************************************************
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @param serviceInstance
-	 * @return
-	 * 
-	 * 
-	 *************************************************************************************************************************/
-	
-	public void updateServiceInstance(Id id, String key, ServiceInstanceDTO serviceInstance) {		
-		Application resource = findApplication(id);
-
-		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptySet());
-		}
-		
-		Optional<ServiceInstanceDTO> query = resource.getServiceInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst();
-		
-		if (! query.isPresent()) {
-			return;
-		}
-		
-		ServiceInstanceDTO original = query.get();
-		
-		resource.getServiceInstances().removeIf(e -> key.equals(e.getKey()));
-		
-		serviceInstance.setKey(key);
-		serviceInstance.setAddedOn(original.getAddedOn());
-		serviceInstance.setUpdatedOn(Date.from(Instant.now()));
-
-		Optional<SimpleStorageService> simpleStoreageService = Optional.of(serviceInstance)
-				.map(ServiceInstanceDTO::getTargets)
-				.map(Targets::getSimpleStorageService);
-		
-		if (simpleStoreageService.isPresent()) {
-			
-			commonFunctions.saveAwsCredentials(getSubject(), key, simpleStoreageService.get());
-			
-			serviceInstance.getTargets().getSimpleStorageService().setAwsAccessKey(null);
-			serviceInstance.getTargets().getSimpleStorageService().setAwsSecretAccessKey(null);
-		}
-
-		resource.addServiceInstance(serviceInstance);
-
-		updateApplication(id, resource);
-	}
-	
-	/**************************************************************************************************************************
-	 * 
-	 * 
-	 * @param id
-	 * @param key
-	 * @param parameters
-	 * @return ServiceInstanceDTO
-	 * 
-	 * 
-	 *************************************************************************************************************************/
-	
-	public ServiceInstanceDTO updateServiceInstance(Id id, String key, MultivaluedMap<String, String> parameters) {		
-		Application resource = findApplication(id);
-		
-		if (resource.getServiceInstances() == null) {
-			resource.setServiceInstances(Collections.emptySet());
-		}
-		
-		Optional<ServiceInstanceDTO> query = resource.getServiceInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst();
-		
-		if (! query.isPresent()) {
-			return null;
-		}
-		
-		ServiceInstanceDTO serviceInstance = query.get();
-		
-		commonFunctions.buildServiceInstance(key, serviceInstance, parameters);
-		
-		updateServiceInstance(id, key, serviceInstance);
-		
-		return serviceInstance;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
-	public Set<ScheduledJob> getBatchJobs(Id id) {
-		return null;
 	}
 }

@@ -1,0 +1,309 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#include "navbar.html" />
+
+        <div class="container">
+
+            <#if action=="listPlans">
+
+                <div class="row">
+
+                    <br>
+
+                    <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>
+
+                    <div class="dashhead m-t-md">
+                        <div class="dashhead">
+                            <div class="dashhead-titles">
+                                <h3 class="dashhead-title">${labels["select.plan"]}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hr-divider"></div>
+                </div>
+
+                <div class="row">
+
+                    <br> ${planTable}
+
+                </div>
+
+            </#if>
+
+            <#if action=="reviewPlan">
+                <div class="row">
+                    <div class="dashhead m-t-md">
+                        <div class="dashhead">
+                            <div class="dashhead-titles">
+                                <h3 class="dashhead-title">${labels["payment.method"]}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hr-divider"></div>
+                </div>
+
+                <div class="row">
+
+                    <br>
+
+                    <#if errorMessage??>
+                        <div id="alert" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+
+                </div>
+
+                <div class="row">
+
+                    <br>
+
+                    <form id="payment-method-form" name="payment-method-form" class="form-vertical" method="post" action="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}">
+
+                        <div class="col-md-9">
+
+                            <#if plan.price.unitPrice==0>
+
+                                <h4 class="text-success">${labels["no.payment.method.required"]}</h4>
+
+                            </#if>
+
+                            <#if plan.price.unitPrice gt 0>
+
+                                <div class="row">
+
+                                    <#if accountProfile.primaryCreditCard??>
+                                        
+                                        <input type="hidden" name="paymentMethodToken" id="paymentMethodToken" value="${(accountProfile.primaryCreditCard.token)!}" />
+
+                                        <div class="col-md-5">
+                                            <label class="control-label">${labels["primary.credit.card"]}</label>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <dl class="dl-vertical">
+                                                <dt>${labels["name.on.card"]}</dt>
+                                                <dd>${accountProfile.primaryCreditCard.cardholderName}&emsp;</dd>
+                                                <hr>
+                                                <dt>${labels["credit.card"]}</dt>
+                                                <dd><img src="${(accountProfile.primaryCreditCard.imageUrl)!}" height="18" width="30" />&emsp;${(accountProfile.primaryCreditCard.cardType)!}&nbsp;${labels["ending.in"]}&nbsp;${(accountProfile.primaryCreditCard.lastFour)!}&emsp;</dd>
+                                                <hr>
+                                                <dt>${labels["expiration.date"]}</dt>
+                                                <dd>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}&emsp;</dd>
+                                                <hr>
+                                            </dl>
+                                        </div>
+
+                                    </#if>
+
+                                    <#if ! accountProfile.primaryCreditCard??>
+
+                                        <div class="col-md-5"></div>
+
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                <input type="checkbox" name="use-contact-info" autofocus="" id="use-contact-info" />
+                                                <label class="control-label" for="use-contact-info">${labels["use.account.profile"]}</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <label class="control-label">${labels["billing.address"]}</label>
+                                        </div>
+                                        <div class="col-md-5">
+
+                                            <div class="form-group">
+                                                <select id="countryCode" name="countryCode" class="form-control" required>
+                                                    <option value="">${labels["select.one"]}</option>
+                                                    <#list countryList as country>
+                                                        <#if creditCard.billingAddress.countryCode??>
+                                                            <#if country.code==creditCard.billingAddress.countryCode>
+                                                                <option value="${country.code}" selected="selected">${country.name}</option>
+                                                            </#if>
+                                                            <#if country.code !=creditCard.billingAddress.countryCode>
+                                                                <option value="${country.code}">${country.name}</option>
+                                                            </#if>
+                                                        </#if>
+                                                        <#if ! creditCard.billingAddress.countryCode??>
+                                                            <option value="${country.code}">${country.name}</option>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(creditCard.billingAddress.street)!}" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(creditCard.billingAddress.city)!}" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(creditCard.billingAddress.state)!}" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" value="${(creditCard.billingAddress.postalCode)!}" />
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-2"></div>
+
+                                        <div class="col-md-10">
+                                            <div class="hr-divider"></div>
+                                            <br>
+                                        </div>
+
+                                        <div class="col-md-2"></div>
+
+                                        <div class="col-md-5">
+                                            <label class="control-label">${labels["billing.contact"]}</label>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" placeholder="${labels['first.name']}" />
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" placeholder="${labels['last.name']}" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2"></div>
+
+                                        <div class="col-md-10">
+                                            <div class="hr-divider"></div>
+                                            <br>
+                                        </div>
+
+                                        <div class="col-md-2"></div>
+
+                                        <div class="col-md-5">
+                                            <label class="control-label">${labels["credit.card"]}</label>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" placeholder="${labels['name.on.card']}" />
+                                            </div>
+
+                                            <div class="form-group">
+
+                                                <input type="text" class="form-control" name="number" id="number" placeholder="${labels['number']}">
+
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="form-group col-md-2">
+                                                    <select class="form-control" name="expirationMonth" id="expirationMonth" style="width: auto">
+                                                        <#assign x=12 />
+                                                        <#list 1..x as month>
+                                                            <#if creditCard.expirationMonth?eval==month>
+                                                                <option value="${month?c}" selected="selected">${month?c}</option>
+                                                            </#if>
+                                                            <#if creditCard.expirationMonth?eval !=month>
+                                                                <option value="${month?c}">${month?c}</option>
+                                                            </#if>
+                                                        </#list>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-4">
+                                                    <select class="form-control" name="expirationYear" id="expirationYear">
+                                                        <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                        <#list .now?string[ "yyyy"]?number..x as year>
+                                                            <#if creditCard.expirationYear?eval==year>
+                                                                <option value="${year?c}" selected="selected">${year?c}</option>
+                                                            </#if>
+                                                            <#if creditCard.expirationYear?eval !=year>
+                                                                <option value="${year?c}">${year?c}</option>
+                                                            </#if>
+                                                        </#list>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-3">
+                                                    &nbsp;
+                                                </div>
+
+                                                <div class="form-group col-md-3 pull-right">
+                                                    <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" />
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-2"></div>
+
+                                    </#if>
+
+                                </div>
+
+                            </#if>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="row">
+
+                                <div class="panel panel-default">
+
+                                    <div class="panel-body">
+
+                                        <dl class="dl-vertical">
+                                            <dt>${labels["plan.name"]}</dt>
+                                            <dd>${(plan.planName)!}</dd>
+                                            <br>
+                                            <dt>${labels["price"]}</dt>
+                                            <dd>${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.##"])!}</dd>
+                                            <br>
+                                            <dt>${labels["billed"]}</dt>
+                                            <dd>${(plan.billingFrequency)!}
+                                                <br>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <#if accountProfile.subscription??>
+                                        <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                    </#if>
+                                    <a href="${labels['base.path']}/${accountProfile.id}/plans" class="btn btn-default" role="button">${labels["back"]}</a>
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["set.plan"]}</button>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </#if>
+        </div>
+
+        <script>
+            var accountProfile = {
+                basePath: "${labels['base.path']}",
+                id: "${(accountProfile.id)!}",
+                firstName: "${(accountProfile.firstName)!}",
+                lastName: "${(accountProfile.lastName)!}",
+                street: "${(accountProfile.address.street)!}",
+                city: "${(accountProfile.address.city)!}",
+                state: "${(accountProfile.address.state)!}",
+                postalCode: "${(accountProfile.address.postalCode)!}",
+                countryCode: "${(accountProfile.address.countryCode)!}"
+            }
+
+            jQuery.data(document.body, "accountProfile", accountProfile);
+        </script>
+
+        <script src="/js/account-profile.js"></script>
+    </@t.page>

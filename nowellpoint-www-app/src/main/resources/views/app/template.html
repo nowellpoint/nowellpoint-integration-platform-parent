@@ -28,6 +28,8 @@
 
         <script src="/js/jquery.js"></script>
         <script src="/dist/toolkit.min.js"></script>
+        
+        <script src="/js/jquery.js"></script>
 
     </head>
 
@@ -42,10 +44,6 @@
         </div>
 
         <script type="text/javascript">
-            
-            $(function () { 
-                $("[data-toggle='tooltip']").tooltip(); 
-            });
             
             $(document)
                 .ajaxStart(function() {
@@ -66,11 +64,7 @@
                         $(this).closest('li').addClass('active');
                     }
                 });
-            });
-
-            $(document).on('shown.bs.modal', '.modal', function() {
-                $(this).find('[autofocus]').focus();
-            });
+            });            
 
         </script>
     </body>

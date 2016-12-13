@@ -17,7 +17,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.Token;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;
@@ -27,29 +27,23 @@ import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import spark.ModelAndView;
 import spark.Request;
+import spark.Response;
 
-abstract class AbstractController {
+abstract class AbstractController implements Controller {
 	
-	protected static final String API_ENDPOINT = System.getenv("NCS_API_ENDPOINT");
+	private static final Logger LOGGER = Logger.getLogger(AbstractController.class.getName());
+	protected static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
+	protected static final String APPLICATION_CONTEXT = "/app/%s";
 	private Class<?> controllerClass;
-	private Configuration configuration;
-	protected static Logger LOGGER;
 	
-	public AbstractController(Class<?> controllerClass, Configuration configuration) {		
+	public AbstractController(Class<?> controllerClass) {		
 		this.controllerClass = controllerClass;
-		this.configuration = configuration;
-		LOGGER = Logger.getLogger(controllerClass.getName());
 	}
 	
 	protected Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<String, Object>();
 		return model;
-	}
-	
-	protected Token getToken(Request request) {
-		Token token = request.attribute("com.nowellpoint.auth.token");
-		return token;
 	}
 	
 	protected String getValue(Token token, String key) {
@@ -96,7 +90,7 @@ abstract class AbstractController {
 		}
 	}
 	
-	private String buildTemplate(Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
+	private String buildTemplate(Configuration configuration, Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
 		try {
 			Template template = configuration.getTemplate(modelAndView.getViewName());
@@ -112,49 +106,33 @@ abstract class AbstractController {
 		return output.toString();
 	}
 	
+	protected Token getToken(Request request) {
+		return request.attribute("com.nowellpoint.auth.token");
+	}
+	
 	protected AccountProfile getAccount(Request request) {
 		return request.attribute("account");
 	}
 	
-	protected Locale getDefaultLocale(AccountProfile accountProfile) {
-		Locale locale = null;
-		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
-			String[] attrs = accountProfile.getLocaleSidKey().split("_");
-			if (attrs.length == 1) {
-				locale = new Locale(attrs[0]);
-			} else if (attrs.length == 2) {
-				locale = new Locale(attrs[0], attrs[1]);
-			} else if (attrs.length == 3) {
-				locale = new Locale(attrs[0], attrs[1], attrs[3]);
-			}
-		} else {
-			locale = configuration.getLocale();
-		}
-		return locale;
+	protected Locale getLocale(Request request) {
+		return request.attribute("com.nowellpoint.default.locale");
 	}
 	
-	protected TimeZone getDefaultTimeZone(AccountProfile accountProfile) {		
-		TimeZone timeZone = null;
-		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
-			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
-		} else {
-			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
-		}
-		
-		return timeZone;
+	protected TimeZone getTimeZone(Request request) {		
+		return request.attribute("com.nowellpoint.default.timezone");
 	}
 	
-	protected String getLabel(AccountProfile accountProfile, String key) {
-		return ResourceBundle.getBundle(controllerClass.getName(), getDefaultLocale(accountProfile)).getString(key);
+	protected String getLabel(Request request, String key) {
+		return ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)).getString(key);
 	}
 	
-	protected String render(Request request, Map<String,Object> model, String templateName) {	
+	protected String render(Configuration configuration, Request request, Response response, Map<String,Object> model, String templateName) {	
 		AccountProfile accountProfile = getAccount(request);
-		Locale locale = getDefaultLocale(accountProfile);
-		TimeZone timeZone = getDefaultTimeZone(accountProfile);
+		Locale locale = getLocale(request) != null ? getLocale(request) : configuration.getLocale();
+		TimeZone timeZone = getTimeZone(request) != null ? getTimeZone(request) : configuration.getTimeZone();
 		model.put("account", accountProfile);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-        return buildTemplate(locale, timeZone, new ModelAndView(model, templateName));
+        return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
 }

@@ -6,7 +6,7 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["environment.detail"]}</h6>
+                            <h3 class="dashhead-title">${labels["environment.detail"]}</h3>
                         </div>
                     </div>
                 </div>
@@ -15,7 +15,7 @@
             <div class="row">
 
                 <br>
-                
+
                 <div id="message"></div>
 
                 <#if errorMessage??>
@@ -139,7 +139,7 @@
 
                         <br>
 
-                        <div class="col-md-3"></div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
 
                         <div class="col-md-6">
 
@@ -183,21 +183,18 @@
 
                             </div>
 
-                            <br>
-
                             <div class="form-group col-md-12">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-default" role="button">${messages["back"]}</a>
-                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${messages["edit"]}</a>
-                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a> 
+                                    <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-default" role="button">${labels["back"]}</a>
+                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                                    <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
                                     <#if environment.isSandbox>
                                         <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                                     </#if>
                                 </div>
                             </div>
-
                         </div>
-                        <div class="col-md-3"></div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
                     </div>
                 </#if>
             </div>
@@ -212,9 +209,9 @@
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    data: $( "#enviroment-form" ).serialize(),
+                    data: $("#enviroment-form").serialize(),
                     url: "${labels['base.path']}/${id}/environments/${(environment.key)!}/test",
-                    success: function (response) {
+                    success: function(response) {
                         var environment = response;
                         if (environment.isValid) {
                             $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + environment.testMessage + '</div></div>');
@@ -224,7 +221,6 @@
                     }
                 });
             });
-
         </script>
 
         <script src="/js/environment.js"></script>

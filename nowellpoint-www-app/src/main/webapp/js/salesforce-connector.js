@@ -46,15 +46,34 @@ $('.test-connection').on('click', function (e) {
     var href = $(this).data('href');
     $.ajax({
         type: "POST",
-        dataType: "json",
+        dataType: "text",
         url: href,
-        success: function (response) {
-            var environment = response;
-            if (environment.isValid) {
-                row.find('td:eq(3)').html('<span class="icon icon-check fa-1x text-success">&emsp;' + environment.testMessage + '</span>');
+        complete: function (response) {
+            if (response.status == 200) {
+                $('#success').show().delay(3000).fadeOut();
             } else {
-                row.find('td:eq(3)').html('<span class="icon icon-squared-cross fa-1x text-danger">&emsp;' + environment.testMessage + '</span>');
+                $('#error-message').text(response.responseText);
+                $('#error').show();
             }
         }
+    });
+});
+
+$('.build-environment').on('click', function (e) {
+    var id = $(this).data('id');
+    var row = $('#'.concat(id));
+    var href = $(this).data('href');
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: href,
+        complete: function (response) {
+            if (response.status == 200) {
+                $('#success').show().delay(3000).fadeOut();
+            } else {
+                $('#error-message').text(response.responseText);
+                $('#error').show();
+            }
+        } 
     });
 });

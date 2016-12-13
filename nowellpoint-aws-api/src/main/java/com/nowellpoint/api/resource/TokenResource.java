@@ -12,7 +12,9 @@ import javax.annotation.security.PermitAll;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -22,12 +24,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.dto.idp.Token;
+import com.nowellpoint.api.exception.AuthenticationException;
+import com.nowellpoint.api.model.domain.idp.Token;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.stormpath.sdk.api.ApiKey;
+import com.stormpath.sdk.api.ApiKeys;
 
 @Path("oauth")
 @Api(value = "/oauth")
 public class TokenResource {
+	
+	private static final String CLIENT_CREDENTIALS = "client_credentials";
+	private static final String PASSWORD = "password";
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -39,18 +47,19 @@ public class TokenResource {
 	private UriInfo uriInfo;
 	
 	@POST
-	@Path("token")
-	@ApiOperation(value = "Authenticate with the API", notes = "Returns the OAuth Token", response = Token.class)
-	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
-	public Response authenticate(@ApiParam(value = "basic authorization header", required = true) @HeaderParam("Authorization") String authorization) {
-		
+	@Path("token")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@ApiOperation(value = "Authenticate with the API", notes = "Returns the OAuth Token", response = Token.class)
+	public Response authenticate(@ApiParam(value = "basic authorization header", required = true) @HeaderParam("Authorization") String authorization, @FormParam("grant_type") String grantType) {
+
 		//
 		// ensure that the authorization header has a basic token
 		//
 		
 		if (! authorization.startsWith("Basic ")) {
-			throw new BadRequestException("Invalid authorization. Should be of type Basic");
+			throw new AuthenticationException("invalid_request", "Invalid header Authorization header must be of type Basic scheme");
 		}
 		
 		//
@@ -70,21 +79,34 @@ public class TokenResource {
 		//
 		
 		if (params.length != 2) {
-			throw new BadRequestException("Invalid Request - Missing email and/or password");
+			throw new AuthenticationException("invalid_request", "Parameters missing from the request, valid parameters are Base64 encoded: username:password or client_id:client_secret");
 		}
+		
+		Token token = null;
 		
 		//
 		// call the identity service provider to authenticate
 		//
 		
-		Token token = identityProviderService.authenticate(params[0], params[1]);
-		
+		if (CLIENT_CREDENTIALS.equals(grantType)) {
+			ApiKey apiKey = ApiKeys.builder()
+					.setId(params[0])
+					.setSecret(params[1])
+					.build();
+			
+			token = identityProviderService.authenticate(apiKey);
+		} else if (PASSWORD.equals(grantType)) {
+			token = identityProviderService.authenticate(params[0], params[1]);
+		} else {
+			throw new AuthenticationException("invalid_grant", "Please provide a valid grant_type, supported types are : client_credentials, password, refresh_token.");
+		}
+
 		//
 		// clear params
 		//
 		
 		params = null;
-			
+
 		//
 		// fire event for handling login functions
 		//
@@ -94,7 +116,7 @@ public class TokenResource {
 		//
 		// return the Response with the token
 		//
-		
+
 		return Response.ok()
 				.entity(token)
 				.type(MediaType.APPLICATION_JSON)

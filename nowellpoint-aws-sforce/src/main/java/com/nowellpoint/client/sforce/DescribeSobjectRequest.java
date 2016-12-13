@@ -1,5 +1,7 @@
 package com.nowellpoint.client.sforce;
 
+import java.util.Date;
+
 public class DescribeSobjectRequest {
 	
 	private String sobjectsUrl;
@@ -7,6 +9,8 @@ public class DescribeSobjectRequest {
 	private String accessToken;
 	
 	private String sobject;
+	
+	private Date ifModifiedSince;
 	
 	public DescribeSobjectRequest() {
 		
@@ -25,6 +29,14 @@ public class DescribeSobjectRequest {
 		return accessToken;
 	}
 
+	public Date getIfModifiedSince() {
+		return ifModifiedSince;
+	}
+
+	public void setIfModifiedSince(Date ifModifiedSince) {
+		this.ifModifiedSince = ifModifiedSince;
+	}
+
 	public DescribeSobjectRequest withAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 		return this;
@@ -36,6 +48,11 @@ public class DescribeSobjectRequest {
 
 	public DescribeSobjectRequest withSobject(String sobject) {
 		this.sobject = sobject;
+		return this;
+	}
+	
+	public DescribeSobjectRequest withIfModifiedSince(Date ifModifiedSince) {
+		this.ifModifiedSince = ifModifiedSince;
 		return this;
 	}
 }

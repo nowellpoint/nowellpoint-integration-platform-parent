@@ -6,7 +6,7 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["edit.user.address"]}</h6>
+                            <h2 class="dashhead-title">${labels["edit.user.address"]}</h2>
                         </div>
                     </div>
                 </div>
@@ -31,33 +31,43 @@
 
                 <br>
 
-                <form class="form" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/address">
+                <form class="form-horizontal" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/address">
 
-                    <div class="row">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="control-label" for="street">${labels["street"]}</label>
-                                <input type="text" class="form-control" name="street" id="street" value="${address.street!}" />
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-6">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="street">${labels["street"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="street" id="street" autofocus="" value="${address.street!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="control-label" for="city">${labels["city"]}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="city">${labels["city"]}</label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control" name="city" id="city" value="${address.city!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="control-label" for="state">${labels["state"]}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="state">${labels["state"]}</label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control" name="state" id="state" value="${address.state!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="postalCode">${labels["zip.postal.code"]}</label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control" name="postalCode" id="postalCode" value="${address.postalCode!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="countryCode">${labels["country"]}*</label>
+                            <div class="col-sm-8">
                                 <select id="countryCode" name="countryCode" class="form-control" required>
                                     <#list countryList as country>
                                         <#if country.code==address.countryCode>
@@ -69,17 +79,31 @@
                                     </#list>
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="form-group">
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+
+                    <div class="col-sm-12">
+                        <br>
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="${labels['base.path']}/${(accountProfile.id)!}#address" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                    <a href="${labels['base.path']}/${accountProfile.id}#address" class="btn btn-default" role="button">${labels["cancel"]}</a>
                                     <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-                    <div class="col-md-4"></div>
+
+                    <div class="col-sm-3"></div>
 
                 </form>
 

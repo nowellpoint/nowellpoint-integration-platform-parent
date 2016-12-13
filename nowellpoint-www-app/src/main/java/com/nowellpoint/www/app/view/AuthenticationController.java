@@ -1,17 +1,24 @@
 package com.nowellpoint.www.app.view;
 
+import static spark.Spark.before;
+import static spark.Spark.get;
 import static spark.Spark.halt;
+import static spark.Spark.post;
+import static spark.Spark.exception;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
@@ -23,40 +30,99 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.idp.Token;
+import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import spark.ExceptionHandler;
-import spark.Filter;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 public class AuthenticationController extends AbstractController {
 	
+	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
 	private static final String REDIRECT_URL = "com.nowellpoint.redirect.url";
 	
-	public AuthenticationController(Configuration configuration) {
-		super(AuthenticationController.class, configuration);
+	public static class Template {
+		public static final String LOGIN = "login.html";
+	}
+	
+	public AuthenticationController() {
+		super(AuthenticationController.class);
+	}
+	
+	@Override
+	public void configureRoutes(Configuration configuration) {
+		before("/app/*", (request, response) -> verify(configuration, request, response));
+		get(Path.Route.LOGIN, (request, response) -> showLoginPage(configuration, request, response));
+        post(Path.Route.LOGIN, (request, response) -> login(configuration, request, response));
+        get(Path.Route.LOGOUT, (request, response) -> logout(configuration, request, response));
+        exception(NotAuthorizedException.class, (exception, request, response) -> handleNotAuthorizedException(configuration, exception, request, response));
 	}
 	
 	/**
 	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
 	 */
 	
-	public Route showLoginPage = (Request request, Response response) -> {
-        Map<String, Object> model = new HashMap<>();
-        return render(request, model, Path.Template.LOGIN);
+	public void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
+		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
+    	if (cookie.isPresent()) {
+    		Token token = objectMapper.readValue(cookie.get(), Token.class);
+    		request.attribute(AUTH_TOKEN, token);
+    		
+    		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+    				.accountProfile()
+    				.get();
+    		
+    		AccountProfile accountProfile = null;
+    		    		
+    		if (getResult.isSuccess()) {
+    			accountProfile = getResult.getTarget();
+    		} else {
+    			throw new NotAuthorizedException(getResult.getErrorMessage());
+    		}
+    		
+    		request.attribute("account", accountProfile);
+    		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(configuration, accountProfile));
+    		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(configuration, accountProfile));
+    		
+    	} else {
+    		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);
+    		response.redirect(Path.Route.LOGIN);
+    		halt();
+    	}
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public String showLoginPage(Configuration configuration, Request request, Response response) {
+        return render(configuration, request, response, new HashMap<>(), Template.LOGIN);
     };
     
     /**
      * 
+     * @param configuration
+     * @param request
+     * @param response
+     * @return
      */
     
-    public static Route login = (Request request, Response response) -> {
+    public String login(Configuration configuration, Request request, Response response) {
     	
     	PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setUsername(request.queryParams("username"))
@@ -111,9 +177,13 @@ public class AuthenticationController extends AbstractController {
     
     /**
      * 
+     * @param configuration
+     * @param request
+     * @param response
+     * @return
      */
 	
-    public static Route logout = (Request request, Response response) -> {
+    public String logout(Configuration configuration, Request request, Response response) {
 		
 		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	
@@ -149,40 +219,63 @@ public class AuthenticationController extends AbstractController {
     	return "";
 	};
 	
-	
 	/**
 	 * 
+	 * @param configuration
+	 * @param exception
+	 * @param request
+	 * @param response
 	 */
 	
-	public static Filter verify = (Request request, Response response) -> {
-    	Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
-    	if (cookie.isPresent()) {
-    		Token token = objectMapper.readValue(cookie.get(), Token.class);
-    		request.attribute(AUTH_TOKEN, token);
-    		
-    		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
-    				.getAccountProfileResource()
-    				.getMyAccountProfile();
-    		
-    		request.attribute("account", accountProfile);
-    	} else {
-    		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);
-    		response.redirect(Path.Route.LOGIN);
-    		halt();
-    	}
-	};
-	
-	/**
-	 * 
-	 */
-	
-	public ExceptionHandler handleNotAuthorizedException = (Exception exception, Request request, Response response) -> {
+	private void handleNotAuthorizedException(Configuration configuration, Exception exception, Request request, Response response) {		
 		Map<String, Object> model = new HashMap<>();
     	model.put("errorMessage", exception.getMessage());
     	
-    	String output = render(request, model, Path.Template.LOGIN);
+    	String output = render(configuration, request, response, model, Template.LOGIN);
     	
     	response.status(400);
     	response.body(output);
 	};
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param accountProfile
+	 * @return
+	 */
+	
+	private TimeZone getDefaultTimeZone(Configuration configuration, AccountProfile accountProfile) {		
+		TimeZone timeZone = null;
+		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
+			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
+		} else {
+			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
+		}
+		
+		return timeZone;
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param accountProfile
+	 * @return
+	 */
+	
+	private Locale getDefaultLocale(Configuration configuration, AccountProfile accountProfile) {
+		Locale locale = null;
+		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
+			String[] attrs = accountProfile.getLocaleSidKey().split("_");
+			if (attrs.length == 1) {
+				locale = new Locale(attrs[0]);
+			} else if (attrs.length == 2) {
+				locale = new Locale(attrs[0], attrs[1]);
+			} else if (attrs.length == 3) {
+				locale = new Locale(attrs[0], attrs[1], attrs[3]);
+			}
+		} else {
+			locale = configuration.getLocale();
+		}
+		return locale;
+	}
 }

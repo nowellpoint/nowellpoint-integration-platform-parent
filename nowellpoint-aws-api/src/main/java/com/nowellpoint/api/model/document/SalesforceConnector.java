@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.api.model.codec.SalesforceConnectionCodec;
 import com.nowellpoint.api.model.sforce.Identity;
 import com.nowellpoint.api.model.sforce.Organization;
-import com.nowellpoint.mongodb.annotation.Audited;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@Audited
 @Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends MongoDocument {
@@ -20,6 +18,8 @@ public class SalesforceConnector extends MongoDocument {
 	 */
 	
 	private static final long serialVersionUID = -3438714915624952119L;
+	
+	private String name;
 	
 	private UserRef createdBy;
 	
@@ -35,10 +35,16 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private Set<Environment> environments;
 	
-	private Set<ServiceInstance> serviceInstances;
-	
 	public SalesforceConnector() {
 		
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public UserRef getCreatedBy() {
@@ -95,13 +101,5 @@ public class SalesforceConnector extends MongoDocument {
 
 	public void setEnvironments(Set<Environment> environments) {
 		this.environments = environments;
-	}
-
-	public Set<ServiceInstance> getServiceInstances() {
-		return serviceInstances;
-	}
-
-	public void setServiceInstances(Set<ServiceInstance> serviceInstances) {
-		this.serviceInstances = serviceInstances;
 	}
 }

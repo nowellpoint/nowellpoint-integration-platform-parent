@@ -4,24 +4,40 @@ import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.Environment;
-import com.nowellpoint.api.model.dto.Id;
-import com.nowellpoint.api.model.dto.SalesforceConnector;
-import com.nowellpoint.api.model.dto.ScheduledJob;
-import com.nowellpoint.api.model.dto.ScheduledJobType;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Backup;
+import com.nowellpoint.api.model.domain.Deactivate;
+import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.RunHistory;
+import com.nowellpoint.api.model.domain.SalesforceConnector;
+import com.nowellpoint.api.model.domain.ScheduledJob;
+import com.nowellpoint.api.model.domain.ScheduledJobType;
+import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.nowellpoint.util.Assert;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
+	
+	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
+	private static final String SCHEDULED = "Scheduled";
+	private static final String STOPPED = "Stopped";
+	private static final String TERMINATED = "Terminated";
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -49,8 +65,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public Set<ScheduledJob> findAllByOwner() {
-		return super.findAllByOwner();
+	public Set<ScheduledJob> findByOwner() {
+		return super.findByOwner();
 	}
 	
 	/**
@@ -63,17 +79,13 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public void createScheduledJob(ScheduledJob scheduledJob) {
 		if (isNull(scheduledJob.getOwner())) {
-			scheduledJob.setOwner(new AccountProfile(getSubject()));
+			scheduledJob.setOwner(new UserInfo(getSubject()));
 		}
 		
-		AccountProfile createdBy = new AccountProfile(getSubject());
-		
-		scheduledJob.setCreatedBy(createdBy);
-		scheduledJob.setLastModifiedBy(createdBy);
-		scheduledJob.setStatus("Scheduled");
+		scheduledJob.setStatus(SCHEDULED);
 		
 		setupScheduledJob(scheduledJob);
-
+		
 		super.createScheduledJob(scheduledJob);
 	}
 	
@@ -86,16 +98,19 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public void updateScheduledJob(Id id, ScheduledJob scheduledJob) {
+	public void updateScheduledJob(String id, ScheduledJob scheduledJob) {
 		ScheduledJob original = findScheduledJobById(id);
+		
+		if (TERMINATED.equals(original.getStatus())) {
+			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
+		}
 		
 		scheduledJob.setId(id);
 		scheduledJob.setJobTypeId(original.getJobTypeId());
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
 		scheduledJob.setJobTypeName(original.getJobTypeName());
-		scheduledJob.setCreatedById(original.getCreatedById());
 		scheduledJob.setCreatedDate(original.getCreatedDate());
-		scheduledJob.setSystemCreationDate(original.getSystemCreationDate());
+		scheduledJob.setSystemCreatedDate(original.getSystemCreatedDate());
 		scheduledJob.setLastRunDate(original.getLastRunDate());
 		scheduledJob.setLastRunStatus(original.getLastRunStatus());
 		scheduledJob.setLastRunFailureMessage(original.getLastRunFailureMessage());
@@ -126,8 +141,11 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		if (isNullOrEmpty(scheduledJob.getNotificationEmail())) {
 			scheduledJob.setNotificationEmail(original.getNotificationEmail());
 		}
-				
-		scheduledJob.setLastModifiedBy(new AccountProfile(getSubject()));
+		
+		if (isNull(scheduledJob.getRunHistories())) {
+			scheduledJob.setRunHistories(original.getRunHistories());
+		}
+		
 		setupScheduledJob(scheduledJob);
 		
 		super.updateScheduledJob(scheduledJob);
@@ -141,7 +159,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public void deleteScheduledJob(Id id) {
+	public void deleteScheduledJob(String id) {
 		super.deleteScheduledJob(findScheduledJobById(id));
 	}
 	
@@ -154,8 +172,80 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 
-	public ScheduledJob findScheduledJobById(Id id) {
+	public ScheduledJob findScheduledJobById(String id) {
 		return super.findScheduedJobById(id);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param id
+	 * @param fireInstanceId
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public RunHistory findRunHistory(String id, String fireInstanceId) {
+		ScheduledJob scheduledJob = findScheduledJobById( id );
+		
+		Optional<RunHistory> filter = scheduledJob.getRunHistories()
+				.stream()
+				.filter(r -> r.getFireInstanceId().equals(fireInstanceId))
+				.findFirst();
+		
+		return filter.get();
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 * 
+	 * 
+	 */
+	
+	public String getFile(String id, String fireInstanceId, String filename) throws IOException {
+		RunHistory runHistory = findRunHistory(id, fireInstanceId);
+		
+		Backup backup = null;
+		
+		if (Assert.isNotNull(runHistory)) {
+			Optional<Backup> filter = runHistory.getBackups()
+					.stream()
+					.filter(r -> r.getType().equals(filename))
+					.findFirst();
+			
+			if (filter.isPresent()) {
+				backup = filter.get();
+			}
+		}
+		
+		AmazonS3 s3client = new AmazonS3Client();
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, backup.getFilename());
+    	
+    	S3Object s3Object = s3client.getObject(getObjectRequest);
+    	
+    	return IOUtils.toString(s3Object.getObjectContent());
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param accountProfile
+	 * 
+	 * 
+	 */
+	
+	public void terminateAllJobs(@Observes @Deactivate AccountProfile accountProfile) {
+		Set<ScheduledJob> scheduledJobs = findByOwner(accountProfile.getId());
+		scheduledJobs.stream().forEach(scheduledJob -> {
+			scheduledJob.setStatus(TERMINATED);
+			updateScheduledJob(scheduledJob);
+		});
 	}
 	
 	/**
@@ -169,21 +259,22 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	private void setupScheduledJob(ScheduledJob scheduledJob) {
 		
 		if (scheduledJob.getScheduleDate().before(Date.from(Instant.now()))) {
-			throw new ServiceException(Status.BAD_REQUEST, "Schedule Date cannot be before current date");
+			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
 		
-		if (! ("Scheduled".equals(scheduledJob.getStatus()) || "Stopped".equals(scheduledJob.getStatus()))) {
-			throw new ServiceException( Status.BAD_REQUEST, String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
+		if (! (SCHEDULED.equals(scheduledJob.getStatus()) || STOPPED.equals(scheduledJob.getStatus())) || TERMINATED.equals(scheduledJob.getStatus())) {
+			throw new ValidationException( String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		
-		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(new Id(scheduledJob.getJobTypeId()));
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( scheduledJob.getJobTypeId() );
 
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
+			
 			SalesforceConnector salesforceConnector = null;
 			try {
-				salesforceConnector = salesforceConnectorService.findSalesforceConnector( new Id( scheduledJob.getConnectorId() ) );
+				salesforceConnector = salesforceConnectorService.findSalesforceConnector( scheduledJob.getConnectorId() );
 			} catch (DocumentNotFoundException e) {
-				throw new ServiceException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
+				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}
 
 			Optional<Environment> environment = null;
@@ -194,7 +285,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 						.findFirst();
 				
 				if (! environment.isPresent()) {
-					throw new ServiceException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
+					throw new ValidationException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
 				}
 				
 			} else {

@@ -5,212 +5,68 @@
         <#include "navbar.html" />
 
         <div class="container-fluid">
-            
             <br>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <#include "sidebar.html"/>
+            </div>
 
             <div class="row">
-
-                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-
-                    <#include "sidebar.html"/>
-
-                </div>
-
-                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="header">
-                                    <h4 class="title">Email Statistics</h4>
-                                    <p class="category">Last Campaign Performance</p>
-                                </div>
-                                <div class="content">
-                                    <div id="chartPreferences" class="ct-chart ct-perfect-fourth"></div>
-
-                                    <div class="footer">
-                                        <div class="legend">
-                                            <i class="fa fa-circle text-info"></i> Open
-                                            <i class="fa fa-circle text-danger"></i> Bounce
-                                            <i class="fa fa-circle text-warning"></i> Unsubscribe
-                                            <i class="fa fa-refresh fa-spin"></i> Refresh
-                                        </div>
-                                        <hr>
-                                        <div class="stats">
-                                            <i class="fa fa-clock-o"></i> Campaign sent 2 days ago
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h4>${labels["salesforce.metadata.backups"]}</h4>
+                            <br>
+                            <div class="content table-responsive">
+                                <table id="salesforce-metadata-backup-status" class="table">
+                                    <thead>
+                                        <th class="col-xs-2 text-center">${labels["status"]}</th>
+                                        <th class="col-xs-6">${labels["instance"]}</th>
+                                        <th class="col-xs-4 text-right">${labels["run.date"]}</th>
+                                    </thead>
+                                    <tbody>
+                                        <#if scheduledJobList?size==0>
+                                            <tr>
+                                                <td class="text-center" colspan="3">&nbsp;</td>
+                                            </tr>
+                                        </#if>
+                                        <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                                                    <i class="fa fa-circle text-success"></i>
+                                                    <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                                                    <i class="fa fa-circle text-danger"></i>
+                                                    <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Stopped"> -->
+                                                    <i class="fa fa-circle text-warning"></i>
+                                                    <!--  <#elseif scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Terminated"> -->
+                                                    <i class="fa fa-circle text-info"></i>
+                                                    <!-- </#if> -->
+                                                </td>
+                                                <td>
+                                                    <a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.environmentName}</a>
+                                                </td>
+                                                <td class="text-right">
+                                                    <!--  <#if scheduledJob.lastRunDate??> -->
+                                                    ${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm"])!}
+                                                    <!--  <#else> -->
+                                                    ${(scheduledJob.scheduleDate?date?string.iso)!} ${(scheduledJob.scheduleDate?time?string["HH:mm"])!}
+                                                    <!-- </#if> -->
+                                                </td>
+                                            </tr>
+                                        </#list>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="header">
-                                    <h4 class="title">Users Behavior</h4>
-                                    <p class="category">24 Hours performance</p>
-                                </div>
-                                <div class="content">
-                                    <div id="chartHours" class="ct-chart"></div>
-                                    <div class="footer">
-                                        <div class="legend">
-                                            <i class="fa fa-circle text-info"></i> Open
-                                            <i class="fa fa-circle text-danger"></i> Click
-                                            <i class="fa fa-circle text-warning"></i> Click Second Time
-                                        </div>
-                                        <hr>
-                                        <div class="stats">
-                                            <i class="fa fa-history"></i> Updated 3 minutes ago
-                                        </div>
-                                    </div>
-                                </div>
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-circle text-success"></i>&nbsp;${labels["success"]}&emsp;
+                                <i class="fa fa-circle text-danger"></i>&nbsp;${labels["fail"]}&emsp;
+                                <i class="fa fa-circle text-warning"></i>&nbsp;${labels["stopped"]}&emsp;
+                                <i class="fa fa-circle text-info"></i>&nbsp;${labels["terminated"]}
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card ">
-                                <div class="header">
-                                    <h4 class="title">2014 Sales</h4>
-                                    <p class="category">All products including Taxes</p>
-                                </div>
-                                <div class="content">
-                                    <div id="chartActivity" class="ct-chart"></div>
-
-                                    <div class="footer">
-                                        <div class="legend">
-                                            <i class="fa fa-circle text-info"></i> Tesla Model S
-                                            <i class="fa fa-circle text-danger"></i> BMW 5 Series
-                                        </div>
-                                        <hr>
-                                        <div class="stats">
-                                            <i class="fa fa-check"></i> Data information certified
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="card ">
-                                <div class="header">
-                                    <h4 class="title">Tasks</h4>
-                                    <p class="category">Backend development</p>
-                                </div>
-                                <div class="content">
-                                    <div class="table-full-width">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" value="" data-toggle="checkbox">
-                                                        </label>
-                                                    </td>
-                                                    <td>Sign contract for "What are conference organizers afraid of?"</td>
-                                                    <td class="td-actions text-right">
-                                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-xs">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" value="" data-toggle="checkbox" checked="">
-                                                        </label>
-                                                    </td>
-                                                    <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                                                    <td class="td-actions text-right">
-                                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-xs">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" value="" data-toggle="checkbox" checked="">
-                                                        </label>
-                                                    </td>
-                                                    <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                                                    </td>
-                                                    <td class="td-actions text-right">
-                                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-xs">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" value="" data-toggle="checkbox">
-                                                        </label>
-                                                    </td>
-                                                    <td>Create 4 Invisible User Experiences you Never Knew About</td>
-                                                    <td class="td-actions text-right">
-                                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-xs">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" value="" data-toggle="checkbox">
-                                                        </label>
-                                                    </td>
-                                                    <td>Read "Following makes Medium better"</td>
-                                                    <td class="td-actions text-right">
-                                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-xs">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label class="checkbox">
-                                                            <input type="checkbox" value="" data-toggle="checkbox">
-                                                        </label>
-                                                    </td>
-                                                    <td>Unfollow 5 enemies from twitter</td>
-                                                    <td class="td-actions text-right">
-                                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-xs">
-                                                            <i class="fa fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-xs">
-                                                            <i class="fa fa-times"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <div class="footer">
-                                        <hr>
-                                        <div class="stats">
-                                            <i class="fa fa-history"></i> Updated 3 minutes ago
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="stats">
+                                <!-- <#assign refreshTime = .now> -->
+                                <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.iso} ${refreshTime?time?string["HH:mm:ss"]}
                             </div>
                         </div>
                     </div>

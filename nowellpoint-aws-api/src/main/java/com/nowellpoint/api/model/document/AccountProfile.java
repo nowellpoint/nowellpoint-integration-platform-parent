@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.model.codec.AccountProfileCodec;
@@ -14,7 +12,6 @@ import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="account.profiles", codec=AccountProfileCodec.class)
 public class AccountProfile extends MongoDocument {
@@ -75,11 +72,11 @@ public class AccountProfile extends MongoDocument {
 	
 	private Photos photos;
 	
+	private Subscription subscription;
+	
 	private String leadId;
 	
 	private Set<CreditCard> creditCards;
-	
-	private Set<SystemReference> systemReferences;
 	
 	private Boolean hasFullAccess;
 	
@@ -281,6 +278,14 @@ public class AccountProfile extends MongoDocument {
 		this.photos = photos;
 	}
 
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
 	public String getLeadId() {
 		return leadId;
 	}
@@ -295,14 +300,6 @@ public class AccountProfile extends MongoDocument {
 
 	public void setCreditCards(Set<CreditCard> creditCards) {
 		this.creditCards = creditCards;
-	}
-
-	public Set<SystemReference> getSystemReferences() {
-		return systemReferences;
-	}
-
-	public void setSystemReferences(Set<SystemReference> systemReferences) {
-		this.systemReferences = systemReferences;
 	}
 
 	public Boolean getHasFullAccess() {

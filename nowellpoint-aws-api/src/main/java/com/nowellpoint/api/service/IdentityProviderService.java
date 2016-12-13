@@ -5,38 +5,41 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.dto.idp.Token;
-import com.nowellpoint.api.model.dto.AccountProfile;
-import com.nowellpoint.api.model.dto.ErrorDTO;
-import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Deactivate;
+import com.nowellpoint.api.model.domain.ErrorDTO;
+import com.nowellpoint.api.model.domain.idp.SearchResult;
+import com.nowellpoint.api.model.domain.idp.Token;
+import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.aws.model.admin.Properties;
-import com.nowellpoint.client.model.idp.Account;
-import com.nowellpoint.client.model.idp.Group;
-import com.nowellpoint.client.model.idp.Groups;
-import com.nowellpoint.client.model.idp.SearchResult;
+import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
+import com.stormpath.sdk.directory.Directory;
 import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
+import com.stormpath.sdk.oauth.OAuthClientCredentialsGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRequests;
-import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -53,6 +56,7 @@ public class IdentityProviderService {
 	private static ApiKey apiKey;
 	private static Client client;
 	private static Application application;
+	private static Directory directory;
 	
 	static {
 		apiKey = ApiKeys.builder()
@@ -66,16 +70,45 @@ public class IdentityProviderService {
 		
 		application = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/applications/")
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
+		
+		directory = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/directories/")
+				.concat(System.getProperty(Properties.STORMPATH_DIRECTORY_ID)), Directory.class);
+	}
+	
+	/**
+	 * 
+	 * @param apiKey
+	 * @return
+	 */
+	
+	public Token authenticate(ApiKey apiKey) {
+		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
+				.builder()
+				.setApiKeyId(apiKey.getId())
+				.setApiKeySecret(apiKey.getSecret())
+				.build();
+		
+		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST_AUTHENTICATOR
+				.forApplication(application)
+				.authenticate(request);
+		
+		AccessToken accessToken = result.getAccessToken();
+        
+        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
+        
+        Token token = createToken(result, accountProfile.getId());
+        
+        return token;
 	}
 	
 	/**
 	 * 
 	 * @param username
 	 * @param password
-	 * @return the Authentication token
+	 * @return
 	 */
 	
-	public Token authenticate(String username, String password) throws ResourceException {			
+	public Token authenticate(String username, String password) {			
 		OAuthPasswordGrantRequestAuthentication request = OAuthRequests.OAUTH_PASSWORD_GRANT_REQUEST
 				.builder()
 				.setLogin(username)
@@ -88,49 +121,17 @@ public class IdentityProviderService {
         
         AccessToken accessToken = result.getAccessToken();
         
-        Account account = new Account();
-        account.setEmail(accessToken.getAccount().getEmail());
-        account.setFullName(accessToken.getAccount().getFullName());
-        account.setGivenName(accessToken.getAccount().getGivenName());
-        account.setHref(accessToken.getAccount().getHref());
-        account.setMiddleName(accessToken.getAccount().getMiddleName());
-        account.setSurname(accessToken.getAccount().getSurname());
-        account.setStatus(accessToken.getAccount().getStatus().name());
-        account.setUsername(accessToken.getAccount().getUsername());
+        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
         
-        Groups groups = new Groups();
-        groups.setHref(accessToken.getAccount().getGroups().getHref());
-        groups.setLimit(accessToken.getAccount().getGroups().getLimit());
-        groups.setOffset(accessToken.getAccount().getGroups().getOffset());
-        groups.setSize(accessToken.getAccount().getGroups().getSize());
-        
-        account.setGroups(groups);
-        
-        if (accessToken.getAccount().getGroups().getSize() > 0) {
-        	Set<Group> items = new HashSet<Group>();
-            accessToken.getAccount().getGroups().forEach(g -> {
-            	Group group = new Group();
-            	group.setHref(g.getHref());
-            	group.setName(g.getName());
-            	items.add(group);
-            });
-            account.getGroups().setItems(items);
-        }
-        
-        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(account.getHref());
-        
-        Token token = createToken(result, accountProfile.getId().toString());
+        Token token = createToken(result, accountProfile.getId());
         
         return token;
 	}
 	
 	/**
 	 * 
-	 * 
 	 * @param username
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Boolean isEnabledAccount(String username) {
@@ -148,8 +149,8 @@ public class IdentityProviderService {
 		if (searchResult.getSize() == 0) {
 			return false;
 		} else {
-			Account account = searchResult.getItems().get(0);
-			if ("ENABLED".equals(account.getStatus())) {
+			User user = searchResult.getItems().get(0);
+			if ("ENABLED".equals(user.getStatus())) {
 				return true;
 			}
 			return false;
@@ -158,16 +159,13 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param id
 	 * @return
-	 * 
-	 * 
 	 */
 	
-	public Account getAccount(String id) {
+	public User getAccount(String id) {
 		
-		Account account = null;
+		User user = null;
 		
 		HttpResponse httpResponse = RestResource.get(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -177,26 +175,23 @@ public class IdentityProviderService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
+			user = httpResponse.getEntity(User.class);
 		} else {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
 	 * 
-	 * 
 	 * @param href
 	 * @return
-	 * 
-	 * 
 	 */
 	
-	public Account getAccountByHref(String href) {
+	public User getAccountByHref(String href) {
 		
-		Account account = null;
+		User user = null;
 		
 		HttpResponse httpResponse = RestResource.get(href)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -205,105 +200,72 @@ public class IdentityProviderService {
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
 		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
+			user = httpResponse.getEntity(User.class);
 		} else {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
 	 * 
-	 * 
-	 * @param account
-	 * 
-	 * 
+	 * @param user
 	 */
 	
-	public Account createAccount(Account account) {	
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.contentType(MediaType.APPLICATION_JSON)
-				.path("directories")
-				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
-				.path("accounts")
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.body(account)
-				.execute();
-
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+	public void createUser(User user) {	
 		
-		if (httpResponse.getStatusCode() == 201) {
-			account = httpResponse.getEntity(Account.class);
-		} else {
-			LOGGER.error(httpResponse.getAsString());
-		}
+		Account account = client.instantiate(Account.class)
+				.setUsername(user.getUsername())
+			    .setEmail(user.getUsername())
+			    .setGivenName(user.getGivenName())
+			    .setSurname(user.getSurname())
+			    .setStatus(AccountStatus.valueOf(user.getStatus()))
+			    .setPassword(user.getPassword());
 		
-		return account;
+		directory.createAccount(account);
+		
+		user.setHref(account.getHref());
 	}
 	
 	/**
 	 * 
-	 * 
-	 * @param account
-	 * 
-	 * 
+	 * @param user
 	 */
 	
-	public Account updateAccount(Account account) {	
-		HttpResponse httpResponse = RestResource.post(account.getHref())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.body(account)
-				.execute();
+	public void updateUser(User user) {	
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
+		Account account = client.getResource(user.getHref(), Account.class)
+				.setUsername(user.getUsername())
+			    .setEmail(user.getUsername())
+			    .setGivenName(user.getGivenName())
+			    .setSurname(user.getSurname())
+			    .setPassword(user.getPassword())
+			    .setStatus(AccountStatus.valueOf(user.getStatus()));
 		
-		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
-		} else {
-			LOGGER.error(httpResponse.getAsString());
-		}
-		
-		return account;
+		account.save();
 	}
 	
 	/**
 	 * 
-	 * 
-	 * @param href
-	 * 
-	 * 
+	 * @param accountProfile
 	 */
 	
-	public void disableAccount(String href) {
-		Account account = new Account();
-		account.setStatus("DISABLED");
+	public void deactivateUser(@Observes @Deactivate AccountProfile accountProfile) {
 		
-		HttpResponse httpResponse = RestResource.post(href)
-				.contentType(MediaType.APPLICATION_JSON)
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.body(account)
-				.execute();
+		Account account = client.getResource(accountProfile.getHref(), Account.class)
+				.setStatus(AccountStatus.DISABLED);
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
-		if (httpResponse.getStatusCode() != 200) {
-			throw new ServiceException(httpResponse.getAsString());
-		}
+		account.save();
 	}
 	
 	/**
-	 * 
 	 * 
 	 * @param subject
 	 * @return
-	 * 
-	 * 
 	 */
 	
-	public Account getAccountBySubject(String subject) {		
+	public User getAccountBySubject(String subject) {		
 		HttpResponse httpResponse = RestResource.get(subject)
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
 				.queryParameter("expand","groups")
@@ -311,23 +273,21 @@ public class IdentityProviderService {
 			
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
 		
-		Account account = null;
+		User user = null;
+		
 		if (httpResponse.getStatusCode() == 200) {
-			account = httpResponse.getEntity(Account.class);
+			user = httpResponse.getEntity(User.class);
 		} else {
-			LOGGER.error(httpResponse.getAsString());
+			throw new ValidationException(httpResponse.getAsString());
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
 	 * 
-	 * 
 	 * @param bearerToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public Token refresh(String bearerToken) {		
@@ -348,11 +308,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param bearerToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public String verify(String bearerToken) {		
@@ -370,14 +327,11 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param username
-	 * @return the Account associated with the @param username
-	 * 
-	 * 
+	 * @return
 	 */
 	
-	public Account findAccountByUsername(String username) {
+	public User findByUsername(String username) {
 		
 		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
 				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
@@ -388,23 +342,20 @@ public class IdentityProviderService {
 				.path("?username=".concat(username))
 				.execute();
 		
-		Account account = null;
+		User user = null;
 		
 		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
 		
 		if (searchResult.getSize() == 1) {
-			account = searchResult.getItems().get(0);
+			user = searchResult.getItems().get(0);
 		}
 		
-		return account;
+		return user;
 	}
 	
 	/**
 	 * 
-	 * 
 	 * @param bearerToken
-	 * 
-	 * 
 	 */
 	
 	public void revoke(String bearerToken) {		
@@ -418,8 +369,6 @@ public class IdentityProviderService {
 				.path(claims.getBody().getId())
 				.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
 		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
 			ObjectNode response = httpResponse.getEntity(ObjectNode.class);
 			LOGGER.warn(response.toString()); 
@@ -428,11 +377,8 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param emailVerificationToken
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	public String verifyEmail(String emailVerificationToken) {	
@@ -448,7 +394,7 @@ public class IdentityProviderService {
 
 		if (httpResponse.getStatusCode() != Status.OK) {
 			ErrorDTO error = new ErrorDTO(response.get("code").asInt(), response.get("developerMessage").asText());
-			throw new ServiceException(error); 
+			throw new ValidationException(error.getMessage()); 
 		}
 		
 		return response.get("href").asText();
@@ -456,23 +402,24 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * 
 	 * @param result
-	 * @param key
+	 * @param subject
 	 * @return
-	 * 
-	 * 
 	 */
 	
 	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {
-		String id = UserContext.parseClaims(result.getAccessTokenString()).getBody().getId();
 		
-		Date expiration = UserContext.parseClaims(result.getAccessTokenString()).getBody().getExpiration();
+		Jws<Claims> claims = Jwts.parser()
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+				.parseClaimsJws(result.getAccessTokenString()); 
+		
+		String id = claims.getBody().getId();
+		Date expiration = claims.getBody().getExpiration();
 		
 		Set<String> groups = new HashSet<String>();
-		result.getAccessToken().getAccount().getGroups().forEach(g -> {
-			groups.add(g.getName());
-        });
+		result.getAccessToken().getAccount().getGroups().forEach(g -> 
+			groups.add(g.getName())
+        );
 		
 		String jwt = Jwts.builder()
         		.setId(id)
@@ -481,7 +428,7 @@ public class IdentityProviderService {
         		.setSubject(subject)
         		.setIssuedAt(new Date(System.currentTimeMillis()))
         		.setExpiration(expiration)
-        		.signWith(SignatureAlgorithm.HS256, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+        		.signWith(SignatureAlgorithm.HS512, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
         		.claim("groups", groups.toArray(new String[groups.size()]))
         		.compact();	 
 		

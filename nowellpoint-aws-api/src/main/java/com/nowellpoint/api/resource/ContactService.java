@@ -2,11 +2,6 @@ package com.nowellpoint.api.resource;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
@@ -18,8 +13,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -57,67 +53,50 @@ public class ContactService {
     		@FormParam("company") String company,
     		@FormParam("description") String description) {
 		
-		ExecutorService executor = Executors.newSingleThreadExecutor();
+		Lead lead = new Lead();
+		lead.setLeadSource(leadSource);
+		lead.setFirstName(firstName);
+		lead.setLastName(lastName);
+		lead.setEmail(email);
+		lead.setDescription(description);
+		lead.setCompany(company);
+		lead.setPhone(phone);
+		lead.setCountryCode("US");
 		
-		Future<Lead> submitLeadTask = executor.submit(() -> {
-			
-			Lead lead = new Lead();
-			lead.setLeadSource(leadSource);
-			lead.setFirstName(firstName);
-			lead.setLastName(lastName);
-			lead.setEmail(email);
-			lead.setDescription(description);
-			lead.setCompany(company);
-			lead.setPhone(phone);
-			lead.setCountryCode("US");
-
-			UsernamePasswordGrantRequest request = OauthRequests.USERNAME_PASSWORD_GRANT_REQUEST.builder()
-					.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-					.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-					.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
-					.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
-					.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
-					.build();
-			
-			OauthAuthenticationResponse response = Authenticators.USERNAME_PASSWORD_GRANT_AUTHENTICATOR
-					.authenticate(request);
-			
-			Token token = response.getToken();
-				
-			HttpResponse httpResponse = RestResource.post(token.getInstanceUrl())
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
-					.path("services/apexrest/nowellpoint/lead")
-					.bearerAuthorization(token.getAccessToken())
-					.body(lead)
-					.execute();
-			
-			LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
-			
-			if (httpResponse.getStatusCode() != 200 && httpResponse.getStatusCode() != 201) {
-				Error error = httpResponse.getEntity(Error.class);
-				throw new Exception(error.getErrorDescription());
-			}
-			
-			String leadId = httpResponse.getAsString();
-			
-			lead.setId(leadId);
-			
-			return lead;
-		});
-
-		executor.shutdown();
+		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setUsername(System.getProperty(Properties.SALESFORCE_USERNAME))
+				.setPassword(System.getProperty(Properties.SALESFORCE_PASSWORD))
+				.setSecurityToken(System.getProperty(Properties.SALESFORCE_SECURITY_TOKEN))
+				.build();
 		
-		Lead lead = null;
-		try {
-			executor.awaitTermination(30, TimeUnit.SECONDS);
-			lead = submitLeadTask.get();
-		} catch (InterruptedException | ExecutionException e) {
-			throw new WebApplicationException(e.getMessage(), Status.INTERNAL_SERVER_ERROR);
+		OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		Token token = response.getToken();
+		
+		HttpResponse httpResponse = RestResource.post(token.getInstanceUrl())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.path("services/apexrest/nowellpoint/lead")
+				.bearerAuthorization(token.getAccessToken())
+				.body(lead)
+				.execute();
+		
+		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
+		
+		if (httpResponse.getStatusCode() != 200 && httpResponse.getStatusCode() != 201) {
+			Error error = httpResponse.getEntity(Error.class);
+			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
+			builder.entity(error);
+			throw new WebApplicationException(builder.build());
 		}
+			
+		String leadId = httpResponse.getAsString();
 		
-		Map<String,String> response = new HashMap<String,String>();
-		response.put("leadId", lead.getId());
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("leadId", leadId);
 		
 		return Response.ok(response).build();
 	}

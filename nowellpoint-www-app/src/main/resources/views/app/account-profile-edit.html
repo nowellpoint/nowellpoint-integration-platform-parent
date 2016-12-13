@@ -6,7 +6,7 @@
                 <div class="dashhead m-t-md">
                     <div class="dashhead">
                         <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">${labels["edit.user.profile"]}</h6>
+                            <h3 class="dashhead-title">${labels["edit.user.profile"]}</h3>
                         </div>
                     </div>
                 </div>
@@ -25,54 +25,120 @@
 
                 <br>
 
-                <form class="form-vertical" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}">
+                <form class="form-horizontal" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}">
                     <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
 
-                    <div class="row">
-                        <div class="form-group col-md-2"></div>
-                        <div class="form-group col-md-8">
+                    <div class="col-sm-3"></div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="firstName">${labels["first.name"]}</label>
-                                <input type="text" class="form-control" name="firstName" id="firstName" autofocus="" value="${accountProfile.firstName!}" />
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="lastName">${labels["last.name"]}</label>
-                                <input type="text" class="form-control" name="lastName" id="lastName" value="${accountProfile.lastName!}" />
-                            </div>
+                    <div class="col-sm-6">
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="company">${labels["company"]}</label>
-                                <input type="text" class="form-control" name="company" id="company" value="${accountProfile.company!}" />
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="firstName">${labels["first.name"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" autofocus="" value="${accountProfile.firstName!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="division">${labels["division"]}</label>
-                                <input type="text" class="form-control" name="division" id="division" value="${accountProfile.division!}" />
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="lastName">${labels["last.name"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${accountProfile.lastName!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="department">${labels["department"]}</label>
-                                <input type="text" class="form-control" name="department" id="department" value="${accountProfile.department!}" />
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="company">${labels["company"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="company" id="company" placeholder="${labels['company']}" value="${accountProfile.company!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="title">${labels["title"]}</label>
-                                <input type="text" class="form-control" name="title" id="title" value="${accountProfile.title!}" />
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="division">${labels["division"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="division" id="division" placeholder="${labels['division']}" value="${accountProfile.division!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="email">${labels["email"]}</label>
-                                <input type="text" class="form-control" name="email" id="email" value="${accountProfile.email!}" />
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="department">${labels["department"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="department" id="department" placeholder="${labels['department']}" value="${accountProfile.department!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="fax">${labels["fax"]}</label>
-                                <input type="text" class="form-control" name="fax" id="fax" value="${accountProfile.fax!}" />
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["title"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="title" id="title" placeholder="${labels['title']}" value="${accountProfile.title!}" />
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-12">
+                        <div class="hr-divider"></div>
+                        <br>
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-6">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["email"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="email" id="email" placeholder="${labels['email']}" value="${accountProfile.email!}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["mobile.phone"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" placeholder="${labels['mobile.phone']}" value="${accountProfile.mobilePhone!}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["phone"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="phone" id="phone" placeholder="${labels['phone']}" value="${accountProfile.phone!}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["extension"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="extension" id="extension" placeholder="${labels['extension']}" value="${accountProfile.extension!}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["fax"]}</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="fax" id="fax" placeholder="${labels['fax']}" value="${accountProfile.fax!}" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-12">
+                        <div class="hr-divider"></div>
+                        <br>
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-6">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["language.key"]}</label>
+                            <div class="col-sm-8">
                                 <select id="languageSidKey" name="languageSidKey" class="form-control" required>
                                     <#list languages?keys as key>
                                         <#if accountProfile.languageSidKey==key>
@@ -84,9 +150,11 @@
                                     </#list>
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["locale.key"]}</label>
+                            <div class="col-sm-8">
                                 <select id="localeSidKey" name="localeSidKey" class="form-control" required>
                                     <#list locales?keys as key>
                                         <#if accountProfile.localeSidKey==key>
@@ -98,9 +166,11 @@
                                     </#list>
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="title">${labels["timezone.key"]}</label>
+                            <div class="col-sm-8">
                                 <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
                                     <#list timeZones as timeZone>
                                         <#if accountProfile.timeZoneSidKey==timeZone>
@@ -112,48 +182,33 @@
                                     </#list>
                                 </select>
                             </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="mobilePhone">${labels["mobile.phone"]}</label>
-                                <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" value="${accountProfile.mobilePhone!}" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="phone">${labels["phone"]}</label>
-                                <input type="text" class="form-control" name="phone" id="phone" value="${accountProfile.phone!}" />
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label class="control-label" for="extension">${labels["extension"]}</label>
-                                <input type="text" class="form-control" name="extension" id="extension" value="${accountProfile.extension!}" />
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <label class="checkbox-inline">
-                                    <!-- <#if accountProfile.enableSalesforceLogin> -->
-                                    <input type="checkbox" name="enableSalesforceLogin" id="enableSalesforceLogin" checked/>${labels["enable.salesforce.login"]}
-                                    <!-- <#else> -->
-                                    <input type="checkbox" name="enableSalesforceLogin" id="enableSalesforceLogin" />${labels["enable.salesforce.login"]}
-                                    <!-- </#if> -->
-                                </label>
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <div class="pull-right">
-                                    <a href="${labels['base.path']}/${(accountProfile.id)!}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
-                                </div>
-                            </div>
-
                         </div>
 
 
-                        <div class="form-group col-md-2"></div>
-
                     </div>
+
+                    <div class="col-sm-3"></div>
+                    
+                    <div class="col-sm-12">
+                        <br>
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="pull-right">
+                                    <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                                </div>
+                            </div>
+                        </div>    
+                    </div>
+
+                    <div class="col-sm-3"></div>
+
                 </form>
-
-
 
             </div>
 
