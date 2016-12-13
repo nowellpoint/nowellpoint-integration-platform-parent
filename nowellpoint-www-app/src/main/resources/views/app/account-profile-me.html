@@ -83,10 +83,8 @@
                 <dl class="dl-vertical">
                     <dt>${labels["plan.name"]}</dt>
                     <dd>${(accountProfile.subscription.planName)!}&emsp;</dd>
-                    <br>
                     <dt>${labels["price"]}</dt>
                     <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}&emsp;</dd>
-                    <br>
                     <dt>${labels["billed"]}&emsp;</dt>
                     <dd>${(accountProfile.subscription.billingFrequency)!}
                         <br>
