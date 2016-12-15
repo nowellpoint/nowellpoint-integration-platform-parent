@@ -154,3 +154,12 @@ label {
     border-radius: 4px;
     padding: 6px;
 }
+
+.navbar-nav>li>a {
+    padding-top: 27px;
+}
+
+.navbar-default .navbar-nav>li>a:hover  {
+    color: #ee4137;
+    
+}
