@@ -123,7 +123,7 @@ label {
   font-style: normal;
 }
 
-[data-icon]:before, [class="icon-nav-bar-logo"] {
+[data-icon]:before, [class="icon-nav-bar-logo"]:before {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: none;
@@ -144,10 +144,7 @@ label {
     color: black;
 }
 
-.icon-nav-bar-logo:hover {
-   content: "\e900";
-    color: #ee4137;
-}
+
 
 .how-can-we-help {
     border: 1px solid #9E9E9E;
@@ -166,4 +163,13 @@ label {
 
 .fa-3x {
     color: #777;
+}
+
+p {
+padding-top: 10px;
+    
+}
+
+.country-name {
+    border: 1px solid #9E9E9E;
 }
