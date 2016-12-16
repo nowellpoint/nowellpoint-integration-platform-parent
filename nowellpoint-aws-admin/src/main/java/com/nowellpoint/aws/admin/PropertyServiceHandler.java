@@ -29,17 +29,16 @@ import com.nowellpoint.aws.model.admin.Property;
 
 public class PropertyServiceHandler implements RequestStreamHandler {
 	
-	private static String KEY_ALIAS = "alias/DATA_ENCRYPTION_KEY";
-	private static AWSKMS kms = new AWSKMSClient();
+	private static AWSKMS kmsClient = new AWSKMSClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	
-	private static String getKeyId() {
+	private static String getKeyId(String keyAlias) {
 
-		ListAliasesResult listAliasesResult = kms.listAliases();
+		ListAliasesResult listAliasesResult = kmsClient.listAliases();
 		
 		Optional<AliasListEntry> aliasListEntry = listAliasesResult.getAliases()
 				.stream()
-				.filter(entry -> KEY_ALIAS.equals(entry.getAliasName()))
+				.filter(entry -> keyAlias.equals(keyAlias))
 				.findFirst();
 		
 		String keyId = null;
@@ -59,11 +58,15 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 		
 		logger.log("getting properties for: " + node.toString());
 		
-		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), getKeyId(), null);			
+		String keyAlias = System.getenv("KEY_ALIAS");
+		
+		logger.log("using encryption key: " + keyAlias);
+		
+		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), getKeyId(keyAlias), null);			
 		DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
 		
 		Property property = new Property();
-		property.setSubject(node.get("propertyStore").asText());
+		property.setSubject(node.get("propertyStore").asText().toUpperCase());
 		
 		DynamoDBQueryExpression<Property> queryExpression = new DynamoDBQueryExpression<Property>()
 				.withHashKeyValues(property);
