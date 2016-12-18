@@ -53,7 +53,7 @@ public class SalesforceOauthController extends AbstractController {
     			.queryParameter("state", request.queryParams("id"))
     			.execute();
 		
-		response.redirect(httpResponse.getHeaders().get("Location").get(0));		
+		response.redirect(httpResponse.getHeaders().get("Location"));		
 		
 		return "";
 	};
