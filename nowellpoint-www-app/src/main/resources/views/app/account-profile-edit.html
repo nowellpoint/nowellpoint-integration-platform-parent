@@ -1,20 +1,18 @@
 <#import "template.html" as t>
     <@t.page>
-        <div class="dashhead m-t-md">
-            <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["edit.user.profile"]}</h3>
-            </div>
-        </div>
-        <div class="hr-divider"></div>
         <#if errorMessage??>
             <div id="alert" class="alert alert-danger">
                 <a class="close" data-dismiss="alert">×</a>
                 <div class="text-center">${errorMessage}</div>
             </div>
         </#if>
-
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["edit.user.profile"]}</h3>
+            </div>
+        </div>
+        <div class="hr-divider"></div>
         <br>
-
         <form class="form-vertical" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}">
 
             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />

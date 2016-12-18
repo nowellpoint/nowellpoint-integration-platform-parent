@@ -11,7 +11,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.model.domain.idp.User;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;

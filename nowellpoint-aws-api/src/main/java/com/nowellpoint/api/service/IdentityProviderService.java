@@ -13,7 +13,6 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.ErrorDTO;
 import com.nowellpoint.api.model.domain.idp.SearchResult;
 import com.nowellpoint.api.model.domain.idp.Token;
@@ -22,7 +21,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.api.ApiKey;
@@ -239,21 +238,19 @@ public class IdentityProviderService {
 				.setUsername(user.getUsername())
 			    .setEmail(user.getUsername())
 			    .setGivenName(user.getGivenName())
-			    .setSurname(user.getSurname())
-			    .setPassword(user.getPassword())
-			    .setStatus(AccountStatus.valueOf(user.getStatus()));
+			    .setSurname(user.getSurname());
 		
 		account.save();
 	}
 	
 	/**
 	 * 
-	 * @param accountProfile
+	 * @param href
 	 */
 	
-	public void deactivateUser(@Observes @Deactivate AccountProfile accountProfile) {
+	public void deactivateUser(String href) {
 		
-		Account account = client.getResource(accountProfile.getHref(), Account.class)
+		Account account = client.getResource(href, Account.class)
 				.setStatus(AccountStatus.DISABLED);
 		
 		account.save();

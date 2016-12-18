@@ -41,7 +41,6 @@ com/nowellpoint/client/auth/PasswordGrantRequest.class
 com/nowellpoint/client/model/CreditCard.class
 com/nowellpoint/client/model/RunHistory.class
 com/nowellpoint/client/resource/SalesforceConnectorResource$SObjectDetailResource.class
-com/nowellpoint/client/model/Property.class
 com/nowellpoint/client/auth/OauthRequests$RevokeTokenRequestFactory.class
 com/nowellpoint/client/auth/OauthRequests.class
 com/nowellpoint/client/auth/impl/PasswordGrantRequestImpl.class

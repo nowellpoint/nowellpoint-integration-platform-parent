@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Properties;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.nowellpoint.aws.model.admin.Property;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 
 public class CreateProperties {

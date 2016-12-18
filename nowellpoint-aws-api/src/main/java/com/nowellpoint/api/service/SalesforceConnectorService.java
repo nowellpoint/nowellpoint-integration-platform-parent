@@ -47,7 +47,7 @@ import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.CountRequest;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;

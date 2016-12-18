@@ -18,7 +18,7 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.NotFoundException;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 public class TestPaymentService {
 	
@@ -27,7 +27,7 @@ public class TestPaymentService {
 	@BeforeClass
 	public static void beforeClass() {
 		
-		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 		
 		gateway = new BraintreeGateway(Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
 				System.getProperty(Properties.BRAINTREE_MERCHANT_ID),

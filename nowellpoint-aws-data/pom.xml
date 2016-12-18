@@ -53,6 +53,11 @@
 			<version>${jedis.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.nowellpoint</groupId>
+            <artifactId>nowellpoint-aws-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${version.junit}</version>

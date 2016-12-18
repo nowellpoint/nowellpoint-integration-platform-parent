@@ -25,7 +25,6 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.admin.Property;
 
 public class PropertyServiceHandler implements RequestStreamHandler {
 	

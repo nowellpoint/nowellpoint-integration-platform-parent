@@ -19,19 +19,19 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.util.Properties;
 
 public class TestRestApi {
 	
 	@BeforeClass
 	public static void init() {
-		Properties.setSystemProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 	}
 
 	//@Test

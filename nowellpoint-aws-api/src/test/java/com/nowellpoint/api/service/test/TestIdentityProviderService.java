@@ -3,7 +3,7 @@ package com.nowellpoint.api.service.test;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
@@ -22,7 +22,7 @@ public class TestIdentityProviderService {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 		
 		System.out.println(System.getProperty(Properties.STORMPATH_API_KEY_ID));
 		System.out.println(System.getProperty(Properties.STORMPATH_API_KEY_SECRET));

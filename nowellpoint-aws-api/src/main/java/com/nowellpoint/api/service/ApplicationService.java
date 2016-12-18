@@ -15,7 +15,7 @@ import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.mapper.ApplicationModelMapper;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;
 
 /**

@@ -14,7 +14,7 @@ import com.braintreegateway.Subscription;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 public class PaymentGatewayService {
 	

@@ -20,7 +20,7 @@ import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.ScheduledJob;
 import com.nowellpoint.api.model.domain.UserInfo;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 
 /**

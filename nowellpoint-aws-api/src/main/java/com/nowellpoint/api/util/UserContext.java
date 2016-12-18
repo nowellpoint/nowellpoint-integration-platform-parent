@@ -7,7 +7,7 @@ import java.util.Collections;
 
 import javax.ws.rs.core.SecurityContext;
 
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

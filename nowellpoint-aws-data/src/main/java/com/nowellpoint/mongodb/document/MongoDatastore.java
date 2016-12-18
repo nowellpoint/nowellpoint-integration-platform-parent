@@ -34,7 +34,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 @WebListener
 public class MongoDatastore implements ServletContextListener {
@@ -52,6 +52,8 @@ public class MongoDatastore implements ServletContextListener {
 	public static void registerCodecs(List<Codec<?>> codecs) {
 		
 		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(codecs));
+		
+		System.out.println("mongo client uri: " + System.getProperty(Properties.MONGO_CLIENT_URI));
 		
 		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
 	}

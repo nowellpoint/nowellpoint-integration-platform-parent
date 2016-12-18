@@ -25,7 +25,7 @@ import javax.servlet.annotation.WebListener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

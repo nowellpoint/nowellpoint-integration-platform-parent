@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.model.admin;
+package com.nowellpoint.aws.admin;
 
 import java.util.Date;
 

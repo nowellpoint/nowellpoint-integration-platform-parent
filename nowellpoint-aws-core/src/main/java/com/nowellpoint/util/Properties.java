@@ -1,16 +1,20 @@
-package com.nowellpoint.aws.model.admin;
+package com.nowellpoint.util;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Properties {
-	
-	private static DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	public static final String LOGGLY_API_KEY = "loggly.api.key";
 	public static final String LOGGLY_API_ENDPOINT = "loggly.api.endpoint";
@@ -45,37 +49,28 @@ public class Properties {
 	public static final String VERIFY_EMAIL_REDIRECT = "verify.email.redirect";
 	public static final String CLOUDFRONT_HOSTNAME = "cloudfront.hostname";
 	
-	public static String getProperty(String store, String key) {
-		return mapper.load(Property.class, store, key).getValue();
-	}
-	
-	public static String getProperty(PropertyStore store, String key) {
-		return getProperty(store.name(), key);
-	}
-	
-	public static Map<String,Property> getProperties(PropertyStore store) {
-		return getProperties(store.name());
-	}
-	
-	public static Map<String,Property> getProperties(String subject) {
-		Property property = new Property();
-		property.setSubject(subject);
+	public static void loadProperties(String propertyStore) {
+		URIBuilder builder = new URIBuilder().setScheme("https")
+				.setHost("ainsh4j3sk.execute-api.us-east-1.amazonaws.com")
+				.setPath(String.format("/production/properties/%s", propertyStore));
 		
-		DynamoDBQueryExpression<Property> queryExpression = new DynamoDBQueryExpression<Property>()
-				.withHashKeyValues(property);
-		
-		List<Property> properties = mapper.query(Property.class, queryExpression);
-		
-		return properties.stream().collect(Collectors.toMap(Property::getKey, p -> p));
-	}
-	
-	public static void setSystemProperties(PropertyStore store) {
-		setSystemProperties(store.name());
-	}
-	
-	public static void setSystemProperties(String store) {
-		getProperties(store).entrySet().forEach(property -> {
-        	System.setProperty(property.getValue().getKey(), property.getValue().getValue());
-        });
+		HttpClient client = HttpClientBuilder.create().build();
+		try {
+			HttpGet request = new HttpGet(builder.build());
+			request.addHeader("x-api-key", System.getenv("X_API_KEY"));
+			
+			HttpResponse response = client.execute(request);
+			
+			if (response.getStatusLine().getStatusCode() != 200) {
+				System.out.println(new ObjectMapper().readValue(response.getEntity().getContent(), JsonNode.class));
+			}
+			
+			Map<String, String> properties = new ObjectMapper().readValue(response.getEntity().getContent(), new TypeReference<Map<String,String>>() {});
+			properties.keySet().stream().forEach(key -> {
+				System.setProperty(key, properties.get(key));
+			});
+		} catch (URISyntaxException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

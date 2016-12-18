@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.model.admin;
+package com.nowellpoint.aws.admin;
 
 public enum PropertyStore {
 	SANDBOX,

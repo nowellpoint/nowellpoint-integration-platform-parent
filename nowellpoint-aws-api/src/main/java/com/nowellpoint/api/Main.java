@@ -11,7 +11,7 @@ import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 import org.wildfly.swarm.logging.LoggingFraction;
 
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 public class Main {
 	
@@ -48,7 +48,7 @@ public class Main {
         // set system properties from configuration
         //
 
-        Properties.setSystemProperties(container
+        Properties.loadProperties(container
                 .stageConfig()
                 .resolve("propertyStore.name")
                 .getValue());

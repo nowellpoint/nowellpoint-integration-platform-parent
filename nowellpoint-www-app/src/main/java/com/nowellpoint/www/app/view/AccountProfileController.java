@@ -375,6 +375,9 @@ public class AccountProfileController extends AbstractController {
 			Map<String, Object> model = getModel();
 			model.put("account", account);
 			model.put("accountProfile", accountProfile);
+			model.put("locales", new TreeMap<String, String>(getLocales(account)));
+			model.put("languages", getSupportedLanguages());
+			model.put("timeZones", getTimeZones());
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);
