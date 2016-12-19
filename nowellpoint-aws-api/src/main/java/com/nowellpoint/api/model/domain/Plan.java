@@ -9,6 +9,8 @@ public class Plan extends AbstractResource {
 	 */
 	
 	private static final long serialVersionUID = 7197168560685144490L;
+	
+	private Boolean recommendedPlan;
 
 	private String localeSidKey;
 	
@@ -26,6 +28,14 @@ public class Plan extends AbstractResource {
 	
 	public Plan() {
 		
+	}
+
+	public Boolean getRecommendedPlan() {
+		return recommendedPlan;
+	}
+
+	public void setRecommendedPlan(Boolean recommendedPlan) {
+		this.recommendedPlan = recommendedPlan;
 	}
 
 	public String getLocaleSidKey() {

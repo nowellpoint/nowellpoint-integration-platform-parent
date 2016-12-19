@@ -33,7 +33,6 @@ import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
-import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PlanService;
@@ -184,21 +183,8 @@ public class AccountProfileResource {
 		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
 		accountProfileService.updateAccountProfile( accountProfile );
-				
-		//
-		// update identity
-		//
 		
-		User user = new User();
-		user.setGivenName(firstName);
-		user.setMiddleName(null);
-		user.setSurname(lastName);
-		user.setEmail(email);
-		user.setUsername(email);
-		user.setHref(accountProfile.getHref());
-		user.setStatus("ENABLED");
-		
-		identityProviderService.updateUser(user);
+		identityProviderService.updateUser(accountProfile.getHref(), email, firstName, lastName);
 		
 		return Response.ok(accountProfile)
 				.build();

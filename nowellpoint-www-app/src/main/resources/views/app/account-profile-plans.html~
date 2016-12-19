@@ -35,18 +35,19 @@
 
                                         <#list plans as plan>
 
-                                            <#if plan.recommendedPlan == true>
+                                            <!--  <#if plan.recommendedPlan gt 0> -->
                                             <th class="plan-header plan-header-standard">
                                                 <div class="header-plan-inner">
-                                                    <span class="recommended-plan-ribbon">${labels["recommended"]}</span>
-                                                    <div class="pricing-plan-name">${plan.planName}</div>
+
+                                                    <span class="recommended-plan-ribbon">RECOMMENDED</span>
+                                                    <div class="pricing-plan-name">STANDARD</div>
                                                     <div class="pricing-plan-price">
-                                                        <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                        <sup>$</sup>34<span>.99</span>
                                                     </div>
-                                                    <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                                    <div class="pricing-plan-period">month</div>
                                                 </div>
                                             </th>
-                                            <#elseif plan.price.unitPrice == 0>
+                                            <!-- <#elseif plan.price.unitPrice==0> -->
                                             <th class="plan-header plan-header-free">
                                                 <div class="pricing-plan-name">${plan.planName}</div>
                                                 <div class="pricing-plan-price">
@@ -54,7 +55,7 @@
                                                 </div>
                                                 <div class="pricing-plan-period">${plan.billingFrequency}</div>
                                             </th>
-                                            <#elseif plan.price.unitPrice gt 0>
+                                            <!-- <#elseif plan.price.unitPrice gt 0> -->
                                             <th class="plan-header plan-header-blue">
                                                 <div class="pricing-plan-name">${plan.planName}</div>
                                                 <div class="pricing-plan-price">
@@ -62,41 +63,64 @@
                                                 </div>
                                                 <div class="pricing-plan-period">${plan.billingFrequency}</div>
                                             </th>
-                                            </#if>
+                                            <!-- </#if> -->
 
                                         </#list>
 
+                                        <!--
+                                        <th class="plan-header plan-header-free">
+                                            <div class="pricing-plan-name">FREE</div>
+                                            <div class="pricing-plan-price">
+                                                <sup>$</sup>0<span>.00</span>
+                                            </div>
+                                            <div class="pricing-plan-period">month</div>
+                                        </th>
+                                        <th class="plan-header plan-header-blue">
+                                            <div class="pricing-plan-name">BASIC</div>
+                                            <div class="pricing-plan-price">
+                                                <sup>$</sup>4<span>.99</span>
+                                            </div>
+                                            <div class="pricing-plan-period">month</div>
+                                        </th>
+                                        <th class="plan-header plan-header-blue">
+                                            <div class="pricing-plan-name">PLUS</div>
+                                            <div class="pricing-plan-price">
+                                                <sup>$</sup>12<span>.95</span>
+                                            </div>
+                                            <div class="pricing-plan-period">month</div>
+                                        </th>
+                                        <th class="plan-header plan-header-standard">
+                                            <div class="header-plan-inner">
+                                                
+                                                <span class="recommended-plan-ribbon">RECOMMENDED</span>
+                                                <div class="pricing-plan-name">STANDARD</div>
+                                                <div class="pricing-plan-price">
+                                                    <sup>$</sup>34<span>.99</span>
+                                                </div>
+                                                <div class="pricing-plan-period">month</div>
+                                            </div>
+                                        </th>
+                                        <th class="plan-header plan-header-blue">
+                                            <div class="pricing-plan-name">PREMIUM</div>
+                                            <div class="pricing-plan-price">
+                                                <sup>$</sup>99<span>.99</span>
+                                            </div>
+                                            <div class="pricing-plan-period">month</div>
+                                        </th>
+                            -->
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        
-                                        <#list plans as plan>
-                                        
-                                        <#if accountProfile.subscription?? && plan.id == accountProfile.subscription.planId>
+
                                         <td class="action-header">
-                                            <div class="current-plan">
-                                                <div class="with-date">Current Plan</div>
-                                                <div><em class="smaller block">renews Feb 19, 2015</em></div>
-                                            </div>
+                                            <a class="btn btn-info">
+                            Downgrade
+                        </a>
                                         </td>
-                                        <#elseif plan.recommendedPlan == true>
                                         <td class="action-header">
-                                            <a class="btn btn-success">${labels["upgrade"]}</a>
-                                        </td>
-                                        <#elseif accountProfile.subscription?? && plan.price.unitPrice gt accountProfile.subscription.unitPrice>
-                                        <td class="action-header">
-                                            <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-info">${labels["upgrade"]}</a>
-                                        </td>
-                                        <#else>
-                                        <td class="action-header">
-                                            <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-info">${labels["downgrade"]}</a>
-                                        </td>
-                                        </#if>
-                                        
-                                        
-                                        <!--
-                                        <td class="action-header">
-                                            <a class="btn btn-info">${labels["downgrade"]}</a>
+                                            <a class="btn btn-info">
+                            Downgrade
+                        </a>
                                         </td>
                                         <td class="action-header">
                                             <div class="current-plan">
@@ -105,15 +129,15 @@
                                             </div>
                                         </td>
                                         <td class="action-header">
-                                            <a class="btn btn-success">${labels["upgrade"]}</a>
+                                            <a class="btn btn-success">
+                            Upgrade
+                        </a>
                                         </td>
                                         <td class="action-header">
-                                            <a class="btn btn-info">${labels["upgrade"]}</a>
+                                            <a class="btn btn-info">
+                            Upgrade
+                        </a>
                                         </td>
-                                        -->
-                                        
-                                        </#list>
-                                        
                                     </tr>
                                     <tr>
                                         <td>Tutorials and Support Docs:</td>

@@ -106,12 +106,15 @@ public class AccountProfileController extends AbstractController {
 				.plan()
 				.getPlans(getPlansRequest);
 		
-		List<Plan> plans = getResult.getTarget();
+		List<Plan> plans = getResult.getTarget().stream()
+				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
+				.collect(Collectors.toList());
 
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", account);
 		model.put("action", "listPlans");
+		model.put("plans", plans);
 		model.put("planTable", buildPlanTable(account, plans));
 		model.put("locales", new TreeMap<String, String>(getLocales(account)));
 		model.put("languages", getSupportedLanguages());
@@ -937,6 +940,7 @@ public class AccountProfileController extends AbstractController {
 		plans = plans.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());
+                         
 		
 		StringBuilder html = new StringBuilder();
 		html.append("<div class='content table-responsive'>");

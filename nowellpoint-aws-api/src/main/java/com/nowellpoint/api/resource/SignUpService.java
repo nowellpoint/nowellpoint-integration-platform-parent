@@ -203,7 +203,7 @@ public class SignUpService {
 		user.setUsername(username);
 		user.setEmail(username);
 		
-		identityProviderService.updateUser(user);
+		identityProviderService.updateUsername(href, username);
 		
 		emailService.sendWelcomeMessage(user);
 		

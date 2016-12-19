@@ -5,7 +5,6 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
@@ -229,16 +228,51 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
+	 * @param href
+	 * @param email
+	 * @param firstName
+	 * @param lastName
+	 */
+	
+	public void updateUser(String href, String email, String firstName, String lastName) {	
+		
+		Account account = client.getResource(href, Account.class)
+				.setUsername(email)
+			    .setEmail(email)
+			    .setGivenName(firstName)
+			    .setSurname(lastName);
+		
+		account.save();
+	}
+	
+	/**
+	 * 
 	 * @param user
 	 */
 	
-	public void updateUser(User user) {	
+	public void updateUser(User user) {
 		
 		Account account = client.getResource(user.getHref(), Account.class)
 				.setUsername(user.getUsername())
-			    .setEmail(user.getUsername())
+			    .setEmail(user.getEmail())
 			    .setGivenName(user.getGivenName())
-			    .setSurname(user.getSurname());
+			    .setSurname(user.getSurname())
+			    .setPassword(user.getPassword())
+			    .setStatus(AccountStatus.valueOf(user.getStatus()));
+		
+		account.save();
+	}
+	
+	/**
+	 * 
+	 * @param href
+	 * @param username
+	 */
+	
+	public void updateUsername(String href, String username) {
+		
+		Account account = client.getResource(href, Account.class)
+				.setUsername(username);
 		
 		account.save();
 	}
@@ -252,6 +286,20 @@ public class IdentityProviderService {
 		
 		Account account = client.getResource(href, Account.class)
 				.setStatus(AccountStatus.DISABLED);
+		
+		account.save();
+	}
+	
+	/**
+	 * 
+	 * @param href
+	 * @param password
+	 */
+	
+	public void changePassword(String href, String password) {
+		
+		Account account = client.getResource(href, Account.class)
+				.setPassword(password);
 		
 		account.save();
 	}
