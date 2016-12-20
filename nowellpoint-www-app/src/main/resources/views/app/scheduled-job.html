@@ -85,7 +85,7 @@
                             <!-- </#if> -->
                             ${(scheduledJob.lastRunStatus)!}&emsp;
                             <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
-                            <a href="#" data-toggle="popover" data-placement="top" data-content="${scheduledJob.lastRunFailureMessage!}"><span class="icon icon-squared-cross"></span></a></dd>
+                            <span class="icon icon-squared-cross"></span>${scheduledJob.lastRunFailureMessage!}</dd>
                         <!-- </#if> -->
                         <hr>
                         <dt>${labels["last.run.date"]}</dt>

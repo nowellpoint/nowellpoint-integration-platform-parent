@@ -520,7 +520,6 @@ public class SalesforceConnectorController extends AbstractController {
 			
 			Map<String, Object> model = getModel();
 	    	model.put("salesforceConnector", salesforceConnector);
-	    	model.put("successMessage", request.cookie("successMessage"));
 	    	model.put("errorMessage", message);
 			
 	    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);

@@ -212,8 +212,11 @@ public abstract class HttpRequest {
 			}
 			
 			statusCode = httpResponse.getStatusLine().getStatusCode();
-			entity = httpResponse.getEntity().getContent();
 			url = uri.toURL();
+			
+			if (httpResponse.getEntity() != null) {
+				entity = httpResponse.getEntity().getContent();
+			}
 		}
 	
 		@Override

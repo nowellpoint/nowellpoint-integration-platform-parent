@@ -2,39 +2,27 @@
 
     <@t.page>
 
-        <#if action=="listPlans">
+        <#if action == "listPlans">
 
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 m-t-md">
                 <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.account.profile"]}
             </div>
             <div class="container">
-
                 <div class="row">
-
                     <div class="dashhead m-t-md">
                         <div class="dashhead-titles">
                             <h3 class="dashhead-title">${labels["select.plan"]}</h3>
                         </div>
                     </div>
                     <div class="hr-divider"></div>
-                    <br> ${planTable}
-
-                </div>
-            </div>
-
-            <div class="container">
-
-                <div class="row">
-
+                    <br>
                     <div class="table-responsive">
                         <div class="membership-pricing-table">
                             <table>
                                 <tbody>
                                     <tr>
                                         <th></th>
-
                                         <#list plans as plan>
-
                                             <#if plan.recommendedPlan == true>
                                             <th class="plan-header plan-header-standard">
                                                 <div class="header-plan-inner">
@@ -69,9 +57,7 @@
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        
-                                        <#list plans as plan>
-                                        
+                                        <#list plans as plan>                          
                                         <#if accountProfile.subscription?? && plan.id == accountProfile.subscription.planId>
                                         <td class="action-header">
                                             <div class="current-plan">
@@ -92,28 +78,7 @@
                                             <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-info">${labels["downgrade"]}</a>
                                         </td>
                                         </#if>
-                                        
-                                        
-                                        <!--
-                                        <td class="action-header">
-                                            <a class="btn btn-info">${labels["downgrade"]}</a>
-                                        </td>
-                                        <td class="action-header">
-                                            <div class="current-plan">
-                                                <div class="with-date">Current Plan</div>
-                                                <div><em class="smaller block">renews Feb 19, 2015</em></div>
-                                            </div>
-                                        </td>
-                                        <td class="action-header">
-                                            <a class="btn btn-success">${labels["upgrade"]}</a>
-                                        </td>
-                                        <td class="action-header">
-                                            <a class="btn btn-info">${labels["upgrade"]}</a>
-                                        </td>
-                                        -->
-                                        
-                                        </#list>
-                                        
+                                        </#list>     
                                     </tr>
                                     <tr>
                                         <td>Tutorials and Support Docs:</td>
@@ -169,8 +134,6 @@
                     </div>
                 </div>
             </div>
-
-
         </#if>
 
         <#if action=="reviewPlan">

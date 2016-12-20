@@ -127,16 +127,16 @@ body {
 }
 
 .navbar {
-   background-color: #fff;
+    background-color: #fff;
+    border-bottom: 1px;
 }
 .navbar > .navbar-header {
     width: 250px;
     background-color: #454545;
 }
 
-
 .membership-pricing-table {
-    width: 920px
+    width: 100%
 }
 
 .membership-pricing-table table .icon-no,.membership-pricing-table table .icon-yes {

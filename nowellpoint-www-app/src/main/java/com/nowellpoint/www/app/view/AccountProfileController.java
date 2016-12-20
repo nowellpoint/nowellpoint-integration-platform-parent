@@ -149,6 +149,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
+		model.put("successMessage", request.cookie("update.profile.success"));
 		
 		if (getResult.getTarget().getId().equals(id)) {
 			return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
