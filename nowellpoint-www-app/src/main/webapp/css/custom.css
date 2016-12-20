@@ -24,7 +24,7 @@ body {
     height: 100%;
     margin-left: -250px;
     overflow-y: auto;
-    background: #454545;
+    background: #605F5F;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -58,28 +58,29 @@ body {
 }
 
 .sidebar-nav li {
-    text-indent: 10px;
+    text-indent: 25px;
     line-height: 50px;
 }
 
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    color: #999999;
+    color: #ffffff;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #fff;
-    background: rgba(255,255,255,0.2);
+    background: #4D894D;
 }
 
 .sidebar-nav > .active > a, 
 .sidebar-nav li a:active,
 .sidebar-nav li a:focus {
     text-decoration: none;
-    color: #fff;
-    background: rgba(255,255,255,0.2);
+    color: #49AB2F !important;
+    background: #454545 !important;
+    cursor: default !important;
 }
 
 .sidebar-nav > .sidebar-brand {
@@ -128,7 +129,6 @@ body {
 
 .navbar {
     background-color: #fff;
-    border-bottom: 1px;
 }
 .navbar > .navbar-header {
     width: 250px;

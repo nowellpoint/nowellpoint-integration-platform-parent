@@ -85,7 +85,7 @@
                             <!-- </#if> -->
                             ${(scheduledJob.lastRunStatus)!}&emsp;
                             <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
-                            <span class="icon icon-squared-cross"></span>${scheduledJob.lastRunFailureMessage!}</dd>
+                            <span class="icon icon-squared-cross"></span>&emsp;${scheduledJob.lastRunFailureMessage!}</dd>
                         <!-- </#if> -->
                         <hr>
                         <dt>${labels["last.run.date"]}</dt>

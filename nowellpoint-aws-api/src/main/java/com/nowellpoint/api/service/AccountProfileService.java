@@ -359,9 +359,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			subscription.setAddedOn(now);
 		} else {
 			
-			//if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
-			//	throw new ValidationException("Unable to process subscription request because there is no credit card associated with the account profile");
-			//}
+			if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
+				throw new ValidationException("Unable to process subscription request because there is no credit card associated with the account profile");
+			}
 			
 			Result<com.braintreegateway.Subscription> subscriptionResult = null;
 			
