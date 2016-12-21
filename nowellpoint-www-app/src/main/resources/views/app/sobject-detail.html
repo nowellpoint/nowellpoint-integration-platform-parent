@@ -1,8 +1,8 @@
 <#import "template.html" as t>
     <@t.page>
 
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a href="${labels['base.path']}/${id}/environments/${key}/sobjects" id="back" class="btn btn-lg btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.sobject.list"]}
+        <div>
+            <a href="${labels['base.path']}/${id}/environments/${key}/sobjects" id="back" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.sobject.list"]}
         </div>
 
         <div class="container">
@@ -10,11 +10,9 @@
             <div class="row">
 
                 <div class="dashhead">
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h3 class="dashhead-title">${sobjectDetail.result.label}</h3>
-                            <h6 class="dashhead-subtitle">${sobjectDetail.result.name}</h6>
-                        </div>
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${sobjectDetail.result.name}</h6>
+                        <h3 class="dashhead-title">${sobjectDetail.result.label}</h3>
                     </div>
                 </div>
                 <div class="hr-divider"></div>

@@ -12,7 +12,7 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.ErrorDTO;
+import com.nowellpoint.api.model.domain.Error;
 import com.nowellpoint.api.model.domain.idp.SearchResult;
 import com.nowellpoint.api.model.domain.idp.Token;
 import com.nowellpoint.api.model.domain.idp.User;
@@ -438,7 +438,7 @@ public class IdentityProviderService {
 		ObjectNode response = httpResponse.getEntity(ObjectNode.class);
 
 		if (httpResponse.getStatusCode() != Status.OK) {
-			ErrorDTO error = new ErrorDTO(response.get("code").asInt(), response.get("developerMessage").asText());
+			Error error = new Error(response.get("code").asInt(), response.get("developerMessage").asText());
 			throw new ValidationException(error.getMessage()); 
 		}
 		

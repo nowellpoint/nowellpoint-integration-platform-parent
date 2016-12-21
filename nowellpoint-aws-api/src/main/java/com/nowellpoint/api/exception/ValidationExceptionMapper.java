@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.model.domain.ErrorDTO;
+import com.nowellpoint.api.model.domain.Error;
 
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ValidationException> {
@@ -14,7 +14,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 	@Override
 	public Response toResponse(ValidationException exception) {
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		ErrorDTO error = new ErrorDTO();
+		Error error = new Error();
 		error.setCode(1000);
 		error.setMessage(exception.getMessage());
 		builder.entity(error);

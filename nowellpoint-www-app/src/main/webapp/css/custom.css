@@ -286,6 +286,22 @@ body {
     border-bottom: none
 }
 
+.flexgrid {
+    display: -webkit-flex; display: flex; flex-wrap: wrap; -webkit-flex-direction: row; flex-direction: row;
+}
+.offer{
+	background:#fff; border:1px solid #ddd; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); margin: 7px 7px; 7px; 7px overflow: hidden; width: 350px;
+}
+.offer-radius{
+	border-radius:7px;
+}
+.offer-info {
+    border-color: #5bc0de; 
+}	
+.offer-content{
+	padding:0 20px 10px;
+}
+
 .spinner {
     position: fixed;
     top: 50%;

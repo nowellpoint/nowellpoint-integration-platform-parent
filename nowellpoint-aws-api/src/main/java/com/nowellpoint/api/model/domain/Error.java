@@ -1,16 +1,16 @@
 package com.nowellpoint.api.model.domain;
 
-public class ErrorDTO {
+public class Error {
 	
 	private Integer code;
 	
 	private String message;
 	
-	public ErrorDTO() {
+	public Error() {
 		
 	}
 	
-	public ErrorDTO(Integer code, String message) {
+	public Error(Integer code, String message) {
 		setCode(code);
 		setMessage(message);
 	}

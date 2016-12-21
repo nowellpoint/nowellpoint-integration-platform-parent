@@ -31,7 +31,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.ErrorDTO;
+import com.nowellpoint.api.model.domain.Error;
 import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
@@ -77,7 +77,7 @@ public class SignUpService {
 		 */
 		
 		if (! password.equals(confirmPassword)) {
-			ErrorDTO error = new ErrorDTO(2000, "Password mismatch");
+			Error error = new Error(2000, "Password mismatch");
 			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
@@ -91,7 +91,7 @@ public class SignUpService {
 		 */
 		
 		if (identityProviderService.isEnabledAccount(email)) {
-			ErrorDTO error = new ErrorDTO(1000, "Account for email is already enabled");
+			Error error = new Error(1000, "Account for email is already enabled");
 			ResponseBuilder builder = Response.status(Status.CONFLICT);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
@@ -210,7 +210,7 @@ public class SignUpService {
 		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(href));
 		
 		if (! query.isPresent()) {
-			ErrorDTO error = new ErrorDTO(1001, String.format("AccountProfile for href: %s was not found", href));
+			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", href));
 			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
