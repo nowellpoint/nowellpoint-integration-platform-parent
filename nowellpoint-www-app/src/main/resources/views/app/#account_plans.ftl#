@@ -20,11 +20,11 @@
                     <div class="offer-content">
                         <h3 class="lead">
 							<#if icons[ "${sobject.name}"]??>
-                                <img src="${icons['${sobject.name}']}" />
-                            </#if>
-                            <#if ! icons[ "${sobject.name}"]??>
-                                <img src="/images/salesforce-logo.png" style="height:32px; width: 32px" />
-                            </#if><a href="${labels['base.path']}/${id}/environments/${environment.key}/sobject/${sobject.name}">${(sobject.label)!}</a> 
+                                    <img src="${icons['${sobject.name}']}" />
+                                </#if>
+                                <#if ! icons[ "${sobject.name}"]??>
+                                    <img src="/images/salesforce-logo.png" style="height: 32px; width: 32px" />
+                                </#if><a href="${labels['base.path']}/${id}/environments/${environment.key}/sobject/${sobject.name}">${(sobject.label)!}</a> 
 						</h3>
                         <p>${(sobject.name)!}</p>
                         <div class="text-right">

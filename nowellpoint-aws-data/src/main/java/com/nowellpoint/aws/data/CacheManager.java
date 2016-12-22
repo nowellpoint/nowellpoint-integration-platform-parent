@@ -61,7 +61,7 @@ public class CacheManager implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(300);
+        poolConfig.setMaxTotal(1000);
 		
 		jedisPool = new JedisPool(
 				poolConfig, 

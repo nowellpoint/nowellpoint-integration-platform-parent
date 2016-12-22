@@ -14,6 +14,8 @@ public class SignUpRequest {
 	
 	private String countryCode;
 	
+	private String planId;
+	
 	public SignUpRequest() {
 		
 	}
@@ -66,6 +68,14 @@ public class SignUpRequest {
 		this.countryCode = countryCode;
 	}
 	
+	public String getPlanId() {
+		return planId;
+	}
+
+	public void setPlanId(String planId) {
+		this.planId = planId;
+	}
+
 	public SignUpRequest withEmail(String email) {
 		setEmail(email);
 		return this;
@@ -93,6 +103,11 @@ public class SignUpRequest {
 	
 	public SignUpRequest withCountryCode(String countryCode) {
 		setCountryCode(countryCode);
+		return this;
+	}
+	
+	public SignUpRequest withPlanId(String planId) {
+		setPlanId(planId);
 		return this;
 	}
 }

@@ -14,13 +14,15 @@
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    
-    <!-- Include the CSS -->
-    <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/custom.css" type="text/css" />
-    
+
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/creative.css" type="text/css">
 
 </head>
 
@@ -67,24 +69,14 @@
             </div>
         </div>
         <div class="row">
-        
-        <#if action == "listPlans">
-        <div class="dashhead p-t">
-                <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["select.plan"]}</h3>
-                </div>
-                </div>   
-                 <div class="hr-divider"></div>
-            <br>
-            
             <div class="table-responsive">
                 <div class="membership-pricing-table">
-                    <table style="text-align:center; margin-left:auto; margin-right:auto;">
+                    <table>
                         <tbody>
                             <tr>
                                 <th></th>
                                 <#list plans as plan>
-                                    <#if plan.recommendedPlan == true>
+                                    <#if plan.recommendedPlan==true>
                                         <th class="plan-header plan-header-standard">
                                             <div class="header-plan-inner">
                                                 <span class="recommended-plan-ribbon">${labels["recommended"]}</span>
@@ -95,7 +87,7 @@
                                                 <div class="pricing-plan-period">${plan.billingFrequency}</div>
                                             </div>
                                         </th>
-                                        <#elseif plan.price.unitPrice == 0>
+                                        <#elseif plan.price.unitPrice==0>
                                             <th class="plan-header plan-header-free">
                                                 <div class="pricing-plan-name">${plan.planName}</div>
                                                 <div class="pricing-plan-price">
@@ -119,16 +111,20 @@
                             <tr>
                                 <td></td>
                                 <#list plans as plan>
-                                    <#if plan.recommendedPlan == true>
+
+                                    <#if plan.recommendedPlan==t rue>
                                         <td class="action-header">
-                                            <a href="/create-account?planId=${plan.id}" class="btn btn-success">${labels["select"]}</a>
+                                            <a class="btn btn-success">${labels["select"]}</a>
                                         </td>
                                     </#if>
-                                    <#if plan.recommendedPlan != true>
+                                    <#if plan.recommendedPlan !=t rue>
                                         <td class="action-header">
-                                            <a href="/create-account?planId=${plan.id}" class="btn btn-info">${labels["select"]}</a>
+                                            <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-info">${labels["select"]}</a>
                                         </td>
                                     </#if>
+
+
+
                                 </#list>
                             </tr>
                             <tr>
@@ -183,22 +179,14 @@
                     </table>
                 </div>
             </div>
-        </#if>
-        
-        <#if action = "createAccount">
-        <div class="dashhead p-t">
-                <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["create.account"]}</h3>
-                </div>
-                </div>   
-                 <div class="hr-divider"></div>
-            <br>
-        
-        
-         <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
+
+
+        </div>
+        <div class="row">
+            <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
+                <h4><div class="text-center">${signUp}</div></h4>
                 <br>
                 <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
-                    <input type="hidden" name="planId" value="${signUpRequest.planId}" />
                     <div class="form-group">
                         <!-- <label class="control-label" for="firstName">${firstName}</label> -->
                         <input class="form-control" name="firstName" id="firstName" placeholder="${firstName}" value="${signUpRequest.firstName!}" autofocus>
@@ -237,161 +225,15 @@
                     </div>
                     <div class="form-group">
                         <div class="pull-right">
-                            <a href="/list-plans">${labels["back"]}</a>&nbsp;
-                            <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["sign.up"]}</button>
+                            <button type="submit" name="submit" id="submit" class="btn btn-primary">${submit}</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-        
-        </#if>
-        
-        <#if action = "paymentMethod">
-
-                                    <div class="dashhead p-t">
-                <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["payment.method"]}</h3>
-                </div>
-                </div>   
-                 <div class="hr-divider"></div>
-            <br>
-
-                                 
-
-                                    <div class="col-md-5">
-                                        <label class="control-label">${labels["billing.address"]}</label>
-                                    </div>
-                                    <div class="col-md-4">
-
-                                        <div class="form-group">
-                                            <select id="countryCode" name="countryCode" class="form-control" required>
-                                                <option value="">${labels["select.one"]}</option>
-                                                <#list countryList as country>
-                                                        <option value="${country.code}">${country.name}</option>
-                                                </#list>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" />
-                                        </div>
-
-                                    </div>
-
-                                    <div class="col-md-3"></div>
-
-                                    <div class="col-md-9">
-                                        <div class="hr-divider"></div>
-                                        <br>
-                                    </div>
-
-                                    <div class="col-md-3"></div>
-
-                                    <div class="col-md-5">
-                                        <label class="control-label">${labels["billing.contact"]}</label>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" />
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" />
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3"></div>
-
-                                    <div class="col-md-9">
-                                        <div class="hr-divider"></div>
-                                        <br>
-                                    </div>
-
-                                    <div class="col-md-3"></div>
-
-                                    <div class="col-md-5">
-                                        <label class="control-label">${labels["credit.card"]}</label>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="cardholderName" id="cardholderName" placeholder="${labels['name.on.card']}" />
-                                        </div>
-
-                                        <div class="form-group">
-
-                                            <input type="text" class="form-control" name="number" id="number" placeholder="${labels['number']}">
-
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="form-group col-md-2">
-                                                <select class="form-control" name="expirationMonth" id="expirationMonth" style="width: auto">
-                                                    <#assign x=12 />
-                                                    <#list 1..x as month>
-                                                        <#if creditCard.expirationMonth?eval==month>
-                                                            <option value="${month?c}" selected="selected">${month?c}</option>
-                                                        </#if>
-                                                        <#if creditCard.expirationMonth?eval !=month>
-                                                            <option value="${month?c}">${month?c}</option>
-                                                        </#if>
-                                                    </#list>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group col-md-4">
-                                                <select class="form-control" name="expirationYear" id="expirationYear">
-                                                    <#assign x=.now?string[ "yyyy"]?number + 19/>
-                                                    <#list .now?string[ "yyyy"]?number..x as year>
-                                                        <#if creditCard.expirationYear?eval==year>
-                                                            <option value="${year?c}" selected="selected">${year?c}</option>
-                                                        </#if>
-                                                        <#if creditCard.expirationYear?eval !=year>
-                                                            <option value="${year?c}">${year?c}</option>
-                                                        </#if>
-                                                    </#list>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group col-md-3">
-                                                &nbsp;
-                                            </div>
-
-                                            <div class="form-group col-md-3 pull-right">
-                                                <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" />
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="col-md-3"></div>
-                                    
-                                    <div class="form-group">
-                        <div class="pull-right">
-                            <a href="/list-plans">${labels["back"]}</a>&nbsp;
-                            <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["sign.up"]}</button>
-                        </div>
-                    </div>
-        
-        
-        </#if>
-        
-        </div>
+    </div>
+    <hr class="primary">
+    <aside class="row bg-light"></aside>
 
 </body>
 
