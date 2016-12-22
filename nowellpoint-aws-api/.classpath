@@ -117,7 +117,7 @@
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/5.2.2.Final/hibernate-validator-5.2.2.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/classmate/1.1.0/classmate-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" sourcepath="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz-jobs/2.2.3/quartz-jobs-2.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/force/api/force-metadata-api/37.0.3/force-metadata-api-37.0.3.jar"/>
@@ -136,7 +136,7 @@
   <classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.68/aws-java-sdk-dynamodb-1.11.68.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.68/aws-java-sdk-s3-1.11.68.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.68/aws-java-sdk-kms-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.15/aws-java-sdk-kms-1.11.15.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.68/aws-java-sdk-core-1.11.68.jar"/>
   <classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.1/ion-java-1.0.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.6/jackson-dataformat-cbor-2.6.6.jar"/>

@@ -25,33 +25,12 @@
 </head>
 
 <body>
-
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-                    <span class="sr-only">${toggleNavigation}</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand page-scroll" href="/">${applicationTitle}</a>
-            </div>
-
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/login"><i class="fa fa-sign-in"></i>&nbsp; ${logIn}</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
     <br>
     <br>
     <div class="container">
         <div class="row">
-            <br>
-            <br>
             <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-2 col-md-8 col-md-offset-2">
+                <br>
                 <#if successMessage??>
                     <div id="success" class="alert alert-success">
                         <a class="close" data-dismiss="alert">×</a>
@@ -66,9 +45,9 @@
                 </#if>
             </div>
         </div>
-        <div class="row">
         
         <#if action == "listPlans">
+            <div class="row">
         <div class="dashhead p-t">
                 <div class="dashhead-titles">
                     <h3 class="dashhead-title">${labels["select.plan"]}</h3>
@@ -183,20 +162,23 @@
                     </table>
                 </div>
             </div>
+                </div>    
         </#if>
         
         <#if action = "createAccount">
+            <div class="row">
         <div class="dashhead p-t">
                 <div class="dashhead-titles">
                     <h3 class="dashhead-title">${labels["create.account"]}</h3>
                 </div>
                 </div>   
                  <div class="hr-divider"></div>
-            <br>
+            <br>   
+            </div>
+            <div class="row">
         
         
-         <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
-                <br>
+         <div class="col-md-offset-4 col-md-4">
                 <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
                     <input type="hidden" name="planId" value="${signUpRequest.planId}" />
                     <div class="form-group">
@@ -237,11 +219,36 @@
                     </div>
                     <div class="form-group">
                         <div class="pull-right">
-                            <a href="/list-plans">${labels["back"]}</a>&nbsp;
                             <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["sign.up"]}</button>
                         </div>
                     </div>
                 </form>
+             
+             </div>
+            
+            <div class="col-md-4">
+             
+
+                            <div class="panel panel-default">
+
+                                <div class="panel-body">
+
+                                    <dl class="dl-vertical">
+                                        <dt>${labels["plan.name"]}</dt>
+                                        <dd>${(plan.planName)!}</dd>
+                                        <dt>${labels["price"]}</dt>
+                                        <dd>${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.##"])!}</dd>
+                                        <dt>${labels["billed"]}</dt>
+                                        <dd>${(plan.billingFrequency)!}
+                                            <br>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <a href="/list-plans" class="btn btn-success" role="button">${labels["change"]}</a>
+                            </div>
+                 
+             
             </div>
         </div>
         

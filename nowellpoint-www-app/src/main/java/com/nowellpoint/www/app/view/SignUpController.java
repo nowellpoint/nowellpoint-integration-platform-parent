@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.GetPlansRequest;
@@ -85,12 +86,22 @@ public class SignUpController extends AbstractController {
 		
 		String planId = request.queryParams("planId");
 		
+		System.out.println(planId);
+		
+		Plan plan = new NowellpointClient()
+				.plan()
+				.get(planId)
+				.getTarget();
+		
+		System.out.println("here");
+		
 		SignUpRequest signUpRequest = new SignUpRequest()
 				.withCountryCode("US")
 				.withPlanId(planId);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("signUpRequest", signUpRequest);
+		model.put("plan", plan);
 		model.put("action", "createAccount");
 		
 		return render(configuration, request, response, model, Template.SIGN_UP);
