@@ -15,7 +15,7 @@
                 </div>
             </#if>
         </div>
-        <hr>
+        <div class="hr-divider"></div>
         <#if scheduledJobList?size==0>
             <br>
             <br>
@@ -27,6 +27,7 @@
                 <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
             </p>
         </#if>
+        <br>
         <div class="flexgrid">
             <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
                 <div class="offer offer-radius offer-info">

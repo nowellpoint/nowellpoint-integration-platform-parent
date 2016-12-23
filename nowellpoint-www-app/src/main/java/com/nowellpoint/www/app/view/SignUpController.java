@@ -41,7 +41,6 @@ public class SignUpController extends AbstractController {
 	public void configureRoutes(Configuration configuration) {
 		get(Path.Route.LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
 		get(Path.Route.CREATE_ACCOUNT, (request, response) -> createAccount(configuration, request, response));
-		get(Path.Route.PAYMENT_METHOD, (request, response) -> listPlans(configuration, request, response));
 		post(Path.Route.SIGN_UP, (request, response) -> signUp(configuration, request, response));
 	}
 	
@@ -86,22 +85,24 @@ public class SignUpController extends AbstractController {
 		
 		String planId = request.queryParams("planId");
 		
-		System.out.println(planId);
-		
 		Plan plan = new NowellpointClient()
 				.plan()
 				.get(planId)
 				.getTarget();
 		
-		System.out.println("here");
-		
 		SignUpRequest signUpRequest = new SignUpRequest()
 				.withCountryCode("US")
 				.withPlanId(planId);
 		
+		CreditCard creditCard = new CreditCard();
+		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
+		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
+		creditCard.setBillingContact(new Contact());
+		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("signUpRequest", signUpRequest);
 		model.put("plan", plan);
+		model.put("creditCard", creditCard);
 		model.put("action", "createAccount");
 		
 		return render(configuration, request, response, model, Template.SIGN_UP);

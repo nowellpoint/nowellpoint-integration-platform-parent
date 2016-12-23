@@ -22,6 +22,7 @@ body {
     left: 250px;
     width: 0;
     height: 100%;
+    top: 50px;
     margin-left: -250px;
     overflow-y: auto;
     background: #605F5F;
@@ -29,15 +30,22 @@ body {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    border: none;
 }
 
 #wrapper.toggled #sidebar-wrapper {
     width: 250px;
 }
 
+#page-content-separator {
+    border-top: 1px solid #D5D8DC;
+    top 52px;
+}
+
 #page-content-wrapper {
     width: 100%;
-    position: absolute;
+    top: 50px;
+    position: fixed;
     padding: 15px;
 }
 
@@ -129,11 +137,9 @@ body {
 
 .navbar {
     background-color: #fff;
+    border-bottom: 1px solid #D5D8DC;
 }
-.navbar > .navbar-header {
-    width: 250px;
-    background-color: #454545;
-}
+
 
 .center-table {
     text-align:center; 
