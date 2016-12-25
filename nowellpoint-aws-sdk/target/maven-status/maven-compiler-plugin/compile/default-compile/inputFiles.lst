@@ -26,7 +26,6 @@
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/UsernamePasswordCredentials.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/Price.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/SimpleStorageService.java
-/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/Feature.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/ClientCredentialsGrantRequest.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/model/DeleteResult.java
 /Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-sdk/src/main/java/com/nowellpoint/client/auth/RevokeTokenRequest.java

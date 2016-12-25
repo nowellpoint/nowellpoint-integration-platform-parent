@@ -25,11 +25,22 @@
 </head>
 
 <body>
-    <br>
-    <br>
-    <div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand p-l">
+                <b>${messages["application.title"]}</b>
+            </div>
+        </div>
+    </nav>
+    <div class="container p-t-lg">
         <div class="row">
-            <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-2 col-md-8 col-md-offset-2">
+            <div>
                 <br>
                 <#if successMessage??>
                     <div id="success" class="alert alert-success">
@@ -49,12 +60,12 @@
         <#if action=="listPlans">
             <div class="row">
                 <ul class="breadcrumb">
-                    <li class="active"><span class = "badge">1</span>&emsp;${labels["select.plan"]}</li>
-                    <li class="active"><span class = "badge">2</span>&emsp;${labels["create.account"]}</li>
-                </ul>       
-            </div>    
+                    <li class="active"><span class="badge">1</span>&emsp;${labels["select.plan"]}</li>
+                    <li class="active"><span class="badge">2</span>&emsp;${labels["create.account"]}</li>
+                </ul>
+            </div>
             <br>
-            <div class="row">
+            <div class="row m-l m-r">
                 <div class="dashhead p-t">
                     <div class="dashhead-titles">
                         <h3 class="dashhead-title">${labels["select.plan"]}</h3>
@@ -116,6 +127,26 @@
                                         </#if>
                                     </#list>
                                 </tr>
+                                <#list plans[0].services?sort_by( "sortOrder") as service>
+                                    <tr id="${service?index}">
+                                        <td>${service.name}</td>
+                                        <#list plans as plan>
+                                            <#assign x=plan.services?sort_by( "sortOrder")[service?index] />
+                                            <td>
+                                                <#if x.enabled?? && x.enabled==true>
+                                                    <span class="icon-yes glyphicon glyphicon-ok-circle"></span>
+                                                </#if>
+                                                <#if x.enabled?? && x.enabled==false>
+                                                    <span class="icon-no glyphicon glyphicon-remove-circle"></span>
+                                                </#if> 
+                                                <#if x.quantity??>
+                                                    ${x.quantity}
+                                                </#if>
+                                            </td>
+                                        </#list>    
+                                    </tr>
+                                </#list>
+                                <!--
                                 <tr>
                                     <td>Tutorials and Support Docs:</td>
                                     <td><span class="icon-no glyphicon glyphicon-remove-circle"></span></td>
@@ -163,7 +194,7 @@
                                     <td>10</td>
                                     <td>20</td>
                                     <td>unlimited</td>
-                                </tr>
+                                </tr-->
                             </tbody>
                         </table>
                     </div>
@@ -174,13 +205,16 @@
         <#if action="createAccount">
             <div class="row">
                 <ul class="breadcrumb">
-                    <li><span class = "badge">1</span>&emsp;<a href="/list-plans">${labels["select.plan"]}</a></li>
-                    <li class="active"><span class = "badge">2</span>&emsp;${labels["create.account"]}</li>
-                </ul>       
-            </div>    
-            <br>
-            <div class="row">
-                <div class="col-md-12">
+                    <li><span class="badge">1</span>&emsp;<a href="/list-plans">${labels["select.plan"]}</a></li>
+                    <#if plan.price.unitPrice gt 0>
+                        <li class="active"><span class="badge">2</span>&emsp;${labels["create.account.payment"]}</li>
+                    </#if>
+                    <#if plan.price.unitPrice==0>
+                        <li class="active"><span class="badge">2</span>&emsp;${labels["create.account"]}</li>
+                    </#if>
+                </ul>
+            </div>
+            <div class="row m-l m-r">
                 <div class="dashhead p-t">
                     <div class="dashhead-titles">
                         <h3 class="dashhead-title">${labels["create.account"]}</h3>
@@ -188,14 +222,13 @@
                 </div>
                 <div class="hr-divider"></div>
                 <br>
-                </div>    
             </div>
             <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
-                <div class="row">
+                <div class="row m-l m-r">
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-7">
-                                <label class="control-label">${labels["user.information"]}</label>
+                                <label class="control-label">${labels["account.information"]}</label>
                             </div>
                             <div class="col-md-5">
                                 <input type="hidden" name="planId" value="${signUpRequest.planId}" />
@@ -211,12 +244,12 @@
                                     <!-- <label class="control-label" for="email">${email}*</label> -->
                                     <input type="email" class="form-control" name="email" id="email" placeholder="${email}" value="${signUpRequest.email!}" required>
                                 </div>
+                                <div>
+                                    <p>${labels["password.policy"]}</p>
+                                </div>
                                 <div class="form-group">
                                     <!-- <label class="control-label" for="password">${password}*</label> -->
                                     <input type="password" class="form-control" name="password" id="password" placeholder="${password}" value="${signUpRequest.password!}" required autocomplete="off" />
-                                </div>
-                                <div>
-                                    <p>${passwordPolicy}</p>
                                 </div>
                                 <div class="form-group">
                                     <!-- <label class="control-label" for="confirmPassword">${retypePassword}*</label> -->
@@ -240,50 +273,56 @@
                         <#if plan.price.unitPrice gt 0>
                             <div class="row">
                                 <div class="hr-divider"></div>
-                                <br>
-                                <div class="col-md-7 m-l-0">
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-7">
                                     <label class="control-label">${labels["credit.card"]}</label>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <input type="text" class="form-control" name="number" id="number" placeholder="${labels['number']}">
                                     </div>
-                                    <div class="row">
-                                        <div class="col-xs-7 col-md-7">
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <div class="col-xs-5 col-lg-5">
-                                                        <select class="form-control" name="expirationMonth" id="expirationMonth">
-                                                            <#assign x=12 />
-                                                            <#list 1..x as month>
-                                                                <#if creditCard.expirationMonth?eval==month>
-                                                                    <option value="${month?c}" selected="selected">${month?c}</option>
-                                                                </#if>
-                                                                <#if creditCard.expirationMonth?eval !=month>
-                                                                    <option value="${month?c}">${month?c}</option>
-                                                                </#if>
-                                                            </#list>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-xs-7 col-lg-7">
-                                                        <select class="form-control" name="expirationYear" id="expirationYear">
-                                                            <#assign x=.now?string[ "yyyy"]?number + 19/>
-                                                            <#list .now?string[ "yyyy"]?number..x as year>
-                                                                <#if creditCard.expirationYear?eval==year>
-                                                                    <option value="${year?c}" selected="selected">${year?c}</option>
-                                                                </#if>
-                                                                <#if creditCard.expirationYear?eval !=year>
-                                                                    <option value="${year?c}">${year?c}</option>
-                                                                </#if>
-                                                            </#list>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-6 col-lg-6">
+                                                <select class="form-control" name="expirationMonth" id="expirationMonth">
+                                                    <#assign x=12 />
+                                                    <#list 1..x as month>
+                                                        <#if creditCard.expirationMonth?eval==month>
+                                                            <option value="${month?c}" selected="selected">${month?c}</option>
+                                                        </#if>
+                                                        <#if creditCard.expirationMonth?eval !=month>
+                                                            <option value="${month?c}">${month?c}</option>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-6 col-lg-6">
+                                                <select class="form-control" name="expirationYear" id="expirationYear">
+                                                    <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                    <#list .now?string[ "yyyy"]?number..x as year>
+                                                        <#if creditCard.expirationYear?eval==year>
+                                                            <option value="${year?c}" selected="selected">${year?c}</option>
+                                                        </#if>
+                                                        <#if creditCard.expirationYear?eval !=year>
+                                                            <option value="${year?c}">${year?c}</option>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
                                             </div>
                                         </div>
-                                        <div class="col-xs-5 col-md-5 pull-right">
-                                            <div class="form-group">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-7 col-md-5">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-6 col-lg-6">
                                                 <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" />
+                                            </div>
+                                            <div class="col-xs-6 col-lg-6">
                                             </div>
                                         </div>
                                     </div>
@@ -293,8 +332,8 @@
                         <div class="row">
                             <div class="col-md-offset-7 col-md-5">
                                 <div class="form-group">
-                                    <a href="/" class="btn btn-default btn-block" role="button">${labels["cancel"]}</a>
                                     <button type="submit" name="submit" id="submit" class="btn btn-primary btn-block">${labels["sign.up"]}</button>
+                                    <a href="/" class="btn btn-default btn-block" role="button">${labels["cancel"]}</a>
                                 </div>
                             </div>
                         </div>
@@ -304,18 +343,18 @@
                             <div class="panel-heading">${labels["selected.plan"]}</div>
                             <div class="panel-body">
                                 <dl class="dl-vertical">
-                                <dt>${labels["plan.name"]}</dt>
-                                <dd>${(plan.planName)!}</dd>
-                                <hr>
-                                <dt>${labels["price"]}</dt>
-                                <dd>${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.##"])!}</dd>
-                                <hr>
-                                <dt>${labels["billed"]}</dt>
-                                <dd>${(plan.billingFrequency)!}
-                            </dl>
-                            <div class="pull-right">
-                                <a href="/list-plans" class="btn btn-success" role="button">${labels["change"]}</a>
-                            </div>
+                                    <dt>${labels["plan.name"]}</dt>
+                                    <dd>${(plan.planName)!}</dd>
+                                    <hr>
+                                    <dt>${labels["price"]}</dt>
+                                    <dd>${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.##"])!}</dd>
+                                    <hr>
+                                    <dt>${labels["billed"]}</dt>
+                                    <dd>${(plan.billingFrequency)!}
+                                </dl>
+                                <div class="pull-right">
+                                    <a href="/list-plans" class="btn btn-success" role="button">${labels["change"]}</a>
+                                </div>
                             </div>
                         </div>
                     </div>

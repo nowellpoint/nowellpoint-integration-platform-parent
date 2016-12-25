@@ -80,7 +80,6 @@ com/nowellpoint/client/resource/AccountProfileResource$CreditCardResource.class
 com/nowellpoint/client/model/ScheduledJobType.class
 com/nowellpoint/client/model/sforce/Urls.class
 com/nowellpoint/client/auth/impl/RevokeTokenRequestImpl.class
-com/nowellpoint/client/model/Feature.class
 com/nowellpoint/client/model/sforce/ActionOverride.class
 com/nowellpoint/client/model/sforce/Color.class
 com/nowellpoint/client/auth/ClientCredentialsGrantRequest.class
