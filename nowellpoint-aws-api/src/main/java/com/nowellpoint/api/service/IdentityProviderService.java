@@ -13,16 +13,16 @@ import org.jboss.logging.Logger;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Error;
-import com.nowellpoint.api.model.domain.idp.SearchResult;
 import com.nowellpoint.api.model.domain.idp.Token;
 import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.account.AccountList;
 import com.stormpath.sdk.account.AccountStatus;
+import com.stormpath.sdk.account.Accounts;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
@@ -133,24 +133,11 @@ public class IdentityProviderService {
 	 */
 	
 	public Boolean isEnabledAccount(String username) {
-		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.accept(MediaType.APPLICATION_JSON)
-				.path("directories")
-				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
-				.path("accounts")
-				.path("?username=".concat(username))
-				.execute();
+		AccountList accounts = application.getAccounts(Accounts.where(Accounts.username().eqIgnoreCase(username)));
 		
-		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
-		
-		if (searchResult.getSize() == 0) {
-			return false;
+		if (accounts.getSize() > 0 && accounts.single().getStatus().equals(AccountStatus.ENABLED)) {
+			return true;
 		} else {
-			User user = searchResult.getItems().get(0);
-			if ("ENABLED".equals(user.getStatus())) {
-				return true;
-			}
 			return false;
 		}
 	}
@@ -211,19 +198,8 @@ public class IdentityProviderService {
 	 * @param user
 	 */
 	
-	public void createUser(User user) {	
-		
-		Account account = client.instantiate(Account.class)
-				.setUsername(user.getUsername())
-			    .setEmail(user.getUsername())
-			    .setGivenName(user.getGivenName())
-			    .setSurname(user.getSurname())
-			    .setStatus(AccountStatus.valueOf(user.getStatus()))
-			    .setPassword(user.getPassword());
-		
+	public void createAccount(Account account) {	
 		directory.createAccount(account);
-		
-		user.setHref(account.getHref());
 	}
 	
 	/**
@@ -234,7 +210,7 @@ public class IdentityProviderService {
 	 * @param lastName
 	 */
 	
-	public void updateUser(String href, String email, String firstName, String lastName) {	
+	public void updateAccount(String href, String email, String firstName, String lastName) {	
 		
 		Account account = client.getResource(href, Account.class)
 				.setUsername(email)
@@ -250,16 +226,7 @@ public class IdentityProviderService {
 	 * @param user
 	 */
 	
-	public void updateUser(User user) {
-		
-		Account account = client.getResource(user.getHref(), Account.class)
-				.setUsername(user.getUsername())
-			    .setEmail(user.getEmail())
-			    .setGivenName(user.getGivenName())
-			    .setSurname(user.getSurname())
-			    .setPassword(user.getPassword())
-			    .setStatus(AccountStatus.valueOf(user.getStatus()));
-		
+	public void updateAccount(Account account) {
 		account.save();
 	}
 	
@@ -376,26 +343,14 @@ public class IdentityProviderService {
 	 * @return
 	 */
 	
-	public User findByUsername(String username) {
+	public Account findByUsername(String username) {
+		AccountList accounts = application.getAccounts(Accounts.where(Accounts.username().eqIgnoreCase(username)));
 		
-		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.accept(MediaType.APPLICATION_JSON)
-				.path("directories")
-				.path(System.getProperty(Properties.STORMPATH_DIRECTORY_ID))
-				.path("accounts")
-				.path("?username=".concat(username))
-				.execute();
-		
-		User user = null;
-		
-		SearchResult searchResult = httpResponse.getEntity(SearchResult.class);
-		
-		if (searchResult.getSize() == 1) {
-			user = searchResult.getItems().get(0);
+		if (accounts.getSize() == 1) {
+			return accounts.single();
 		}
 		
-		return user;
+		return client.instantiate(Account.class);
 	}
 	
 	/**

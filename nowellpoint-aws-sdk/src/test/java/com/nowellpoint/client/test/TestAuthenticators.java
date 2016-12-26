@@ -1,4 +1,4 @@
-package com.nowellpoint.client.auth;
+package com.nowellpoint.client.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,6 +14,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.auth.Authenticators;
+import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
+import com.nowellpoint.client.auth.OauthAuthenticationResponse;
+import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.auth.PasswordGrantRequest;
+import com.nowellpoint.client.auth.RevokeTokenRequest;
+import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateResult;

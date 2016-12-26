@@ -1,6 +1,7 @@
 package com.nowellpoint.api.service.test;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -10,6 +11,7 @@ import com.braintreegateway.Address;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCard;
+import com.braintreegateway.CreditCardAddressRequest;
 import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.Customer;
 import com.braintreegateway.CustomerRequest;
@@ -42,41 +44,23 @@ public class TestPaymentService {
 	public void addCreditCard() {
 		
 		Customer customer = null;
-		
-		try {		
-			customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
-		} catch (NotFoundException e) {
-			
-		}
+//		
+//		try {		
+//			customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
+//		} catch (NotFoundException e) {
+//			
+//		}
 		
 		CustomerRequest customerRequest = new CustomerRequest()
-				.id("56c7f2b33004ea79702df8d4")
-				.company("Nowellpoint")
-				.email("john.d.herson@gmail.com")
+				.customerId( UUID.randomUUID().toString() )
+				.email("jherson@aim.com")
 				.firstName("John")
-				.lastName("Herson")
-				.phone("6787730798");
+				.lastName("Herson");
 		
-		AddressRequest addressRequest = new AddressRequest()
-				.countryCodeAlpha2("US")
-				.firstName("John")
-				.lastName("Herson")
-				.locality("Raleigh")
-				.region("North Carolina")
-				.postalCode("27601")
-				.streetAddress("300 W. Hargett Unit 415");
+		Result<Customer> customerResult = gateway.customer().create(customerRequest);
+		customer = customerResult.getTarget();
 		
-		if (customer == null) {
-			Result<Customer> customerResult = gateway.customer().create(customerRequest);
-			customer = customerResult.getTarget();
-		} else {
-			Result<Customer> customerResult = gateway.customer().update(customer.getId(), customerRequest);
-			customer = customerResult.getTarget();
-		}
-		
-		Result<Address> addressResult = gateway.address().create(customer.getId(), addressRequest);
-		
-		System.out.println(addressResult.getTarget().getId());
+		System.out.println(customer.getId());
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName("John Herson")
@@ -84,30 +68,62 @@ public class TestPaymentService {
 				.expirationYear("2018")
 				.number("4111111111111111")
 				.customerId(customer.getId())
-				.billingAddressId(addressResult.getTarget().getId());
+				.billingAddress()
+				.firstName("John")
+				.lastName("Herson")
+				.countryCodeAlpha2("US").done();
 		
+		
+//		if (customer == null) {
 		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+			System.out.println(creditCardResult.getTarget().getToken());
+//		} else {
+//			Result<Customer> customerResult = gateway.customer().update(customer.getId(), customerRequest);
+//			customer = customerResult.getTarget();
+//		}
 		
-		System.out.println(creditCardResult.getTarget().getToken());
+//		AddressRequest addressRequest = new AddressRequest()
+//				.countryCodeAlpha2("US");
+//		
+//		Result<Address> addressResult = gateway.address().create(customer.getId(), addressRequest);
+//		
+//		System.out.println(addressResult.getTarget().getId());
 		
-		gateway.address().update(customer.getId(), addressResult.getTarget().getId(), addressRequest);
 		
-		gateway.creditCard().update(creditCardResult.getTarget().getToken(), creditCardRequest);
+//		CreditCardRequest creditCardRequest = new CreditCardRequest()
+//				.cardholderName("John Herson")
+//				.expirationMonth("12")
+//				.expirationYear("2018")
+//				.number("4111111111111111")
+//				.customerId(customer.getId());
+//		
+//		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+//		
+//		System.out.println(creditCardResult.getTarget().getToken());
+//		
+//		CreditCardAddressRequest creditCardAddressRequest = new CreditCardAddressRequest(creditCardRequest).
+//				.countryCodeAlpha2("US");
+//		
+//		gateway.address().create(customer.getId(), creditCardAddressRequest);
 		
-		customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
+		//gateway.address().update(customer.getId(), addressResult.getTarget().getId(), addressRequest);
 		
-		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-			    .paymentMethodToken(customer.getDefaultPaymentMethod().getToken())
-			    .planId("RECURRING_MONTHLY_PLAN")
-			    .price(new BigDecimal("0.00"));
-
-		Result<Subscription> subscriptionResult = gateway.subscription().create(subscriptionRequest);
+		//gateway.creditCard().update(creditCardResult.getTarget().getToken(), creditCardRequest);
 		
-		System.out.println(subscriptionResult.getTarget().getId());		
+		//customer = gateway.customer().find("56c7f2b33004ea79702df8d4");
+		
+//		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+//			    .paymentMethodToken(customer.getDefaultPaymentMethod().getToken())
+//			    .planId("RECURRING_MONTHLY_PLAN")
+//			    .price(new BigDecimal("0.00"));
+//
+//		Result<Subscription> subscriptionResult = gateway.subscription().create(subscriptionRequest);
+//		
+//		System.out.println(subscriptionResult.getTarget().getId());		
 	}
 	
 	@AfterClass
 	public static void afterClass() {
-		gateway.customer().delete("56c7f2b33004ea79702df8d4");
+		//gateway.customer().delete("56c7f2b33004ea79702df8d4");
 	}
 }

@@ -1,1 +1,2 @@
-com/nowellpoint/client/auth/TestAuthenticators.class
+com/nowellpoint/client/test/TestAuthenticators.class
+com/nowellpoint/client/test/TestSignUp.class

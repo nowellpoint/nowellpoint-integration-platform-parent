@@ -29,6 +29,8 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.braintreegateway.CreditCardRequest;
+import com.braintreegateway.CustomerRequest;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Error;
@@ -36,7 +38,10 @@ import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.account.AccountStatus;
 
 @Path("/signup")
 public class SignUpService {
@@ -49,6 +54,9 @@ public class SignUpService {
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
+	
+	@Inject
+	private PaymentGatewayService paymentGatewayService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -68,7 +76,12 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one upper letter."),
     	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
     	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password,
-    		@FormParam("confirmPassword") @NotEmpty(message="Confirmation Password must be filled in") String confirmPassword) {
+    		@FormParam("confirmPassword") @NotEmpty(message="Confirmation Password must be filled in") String confirmPassword,
+    		@FormParam("planId") @NotEmpty(message="No plan has been specified") String planId,
+    		@FormParam("cardNumber") String cardNumber,
+    		@FormParam("expirationMonth") String expirationMonth,
+    		@FormParam("expirationYear") String expirationYear,
+    		@FormParam("securityCode") String securityCode) {
 		
 		/**
 		 * 
@@ -104,25 +117,20 @@ public class SignUpService {
 		 * 
 		 */
 		
-		User user = identityProviderService.findByUsername(email);
-		
-		if (user == null) {
-			user = new User();
-		}
+		Account user = identityProviderService.findByUsername(email);
 			
-		user = new User();
 		user.setGivenName(firstName);
 		user.setMiddleName(null);
 		user.setSurname(lastName);
 		user.setEmail("administrator@nowellpoint.com");
 		user.setUsername(email);
 		user.setPassword(password);
-		user.setStatus("UNVERIFIED");
+		user.setStatus(AccountStatus.UNVERIFIED);
 			
 		if (user.getHref() == null) {
-			identityProviderService.createUser(user);
+			identityProviderService.createAccount( user );
 		} else {
-			identityProviderService.updateUser(user);
+			identityProviderService.updateAccount( user );
 		}
 		
 		/**
@@ -165,9 +173,38 @@ public class SignUpService {
 		 * 
 		 */
 		
+		CustomerRequest customerRequest = new CustomerRequest()
+				.customerId( accountProfile.getId() )
+				.email( email )
+				.firstName( firstName )
+				.lastName( lastName );
+		
+		//paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.cardholderName( accountProfile.getName() )
+				.expirationMonth( expirationMonth )
+				.expirationYear( expirationYear )
+				.number( cardNumber )
+				.customerId( accountProfile.getId() )
+				.billingAddress()
+				.firstName( firstName )
+				.lastName( lastName )
+				.countryCodeAlpha2( countryCode )
+				.done();
+		
+		paymentGatewayService.createCreditCard(creditCardRequest);
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
 		String emailVerificationToken = user.getEmailVerificationToken().getHref().substring(user.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
 		
-		emailService.sendEmailVerificationMessage(user, emailVerificationToken);
+		emailService.sendEmailVerificationMessage(user.getEmail(), user.getFullName(), emailVerificationToken);
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)

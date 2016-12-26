@@ -13,6 +13,7 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
+import com.braintreegateway.exceptions.AuthorizationException;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.util.Properties;
 
@@ -43,10 +44,14 @@ public class PaymentGatewayService {
 		
 		Result<Customer> customerResult = null;
 		
-		if (customer == null) {
-			customerResult = gateway.customer().create(customerRequest);
-		} else {
-			customerResult = gateway.customer().update(customer.getId(), customerRequest);
+		try {
+			if (customer == null) {
+				customerResult = gateway.customer().create(customerRequest);
+			} else {
+				customerResult = gateway.customer().update(customer.getId(), customerRequest);
+			}
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
 		}
 		
 		return customerResult;

@@ -36,6 +36,11 @@ public class UserResource extends AbstractResource {
 					.parameter("countryCode", signUpRequest.getCountryCode())
 					.parameter("password", URLEncoder.encode(signUpRequest.getPassword(), "UTF-8"))
 					.parameter("confirmPassword", URLEncoder.encode(signUpRequest.getConfirmPassword(), "UTF-8"))
+					.parameter("planId", signUpRequest.getPlanId())
+					.parameter("cardNumber", signUpRequest.getCardNumber())
+					.parameter("expirationMonth", signUpRequest.getExpirationMonth())
+					.parameter("expirationYear", signUpRequest.getExpirationYear())
+					.parameter("securityCode", signUpRequest.getSecurityCode())
 					.execute();
 			
 			SignUpResult<User> result = null;

@@ -184,7 +184,7 @@ public class AccountProfileResource {
 		
 		accountProfileService.updateAccountProfile( accountProfile );
 		
-		identityProviderService.updateUser(accountProfile.getHref(), email, firstName, lastName);
+		identityProviderService.updateAccount(accountProfile.getHref(), email, firstName, lastName);
 		
 		return Response.ok(accountProfile)
 				.build();

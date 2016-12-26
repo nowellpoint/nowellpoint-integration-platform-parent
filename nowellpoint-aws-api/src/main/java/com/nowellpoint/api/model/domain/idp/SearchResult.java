@@ -3,7 +3,9 @@ package com.nowellpoint.api.model.domain.idp;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchResult implements Serializable {
 	
 	/**
@@ -19,6 +21,8 @@ public class SearchResult implements Serializable {
 	private Integer limit;
 	
 	private String href;
+	
+	private String status;
 	
 	private List<User> items;
 	
@@ -56,6 +60,14 @@ public class SearchResult implements Serializable {
 
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public List<User> getItems() {

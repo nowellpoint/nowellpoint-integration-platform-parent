@@ -31,6 +31,7 @@
 		<version.wildfly.swarm>2016.11.0</version.wildfly.swarm>
 		<version.force.api>37.0.3</version.force.api>
 		<version.stormpath.sdk>1.2.3</version.stormpath.sdk>
+		<version.braintree.sdk>2.69.0</version.braintree.sdk>
 	</properties>
 
 	<dependencyManagement>
@@ -97,7 +98,7 @@
 		<dependency>
 			<groupId>com.braintreepayments.gateway</groupId>
 			<artifactId>braintree-java</artifactId>
-			<version>2.68.0</version>
+			<version>${version.braintree.sdk}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sendgrid</groupId>
