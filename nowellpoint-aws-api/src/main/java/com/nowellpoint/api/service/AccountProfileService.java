@@ -11,6 +11,7 @@ import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
@@ -51,6 +52,9 @@ import com.nowellpoint.util.Assert;
 public class AccountProfileService extends AccountProfileModelMapper {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 	
 	@Inject
 	private PaymentGatewayService paymentGatewayService;
@@ -129,8 +133,18 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * 
 	 */
 	
-	public void deactivateAccountProfile(AccountProfile accountProfile) {
+	public void deactivateAccountProfile(String id) {
+		AccountProfile accountProfile = findAccountProfile(id);
 		accountProfile.setIsActive(Boolean.FALSE);
+		accountProfile.setCreditCards(Collections.emptySet());
+		
+		if (isNotNull(accountProfile.getHref())) {
+			identityProviderService.deactivateUser(accountProfile.getHref());
+		}
+		
+		if (isNotNull(accountProfile.getSubscription())) {
+			paymentGatewayService.cancelSubscription(accountProfile.getSubscription().getSubscriptionId());
+		}
 		
 		updateAccountProfile( accountProfile );
 	}
@@ -267,6 +281,15 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
 		
 		super.updateAccountProfile(accountProfile);
+		
+		if (isNotNull(accountProfile.getHref())) {
+			
+			identityProviderService.updateAccount(
+					accountProfile.getHref(), 
+					accountProfile.getEmail(), 
+					accountProfile.getFirstName(), 
+					accountProfile.getLastName());
+		}
 		
 		if (isNotNull(accountProfile.getSubscription())) {
 			

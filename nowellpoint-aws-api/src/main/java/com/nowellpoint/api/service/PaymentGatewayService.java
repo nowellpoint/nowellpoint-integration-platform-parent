@@ -100,4 +100,9 @@ public class PaymentGatewayService {
 		Result<Subscription> result = gateway.subscription().update(id, subscriptionRequest);
 		return result;
 	}
+	
+	public Result<Subscription> cancelSubscription(String id) {
+		Result<Subscription> result = gateway.subscription().cancel(id);
+		return result;
+	}
 }

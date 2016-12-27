@@ -29,9 +29,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<version.wildfly.swarm>2016.11.0</version.wildfly.swarm>
-		<version.force.api>37.0.3</version.force.api>
-		<version.stormpath.sdk>1.2.3</version.stormpath.sdk>
-		<version.braintree.sdk>2.69.0</version.braintree.sdk>
 	</properties>
 
 	<dependencyManagement>
@@ -103,7 +100,7 @@
 		<dependency>
 			<groupId>com.sendgrid</groupId>
 			<artifactId>sendgrid-java</artifactId>
-			<version>3.0.4</version>
+			<version>${version.sendgrid.java}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

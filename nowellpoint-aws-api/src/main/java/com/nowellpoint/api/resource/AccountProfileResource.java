@@ -34,7 +34,6 @@ import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
-import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PlanService;
 
 @Path("account-profile")
@@ -42,9 +41,6 @@ public class AccountProfileResource {
 	
 	@Inject
 	private AccountProfileService accountProfileService;
-	
-	@Inject
-	private IdentityProviderService identityProviderService;
 	
 	@Inject
 	private PlanService planService;
@@ -184,8 +180,6 @@ public class AccountProfileResource {
 		
 		accountProfileService.updateAccountProfile( accountProfile );
 		
-		identityProviderService.updateAccount(accountProfile.getHref(), email, firstName, lastName);
-		
 		return Response.ok(accountProfile)
 				.build();
 	}
@@ -221,7 +215,8 @@ public class AccountProfileResource {
 				.path("/{id}")
 				.build(accountProfile.getId());
 		
-		return Response.created(uri).build();
+		return Response.created(uri)
+				.build();
 	}
 	
 	@PUT
@@ -238,16 +233,12 @@ public class AccountProfileResource {
 	
 	@DELETE
 	@Path("{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deactivateAccountProfile(@PathParam("id") String id) {
+
+		accountProfileService.deactivateAccountProfile( id );
 		
-		AccountProfile resource = new AccountProfile(id);
-		accountProfileService.deactivateAccountProfile( resource );
-		
-		identityProviderService.deactivateUser(resource.getHref());
-		
-		return Response.ok().build();
+		return Response.ok()
+				.build();
 	}
 	
 	@GET
@@ -255,14 +246,13 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		CreditCard resource = accountProfileService.getCreditCard( id, token);
+		CreditCard resource = accountProfileService.getCreditCard( id, token );
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
 		}
 		
-		return Response
-				.ok(resource)
+		return Response.ok(resource)
 				.build();
 	}
 	
@@ -272,10 +262,9 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		
-		accountProfileService.addCreditCard( id, creditCard);
+		accountProfileService.addCreditCard( id, creditCard );
 		
-		return Response
-				.ok(creditCard)
+		return Response.ok(creditCard)
 				.build();
 	}
 	
@@ -287,8 +276,7 @@ public class AccountProfileResource {
 		
 		CreditCard resource = accountProfileService.updateCreditCard( id, token, parameters );
 		
-		return Response
-				.ok(resource)
+		return Response.ok(resource)
 				.build();
 	}
 	
@@ -300,9 +288,7 @@ public class AccountProfileResource {
 		
 		accountProfileService.updateCreditCard( id, token, creditCard );
 		
-		return Response
-				.ok(creditCard)
-				.build();
+		return Response.ok(creditCard).build();
 	}
 	
 	@DELETE
@@ -311,8 +297,7 @@ public class AccountProfileResource {
 		
 		accountProfileService.removeCreditCard( id, token );
 		
-		return Response
-				.ok()
+		return Response.ok()
 				.build();
 	}
 	
