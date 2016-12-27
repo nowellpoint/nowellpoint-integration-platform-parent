@@ -6,6 +6,7 @@ import static com.nowellpoint.util.Assert.isNotNull;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -46,7 +46,6 @@ import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Error;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
-import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -335,6 +334,8 @@ public class SignUpService {
 		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
 		creditCard.setAddedOn(now);
 		creditCard.setUpdatedOn(now);
+		
+		accountProfile.setCreditCards(Collections.emptySet());
 			
 		accountProfile.addCreditCard(creditCard);
 		
@@ -363,7 +364,7 @@ public class SignUpService {
 		
 		String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
 		
-		emailService.sendEmailVerificationMessage(account.getEmail(), account.getFullName(), emailVerificationToken);
+		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), emailVerificationToken);
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)
@@ -386,22 +387,18 @@ public class SignUpService {
 	
 	@PermitAll
 	@POST
-	@Path("verify-email/{emailVerificationToken}")
+	@Path("verify-email")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response verifyEmail(@PathParam("emailVerificationToken") String emailVerificationToken) {
+	public Response verifyEmail(@FormParam("emailVerificationToken") String emailVerificationToken) {
 		
 		String href = identityProviderService.verifyEmail(emailVerificationToken);
 		
-		String username = identityProviderService.getAccountByHref(href).getUsername();
+		Account account = identityProviderService.getAccountByHref(href);
 		
-		User user = new User();
-		user.setHref(href);
-		user.setUsername(username);
-		user.setEmail(username);
+		identityProviderService.updateEmail(href, account.getUsername());
 		
-		identityProviderService.updateUsername(href, username);
-		
-		emailService.sendWelcomeMessage(user);
+		emailService.sendWelcomeMessage(account.getUsername(), account.getUsername(), account.getFullName());
 		
 		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(href));
 		

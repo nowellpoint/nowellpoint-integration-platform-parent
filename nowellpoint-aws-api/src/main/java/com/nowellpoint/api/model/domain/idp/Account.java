@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
-public class User implements Serializable {
+public class Account implements Serializable {
 
 	/**
 	 * 
@@ -64,7 +64,7 @@ public class User implements Serializable {
 	@JsonProperty(value="directory")
 	private Directory directory;
 	  
-	public User() {
+	public Account() {
 		
 	}
 

@@ -24,7 +24,7 @@ public class SearchResult implements Serializable {
 	
 	private String status;
 	
-	private List<User> items;
+	private List<Account> items;
 	
 	public SearchResult() {
 		
@@ -70,11 +70,11 @@ public class SearchResult implements Serializable {
 		this.status = status;
 	}
 
-	public List<User> getItems() {
+	public List<Account> getItems() {
 		return items;
 	}
 
-	public void setItems(List<User> items) {
+	public void setItems(List<Account> items) {
 		this.items = items;
 	}
 }

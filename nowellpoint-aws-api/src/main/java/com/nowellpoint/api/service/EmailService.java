@@ -10,7 +10,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -73,7 +72,7 @@ public class EmailService {
 		});
 	}
 	
-	public void sendWelcomeMessage(User user) {
+	public void sendWelcomeMessage(String email, String username, String name) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -82,8 +81,8 @@ public class EmailService {
 				from.setName("Nowellpoint Support");
 			    
 			    Email to = new Email();
-			    to.setEmail(user.getUsername());
-			    to.setName(user.getFullName());
+			    to.setEmail(email);
+			    to.setName(name);
 			    
 			    Content content = new Content();
 			    content.setType("text/html");
@@ -91,8 +90,8 @@ public class EmailService {
 			    	    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", user.getFullName());
-			    personalization.addSubstitution("%username%", user.getUsername());
+			    personalization.addSubstitution("%name%", name);
+			    personalization.addSubstitution("%username%", username);
 			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);

@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Error;
 import com.nowellpoint.api.model.domain.idp.Token;
-import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
@@ -38,6 +37,7 @@ import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRequests;
+import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -126,31 +126,7 @@ public class IdentityProviderService {
         return token;
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
 	
-	public User getAccount(String id) {
-		
-		User user = null;
-		
-		HttpResponse httpResponse = RestResource.get(String.format("%s/accounts/%s", System.getProperty(Properties.STORMPATH_API_ENDPOINT), id))
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.queryParameter("expand","groups")
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
-		if (httpResponse.getStatusCode() == 200) {
-			user = httpResponse.getEntity(User.class);
-		} else {
-			LOGGER.error(httpResponse.getAsString());
-		}
-		
-		return user;
-	}
 	
 	/**
 	 * 
@@ -158,23 +134,8 @@ public class IdentityProviderService {
 	 * @return
 	 */
 	
-	public User getAccountByHref(String href) {
-		
-		User user = null;
-		
-		HttpResponse httpResponse = RestResource.get(href)
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
-		if (httpResponse.getStatusCode() == 200) {
-			user = httpResponse.getEntity(User.class);
-		} else {
-			LOGGER.error(httpResponse.getAsString());
-		}
-		
-		return user;
+	public Account getAccountByHref(String href) {
+		return client.getResource(href, Account.class);
 	}
 	
 	/**
@@ -207,7 +168,7 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param user
+	 * @param account
 	 */
 	
 	public void updateAccount(Account account) {
@@ -226,6 +187,21 @@ public class IdentityProviderService {
 				.setUsername(username);
 		
 		account.save();
+	}
+	
+	/**
+	 * 
+	 * @param href
+	 * @param email
+	 */
+	
+	public void updateEmail(String href, String email) {
+		
+		Account account = client.getResource(href, Account.class)
+				.setEmail(email);
+		
+		account.save();
+		
 	}
 	
 	/**
@@ -253,31 +229,6 @@ public class IdentityProviderService {
 				.setPassword(password);
 		
 		account.save();
-	}
-	
-	/**
-	 * 
-	 * @param subject
-	 * @return
-	 */
-	
-	public User getAccountBySubject(String subject) {		
-		HttpResponse httpResponse = RestResource.get(subject)
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.queryParameter("expand","groups")
-				.execute();
-			
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());
-		
-		User user = null;
-		
-		if (httpResponse.getStatusCode() == 200) {
-			user = httpResponse.getEntity(User.class);
-		} else {
-			throw new ValidationException(httpResponse.getAsString());
-		}
-		
-		return user;
 	}
 	
 	/**
@@ -367,21 +318,13 @@ public class IdentityProviderService {
 	
 	public String verifyEmail(String emailVerificationToken) {	
 		
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.path("accounts")
-				.path("emailVerificationTokens")
-				.path(emailVerificationToken)
-				.execute();
-		
-		ObjectNode response = httpResponse.getEntity(ObjectNode.class);
-
-		if (httpResponse.getStatusCode() != Status.OK) {
-			Error error = new Error(response.get("code").asInt(), response.get("developerMessage").asText());
+		try {
+		    Account account = client.verifyAccountEmail(emailVerificationToken);
+		    return account.getHref();
+		} catch (ResourceException e) {
+			Error error = new Error(e.getCode(), e.getDeveloperMessage());
 			throw new ValidationException(error.getMessage()); 
 		}
-		
-		return response.get("href").asText();
 	}
 	
 	/**
@@ -408,7 +351,7 @@ public class IdentityProviderService {
 		String jwt = Jwts.builder()
         		.setId(id)
         		.setHeaderParam("typ", "JWT")
-        		.setIssuer("nowellpoint.com")
+        		.setIssuer(application.getHref())
         		.setSubject(subject)
         		.setIssuedAt(new Date(System.currentTimeMillis()))
         		.setExpiration(expiration)

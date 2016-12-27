@@ -13,7 +13,7 @@ import org.junit.BeforeClass;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.domain.idp.Token;
-import com.nowellpoint.api.model.domain.idp.User;
+import com.nowellpoint.api.model.domain.idp.Account;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
@@ -64,18 +64,18 @@ public class TestRestApi {
 			
 			assertTrue(httpResponse.getStatusCode() == Status.OK);
 			
-			User user = httpResponse.getEntity(User.class);
+			Account account = httpResponse.getEntity(Account.class);
 			
-			assertNotNull(user);
-			assertNotNull(user.getEmail());
-			assertNotNull(user.getFullName());
-			assertNotNull(user.getGivenName());
-			assertNotNull(user.getHref());
-			assertNotNull(user.getId());
-			assertNotNull(user.getStatus());
-			assertNotNull(user.getSurname());
-			assertNotNull(user.getUsername());
-			assertEquals(user.getEmail(), "john.d.herson@gmail.com");
+			assertNotNull(account);
+			assertNotNull(account.getEmail());
+			assertNotNull(account.getFullName());
+			assertNotNull(account.getGivenName());
+			assertNotNull(account.getHref());
+			assertNotNull(account.getId());
+			assertNotNull(account.getStatus());
+			assertNotNull(account.getSurname());
+			assertNotNull(account.getUsername());
+			assertEquals(account.getEmail(), "john.d.herson@gmail.com");
 			
 			httpResponse = RestResource.get(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.bearerAuthorization(token.getAccessToken())
@@ -103,13 +103,13 @@ public class TestRestApi {
 		
 		System.out.println("testAccount");
 		
-		User user = new User();
-		user.setEmail("allbuyer@aim.com");
-		user.setSurname("Buyer");
-		user.setGivenName("All");
-		user.setUsername("allbuyer@aim.com");
+		Account account = new Account();
+		account.setEmail("allbuyer@aim.com");
+		account.setSurname("Buyer");
+		account.setGivenName("All");
+		account.setUsername("allbuyer@aim.com");
 		try {
-			user.setPassword(URLEncoder.encode("!t2U1&JUTJvY", "UTF-8"));
+			account.setPassword(URLEncoder.encode("!t2U1&JUTJvY", "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -131,33 +131,33 @@ public class TestRestApi {
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 					.path("account")
-					.body(user)
+					.body(account)
 					.execute();
 			
 			assertEquals(httpResponse.getStatusCode(), 201);
 			assertNotNull(httpResponse.getHeaders().get("Location"));
 			
-			user = httpResponse.getEntity(User.class);
+			account = httpResponse.getEntity(Account.class);
 			
-			assertNotNull(user.getEmail());
-			assertNotNull(user.getFullName());
-			assertNotNull(user.getGivenName());
-			assertNotNull(user.getHref());
-			assertNotNull(user.getId());
-			assertNotNull(user.getStatus());
-			assertNotNull(user.getSurname());
-			assertNotNull(user.getUsername());
+			assertNotNull(account.getEmail());
+			assertNotNull(account.getFullName());
+			assertNotNull(account.getGivenName());
+			assertNotNull(account.getHref());
+			assertNotNull(account.getId());
+			assertNotNull(account.getStatus());
+			assertNotNull(account.getSurname());
+			assertNotNull(account.getUsername());
 			
 			httpResponse = RestResource.delete(System.getenv("NOWELLPOINT_API_ENDPOINT"))
 					.contentType(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 					.path("account")
-					.path(user.getId())
+					.path(account.getId())
 					.execute();
 			
 			assertEquals(httpResponse.getStatusCode(), 204);
 			
-			httpResponse = RestResource.delete(user.getHref())
+			httpResponse = RestResource.delete(account.getHref())
 					.basicAuthorization(System.getProperty(Properties.STORMPATH_API_KEY_ID), System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
 					.execute();
 			

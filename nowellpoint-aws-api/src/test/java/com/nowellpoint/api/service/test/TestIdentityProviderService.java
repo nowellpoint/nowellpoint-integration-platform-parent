@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.util.Properties;
+import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
@@ -56,5 +57,10 @@ public class TestIdentityProviderService {
 		
 		System.out.println(authenticationResult.getAccessToken().getAccount().getFullName());
 		System.out.println(authenticationResult.getAccessToken().getJwt());
+		
+		Account account = client.getResource(authenticationResult.getAccessToken().getAccount().getHref(), Account.class);
+		
+		System.out.println(account.getHref());
+		System.out.println(account.getGroups().single().getName());
 	}
 }
