@@ -1,8 +1,12 @@
 package com.nowellpoint.api.resource;
 
 import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNotNull;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,23 +32,34 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.jboss.logging.Logger;
 
+import com.braintreegateway.AddressRequest;
 import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.CustomerRequest;
+import com.braintreegateway.Result;
+import com.braintreegateway.SubscriptionRequest;
+import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Error;
+import com.nowellpoint.api.model.domain.Plan;
+import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PaymentGatewayService;
+import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.account.AccountStatus;
 
 @Path("/signup")
 public class SignUpService {
+	
+	private static final Logger LOGGER = Logger.getLogger(SignUpService.class);
 	
 	@Inject
 	private EmailService emailService;
@@ -58,8 +73,41 @@ public class SignUpService {
 	@Inject
 	private PaymentGatewayService paymentGatewayService;
 	
+	@Inject
+	private PlanService planService;
+	
 	@Context
 	private UriInfo uriInfo;
+	
+	/**
+	 * Sign up steps:
+	 * 
+	 * 1. check that password and confirm password match (Error error = new Error(2000, "Password mismatch")
+	 * 2. lookup account in identity provider by username 
+	 * 3. if account exists and is is enabled (1000, "Account for email is already enabled")
+	 * 4. create or update account in identity provided
+	 * 5. create or update account profile local
+	 * 6. lookup plan with planId local
+	 * 7. add or update customer in payment gateway
+	 * 8. add or update credit card in payment gateway with billing address
+	 * 9. add or update subscription based on plan
+	 * 10. udpate account profile with credit card and subscription info
+	 * 11. build and return email verification token and location to account profile
+	 * 
+	 * @param firstName
+	 * @param lastName
+	 * @param email
+	 * @param countryCode
+	 * @param password
+	 * @param confirmPassword
+	 * @param planId
+	 * @param cardNumber
+	 * @param expirationMonth
+	 * @param expirationYear
+	 * @param securityCode
+	 * @return the response with verification token and url link to account profile
+	 * 
+	 */
 
 	@PermitAll
 	@POST
@@ -78,10 +126,10 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password,
     		@FormParam("confirmPassword") @NotEmpty(message="Confirmation Password must be filled in") String confirmPassword,
     		@FormParam("planId") @NotEmpty(message="No plan has been specified") String planId,
-    		@FormParam("cardNumber") String cardNumber,
-    		@FormParam("expirationMonth") String expirationMonth,
-    		@FormParam("expirationYear") String expirationYear,
-    		@FormParam("securityCode") String securityCode) {
+    		@FormParam("cardNumber") @NotEmpty(message="Credit Card number must be provided") String cardNumber,
+    		@FormParam("expirationMonth") @NotEmpty(message="Credit card is missing expiration month") String expirationMonth,
+    		@FormParam("expirationYear") @NotEmpty(message="Credit card is missing expiration year") String expirationYear,
+    		@FormParam("securityCode") @NotEmpty(message="Credit card is mssing security code") String securityCode) {
 		
 		/**
 		 * 
@@ -103,34 +151,27 @@ public class SignUpService {
 		 * 
 		 */
 		
-		if (identityProviderService.isEnabledAccount(email)) {
+		Account account = identityProviderService.findByUsername(email);
+		
+		if (isNotNull(account.getStatus()) && account.getStatus().equals(AccountStatus.ENABLED)) {
 			Error error = new Error(1000, "Account for email is already enabled");
 			ResponseBuilder builder = Response.status(Status.CONFLICT);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
-		
-		/**
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
-		
-		Account user = identityProviderService.findByUsername(email);
 			
-		user.setGivenName(firstName);
-		user.setMiddleName(null);
-		user.setSurname(lastName);
-		user.setEmail("administrator@nowellpoint.com");
-		user.setUsername(email);
-		user.setPassword(password);
-		user.setStatus(AccountStatus.UNVERIFIED);
+		account.setGivenName(firstName);
+		account.setMiddleName(null);
+		account.setSurname(lastName);
+		account.setEmail("administrator@nowellpoint.com");
+		account.setUsername(email);
+		account.setPassword(password);
+		account.setStatus(AccountStatus.UNVERIFIED);
 			
-		if (user.getHref() == null) {
-			identityProviderService.createAccount( user );
+		if (account.getHref() == null) {
+			identityProviderService.createAccount( account );
 		} else {
-			identityProviderService.updateAccount( user );
+			identityProviderService.updateAccount( account );
 		}
 		
 		/**
@@ -153,14 +194,14 @@ public class SignUpService {
 		accountProfile.setEmail(email);
 		accountProfile.setUsername(email);
 		accountProfile.setIsActive(Boolean.TRUE);
-		accountProfile.setHref(user.getHref());
+		accountProfile.setHref(account.getHref());
 			
 		Address address = accountProfile.getAddress() != null ? accountProfile.getAddress() : new Address();
 		address.setCountryCode(countryCode);
 			
 		accountProfile.setAddress(address);
-			
-		if (isNull(accountProfile.getId())) {			
+		
+		if (isNull(accountProfile.getId())) {	
 			accountProfileService.createAccountProfile( accountProfile );
 		} else {
 			accountProfileService.updateAccountProfile( accountProfile );
@@ -173,27 +214,7 @@ public class SignUpService {
 		 * 
 		 */
 		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.customerId( accountProfile.getId() )
-				.email( email )
-				.firstName( firstName )
-				.lastName( lastName );
-		
-		//paymentGatewayService.addOrUpdateCustomer(customerRequest);
-		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.cardholderName( accountProfile.getName() )
-				.expirationMonth( expirationMonth )
-				.expirationYear( expirationYear )
-				.number( cardNumber )
-				.customerId( accountProfile.getId() )
-				.billingAddress()
-				.firstName( firstName )
-				.lastName( lastName )
-				.countryCodeAlpha2( countryCode )
-				.done();
-		
-		paymentGatewayService.createCreditCard(creditCardRequest);
+		Plan plan = planService.findPlan(planId);
 		
 		/**
 		 * 
@@ -202,9 +223,147 @@ public class SignUpService {
 		 * 
 		 */
 		
-		String emailVerificationToken = user.getEmailVerificationToken().getHref().substring(user.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
+		CustomerRequest customerRequest = new CustomerRequest()
+				.id(accountProfile.getId())
+				.company(accountProfile.getCompany())
+				.email(accountProfile.getEmail())
+				.firstName(accountProfile.getFirstName())
+				.lastName(accountProfile.getLastName())
+				.phone(accountProfile.getPhone());
 		
-		emailService.sendEmailVerificationMessage(user.getEmail(), user.getFullName(), emailVerificationToken);
+		Result<com.braintreegateway.Customer> customerResult = null;
+		
+		try {
+			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+		} catch (NotFoundException e) {
+			LOGGER.error(e);
+		}
+		
+		if (! customerResult.isSuccess()) {
+			LOGGER.error(customerResult.getMessage());
+		}
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		Result<com.braintreegateway.CreditCard> creditCardResult = null;
+		
+		if (customerResult.getTarget().getCreditCards().isEmpty()) {
+			
+			CreditCardRequest creditCardRequest = new CreditCardRequest()
+					.cardholderName( accountProfile.getName() )
+					.expirationMonth( expirationMonth )
+					.expirationYear( expirationYear )
+					.number( cardNumber )
+					.customerId( accountProfile.getId() )
+					.billingAddress()
+					.firstName( firstName )
+					.lastName( lastName )
+					.countryCodeAlpha2( countryCode )
+					.done();
+			
+			creditCardResult = paymentGatewayService.createCreditCard(creditCardRequest);
+			
+		} else {
+			
+			AddressRequest addressRequest = new AddressRequest()
+					.countryCodeAlpha2(countryCode);
+			
+			Result<com.braintreegateway.Address> addressResult = paymentGatewayService.updateAddress(accountProfile.getId(), customerResult.getTarget().getAddresses().get(0).getId(), addressRequest);
+			
+			CreditCardRequest creditCardRequest = new CreditCardRequest()
+					.cardholderName( accountProfile.getName() )
+					.expirationMonth( expirationMonth )
+					.expirationYear( expirationYear )
+					.number( cardNumber )
+					.customerId( accountProfile.getId() )
+					.billingAddressId(addressResult.getTarget().getId());
+			
+			creditCardResult = paymentGatewayService.updateCreditCard(accountProfile.getPrimaryCreditCard().getToken(), creditCardRequest);
+		}
+		
+		if (! creditCardResult.isSuccess()) {
+			LOGGER.error(creditCardResult.getMessage());
+		}
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				.paymentMethodToken(creditCardResult.getTarget().getToken())
+				.planId(plan.getPlanCode())
+				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+		
+		Result<com.braintreegateway.Subscription> subscriptionResult = null;
+			
+		if (isNull(accountProfile.getSubscription())) {
+			subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
+		} else {
+			subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+		}
+
+		if (! subscriptionResult.isSuccess()) {
+			LOGGER.error(subscriptionResult.getMessage());
+		}
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		Date now = Date.from(Instant.now());
+			
+		CreditCard creditCard = new CreditCard();
+		creditCard.setCardholderName(creditCardResult.getTarget().getCardholderName());
+		creditCard.setCardType(creditCardResult.getTarget().getCardType());
+		creditCard.setExpirationMonth(creditCardResult.getTarget().getExpirationMonth());
+		creditCard.setExpirationYear(creditCardResult.getTarget().getExpirationYear());
+		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
+		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
+		creditCard.setPrimary(Boolean.TRUE);
+		creditCard.setToken(creditCardResult.getTarget().getToken());
+		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
+		creditCard.setAddedOn(now);
+		creditCard.setUpdatedOn(now);
+			
+		accountProfile.addCreditCard(creditCard);
+		
+		Subscription subscription = new Subscription();
+		subscription.setPlanId(planId);
+		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
+		subscription.setPlanCode(plan.getPlanCode());
+		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
+		subscription.setPlanName(plan.getPlanName());
+		subscription.setBillingFrequency(plan.getBillingFrequency());
+		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
+		subscription.setAddedOn(now);
+		subscription.setUpdatedOn(now);
+		subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
+		
+		accountProfile.setSubscription(subscription);
+		
+		accountProfileService.updateAccountProfile( accountProfile );
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
+		
+		String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
+		
+		emailService.sendEmailVerificationMessage(account.getEmail(), account.getFullName(), emailVerificationToken);
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)

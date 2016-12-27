@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.GetPlansRequest;
@@ -118,34 +117,54 @@ public class SignUpController extends AbstractController {
 	
 	private String signUp(Configuration configuration, Request request, Response response) {
 		
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
+		String email = request.queryParams("email");
+		String password = request.queryParams("password");
+		String confirmPassword = request.queryParams("confirmPassword");
+		String countryCode = request.queryParams("countryCode");
+		String planId = request.queryParams("planId");
+		String cardNumber = request.queryParams("cardNumber");
+		String expirationMonth = request.queryParams("expirationMonth");
+		String expirationYear = request.queryParams("expirationYear");
+		String securityCode = request.queryParams("securityCode");
+		
 		SignUpRequest signUpRequest = new SignUpRequest()
-				.withFirstName(request.queryParams("firstName"))
-				.withLastName(request.queryParams("lastName"))
-				.withEmail(request.queryParams("email"))
-				.withPassword(request.queryParams("password"))
-				.withConfirmPassword(request.queryParams("confirmPassword"))
-				.withCountryCode(request.queryParams("countryCode"))
-				.withPlanId(request.queryParams("planId"));
+				.withFirstName(firstName)
+				.withLastName(lastName)
+				.withEmail(email)
+				.withPassword(password)
+				.withConfirmPassword(confirmPassword)
+				.withCountryCode(countryCode)
+				.withPlanId(planId)
+				.withCardNumber(cardNumber)
+				.withExpirationMonth(expirationMonth)
+				.withExpirationYear(expirationYear)
+				.withSecurityCode(securityCode);
 		
-//		SignUpResult<User> signUpResult = new NowellpointClient()
-//				.user()
-//				.signUp(signUpRequest);
-		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingContact(new Contact());
+		SignUpResult<User> signUpResult = new NowellpointClient()
+				.user()
+				.signUp(signUpRequest);
 		
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("action", "paymentMethod");
-		model.put("creditCard", creditCard);
-    	
-//    	if (signUpResult.isSuccess()) {
-//    		model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
-//    	} else {
-//    		model.put("signUpRequest", signUpRequest);
-//    		model.put("errorMessage", signUpResult.getErrorMessage());
-//    	}
+		
+    	if (! signUpResult.isSuccess()) {
+    		
+    		Plan plan = new NowellpointClient()
+    				.plan()
+    				.get(planId)
+    				.getTarget();
+    		
+    		model.put("action", "createAccount");
+    		model.put("signUpRequest", signUpRequest);
+    		model.put("plan", plan);
+    		model.put("errorMessage", signUpResult.getErrorMessage());
+    		
+    		return render(configuration, request, response, model, Template.SIGN_UP);
+    	}
+
+    	model.put("action", "signUpSuccess");
+    	model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
     	
     	return render(configuration, request, response, model, Template.SIGN_UP);
 	}

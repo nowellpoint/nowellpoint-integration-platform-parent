@@ -1,6 +1,7 @@
 package com.nowellpoint.api.service;
 
 import static com.nowellpoint.util.Assert.isEmpty;
+import static com.nowellpoint.util.Assert.isNotNull;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isEqual;
 
@@ -120,26 +121,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setLastModifiedBy(userInfo);
 
 		super.createAccountProfile(accountProfile);
-		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.id(accountProfile.getId())
-				.company(accountProfile.getCompany())
-				.email(accountProfile.getEmail())
-				.firstName(accountProfile.getFirstName())
-				.lastName(accountProfile.getLastName())
-				.phone(accountProfile.getPhone());
-		
-		Result<com.braintreegateway.Customer> customerResult = null;
-		
-		try {
-			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
-		} catch (NotFoundException e) {
-			throw new ValidationException(e.getMessage());
-		}
-		
-		if (! customerResult.isSuccess()) {
-			LOGGER.error(customerResult.getMessage());
-		}
 	}
 	
 	/**
@@ -287,24 +268,27 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		super.updateAccountProfile(accountProfile);
 		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.id(accountProfile.getId())
-				.company(accountProfile.getCompany())
-				.email(accountProfile.getEmail())
-				.firstName(accountProfile.getFirstName())
-				.lastName(accountProfile.getLastName())
-				.phone(accountProfile.getPhone());
-		
-		Result<com.braintreegateway.Customer> customerResult = null;
-		
-		try {
-			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
-		} catch (NotFoundException e) {
-			throw new ValidationException(e.getMessage());
-		}
-		
-		if (! customerResult.isSuccess()) {
-			LOGGER.error(customerResult.getMessage());
+		if (isNotNull(accountProfile.getSubscription())) {
+			
+			CustomerRequest customerRequest = new CustomerRequest()
+					.id(accountProfile.getId())
+					.company(accountProfile.getCompany())
+					.email(accountProfile.getEmail())
+					.firstName(accountProfile.getFirstName())
+					.lastName(accountProfile.getLastName())
+					.phone(accountProfile.getPhone());
+			
+			Result<com.braintreegateway.Customer> customerResult = null;
+			
+			try {
+				customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+			} catch (NotFoundException e) {
+				LOGGER.error(e);
+			}
+			
+			if (! customerResult.isSuccess()) {
+				LOGGER.error(customerResult.getMessage());
+			}
 		}
 	}
 	

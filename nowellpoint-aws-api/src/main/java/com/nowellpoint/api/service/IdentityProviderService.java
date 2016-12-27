@@ -128,22 +128,6 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param username
-	 * @return
-	 */
-	
-	public Boolean isEnabledAccount(String username) {
-		AccountList accounts = application.getAccounts(Accounts.where(Accounts.username().eqIgnoreCase(username)));
-		
-		if (accounts.getSize() > 0 && accounts.single().getStatus().equals(AccountStatus.ENABLED)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * 
 	 * @param id
 	 * @return
 	 */

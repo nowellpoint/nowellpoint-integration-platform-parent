@@ -51,32 +51,24 @@ public class TestPaymentService {
 //			
 //		}
 		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.customerId( UUID.randomUUID().toString() )
-				.email("jherson@aim.com")
-				.firstName("John")
-				.lastName("Herson");
-		
-		Result<Customer> customerResult = gateway.customer().create(customerRequest);
-		customer = customerResult.getTarget();
-		
-		System.out.println(customer.getId());
-		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName("John Herson")
 				.expirationMonth("12")
 				.expirationYear("2018")
 				.number("4111111111111111")
-				.customerId(customer.getId())
+				.customerId(UUID.randomUUID().toString())
 				.billingAddress()
 				.firstName("John")
 				.lastName("Herson")
-				.countryCodeAlpha2("US").done();
+				.countryCodeAlpha2("US")
+				.done();
+		
+		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+		
+		System.out.println(creditCardResult.getTarget().getToken());
 		
 		
 //		if (customer == null) {
-		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
-			System.out.println(creditCardResult.getTarget().getToken());
 //		} else {
 //			Result<Customer> customerResult = gateway.customer().update(customer.getId(), customerRequest);
 //			customer = customerResult.getTarget();

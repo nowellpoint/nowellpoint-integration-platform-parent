@@ -221,7 +221,6 @@
                                 </div>
                             </div>
                         </div>
-                        <#if plan.price.unitPrice gt 0>
                             <div class="row">
                                 <div class="hr-divider"></div>
                             </div>
@@ -232,7 +231,7 @@
                                 </div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="number" id="number" placeholder="${labels['number']}">
+                                        <input type="text" class="form-control" name="cardNumber" id="cardNumber" placeholder="${labels['number']}">
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
@@ -271,7 +270,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-6 col-lg-6">
-                                                <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" />
+                                                <input type="text" class="form-control" name="securityCode" id="securityCode" placeholder="${labels['cvv']}" />
                                             </div>
                                             <div class="col-xs-6 col-lg-6">
                                             </div>
@@ -279,7 +278,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </#if>
                         <div class="row">
                             <div class="col-md-offset-7 col-md-5">
                                 <div class="form-group">
@@ -312,6 +310,11 @@
                 </div>
             </form>
         </#if>
+        
+        <#if action="signUpSuccess">
+            
+            
+        </#if>     
     </div>
 </body>
 
