@@ -1,5 +1,7 @@
 package com.nowellpoint.api.service.test;
 
+import java.util.Base64;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,6 +17,10 @@ import com.stormpath.sdk.oauth.OAuthClientCredentialsGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthRequests;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+
 public class TestIdentityProviderService {
 	
 	private static Client client;
@@ -24,9 +30,6 @@ public class TestIdentityProviderService {
 	@BeforeClass
 	public static void beforeClass() {
 		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
-		
-		System.out.println(System.getProperty(Properties.STORMPATH_API_KEY_ID));
-		System.out.println(System.getProperty(Properties.STORMPATH_API_KEY_SECRET));
 		
 		apiKey = ApiKeys.builder()
 				.setId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
@@ -39,8 +42,6 @@ public class TestIdentityProviderService {
 		
 		application = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/applications/")
 				.concat(System.getProperty(Properties.STORMPATH_APPLICATION_ID)), Application.class);
-		
-		System.out.println(application.getName());
 	}
 	
 	@Test
@@ -57,6 +58,14 @@ public class TestIdentityProviderService {
 		
 		System.out.println(authenticationResult.getAccessToken().getAccount().getFullName());
 		System.out.println(authenticationResult.getAccessToken().getJwt());
+		
+		Jws<Claims> claims = Jwts.parser()
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+				.parseClaimsJws(authenticationResult.getAccessToken().getJwt());
+		
+		System.out.println("id: " + claims.getBody().getId());
+		System.out.println("iss: " + claims.getBody().getIssuer());
+		System.out.println("sub: " + claims.getBody().getSubject());
 		
 		Account account = client.getResource(authenticationResult.getAccessToken().getAccount().getHref(), Account.class);
 		

@@ -54,6 +54,7 @@ import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.account.AccountStatus;
+import com.stormpath.sdk.resource.ResourceException;
 
 @Path("/signup")
 public class SignUpService {
@@ -392,18 +393,25 @@ public class SignUpService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verifyEmail(@FormParam("emailVerificationToken") String emailVerificationToken) {
 		
-		String href = identityProviderService.verifyEmail(emailVerificationToken);
+		Account account = null;
 		
-		Account account = identityProviderService.getAccountByHref(href);
+		try {
+			account = identityProviderService.verifyEmail(emailVerificationToken);
+		} catch (ResourceException e) {
+			Error error = new Error(e.getCode(), e.getDeveloperMessage());
+			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			builder.entity(error);
+			throw new WebApplicationException(builder.build());
+		}
 		
-		identityProviderService.updateEmail(href, account.getUsername());
+		identityProviderService.updateEmail(account.getHref(), account.getUsername());
 		
 		emailService.sendWelcomeMessage(account.getUsername(), account.getUsername(), account.getFullName());
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(href));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(account.getHref()));
 		
 		if (! query.isPresent()) {
-			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", href));
+			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", account.getHref()));
 			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());

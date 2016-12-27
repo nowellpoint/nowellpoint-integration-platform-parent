@@ -23,9 +23,9 @@ public class UserContext {
 		String subject = claims.getBody().getSubject();
 		
 		@SuppressWarnings("unchecked")
-		ArrayList<String> groups = (ArrayList<String>) claims.getBody().getOrDefault("groups", Collections.emptyList());
+		ArrayList<String> scope = (ArrayList<String>) claims.getBody().getOrDefault("scope", Collections.emptyList());
 		
-		SecurityContext securityContext = new UserPrincipalSecurityContext(subject, groups);
+		SecurityContext securityContext = new UserPrincipalSecurityContext(subject, scope);
 		threadLocal.set(securityContext);
 	}
 
@@ -67,12 +67,12 @@ public class UserContext {
 		
 		private Principal principal;
 		private String authenticationScheme;
-		private ArrayList<String> groups;
+		private ArrayList<String> scope;
 		
-		public UserPrincipalSecurityContext(String subject, ArrayList<String> groups) {
+		public UserPrincipalSecurityContext(String subject, ArrayList<String> scope) {
 			this.authenticationScheme = subject.split("-")[0];
 			this.principal = new UserPrincipal(subject);
-			this.groups = groups;
+			this.scope = scope;
 		}
 
 		@Override
@@ -92,10 +92,10 @@ public class UserContext {
 
 		@Override
 		public boolean isUserInRole(String role) {
-			if (groups == null) {
+			if (scope == null) {
 				return false;
 			}
-			return groups.contains(role);
+			return scope.contains(role);
 		}
 	}
 }

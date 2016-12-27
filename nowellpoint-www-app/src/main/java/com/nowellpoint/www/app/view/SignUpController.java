@@ -30,6 +30,7 @@ public class SignUpController extends AbstractController {
 	
 	public static class Template {
 		public static final String SIGN_UP = "signup.html";
+		public static final String VERIFY_EMAIL = "verify-email.html";
 	}
 	
 	public SignUpController() {
@@ -39,8 +40,9 @@ public class SignUpController extends AbstractController {
 	@Override
 	public void configureRoutes(Configuration configuration) {
 		get(Path.Route.LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
-		get(Path.Route.CREATE_ACCOUNT, (request, response) -> createAccount(configuration, request, response));
+		get(Path.Route.SETUP_ACCOUNT, (request, response) -> setupAccount(configuration, request, response));
 		post(Path.Route.SIGN_UP, (request, response) -> signUp(configuration, request, response));
+		get(Path.Route.VERIFY_EMAIL, (request, response) -> verifyEmail(configuration, request, response));
 	}
 	
 	/**
@@ -80,7 +82,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String createAccount(Configuration configuration, Request request, Response response) {
+	private String setupAccount(Configuration configuration, Request request, Response response) {
 		
 		String planId = request.queryParams("planId");
 		
@@ -167,5 +169,31 @@ public class SignUpController extends AbstractController {
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
     	
     	return render(configuration, request, response, model, Template.SIGN_UP);
+	}
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String verifyEmail(Configuration configuration, Request request, Response response) {
+		
+		String emailVerificationToken = request.queryParams("emailVerificationToken");
+		
+		SignUpResult<User> signUpResult = new NowellpointClient()
+				.user()
+				.verifyEmail(emailVerificationToken);
+		
+		Map<String,Object> model = getModel();
+		
+		if (signUpResult.isSuccess()) {
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "email.verification.success"));
+		} else {
+			model.put("errorMessage", MessageProvider.getMessage(Locale.US, "email.verification.failure"));
+		}
+		
+    	return render(configuration, request, response, model, Template.VERIFY_EMAIL);
 	}
 }

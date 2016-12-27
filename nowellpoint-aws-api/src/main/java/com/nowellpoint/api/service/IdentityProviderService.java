@@ -1,19 +1,10 @@
 package com.nowellpoint.api.service;
 
-import java.util.Date;
 import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.ValidationException;
 
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.Error;
-import com.nowellpoint.api.model.domain.idp.Token;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
@@ -28,7 +19,6 @@ import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
 import com.stormpath.sdk.directory.Directory;
-import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
@@ -37,19 +27,14 @@ import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRequests;
-import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 public class IdentityProviderService {
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class);
-	
-	@Inject
-	private AccountProfileService accountProfileService;
 	
 	private static ApiKey apiKey;
 	private static Client client;
@@ -79,7 +64,7 @@ public class IdentityProviderService {
 	 * @return
 	 */
 	
-	public Token authenticate(ApiKey apiKey) {
+	public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey) {
 		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
 				.builder()
 				.setApiKeyId(apiKey.getId())
@@ -90,13 +75,7 @@ public class IdentityProviderService {
 				.forApplication(application)
 				.authenticate(request);
 		
-		AccessToken accessToken = result.getAccessToken();
-        
-        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
-        
-        Token token = createToken(result, accountProfile.getId());
-        
-        return token;
+		return result;
 	}
 	
 	/**
@@ -106,7 +85,7 @@ public class IdentityProviderService {
 	 * @return
 	 */
 	
-	public Token authenticate(String username, String password) {			
+	public OAuthGrantRequestAuthenticationResult authenticate(String username, String password) {			
 		OAuthPasswordGrantRequestAuthentication request = OAuthRequests.OAUTH_PASSWORD_GRANT_REQUEST
 				.builder()
 				.setLogin(username)
@@ -117,16 +96,51 @@ public class IdentityProviderService {
         		.forApplication(application)
         		.authenticate(request);
         
-        AccessToken accessToken = result.getAccessToken();
+        return result;
         
-        AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
+        //AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
         
-        Token token = createToken(result, accountProfile.getId());
+        //Token token = createToken(result, accountProfile.getId());
         
-        return token;
+        //return token;
 	}
 	
+	/**
+	 * 
+	 * @param refreshToken
+	 * @return
+	 */
 	
+	public OAuthGrantRequestAuthenticationResult refreshToken(String refreshToken) {		
+		OAuthRefreshTokenRequestAuthentication refreshRequest = OAuthRequests.OAUTH_REFRESH_TOKEN_REQUEST.builder()
+				  .setRefreshToken(refreshToken)
+				  .build();
+		
+		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_REFRESH_TOKEN_REQUEST_AUTHENTICATOR
+				  .forApplication(application)
+				  .authenticate(refreshRequest);
+		
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param bearerToken
+	 * @return
+	 */
+	
+	public String verify(String bearerToken) {		
+		OAuthBearerRequestAuthentication request = OAuthRequests.OAUTH_BEARER_REQUEST.builder()
+				.setJwt(bearerToken)
+				.build();
+		
+		OAuthBearerRequestAuthenticationResult result = Authenticators.OAUTH_BEARER_REQUEST_AUTHENTICATOR
+				.forApplication(application)
+				.withLocalValidation()
+				.authenticate(request);
+		
+		return result.getJwt();
+	}
 	
 	/**
 	 * 
@@ -233,47 +247,6 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param bearerToken
-	 * @return
-	 */
-	
-	public Token refresh(String bearerToken) {		
-		OAuthRefreshTokenRequestAuthentication refreshRequest = OAuthRequests.OAUTH_REFRESH_TOKEN_REQUEST.builder()
-				  .setRefreshToken(bearerToken)
-				  .build();
-		
-		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_REFRESH_TOKEN_REQUEST_AUTHENTICATOR
-				  .forApplication(application)
-				  .authenticate(refreshRequest);
-		
-		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(result.getAccessToken().getAccount().getHref());
-		
-		Token token = createToken(result, accountProfile.getId().toString());
-        
-        return token;
-	}
-	
-	/**
-	 * 
-	 * @param bearerToken
-	 * @return
-	 */
-	
-	public String verify(String bearerToken) {		
-		OAuthBearerRequestAuthentication request = OAuthRequests.OAUTH_BEARER_REQUEST.builder()
-				.setJwt(bearerToken)
-				.build();
-		
-		OAuthBearerRequestAuthenticationResult result = Authenticators.OAUTH_BEARER_REQUEST_AUTHENTICATOR
-				.forApplication(application)
-				.withLocalValidation()
-				.authenticate(request);
-		
-		return result.getJwt();
-	}
-	
-	/**
-	 * 
 	 * @param username
 	 * @return
 	 */
@@ -304,6 +277,11 @@ public class IdentityProviderService {
 				.path(claims.getBody().getId())
 				.execute();
 		
+		/**
+		 * AccessToken accessToken = oAuthGrantRequestAuthenticationResult.getAccessToken();
+accessToken.delete();
+		 */
+		
 		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
 			ObjectNode response = httpResponse.getEntity(ObjectNode.class);
 			LOGGER.warn(response.toString()); 
@@ -316,55 +294,8 @@ public class IdentityProviderService {
 	 * @return
 	 */
 	
-	public String verifyEmail(String emailVerificationToken) {	
-		
-		try {
-		    Account account = client.verifyAccountEmail(emailVerificationToken);
-		    return account.getHref();
-		} catch (ResourceException e) {
-			Error error = new Error(e.getCode(), e.getDeveloperMessage());
-			throw new ValidationException(error.getMessage()); 
-		}
-	}
-	
-	/**
-	 * 
-	 * @param result
-	 * @param subject
-	 * @return
-	 */
-	
-	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {
-		
-		Jws<Claims> claims = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
-				.parseClaimsJws(result.getAccessTokenString()); 
-		
-		String id = claims.getBody().getId();
-		Date expiration = claims.getBody().getExpiration();
-		
-		Set<String> groups = new HashSet<String>();
-		result.getAccessToken().getAccount().getGroups().forEach(g -> 
-			groups.add(g.getName())
-        );
-		
-		String jwt = Jwts.builder()
-        		.setId(id)
-        		.setHeaderParam("typ", "JWT")
-        		.setIssuer(application.getHref())
-        		.setSubject(subject)
-        		.setIssuedAt(new Date(System.currentTimeMillis()))
-        		.setExpiration(expiration)
-        		.signWith(SignatureAlgorithm.HS512, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
-        		.claim("groups", groups.toArray(new String[groups.size()]))
-        		.compact();	 
-		
-		Token token = new Token();
-		token.setAccessToken(jwt);
-		token.setExpiresIn(result.getExpiresIn());
-		token.setRefreshToken(result.getRefreshTokenString());
-		token.setTokenType(result.getTokenType());
-        
-        return token;
+	public Account verifyEmail(String emailVerificationToken) {	
+		Account account = client.verifyAccountEmail(emailVerificationToken);
+	    return account;
 	}
 }

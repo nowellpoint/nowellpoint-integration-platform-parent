@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.model.domain.idp.Token;
+import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.idp.Account;
 import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;

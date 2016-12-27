@@ -1,4 +1,4 @@
-package com.nowellpoint.api.model.domain.idp;
+package com.nowellpoint.api.model.domain;
 
 import java.io.Serializable;
 
@@ -20,8 +20,6 @@ public class Token implements Serializable {
 	private String token_type;
 	
 	private Long expires_in;
-	
-	private String stormpath_access_token_href;
 	
 	public Token() {
 		
@@ -59,20 +57,10 @@ public class Token implements Serializable {
 		this.expires_in = expiresIn;
 	}
 
-	public String getStormpathAccessTokenHref() {
-		return stormpath_access_token_href;
-	}
-
-	public void setStormpathAccessTokenHref(String stormpathAccessTokenHref) {
-		this.stormpath_access_token_href = stormpathAccessTokenHref;
-	}
-
 	@Override
 	public String toString() {
 		return "Token [access_token=" + access_token + ", refresh_token="
 				+ refresh_token + ", token_type=" + token_type
-				+ ", expires_in=" + expires_in
-				+ ", stormpath_access_token_href="
-				+ stormpath_access_token_href + "]";
+				+ ", expires_in=" + expires_in + "]";
 	}
 }
