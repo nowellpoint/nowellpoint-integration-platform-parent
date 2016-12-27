@@ -60,4 +60,26 @@ public class UserResource extends AbstractResource {
 			return null;
 		}
 	}
+	
+	public SignUpResult<User> verifyEmail(String emailVerificationToken) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("signup")
+				.path("verify-email")
+				.parameter("emailVerificationToken", emailVerificationToken)
+				.execute();
+		
+		SignUpResult<User> result = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		User resource = httpResponse.getEntity(User.class);
+    		result = new SignUpResultImpl<User>(resource); 
+    	} else {
+    		Error error = httpResponse.getEntity(Error.class);
+			result = new SignUpResultImpl<User>(error);
+    	}
+    	
+    	return result;
+	}
 }

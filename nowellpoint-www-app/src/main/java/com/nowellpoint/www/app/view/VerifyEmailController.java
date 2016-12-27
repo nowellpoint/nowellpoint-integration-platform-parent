@@ -5,10 +5,9 @@ import static spark.Spark.get;
 import java.util.Locale;
 import java.util.Map;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.model.SignUpResult;
+import com.nowellpoint.client.model.User;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -42,22 +41,21 @@ public class VerifyEmailController extends AbstractController {
 	 */
 	
 	private String verifyEmail(Configuration configuration, Request request, Response response) {
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("signup")
-				.path("verify-email")
-				.parameter("emailVerificationToken", request.queryParams("emailVerificationToken"))
-				.execute();
+		
+		String emailVerificationToken = request.queryParams("emailVerificationToken");
+		
+		SignUpResult<User> signUpResult = new NowellpointClient()
+				.user()
+				.verifyEmail(emailVerificationToken);
 		
 		Map<String,Object> model = getModel();
-
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		model.put("successMessage", MessageProvider.getMessage(Locale.US, "email.verification.success"));
-    	} else {
-    		model.put("errorMessage", MessageProvider.getMessage(Locale.US, "email.verification.failure"));
-    	}
-
+		
+		if (signUpResult.isSuccess()) {
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "email.verification.success"));
+		} else {
+			model.put("errorMessage", MessageProvider.getMessage(Locale.US, "email.verification.failure"));
+		}
+		
     	return render(configuration, request, response, model, Template.VERIFY_EMAIL);
 	}
 }
