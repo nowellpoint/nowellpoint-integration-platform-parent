@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 
@@ -197,16 +196,11 @@ public class AuthenticationController extends AbstractController {
         		throw new InternalServerErrorException(e);
         	}
     		
-    		try {
-    			RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-    					.setAccessToken(token.getAccessToken())
-    					.build();
-    			
-    			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
-    			
-    		} catch (OauthException e) {
-    			throw new BadRequestException(e.getMessage());
-    		}
+    		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+					.setAccessToken(token.getAccessToken())
+					.build();
+			
+			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
         	
 	    	response.removeCookie(REDIRECT_URL);
         	response.removeCookie(AUTH_TOKEN); 

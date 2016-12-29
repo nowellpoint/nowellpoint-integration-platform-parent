@@ -2,12 +2,6 @@ package com.nowellpoint.api.service;
 
 import java.util.Base64;
 
-import org.jboss.logging.Logger;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.account.AccountList;
@@ -19,6 +13,7 @@ import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.Clients;
 import com.stormpath.sdk.directory.Directory;
+import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
@@ -33,8 +28,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
 public class IdentityProviderService {
-	
-	private static final Logger LOGGER = Logger.getLogger(IdentityProviderService.class);
 	
 	private static ApiKey apiKey;
 	private static Client client;
@@ -97,12 +90,6 @@ public class IdentityProviderService {
         		.authenticate(request);
         
         return result;
-        
-        //AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(accessToken.getAccount().getHref());
-        
-        //Token token = createToken(result, accountProfile.getId());
-        
-        //return token;
 	}
 	
 	/**
@@ -154,7 +141,7 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param user
+	 * @param account
 	 */
 	
 	public void createAccount(Account account) {	
@@ -215,7 +202,6 @@ public class IdentityProviderService {
 				.setEmail(email);
 		
 		account.save();
-		
 	}
 	
 	/**
@@ -223,7 +209,7 @@ public class IdentityProviderService {
 	 * @param href
 	 */
 	
-	public void deactivateUser(String href) {
+	public void deactivateAccount(String href) {
 		
 		Account account = client.getResource(href, Account.class)
 				.setStatus(AccountStatus.DISABLED);
@@ -266,26 +252,15 @@ public class IdentityProviderService {
 	 * @param bearerToken
 	 */
 	
-	public void revoke(String bearerToken) {		
+	public void revokeToken(String bearerToken) {		
 		Jws<Claims> claims = Jwts.parser()
 				.setSigningKey(Base64.getUrlEncoder().encodeToString(apiKey.getSecret().getBytes()))
 				.parseClaimsJws(bearerToken); 
 		
-		HttpResponse httpResponse = RestResource.delete(System.getProperty(Properties.STORMPATH_API_ENDPOINT))
-				.basicAuthorization(apiKey.getId(), apiKey.getSecret())
-				.path("accessTokens")
-				.path(claims.getBody().getId())
-				.execute();
+		String href = String.format(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/accessTokens/%s"), claims.getBody().getId());
 		
-		/**
-		 * AccessToken accessToken = oAuthGrantRequestAuthenticationResult.getAccessToken();
-accessToken.delete();
-		 */
-		
-		if (httpResponse.getStatusCode() != Status.NO_CONTENT) {
-			ObjectNode response = httpResponse.getEntity(ObjectNode.class);
-			LOGGER.warn(response.toString()); 
-		}
+		AccessToken accessToken = client.getResource(href, AccessToken.class);
+		accessToken.delete();
 	}
 	
 	/**

@@ -1,8 +1,16 @@
 package com.nowellpoint.api.model.sforce;
 
-public class Attributes {
+import java.io.Serializable;
+
+public class Attributes implements Serializable {
 	
-private String type;
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 8275564394346542878L;
+
+	private String type;
 	
 	private String url;
 	

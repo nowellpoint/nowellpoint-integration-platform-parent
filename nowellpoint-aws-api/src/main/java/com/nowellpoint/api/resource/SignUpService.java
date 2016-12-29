@@ -6,7 +6,6 @@ import static com.nowellpoint.util.Assert.isNotNull;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,7 +158,7 @@ public class SignUpService {
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
-			
+		System.out.println("1 " + account.getEmailVerificationToken().getValue());	
 		account.setGivenName(firstName);
 		account.setMiddleName(null);
 		account.setSurname(lastName);
@@ -174,6 +173,7 @@ public class SignUpService {
 			identityProviderService.updateAccount( account );
 		}
 		
+		System.out.println("2 " + account.getEmailVerificationToken().getValue());
 		/**
 		 * 
 		 * 
@@ -252,7 +252,7 @@ public class SignUpService {
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = null;
 		
-		if (customerResult.getTarget().getCreditCards().isEmpty()) {
+		if (isNull(customerResult.getTarget().getCreditCards()) || customerResult.getTarget().getCreditCards().isEmpty()) {
 			
 			CreditCardRequest creditCardRequest = new CreditCardRequest()
 					.cardholderName( accountProfile.getName() )
@@ -336,7 +336,7 @@ public class SignUpService {
 		creditCard.setAddedOn(now);
 		creditCard.setUpdatedOn(now);
 		
-		accountProfile.setCreditCards(Collections.emptySet());
+		accountProfile.setCreditCards(null);
 			
 		accountProfile.addCreditCard(creditCard);
 		
@@ -363,7 +363,7 @@ public class SignUpService {
 		 * 
 		 */
 		
-		String emailVerificationToken = account.getEmailVerificationToken().getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
+		String emailVerificationToken = account.getEmailVerificationToken().getValue(); //.getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
 		
 		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), emailVerificationToken);
 		

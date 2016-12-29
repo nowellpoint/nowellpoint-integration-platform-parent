@@ -154,7 +154,7 @@ public class TokenResource {
 	@ApiResponses(value = { 
 		      @ApiResponse(code = 204, message = "successful operation") 
 		  })
-	public Response revoke(@ApiParam(value = "bearer authorization header", required = true) @HeaderParam("Authorization") String authorization) {
+	public Response revokeToken(@ApiParam(value = "bearer authorization header", required = true) @HeaderParam("Authorization") String authorization) {
 		
 		//
 		// ensure that the authorization header has a bearer token
@@ -174,7 +174,7 @@ public class TokenResource {
 		// call the identity provider service to revoke the token
 		//
 		
-		identityProviderService.revoke(bearerToken);
+		identityProviderService.revokeToken(bearerToken);
 		
 		//
 		// return Response

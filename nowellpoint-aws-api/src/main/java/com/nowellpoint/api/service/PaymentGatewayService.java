@@ -51,7 +51,7 @@ public class PaymentGatewayService {
 				customerResult = gateway.customer().update(customer.getId(), customerRequest);
 			}
 		} catch (AuthorizationException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		
 		return customerResult;

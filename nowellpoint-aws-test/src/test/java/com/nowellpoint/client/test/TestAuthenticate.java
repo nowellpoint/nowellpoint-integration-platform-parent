@@ -8,13 +8,14 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.auth.PasswordGrantRequest;
+import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.model.Token;
 
 public class TestAuthenticate {
 	
 	@Test
-	public void testAuthenticate() {
-		long start = System.currentTimeMillis();
+	public void testClientCredentialsAuthentication() {
 		
 		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
 				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
@@ -26,12 +27,45 @@ public class TestAuthenticate {
 		
 		Token token = response.getToken();
 		
-		System.out.println("testAuthenticate: " + (System.currentTimeMillis() - start));
+		assertNotNull(token);
+		assertNotNull(token.getExpiresIn());
+		assertNotNull(token.getTokenType());
+		assertNotNull(token.getAccessToken());
+		
+		System.out.println(token.getAccessToken());
+		
+		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+				.setAccessToken(token.getAccessToken())
+				.build();
+		
+		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
+	}
+	
+	@Test
+	public void testUsernamePasswordAuthentication() {
+		
+		PasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+				.setUsername(System.getenv("STORMPATH_USERNAME"))
+				.setPassword(System.getenv("STORMPATH_PASSWORD"))
+				.build();
+		
+		OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		Token token = response.getToken();
 		
 		assertNotNull(token);
 		assertNotNull(token.getExpiresIn());
 		assertNotNull(token.getTokenType());
+		assertNotNull(token.getRefreshToken());
+		assertNotNull(token.getAccessToken());
 		
 		System.out.println(token.getAccessToken());
+		
+		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+				.setAccessToken(token.getAccessToken())
+				.build();
+		
+		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
 	}
 }

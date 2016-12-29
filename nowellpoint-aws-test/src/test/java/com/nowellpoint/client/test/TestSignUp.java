@@ -6,9 +6,19 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.Environment;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
@@ -16,10 +26,55 @@ import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.User;
+import com.nowellpoint.util.Properties;
+import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.api.ApiKey;
+import com.stormpath.sdk.api.ApiKeys;
+import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.client.Clients;
 
 public class TestSignUp {
 	
 	private static Logger log = Logger.getLogger(TestSignUp.class);
+	
+	private static MongoClientURI mongoClientURI;
+	private static MongoClient mongoClient;
+	private static MongoDatabase mongoDatabase;
+	private static BraintreeGateway gateway;
+	private static ApiKey apiKey;
+	private static Client client;
+	
+	@BeforeClass
+	public static void beforeClass() {
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		
+		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
+		mongoClient = new MongoClient(mongoClientURI);	
+		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
+		
+		gateway = new BraintreeGateway(
+				Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
+				System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
+				System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
+				System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
+		);
+		
+		gateway.clientToken().generate();
+		
+		apiKey = ApiKeys.builder()
+				.setId(System.getProperty(Properties.STORMPATH_API_KEY_ID))
+				.setSecret(System.getProperty(Properties.STORMPATH_API_KEY_SECRET))
+				.build();
+		
+		client = Clients.builder()
+				.setApiKey(apiKey)
+				.build();
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		mongoClient.close();
+	}
 
 	@Test
 	public void testSignUp() {
@@ -59,6 +114,12 @@ public class TestSignUp {
 					.user()
 					.signUp(signUpRequest);
 			
+			System.out.println(signUpResult.getTarget().getHref().substring(signUpResult.getTarget().getHref().lastIndexOf("/")));
+			
+			String accountProfileId = signUpResult.getTarget().getHref().substring(signUpResult.getTarget().getHref().lastIndexOf("/") + 1);
+			
+			System.out.println(accountProfileId);
+			
 			assertTrue(signUpResult.isSuccess());
 			assertNotNull(signUpResult.getTarget());
 			assertNotNull(signUpResult.getTarget().getHref());
@@ -69,6 +130,19 @@ public class TestSignUp {
 					.verifyEmail(signUpResult.getTarget().getEmailVerificationToken());
 			
 			assertTrue(signUpResult.isSuccess());
+			
+			Document document = mongoDatabase.getCollection("account.profiles")
+					.find(Filters.eq ( "_id", new ObjectId( accountProfileId ) ) )
+					.first();
+			
+			System.out.println(document.getString("href"));
+			
+			mongoDatabase.getCollection("account.profiles").deleteOne( Filters.eq ( "_id", new ObjectId( accountProfileId ) ) );
+			
+			gateway.customer().delete(accountProfileId);
+			
+			client.getResource(document.getString("href"), Account.class).delete();
+			
 		});
 	}
 }

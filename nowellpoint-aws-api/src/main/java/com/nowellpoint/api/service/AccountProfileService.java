@@ -139,7 +139,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setCreditCards(Collections.emptySet());
 		
 		if (isNotNull(accountProfile.getHref())) {
-			identityProviderService.deactivateUser(accountProfile.getHref());
+			identityProviderService.deactivateAccount(accountProfile.getHref());
 		}
 		
 		if (isNotNull(accountProfile.getSubscription())) {

@@ -53,8 +53,6 @@ public class MongoDatastore implements ServletContextListener {
 		
 		CodecRegistry codecRegistry = fromRegistries(getDefaultCodecRegistry(), fromCodecs(codecs));
 		
-		System.out.println("mongo client uri: " + System.getProperty(Properties.MONGO_CLIENT_URI));
-		
 		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), builder().codecRegistry(codecRegistry));
 	}
 	
