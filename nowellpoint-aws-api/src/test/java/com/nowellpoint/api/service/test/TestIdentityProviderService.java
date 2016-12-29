@@ -1,14 +1,15 @@
 package com.nowellpoint.api.service.test;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Base64;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.nowellpoint.api.model.domain.idp.EmailVerificationToken;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.account.AccountOptions;
+import com.stormpath.sdk.account.AccountList;
 import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.account.Accounts;
 import com.stormpath.sdk.api.ApiKey;
@@ -52,13 +53,27 @@ public class TestIdentityProviderService {
 	@Test
 	public void testEmailVerificationToken() {
 		
-		Account account = client.getResource("https://api.stormpath.com/v1/accounts/7Z86VkvhbBVbFxMceRTcSL", Account.class, Accounts.options());
+		AccountList accounts = application.getAccounts(
+				Accounts.where(
+						Accounts.username().eqIgnoreCase("test.nowellpoint@mailinator.com")));
+		
+		Account account = accounts.single();
+		
+		//Account account = client.getResource("https://api.stormpath.com/v1/accounts/7Z86VkvhbBVbFxMceRTcSL", Account.class, Accounts.options());
+		
+		System.out.println(account.getFullName());
+		
 		System.out.println(account.getEmailVerificationStatus());
 		System.out.println(account.getEmailVerificationToken().getHref());
 		System.out.println(account.getEmailVerificationToken().getValue());
 		
+		account.setPassword("ksieki81;ski");
+		account.setUsername(account.getUsername());
+		account.setEmail("administrator@nowellpoint.com");
 		account.setStatus(AccountStatus.UNVERIFIED);
 		account.save();
+		
+		assertNotNull(account.getEmailVerificationToken().getHref());
 	}
 	
 	@Test
@@ -73,17 +88,17 @@ public class TestIdentityProviderService {
 				.forApplication(application)
 				.authenticate(request);
 		
-		System.out.println(authenticationResult.getAccessToken().getAccount().getFullName());
-		System.out.println(authenticationResult.getAccessToken().getJwt());
-		System.out.println(authenticationResult.getAccessToken().getHref());
+		assertNotNull(authenticationResult.getAccessToken().getAccount().getFullName());
+		assertNotNull(authenticationResult.getAccessToken().getJwt());
+		assertNotNull(authenticationResult.getAccessToken().getHref());
 		
 		Jws<Claims> claims = Jwts.parser()
 				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
 				.parseClaimsJws(authenticationResult.getAccessToken().getJwt());
 		
-		System.out.println("id: " + claims.getBody().getId());
-		System.out.println("iss: " + claims.getBody().getIssuer());
-		System.out.println("sub: " + claims.getBody().getSubject());
+		assertNotNull(claims.getBody().getId());
+		assertNotNull(claims.getBody().getIssuer());
+		assertNotNull(claims.getBody().getSubject());
 		
 		Account account = client.getResource(authenticationResult.getAccessToken().getAccount().getHref(), Account.class);
 		

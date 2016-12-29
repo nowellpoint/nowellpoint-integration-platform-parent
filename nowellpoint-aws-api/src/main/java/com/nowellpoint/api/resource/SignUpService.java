@@ -165,7 +165,7 @@ public class SignUpService {
 		account.setEmail("administrator@nowellpoint.com");
 		account.setUsername(email);
 		account.setPassword(password);
-		//account.setStatus(AccountStatus.UNVERIFIED);
+		account.setStatus(AccountStatus.UNVERIFIED);
 			
 		if (account.getHref() == null) {
 			identityProviderService.createAccount( account );
