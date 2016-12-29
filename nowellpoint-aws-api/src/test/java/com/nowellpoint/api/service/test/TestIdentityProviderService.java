@@ -9,6 +9,7 @@ import com.nowellpoint.api.model.domain.idp.EmailVerificationToken;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.account.AccountOptions;
+import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.account.Accounts;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
@@ -55,6 +56,9 @@ public class TestIdentityProviderService {
 		System.out.println(account.getEmailVerificationStatus());
 		System.out.println(account.getEmailVerificationToken().getHref());
 		System.out.println(account.getEmailVerificationToken().getValue());
+		
+		account.setStatus(AccountStatus.UNVERIFIED);
+		account.save();
 	}
 	
 	@Test
