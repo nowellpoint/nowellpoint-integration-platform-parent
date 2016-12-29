@@ -151,6 +151,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		super.updateScheduledJob(scheduledJob);
 	}
 	
+	public void terminateScheduledJob(String id) {
+		
+	}
+	
 	/**
 	 * 
 	 * 

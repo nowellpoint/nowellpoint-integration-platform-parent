@@ -238,7 +238,9 @@ public class IdentityProviderService {
 	 */
 	
 	public Account findByUsername(String username) {
-		AccountList accounts = application.getAccounts(Accounts.where(Accounts.username().eqIgnoreCase(username)));
+		AccountList accounts = application.getAccounts(
+				Accounts.where(
+						Accounts.username().eqIgnoreCase(username)));
 		
 		if (accounts.getSize() == 1) {
 			return accounts.single();
