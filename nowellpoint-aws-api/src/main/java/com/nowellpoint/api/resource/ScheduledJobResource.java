@@ -29,7 +29,6 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
@@ -198,11 +197,12 @@ public class ScheduledJobResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action) {
 		
-		
-		if ("build".equals(action)) {
-
+		if ("terminate".equals(action)) {
+			scheduledJobService.terminateScheduledJob(id);
 		} else if ("test".equals(action)) {
 
+		} else {
+			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
 		
 		return Response.ok()

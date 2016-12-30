@@ -54,9 +54,9 @@
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.0/amazon-sqs-java-messaging-lib-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-dynamodb-encryption-java/1.11.0/aws-dynamodb-encryption-java-1.11.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.4.1/mongodb-driver-3.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.4.1/mongodb-driver-core-3.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.4.1/bson-3.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.3.0/mongodb-driver-3.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.3.0/bson-3.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.3.0/mongodb-driver-core-3.3.0.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar"/>
 </classpath>

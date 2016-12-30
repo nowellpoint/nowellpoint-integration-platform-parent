@@ -58,9 +58,7 @@ public class TestIdentityProviderService {
 						Accounts.username().eqIgnoreCase("test.nowellpoint@mailinator.com")));
 		
 		Account account = accounts.single();
-		
-		//Account account = client.getResource("https://api.stormpath.com/v1/accounts/7Z86VkvhbBVbFxMceRTcSL", Account.class, Accounts.options());
-		
+			
 		System.out.println(account.getFullName());
 		
 		System.out.println(account.getEmailVerificationStatus());
@@ -69,8 +67,12 @@ public class TestIdentityProviderService {
 		
 		account.setPassword("ksieki81;ski");
 		account.setUsername(account.getUsername());
+		account.setGivenName(account.getGivenName());
+		account.setMiddleName(null);
+		account.setSurname(account.getSurname());
 		account.setEmail("administrator@nowellpoint.com");
 		account.setStatus(AccountStatus.UNVERIFIED);
+		
 		account.save();
 		
 		assertNotNull(account.getEmailVerificationToken().getHref());

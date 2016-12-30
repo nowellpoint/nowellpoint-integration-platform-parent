@@ -1,7 +1,6 @@
 package com.nowellpoint.api.resource;
 
 import static com.nowellpoint.util.Assert.isNull;
-import static com.nowellpoint.util.Assert.isNotNull;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -52,7 +51,6 @@ import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.account.AccountStatus;
 import com.stormpath.sdk.resource.ResourceException;
 
 @Path("/signup")
@@ -150,61 +148,42 @@ public class SignUpService {
 		 * 
 		 */
 		
-		Account account = identityProviderService.findByUsername(email);
-		
-		if (isNotNull(account.getStatus()) && account.getStatus().equals(AccountStatus.ENABLED)) {
-			Error error = new Error(1000, "Account for email is already enabled");
-			ResponseBuilder builder = Response.status(Status.CONFLICT);
-			builder.entity(error);
-			throw new WebApplicationException(builder.build());
-		}
-		System.out.println("1 " + account.getEmailVerificationToken().getValue());	
-		account.setGivenName(firstName);
-		account.setMiddleName(null);
-		account.setSurname(lastName);
-		account.setEmail("administrator@nowellpoint.com");
-		account.setUsername(email);
-		account.setPassword(password);
-		account.setStatus(AccountStatus.UNVERIFIED);
-			
-		if (account.getHref() == null) {
-			identityProviderService.createAccount( account );
-		} else {
-			identityProviderService.updateAccount( account );
-		}
-		
-		System.out.println("2 " + account.getEmailVerificationToken().getValue());
-		/**
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
-		
 		AccountProfile accountProfile = null;
-			
-		try {
-			accountProfile = accountProfileService.findAccountProfileByUsername(email);
-		} catch (DocumentNotFoundException e) {
-			accountProfile = new AccountProfile();
-		}
-			
-		accountProfile.setFirstName(firstName);
-		accountProfile.setLastName(lastName);
-		accountProfile.setEmail(email);
-		accountProfile.setUsername(email);
-		accountProfile.setIsActive(Boolean.TRUE);
-		accountProfile.setHref(account.getHref());
-			
-		Address address = accountProfile.getAddress() != null ? accountProfile.getAddress() : new Address();
-		address.setCountryCode(countryCode);
-			
-		accountProfile.setAddress(address);
 		
-		if (isNull(accountProfile.getId())) {	
-			accountProfileService.createAccountProfile( accountProfile );
-		} else {
-			accountProfileService.updateAccountProfile( accountProfile );
+		try {
+			
+			accountProfile = accountProfileService.findAccountProfileByUsername(email);
+			
+			if (accountProfile.getIsActive()) {
+				Error error = new Error(1000, "Account for email is already enabled");
+				ResponseBuilder builder = Response.status(Status.CONFLICT);
+				builder.entity(error);
+				throw new WebApplicationException(builder.build());
+			}
+			
+		} catch (DocumentNotFoundException e) {
+			
+			Account account = identityProviderService.createAccount(email, firstName, lastName, password);
+			
+			accountProfile = new AccountProfile();
+			accountProfile.setHref(account.getHref());
+			accountProfile.setEmailVerificationToken(account.getEmailVerificationToken().getValue());
+			accountProfile.setFirstName(firstName);
+			accountProfile.setLastName(lastName);
+			accountProfile.setEmail(email);
+			accountProfile.setUsername(email);
+			accountProfile.setIsActive(Boolean.FALSE);
+				
+			Address address = accountProfile.getAddress() != null ? accountProfile.getAddress() : new Address();
+			address.setCountryCode(countryCode);
+				
+			accountProfile.setAddress(address);
+			
+			if (isNull(accountProfile.getId())) {	
+				accountProfileService.createAccountProfile( accountProfile );
+			} else {
+				accountProfileService.updateAccountProfile( accountProfile );
+			}
 		}
 		
 		/**
@@ -320,7 +299,7 @@ public class SignUpService {
 		 * 
 		 * 
 		 */
-		
+
 		Date now = Date.from(Instant.now());
 			
 		CreditCard creditCard = new CreditCard();
@@ -363,15 +342,7 @@ public class SignUpService {
 		 * 
 		 */
 		
-		String emailVerificationToken = account.getEmailVerificationToken().getValue(); //.getHref().substring(account.getEmailVerificationToken().getHref().lastIndexOf("/") + 1);
-		
-		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), emailVerificationToken);
-		
-		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SignUpService.class)
-				.path("verify-email")
-				.path("{emailVerificationToken}")
-				.build(emailVerificationToken);
+		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), accountProfile.getEmailVerificationToken());
 		
 		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)
@@ -380,7 +351,7 @@ public class SignUpService {
 		
 		Map<String,Object> response = new HashMap<String,Object>();
 		response.put("href", resourceUri);
-		response.put("emailVerificationToken", emailVerificationTokenUri);
+		response.put("emailVerificationToken", accountProfile.getEmailVerificationToken());
 		
 		return Response.ok(response)
 				.build();
@@ -399,14 +370,10 @@ public class SignUpService {
 			account = identityProviderService.verifyEmail(emailVerificationToken);
 		} catch (ResourceException e) {
 			Error error = new Error(e.getCode(), e.getDeveloperMessage());
-			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
+			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
-		
-		identityProviderService.updateEmail(account.getHref(), account.getUsername());
-		
-		emailService.sendWelcomeMessage(account.getUsername(), account.getUsername(), account.getFullName());
 		
 		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(account.getHref()));
 		
@@ -417,12 +384,18 @@ public class SignUpService {
 			throw new WebApplicationException(builder.build());
 		}
 		
-		AccountProfile resource = query.get();
+		AccountProfile accountProfile = query.get();
+		accountProfile.setIsActive(Boolean.TRUE);
+		accountProfile.setEmailVerificationToken(null);
+		
+		accountProfileService.updateAccountProfile(accountProfile);
+		
+		emailService.sendWelcomeMessage(accountProfile.getEmail(), accountProfile.getUsername(), accountProfile.getName());
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)
 				.path("/{id}")
-				.build(resource.getId());
+				.build(accountProfile.getId());
 		
 		Map<String,Object> response = new HashMap<String,Object>();
 		response.put("href", uri);

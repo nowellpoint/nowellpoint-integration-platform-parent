@@ -80,6 +80,8 @@ public class AccountProfile extends MongoDocument {
 	
 	private Boolean hasFullAccess;
 	
+	private String emailVerificationToken;
+	
 	private Boolean enableSalesforceLogin;
 	
 	public AccountProfile() {
@@ -308,6 +310,14 @@ public class AccountProfile extends MongoDocument {
 
 	public void setHasFullAccess(Boolean hasFullAccess) {
 		this.hasFullAccess = hasFullAccess;
+	}
+
+	public String getEmailVerificationToken() {
+		return emailVerificationToken;
+	}
+
+	public void setEmailVerificationToken(String emailVerificationToken) {
+		this.emailVerificationToken = emailVerificationToken;
 	}
 
 	public Boolean getEnableSalesforceLogin() {

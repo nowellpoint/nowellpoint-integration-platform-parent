@@ -1,7 +1,5 @@
 package com.nowellpoint.api.service;
 
-import org.jboss.logging.Logger;
-
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.Address;
 import com.braintreegateway.AddressRequest;
@@ -13,13 +11,10 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.braintreegateway.exceptions.AuthorizationException;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.util.Properties;
 
 public class PaymentGatewayService {
-	
-	private static final Logger LOGGER = Logger.getLogger(PaymentGatewayService.class);
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
@@ -34,24 +29,13 @@ public class PaymentGatewayService {
 	
 	public Result<Customer> addOrUpdateCustomer(CustomerRequest customerRequest) {
 		
-		Customer customer = null;
-		
-		try {
-			customer = gateway.customer().find(customerRequest.getId());
-		} catch (NotFoundException e) {
-			LOGGER.warn(e.getMessage());
-		}
-		
 		Result<Customer> customerResult = null;
 		
 		try {
-			if (customer == null) {
-				customerResult = gateway.customer().create(customerRequest);
-			} else {
-				customerResult = gateway.customer().update(customer.getId(), customerRequest);
-			}
-		} catch (AuthorizationException e) {
-			LOGGER.error(e);
+			Customer customer = gateway.customer().find(customerRequest.getId());
+			customerResult = gateway.customer().update(customer.getId(), customerRequest);
+		} catch (NotFoundException e) {
+			customerResult = gateway.customer().create(customerRequest);
 		}
 		
 		return customerResult;

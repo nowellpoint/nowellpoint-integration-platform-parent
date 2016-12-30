@@ -150,6 +150,29 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
+	 * @param email
+	 * @param firstName
+	 * @param lastName
+	 * @param password
+	 */
+	
+	public Account createAccount(String email, String firstName, String lastName, String password) {	
+		
+		Account account = client.instantiate(Account.class)
+				.setGivenName(firstName)
+				.setMiddleName(null)
+				.setSurname(lastName)
+				.setEmail("administrator@nowellpoint.com")
+				.setUsername(email)
+				.setPassword(password);
+		
+		directory.createAccount(account);
+		
+		return account;
+	}
+	
+	/**
+	 * 
 	 * @param href
 	 * @param email
 	 * @param firstName

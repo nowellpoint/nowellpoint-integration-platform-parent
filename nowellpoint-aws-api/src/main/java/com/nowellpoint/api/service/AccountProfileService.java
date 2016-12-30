@@ -95,6 +95,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	public void createAccountProfile(AccountProfile accountProfile) {
 		accountProfile.setEnableSalesforceLogin(Boolean.FALSE);
+		accountProfile.setIsActive(Boolean.FALSE);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 
@@ -282,7 +283,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		super.updateAccountProfile(accountProfile);
 		
-		if (isNotNull(accountProfile.getHref())) {
+		if (accountProfile.getIsActive() && isNotNull(accountProfile.getHref())) {
 			
 			identityProviderService.updateAccount(
 					accountProfile.getHref(), 

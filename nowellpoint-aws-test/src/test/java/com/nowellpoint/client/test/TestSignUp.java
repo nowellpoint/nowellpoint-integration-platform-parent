@@ -1,6 +1,7 @@
 package com.nowellpoint.client.test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -114,11 +115,7 @@ public class TestSignUp {
 					.user()
 					.signUp(signUpRequest);
 			
-			System.out.println(signUpResult.getTarget().getHref().substring(signUpResult.getTarget().getHref().lastIndexOf("/")));
-			
 			String accountProfileId = signUpResult.getTarget().getHref().substring(signUpResult.getTarget().getHref().lastIndexOf("/") + 1);
-			
-			System.out.println(accountProfileId);
 			
 			assertTrue(signUpResult.isSuccess());
 			assertNotNull(signUpResult.getTarget());
@@ -129,11 +126,19 @@ public class TestSignUp {
 					.user()
 					.verifyEmail(signUpResult.getTarget().getEmailVerificationToken());
 			
-			assertTrue(signUpResult.isSuccess());
+			if (! signUpResult.isSuccess()) {
+				System.out.println("verify email error: " + signUpResult.getErrorMessage());
+			}
 			
 			Document document = mongoDatabase.getCollection("account.profiles")
 					.find(Filters.eq ( "_id", new ObjectId( accountProfileId ) ) )
 					.first();
+			
+			//assertTrue(signUpResult.isSuccess());
+			
+			assertNotNull(document.getString("href"));
+			assertNull(document.getString("emailVerificationToken"));
+			assertTrue(document.getBoolean("isActive"));
 			
 			System.out.println(document.getString("href"));
 			
