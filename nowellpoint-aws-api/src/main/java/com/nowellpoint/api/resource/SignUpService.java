@@ -163,8 +163,12 @@ public class SignUpService {
 			
 		} catch (DocumentNotFoundException e) {
 			
-			Account account = identityProviderService.createAccount(email, firstName, lastName, password);
+			Account account = identityProviderService.findByUsername(email);
 			
+			if (isNull(account)) {
+				identityProviderService.createAccount(email, firstName, lastName, password);
+			}
+					
 			accountProfile = new AccountProfile();
 			accountProfile.setHref(account.getHref());
 			accountProfile.setEmailVerificationToken(account.getEmailVerificationToken().getValue());

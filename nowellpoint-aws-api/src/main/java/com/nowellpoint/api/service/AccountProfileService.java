@@ -11,12 +11,12 @@ import java.net.URL;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
@@ -42,6 +42,7 @@ import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
+import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.UserInfo;
@@ -61,6 +62,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	@Inject
 	private IsoCountryService isoCountryService;
+	
+	@Inject
+	@Deactivate
+	private Event<AccountProfile> deactivateEvent;
 	
 	public AccountProfileService() {
 		super();
@@ -137,7 +142,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void deactivateAccountProfile(String id) {
 		AccountProfile accountProfile = findAccountProfile(id);
 		accountProfile.setIsActive(Boolean.FALSE);
-		accountProfile.setCreditCards(Collections.emptySet());
+		accountProfile.setCreditCards(null);
 		
 		if (isNotNull(accountProfile.getHref())) {
 			identityProviderService.deactivateAccount(accountProfile.getHref());
@@ -148,6 +153,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 		
 		updateAccountProfile( accountProfile );
+		
+		deactivateEvent.fire( accountProfile );
 	}
 	
 	/**

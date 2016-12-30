@@ -269,7 +269,25 @@ public class IdentityProviderService {
 			return accounts.single();
 		}
 		
-		return client.instantiate(Account.class);
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param email
+	 * @return
+	 */
+	
+	public Account findByEmail(String email) {
+		AccountList accounts = application.getAccounts(
+				Accounts.where(
+						Accounts.email().eqIgnoreCase(email)));
+		
+		if (accounts.getSize() == 1) {
+			return accounts.single();
+		}
+		
+		return null;
 	}
 	
 	/**

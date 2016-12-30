@@ -197,16 +197,20 @@ public class ScheduledJobResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action) {
 		
-		if ("terminate".equals(action)) {
-			scheduledJobService.terminateScheduledJob(id);
-		} else if ("test".equals(action)) {
-
+		ScheduledJob scheduledJob = null;
+		
+		if ("terminate".equalsIgnoreCase(action)) {
+			scheduledJob = scheduledJobService.terminateScheduledJob(id);
+		} else if ("start".equalsIgnoreCase(action)) {
+			scheduledJob = scheduledJobService.startScheduledJob(id);
+		} else if ("stop".equalsIgnoreCase(action)) {
+			scheduledJob = scheduledJobService.stopScheduledJob(id);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
 		
 		return Response.ok()
-				.entity(null)
+				.entity(scheduledJob)
 				.build(); 
 	}
 	
