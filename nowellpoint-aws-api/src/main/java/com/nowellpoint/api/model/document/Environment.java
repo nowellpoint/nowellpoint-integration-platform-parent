@@ -1,5 +1,6 @@
 package com.nowellpoint.api.model.document;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -12,8 +13,14 @@ import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Environment {
+public class Environment implements Serializable {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -3274823131929250524L;
+
 	private String key;
 	
 	@JsonSerialize(using = DateSerializer.class)

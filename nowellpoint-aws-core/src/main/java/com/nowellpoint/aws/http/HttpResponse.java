@@ -16,5 +16,5 @@ public interface HttpResponse {
 	
 	public <T> List<T> getEntityList(Class<T> type) throws HttpRequestException;
 	
-	public Map<String, List<String>> getHeaders();
+	public Map<String, String> getHeaders();
 }

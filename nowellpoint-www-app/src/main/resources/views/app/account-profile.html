@@ -1,149 +1,130 @@
 <#import "template.html" as t>
     <@t.page>
-        <#include "navbar.html" />
 
-        <div class="container-fluid">
+        <div class="flextable">
+            <div class="flextable-item flextable-primary">
+                <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
+            </div>
+        </div>
+        <br>
 
-            <br>
+        <div class="row">
 
-            <div class="row">
+            <div class="col-md-4">
 
-                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <dl class="dl-vertical">
+                    <dt>${labels["name"]}</dt>
+                    <dd>${accountProfile.name!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["email"]}</dt>
+                    <dd>${accountProfile.email!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["title"]}</dt>
+                    <dd>${accountProfile.title!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["company"]}</dt>
+                    <dd>${accountProfile.company!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["division"]}</dt>
+                    <dd>${accountProfile.division!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["language.key"]}</dt>
+                    <dd>${languages[accountProfile.languageSidKey]!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["timezone.key"]}</dt>
+                    <dd>${accountProfile.timeZoneSidKey!}&emsp;</dd>
+                    <hr>
+                </dl>
+            </div>
 
-                    <#include "sidebar.html"/>
+            <div class="col-md-4">
 
+                <dl class="dl-vertical">
+                    <dt>${labels["department"]}</dt>
+                    <dd>${accountProfile.department!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["mobile.phone"]}</dt>
+                    <dd>${accountProfile.mobilePhone!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["phone"]}</dt>
+                    <dd>${accountProfile.phone!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["extension"]}</dt>
+                    <dd>${accountProfile.extension!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["fax"]}</dt>
+                    <dd>${accountProfile.fax!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["locale.key"]}</dt>
+                    <dd>${locales[accountProfile.localeSidKey]!}&emsp;</dd>
+                    <hr>
+                </dl>
+            </div>
+
+            <div class="col-md-4">
+
+                <div>
+                    <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
+                </div>
+                <br>
+                <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
+                    <div class="text-center">
+                        <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
+                        </a>
+                    </div>
+                </#if>
+
+            </div>
+
+        </div>
+
+        <br>
+        <br>
+
+        <div id="address" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["address"]}</h3>
+                    </div>
                 </div>
 
-                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                    <div class="flextable p-t">
-                        <div class="flextable-item flextable-primary">
-                            <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
-                        </div>
-                    </div>
-                    <br>
-
-                    <div class="row">
-
-                        <div class="col-md-4">
-
-                            <dl class="dl-vertical">
-                                <dt>${labels["name"]}</dt>
-                                <dd>${accountProfile.name!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["email"]}</dt>
-                                <dd>${accountProfile.email!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["title"]}</dt>
-                                <dd>${accountProfile.title!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["company"]}</dt>
-                                <dd>${accountProfile.company!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["division"]}</dt>
-                                <dd>${accountProfile.division!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["language.key"]}</dt>
-                                <dd>${languages[accountProfile.languageSidKey]!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["timezone.key"]}</dt>
-                                <dd>${accountProfile.timeZoneSidKey!}&emsp;</dd>
-                                <hr>
-                            </dl>
-                        </div>
-
-                        <div class="col-md-4">
-
-                            <dl class="dl-vertical">
-                                <dt>${labels["department"]}</dt>
-                                <dd>${accountProfile.department!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["mobile.phone"]}</dt>
-                                <dd>${accountProfile.mobilePhone!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["phone"]}</dt>
-                                <dd>${accountProfile.phone!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["extension"]}</dt>
-                                <dd>${accountProfile.extension!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["fax"]}</dt>
-                                <dd>${accountProfile.fax!}&emsp;</dd>
-                                <hr>
-                                <dt>${labels["locale.key"]}</dt>
-                                <dd>${locales[accountProfile.localeSidKey]!}&emsp;</dd>
-                                <hr>
-                            </dl>
-                        </div>
-
-                        <div class="col-md-4">
-
-                            <div>
-                                <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
-                            </div>
-                            <br>
-                            <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
-                                <div class="text-center">
-                                    <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
-                                    </a>
-                                </div>
-                            </#if>
-
-                        </div>
-
-                    </div>
-
-                    <br>
-                    <br>
-
-                    <div id="address" class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="flextable">
-                                <div class="flextable-item flextable-primary">
-                                    <h3 class="dashhead-title">${labels["address"]}</h3>
-                                </div>
-                            </div>
-
-                            <br>
-                            <div class="hr-divider"></div>
-                            <br>
-                            <address>
+                <br>
+                <div class="hr-divider"></div>
+                <br>
+                <address>
                             ${accountProfile.address.street!}<br>
                             ${accountProfile.address.city!}<#if accountProfile.address.city??>,</#if> ${accountProfile.address.state!} ${accountProfile.address.postalCode!}<br>
                             ${accountProfile.address.country!}<br>
                         </address>
-                        </div>
-                    </div>
-
-                    <br>
-                    <br>
-
-                    <div id="settings" class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="flextable">
-                                <div class="flextable-item flextable-primary">
-                                    <h3 class="dashhead-title">${labels["settings"]}</h3>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="hr-divider"></div>
-                            <br>
-                        </div>
-                        <div class="col-md-6">
-                            <dl class="dl-vertical">
-                                <dt>${labels["created.by"]}</dt>
-                                <dd><a href="${createdByHref}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdDate?date?string.long!} ${accountProfile.createdDate?time?string.medium!}</dd>
-                            </dl>
-                        </div>
-                        <div class="col-md-6">
-                            <dl class="dl-vertical">
-                                <dt>${labels["last.modified.by"]}</dt>
-                                <dd><a href="${lastModifiedByHref}">${accountProfile.lastModifiedBy.name}</a>, ${accountProfile.lastModifiedDate?date?string.long!} ${accountProfile.lastModifiedDate?time?string.medium!}</dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
+        <br>
+        <br>
+
+        <div id="settings" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["settings"]}</h3>
+                    </div>
+                </div>
+                <br>
+                <div class="hr-divider"></div>
+                <br>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-vertical">
+                    <dt>${labels["created.by"]}</dt>
+                    <dd><a href="${createdByHref}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdDate?date?string.long!} ${accountProfile.createdDate?time?string.medium!}</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-vertical">
+                    <dt>${labels["last.modified.by"]}</dt>
+                    <dd><a href="${lastModifiedByHref}">${accountProfile.lastModifiedBy.name}</a>, ${accountProfile.lastModifiedDate?date?string.long!} ${accountProfile.lastModifiedDate?time?string.medium!}</dd>
+                </dl>
+            </div>
+        </div>
     </@t.page>

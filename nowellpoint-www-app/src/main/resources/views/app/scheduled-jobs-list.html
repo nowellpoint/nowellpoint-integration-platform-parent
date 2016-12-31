@@ -2,77 +2,54 @@
 
     <@t.page>
 
-        <#include "navbar.html" />
-
-        <div class="container-fluid">
-
-            <div class="row">
-
-                <br>
-
-                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-
-                    <#include "sidebar.html"/>
-
-                </div>
-
-                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-
-                    <div class="dashhead">
-                        <div class="dashhead-titles">
-                            <h6 class="dashhead-subtitle">&emsp;</h6>
-                            <h2 class="dashhead-title">${labels["scheduled.jobs"]}</h2>
-                        </div>
-                        <#if scheduledJobList?size gt 0>
-                            <div class="dashhead-toolbar">
-                                <p class="pull-right">
-                                    <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
-                                </p>
-                            </div>
-                        </#if>
-                    </div>
-
-                    <br>
-
-                    <div class="hr-divider"></div>
-
-                    <br>
-
-                    <div class="row">
-
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <#if scheduledJobList?size == 0>
-                                <br>
-                                <br>
-                                <br>
-                                <img class="media-object center-block" src="/images/clock.png">
-                                <br>
-                                <h4 class="text-muted text-center">${labels["no.records"]}</h4>
-                                <p class="text-center">
-                                    <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
-                                </p>
-                            </#if>
-                            <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <div class="media">
-                                            <div class="media-left">
-                                                <img class="media-object" src="/images/clock.png">
-                                            </div>
-                                            <div class="media-body">
-                                                <h4 class="media-heading"><a href="${labels['base.path']}/${scheduledJob.id}">${scheduledJob.jobTypeName}</a> - (${(scheduledJob.status)!})</h4>
-                                                <p>${(scheduledJob.description)!}</p>
-                                            </div>
-                                            <div class="media-right">
-                                                <a href="${labels['base.path']}/${scheduledJob.id!}/edit?view=1" class="btn btn-lg btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </#list>
-                        </div>
-                    </div>
-                </div>
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h6 class="dashhead-subtitle">&emsp;</h6>
+                <h2 class="dashhead-title">${labels["scheduled.jobs"]}</h2>
             </div>
+            <#if scheduledJobList?size gt 0>
+                <div class="dashhead-toolbar">
+                    <p class="pull-right">
+                        <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+                    </p>
+                </div>
+            </#if>
+        </div>
+        <div class="hr-divider"></div>
+        <#if scheduledJobList?size==0>
+            <br>
+            <br>
+            <br>
+            <img class="media-object center-block" src="/images/clock.png">
+            <br>
+            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+            <p class="text-center">
+                <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+            </p>
+        </#if>
+        <br>
+        <div class="flexgrid">
+            <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
+                <div class="offer offer-radius offer-info">
+                    <div class="offer-content">
+                        <h3 class="lead">
+							<a href="${labels['base.path']}/${scheduledJob.id}">${scheduledJob.jobTypeName}</a>
+						</h3>
+                        <p>
+                            ${scheduledJob.environmentName} - 
+                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                            <span class="text-danger">(${(scheduledJob.lastRunStatus)!})</span>
+                            <!-- </#if> -->
+                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                            <span class="text-success">(${(scheduledJob.lastRunStatus)!})</span>
+                            <!-- </#if> -->
+                            <br> <small>${labels["by"]}</small>&nbsp;${scheduledJob.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${scheduledJob.createdDate?date?string.long}
+                        </p>
+                        <div class="text-right">
+                            <a href="${labels['base.path']}/${scheduledJob.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </#list>
         </div>
     </@t.page>

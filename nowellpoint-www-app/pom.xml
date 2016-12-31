@@ -61,12 +61,12 @@
 			<version>0.7</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-sdk</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.nowellpoint</groupId>
             <artifactId>nowellpoint-aws-sforce</artifactId>
             <version>${project.version}</version>
         </dependency>

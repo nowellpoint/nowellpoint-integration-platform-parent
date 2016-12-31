@@ -14,6 +14,16 @@ public class SignUpRequest {
 	
 	private String countryCode;
 	
+	private String planId;
+	
+	private String cardNumber;
+	
+	private String expirationMonth;
+	
+	private String expirationYear;
+	
+	private String securityCode;
+	
 	public SignUpRequest() {
 		
 	}
@@ -66,6 +76,46 @@ public class SignUpRequest {
 		this.countryCode = countryCode;
 	}
 	
+	public String getPlanId() {
+		return planId;
+	}
+
+	public void setPlanId(String planId) {
+		this.planId = planId;
+	}
+
+	public String getCardNumber() {
+		return cardNumber;
+	}
+
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
+	}
+
+	public String getExpirationMonth() {
+		return expirationMonth;
+	}
+
+	public void setExpirationMonth(String expirationMonth) {
+		this.expirationMonth = expirationMonth;
+	}
+
+	public String getExpirationYear() {
+		return expirationYear;
+	}
+
+	public void setExpirationYear(String expirationYear) {
+		this.expirationYear = expirationYear;
+	}
+
+	public String getSecurityCode() {
+		return securityCode;
+	}
+
+	public void setSecurityCode(String securityCode) {
+		this.securityCode = securityCode;
+	}
+
 	public SignUpRequest withEmail(String email) {
 		setEmail(email);
 		return this;
@@ -93,6 +143,31 @@ public class SignUpRequest {
 	
 	public SignUpRequest withCountryCode(String countryCode) {
 		setCountryCode(countryCode);
+		return this;
+	}
+	
+	public SignUpRequest withPlanId(String planId) {
+		setPlanId(planId);
+		return this;
+	}
+	
+	public SignUpRequest withCardNumber(String cardNumber) {
+		setCardNumber(cardNumber);
+		return this;
+	}
+	
+	public SignUpRequest withExpirationMonth(String expirationMonth) {
+		setExpirationMonth(expirationMonth);
+		return this;
+	}
+	
+	public SignUpRequest withExpirationYear(String expirationYear) {
+		setExpirationYear(expirationYear);
+		return this;
+	}
+	
+	public SignUpRequest withSecurityCode(String securityCode) {
+		setSecurityCode(securityCode);
 		return this;
 	}
 }

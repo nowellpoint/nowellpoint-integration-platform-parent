@@ -16,7 +16,7 @@
 			<dependency>
 				<groupId>com.amazonaws</groupId>
 				<artifactId>aws-java-sdk-bom</artifactId>
-				<version>${aws.sdk.version}</version>
+				<version>${version.aws.sdk}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -94,5 +94,4 @@
 			</build>
 		</profile>
 	</profiles>
-	<version>2016.12.0</version>
 </project>

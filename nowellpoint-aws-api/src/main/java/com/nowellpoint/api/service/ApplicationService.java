@@ -15,7 +15,7 @@ import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.mapper.ApplicationModelMapper;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;
 
 /**
@@ -217,7 +217,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		Application resource = findApplication(id);
 		
 		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
-			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: ", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
+			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: %s", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
 		}
 		
 		environment.setKey(UUID.randomUUID().toString().replace("-", ""));

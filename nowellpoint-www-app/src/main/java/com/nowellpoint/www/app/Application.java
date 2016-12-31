@@ -36,7 +36,6 @@ import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.ScheduledJobController;
 //import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
-import com.nowellpoint.www.app.view.VerifyEmailController;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
@@ -115,7 +114,6 @@ public class Application implements SparkApplication {
         
         AuthenticationController authenticationController = new AuthenticationController();
         AccountProfileController accountProfileController = new AccountProfileController();
-        VerifyEmailController verifyEmailController = new VerifyEmailController();
         DashboardController dashboardController = new DashboardController();
         AdministrationController administrationController = new AdministrationController();
         SignUpController signUpController = new SignUpController();
@@ -136,7 +134,6 @@ public class Application implements SparkApplication {
         accountProfileController.configureRoutes(configuration);
         administrationController.configureRoutes(configuration);
         salesforceOauthController.configureRoutes(configuration);
-        verifyEmailController.configureRoutes(configuration);
         dashboardController.configureRoutes(configuration);
         signUpController.configureRoutes(configuration);
         notificationController.configureRoutes(configuration);

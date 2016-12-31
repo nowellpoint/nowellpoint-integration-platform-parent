@@ -26,7 +26,7 @@ public class AuthToken implements Serializable {
 	private ExpandedJwt expandedJwt;
 	
 	@JsonProperty(value="account")
-	private User user;
+	private Account account;
 	
 	@JsonProperty(value="application")
 	private Application application;
@@ -70,12 +70,12 @@ public class AuthToken implements Serializable {
 		this.expandedJwt = expandedJwt;
 	}
 
-	public User getAccount() {
-		return user;
+	public Account getAccount() {
+		return account;
 	}
 
-	public void setAccount(User user) {
-		this.user = user;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 	public Application getApplication() {

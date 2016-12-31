@@ -21,6 +21,8 @@ public class Plan extends MongoDocument {
 	
 	private UserRef lastModifiedBy;
 	
+	private Boolean recommendedPlan;
+	
 	private String localeSidKey;
 	
 	private String languageLocaleKey;
@@ -39,6 +41,14 @@ public class Plan extends MongoDocument {
 	
 	public Plan() {
 		
+	}
+
+	public Boolean getRecommendedPlan() {
+		return recommendedPlan;
+	}
+
+	public void setRecommendedPlan(Boolean recommendedPlan) {
+		this.recommendedPlan = recommendedPlan;
 	}
 
 	public UserRef getCreatedBy() {

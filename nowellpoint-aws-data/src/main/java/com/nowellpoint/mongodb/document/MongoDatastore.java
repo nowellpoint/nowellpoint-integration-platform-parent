@@ -34,7 +34,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 @WebListener
 public class MongoDatastore implements ServletContextListener {

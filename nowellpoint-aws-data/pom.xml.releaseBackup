@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>2016.11.1-SNAPSHOT</version>
+		<version>2016.12.0-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -25,12 +25,12 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-dynamodb</artifactId>
-			<version>${aws.sdk.version}</version>
+			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-sns</artifactId>
-			<version>${aws.sdk.version}</version>
+			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
@@ -53,9 +53,14 @@
 			<version>${jedis.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.nowellpoint</groupId>
+            <artifactId>nowellpoint-aws-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
 	</dependencies>

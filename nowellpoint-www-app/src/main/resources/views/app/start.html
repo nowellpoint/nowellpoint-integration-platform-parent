@@ -1,55 +1,47 @@
-<#import "template.html" as t>
+<#import "template-no-sidebar.html" as t>
 
     <@t.page>
 
-        <#include "navbar.html" />
+        <br>
+        <br>
+        <br>
+        <br>
 
+        <div>
+            <h2>${messages["welcome"]}</h2>
+            <h4 class="text-muted">${messages["welcome.text"]}</h4>
+        </div>
 
-        <div class="container">
+        <div class="row">
 
-            <br>
+            <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                <h4><b>${messages["step1"]}</b></h4>
+                <a href="/app/connectors/salesforce" style="text-decoration:none;">
+                    <span class="center-block icon icon-database fa fa-4x"></span>
+                    <h3>${messages["connectors"]}</h3>
+                    <p class="text-muted">${messages["connector.headline"]}</p>
+                </a>
+            </div>
 
-            <div class="row">
+            <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                <h4><b>${messages["step2"]}</b></h4>
+                <a href="/app/scheduled-jobs" style="text-decoration:none;">
+                    <span class="center-block icon icon-flow-tree fa fa-4x"></span>
+                    <h3>${messages["scheduled.jobs"]}</h3>
+                    <p class="text-muted">${messages["scheduled.jobs.headline"]}</p>
+                </a>
+            </div>
 
-                <br>
-                <br>
-                <br>
+            <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                <h4><b>${messages["step3"]}</b></h4>
+                <a href="/app/dashboard" style="text-decoration:none;">
+                    <span class="center-block icon icon-gauge fa fa-4x"></span>
+                    <h3>${messages["dashboard"]}</h3>
+                    <p class="text-muted">${messages["dashboard.headline"]}</p>
+                </a>
+            </div>
 
-                <div>
-                    <h2>${messages["welcome"]}</h2>
-                    <h4 class="text-muted">${messages["welcome.text"]}</h4>
-                </div>
-
-                <div class="row">
-
-                    <div class="col-lg-4 col-md-4 text-center p-a-lg">
-                        <h4><b>${messages["step1"]}</b></h4>
-                        <a href="/app/connectors/salesforce" style="text-decoration:none;">
-                            <img class="media-object center-block" src="/images/connection.png">
-                            <h3>${messages["connectors"]}</h3>
-                            <p class="text-muted">${messages["connector.headline"]}</p>
-                        </a>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-4 text-center p-a-lg">
-                        <h4><b>${messages["step2"]}</b></h4>
-                        <a href="/app/scheduled-jobs" style="text-decoration:none;">
-                            <img class="media-object center-block" src="/images/clock.png">
-                            <h3>${messages["scheduled.jobs"]}</h3>
-                            <p class="text-muted">${messages["scheduled.jobs.headline"]}</p>
-                        </a>
-                    </div>
-                    
-                     <div class="col-lg-4 col-md-4 text-center p-a-lg">
-                        <h4><b>${messages["step3"]}</b></h4>
-                        <a href="/app/dashboard" style="text-decoration:none;">
-                            <img class="media-object center-block" src="/images/dashboard.png">
-                            <h3>${messages["dashboard"]}</h3>
-                            <p class="text-muted">${messages["dashboard.headline"]}</p>
-                        </a>
-                    </div>
-
-                    <!--
+            <!--
                     <div class="col-lg-4 col-md-4 text-center p-a-lg">
                         <a href="/app/applications" style="text-decoration:none;">
                             <img class="media-object center-block" src="/images/application.png">
@@ -57,7 +49,6 @@
                             <p class="text-muted">${messages["application.headline"]}</p>
                         </a>
                     </div> -->
-                </div>
-            </div>
         </div>
+
     </@t.page>

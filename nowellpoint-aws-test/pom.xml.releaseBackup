@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>2016.11.1-SNAPSHOT</version>
+		<version>2016.12.0-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -24,30 +24,35 @@
 		<dependency>
 			<groupId>com.sendgrid</groupId>
 			<artifactId>sendgrid-java</artifactId>
-			<version>3.0.4</version>
+			<version>${version.sendgrid.java}</version>
 		</dependency>
 		<dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-api</artifactId>
-            <version>1.0.RC9.2</version>
+            <version>${version.stormpath.sdk}</version>
         </dependency>
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-impl</artifactId>
-            <version>1.0.RC9.2</version>
+            <version>${version.stormpath.sdk}</version>
         </dependency>
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
-            <version>1.0.RC9.2</version>
+            <version>${version.stormpath.sdk}</version>
         </dependency>
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-oauth</artifactId>
-            <version>1.0.RC9.2</version>
+            <version>${version.stormpath.sdk}</version>
         </dependency>
+        <dependency>
+			<groupId>com.braintreepayments.gateway</groupId>
+			<artifactId>braintree-java</artifactId>
+			<version>${version.braintree.sdk}</version>
+		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-sdk</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -64,7 +69,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<version>${version.junit}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

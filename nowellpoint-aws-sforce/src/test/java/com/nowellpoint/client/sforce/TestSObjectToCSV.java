@@ -1,6 +1,5 @@
 package com.nowellpoint.client.sforce;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -33,12 +32,12 @@ import com.nowellpoint.aws.http.HttpRequestException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.OutboundEvent;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.util.Properties;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -46,7 +45,7 @@ public class TestSObjectToCSV {
 	
 	@BeforeClass
 	public static void init() {
-		Properties.setSystemProperties(System.getenv("NCS_PROPERTY_STORE"));
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 	}
 	
 	@Test

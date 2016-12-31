@@ -26,6 +26,7 @@ import com.nowellpoint.api.model.domain.Environment;
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.ScheduledJob;
+import com.nowellpoint.api.model.domain.ScheduledJobStatus;
 import com.nowellpoint.api.model.domain.ScheduledJobType;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
@@ -35,9 +36,6 @@ import com.nowellpoint.util.Assert;
 public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
-	private static final String SCHEDULED = "Scheduled";
-	private static final String STOPPED = "Stopped";
-	private static final String TERMINATED = "Terminated";
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -82,7 +80,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			scheduledJob.setOwner(new UserInfo(getSubject()));
 		}
 		
-		scheduledJob.setStatus(SCHEDULED);
+		scheduledJob.setStatus(ScheduledJobStatus.SCHEDULED);
 		
 		setupScheduledJob(scheduledJob);
 		
@@ -101,11 +99,12 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	public void updateScheduledJob(String id, ScheduledJob scheduledJob) {
 		ScheduledJob original = findScheduledJobById(id);
 		
-		if (TERMINATED.equals(original.getStatus())) {
+		if (ScheduledJobStatus.TERMINATED.equals(original.getStatus())) {
 			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
 		}
 		
 		scheduledJob.setId(id);
+		scheduledJob.setStatus(original.getStatus());
 		scheduledJob.setJobTypeId(original.getJobTypeId());
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
 		scheduledJob.setJobTypeName(original.getJobTypeName());
@@ -149,6 +148,42 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		setupScheduledJob(scheduledJob);
 		
 		super.updateScheduledJob(scheduledJob);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	
+	public ScheduledJob terminateScheduledJob(String id) {
+		ScheduledJob scheduledJob = findScheduledJobById(id);
+		scheduledJob.setStatus(ScheduledJobStatus.TERMINATED);
+		updateScheduledJob(scheduledJob);
+		return scheduledJob;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	
+	public ScheduledJob startScheduledJob(String id) {
+		ScheduledJob scheduledJob = findScheduledJobById(id);
+		scheduledJob.setStatus(ScheduledJobStatus.SCHEDULED);
+		updateScheduledJob(scheduledJob);
+		return scheduledJob;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	
+	public ScheduledJob stopScheduledJob(String id) {
+		ScheduledJob scheduledJob = findScheduledJobById(id);
+		scheduledJob.setStatus(ScheduledJobStatus.STOPPED);
+		updateScheduledJob(scheduledJob);
+		return scheduledJob;
 	}
 	
 	/**
@@ -243,7 +278,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	public void terminateAllJobs(@Observes @Deactivate AccountProfile accountProfile) {
 		Set<ScheduledJob> scheduledJobs = findByOwner(accountProfile.getId());
 		scheduledJobs.stream().forEach(scheduledJob -> {
-			scheduledJob.setStatus(TERMINATED);
+			scheduledJob.setStatus(ScheduledJobStatus.TERMINATED);
 			updateScheduledJob(scheduledJob);
 		});
 	}
@@ -262,7 +297,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
 		
-		if (! (SCHEDULED.equals(scheduledJob.getStatus()) || STOPPED.equals(scheduledJob.getStatus())) || TERMINATED.equals(scheduledJob.getStatus())) {
+		if (! (ScheduledJobStatus.SCHEDULED.equals(scheduledJob.getStatus()) || ScheduledJobStatus.STOPPED.equals(scheduledJob.getStatus())) || ScheduledJobStatus.TERMINATED.equals(scheduledJob.getStatus())) {
 			throw new ValidationException( String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		

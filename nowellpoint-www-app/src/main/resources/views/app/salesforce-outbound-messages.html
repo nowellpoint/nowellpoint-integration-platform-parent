@@ -2,265 +2,259 @@
 
     <@t.page>
 
-        <#include "navbar.html" />
+        <div id="status-message"></div>
+        <div class="col-sm-2">
+            <#include "salesforce-service-nav.html" />
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-10">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        <div class="panel panel-primary">
+                            <div class="statcard p-a-md m-b">
+                                <h3 class="statcard-number">${serviceInstance.activeEnvironments} ${labels["of"]} ${serviceInstance.environments?size}</h3>
+                                <span class="statcard-desc">${labels["active.environments"]}</span>
+                            </div>
+                        </div>
+                    </div>
 
-        <div class="container-fluid">
-            <br>
-            <div class="row">
-                <div id="status-message"></div>
-                <div class="col-sm-2">
-                    <#include "salesforce-service-nav.html" />
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        <div class="panel panel-primary">
+                            <div class="statcard p-a-md m-b">
+                                <h3 class="statcard-number">${serviceInstance.plan.transactions} / ${serviceInstance.plan.billingFrequencyPer}</h3>
+                                <span class="statcard-desc">${serviceInstance.plan.planName}</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="col-lg-10 col-md-10 col-sm-10">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                        <div class="row">
-                            <div class="col-lg-2 col-md-2 col-sm-2">
-                                <div class="panel panel-primary">
-                                    <div class="statcard p-a-md m-b">
-                                        <h3 class="statcard-number">${serviceInstance.activeEnvironments} ${labels["of"]} ${serviceInstance.environments?size}</h3>
-                                        <span class="statcard-desc">${labels["active.environments"]}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-2 col-md-2 col-sm-2">
-                                <div class="panel panel-primary">
-                                    <div class="statcard p-a-md m-b">
-                                        <h3 class="statcard-number">${serviceInstance.plan.transactions} / ${serviceInstance.plan.billingFrequencyPer}</h3>
-                                        <span class="statcard-desc">${serviceInstance.plan.planName}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
 
-                        <div class="hr-divider">
-                            <h3 class="hr-divider-content hr-divider-heading"></h3>
+                <div class="hr-divider">
+                    <h3 class="hr-divider-content hr-divider-heading"></h3>
+                </div>
+
+                <br>
+
+                <div class="row">
+
+                    <dl class="dl-horizontal">
+                        <dt>${labels["connector"]}</dt>
+                        <dd><a href="${labels['base.path']}/${(salesforceConnector.id)!}">${(salesforceConnector.id)!}</a></dd>
+                        <dt>${labels["identity.id"]}</dt>
+                        <dd>${(salesforceConnector.identity.id)!}</dd>
+                        <dt>${labels["name"]}</dt>
+                        <dd>${(salesforceConnector.organization.name)!}</dd>
+                        <dt>${labels["organization.type"]}</dt>
+                        <dd>${(salesforceConnector.organization.organizationType)!}</dd>
+                        <dt>${labels["instance.name"]}</dt>
+                        <dd>${(salesforceConnector.organization.instanceName)!}</dd>
+                    </dl>
+
+                    <div class="hr-divider">
+                        <h3 class="hr-divider-content hr-divider-heading"></h3>
+                    </div>
+
+                    <br>
+
+                    <form id="form" name="form" class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${labels["name"]}</label>
+                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                <input type="text" class="form-control" name="name" id="name" value="${(serviceInstance.name)!}" required="" />
+                            </div>
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-md-2 col-lg-2" for="sourceEnvironment">${labels["source.environment"]}</label>
+                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                <#if ! serviceInstance.eventListeners?has_content>
+                                    <select id="sourceEnvironment" name="sourceEnvironment" class="form-control" value="${(serviceInstance.sourceEnvironment)!}" required="">
+                                        <option value="">--- ${labels["select.environment"]} ---</option>
+                                        <#list serviceInstance.environments as environment>
+                                            <#if environment.active>
+                                                <#if environment.name==( serviceInstance.sourceEnvironment)! "">
+                                                    <option value="${environment.name}" selected>${environment.label}</option>
+                                                </#if>
+                                                <#if environment.name !=( serviceInstance.sourceEnvironment)! "">
+                                                    <option value="${environment.name}">${environment.label}</option>
+                                                </#if>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </#if>
+                                <#if serviceInstance.eventListeners?has_content>
+                                    <input type="hidden" id="sourceEnvironment" name="sourceEnvironment" value="${(serviceInstance.sourceEnvironment)!}" />
+                                    <p class="form-control-static">${(serviceInstance.sourceEnvironment)!}</p>
+                                </#if>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-5 col-md-5 col-lg-5">
+                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="hr-divider">
+                        <h3 class="hr-divider-content hr-divider-heading"></h3>
+                    </div>
+
+                    <#include "fragments/environment-list.html" />
+
+                    <div class="hr-divider">
+                        <h3 class="hr-divider-content hr-divider-heading"></h3>
+                    </div>
+
+                    <div class="col-lg-10 col-md-10 col-sm-10">
 
                         <br>
 
-                        <div class="row">
+                        <p class="text-danger">
+                            ${labels["delete.warning"]}
+                        </p>
 
-                            <dl class="dl-horizontal">
-                                <dt>${labels["connector"]}</dt>
-                                <dd><a href="${labels['base.path']}/${(salesforceConnector.id)!}">${(salesforceConnector.id)!}</a></dd>
-                                <dt>${labels["identity.id"]}</dt>
-                                <dd>${(salesforceConnector.identity.id)!}</dd>
-                                <dt>${labels["name"]}</dt>
-                                <dd>${(salesforceConnector.organization.name)!}</dd>
-                                <dt>${labels["organization.type"]}</dt>
-                                <dd>${(salesforceConnector.organization.organizationType)!}</dd>
-                                <dt>${labels["instance.name"]}</dt>
-                                <dd>${(salesforceConnector.organization.instanceName)!}</dd>
-                            </dl>
+                        <a href="" class="btn btn-lg btn-danger-outline confirm-delete" title="${labels['delete.service']}" data-toggle="modal" aria-hidden="true" role="button" data-id="${serviceInstance.key!}" data-message="${serviceInstance.serviceName!}" data-title="${labels['delete.message']}">${labels["delete.service"]}</a>
 
-                            <div class="hr-divider">
-                                <h3 class="hr-divider-content hr-divider-heading"></h3>
-                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                            <br>
+        <!-- Modal Dialog -->
+        <div class="modal fade" id="environment-variables-modal" role="dialog" tabindex="-1" aria-hidden="true">
+            <form class="form-vertical" id="environment-variables-form" role="form">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">${labels["environment.variables"]}</h4>
+                        </div>
+                        <div class="modal-body" id="modal-body">
 
-                            <form id="form" name="form" class="form-horizontal" role="form">
-
-                                <div class="form-group">
-                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="name">${labels["name"]}</label>
-                                    <div class="col-sm-3 col-md-3 col-lg-3">
-                                        <input type="text" class="form-control" name="name" id="name" value="${(serviceInstance.name)!}" required="" />
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-sm-2 col-md-2 col-lg-2" for="sourceEnvironment">${labels["source.environment"]}</label>
-                                    <div class="col-sm-3 col-md-3 col-lg-3">
-                                        <#if ! serviceInstance.eventListeners?has_content>
-                                            <select id="sourceEnvironment" name="sourceEnvironment" class="form-control" value="${(serviceInstance.sourceEnvironment)!}" required="">
-                                                <option value="">--- ${labels["select.environment"]} ---</option>
-                                                <#list serviceInstance.environments as environment>
-                                                    <#if environment.active>
-                                                        <#if environment.name==( serviceInstance.sourceEnvironment)! "">
-                                                            <option value="${environment.name}" selected>${environment.label}</option>
-                                                        </#if>
-                                                        <#if environment.name !=( serviceInstance.sourceEnvironment)! "">
-                                                            <option value="${environment.name}">${environment.label}</option>
-                                                        </#if>
-                                                    </#if>
-                                                </#list>
-                                            </select>
-                                        </#if>
-                                        <#if serviceInstance.eventListeners?has_content>
-                                            <input type="hidden" id="sourceEnvironment" name="sourceEnvironment" value="${(serviceInstance.sourceEnvironment)!}" />
-                                            <p class="form-control-static">${(serviceInstance.sourceEnvironment)!}</p>
-                                        </#if>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-5 col-md-5 col-lg-5">
-                                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
-                                    </div>
-                                </div>
-                            </form>
-
-                            <div class="hr-divider">
-                                <h3 class="hr-divider-content hr-divider-heading"></h3>
-                            </div>
-
-                            <#include "fragments/environment-list.html" />
-
-                            <div class="hr-divider">
-                                <h3 class="hr-divider-content hr-divider-heading"></h3>
-                            </div>
-
-                            <div class="col-lg-10 col-md-10 col-sm-10">
-
-                                <br>
-
-                                <p class="text-danger">
-                                    ${labels["delete.warning"]}
-                                </p>
-
-                                <a href="" class="btn btn-lg btn-danger-outline confirm-delete" title="${labels['delete.service']}" data-toggle="modal" aria-hidden="true" role="button" data-id="${serviceInstance.key!}" data-message="${serviceInstance.serviceName!}" data-title="${labels['delete.message']}">${labels["delete.service"]}</a>
-
+                        </div>
+                        <div class="modal-footer">
+                            <div class="pull-right">
+                                <a id="reset" role="button">${labels["reset"]}</a>&nbsp;
+                                <a id="addVariable" class="btn btn-default" role="button">${labels["add.variable"]}</a>&nbsp;
+                                <a id="saveVariables" class="btn btn-primary" role="button">${labels["save"]}</a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
+        </div>
 
-            <!-- Modal Dialog -->
-            <div class="modal fade" id="environment-variables-modal" role="dialog" tabindex="-1" aria-hidden="true">
-                <form class="form-vertical" id="environment-variables-form" role="form">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h4 class="modal-title">${labels["environment.variables"]}</h4>
-                            </div>
-                            <div class="modal-body" id="modal-body">
+        <#include "confirm-dialog.html"/>
+        <#include "spinner.html" />
 
-                            </div>
-                            <div class="modal-footer">
-                                <div class="pull-right">
-                                    <a id="reset" name="reset" role="button">${labels["reset"]}</a>&nbsp;
-                                    <a id="addVariable" name="add" class="btn btn-default" role="button">${labels["add.variable"]}</a>&nbsp;
-                                    <a id="saveVariables" name="save" class="btn btn-primary" role="button">${labels["save"]}</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <#include "confirm-dialog.html"/>
-            <#include "spinner.html" />
-
-            <script>
-                $(document).on('click', '.test-connection', function(e) {
-                    var id = $(this).data('id');
-                    $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/connection/".concat(id),
-                        type: "GET",
-                        complete: function(data) {
-                            $("#environments-table").html(data.responseText);
-                        }
-                    });
-
-                    e.preventDefault();
-                });
-                
-                $(document).on('click', '.deploy', function(e) {
-                    var id = $(this).data('id');
-                    $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/deployment/".concat(id),
-                        type: "POST",
-                        complete: function(data) {
-                            $("#status-message").html(data.responseText);
-                        }
-                    });
-
-                    e.preventDefault();
+        <script>
+            $(document).on('click', '.test-connection', function(e) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/connection/".concat(id),
+                    type: "GET",
+                    complete: function(data) {
+                        $("#environments-table").html(data.responseText);
+                    }
                 });
 
-                $(document).on('click', 'a.removeEnvironmentVariable', function(e) {
-                    $(this).closest('tr').fadeTo(400, 0, function() {
-                        $(this).remove();
-                    });
+                e.preventDefault();
+            });
 
-                    e.preventDefault();
+            $(document).on('click', '.deploy', function(e) {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/deployment/".concat(id),
+                    type: "POST",
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
                 });
 
-                $("#environment-variables-modal").on("show.bs.modal", function(e) {
-                    var id = $(e.relatedTarget).attr('data-id');
-                    $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables/".concat(id),
-                        type: "GET",
-                        dataType: "html",
-                        success: function(data) {
-                            $("#modal-body").html(data);
-                        }
-                    });
+                e.preventDefault();
+            });
+
+            $(document).on('click', 'a.removeEnvironmentVariable', function(e) {
+                $(this).closest('tr').fadeTo(400, 0, function() {
+                    $(this).remove();
                 });
 
-                $('#addVariable').click(function() {
-                    $.ajax({
-                        dataType: "html",
-                        type: "GET",
-                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
-                        complete: function(data) {
-                            $('#environment-variables-table tbody').append(data.responseText);
-                        }
-                    });
+                e.preventDefault();
+            });
+
+            $("#environment-variables-modal").on("show.bs.modal", function(e) {
+                var id = $(e.relatedTarget).attr('data-id');
+                $.ajax({
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}/variables/".concat(id),
+                    type: "GET",
+                    dataType: "html",
+                    success: function(data) {
+                        $("#modal-body").html(data);
+                    }
+                });
+            });
+
+            $('#addVariable').click(function() {
+                $.ajax({
+                    dataType: "html",
+                    type: "GET",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/add",
+                    complete: function(data) {
+                        $('#environment-variables-table tbody').append(data.responseText);
+                    }
+                });
+            });
+
+            $('#saveVariables').click(function() {
+                var params = $("#environment-variables-form").serialize();
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
+                    data: params,
+                    complete: function(data) {
+                        $("#environment-variables-modal").modal('hide');
+                    }
+                });
+            });
+
+            $('#reset').click(function() {
+                $.ajax({
+                    dataType: "html",
+                    type: "GET",
+                    url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.sourceEnvironment!)}",
+                    complete: function(data) {
+                        $('#environment-variables-table').html(data.responseText);
+                    }
+                });
+            });
+
+            $('#confirm').click(function(e) {
+                $('#confirmDialog').modal('hide');
+                $.ajax({
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
+                    type: "DELETE",
+                    complete: function(data) {
+                        window.location.replace("${labels['base.path']}/${(salesforceConnector.id)!}");
+                    }
+                });
+            });
+
+            $('#form').submit(function(e) {
+                var params = $("#form").serialize();
+                $.ajax({
+                    dataType: "html",
+                    type: "POST",
+                    url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
+                    data: params,
+                    complete: function(data) {
+                        $("#status-message").html(data.responseText);
+                    }
                 });
 
-                $('#saveVariables').click(function() {
-                    var params = $("#environment-variables-form").serialize();
-                    $.ajax({
-                        dataType: "html",
-                        type: "POST",
-                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables",
-                        data: params,
-                        complete: function(data) {
-                            $("#environment-variables-modal").modal('hide');
-                        }
-                    });
-                });
+                e.preventDefault();
 
-                $('#reset').click(function() {
-                    $.ajax({
-                        dataType: "html",
-                        type: "GET",
-                        url: "${labels['base.path']}/${salesforceConnector.id!}/service/${serviceInstance.key!}/variables/${(serviceInstance.sourceEnvironment!)}",
-                        complete: function(data) {
-                            $('#environment-variables-table').html(data.responseText);
-                        }
-                    });
-                });
-
-                $('#confirm').click(function(e) {
-                    $('#confirmDialog').modal('hide');
-                    $.ajax({
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
-                        type: "DELETE",
-                        complete: function(data) {
-                            window.location.replace("${labels['base.path']}/${(salesforceConnector.id)!}");
-                        }
-                    });
-                });
-
-                $('#form').submit(function(e) {
-                    var params = $("#form").serialize();
-                    $.ajax({
-                        dataType: "html",
-                        type: "POST",
-                        url: "${labels['base.path']}/${(salesforceConnector.id)!}/service/${(serviceInstance.key)!}",
-                        data: params,
-                        complete: function(data) {
-                            $("#status-message").html(data.responseText);
-                        }
-                    });
-
-                    e.preventDefault();
-
-                });
-            </script>
+            });
+        </script>
 
     </@t.page>

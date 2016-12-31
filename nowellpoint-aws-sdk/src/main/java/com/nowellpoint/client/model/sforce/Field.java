@@ -7,6 +7,8 @@ public class Field {
 	
 	private Boolean autonumber;
 	
+	private String type;
+	
 	private Integer byteLength;
 
 	private Boolean calculated;
@@ -45,6 +47,14 @@ public class Field {
 
 	public void setAutonumber(Boolean autonumber) {
 		this.autonumber = autonumber;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public Integer getByteLength() {

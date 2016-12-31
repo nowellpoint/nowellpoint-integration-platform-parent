@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.util.IOUtils;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 public class LogManager {
 	

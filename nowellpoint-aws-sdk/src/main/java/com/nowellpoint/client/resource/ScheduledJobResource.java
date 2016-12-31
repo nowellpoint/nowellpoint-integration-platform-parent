@@ -20,6 +20,9 @@ import com.nowellpoint.client.model.Token;
 public class ScheduledJobResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "scheduled-jobs";
+	private static final String START = "start";
+	private static final String STOP = "stop";
+	private static final String TERMINATE = "terminate";
 	
 	public ScheduledJobResource(Token token) {
 		super(token);
@@ -111,7 +114,9 @@ public class ScheduledJobResource extends AbstractResource {
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(id)
-				.parameter("status", "Stopped")
+				.path("actions")
+				.path(STOP)
+				.path("invoke")
 				.execute();
 		
 		UpdateResult<ScheduledJob> result = null;
@@ -136,7 +141,9 @@ public class ScheduledJobResource extends AbstractResource {
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(id)
-				.parameter("status", "Terminated")
+				.path("actions")
+				.path(TERMINATE)
+				.path("invoke")
 				.execute();
 		
 		UpdateResult<ScheduledJob> result = null;
@@ -161,7 +168,9 @@ public class ScheduledJobResource extends AbstractResource {
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(id)
-				.parameter("status", "Scheduled")
+				.path("actions")
+				.path(START)
+				.path("invoke")
 				.execute();
 		
 		UpdateResult<ScheduledJob> result = null;

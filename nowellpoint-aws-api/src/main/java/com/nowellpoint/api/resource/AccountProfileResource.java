@@ -2,7 +2,6 @@ package com.nowellpoint.api.resource;
 
 import java.net.URI;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -32,12 +31,9 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
-import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
-import com.nowellpoint.api.model.domain.idp.User;
 import com.nowellpoint.api.service.AccountProfileService;
-import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PlanService;
 
 @Path("account-profile")
@@ -47,14 +43,7 @@ public class AccountProfileResource {
 	private AccountProfileService accountProfileService;
 	
 	@Inject
-	private IdentityProviderService identityProviderService;
-	
-	@Inject
 	private PlanService planService;
-	
-	@Inject
-	@Deactivate
-	private Event<AccountProfile> deactivateEvent;
 
 	@Context
 	private UriInfo uriInfo;
@@ -190,20 +179,6 @@ public class AccountProfileResource {
 		accountProfile.setEnableSalesforceLogin(enableSalesforceLogin);
 		
 		accountProfileService.updateAccountProfile( accountProfile );
-				
-		//
-		// update identity
-		//
-		
-		User user = new User();
-		user.setGivenName(firstName);
-		user.setMiddleName(null);
-		user.setSurname(lastName);
-		user.setEmail(email);
-		user.setUsername(email);
-		user.setHref(accountProfile.getHref());
-		
-		identityProviderService.updateUser(user);
 		
 		return Response.ok(accountProfile)
 				.build();
@@ -240,7 +215,8 @@ public class AccountProfileResource {
 				.path("/{id}")
 				.build(accountProfile.getId());
 		
-		return Response.created(uri).build();
+		return Response.created(uri)
+				.build();
 	}
 	
 	@PUT
@@ -257,16 +233,12 @@ public class AccountProfileResource {
 	
 	@DELETE
 	@Path("{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deactivateAccountProfile(@PathParam("id") String id) {
+
+		accountProfileService.deactivateAccountProfile( id );
 		
-		AccountProfile resource = new AccountProfile(id);
-		accountProfileService.deactivateAccountProfile( resource );
-		
-		deactivateEvent.fire( resource );
-		
-		return Response.ok().build();
+		return Response.ok()
+				.build();
 	}
 	
 	@GET
@@ -274,14 +246,13 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCreditCard(@PathParam("id") String id, @PathParam("token") String token) {
 		
-		CreditCard resource = accountProfileService.getCreditCard( id, token);
+		CreditCard resource = accountProfileService.getCreditCard( id, token );
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
 		}
 		
-		return Response
-				.ok(resource)
+		return Response.ok(resource)
 				.build();
 	}
 	
@@ -291,10 +262,9 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addCreditCard(@PathParam("id") String id, CreditCard creditCard) {
 		
-		accountProfileService.addCreditCard( id, creditCard);
+		accountProfileService.addCreditCard( id, creditCard );
 		
-		return Response
-				.ok(creditCard)
+		return Response.ok(creditCard)
 				.build();
 	}
 	
@@ -306,8 +276,7 @@ public class AccountProfileResource {
 		
 		CreditCard resource = accountProfileService.updateCreditCard( id, token, parameters );
 		
-		return Response
-				.ok(resource)
+		return Response.ok(resource)
 				.build();
 	}
 	
@@ -319,9 +288,7 @@ public class AccountProfileResource {
 		
 		accountProfileService.updateCreditCard( id, token, creditCard );
 		
-		return Response
-				.ok(creditCard)
-				.build();
+		return Response.ok(creditCard).build();
 	}
 	
 	@DELETE
@@ -330,8 +297,7 @@ public class AccountProfileResource {
 		
 		accountProfileService.removeCreditCard( id, token );
 		
-		return Response
-				.ok()
+		return Response.ok()
 				.build();
 	}
 	

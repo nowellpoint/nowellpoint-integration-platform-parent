@@ -1,5 +1,9 @@
 package com.nowellpoint.api.resource;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -7,6 +11,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.event.Event;
@@ -25,10 +31,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.exception.AuthenticationException;
-import com.nowellpoint.api.model.domain.idp.Token;
+import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Token;
+import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
+import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 
 @Path("oauth")
 @Api(value = "/oauth")
@@ -39,6 +49,9 @@ public class TokenResource {
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
+	
+	@Inject
+	private AccountProfileService accountProfileService;
 	
 	@Inject
 	private Event<Token> loggedInEvent;
@@ -82,7 +95,7 @@ public class TokenResource {
 			throw new AuthenticationException("invalid_request", "Parameters missing from the request, valid parameters are Base64 encoded: username:password or client_id:client_secret");
 		}
 		
-		Token token = null;
+		OAuthGrantRequestAuthenticationResult result = null;
 		
 		//
 		// call the identity service provider to authenticate
@@ -94,9 +107,9 @@ public class TokenResource {
 					.setSecret(params[1])
 					.build();
 			
-			token = identityProviderService.authenticate(apiKey);
+			result = identityProviderService.authenticate(apiKey);
 		} else if (PASSWORD.equals(grantType)) {
-			token = identityProviderService.authenticate(params[0], params[1]);
+			result = identityProviderService.authenticate(params[0], params[1]);
 		} else {
 			throw new AuthenticationException("invalid_grant", "Please provide a valid grant_type, supported types are : client_credentials, password, refresh_token.");
 		}
@@ -106,6 +119,18 @@ public class TokenResource {
 		//
 		
 		params = null;
+		
+		//
+		// lookup account profile
+		//
+		
+		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(result.getAccessToken().getAccount().getHref());
+        
+		//
+		// create the token
+		//
+		
+        Token token = createToken(result, accountProfile.getId());
 
 		//
 		// fire event for handling login functions
@@ -129,7 +154,7 @@ public class TokenResource {
 	@ApiResponses(value = { 
 		      @ApiResponse(code = 204, message = "successful operation") 
 		  })
-	public Response revoke(@ApiParam(value = "bearer authorization header", required = true) @HeaderParam("Authorization") String authorization) {
+	public Response revokeToken(@ApiParam(value = "bearer authorization header", required = true) @HeaderParam("Authorization") String authorization) {
 		
 		//
 		// ensure that the authorization header has a bearer token
@@ -149,12 +174,51 @@ public class TokenResource {
 		// call the identity provider service to revoke the token
 		//
 		
-		identityProviderService.revoke(bearerToken);
+		identityProviderService.revokeToken(bearerToken);
 		
 		//
 		// return Response
 		//
 		
 		return Response.noContent().build();
+	}
+	
+	/**
+	 * 
+	 * @param result
+	 * @param issuer
+	 * @param subject
+	 * @return authentication token
+	 */
+	
+	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {
+		
+		Jws<Claims> claims = Jwts.parser()
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+				.parseClaimsJws(result.getAccessToken().getJwt()); 
+		
+		Set<String> groups = new HashSet<String>();
+		result.getAccessToken().getAccount().getGroups().forEach(g -> 
+			groups.add(g.getName())
+        );
+		
+		String jwt = Jwts.builder()
+        		.setId(claims.getBody().getId())
+        		.setHeaderParam("typ", "JWT")
+        		.setIssuer(claims.getBody().getIssuer())
+        		.setSubject(subject)
+        		.setIssuedAt(claims.getBody().getIssuedAt())
+        		.setExpiration(claims.getBody().getExpiration())
+        		.signWith(SignatureAlgorithm.HS512, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+        		.claim("scope", groups.toArray(new String[groups.size()]))
+        		.compact();	 
+		
+		Token token = new Token();
+		token.setAccessToken(jwt);
+		token.setExpiresIn(result.getExpiresIn());
+		token.setRefreshToken(result.getRefreshTokenString());
+		token.setTokenType(result.getTokenType());
+        
+        return token;
 	}
 }

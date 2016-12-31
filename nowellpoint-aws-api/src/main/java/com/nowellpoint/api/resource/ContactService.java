@@ -24,7 +24,7 @@ import org.jboss.logging.Logger;
 import com.nowellpoint.api.model.sforce.Lead;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;

@@ -1,6 +1,7 @@
 package com.nowellpoint.api.service;
 
 import static com.nowellpoint.util.Assert.isEmpty;
+import static com.nowellpoint.util.Assert.isNotNull;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isEqual;
 
@@ -15,6 +16,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
@@ -40,9 +42,10 @@ import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
+import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.Subscription;
+import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.UserInfo;
-import com.nowellpoint.api.model.domain.idp.Token;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
@@ -52,10 +55,17 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
 	@Inject
+	private IdentityProviderService identityProviderService;
+	
+	@Inject
 	private PaymentGatewayService paymentGatewayService;
 	
 	@Inject
 	private IsoCountryService isoCountryService;
+	
+	@Inject
+	@Deactivate
+	private Event<AccountProfile> deactivateEvent;
 	
 	public AccountProfileService() {
 		super();
@@ -90,6 +100,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	public void createAccountProfile(AccountProfile accountProfile) {
 		accountProfile.setEnableSalesforceLogin(Boolean.FALSE);
+		accountProfile.setIsActive(Boolean.FALSE);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 
@@ -120,26 +131,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setLastModifiedBy(userInfo);
 
 		super.createAccountProfile(accountProfile);
-		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.id(accountProfile.getId())
-				.company(accountProfile.getCompany())
-				.email(accountProfile.getEmail())
-				.firstName(accountProfile.getFirstName())
-				.lastName(accountProfile.getLastName())
-				.phone(accountProfile.getPhone());
-		
-		Result<com.braintreegateway.Customer> customerResult = null;
-		
-		try {
-			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
-		} catch (NotFoundException e) {
-			throw new ValidationException(e.getMessage());
-		}
-		
-		if (! customerResult.isSuccess()) {
-			LOGGER.error(customerResult.getMessage());
-		}
 	}
 	
 	/**
@@ -148,10 +139,22 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	 * 
 	 */
 	
-	public void deactivateAccountProfile(AccountProfile accountProfile) {
+	public void deactivateAccountProfile(String id) {
+		AccountProfile accountProfile = findAccountProfile(id);
 		accountProfile.setIsActive(Boolean.FALSE);
+		accountProfile.setCreditCards(null);
+		
+		if (isNotNull(accountProfile.getHref())) {
+			identityProviderService.deactivateAccount(accountProfile.getHref());
+		}
+		
+		if (isNotNull(accountProfile.getSubscription())) {
+			paymentGatewayService.cancelSubscription(accountProfile.getSubscription().getSubscriptionId());
+		}
 		
 		updateAccountProfile( accountProfile );
+		
+		deactivateEvent.fire( accountProfile );
 	}
 	
 	/**
@@ -287,24 +290,36 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		super.updateAccountProfile(accountProfile);
 		
-		CustomerRequest customerRequest = new CustomerRequest()
-				.id(accountProfile.getId())
-				.company(accountProfile.getCompany())
-				.email(accountProfile.getEmail())
-				.firstName(accountProfile.getFirstName())
-				.lastName(accountProfile.getLastName())
-				.phone(accountProfile.getPhone());
-		
-		Result<com.braintreegateway.Customer> customerResult = null;
-		
-		try {
-			customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
-		} catch (NotFoundException e) {
-			throw new ValidationException(e.getMessage());
+		if (accountProfile.getIsActive() && isNotNull(accountProfile.getHref())) {
+			
+			identityProviderService.updateAccount(
+					accountProfile.getHref(), 
+					accountProfile.getEmail(), 
+					accountProfile.getFirstName(), 
+					accountProfile.getLastName());
 		}
 		
-		if (! customerResult.isSuccess()) {
-			LOGGER.error(customerResult.getMessage());
+		if (isNotNull(accountProfile.getSubscription())) {
+			
+			CustomerRequest customerRequest = new CustomerRequest()
+					.id(accountProfile.getId())
+					.company(accountProfile.getCompany())
+					.email(accountProfile.getEmail())
+					.firstName(accountProfile.getFirstName())
+					.lastName(accountProfile.getLastName())
+					.phone(accountProfile.getPhone());
+			
+			Result<com.braintreegateway.Customer> customerResult = null;
+			
+			try {
+				customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+			} catch (NotFoundException e) {
+				LOGGER.error(e);
+			}
+			
+			if (! customerResult.isSuccess()) {
+				LOGGER.error(customerResult.getMessage());
+			}
 		}
 	}
 	

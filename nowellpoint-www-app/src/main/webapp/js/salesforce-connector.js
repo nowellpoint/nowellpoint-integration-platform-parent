@@ -41,6 +41,7 @@ $('#confirm-remove-environment-button').click(function (e) {
 });
 
 $('.test-connection').on('click', function (e) {
+    $('#test-connection-dialog').modal('show');
     var id = $(this).data('id');
     var row = $('#'.concat(id));
     var href = $(this).data('href');
@@ -57,6 +58,7 @@ $('.test-connection').on('click', function (e) {
             }
         }
     });
+    $('#test-connection-dialog').modal('hide');
 });
 
 $('.build-environment').on('click', function (e) {

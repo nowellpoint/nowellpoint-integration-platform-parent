@@ -36,6 +36,11 @@ public class UserResource extends AbstractResource {
 					.parameter("countryCode", signUpRequest.getCountryCode())
 					.parameter("password", URLEncoder.encode(signUpRequest.getPassword(), "UTF-8"))
 					.parameter("confirmPassword", URLEncoder.encode(signUpRequest.getConfirmPassword(), "UTF-8"))
+					.parameter("planId", signUpRequest.getPlanId())
+					.parameter("cardNumber", signUpRequest.getCardNumber())
+					.parameter("expirationMonth", signUpRequest.getExpirationMonth())
+					.parameter("expirationYear", signUpRequest.getExpirationYear())
+					.parameter("securityCode", signUpRequest.getSecurityCode())
 					.execute();
 			
 			SignUpResult<User> result = null;
@@ -54,5 +59,27 @@ public class UserResource extends AbstractResource {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public SignUpResult<User> verifyEmail(String emailVerificationToken) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("signup")
+				.path("verify-email")
+				.path(emailVerificationToken)
+				.execute();
+		
+		SignUpResult<User> result = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		User resource = httpResponse.getEntity(User.class);
+    		result = new SignUpResultImpl<User>(resource); 
+    	} else {
+    		Error error = httpResponse.getEntity(Error.class);
+			result = new SignUpResultImpl<User>(error);
+    	}
+    	
+    	return result;
 	}
 }

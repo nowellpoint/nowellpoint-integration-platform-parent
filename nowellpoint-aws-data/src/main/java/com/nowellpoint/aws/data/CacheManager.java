@@ -25,7 +25,7 @@ import javax.servlet.annotation.WebListener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -61,7 +61,7 @@ public class CacheManager implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(300);
+        poolConfig.setMaxTotal(1000);
 		
 		jedisPool = new JedisPool(
 				poolConfig, 

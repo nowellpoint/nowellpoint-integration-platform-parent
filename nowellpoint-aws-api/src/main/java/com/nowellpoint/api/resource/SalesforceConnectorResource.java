@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -227,10 +228,12 @@ public class SalesforceConnectorResource {
 		
 		Environment environment = null;
 		
-		if ("build".equals(action)) {
+		if ("build".equalsIgnoreCase(action)) {
 			environment = salesforceConnectorService.buildEnvironment(id, key);
-		} else if ("test".equals(action)) {
+		} else if ("test".equalsIgnoreCase(action)) {
 			environment = salesforceConnectorService.testConnection(id, key);
+		} else {
+			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
 		
 		return Response.ok()

@@ -20,7 +20,6 @@ public class PlanResource extends AbstractResource {
 	
 	public GetResult<Plan> get(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
 				.path("plans")
 				.path(id)
 				.execute();
@@ -42,7 +41,6 @@ public class PlanResource extends AbstractResource {
 	
 	public GetResult<List<Plan>> getPlans(GetPlansRequest getPlansRequest) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.bearerAuthorization(token.getAccessToken())
 				.path("plans")
 				.queryParameter("localeSidKey", getPlansRequest.getLocaleSidKey())
 				.queryParameter("languageLocaleKey", getPlansRequest.getLanguageSidKey())

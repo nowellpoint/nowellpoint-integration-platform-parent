@@ -4,7 +4,6 @@ import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,11 +28,9 @@ import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
-import com.nowellpoint.client.model.Feature;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
@@ -106,13 +103,15 @@ public class AccountProfileController extends AbstractController {
 				.plan()
 				.getPlans(getPlansRequest);
 		
-		List<Plan> plans = getResult.getTarget();
+		List<Plan> plans = getResult.getTarget().stream()
+				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
+				.collect(Collectors.toList());
 
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", account);
 		model.put("action", "listPlans");
-		model.put("planTable", buildPlanTable(account, plans));
+		model.put("plans", plans);
 		model.put("locales", new TreeMap<String, String>(getLocales(account)));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
@@ -146,6 +145,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
+		model.put("successMessage", request.cookie("update.profile.success"));
 		
 		if (getResult.getTarget().getId().equals(id)) {
 			return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
@@ -375,6 +375,9 @@ public class AccountProfileController extends AbstractController {
 			Map<String, Object> model = getModel();
 			model.put("account", account);
 			model.put("accountProfile", accountProfile);
+			model.put("locales", new TreeMap<String, String>(getLocales(account)));
+			model.put("languages", getSupportedLanguages());
+			model.put("timeZones", getTimeZones());
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);
@@ -916,86 +919,5 @@ public class AccountProfileController extends AbstractController {
 	
 	private List<String> getTimeZones() {
 		return Arrays.asList(TimeZone.getAvailableIDs());
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param plans
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	private static String buildPlanTable(AccountProfile accountProfile, List<Plan> plans) {
-
-		//ResourceBundle bundle = ResourceBundle.getBundle(AccountProfileController.class.getName(), new Locale("en_US"));
-		
-		plans = plans.stream()
-				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
-				.collect(Collectors.toList());
-		
-		StringBuilder html = new StringBuilder();
-		html.append("<div class='content table-responsive'>");
-		html.append("<table id='plan-comparison' class='table'>");
-		//html.append("<thead><th class='col-xs-4'>" + bundle.getString("features") + "</th>");
-		html.append("<thead><th class='col-xs-4'>Features</th>");
-		plans.stream().forEach(p -> {
-			html.append("<th class='col-xs-4 text-center'>" + p.getPlanName() + "<br>" + p.getPrice().getCurrencySymbol() + "&nbsp;" + NumberFormat.getInstance(new Locale("en_US")).format(p.getPrice().getUnitPrice()) + "</th>");
-		});
-		html.append("</thead>");
-		html.append("<tbody>");
-
-		for (int j = 0; j < plans.get(0).getServices().size(); j++) {
-			
-			boolean newService = true;
-			
-			for (int k = 0; k < plans.get(0).getServices().get(0).getFeatures().size(); k++) {
-				
-				for (int i = 0; i < plans.size(); i++) {
-					
-					Service service = plans.get(i).getServices().stream().sorted((s1, s2) -> s1.getName().compareTo(s2.getName())).collect(Collectors.toList()).get(j);
-					
-					if (newService) {
-						html.append("<tr>");
-						html.append("<td class='active' colspan='" + String.valueOf(1 + plans.size()) + "'><h4>" + service.getName() + ": " + service.getDescription() + "</h4></td>");
-						html.append("</tr>");
-						newService = false;
-					}
-					
-					Feature feature = service.getFeatures().stream().sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(Collectors.toList()).get(k);
-					
-					if (i == 0) {
-						html.append("<tr>");
-						html.append("<td>" + feature.getName() + "</td>");
-					}
-					
-					html.append("<td class='text-center "  + (feature.getEnabled() ? "text-success" : "text-danger") + "'><span class='icon " + (feature.getEnabled() ? "icon icon-check" : "icon icon-cross") + "'></span></td>");
-				}
-			}
-			
-			html.append("</tr>");	
-		}
-		
-		html.append("<tr>");
-		html.append("<td></td>");
-		plans.stream().forEach(p -> {
-			html.append("<td class='text-center p-a'>");
-			if (accountProfile.getSubscription() != null && p.getId().equals(accountProfile.getSubscription().getPlanId())) {
-				//html.append("<p class='text-center text-success'>" + bundle.getString("current.subscription") + "</p>");
-				html.append("<p class='text-center text-success'>Current Subscription</p>");
-			} else {
-				//html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_PLAN.replace(":id", accountProfile.getId()).replace(":planId", p.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>" + bundle.getString("select") + "</a>");
-				html.append("<a class='btn btn-primary' role='button' href='" + Path.Route.ACCOUNT_PROFILE_PLAN.replace(":id", accountProfile.getId()).replace(":planId", p.getId()) + "' id='add-plan-" + p.getPlanCode().toLowerCase() + "'>Select</a>");
-			}
-			html.append("</td>");
-		});
-		
-		html.append("</tr>");
-		html.append("</tbody>");
-		html.append("</table>");
-		html.append("</div>");
-
-		return html.toString();
 	}
 }

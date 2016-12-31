@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+<<<<<<< HEAD
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -77,3 +78,65 @@
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
+=======
+  <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
+  <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.8.0/jedis-2.8.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-pool2/2.3/commons-pool2-2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sendgrid/sendgrid-java/3.1.0/sendgrid-java-3.1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sendgrid/java-http-client/2.3.4/java-http-client-2.3.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mockito/mockito-core/1.10.19/mockito-core-1.10.19.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/objenesis/objenesis/2.1/objenesis-2.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.2.3/stormpath-sdk-api-1.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.2.3/stormpath-sdk-impl-1.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.6.0/jjwt-0.6.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.9.4/joda-time-2.9.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-httpclient/1.2.3/stormpath-sdk-httpclient-1.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.21/jcl-over-slf4j-1.7.21.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-oauth/1.2.3/stormpath-sdk-oauth-1.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.authzserver/1.0.2/org.apache.oltu.oauth2.authzserver-1.0.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.common/1.0.2/org.apache.oltu.oauth2.common-1.0.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.resourceserver/1.0.2/org.apache.oltu.oauth2.resourceserver-1.0.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.69.0/braintree-java-2.69.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
+  <classpathentry kind="src" path="/nowellpoint-aws-sdk"/>
+  <classpathentry kind="src" path="/nowellpoint-aws-core"/>
+  <classpathentry kind="src" path="/nowellpoint-aws-data"/>
+  <classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging/3.3.0.Final/jboss-logging-3.3.0.Final.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.68/aws-java-sdk-dynamodb-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.68/aws-java-sdk-s3-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.68/aws-java-sdk-kms-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.68/aws-java-sdk-core-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.1/ion-java-1.0.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.6/jackson-dataformat-cbor-2.6.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.68/jmespath-java-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.11.68/aws-java-sdk-sns-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.11.68/aws-java-sdk-sqs-1.11.68.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.0/amazon-sqs-java-messaging-lib-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-dynamodb-encryption-java/1.11.0/aws-dynamodb-encryption-java-1.11.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.3.0/mongodb-driver-3.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/bson/3.3.0/bson-3.3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.3.0/mongodb-driver-core-3.3.0.jar"/>
+  <classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar"/>
+</classpath>
+>>>>>>> cb8c9363f59101a531b76c9257a75b91814e1c52

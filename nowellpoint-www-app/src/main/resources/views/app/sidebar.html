@@ -1,50 +1,25 @@
-<div class="sidebar-nav">
-    <div class="navbar navbar-default" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <span class="visible-xs navbar-brand">Sidebar menu</span>
-        </div>
-        <div class="navbar-collapse collapse sidebar-navbar-collapse">
-            <ul class="nav navbar-nav">
-
-                <li>
-                    <a href="/app/dashboard">
-                        <span class="icon icon-gauge"></span>
-                        <span class="iconav-nav-label"> ${messages["dashboard"]}</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/app/connectors/salesforce">
-                        <span class="icon icon-database"></span>
-                        <span class="iconav-nav-label"> ${messages["connectors"]}</span>
-                    </a>
-
-                </li>
-                <li>
-                    <a href="/app/scheduled-jobs">
-                        <span class="icon icon-clock"></span>
-                        <span class="iconav-nav-label"> ${messages["scheduled.jobs"]}</span>
-                    </a>
-                </li>
-                <!--
-                <li>
-                    <a href="/app/applications">
-                        <span class="icon icon-browser"></span>
-                        <span class="iconav-nav-label"> ${messages["applications"]}</span>
-                    </a>
-                </li>-->
-                <li>
-                    <a href="/app/account-profile/${account.id}">
-                        <span class="icon icon-user"></span>
-                        <span class="iconav-nav-label"> ${messages["account.profile"]}</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <li>&nbsp;</li>
+        <li>
+            <a href="/app/dashboard">
+               ${messages["dashboard"]}
+            </a>
+        </li>
+        <li>
+            <a href="/app/connectors/salesforce">
+               ${messages["connectors"]}
+            </a>
+        </li>
+        <li>
+            <a href="/app/scheduled-jobs">
+                ${messages["scheduled.jobs"]}
+            </a>
+        </li>
+        <li>
+            <a href="/app/account-profile/${account.id}">
+                ${messages["account.profile"]}
+            </a>
+        </li>
+    </ul>
 </div>

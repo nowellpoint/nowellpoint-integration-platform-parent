@@ -1,8 +1,8 @@
 package com.nowellpoint.api.model.domain;
 
-import java.util.Set;
-
 public class Service {
+	
+	private Integer sortOrder;
 	
 	private String code;
 	
@@ -10,10 +10,20 @@ public class Service {
 	
 	private String description;
 	
-	private Set<Feature> features; 
+	private Boolean enabled;
+	
+	private String quantity;
 	
 	public Service() {
 		
+	}
+
+	public Integer getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(Integer sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 	public String getCode() {
@@ -40,12 +50,19 @@ public class Service {
 		this.description = description;
 	}
 
-	public Set<Feature> getFeatures() {
-		return features;
+	public Boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setFeatures(Set<Feature> features) {
-		this.features = features;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 
+	public String getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(String quantity) {
+		this.quantity = quantity;
+	}
 }

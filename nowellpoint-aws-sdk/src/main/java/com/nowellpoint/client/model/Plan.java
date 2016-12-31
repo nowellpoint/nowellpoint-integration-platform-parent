@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Plan extends AbstractResource {
 	
+	private Boolean recommendedPlan;
+	
 	private String localeSidKey;
 	
 	private String languageLocaleKey;
@@ -23,6 +25,14 @@ public class Plan extends AbstractResource {
 	
 	public Plan() {
 		
+	}
+
+	public Boolean getRecommendedPlan() {
+		return recommendedPlan;
+	}
+
+	public void setRecommendedPlan(Boolean recommendedPlan) {
+		this.recommendedPlan = recommendedPlan;
 	}
 
 	public String getLocaleSidKey() {

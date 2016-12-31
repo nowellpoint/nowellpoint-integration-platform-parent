@@ -1,27 +1,36 @@
 package com.nowellpoint.aws.http;
 
-import static java.util.Optional.ofNullable;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class HttpRequest {
@@ -30,30 +39,19 @@ public abstract class HttpRequest {
 	private HttpMethod httpMethod;
 	private String target;
 	private String path;
-	private Map<String,String> headers;
+	private List<Header> headers;
 	private Map<String,String> parameters;
-	private Map<String,String> queryParameters;
+	private List<NameValuePair> queryParameters;
 	private Object body;
-	
-	static {
-		HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-			public boolean verify(String hostname, SSLSession sslSession) {
-				if (hostname.equals("localhost")) {
-					return true;
-			    }
-			    return false;
-			}
-		});
-	}
 	
 	public HttpRequest(HttpMethod httpMethod, String target) {
 		this.objectMapper = new ObjectMapper();
 		this.httpMethod = httpMethod; 
 		this.target = target;
 		this.path = new String();
-		this.headers = new HashMap<String,String>();
+		this.headers = new ArrayList<Header>();
 		this.parameters = new HashMap<String,String>();
-		this.queryParameters = new HashMap<String,String>();
+		this.queryParameters = new ArrayList<NameValuePair>();
 	}
 	
 	protected HttpRequest path(String path) {
@@ -66,12 +64,14 @@ public abstract class HttpRequest {
 	}
 
 	protected HttpRequest header(String key, String value) {
-		headers.put(key, value);
+		headers.add(new BasicHeader(key, value));
 		return this;
 	}
 	
 	protected HttpRequest headers(Map<String, String> headers) {
-		this.headers = headers;
+		headers.keySet().stream().forEach(key -> {
+			header(key, headers.get(key));
+		});
 		return this;
 	}
 	
@@ -91,37 +91,37 @@ public abstract class HttpRequest {
 	}
 	
 	protected HttpRequest queryParameter(String key, String value) {
-		queryParameters.put(key, value);
+		queryParameters.add(new BasicNameValuePair(key, value));
 		return this;
 	}
 	
 	protected HttpRequest acceptCharset(Charset charset) {
-		headers.put(HttpHeaders.ACCEPT_CHARSET, charset.displayName());
+		header(HttpHeaders.ACCEPT_CHARSET, charset.displayName());
 		return this;
 	}
 	
 	protected HttpRequest acceptCharset(String charset) {
-		headers.put(HttpHeaders.ACCEPT_CHARSET, charset);
+		header(HttpHeaders.ACCEPT_CHARSET, charset);
 		return this;
 	}
 	
 	protected HttpRequest contentType(String contentType) {
-		headers.put(HttpHeaders.CONTENT_TYPE, contentType);
+		header(HttpHeaders.CONTENT_TYPE, contentType);
 		return this;
 	}
 	
 	protected HttpRequest basicAuthorization(String username, String password) {
-		headers.put(HttpHeaders.AUTHORIZATION, "Basic ".concat(new String(Base64.getEncoder().encode(username.concat(":").concat(password).getBytes()))));
+		header(HttpHeaders.AUTHORIZATION, "Basic ".concat(new String(Base64.getEncoder().encode(username.concat(":").concat(password).getBytes()))));
 		return this;
 	}
 	
 	protected HttpRequest bearerAuthorization(String bearerToken) {
-		headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken);
+		header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken);
 		return this;
 	}
 	
 	protected HttpRequest accept(String accept) {
-		headers.put(HttpHeaders.ACCEPT, accept);
+		header(HttpHeaders.ACCEPT, accept);
 		return this;
 	}
 
@@ -129,28 +129,16 @@ public abstract class HttpRequest {
 		this.body = body;
 		return this;
 	}
-
-	@Deprecated
-	public JsonNode asJson() throws HttpRequestException {
-		JsonNode json;
-		try {
-			HttpResponse response = new HttpResponseImpl();
-			json = objectMapper.readValue(response.getAsString(), JsonNode.class);
-		} catch (IOException e) {
-			throw new HttpRequestException(e);
-		}
-		return json;
-	}
 	
 	public HttpResponse execute() throws HttpRequestException {
 		try {
 			return new HttpResponseImpl();
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			throw new HttpRequestException(e);
 		}
 	}
 	
-	private URL buildTarget() throws MalformedURLException{
+	private URI buildTarget() throws URISyntaxException{
 		StringBuilder sb = new StringBuilder();
 		if (target.endsWith("/")) {
 			target = target.substring(0, target.length() - 1);
@@ -159,17 +147,12 @@ public abstract class HttpRequest {
 		if (path != null && ! path.trim().isEmpty()) {
 			sb.append(path);
 		}
-		if (! queryParameters.isEmpty()) {
-			sb.append("?");
-			queryParameters.keySet().forEach(param -> {
-				sb.append(param);
-				sb.append("=");
-				sb.append(queryParameters.get(param));
-				sb.append("&");
-			});
-		}
 		
-		return new URL(sb.toString());
+		URIBuilder builder = new URIBuilder()
+				.setPath(sb.toString())
+				.addParameters(queryParameters);
+		
+		return builder.build();
 	}
 	
 	private String parseResponse(InputStream response) throws IOException {
@@ -186,25 +169,105 @@ public abstract class HttpRequest {
 		
 		private int statusCode;
 		
+		private URL url;
+		
 		private InputStream entity;
 		
-		private HttpURLConnection connection;
-		
-		public HttpResponseImpl() throws IOException {
-			URL url = buildTarget();
-			if ("https".equals(url.getProtocol())) {
-				connection = (HttpsURLConnection) url.openConnection();
+		public HttpResponseImpl() throws IOException, URISyntaxException {
+			
+			URI uri = buildTarget();
+			
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			CloseableHttpResponse httpResponse = null;
+			
+			if (HttpMethod.POST.equals(httpMethod)) {
+				HttpPost post = new HttpPost(uri);
+				post.setHeaders(addHeaders());
+				if (! Optional.ofNullable(post.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
+					throw new IOException("Missing content type header");
+				}
+		        HttpEntity entity = addBody(post.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+		        post.setEntity(entity);
+		        httpResponse = httpClient.execute(post);
+			} else if (HttpMethod.PUT.equals(httpMethod)) {
+				HttpPut put = new HttpPut(uri);
+				put.setHeaders(addHeaders());
+				if (! Optional.ofNullable(put.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
+					throw new IOException("Missing content type header");
+				}
+		        HttpEntity entity = addBody(put.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+		        put.setEntity(entity);
+		        httpResponse = httpClient.execute(put);
+			} else if (HttpMethod.GET.equals(httpMethod)) {
+				HttpGet get = new HttpGet(uri);
+				get.setHeaders(addHeaders());
+		        httpResponse = httpClient.execute(get);
+			} else if (HttpMethod.DELETE.equals(httpMethod)) {
+				HttpDelete delete = new HttpDelete(uri);
+				delete.setHeaders(addHeaders());
+		        httpResponse = httpClient.execute(delete);
 			} else {
-				connection = (HttpURLConnection) url.openConnection();
+				System.out.println("unsupported method exception");
+				throw new IOException("unsupported method exception");
 			}
 			
-			connection.setRequestMethod(httpMethod.toString());
+			statusCode = httpResponse.getStatusLine().getStatusCode();
+			url = uri.toURL();
 			
-			headers.keySet().forEach(key -> {
-				connection.setRequestProperty(key, headers.get(key));
-			});
-			
+			if (httpResponse.getEntity() != null) {
+				entity = httpResponse.getEntity().getContent();
+			}
+		}
+	
+		@Override
+		public int getStatusCode() {
+			return statusCode;
+		}
+		
+		@Override
+		public URL getURL() {
+			return url;
+		}
+	
+		@Override
+		public String getAsString() throws HttpRequestException {
+			try {
+				return parseResponse(entity);
+			} catch (IOException e) {
+				throw new HttpRequestException(e);
+			}
+		}
+		
+		@Override
+		public <T> T getEntity(Class<T> type) throws HttpRequestException {
+			try {
+				return objectMapper.readValue(entity, type);
+			} catch (IOException e) {
+				throw new HttpRequestException(e);
+			}
+		}
+		
+		@Override
+		public <T> List<T> getEntityList(Class<T> type) throws HttpRequestException {
+			try {
+				return objectMapper.readValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
+			} catch (IOException e) {
+				throw new HttpRequestException(e);
+			}
+		}
+		
+		@Override
+		public Map<String, String> getHeaders() {
+			return headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
+		}
+		
+		private Header[] addHeaders() {
+			return headers.toArray(new Header[headers.size()]);
+		}
+		
+		private HttpEntity addBody(String contentType) throws IOException {
 			if (! parameters.isEmpty()) {
+				
 				StringBuilder sb = new StringBuilder();
 				parameters.keySet().forEach(param -> {
 					sb.append(param);
@@ -216,76 +279,24 @@ public abstract class HttpRequest {
 				});
 				
 				body = sb.toString();
-			} 
+			}
 			
-			if (ofNullable(body).isPresent()) {
-				
-				if (! Optional.ofNullable(headers.get(HttpHeaders.CONTENT_TYPE)).isPresent()) {
-					throw new IOException("Missing content type header");
-				}
+			HttpEntity httpEntity = null;
+			
+			if (Optional.ofNullable(body).isPresent()) {
 				
 				byte[] bytes = null;
 				
-				if (headers.get(HttpHeaders.CONTENT_TYPE).equals(MediaType.APPLICATION_JSON)) {
+				if (contentType.equals(MediaType.APPLICATION_JSON)) {
 					bytes = objectMapper.writeValueAsString(body).getBytes();
 				} else {
 					bytes = String.valueOf(body).getBytes();
 				}
 				
-				connection.setDoOutput(true);
-				connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, Integer.toString(bytes.length));
-				
-				OutputStream os = connection.getOutputStream();
-				os.write( bytes );    
-				os.close();
+				httpEntity = new ByteArrayEntity(bytes);
 			}
-
-			connection.connect();
 			
-			statusCode = connection.getResponseCode();
-			url = connection.getURL();
-			
-			if (statusCode < 400) {
-				entity = connection.getInputStream();
-			} else {
-				entity = connection.getErrorStream();
-			}
-		}
-	
-		public int getStatusCode() {
-			return statusCode;
-		}
-		
-		public URL getURL() {
-			return connection.getURL();
-		}
-	
-		public String getAsString() throws HttpRequestException {
-			try {
-				return parseResponse(entity);
-			} catch (IOException e) {
-				throw new HttpRequestException(e);
-			}
-		}
-		
-		public <T> T getEntity(Class<T> type) throws HttpRequestException {
-			try {
-				return objectMapper.readValue(entity, type);
-			} catch (IOException e) {
-				throw new HttpRequestException(e);
-			}
-		}
-		
-		public <T> List<T> getEntityList(Class<T> type) throws HttpRequestException {
-			try {
-				return objectMapper.readValue(entity, objectMapper.getTypeFactory().constructCollectionType(List.class, type));
-			} catch (IOException e) {
-				throw new HttpRequestException(e);
-			}
-		}
-		
-		public Map<String, List<String>> getHeaders() {
-			return connection.getHeaderFields();
+			return httpEntity;
 		}
 	}
 }

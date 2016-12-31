@@ -6,11 +6,11 @@ project:
 logger:
     level: DEBUG
 propertyStore: 
-    name: SANDBOX    
+    name: sandbox    
 ---
 project:
     stage: production
 logger:
     level: INFO
 propertyStore:
-    name: PRODUCTION  
+    name: production  

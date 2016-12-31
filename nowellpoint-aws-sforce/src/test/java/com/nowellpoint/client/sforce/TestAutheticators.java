@@ -6,11 +6,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
-import com.nowellpoint.aws.model.admin.Properties;
 import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.util.Properties;
 
 public class TestAutheticators {
 	
@@ -18,7 +18,7 @@ public class TestAutheticators {
 	
 	@BeforeClass
 	public static void init() {
-		Properties.setSystemProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 	}
 	
 	@Test

@@ -15,7 +15,7 @@ import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.aws.model.admin.Properties;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.mongodb.document.MongoDocumentService;

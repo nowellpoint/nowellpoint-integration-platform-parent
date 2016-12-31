@@ -42,7 +42,7 @@ public class SalesforceConnectorController extends AbstractController {
 		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connectors-list.html");
 		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
 		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
-		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobjects.html");
+		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobject-list.html");
 		public static final String SOBJECT_DETAIL = String.format(APPLICATION_CONTEXT, "sobject-detail.html");
 		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
 	}
@@ -520,7 +520,6 @@ public class SalesforceConnectorController extends AbstractController {
 			
 			Map<String, Object> model = getModel();
 	    	model.put("salesforceConnector", salesforceConnector);
-	    	model.put("successMessage", request.cookie("successMessage"));
 	    	model.put("errorMessage", message);
 			
 	    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
