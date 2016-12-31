@@ -16,6 +16,8 @@ public class User implements Serializable {
 	private String href;
 	
 	private String emailVerificationToken;
+	
+	private String emailVerificationTokenHref;
 	  
 	public User() {
 		
@@ -35,5 +37,13 @@ public class User implements Serializable {
 
 	public void setEmailVerificationToken(String emailVerificationToken) {
 		this.emailVerificationToken = emailVerificationToken;
+	}
+
+	public String getEmailVerificationTokenHref() {
+		return emailVerificationTokenHref;
+	}
+
+	public void setEmailVerificationTokenHref(String emailVerificationTokenHref) {
+		this.emailVerificationTokenHref = emailVerificationTokenHref;
 	}
 }

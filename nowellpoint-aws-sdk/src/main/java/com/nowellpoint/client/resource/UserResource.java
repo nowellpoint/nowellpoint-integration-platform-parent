@@ -67,7 +67,7 @@ public class UserResource extends AbstractResource {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path("signup")
 				.path("verify-email")
-				.parameter("emailVerificationToken", emailVerificationToken)
+				.path(emailVerificationToken)
 				.execute();
 		
 		SignUpResult<User> result = null;

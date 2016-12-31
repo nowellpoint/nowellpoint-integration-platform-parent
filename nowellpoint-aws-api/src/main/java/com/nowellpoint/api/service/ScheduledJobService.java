@@ -104,6 +104,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		}
 		
 		scheduledJob.setId(id);
+		scheduledJob.setStatus(original.getStatus());
 		scheduledJob.setJobTypeId(original.getJobTypeId());
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
 		scheduledJob.setJobTypeName(original.getJobTypeName());

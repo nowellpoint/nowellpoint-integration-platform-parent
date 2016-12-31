@@ -17,6 +17,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -77,19 +78,6 @@ public class SignUpService {
 	private UriInfo uriInfo;
 	
 	/**
-	 * Sign up steps:
-	 * 
-	 * 1. check that password and confirm password match (Error error = new Error(2000, "Password mismatch")
-	 * 2. lookup account in identity provider by username 
-	 * 3. if account exists and is is enabled (1000, "Account for email is already enabled")
-	 * 4. create or update account in identity provided
-	 * 5. create or update account profile local
-	 * 6. lookup plan with planId local
-	 * 7. add or update customer in payment gateway
-	 * 8. add or update credit card in payment gateway with billing address
-	 * 9. add or update subscription based on plan
-	 * 10. udpate account profile with credit card and subscription info
-	 * 11. build and return email verification token and location to account profile
 	 * 
 	 * @param firstName
 	 * @param lastName
@@ -166,7 +154,7 @@ public class SignUpService {
 			Account account = identityProviderService.findByUsername(email);
 			
 			if (isNull(account)) {
-				identityProviderService.createAccount(email, firstName, lastName, password);
+				account = identityProviderService.createAccount(email, firstName, lastName, password);
 			}
 					
 			accountProfile = new AccountProfile();
@@ -348,6 +336,12 @@ public class SignUpService {
 		
 		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), accountProfile.getEmailVerificationToken());
 		
+		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(SignUpService.class)
+				.path("verify-email")
+				.path("{emailVerificationToken}")
+				.build(accountProfile.getEmailVerificationToken());
+		
 		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)
 				.path("/{id}")
@@ -356,6 +350,7 @@ public class SignUpService {
 		Map<String,Object> response = new HashMap<String,Object>();
 		response.put("href", resourceUri);
 		response.put("emailVerificationToken", accountProfile.getEmailVerificationToken());
+		response.put("emailVerificationTokenHref", emailVerificationTokenUri);
 		
 		return Response.ok(response)
 				.build();
@@ -363,10 +358,10 @@ public class SignUpService {
 	
 	@PermitAll
 	@POST
-	@Path("verify-email")
+	@Path("verify-email/{emailVerificationToken}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response verifyEmail(@FormParam("emailVerificationToken") String emailVerificationToken) {
+	public Response verifyEmail(@PathParam("emailVerificationToken") String emailVerificationToken) {
 		
 		Account account = null;
 		

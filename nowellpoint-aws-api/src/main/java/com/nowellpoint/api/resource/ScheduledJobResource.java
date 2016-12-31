@@ -116,8 +116,7 @@ public class ScheduledJobResource {
 			@FormParam("description") String description,
 			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("environmentKey") String environmentKey,
-			@FormParam("scheduleDate") @NotEmpty String scheduleDate,
-			@FormParam("status") String status) {
+			@FormParam("scheduleDate") @NotEmpty String scheduleDate) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setNotificationEmail(notificationEmail);
@@ -125,7 +124,7 @@ public class ScheduledJobResource {
 		scheduledJob.setEnvironmentKey(environmentKey);
 		scheduledJob.setJobTypeId(jobTypeId);
 		scheduledJob.setDescription(description);
-		scheduledJob.setStatus(status);
+
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
 			scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
@@ -166,15 +165,14 @@ public class ScheduledJobResource {
 			@FormParam("description") String description,
 			@FormParam("connectorId") String connectorId,
 			@FormParam("environmentKey") String environmentKey,
-			@FormParam("scheduleDate") String scheduleDate,
-			@FormParam("status") String status) {
+			@FormParam("scheduleDate") String scheduleDate) {
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setNotificationEmail(notificationEmail);
 		scheduledJob.setDescription(description);
 		scheduledJob.setConnectorId(isNotNullOrEmpty(connectorId) ? connectorId : null);
 		scheduledJob.setEnvironmentKey(isNotNullOrEmpty(environmentKey) ? environmentKey : null);
-		scheduledJob.setStatus(isNotNullOrEmpty(status) ? status : null);
+
 		if (isNotNullOrEmpty(scheduleDate)) {
 			try {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 

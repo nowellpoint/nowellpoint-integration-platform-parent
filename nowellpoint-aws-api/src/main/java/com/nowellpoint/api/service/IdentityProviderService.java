@@ -141,15 +141,6 @@ public class IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param account
-	 */
-	
-	public void createAccount(Account account) {	
-		directory.createAccount(account);
-	}
-	
-	/**
-	 * 
 	 * @param email
 	 * @param firstName
 	 * @param lastName
@@ -187,15 +178,6 @@ public class IdentityProviderService {
 			    .setGivenName(firstName)
 			    .setSurname(lastName);
 		
-		account.save();
-	}
-	
-	/**
-	 * 
-	 * @param account
-	 */
-	
-	public void updateAccount(Account account) {
 		account.save();
 	}
 	
@@ -264,24 +246,6 @@ public class IdentityProviderService {
 		AccountList accounts = application.getAccounts(
 				Accounts.where(
 						Accounts.username().eqIgnoreCase(username)));
-		
-		if (accounts.getSize() == 1) {
-			return accounts.single();
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @param email
-	 * @return
-	 */
-	
-	public Account findByEmail(String email) {
-		AccountList accounts = application.getAccounts(
-				Accounts.where(
-						Accounts.email().eqIgnoreCase(email)));
 		
 		if (accounts.getSize() == 1) {
 			return accounts.single();
