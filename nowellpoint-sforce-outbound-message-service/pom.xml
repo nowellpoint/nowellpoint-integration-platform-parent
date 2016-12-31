@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>2016.12.0</version>
+		<version>2016.12.0-SNAPSHOT</version>
 	</parent>
 
 	<dependencyManagement>
