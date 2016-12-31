@@ -30,7 +30,7 @@
 
 	<scm>
 		<connection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent.git</connection>
-		<developerConnection>scm:git:git@github.com/nowellpoint/nowellpoint-integration-platform-parent.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent.git</developerConnection>
 		<url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent</url>
 	</scm>
 
