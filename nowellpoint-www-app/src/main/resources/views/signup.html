@@ -13,18 +13,31 @@
     <title>${applicationTitle}</title>
 
     <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="../../webapp/css/bootstrap.min.css" type="text/css">
 
+<<<<<<< HEAD
     <!-- Include the CSS -->
     <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
     <link rel="stylesheet" href="/css/custom.css" type="text/css" />
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+=======
+    <!-- Custom Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../../webapp/font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="../../webapp/css/animate.min.css" type="text/css">
+    
+    <link rel="stylesheet" href="../../webapp/css/style.css" type="text/css">
+>>>>>>> 995e6c5ab0014b10beea8e83d783f951264fc298
 
 </head>
 
 <body>
+<<<<<<< HEAD
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -35,6 +48,25 @@
             </button>
             <div class="navbar-brand">
                 <a href="/"><b>${messages["application.title"]}</b></a>
+=======
+
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">${toggleNavigation}</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+               <a href="/"><span aria-hidden="true" class="icon-nav-bar-logo" data-icon="&#xe900;"> </span></a>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/login"><i class="fa fa-sign-in"></i>&nbsp; ${logIn}</a></li>
+                </ul>
+>>>>>>> 995e6c5ab0014b10beea8e83d783f951264fc298
             </div>
         </div>
     </nav>
@@ -154,6 +186,7 @@
 
         <#if action="createAccount">
             <div class="row">
+<<<<<<< HEAD
                 <ul class="breadcrumb">
                     <li><span class="badge">1</span>&emsp;<a href="/list-plans">${labels["select.plan"]}</a></li>
                     <#if plan.price.unitPrice gt 0>
@@ -284,6 +317,49 @@
                                     <a href="/" class="btn btn-default btn-block" role="button">${labels["cancel"]}</a>
                                 </div>
                             </div>
+=======
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <h4><div class="text-center">${signUp}</div></h4>
+                    <br>
+
+                    <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
+                        <div class="form-group">
+                            <!-- <label class="control-label" for="firstName">${firstName}</label> -->
+                            <input class="form-control" name="firstName" id="firstName" placeholder="${firstName}"  autofocus>
+                        </div>
+                        <div class="form-group">
+                            <!-- <label class="control-label" for="lastName">${lastName}*</label> -->
+                            <input class="form-control" name="lastName" id="lastName" placeholder="${lastName}"  required>
+                        </div>
+                        <div class="form-group">
+                            <!-- <label class="control-label" for="email">${email}*</label> -->
+                            <input type="email" class="form-control" name="email" id="email" placeholder="${email}"  required>
+                        </div>
+                        <div class="form-group">
+                            <!-- <label class="control-label" for="password">${password}*</label> -->
+                            <input type="password" class="form-control" name="password" id="password" placeholder="${password}" required autocomplete="off" />
+                        </div>
+                        <div>
+                            <p>${passwordPolicy}</p>
+                        </div>
+                        <div class="form-group">
+                            <!-- <label class="control-label" for="confirmPassword">${retypePassword}*</label> -->
+                            <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="${retypePassword}" required autocomplete="off" />
+                        </div>
+                        <div class="form-group">
+                            <!--<label class="control-label" for="countryCode">${country}*</label> -->
+                            <select id="countryCode" name="countryCode" class="form-control country-name" required>
+                                <#list countryList as country>
+                                    <#if country.code==signUpRequest.countryCode>
+                                        <option value="${country.code}" selected="selected">${country.name}</option>
+                                    </#if>
+                                    <#if country.code !=signUpRequest.countryCode>
+                                        <option value="${country.code}">${country.name}</option>
+                                    </#if>
+                                </#list>
+                            </select>
+>>>>>>> 995e6c5ab0014b10beea8e83d783f951264fc298
                         </div>
                     </div>
                     <div class="col-md-offset-1 col-md-3">
