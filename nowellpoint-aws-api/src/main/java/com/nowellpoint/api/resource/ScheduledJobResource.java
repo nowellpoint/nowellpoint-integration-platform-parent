@@ -50,23 +50,12 @@ public class ScheduledJobResource {
 	@Context
 	private SecurityContext securityContext;
 	
-	/**
-	 * 
-	 * @return
-	 */
-	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
 		Set<ScheduledJob> resources = scheduledJobService.findByOwner();
 		return Response.ok(resources).build();
     }
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
 	
 	@GET
 	@Path("{id}")
@@ -82,12 +71,6 @@ public class ScheduledJobResource {
 		
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
 	@DELETE
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -95,17 +78,6 @@ public class ScheduledJobResource {
 		scheduledJobService.deleteScheduledJob( id );
 		return Response.noContent().build();
 	}
-	
-	/**
-	 * 
-	 * @param description
-	 * @param connectorId
-	 * @param environmentKey
-	 * @param jobTypeId
-	 * @param scheduleDate
-	 * @param status
-	 * @return
-	 */
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -144,17 +116,6 @@ public class ScheduledJobResource {
 				.entity(scheduledJob)
 				.build();	
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param description
-	 * @param connectorId
-	 * @param environmentKey
-	 * @param scheduleDate
-	 * @param status
-	 * @return
-	 */
 	
 	@POST
 	@Path("{id}")
@@ -211,13 +172,6 @@ public class ScheduledJobResource {
 				.entity(scheduledJob)
 				.build(); 
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param fireInstanceId
-	 * @return
-	 */
 	
 	@GET
 	@Path("{id}/run-history/{fireInstanceId}")

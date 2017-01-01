@@ -90,7 +90,7 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 	/**
 	 * 
 	 * 
-	 * @param owner
+	 * @param owner AccountProfile Id for the owner of all documents
 	 * @return Collection of documents for owner
 	 * 
 	 * 
@@ -105,7 +105,7 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 	
 	/**
 	 * 
-	 * @return
+	 * @return default Subject which is the AccountProfile id
 	 */
 	
 	protected String getSubject() {

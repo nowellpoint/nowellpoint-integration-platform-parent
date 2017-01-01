@@ -34,29 +34,13 @@ public class ApplicationService extends ApplicationModelMapper {
 	@Inject
 	private SalesforceService salesforceService;
 	
-	/**
-	 * 
-	 */
-	
 	public ApplicationService() {
 		
 	}
 	
-	/**
-	 * @return 
-	 */
-	
 	public Set<Application> findAllByOwner() {
 		return super.findAllByOwner();
 	}
-	
-	/**
-	 * 
-	 * @param application
-	 * @param connectorId
-	 * @param importSandboxes
-	 * @param importServices
-	 */
 	
 	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {
 		
@@ -77,12 +61,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		super.createApplication(application);
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param application
-	 */
 	
 	public void updateApplication(String id, Application application) {
 		Application original = findApplication( id );
@@ -115,30 +93,14 @@ public class ApplicationService extends ApplicationModelMapper {
 		super.updateApplication(application);
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 */
-	
 	public void deleteApplication(String id) {		
 		Application resource = findApplication(id);
 		super.deleteApplication(resource);
 	}
 	
-	/**
-	 * 
-	 */
-	
 	public Application findApplication(String id) {
 		return super.findApplication(id);
 	}	
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param environment
-	 */
 	
 	public void updateEnvironment(String id, String key, Environment environment) {
 		Application application = findApplication( id );
@@ -147,14 +109,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		updateEnvironment(application, environment);
 	} 
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param parameters
-	 * @return
-	 */
 	
 	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
@@ -170,28 +124,17 @@ public class ApplicationService extends ApplicationModelMapper {
 			
 			application.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 			
-			//environmentService.testConnection(environment, parameters);
-			
 			application.addEnvironment(environment);
 			
 			updateApplication( id, application );
 			
 		} else {
 			
-			//environmentService.updateEnvironment(environment, parameters);
-			
 			updateEnvironment(application, environment);
 		}
 		
 		return environment;
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 */
 	
 	public Environment getEnvironment(String id, String key) {
 		Application resource = findApplication(id);
@@ -204,12 +147,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		return environment;
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param environment
-	 */
 	
 	public void addEnvironment(String id, Environment environment) {
 		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
@@ -242,12 +179,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		updateApplication(id, resource);
 	}
-	
-	/**
-	 * 
-	 * @param resource
-	 * @param environment
-	 */
 	
 	public void updateEnvironment(Application resource, Environment environment) {
 		
@@ -297,12 +228,6 @@ public class ApplicationService extends ApplicationModelMapper {
 		
 		updateApplication(resource.getId(), resource);
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 */
 	
 	public void removeEnvironment(String id, String key) {
 		Application resource = findApplication(id);

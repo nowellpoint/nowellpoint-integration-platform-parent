@@ -1,0 +1,8 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "API for all interactions with the Nowellpoint\n\t\t\t\t\t\t\t\t\tintegration platform",
+    "version" : "v1.0",
+    "title" : "The Nowellpoint API"
+  }
+}

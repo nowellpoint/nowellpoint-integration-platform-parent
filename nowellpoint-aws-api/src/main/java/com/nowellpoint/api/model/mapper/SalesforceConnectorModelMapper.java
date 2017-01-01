@@ -32,8 +32,8 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	/**
 	 * 
 	 * 
-	 * @param id
-	 * @return
+	 * @param id the primary key for the SalesforceConnector
+	 * @return SalesforceConnector for id
 	 * 
 	 * 
 	 */
@@ -46,7 +46,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	/**
 	 * 
 	 * 
-	 * @return
+	 * @return set of SalesforceConnectors found for current owner based on logged in user
 	 * 
 	 * 
 	 */
@@ -60,7 +60,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	/**
 	 * 
 	 * 
-	 * @param salesforceConnector
+	 * @param salesforceConnector the SalesforceConnector to be created
 	 * 
 	 * 
 	 */
@@ -75,7 +75,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	/**
 	 * 
 	 * 
-	 * @param salesforceConnector
+	 * @param salesforceConnector the SalesforceConnector to be updated
 	 * 
 	 * 
 	 */
@@ -90,7 +90,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	/**
 	 * 
 	 * 
-	 * @param salesforceConnector
+	 * @param salesforceConnector the SalesforceConnector to be deleted
 	 * 
 	 * 
 	 */

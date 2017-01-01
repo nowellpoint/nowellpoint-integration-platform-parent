@@ -76,23 +76,6 @@ public class SignUpService {
 	
 	@Context
 	private UriInfo uriInfo;
-	
-	/**
-	 * 
-	 * @param firstName
-	 * @param lastName
-	 * @param email
-	 * @param countryCode
-	 * @param password
-	 * @param confirmPassword
-	 * @param planId
-	 * @param cardNumber
-	 * @param expirationMonth
-	 * @param expirationYear
-	 * @param securityCode
-	 * @return the response with verification token and url link to account profile
-	 * 
-	 */
 
 	@PermitAll
 	@POST

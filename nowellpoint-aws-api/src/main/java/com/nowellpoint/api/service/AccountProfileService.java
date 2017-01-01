@@ -71,14 +71,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		super();
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param token
-	 * 
-	 * 
-	 */
-	
 	public void loggedInEvent(@Observes Token token) {		
 		UserContext.setUserContext(token.getAccessToken());
 		
@@ -89,14 +81,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		updateAccountProfile( accountProfile );
 	}
-	
-	/**
-	 * 
-	 * 
-	 * @param accountProfile
-	 * 
-	 * 
-	 */
 	
 	public void createAccountProfile(AccountProfile accountProfile) {
 		accountProfile.setEnableSalesforceLogin(Boolean.FALSE);
@@ -133,12 +117,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		super.createAccountProfile(accountProfile);
 	}
 	
-	/**
-	 * 
-	 * @param accountProfile
-	 * 
-	 */
-	
 	public void deactivateAccountProfile(String id) {
 		AccountProfile accountProfile = findAccountProfile(id);
 		accountProfile.setIsActive(Boolean.FALSE);
@@ -156,13 +134,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		deactivateEvent.fire( accountProfile );
 	}
-	
-	/**
-	 * 
-	 * @param accountProfile
-	 * 
-	 * 
-	 */
 	
 	public void updateAccountProfile(AccountProfile accountProfile) {
 		AccountProfile original = findAccountProfile( accountProfile.getId() );
@@ -323,14 +294,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @param address
-	 * 
-	 * 
-	 */
-	
 	public void updateAddress(String id, Address address) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		
@@ -347,23 +310,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		super.updateAccountProfile(accountProfile);
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
 	public Subscription getSubscription(String id) {
 		AccountProfile accountProfile = findAccountProfile( id );
 		return accountProfile.getSubscription();
 	}
-	
-	/**
-	 * 
-	 * @param accountProfileId
-	 * @param paymentMethodToken
-	 * @param subscription
-	 */
 	
 	public void setSubscription(String accountProfileId, String paymentMethodToken, Subscription subscription) {
 		AccountProfile accountProfile = findAccountProfile( accountProfileId );
@@ -422,52 +372,22 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		super.updateAccountProfile(accountProfile);
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
 	public Address getAddress(String id) {
 		AccountProfile resource = findAccountProfile( id );
 		return resource.getAddress();
 	}
 	
-	/**
-	 * @param id
-	 */
-	
 	public AccountProfile findAccountProfile(String id) {	
 		return super.findAccountProfile(id);
 	}
-	
-	/**
-	 * @param href
-	 * @return
-	 */
 	
 	public AccountProfile findAccountProfileByHref(String href) {
 		return super.findAccountProfileByHref(href);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param username
-	 * @return AccountProfile resource for subject
-	 * 
-	 * 
-	 */
-	
 	public AccountProfile findAccountProfileByUsername(String username) {
 		return super.findAccountProfileByUsername(username);
 	}
-	
-	/**
-	 * 
-	 * @param userId
-	 * @param profileHref
-	 */
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
 		
@@ -492,13 +412,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @param token
-	 * @return
-	 */
-	
 	public CreditCard getCreditCard(String id, String token) {
 		AccountProfile resource = findAccountProfile(id);
 		
@@ -510,12 +423,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		return creditCard.get();
 		
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param creditCard
-	 */
 	
 	public void addCreditCard(String id, CreditCard creditCard) {
 		AccountProfile accountProfile = findAccountProfile(id);
@@ -597,13 +504,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 * @param token
-	 * @param creditCard
-	 */
-	
 	public void updateCreditCard(String id, String token, CreditCard creditCard) {
 		AccountProfile accountProfile = findAccountProfile(id);
 		
@@ -677,15 +577,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			throw new ValidationException(creditCardResult.getMessage());
 		}
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param token
-	 * @param parameters
-	 * @return
-	 */
-	
+
 	public CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
 		
 		CreditCard creditCard = getCreditCard(id, token);
@@ -710,12 +602,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		return creditCard;
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param token
-	 */
 	
 	public void removeCreditCard(String id, String token) {
 		

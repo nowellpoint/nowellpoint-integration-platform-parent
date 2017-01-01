@@ -25,8 +25,8 @@ public class SObjectDetailModelMapper extends AbstractModelMapper<com.nowellpoin
 	
 	/**
 	 * 
-	 * @param id
-	 * @return
+	 * @param id the primary key for the SObjectDetail
+	 * @return SObjectDetail for id
 	 */
 	
 	protected SObjectDetail findSObjectDetail(String id) {
@@ -36,55 +36,56 @@ public class SObjectDetailModelMapper extends AbstractModelMapper<com.nowellpoin
 	
 	/**
 	 * 
-	 * @param sobjectDescription
+	 * @param sobjectDetail record to be created or updated
 	 */
 	
-	protected void createOrUpdateSObjectDetail(SObjectDetail sobjectDescription) {
-		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDescription, com.nowellpoint.api.model.document.SObjectDetail.class);
-		if (isNull(sobjectDescription.getId())) {
+	protected void createOrUpdateSObjectDetail(SObjectDetail sobjectDetail) {
+		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDetail, com.nowellpoint.api.model.document.SObjectDetail.class);
+		if (isNull(sobjectDetail.getId())) {
 			create(document);
 		} else {
 			replace(document);
 		}
-		modelMapper.map(document, sobjectDescription);
+		modelMapper.map(document, sobjectDetail);
 	}
 	
 	/**
 	 * 
-	 * @param sobjectDescription
+	 * @param sobjectDetail record to be created
 	 */
 	
-	protected void createSObjectDetail(SObjectDetail sobjectDescription) {
-		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDescription, com.nowellpoint.api.model.document.SObjectDetail.class);
+	protected void createSObjectDetail(SObjectDetail sobjectDetail) {
+		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDetail, com.nowellpoint.api.model.document.SObjectDetail.class);
 		create(document);
-		modelMapper.map(document, sobjectDescription);
+		modelMapper.map(document, sobjectDetail);
 	}
 	
 	/**
 	 * 
-	 * @param sobjectDescription
+	 * @param sobjectDetail record to be updated
 	 */
 	
-	protected void updateSObjectDetail(SObjectDetail sobjectDescription) {
-		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDescription, com.nowellpoint.api.model.document.SObjectDetail.class);
+	protected void updateSObjectDetail(SObjectDetail sobjectDetail) {
+		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDetail, com.nowellpoint.api.model.document.SObjectDetail.class);
 		replace(document);
-		modelMapper.map(document, sobjectDescription);
+		modelMapper.map(document, sobjectDetail);
 	}
 	
 	/**
 	 * 
-	 * @param sobjectDescription
+	 * @param sobjectDetail record to be deleted
 	 */
 	
-	protected void deleteSObjectDetail(SObjectDetail sobjectDescription) {
-		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDescription, com.nowellpoint.api.model.document.SObjectDetail.class);
+	protected void deleteSObjectDetail(SObjectDetail sobjectDetail) {
+		com.nowellpoint.api.model.document.SObjectDetail document = modelMapper.map(sobjectDetail, com.nowellpoint.api.model.document.SObjectDetail.class);
 		delete(document);
 	}
 	
 	/**
 	 * 
-	 * @param name
-	 * @return
+	 * @param environmentKey Salesforce environment for SObjectDetails
+	 * @param name name of the SObject to lookup
+	 * @return  the SObjectDetail record that was found
 	 */
 	
 	protected SObjectDetail findSObjectDetailByName(String environmentKey, String name) {

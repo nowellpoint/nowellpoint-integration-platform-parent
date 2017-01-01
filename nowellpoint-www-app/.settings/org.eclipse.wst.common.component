@@ -4,13 +4,13 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="nowellpoint-aws-sdk-2016.12.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sdk/nowellpoint-aws-sdk">
+        <dependent-module archiveName="nowellpoint-aws-sdk-1.0.0-Final.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sdk/nowellpoint-aws-sdk">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="nowellpoint-aws-core-2016.12.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-core/nowellpoint-aws-core">
+        <dependent-module archiveName="nowellpoint-aws-core-1.0.0-Final.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-core/nowellpoint-aws-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="nowellpoint-aws-sforce-2016.12.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sforce/nowellpoint-aws-sforce">
+        <dependent-module archiveName="nowellpoint-aws-sforce-1.0.0-Final.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sforce/nowellpoint-aws-sforce">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/nowellpoint-www-app/target/classes"/>

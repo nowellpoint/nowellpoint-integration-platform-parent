@@ -33,8 +33,8 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param id
-	 * @return
+	 * @param id primary key for the Plan
+	 * @return Plan for id
 	 * 
 	 * 
 	 */
@@ -48,7 +48,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param plan
+	 * @param plan the plan to be created
 	 * 
 	 * 
 	 */
@@ -62,7 +62,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param plan
+	 * @param plan the plan to be updated
 	 * 
 	 * 
 	 */
@@ -76,8 +76,8 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param planCode
-	 * @return
+	 * @param planCode the plan code to perform lookup
+	 * @return the Plan that was found based on planCode
 	 * 
 	 * 
 	 */
@@ -91,9 +91,9 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param localeSidKey
-	 * @param languageLocaleKey
-	 * @return
+	 * @param localeSidKey locale to search for
+	 * @param languageLocaleKey language to search for
+	 * @return Set of plans for locale and language keys
 	 * 
 	 * 
 	 */
@@ -116,7 +116,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	/**
 	 * 
 	 * 
-	 * @param plan
+	 * @param plan the plan to be deleted
 	 * 
 	 * 
 	 */
