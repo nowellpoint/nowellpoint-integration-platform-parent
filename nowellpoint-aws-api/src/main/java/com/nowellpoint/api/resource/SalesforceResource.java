@@ -3,7 +3,6 @@ package com.nowellpoint.api.resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -40,7 +39,6 @@ public class SalesforceResource {
 	
 	@GET
 	@Path("oauth")
-	@PermitAll
 	public Response oauth() {
 		
 		String url = null;
@@ -62,7 +60,8 @@ public class SalesforceResource {
 					.append("redirect_uri=")
 					.append(URLEncoder.encode(System.getProperty(Properties.SALESFORCE_REDIRECT_URI), "UTF-8"))
 					.append("&")
-					.append("scope=web%20api%20refresh_token")
+					.append("scope=")
+					.append(URLEncoder.encode("web api refresh_token", "UTF-8"))
 					.toString();
 			
 		} catch (UnsupportedEncodingException e) {

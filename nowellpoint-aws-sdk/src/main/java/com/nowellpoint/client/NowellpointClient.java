@@ -12,6 +12,7 @@ import com.nowellpoint.client.resource.AccountProfileResource;
 import com.nowellpoint.client.resource.ApplicationResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
+import com.nowellpoint.client.resource.SalesforceResource;
 import com.nowellpoint.client.resource.ScheduledJobResource;
 import com.nowellpoint.client.resource.ScheduledJobTypeResource;
 import com.nowellpoint.client.resource.UserResource;
@@ -74,5 +75,9 @@ public class NowellpointClient {
 	
 	public UserResource user() {
 		return new UserResource();
+	}
+	
+	public SalesforceResource salesforce() {
+		return new SalesforceResource(token);
 	}
 }

@@ -11,6 +11,7 @@ import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.EnvironmentRequest;
@@ -25,6 +26,31 @@ public class SalesforceConnectorResource extends AbstractResource {
 	
 	public SalesforceConnectorResource(Token token) {
 		super(token);
+	}
+	
+	public CreateResult<SalesforceConnector> create(CreateSalesforceConnectorRequest request) {
+		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.bearerAuthorization(token.getAccessToken())
+				.path("connectors")
+    			.path("salesforce")
+    			.parameter("id", request.getId())
+    			.parameter("instanceUrl", request.getInstanceUrl())
+    			.parameter("accessToken", request.getAccessToken())
+    			.parameter("refreshToken", request.getRefreshToken())
+    			.execute();
+		
+		CreateResult<SalesforceConnector> result = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.CREATED) {
+    		SalesforceConnector resource = httpResponse.getEntity(SalesforceConnector.class);
+    		result = new CreateResultImpl<SalesforceConnector>(resource);
+    	} else {
+    		Error error = httpResponse.getEntity(Error.class);
+    		result = new CreateResultImpl<SalesforceConnector>(error);
+    	}
+    	
+    	return result;
 	}
 	
 	public GetResult<List<SalesforceConnector>> getSalesforceConnectors() {
