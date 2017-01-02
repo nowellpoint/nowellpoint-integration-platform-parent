@@ -94,10 +94,10 @@ public class SignUpService {
     	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password,
     		@FormParam("confirmPassword") @NotEmpty(message="Confirmation Password must be filled in") String confirmPassword,
     		@FormParam("planId") @NotEmpty(message="No plan has been specified") String planId,
-    		@FormParam("cardNumber") @NotEmpty(message="Credit Card number must be provided") String cardNumber,
-    		@FormParam("expirationMonth") @NotEmpty(message="Credit card is missing expiration month") String expirationMonth,
-    		@FormParam("expirationYear") @NotEmpty(message="Credit card is missing expiration year") String expirationYear,
-    		@FormParam("securityCode") @NotEmpty(message="Credit card is mssing security code") String securityCode) {
+    		@FormParam("cardNumber") String cardNumber,
+    		@FormParam("expirationMonth") String expirationMonth,
+    		@FormParam("expirationYear") String expirationYear,
+    		@FormParam("securityCode") String securityCode) {
 		
 		/**
 		 * 
@@ -170,6 +170,17 @@ public class SignUpService {
 		
 		Plan plan = planService.findPlan(planId);
 		
+		Subscription subscription = new Subscription();
+		subscription.setPlanId(planId);
+		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
+		subscription.setPlanCode(plan.getPlanCode());
+		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
+		subscription.setPlanName(plan.getPlanName());
+		subscription.setBillingFrequency(plan.getBillingFrequency());
+		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
+		subscription.setAddedOn(Date.from(Instant.now()));
+		subscription.setUpdatedOn(Date.from(Instant.now()));
+		
 		/**
 		 * 
 		 * 
@@ -204,44 +215,19 @@ public class SignUpService {
 		 * 
 		 */
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = null;
+		AddressRequest addressRequest = new AddressRequest()
+				.countryCodeAlpha2(countryCode);
 		
-		if (isNull(customerResult.getTarget().getCreditCards()) || customerResult.getTarget().getCreditCards().isEmpty()) {
-			
-			CreditCardRequest creditCardRequest = new CreditCardRequest()
-					.cardholderName( accountProfile.getName() )
-					.expirationMonth( expirationMonth )
-					.expirationYear( expirationYear )
-					.number( cardNumber )
-					.customerId( accountProfile.getId() )
-					.billingAddress()
-					.firstName( firstName )
-					.lastName( lastName )
-					.countryCodeAlpha2( countryCode )
-					.done();
-			
-			creditCardResult = paymentGatewayService.createCreditCard(creditCardRequest);
-			
+		Result<com.braintreegateway.Address> addressResult = null;
+		
+		if (isNull(customerResult.getTarget().getAddresses()) || customerResult.getTarget().getAddresses().isEmpty()) {
+			addressResult = paymentGatewayService.createAddress(accountProfile.getId(), addressRequest);
 		} else {
-			
-			AddressRequest addressRequest = new AddressRequest()
-					.countryCodeAlpha2(countryCode);
-			
-			Result<com.braintreegateway.Address> addressResult = paymentGatewayService.updateAddress(accountProfile.getId(), customerResult.getTarget().getAddresses().get(0).getId(), addressRequest);
-			
-			CreditCardRequest creditCardRequest = new CreditCardRequest()
-					.cardholderName( accountProfile.getName() )
-					.expirationMonth( expirationMonth )
-					.expirationYear( expirationYear )
-					.number( cardNumber )
-					.customerId( accountProfile.getId() )
-					.billingAddressId(addressResult.getTarget().getId());
-			
-			creditCardResult = paymentGatewayService.updateCreditCard(accountProfile.getPrimaryCreditCard().getToken(), creditCardRequest);
+			addressResult = paymentGatewayService.updateAddress(accountProfile.getId(), customerResult.getTarget().getAddresses().get(0).getId(), addressRequest);
 		}
 		
-		if (! creditCardResult.isSuccess()) {
-			LOGGER.error(creditCardResult.getMessage());
+		if (! addressResult.isSuccess()) {
+			LOGGER.error(customerResult.getMessage());
 		}
 		
 		/**
@@ -251,60 +237,93 @@ public class SignUpService {
 		 * 
 		 */
 		
-		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-				.paymentMethodToken(creditCardResult.getTarget().getToken())
-				.planId(plan.getPlanCode())
-				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
-		
-		Result<com.braintreegateway.Subscription> subscriptionResult = null;
+		if (plan.getPrice().getUnitPrice() > 0) {
 			
-		if (isNull(accountProfile.getSubscription())) {
-			subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
-		} else {
-			subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
-		}
+			if (isNull(cardNumber) || isNull(expirationMonth) || isNull(expirationYear) || isNull(securityCode)) {
+				throw new IllegalArgumentException("Missing credit card information. Required information: card number, expiration month, expiration year and security code");
+			}
+			
+			Result<com.braintreegateway.CreditCard> creditCardResult = null;
+			
+			if (isNull(customerResult.getTarget().getCreditCards()) || customerResult.getTarget().getCreditCards().isEmpty()) {
+				
+				CreditCardRequest creditCardRequest = new CreditCardRequest()
+						.cardholderName( accountProfile.getName() )
+						.expirationMonth( expirationMonth )
+						.expirationYear( expirationYear )
+						.number( cardNumber )
+						.customerId( accountProfile.getId() )
+						.billingAddressId(addressResult.getTarget().getId());
+				
+				creditCardResult = paymentGatewayService.createCreditCard(creditCardRequest);
+				
+			} else {
+				
+				CreditCardRequest creditCardRequest = new CreditCardRequest()
+						.cardholderName( accountProfile.getName() )
+						.expirationMonth( expirationMonth )
+						.expirationYear( expirationYear )
+						.number( cardNumber )
+						.customerId( accountProfile.getId() )
+						.billingAddressId(addressResult.getTarget().getId());
+				
+				creditCardResult = paymentGatewayService.updateCreditCard(accountProfile.getPrimaryCreditCard().getToken(), creditCardRequest);
+			}
+			
+			if (! creditCardResult.isSuccess()) {
+				LOGGER.error(creditCardResult.getMessage());
+			}
+			
+			/**
+			 * 
+			 * 
+			 * 
+			 * 
+			 */
+			
+			SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+					.paymentMethodToken(creditCardResult.getTarget().getToken())
+					.planId(plan.getPlanCode())
+					.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+			
+			Result<com.braintreegateway.Subscription> subscriptionResult = null;
+				
+			if (isNull(accountProfile.getSubscription())) {
+				subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
+			} else {
+				subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+			}
 
-		if (! subscriptionResult.isSuccess()) {
-			LOGGER.error(subscriptionResult.getMessage());
+			if (! subscriptionResult.isSuccess()) {
+				LOGGER.error(subscriptionResult.getMessage());
+			}
+			
+			/**
+			 * 
+			 * 
+			 * 
+			 * 
+			 */
+				
+			CreditCard creditCard = new CreditCard();
+			creditCard.setCardholderName(creditCardResult.getTarget().getCardholderName());
+			creditCard.setCardType(creditCardResult.getTarget().getCardType());
+			creditCard.setExpirationMonth(creditCardResult.getTarget().getExpirationMonth());
+			creditCard.setExpirationYear(creditCardResult.getTarget().getExpirationYear());
+			creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
+			creditCard.setLastFour(creditCardResult.getTarget().getLast4());
+			creditCard.setPrimary(Boolean.TRUE);
+			creditCard.setToken(creditCardResult.getTarget().getToken());
+			creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
+			creditCard.setAddedOn(Date.from(Instant.now()));
+			creditCard.setUpdatedOn(Date.from(Instant.now()));
+			
+			accountProfile.setCreditCards(null);
+				
+			accountProfile.addCreditCard(creditCard);
+			
+			subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
 		}
-		
-		/**
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
-
-		Date now = Date.from(Instant.now());
-			
-		CreditCard creditCard = new CreditCard();
-		creditCard.setCardholderName(creditCardResult.getTarget().getCardholderName());
-		creditCard.setCardType(creditCardResult.getTarget().getCardType());
-		creditCard.setExpirationMonth(creditCardResult.getTarget().getExpirationMonth());
-		creditCard.setExpirationYear(creditCardResult.getTarget().getExpirationYear());
-		creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
-		creditCard.setLastFour(creditCardResult.getTarget().getLast4());
-		creditCard.setPrimary(Boolean.TRUE);
-		creditCard.setToken(creditCardResult.getTarget().getToken());
-		creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
-		creditCard.setAddedOn(now);
-		creditCard.setUpdatedOn(now);
-		
-		accountProfile.setCreditCards(null);
-			
-		accountProfile.addCreditCard(creditCard);
-		
-		Subscription subscription = new Subscription();
-		subscription.setPlanId(planId);
-		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
-		subscription.setPlanCode(plan.getPlanCode());
-		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
-		subscription.setPlanName(plan.getPlanName());
-		subscription.setBillingFrequency(plan.getBillingFrequency());
-		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
-		subscription.setAddedOn(now);
-		subscription.setUpdatedOn(now);
-		subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
 		
 		accountProfile.setSubscription(subscription);
 		

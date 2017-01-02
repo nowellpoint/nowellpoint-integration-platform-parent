@@ -50,7 +50,6 @@ public class SalesforceOauthController extends AbstractController {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
     			.path("salesforce")
     			.path("oauth")
-    			.queryParameter("state", request.queryParams("id"))
     			.execute();
 		
 		response.redirect(httpResponse.getHeaders().get("Location"));		

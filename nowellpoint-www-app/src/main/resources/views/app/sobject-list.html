@@ -6,10 +6,10 @@
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <div class="dashhead">
-                <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["sobjects"]}</h3>
+                    <div class="dashhead-titles">
+                        <h3 class="dashhead-title">${labels["sobjects"]}</h3>
+                    </div>
                 </div>
-                </div>    
             </div>
         </div>
         <div class="hr-divider"></div>
@@ -17,20 +17,22 @@
         <div class="flexgrid">
             <#list environment.sobjects?sort_by( "label") as sobject>
                 <div class="offer offer-radius offer-info">
-                    <div class="offer-content">
-                        <h3 class="lead">
+                    <a href="${labels['base.path']}/${id}/environments/${environment.key}/sobject/${sobject.name}" style="text-decoration: none">
+                        <div class="offer-content">
+                            <h3 class="lead">
 							<#if icons[ "${sobject.name}"]??>
                                 <img src="${icons['${sobject.name}']}" />
                             </#if>
                             <#if ! icons[ "${sobject.name}"]??>
                                 <img src="/images/salesforce-logo.png" style="height:32px; width: 32px" />
-                            </#if><a href="${labels['base.path']}/${id}/environments/${environment.key}/sobject/${sobject.name}">${(sobject.label)!}</a> 
+                            </#if>${(sobject.label)!} 
 						</h3>
-                        <p>${(sobject.name)!}</p>
-                        <div class="text-right">
+                            <p>${(sobject.name)!}</p>
+                            <div class="text-right">
 
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </#list>
         </div>

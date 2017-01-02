@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -217,6 +218,8 @@ public abstract class HttpRequest {
 			if (httpResponse.getEntity() != null) {
 				entity = httpResponse.getEntity().getContent();
 			}
+			
+			headers = Arrays.asList(httpResponse.getAllHeaders());
 		}
 	
 		@Override

@@ -30,6 +30,7 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.Error;
+import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/contact")
@@ -61,7 +62,6 @@ public class ContactService {
 		lead.setDescription(description);
 		lead.setCompany(company);
 		lead.setPhone(phone);
-		lead.setCountryCode("US");
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
@@ -76,13 +76,14 @@ public class ContactService {
 		
 		Token token = response.getToken();
 		
-		HttpResponse httpResponse = RestResource.post(token.getInstanceUrl())
+		Identity identity = response.getIdentity();
+		
+		HttpResponse httpResponse = RestResource.post(identity.getUrls().getSobjects())
 				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.path("services/apexrest/nowellpoint/lead")
 				.bearerAuthorization(token.getAccessToken())
-				.body(lead)
-				.execute();
+    			.path("Lead")
+    			.body(lead)
+    			.execute();
 		
 		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
 		

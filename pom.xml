@@ -5,7 +5,7 @@
 	<groupId>com.nowellpoint</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0-Final</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>Nowellpoint Integration Platform Parent</name>
 
 	<parent>

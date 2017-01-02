@@ -28,13 +28,6 @@ public class AccountProfile extends AbstractResource {
 	 */
 	
 	private UserInfo lastModifiedBy;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonIgnore
-	private String leadId;
 
 	/**
 	 * 
@@ -225,14 +218,6 @@ public class AccountProfile extends AbstractResource {
 
 	public void setLastModifiedBy(UserInfo lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public String getLeadId() {
-		return leadId;
-	}
-
-	public void setLeadId(String leadId) {
-		this.leadId = leadId;
 	}
 
 	public String getUsername() {

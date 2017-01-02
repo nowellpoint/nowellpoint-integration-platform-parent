@@ -74,8 +74,6 @@ public class AccountProfile extends MongoDocument {
 	
 	private Subscription subscription;
 	
-	private String leadId;
-	
 	private Set<CreditCard> creditCards;
 	
 	private Boolean hasFullAccess;
@@ -286,14 +284,6 @@ public class AccountProfile extends MongoDocument {
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
-	}
-
-	public String getLeadId() {
-		return leadId;
-	}
-
-	public void setLeadId(String leadId) {
-		this.leadId = leadId;
 	}
 
 	public Set<CreditCard> getCreditCards() {

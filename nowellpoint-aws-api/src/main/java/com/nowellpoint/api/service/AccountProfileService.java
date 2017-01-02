@@ -143,7 +143,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setCreatedBy(original.getCreatedBy());
 		accountProfile.setCreatedDate(original.getCreatedDate());
 		accountProfile.setSystemCreatedDate(original.getSystemCreatedDate());
-		accountProfile.setLeadId(original.getLeadId());
 		
 		if (isNull(accountProfile.getDivision())) {
 			accountProfile.setDivision(original.getDivision());

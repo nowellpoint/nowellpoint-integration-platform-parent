@@ -20,8 +20,9 @@
             <br>
             <br>
             <br>
-            <img class="media-object center-block" src="/images/clock.png">
-            <br>
+            <p class="text-center">
+                <span class="icon icon-flow-tree fa fa-4x"></span>
+            </p>    
             <h4 class="text-muted text-center">${labels["no.records"]}</h4>
             <p class="text-center">
                 <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
@@ -31,9 +32,10 @@
         <div class="flexgrid">
             <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
                 <div class="offer offer-radius offer-info">
+                    <a href="${labels['base.path']}/${scheduledJob.id}" style="text-decoration: none">
                     <div class="offer-content">
                         <h3 class="lead">
-							<a href="${labels['base.path']}/${scheduledJob.id}">${scheduledJob.jobTypeName}</a>
+							${scheduledJob.jobTypeName}
 						</h3>
                         <p>
                             ${scheduledJob.environmentName} - 
@@ -49,6 +51,7 @@
                             <a href="${labels['base.path']}/${scheduledJob.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
                         </div>
                     </div>
+                    </a>    
                 </div>
             </#list>
         </div>

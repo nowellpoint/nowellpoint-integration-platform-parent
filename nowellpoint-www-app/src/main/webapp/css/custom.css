@@ -302,10 +302,10 @@ body {
 .flexgrid {
     display: -webkit-flex; display: flex; flex-wrap: wrap; -webkit-flex-direction: row; flex-direction: row;
 }
-.offer{
+.offer {
 	background:#fff; border:1px solid #ddd; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); margin: 7px 7px; 7px; 7px overflow: hidden; width: 350px;
 }
-.offer-radius{
+.offer-radius {
 	border-radius:7px;
 }
 .offer-info {
