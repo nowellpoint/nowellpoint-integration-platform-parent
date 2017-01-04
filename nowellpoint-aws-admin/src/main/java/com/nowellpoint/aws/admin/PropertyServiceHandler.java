@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -31,22 +30,17 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 	private static AWSKMS kmsClient = new AWSKMSClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	
-	private static String getKeyId(String keyAlias) {
+	private static String getKeyId(String keyAlias) throws IOException {
 
 		ListAliasesResult listAliasesResult = kmsClient.listAliases();
 		
-		Optional<AliasListEntry> aliasListEntry = listAliasesResult.getAliases()
+		AliasListEntry aliasListEntry = listAliasesResult.getAliases()
 				.stream()
 				.filter(entry -> keyAlias.equals(keyAlias))
-				.findFirst();
-		
-		String keyId = null;
-		
-		if (aliasListEntry.isPresent()) {
-			keyId = aliasListEntry.get().getTargetKeyId();
-		} 
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to find key for alias: %s", keyAlias)));
 
-		return keyId;
+		return aliasListEntry.getTargetKeyId();
 	}
 
 	@Override

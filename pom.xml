@@ -67,6 +67,7 @@
 		<module>nowellpoint-aws-data</module>
 		<module>nowellpoint-aws-sforce</module>
 		<module>nowellpoint-aws-admin</module>
+		<module>nowellpoint-payment-gateway-webhook</module>
 		<module>nowellpoint-sforce-outbound-message-service</module>
 		<module>nowellpoint-aws-api</module>
 		<module>nowellpoint-www-app</module>
