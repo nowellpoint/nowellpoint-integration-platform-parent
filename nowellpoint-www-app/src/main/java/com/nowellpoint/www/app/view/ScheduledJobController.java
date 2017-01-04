@@ -111,13 +111,13 @@ public class ScheduledJobController extends AbstractController {
 			halt();
 		}
 		
-		List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<ScheduledJobType>> getScheduledJobsTypes = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJobType()
 				.getScheduledJobTypesByLanguage(accountProfile.getLanguageSidKey());
 		
 		Map<String, Object> model = getModel();
 		model.put("step", "select-type");
-    	model.put("scheduledJobTypeList", scheduledJobTypes);
+    	model.put("scheduledJobTypeList", getScheduledJobsTypes.getTarget());
     	model.put("title", getLabel(request, "select.scheduled.job.type"));
     	
     	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
@@ -138,15 +138,15 @@ public class ScheduledJobController extends AbstractController {
 		
 		String jobTypeId = request.queryParams("job-type-id");
 		
-		ScheduledJobType scheduledJobType = new NowellpointClient(new TokenCredentials(token))
+		GetResult<ScheduledJobType> getScheduledJobTypeResult = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJobType()
-				.getById(jobTypeId);
+				.get(jobTypeId);
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setId(UUID.randomUUID().toString());
-		scheduledJob.setJobTypeId(scheduledJobType.getId());
-		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
-		scheduledJob.setJobTypeName(scheduledJobType.getName());
+		scheduledJob.setJobTypeId(getScheduledJobTypeResult.getTarget().getId());
+		scheduledJob.setJobTypeCode(getScheduledJobTypeResult.getTarget().getCode());
+		scheduledJob.setJobTypeName(getScheduledJobTypeResult.getTarget().getName());
 		
 		putValue(token, scheduledJob.getId(), objectMapper.writeValueAsString(scheduledJob));
 		

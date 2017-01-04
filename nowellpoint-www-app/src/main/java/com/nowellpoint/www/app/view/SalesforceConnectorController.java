@@ -502,7 +502,6 @@ public class SalesforceConnectorController extends AbstractController {
 		String tag = request.queryParams("tag");
 		String name = request.queryParams("name");
 		
-		
 		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
 				.withName(name)
 				.withTag(tag);

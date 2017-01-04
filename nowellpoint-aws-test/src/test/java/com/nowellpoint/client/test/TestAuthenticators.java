@@ -317,14 +317,11 @@ public class TestAuthenticators {
 	
 	@AfterClass
 	public static void afterClass() {
-		long start = System.currentTimeMillis();
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
 				.setAccessToken(token.getAccessToken())
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
-		
-		System.out.println("revoke token: " + (System.currentTimeMillis() - start));
 	}
 }

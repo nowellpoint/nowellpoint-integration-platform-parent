@@ -89,11 +89,19 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
+		
 		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( id );
 		
 		if (salesforceConnector == null){
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
 		}
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(SalesforceResource.class)
+				.path("/{id}")
+				.build(salesforceConnector.getId());
+		
+		salesforceConnector.setHref(uri.toString());
 		
 		return Response.ok(salesforceConnector).build();
 	}

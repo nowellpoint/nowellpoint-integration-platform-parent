@@ -5,7 +5,8 @@ import java.util.List;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.Error;
+import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.Token;
 
@@ -17,39 +18,43 @@ public class ScheduledJobTypeResource extends AbstractResource {
 		super(token);
 	}
 	
-	public ScheduledJobType getById(String id) {
+	public GetResult<ScheduledJobType> get(String id) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
 		
-		ScheduledJobType scheduledJobType = null;
+		GetResult<ScheduledJobType> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			scheduledJobType = httpResponse.getEntity(ScheduledJobType.class);
+			ScheduledJobType resource = httpResponse.getEntity(ScheduledJobType.class);
+			result = new GetResultImpl<ScheduledJobType>(resource);
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			result = new GetResultImpl<ScheduledJobType>(error);
 		}
 		
-		return scheduledJobType;
+		return result;
 	}
 
-	public List<ScheduledJobType> getScheduledJobTypesByLanguage(String language) {
+	public GetResult<List<ScheduledJobType>> getScheduledJobTypesByLanguage(String language) {
 		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.queryParameter("languageSidKey", language)
 				.execute();
 		
-		List<ScheduledJobType> scheduledJobTypes = null;
+		GetResult<List<ScheduledJobType>> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			scheduledJobTypes = httpResponse.getEntityList(ScheduledJobType.class);
+			List<ScheduledJobType> resources = httpResponse.getEntityList(ScheduledJobType.class);
+			result = new GetResultImpl<List<ScheduledJobType>>(resources);
 		} else {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			Error error = httpResponse.getEntity(Error.class);
+			result = new GetResultImpl<List<ScheduledJobType>>(error);
 		}
 		
-		return scheduledJobTypes;
+		return result;
 	}
 }
