@@ -638,7 +638,7 @@ class SalesforceConnectorService extends MongoDocumentService<SalesforceConnecto
 	}
 	
 	public Environment getEnvironment(String id, String key) {
-		SalesforceConnector salesforceConnector = super.findById(id);
+		SalesforceConnector salesforceConnector = super.find(id);
 		
 		Environment environment = salesforceConnector.getEnvironments()
 				.stream()

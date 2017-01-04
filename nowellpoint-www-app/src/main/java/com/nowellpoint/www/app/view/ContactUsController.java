@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -43,11 +42,6 @@ public class ContactUsController extends AbstractController {
 	};
 	
 	private String contactUs(Configuration configuration, Request request, Response response) {
-		ObjectNode body = objectMapper.createObjectNode();
-    	request.queryParams().stream().forEach(param -> {
-    		body.put(param, request.queryParams(param));
-    	});
-    	
     	HttpResponse httpResponse = RestResource.post(System.getenv("NOWELLPOINT_API_ENDPOINT"))
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
     			.path("contact")
@@ -60,7 +54,7 @@ public class ContactUsController extends AbstractController {
 				.parameter("description", request.queryParams("description"))
     			.execute();
     	
-    	logger.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo() + " : " + httpResponse.getHeaders().get("Location"));
+    	logger.info("Status Code: " + httpResponse.getStatusCode());
     	
     	Map<String, Object> model = new HashMap<String, Object>();
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "contactConfirm"));

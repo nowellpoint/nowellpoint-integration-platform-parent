@@ -118,7 +118,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public void deactivateAccountProfile(String id) {
-		AccountProfile accountProfile = findAccountProfile(id);
+		AccountProfile accountProfile = findById(id);
 		accountProfile.setIsActive(Boolean.FALSE);
 		accountProfile.setCreditCards(null);
 		
@@ -136,7 +136,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public void updateAccountProfile(AccountProfile accountProfile) {
-		AccountProfile original = findAccountProfile( accountProfile.getId() );
+		AccountProfile original = findById( accountProfile.getId() );
 		
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
@@ -294,7 +294,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public void updateAddress(String id, Address address) {
-		AccountProfile accountProfile = findAccountProfile( id );
+		AccountProfile accountProfile = findById( id );
 		
 		
 		if (isEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
@@ -310,12 +310,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public Subscription getSubscription(String id) {
-		AccountProfile accountProfile = findAccountProfile( id );
+		AccountProfile accountProfile = findById( id );
 		return accountProfile.getSubscription();
 	}
 	
 	public void setSubscription(String accountProfileId, String paymentMethodToken, Subscription subscription) {
-		AccountProfile accountProfile = findAccountProfile( accountProfileId );
+		AccountProfile accountProfile = findById( accountProfileId );
 		
 		Date now = Date.from(Instant.now());
 		
@@ -372,16 +372,16 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public Address getAddress(String id) {
-		AccountProfile resource = findAccountProfile( id );
+		AccountProfile resource = findById( id );
 		return resource.getAddress();
 	}
 	
-	public AccountProfile findAccountProfile(String id) {	
-		return super.findAccountProfile(id);
+	public AccountProfile findById(String id) {	
+		return super.findById(id);
 	}
 	
-	public AccountProfile findAccountProfileByHref(String href) {
-		return super.findAccountProfileByHref(href);
+	public AccountProfile findByAccountHref(String accountHref) {
+		return super.findByAccountHref(accountHref);
 	}
 	
 	public AccountProfile findAccountProfileByUsername(String username) {
@@ -412,7 +412,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public CreditCard getCreditCard(String id, String token) {
-		AccountProfile resource = findAccountProfile(id);
+		AccountProfile resource = findById(id);
 		
 		Optional<CreditCard> creditCard = resource.getCreditCards()
 				.stream()
@@ -424,7 +424,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public void addCreditCard(String id, CreditCard creditCard) {
-		AccountProfile accountProfile = findAccountProfile(id);
+		AccountProfile accountProfile = findById(id);
 		
 		if (! Assert.isNumber(creditCard.getExpirationMonth())) {
 			throw new ValidationException("Unable to process credit card because it has an invalid month: " + creditCard.getExpirationMonth()); 
@@ -504,7 +504,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public void updateCreditCard(String id, String token, CreditCard creditCard) {
-		AccountProfile accountProfile = findAccountProfile(id);
+		AccountProfile accountProfile = findById(id);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
@@ -604,7 +604,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	public void removeCreditCard(String id, String token) {
 		
-		AccountProfile accountProfile = findAccountProfile(id);
+		AccountProfile accountProfile = findById(id);
 		
 		if (token.equals(accountProfile.getPrimaryCreditCard().getToken())) {
 			throw new ValidationException("Unable to delete credit card because it has been set as the primary card for the account profile.");

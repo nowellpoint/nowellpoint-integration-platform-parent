@@ -2,24 +2,17 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 
-import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.MediaType;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
-import com.nowellpoint.client.model.ExceptionResponse;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.sforce.OauthToken;
-import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
@@ -86,9 +79,7 @@ public class SalesforceOauthController extends AbstractController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
-    	Map<String, Object> model = getModel();
-    	
-    	return render(configuration, request, response, model, Template.SALESFORCE_OAUTH);
+    	return render(configuration, request, response, getModel(), Template.SALESFORCE_OAUTH);
     };
 	
     /**
@@ -104,24 +95,6 @@ public class SalesforceOauthController extends AbstractController {
     	GetResult<OauthToken> getResult = new NowellpointClient(new TokenCredentials(getToken(request)))
     			.salesforce()
     			.getOauthToken(request.queryParams("code"));
-    	
-//    	HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-//				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-//				.bearerAuthorization(getToken(request).getAccessToken())
-//    			.path("salesforce")
-//    			.path("oauth")
-//    			.path("token")
-//    			.queryParameter("code", request.queryParams("code"))
-//    			.execute();
-//    	
-//    	Token token = null;
-//    	
-//    	if (httpResponse.getStatusCode() != Status.OK) {
-//    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-//			throw new BadRequestException(error.getMessage());
-//    	}
-//    	
-//    	token = httpResponse.getEntity(Token.class);
     	
     	OauthToken token = getResult.getTarget();
     	

@@ -35,8 +35,9 @@
                     <a href="${labels['base.path']}/${salesforceConnector.id}" style="text-decoration: none">
                     <div class="offer-content">
                         <h3 class="lead">
-							${salesforceConnector.organization.name}
+							${(salesforceConnector.name!)}
 						</h3>
+                        <h4>${salesforceConnector.organization.name}</h4>
                         <p>
                             ${salesforceConnector.organization.instanceName} - ${salesforceConnector.organization.organizationType} (${salesforceConnector.identity.displayName})
                             <br> <small>${labels["by"]}</small>&nbsp;${salesforceConnector.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${salesforceConnector.createdDate?date?string.long}

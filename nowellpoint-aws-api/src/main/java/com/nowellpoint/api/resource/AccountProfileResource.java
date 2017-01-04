@@ -57,7 +57,7 @@ public class AccountProfileResource {
 	public Response getAccountProfile() {
 		String subject = securityContext.getUserPrincipal().getName();
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( subject );
+		AccountProfile accountProfile = accountProfileService.findById( subject );
 				
 		return Response.ok(accountProfile)
 				.build();
@@ -189,7 +189,7 @@ public class AccountProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccountProfile(@PathParam("id") String id) {
 		
-		AccountProfile resource = accountProfileService.findAccountProfile( id );
+		AccountProfile resource = accountProfileService.findById( id );
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		
@@ -307,7 +307,7 @@ public class AccountProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response removeProfilePicture(@PathParam("id") String id) {
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfile( id );
+		AccountProfile accountProfile = accountProfileService.findById( id );
 		
 		AmazonS3 s3Client = new AmazonS3Client();
 		

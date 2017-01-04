@@ -124,7 +124,7 @@ public class TokenResource {
 		// lookup account profile
 		//
 		
-		AccountProfile accountProfile = accountProfileService.findAccountProfileByHref(result.getAccessToken().getAccount().getHref());
+		AccountProfile accountProfile = accountProfileService.findByAccountHref(result.getAccessToken().getAccount().getHref());
         
 		//
 		// create the token

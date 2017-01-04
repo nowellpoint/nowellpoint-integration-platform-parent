@@ -19,8 +19,15 @@
         <form class="form-vertical" role="form" method="post" action="${labels['base.path']}/${(salesforceConnector.id)!}">
             <div class="row">
                 <div class="form-group col-md-2">
+                    <label class="control-label" for="tag">${labels["name"]}</label>
+                    <input type="text" class="form-control" name="name" id="name" required autofocus="" value="${(salesforceConnector.name)!}" />
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
                     <label class="control-label" for="tag">${labels["tag"]}</label>
-                    <input type="text" class="form-control" name="tag" id="tag" autofocus="" value="${(salesforceConnector.tag)!}" />
+                    <input type="text" class="form-control" name="tag" id="tag" value="${(salesforceConnector.tag)!}" />
                 </div>
                 <div class="col-md-10"></div>
             </div>

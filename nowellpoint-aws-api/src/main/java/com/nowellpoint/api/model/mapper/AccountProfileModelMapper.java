@@ -28,8 +28,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * @return AccountProfile for id
 	 */
 	
-	protected AccountProfile findAccountProfile(String id) {
-		com.nowellpoint.api.model.document.AccountProfile document = findById(id);
+	protected AccountProfile findById(String id) {
+		com.nowellpoint.api.model.document.AccountProfile document = super.find(id);
 		return modelMapper.map(document, AccountProfile.class);
 	}	
 	
@@ -74,8 +74,8 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 * @return the AccountProfile that was found
 	 */
 	
-	protected AccountProfile findAccountProfileByHref(String href) {
-		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "href", href) );
+	protected AccountProfile findByAccountHref(String accountHref) {
+		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "accountHref", accountHref) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile;
 	}

@@ -104,7 +104,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected T findById(String id) {	
+	protected T find(String id) {	
 		T document = get(documentClass, id);
 		
 		if (document == null) {

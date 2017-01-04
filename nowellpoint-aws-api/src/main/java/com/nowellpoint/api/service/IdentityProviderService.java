@@ -170,7 +170,7 @@ public class IdentityProviderService {
 	 * @param lastName
 	 */
 	
-	public void updateAccount(String href, String email, String firstName, String lastName) {	
+	public Account updateAccount(String href, String email, String firstName, String lastName) {	
 		
 		Account account = client.getResource(href, Account.class)
 				.setUsername(email)
@@ -179,6 +179,8 @@ public class IdentityProviderService {
 			    .setSurname(lastName);
 		
 		account.save();
+		
+		return account;
 	}
 	
 	/**

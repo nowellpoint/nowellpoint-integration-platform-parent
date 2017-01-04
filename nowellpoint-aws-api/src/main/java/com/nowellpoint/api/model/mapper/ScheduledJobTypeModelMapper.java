@@ -36,7 +36,7 @@ public class ScheduledJobTypeModelMapper extends AbstractModelMapper<com.nowellp
 	}
 
 	protected ScheduledJobType findScheduedJobTypeById(String id) {
-		com.nowellpoint.api.model.document.ScheduledJobType document = findById(id);
+		com.nowellpoint.api.model.document.ScheduledJobType document = find(id);
 		return modelMapper.map(document, ScheduledJobType.class);
 	}
 	

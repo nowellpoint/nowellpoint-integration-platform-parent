@@ -1,5 +1,7 @@
 package com.nowellpoint.client.sforce;
 
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.util.Properties;
@@ -41,6 +44,7 @@ public class TestCreate {
 			ObjectMapper mapper = new ObjectMapper();
 			
 			ObjectNode contact = mapper.createObjectNode()
+					.put("Id", "dkhdlkhfdkhjfd")
 					.put("FirstName", "John")
 					.put("LastName", "Herson")
 					.put("Email", "test.nowellpoint@mailinator.com ")
@@ -57,9 +61,17 @@ public class TestCreate {
 	    			.body(contact)
 	    			.execute();
 			
-			System.out.println(httpResponse.getURL());
 			System.out.println(httpResponse.getStatusCode());
-			System.out.println(httpResponse.getAsString());
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				CreateResult createResult = httpResponse.getEntity(CreateResult.class);
+				System.out.println(createResult.getSuccess());
+				System.out.println(createResult.getId());
+			} else {
+				List<Error> errors = httpResponse.getEntityList(Error.class);
+				System.out.println(errors.get(0).getErrorCode());
+				System.out.println(errors.get(0).getMessage());
+			}
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());

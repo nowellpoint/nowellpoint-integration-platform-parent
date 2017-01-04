@@ -3,11 +3,6 @@ package com.nowellpoint.api.model.domain;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 
 public class SObjectDetail extends AbstractResource {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3740458498780531334L;
 	
 	private UserInfo createdBy;
 	

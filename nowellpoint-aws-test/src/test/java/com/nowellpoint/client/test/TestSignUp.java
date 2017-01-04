@@ -126,27 +126,23 @@ public class TestSignUp {
 					.user()
 					.verifyEmail(signUpResult.getTarget().getEmailVerificationToken());
 			
-			if (! signUpResult.isSuccess()) {
-				System.out.println("verify email error: " + signUpResult.getErrorMessage());
-			}
+			assertTrue(signUpResult.isSuccess());
 			
 			Document document = mongoDatabase.getCollection("account.profiles")
 					.find(Filters.eq ( "_id", new ObjectId( accountProfileId ) ) )
 					.first();
 			
-			//assertTrue(signUpResult.isSuccess());
-			
-			assertNotNull(document.getString("href"));
+			assertNotNull(document.getString("accountHref"));
 			assertNull(document.getString("emailVerificationToken"));
 			assertTrue(document.getBoolean("isActive"));
 			
-			System.out.println(document.getString("href"));
+			System.out.println(document.getString("accountHref"));
 			
 			mongoDatabase.getCollection("account.profiles").deleteOne( Filters.eq ( "_id", new ObjectId( accountProfileId ) ) );
 			
 			gateway.customer().delete(accountProfileId);
 			
-			client.getResource(document.getString("href"), Account.class).delete();
+			client.getResource(document.getString("accountHref"), Account.class).delete();
 			
 		});
 	}

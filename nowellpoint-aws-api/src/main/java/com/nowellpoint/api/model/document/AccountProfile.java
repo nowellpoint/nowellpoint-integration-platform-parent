@@ -68,7 +68,7 @@ public class AccountProfile extends MongoDocument {
 	
 	private Address address;
 
-	private String href;
+	private String accountHref;
 	
 	private Photos photos;
 	
@@ -262,12 +262,12 @@ public class AccountProfile extends MongoDocument {
 		this.address = address;
 	}
 
-	public String getHref() {
-		return href;
+	public String getAccountHref() {
+		return accountHref;
 	}
 
-	public void setHref(String href) {
-		this.href = href;
+	public void setAccountHref(String accountHref) {
+		this.accountHref = accountHref;
 	}
 
 	public Photos getPhotos() {

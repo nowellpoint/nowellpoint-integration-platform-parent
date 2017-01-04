@@ -4,12 +4,6 @@ import java.util.Set;
 
 public class Plan extends AbstractResource {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 7197168560685144490L;
-	
 	private Boolean recommendedPlan;
 
 	private String localeSidKey;

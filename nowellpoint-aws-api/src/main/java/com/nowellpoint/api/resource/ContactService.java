@@ -1,7 +1,6 @@
 package com.nowellpoint.api.resource;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
@@ -19,13 +18,13 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.model.sforce.Lead;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
@@ -35,8 +34,6 @@ import com.nowellpoint.client.sforce.model.Token;
 
 @Path("/contact")
 public class ContactService {
-	
-	private static final Logger LOGGER = Logger.getLogger(ContactService.class);
 
 	@Context
 	private UriInfo uriInfo;
@@ -85,20 +82,18 @@ public class ContactService {
     			.body(lead)
     			.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Target: " + httpResponse.getURL());	
-		
-		if (httpResponse.getStatusCode() != 200 && httpResponse.getStatusCode() != 201) {
-			Error error = httpResponse.getEntity(Error.class);
-			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
-			builder.entity(error);
+		if (httpResponse.getStatusCode() == Status.CREATED.getStatusCode()) {
+			CreateResult createResult = httpResponse.getEntity(CreateResult.class);
+			if (createResult.getSuccess()) {
+				return Response.ok(createResult).build();
+			} else {
+				return Response.status(Status.BAD_REQUEST).entity(createResult.getErrors()).build();
+			}
+		} else {
+			List<Error> errors = httpResponse.getEntityList(Error.class);
+			ResponseBuilder builder = Response.status(httpResponse.getStatusCode());
+			builder.entity(errors);
 			throw new WebApplicationException(builder.build());
 		}
-			
-		String leadId = httpResponse.getAsString();
-		
-		Map<String,String> map = new HashMap<String,String>();
-		map.put("leadId", leadId);
-		
-		return Response.ok(response).build();
 	}
 }

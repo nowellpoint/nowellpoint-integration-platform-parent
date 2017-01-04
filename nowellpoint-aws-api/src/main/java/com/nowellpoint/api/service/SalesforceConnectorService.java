@@ -352,6 +352,8 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		environment.setApiVersion(original.getApiVersion());
 		environment.setTestMessage(original.getTestMessage());
 		environment.setGrantType(original.getGrantType());
+		environment.setTheme(original.getTheme());
+		environment.setSobjects(original.getSobjects());
 		
 		if (environment.getIsActive()) {
 			LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
@@ -718,8 +720,10 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				sobjectDetail.setSystemModifiedDate(now);
 				sobjectDetail.setResult(describeSobjectResult);
 				if (isNull(sobjectDetail.getId())) {
+					System.out.println("inserting");
 					MongoDatastore.insertOne(sobjectDetail);
 				} else {
+					System.out.println("updating");
 					MongoDatastore.replaceOne(sobjectDetail);
 				}
 			});

@@ -1,12 +1,6 @@
 package com.nowellpoint.api.model.domain;
 
 public class Project extends AbstractResource {
-	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -4568819604209454827L;
 
 	private String name;
 	

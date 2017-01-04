@@ -45,7 +45,7 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	}
 
 	protected ScheduledJob findScheduedJobById(String id) {
-		com.nowellpoint.api.model.document.ScheduledJob document = findById(id);
+		com.nowellpoint.api.model.document.ScheduledJob document = find(id);
 		return modelMapper.map(document, ScheduledJob.class);
 	}
 	
@@ -84,6 +84,12 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
 		delete(document);
 		hdel(encode(getSubject()), document);
+	}
+	
+	protected Set<ScheduledJob> findAllScheduled() {
+		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = super.find( eq ( "status", "Scheduled" ) );
+		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
+		return scheduledJobs;
 	}
 	
 	private void submitScheduledJobRequest(com.nowellpoint.api.model.document.ScheduledJob scheduledJob) {

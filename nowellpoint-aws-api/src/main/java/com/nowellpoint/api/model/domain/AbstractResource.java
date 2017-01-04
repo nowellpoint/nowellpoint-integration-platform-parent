@@ -2,56 +2,26 @@ package com.nowellpoint.api.model.domain;
 
 import java.util.Date;
 
-import javax.validation.constraints.Null;
-
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractResource implements Serializable {
+public abstract class AbstractResource implements Resource {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 3468369885294317641L;
-
-	/**
-	 * 
-	 */
-	
-	@Null
 	private String id;
-	
-	/**
-	 * 
-	 */
 	
 	private Date createdDate;
 	
-	/**
-	 * 
-	 */
-	
 	private Date lastModifiedDate;
-	
-	/**
-	 * 
-	 */
 	
 	private Date systemCreatedDate;
 	
-	/**
-	 * 
-	 */
-
 	private Date systemModifiedDate;
 	
-	
+	private String href;
+		
 	public AbstractResource() {
 		
 	}
@@ -98,5 +68,13 @@ public abstract class AbstractResource implements Serializable {
 
 	public void setSystemModifiedDate(Date systemModifiedDate) {
 		this.systemModifiedDate = systemModifiedDate;
+	}
+	
+	public String getHref() {
+		return href;
+	}
+	
+	public void setHref(String href) {
+		this.href = href;
 	}
 }

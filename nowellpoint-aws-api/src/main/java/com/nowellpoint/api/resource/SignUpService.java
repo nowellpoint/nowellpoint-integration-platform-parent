@@ -1,6 +1,7 @@
 package com.nowellpoint.api.resource;
 
 import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNotNull;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -136,12 +137,14 @@ public class SignUpService {
 			
 			Account account = identityProviderService.findByUsername(email);
 			
-			if (isNull(account)) {
-				account = identityProviderService.createAccount(email, firstName, lastName, password);
-			}
+			if (isNotNull(account)) {
+				account.delete();
+			} 
+			
+			account = identityProviderService.createAccount(email, firstName, lastName, password);
 					
 			accountProfile = new AccountProfile();
-			accountProfile.setHref(account.getHref());
+			accountProfile.setAccountHref(account.getHref());
 			accountProfile.setEmailVerificationToken(account.getEmailVerificationToken().getValue());
 			accountProfile.setFirstName(firstName);
 			accountProfile.setLastName(lastName);
@@ -376,7 +379,7 @@ public class SignUpService {
 			throw new WebApplicationException(builder.build());
 		}
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findAccountProfileByHref(account.getHref()));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findByAccountHref(account.getHref()));
 		
 		if (! query.isPresent()) {
 			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", account.getHref()));

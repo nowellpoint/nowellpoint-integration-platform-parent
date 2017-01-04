@@ -368,7 +368,7 @@ public class SalesforceConnectorController extends AbstractController {
 		}
 		
 		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.environment.success"), 3);
-		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
+		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id).concat("#environments"));
 		
 		return "";		
 	};
@@ -500,8 +500,11 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		String tag = request.queryParams("tag");
+		String name = request.queryParams("name");
+		
 		
 		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
+				.withName(name)
 				.withTag(tag);
 		
 		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(new TokenCredentials(token))

@@ -70,7 +70,15 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	/**
 	 * 
 	 * 
-	 * @param scheduledJob
+	 * 
+	 */
+	
+	public Set<ScheduledJob> findAllScheduled() {
+		return super.findAllScheduled();
+	}
+	
+	/**
+	 * 
 	 * 
 	 * 
 	 */
@@ -270,8 +278,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	/**
 	 * 
 	 * 
-	 * @param accountProfile
-	 * 
 	 * 
 	 */
 	
@@ -285,8 +291,6 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	/**
 	 * 
-	 * 
-	 * @param scheduledJob
 	 * 
 	 * 
 	 */

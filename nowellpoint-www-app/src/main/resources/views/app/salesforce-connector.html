@@ -43,8 +43,12 @@
             <div class="col-md-3">
 
                 <dl class="dl-vertical">
-
+                    
                     <dt>${labels["name"]}</dt>
+                    <dd>${(salesforceConnector.name)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["organization.name"]}</dt>
                     <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
                     <hr>
 
@@ -71,6 +75,10 @@
             <div class="col-md-3">
 
                 <dl class="dl-vertical">
+                    
+                    <dt>${labels["tag"]}</dt>
+                    <dd>${(salesforceConnector.tag)!}&emsp;</dd>
+                    <hr>
 
                     <dt>${labels["instance.name"]}</dt>
                     <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
@@ -143,23 +151,13 @@
                     <dt>${labels["query"]}</dt>
                     <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
                     <hr>
-
+                    
                 </dl>
-
-
             </div>
-
-
 
             <div class="col-md-6"></div>
 
         </div>
-
-        <!--
-<dt>${labels["tag"]}</dt>
-                                    <dd>${(salesforceConnector.tag)!}&emsp;</dd>
-                                    <hr>
--->
 
         <br>
         <br>

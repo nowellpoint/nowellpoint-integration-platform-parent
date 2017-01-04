@@ -40,7 +40,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	 */
 	
 	protected Plan findPlan(String id) {
-		com.nowellpoint.api.model.document.Plan document = findById(id.toString());
+		com.nowellpoint.api.model.document.Plan document = find(id.toString());
 		Plan plan = modelMapper.map(document, Plan.class);
 		return plan;
 	}	

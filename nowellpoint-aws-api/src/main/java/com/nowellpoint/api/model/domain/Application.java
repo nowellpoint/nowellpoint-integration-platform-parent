@@ -4,12 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Application extends AbstractResource {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -365479731136738071L;
 	
 	private AccountProfile owner;
 	

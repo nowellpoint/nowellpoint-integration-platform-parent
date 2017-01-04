@@ -11,187 +11,65 @@ import com.nowellpoint.api.model.document.Photos;
 
 public class AccountProfile extends AbstractResource {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -856231703315633645L;
-	
-	/**
-	 * 
-	 */
-	
 	private UserInfo createdBy;
-	
-	/**
-	 * 
-	 */
 	
 	private UserInfo lastModifiedBy;
 
-	/**
-	 * 
-	 */
-
 	private String username;
-
-	/**
-	 * 
-	 */
 
 	private String lastName;
 
-	/**
-	 * 
-	 */
-
 	private String firstName;
-
-	/**
-	 * 
-	 */
 
 	private String name;
 
-	/**
-	 * 
-	 */
-
 	private String company;
-
-	/**
-	 * 
-	 */
 
 	private String division;
 
-	/**
-	 * 
-	 */
-
 	private String department;
-
-	/**
-	 * 
-	 */
 
 	private String title;
 
-	/**
-	 * 
-	 */
-
 	private String email;
-
-	/**
-	 * 
-	 */
 
 	private String phone;
 
-	/**
-	 * 
-	 */
-
 	private String extension;
-
-	/**
-	 * 
-	 */
 
 	private String fax;
 
-	/**
-	 * 
-	 */
-
 	private String mobilePhone;
-
-	/**
-	 * 
-	 */
 
 	private Boolean isActive;
 
-	/**
-	 * 
-	 */
-
 	private String timeZoneSidKey;
-	
-	/**
-	 * 
-	 */
 	
 	private String languageSidKey;
 
-	/**
-	 * 
-	 */
-
 	private String localeSidKey;
-
-	/**
-	 * 
-	 */
 
 	private String emailEncodingKey;
 
-	/**
-	 * 
-	 */
-
 	private Date lastLoginDate;
-	
-	/**
-	 * 
-	 */
 	
 	private Address address;
 	
-	/**
-	 * 
-	 */
-	
 	private Subscription subscription;
 
-	/**
-	 * 
-	 */
-
 	@JsonIgnore
-	private String href;
-	
-	/**
-	 * 
-	 */
+	private String accountHref;
 	
 	@JsonIgnore
 	private String emailVerificationToken;
 	
-	/**
-	 * 
-	 */
-	
 	private Photos photos;
-	
-	/**
-	 * 
-	 */
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<CreditCard> creditCards;
 	
-	/**
-	 * 
-	 */
-	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean hasFullAccess;
-	
-	/**
-	 * 
-	 */
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean enableSalesforceLogin;
@@ -388,12 +266,12 @@ public class AccountProfile extends AbstractResource {
 		this.subscription = subscription;
 	}
 
-	public String getHref() {
-		return href;
+	public String getAccountHref() {
+		return accountHref;
 	}
 
-	public void setHref(String href) {
-		this.href = href;
+	public void setAccountHref(String accountHref) {
+		this.accountHref = accountHref;
 	}
 
 	public String getEmailVerificationToken() {
