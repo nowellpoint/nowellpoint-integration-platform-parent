@@ -19,7 +19,6 @@ import javax.ws.rs.NotAuthorizedException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -131,13 +130,13 @@ public class AuthenticationController extends AbstractController {
 		try {
 			OauthAuthenticationResponse oauthAuthenticationResponse = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(passwordGrantRequest);
-			
+
 			Token token = oauthAuthenticationResponse.getToken();
-    		
+
 	    	Long expiresIn = token.getExpiresIn();
-	    		
+	
 	    	try {
-	    		response.cookie(AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true); 
+	    		response.cookie(AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true);
 	    	} catch (IOException e) {
 	    		throw new InternalServerErrorException(e);
 	    	}
@@ -155,12 +154,12 @@ public class AuthenticationController extends AbstractController {
 			LOGGER.info(locales[0]);
 		
 			if (e.getCode() == 7100) {
-    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"));
     		} else if (e.getCode() == 7101) {
-    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "disabled.account"), Status.NOT_AUTHORIZED);
+    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "disabled.account"));
     		} else {
     			LOGGER.error(e.getMessage());
-    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"), Status.NOT_AUTHORIZED);
+    			throw new InternalServerErrorException(e.getMessage());
     		}
 		}
 		
@@ -227,7 +226,7 @@ public class AuthenticationController extends AbstractController {
     	
     	String output = render(configuration, request, response, model, Template.LOGIN);
     	
-    	response.status(400);
+    	response.status(401);
     	response.body(output);
 	};
 	

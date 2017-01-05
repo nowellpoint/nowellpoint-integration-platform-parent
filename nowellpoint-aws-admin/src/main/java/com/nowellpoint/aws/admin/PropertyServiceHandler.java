@@ -29,19 +29,6 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 	
 	private static AWSKMS kmsClient = new AWSKMSClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();
-	
-	private static String getKeyId(String keyAlias) throws IOException {
-
-		ListAliasesResult listAliasesResult = kmsClient.listAliases();
-		
-		AliasListEntry aliasListEntry = listAliasesResult.getAliases()
-				.stream()
-				.filter(entry -> keyAlias.equals(keyAlias))
-				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to find key for alias: %s", keyAlias)));
-
-		return aliasListEntry.getTargetKeyId();
-	}
 
 	@Override
 	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
@@ -78,5 +65,18 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 		}
 		
 		outputStream.write(bytes);
+	}
+	
+	private static String getKeyId(String keyAlias) throws IOException {
+
+		ListAliasesResult listAliasesResult = kmsClient.listAliases();
+		
+		AliasListEntry aliasListEntry = listAliasesResult.getAliases()
+				.stream()
+				.filter(entry -> keyAlias.equals(keyAlias))
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to find key for alias: %s", keyAlias)));
+
+		return aliasListEntry.getTargetKeyId();
 	}
 }

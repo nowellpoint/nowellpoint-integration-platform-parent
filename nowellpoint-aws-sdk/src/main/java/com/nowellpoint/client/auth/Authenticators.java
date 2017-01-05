@@ -2,13 +2,13 @@ package com.nowellpoint.client.auth;
 
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
+import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
 
 public class Authenticators {
@@ -24,7 +24,7 @@ public class Authenticators {
 			
 			Optional.of(passwordGrantRequest.getUsername()).orElseThrow(() -> new IllegalArgumentException("missing username"));
 			Optional.of(passwordGrantRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("missing password"));
-			
+
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 	    			.accept(MediaType.APPLICATION_JSON)
 	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -33,14 +33,14 @@ public class Authenticators {
 	    			.basicAuthorization(passwordGrantRequest.getUsername(), passwordGrantRequest.getPassword())
 	    			.parameter("grant_type", "password")
 	    			.execute();
-	    			
+		
 	    	int statusCode = httpResponse.getStatusCode();
-	    			
+
 	    	if (statusCode != Status.OK) {
-	    		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
-	    		throw new OauthException(error.get("code").asInt(), error.get("message").asText());
+	    		Error error = httpResponse.getEntity(Error.class);
+	    		throw new OauthException(error.getCode(), error.getMessage());
 	    	}
-	    			
+	
 	    	Token token = httpResponse.getEntity(Token.class);
 	    	
 	    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
@@ -67,8 +67,8 @@ public class Authenticators {
 	    	int statusCode = httpResponse.getStatusCode();
 	    			
 	    	if (statusCode != Status.OK) {
-	    		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
-	    		throw new OauthException(error.get("code").asInt(), error.get("message").asText());
+	    		Error error = httpResponse.getEntity(Error.class);
+	    		throw new OauthException(error.getCode(), error.getMessage());
 	    	}
 	    			
 	    	Token token = httpResponse.getEntity(Token.class);
@@ -90,8 +90,8 @@ public class Authenticators {
 	    	int statusCode = httpResponse.getStatusCode();
 	    	
 	    	if (statusCode != 204) {
-	    		ObjectNode error = httpResponse.getEntity(ObjectNode.class);
-	    		throw new OauthException(error.get("code").asInt(), error.get("message").asText());
+	    		Error error = httpResponse.getEntity(Error.class);
+	    		throw new OauthException(error.getCode(), error.getMessage());
 	    	}
 		}
 	}

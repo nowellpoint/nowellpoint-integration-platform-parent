@@ -167,7 +167,7 @@ public class MongoDatastore implements ServletContextListener {
 				.first();
 		
 		if (document == null) {
-			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found", documentClass.getSimpleName() ) );
+			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found: %s", documentClass.getSimpleName(), query.toBsonDocument(Document.class, getDefaultCodecRegistry()).toString()) );
 		}
 		
 		return document;

@@ -4,6 +4,8 @@ import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +39,9 @@ import com.nowellpoint.www.app.view.ScheduledJobController;
 //import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
+import freemarker.core.Environment;
 import freemarker.template.Configuration;
+import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
 import spark.ModelAndView;
@@ -163,14 +167,27 @@ public class Application implements SparkApplication {
         });
         
         exception(NotFoundException.class, (exception, request, response) -> {
-        	exception.printStackTrace();
             response.status(404);
             response.body(exception.getMessage());
         });
         
         exception(InternalServerErrorException.class, (exception, request, response) -> {
-            response.status(500);
-            response.body(exception.getMessage());
+  
+        	Map<String, Object> model = new HashMap<>();
+        	model.put("errorMessage", exception.getMessage());
+        	
+        	Writer output = new StringWriter();
+    		try {
+    			Template template = configuration.getTemplate("error.html");
+    			Environment environment = template.createProcessingEnvironment(model, output);
+    			environment.process();
+    			response.status(500);
+            	response.body(output.toString());
+            	output.flush();
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			halt();
+    		}
         });
         
         exception(Exception.class, (exception, request, response) -> {

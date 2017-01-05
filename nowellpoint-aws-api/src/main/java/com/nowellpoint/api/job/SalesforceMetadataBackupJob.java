@@ -118,7 +118,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
 		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
 		    			scheduledJobRequestService.replace( scheduledJobRequest );
-		    			
+		    			System.out.println("1");
 		    			//
 		    			// update ScheduledJob
 		    			//
@@ -126,7 +126,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			scheduledJob = scheduledJobService.findById(scheduledJobRequest.getScheduledJobId());
 		    			scheduledJob.setStatus(scheduledJobRequest.getStatus());
 		    			scheduledJobService.replace(scheduledJob);
-			    	
+		    			System.out.println("2");
 			    		//
 			    		// get environment associated with the ScheduledJob
 			    		//
@@ -144,13 +144,13 @@ public class SalesforceMetadataBackupJob implements Job {
 			    		//
 			    		
 			    		String accessToken = null;
-			    		
+			    		System.out.println("3");
 			    		if ("password".equals(environment.getGrantType())) {
 			    			accessToken = authenticate(environment.getAuthEndpoint(), environment.getUsername(), properties.get("password").getValue(), properties.get("securityToken").getValue());
 			    		} else {
 			    			accessToken = authenticate(properties.get("refresh.token").getValue());
 			    		}
-			    		
+			    		System.out.println("4");
 			    		//
 			    		// get the identity of the user associate to the environment
 			    		//
@@ -160,19 +160,19 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	// 
 				    	// DescribeGlobal
 				    	//
-				    	
+				    	System.out.println("5");
 						DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(accessToken, identity.getUrls().getSobjects());
 				    	
 						//
 						// create keyName
 						//
-						
+						System.out.println("6");
 				    	String keyName = String.format("%s/DescribeGlobalResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
 				    	
 				    	//
 						// write the result to S3
 						//
-				    	
+				    	System.out.println("7");
 				    	PutObjectResult result = putObject(keyName, describeGlobalSobjectsResult);
 				    	
 				    	//
@@ -184,7 +184,7 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	//
 				    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
 				    	//
-				    	
+				    	System.out.println("8");
 				    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
 				    	
 				    	//
@@ -202,13 +202,13 @@ public class SalesforceMetadataBackupJob implements Job {
 					    	//
 							// write the result to S3
 							//
-					    	
+					    	System.out.println("9");
 					    	result = putObject(keyName, describeSobjectResults);
 					    	
 					    	//
 					    	// add Backup reference to ScheduledJobRequest
 					    	//
-					    	
+					    	System.out.println("10");
 					    	scheduledJobRequest.addBackup(new Backup("DescribeSobjects", keyName, result.getMetadata().getContentLength()));
 				    		
 				    	}
@@ -222,19 +222,19 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	//
 				    	// get theme
 				    	//
-				    	
+				    	System.out.println("11");
 				    	Theme theme = getTheme(accessToken, identity.getUrls().getRest());
 				    	
 				    	// 
 				    	// write result to S3
 				    	//
-				    	
+				    	System.out.println("12");
 				    	result = putObject(keyName, theme);
 				    	
 				    	//
 				    	// add Backup reference to ScheduledJobRequest
 				    	//
-				    	
+				    	System.out.println("13");
 				    	scheduledJobRequest.addBackup(new Backup("Theme", keyName, result.getMetadata().getContentLength()));
 				    	
 				    	// 
@@ -246,10 +246,10 @@ public class SalesforceMetadataBackupJob implements Job {
 				    	//
 				    	// udpate environment with lastest information
 				    	//
-				    	
+				    	System.out.println("14");
 				    	environment.setTheme(theme);
 				    	environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
-				    	
+				    	System.out.println("15");
 			    	} catch (Exception e) {
 			    		scheduledJobRequest.setStatus("Failure");
 			    		scheduledJobRequest.setFailureMessage(e.getMessage());

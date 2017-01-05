@@ -210,6 +210,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setHref(original.getHref());
 		}
 		
+		if (isNull(accountProfile.getAccountHref())) {
+			accountProfile.setAccountHref(original.getAccountHref());
+		}
+		
 		if (isNull(accountProfile.getLocaleSidKey())) {
 			accountProfile.setLocaleSidKey(original.getLocaleSidKey());
 		}

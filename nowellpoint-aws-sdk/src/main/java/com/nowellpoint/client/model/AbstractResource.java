@@ -10,36 +10,17 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractResource {
 
-	/**
-	 * 
-	 */
-	
 	private String id;
-	
-	/**
-	 * 
-	 */
 	
 	private Date createdDate;
 	
-	/**
-	 * 
-	 */
-	
 	private Date lastModifiedDate;
-	
-	/**
-	 * 
-	 */
 	
 	private UserInfo createdBy;
 	
-	/**
-	 * 
-	 */
-	
 	private UserInfo lastModifiedBy;
-
+	
+	private String href;
 
 	public AbstractResource() {
 		
@@ -83,5 +64,13 @@ public abstract class AbstractResource {
 
 	public void setLastModifiedBy(UserInfo lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public String getHref() {
+		return href;
+	}
+	
+	public void setHref(String href) {
+		this.href = href;
 	}
 }
