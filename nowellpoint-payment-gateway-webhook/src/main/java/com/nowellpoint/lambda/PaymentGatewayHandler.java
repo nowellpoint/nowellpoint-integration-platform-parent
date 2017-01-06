@@ -11,6 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
@@ -25,12 +26,15 @@ public class PaymentGatewayHandler implements RequestStreamHandler {
 
 	@Override
 	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
+		LambdaLogger logger = context.getLogger();
 		
 		JsonNode node = objectMapper.readTree(inputStream);
 		
-		List<NameValuePair> params = URLEncodedUtils.parse(node.get("body").asText(), Charset.forName("UTF-8"));
+		logger.log(node.toString());
 		
-		Properties.loadProperties("production");
+		Properties.loadProperties(node.get("instance").asText());
+		
+		List<NameValuePair> params = URLEncodedUtils.parse(node.get("body").asText(), Charset.forName("UTF-8"));
 		
 		BraintreeGateway gateway = new BraintreeGateway(
 				Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),

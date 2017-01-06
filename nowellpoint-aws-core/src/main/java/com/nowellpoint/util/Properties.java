@@ -1,7 +1,10 @@
 package com.nowellpoint.util;
 
-import java.util.HashMap;
+import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -56,13 +59,17 @@ public class Properties {
 		AWSLambda lambdaClient = new AWSLambdaClient();
 		lambdaClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 		
-		Map<String,String> input = new HashMap<String,String>();
-		input.put("propertyStore", propertyStore);
+		Map<String,String> input = buildPropertyStore(propertyStore);
 		
 		PropertyService propertyService = LambdaInvokerFactory.builder()
 				.lambdaClient(lambdaClient)
 				.build(PropertyService.class);
 		
 		return propertyService.getProperties(input);
+	}
+	
+	private static Map<String,String> buildPropertyStore(String propertyStore) {
+		return Collections.unmodifiableMap(Stream.of(new AbstractMap.SimpleEntry<>("propertyStore", propertyStore))
+				.collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue())));
 	}
 }
