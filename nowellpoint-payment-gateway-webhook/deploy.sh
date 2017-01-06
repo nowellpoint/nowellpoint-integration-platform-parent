@@ -11,11 +11,11 @@ s3://aws-microservices/nowellpoint-payment-gateway-webhook.jar
 #--handler com.nowellpoint.lambda.PaymentGatewayHandler::handleRequest \
 #--runtime java8 \
 #--description "Payment Gateway: Handle Payment Gateway Events" \
-#--timeout 15 \
+#--timeout 30 \
 #--memory-size 256
 
 aws lambda update-function-code \
---function-name PropertyServiceHandler \
+--function-name PaymentGatewayWebhook \
 --s3-bucket aws-microservices \
 --s3-key nowellpoint-payment-gateway-webhook.jar \
 --no-publish

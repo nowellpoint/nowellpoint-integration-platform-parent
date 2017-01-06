@@ -1,18 +1,14 @@
 package com.nowellpoint.util;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.HttpClientBuilder;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.AWSLambdaClient;
+import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
+import com.nowellpoint.service.PropertyService;
 
 public class Properties {
 	
@@ -50,27 +46,23 @@ public class Properties {
 	public static final String CLOUDFRONT_HOSTNAME = "cloudfront.hostname";
 	
 	public static void loadProperties(String propertyStore) {
-		URIBuilder builder = new URIBuilder().setScheme("https")
-				.setHost("ainsh4j3sk.execute-api.us-east-1.amazonaws.com")
-				.setPath(String.format("/production/properties/%s", propertyStore));
+		Map<String,String> properties = getProperties(propertyStore);
+		properties.keySet().stream().forEach(key -> {
+			System.setProperty(key, properties.get(key));
+		});
+	}
+	
+	public static Map<String,String> getProperties(String propertyStore) {
+		AWSLambda lambdaClient = new AWSLambdaClient();
+		lambdaClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 		
-		HttpClient client = HttpClientBuilder.create().build();
-		try {
-			HttpGet request = new HttpGet(builder.build());
-			request.addHeader("x-api-key", System.getenv("X_API_KEY"));
-			
-			HttpResponse response = client.execute(request);
-			
-			if (response.getStatusLine().getStatusCode() != 200) {
-				System.out.println(new ObjectMapper().readValue(response.getEntity().getContent(), JsonNode.class));
-			}
-			
-			Map<String, String> properties = new ObjectMapper().readValue(response.getEntity().getContent(), new TypeReference<Map<String,String>>() {});
-			properties.keySet().stream().forEach(key -> {
-				System.setProperty(key, properties.get(key));
-			});
-		} catch (URISyntaxException | IOException e) {
-			e.printStackTrace();
-		}
+		Map<String,String> input = new HashMap<String,String>();
+		input.put("propertyStore", propertyStore);
+		
+		PropertyService propertyService = LambdaInvokerFactory.builder()
+				.lambdaClient(lambdaClient)
+				.build(PropertyService.class);
+		
+		return propertyService.getProperties(input);
 	}
 }

@@ -2,7 +2,9 @@
 <projectDescription>
   <name>nowellpoint-payment-gateway-webhook</name>
   <comment>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects/>
+  <projects>
+    <project>nowellpoint-aws-core</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
