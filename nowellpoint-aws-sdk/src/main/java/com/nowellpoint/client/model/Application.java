@@ -11,7 +11,7 @@ public class Application extends AbstractResource {
 	
 	private String description;
 	
-	private List<Environment> environments;
+	private List<Instance> instances;
 	
 	private String status;
 	
@@ -47,12 +47,12 @@ public class Application extends AbstractResource {
 		this.description = description;
 	}
 
-	public List<Environment> getEnvironments() {
-		return environments;
+	public List<Instance> getEnvironments() {
+		return instances;
 	}
 
-	public void setEnvironments(List<Environment> environments) {
-		this.environments = environments;
+	public void setEnvironments(List<Instance> instances) {
+		this.instances = instances;
 	}
 
 	public String getStatus() {

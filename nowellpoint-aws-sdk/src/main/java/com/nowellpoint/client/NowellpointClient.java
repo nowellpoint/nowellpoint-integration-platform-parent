@@ -1,12 +1,14 @@
 package com.nowellpoint.client;
 
 import com.nowellpoint.client.auth.Authenticators;
+import com.nowellpoint.client.auth.ClientCredentials;
+import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.TokenCredentials;
-import com.nowellpoint.client.auth.UsernamePasswordCredentials;
+import com.nowellpoint.client.auth.PasswordCredentials;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
 import com.nowellpoint.client.resource.ApplicationResource;
@@ -31,15 +33,27 @@ public class NowellpointClient {
 		}
 	}
 	
-	public NowellpointClient(UsernamePasswordCredentials credentials) {
+	public NowellpointClient(ClientCredentials credentials) {
 		this();
-		PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+		ClientCredentialsGrantRequest grantRequest = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
+				.setApiKeyId(credentials.getApiKeyId())
+				.setApiKeySecret(credentials.getApiKeySecret()).build();
+		
+		OauthAuthenticationResponse oauthAuthenticationResponse = Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR
+					.authenticate(grantRequest);
+		
+		token = oauthAuthenticationResponse.getToken();
+	}
+	
+	public NowellpointClient(PasswordCredentials credentials) {
+		this();
+		PasswordGrantRequest grantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setUsername(credentials.getUsername())
 				.setPassword(credentials.getPassword())
 				.build();
 	
 		OauthAuthenticationResponse oauthAuthenticationResponse = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
-					.authenticate(passwordGrantRequest);
+					.authenticate(grantRequest);
 		
 		token = oauthAuthenticationResponse.getToken();
 	}
@@ -58,34 +72,34 @@ public class NowellpointClient {
 	}
 	
 	public ApplicationResource application() {
-		return new ApplicationResource(token);
+		return new ApplicationResource(environment, token);
 	}
 	
 	public PlanResource plan() {
-		return new PlanResource(token);
+		return new PlanResource(environment, token);
 	}
 	
 	public ScheduledJobResource scheduledJob() {
-		return new ScheduledJobResource(token);
+		return new ScheduledJobResource(environment, token);
 	}
 	
 	public SalesforceConnectorResource salesforceConnector() {
-		return new SalesforceConnectorResource(token);
+		return new SalesforceConnectorResource(environment, token);
 	}
 	
 	public ScheduledJobTypeResource scheduledJobType() {
-		return new ScheduledJobTypeResource(token);
+		return new ScheduledJobTypeResource(environment, token);
 	}
 	
 	public AccountProfileResource accountProfile() {
-		return new AccountProfileResource(token);
+		return new AccountProfileResource(environment, token);
 	}
 	
 	public UserResource user() {
-		return new UserResource();
+		return new UserResource(environment);
 	}
 	
 	public SalesforceResource salesforce() {
-		return new SalesforceResource(token);
+		return new SalesforceResource(environment, token);
 	}
 }

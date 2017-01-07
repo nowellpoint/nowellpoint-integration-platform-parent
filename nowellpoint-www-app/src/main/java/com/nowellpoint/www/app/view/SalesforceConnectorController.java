@@ -16,7 +16,7 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SObjectDetail;
@@ -99,14 +99,14 @@ public class SalesforceConnectorController extends AbstractController {
 	private String newEnvironment(Configuration configuration, Request request, Response response) {	
 		String id = request.params(":id");
 		
-		Environment environment = new Environment();
-		environment.setAuthEndpoint("https://test.salesforce.com");
+		Instance instance = new Instance();
+		instance.setAuthEndpoint("https://test.salesforce.com");
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "add");
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
-		model.put("environment", environment);
+		model.put("environment", instance);
 		
 		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
@@ -156,17 +156,17 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.get(id, key);
 		
-		Environment environment = result.getTarget();
+		Instance instance = result.getTarget();
 		
 		Map<String,String> icons = new HashMap<String,String>();
 		
-		environment.getSobjects().stream().forEach(sobject -> {
-			Optional<ThemeItem> item = environment.getTheme()
+		instance.getSobjects().stream().forEach(sobject -> {
+			Optional<ThemeItem> item = instance.getTheme()
 					.getThemeItems()
 					.stream()
 					.filter(themeItem -> themeItem.getName().equals(sobject.getName()))
@@ -187,7 +187,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
-		model.put("environment", environment);
+		model.put("environment", instance);
 		model.put("icons", icons);
 		
 		return render(configuration, request, response, model, Template.SOBJECTS);
@@ -207,17 +207,17 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.get(id, key);
 		
-		Environment environment = result.getTarget();
+		Instance instance = result.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "view");
-		model.put("environment", environment);
+		model.put("environment", instance);
 		
 		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
@@ -236,18 +236,18 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.get(id, key);
 		
-		Environment environment = result.getTarget();
+		Instance instance = result.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "edit");
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
-		model.put("environment", environment);
+		model.put("environment", instance);
 		
 		return render(configuration, request, response, model, Template.ENVIRONMENT);
 	};
@@ -279,14 +279,14 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		CreateResult<Environment> createResult = new NowellpointClient(new TokenCredentials(token))
+		CreateResult<Instance> createResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.add(id, environmentRequest);
 
 		if (! createResult.isSuccess()) {
 			
-			Environment environment = new Environment()
+			Instance instance = new Instance()
 					.withIsActive(Boolean.valueOf(active))
 					.withAuthEndpoint(authEndpoint)
 					.withEnvironmentName(environmentName)
@@ -298,7 +298,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("id", id);
 			model.put("mode", "add");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
-			model.put("environment", environment);
+			model.put("environment", instance);
 			model.put("errorMessage", createResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
@@ -340,14 +340,14 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.update(id, key, environmentRequest);
 		
 		if (! updateResult.isSuccess()) {
 			
-			Environment environment = new Environment()
+			Instance instance = new Instance()
 					.withIsActive(Boolean.valueOf(active))
 					.withAuthEndpoint(authEndpoint)
 					.withEnvironmentName(environmentName)
@@ -359,7 +359,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("id", id);
 			model.put("mode", "edit");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
-			model.put("environment", environment);
+			model.put("environment", instance);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
@@ -571,7 +571,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.build(id, key);
@@ -599,7 +599,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.test(id, key);

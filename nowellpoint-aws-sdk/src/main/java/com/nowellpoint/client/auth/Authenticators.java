@@ -1,7 +1,5 @@
 package com.nowellpoint.client.auth;
 
-import java.util.Optional;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -10,6 +8,7 @@ import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.util.Assert;
 
 public class Authenticators {
 	
@@ -22,9 +21,9 @@ public class Authenticators {
 	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(PasswordGrantRequest passwordGrantRequest) {
 			
-			Optional.of(passwordGrantRequest.getUsername()).orElseThrow(() -> new IllegalArgumentException("missing username"));
-			Optional.of(passwordGrantRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("missing password"));
-
+			Assert.notNull(passwordGrantRequest.getUsername(), "missing username");
+			Assert.notNull(passwordGrantRequest.getPassword(), "missing password");
+			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 	    			.accept(MediaType.APPLICATION_JSON)
 	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -52,8 +51,8 @@ public class Authenticators {
 	public static class ClientCredentialsGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
 			
-			Optional.of(grantRequest.getApiKeyId()).orElseThrow(() -> new IllegalArgumentException("missing username"));
-			Optional.of(grantRequest.getApiKeySecret()).orElseThrow(() -> new IllegalArgumentException("missing password"));
+			Assert.notNull(grantRequest.getApiKeyId(), "missing api key id");
+			Assert.notNull(grantRequest.getApiKeySecret(), "missing api key secret");
 			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 	    			.accept(MediaType.APPLICATION_JSON)

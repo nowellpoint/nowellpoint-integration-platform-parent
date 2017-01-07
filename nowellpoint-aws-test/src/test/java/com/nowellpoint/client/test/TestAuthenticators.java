@@ -25,7 +25,7 @@ import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NowellpointServiceException;
@@ -120,7 +120,7 @@ public class TestAuthenticators {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		CreateResult<Environment> createResult = new NowellpointClient(new TokenCredentials(token))
+		CreateResult<Instance> createResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.add(salesforceConnector.getId(), environmentRequest);
@@ -129,14 +129,14 @@ public class TestAuthenticators {
 		
 		String environmentKey = createResult.getTarget().getKey();
 		
-		UpdateResult<Environment> testConnection = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> testConnection = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.test(salesforceConnector.getId(), environmentKey);
 		
 		assertTrue(testConnection.isSuccess());
 		
-		UpdateResult<Environment> buildResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> buildResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.build(salesforceConnector.getId(), environmentKey);
@@ -189,7 +189,7 @@ public class TestAuthenticators {
 				.findFirst()
 				.get();
 		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.build(salesforceConnector.getId(), salesforceConnector.getEnvironments().get(0).getKey());
@@ -198,9 +198,9 @@ public class TestAuthenticators {
 		System.out.println(updateResult.getErrorMessage());
 		System.out.println("buildEnvironment: " + (System.currentTimeMillis() - start));
 		
-		Environment environment = updateResult.getTarget();
+		Instance instance = updateResult.getTarget();
 		
-		System.out.println(environment.getKey());
+		System.out.println(instance.getKey());
 	}
 	
 	@Test
@@ -214,7 +214,7 @@ public class TestAuthenticators {
 		
 		SalesforceConnector salesforceConnector = salesforceConnectors.getTarget().get(0);
 		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.test(salesforceConnector.getId(), salesforceConnector.getEnvironments().get(0).getKey());
@@ -223,9 +223,9 @@ public class TestAuthenticators {
 		System.out.println(updateResult.getErrorMessage());
 		System.out.println("testConnection: " + (System.currentTimeMillis() - start));
 		
-		Environment environment = updateResult.getTarget();
+		Instance instance = updateResult.getTarget();
 		
-		System.out.println(environment.getKey());
+		System.out.println(instance.getKey());
 	}
 	
 	@Test

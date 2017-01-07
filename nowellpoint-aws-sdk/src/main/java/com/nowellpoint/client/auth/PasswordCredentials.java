@@ -1,6 +1,6 @@
 package com.nowellpoint.client.auth;
 
-public interface UsernamePasswordCredentials extends Credentials {
+public interface PasswordCredentials extends Credentials {
 	
 	public String getUsername();
 	

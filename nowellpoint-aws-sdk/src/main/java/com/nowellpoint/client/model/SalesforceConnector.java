@@ -21,7 +21,7 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String tag;
 	
-	private List<Environment> environments;
+	private List<Instance> instances;
 	
 	public SalesforceConnector() {
 		setEnvironments(Collections.emptyList());
@@ -71,14 +71,14 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public List<Environment> getEnvironments() {
-		if (environments == null) {
-			setEnvironments(new ArrayList<Environment>());
+	public List<Instance> getEnvironments() {
+		if (instances == null) {
+			setEnvironments(new ArrayList<Instance>());
 		}
-		return environments;
+		return instances;
 	}
 
-	public void setEnvironments(List<Environment> environments) {
-		this.environments = environments;
+	public void setEnvironments(List<Instance> instances) {
+		this.instances = instances;
 	}
 }

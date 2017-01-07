@@ -1,8 +1,5 @@
 package com.nowellpoint.sqs.spi;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.nowellpoint.aws.data.QueueListener;
 
 import javax.enterprise.event.Observes;
@@ -35,12 +32,12 @@ public class SQSBootstrapExtension implements Extension {
 	
 	private static Session session;
 	
-	private Map<String,String> queueMap = new HashMap<String,String>();
-	
 	public <T> void processAnnotatedType(@Observes @WithAnnotations({QueueListener.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
+		
     	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(QueueListener.class)) {
+    		
     		QueueListener queueListener = type.getAnnotatedType().getJavaClass().getAnnotation(QueueListener.class);
-			//queueMap.put(queue.queueName(), type.getAnnotatedType().getJavaClass().getName());
+    		
     		LOGGER.info(String.format("setting up queue: %s", queueListener.queueName()));
 
 			try {
@@ -48,7 +45,7 @@ public class SQSBootstrapExtension implements Extension {
 				
 				MessageConsumer consumer = session.createConsumer(queue);
 				
-				MessageListener listener = (MessageListener) Class.forName(queueMap.get(queueListener.queueName())).newInstance();
+				MessageListener listener = (MessageListener) Class.forName(type.getAnnotatedType().getJavaClass().getName()).newInstance();
 				 
 				consumer.setMessageListener(listener);
 				
@@ -59,6 +56,7 @@ public class SQSBootstrapExtension implements Extension {
     } 
 	
 	public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event) {
+		
     	LOGGER.info("beginning the simple queue scanning process");
     	
     	try {
@@ -76,38 +74,9 @@ public class SQSBootstrapExtension implements Extension {
 	
 	public void afterDeploymentValidation(@Observes AfterDeploymentValidation event) {
 		
-//		if (queueMap.isEmpty()) {
-//			return;
-//		}
-//		
-//		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();	
-//		 
-//		try {
-//			connection = connectionFactory.createConnection();
-//			
-//			Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-//			
-//			for (String name : queueMap.keySet()) {
-//				
-//				LOGGER.info(String.format("setting up queue: %s", name));
-//				
-//				Queue queue =  session.createQueue(name);
-//				
-//				MessageConsumer consumer = session.createConsumer(queue);
-//				
-//				LOGGER.info(queueMap.get(name));
-//				
-//				MessageListener listener = (MessageListener) Class.forName(queueMap.get(name)).newInstance();
-//				 
-//				consumer.setMessageListener(listener);
-//			}
-//			
-//		} catch (JMSException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-//			LOGGER.error(e);
-//		}
+		LOGGER.info("starting queue connections");
 		
 		try {
-			Thread.sleep(10000);
 			connection.start();
 			Thread.sleep(1000);
 		} catch (JMSException | InterruptedException e) {

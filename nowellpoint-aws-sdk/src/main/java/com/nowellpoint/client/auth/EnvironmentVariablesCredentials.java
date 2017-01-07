@@ -1,6 +1,6 @@
 package com.nowellpoint.client.auth;
 
-public class EnvironmentVariablesCredentials implements UsernamePasswordCredentials {
+public class EnvironmentVariablesCredentials implements PasswordCredentials {
 	
 	private String username;
 	private String password;

@@ -5,6 +5,7 @@ import java.util.List;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.ScheduledJobType;
@@ -14,12 +15,12 @@ public class ScheduledJobTypeResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "scheduled-job-types";
 
-	public ScheduledJobTypeResource(Token token) {
-		super(token);
+	public ScheduledJobTypeResource(Environment environment, Token token) {
+		super(environment, token);
 	}
 	
 	public GetResult<ScheduledJobType> get(String id) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
@@ -39,7 +40,7 @@ public class ScheduledJobTypeResource extends AbstractResource {
 	}
 
 	public GetResult<List<ScheduledJobType>> getScheduledJobTypesByLanguage(String language) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.queryParameter("languageSidKey", language)

@@ -12,7 +12,7 @@ import com.nowellpoint.client.model.sforce.Theme;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public class Environment {
+public class Instance {
 	
 	private String key;
 	
@@ -60,7 +60,7 @@ public class Environment {
 	
 	private Theme theme;
 	
-	public Environment() {
+	public Instance() {
 		setIsReadOnly(Boolean.FALSE);
 		setIsActive(Boolean.FALSE);
 		setSobjects(Collections.emptyList());
@@ -250,32 +250,32 @@ public class Environment {
 		this.theme = theme;
 	}
 
-	public Environment withEnvironmentName(String environmentName) {
+	public Instance withEnvironmentName(String environmentName) {
 		setEnvironmentName(environmentName);
 		return this;
 	}
 	
-	public Environment withIsActive(Boolean active) {
+	public Instance withIsActive(Boolean active) {
 		setIsActive(active);
 		return this;
 	}
 	
-	public Environment withAuthEndpoint(String authEndpoint) {
+	public Instance withAuthEndpoint(String authEndpoint) {
 		setAuthEndpoint(authEndpoint);
 		return this;
 	}
 	
-	public Environment withUsername(String username) {
+	public Instance withUsername(String username) {
 		setUsername(username);
 		return this;
 	}
 	
-	public Environment withPassword(String password) {
+	public Instance withPassword(String password) {
 		setPassword(password);
 		return this;
 	}
 	
-	public Environment withSecurityToken(String securityToken) {
+	public Instance withSecurityToken(String securityToken) {
 		setSecurityToken(securityToken);
 		return this;
 	}

@@ -18,7 +18,7 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.Environment;
+import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
@@ -201,9 +201,9 @@ public class ScheduledJobController extends AbstractController {
 			
 			SalesforceConnector salesforceConnector = getResult.getTarget();
 			
-			List<Environment> environments = salesforceConnector.getEnvironments();
+			List<Instance> instances = salesforceConnector.getEnvironments();
 			
-			model.put("environments", environments);
+			model.put("environments", instances);
 		}
 		
     	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
@@ -227,7 +227,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
-		GetResult<Environment> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.environment()
 				.get(scheduledJob.getConnectorId(), environmentKey);

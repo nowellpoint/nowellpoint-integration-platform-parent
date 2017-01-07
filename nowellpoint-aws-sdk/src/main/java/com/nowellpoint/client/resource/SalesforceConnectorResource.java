@@ -6,30 +6,31 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.SalesforceConnector;
-import com.nowellpoint.client.model.SalesforceConnectorRequest;
-import com.nowellpoint.client.model.Token;
-import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Environment;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.SObjectDetail;
+import com.nowellpoint.client.model.Instance;
+import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorRequest;
+import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 
 public class SalesforceConnectorResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "connectors";
 	
-	public SalesforceConnectorResource(Token token) {
-		super(token);
+	public SalesforceConnectorResource(Environment environment, Token token) {
+		super(environment, token);
 	}
 	
 	public CreateResult<SalesforceConnector> create(CreateSalesforceConnectorRequest request) {
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
@@ -54,7 +55,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 	}
 	
 	public GetResult<List<SalesforceConnector>> getSalesforceConnectors() {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -76,7 +77,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 	}
 	
 	public GetResult<SalesforceConnector> get(String id) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
@@ -100,7 +101,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 	}
 	
 	public UpdateResult<SalesforceConnector> update(String id, SalesforceConnectorRequest salesforceConnectorRequest) {
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
@@ -126,7 +127,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 	}
 	
 	public DeleteResult delete(String id) {
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("connectors")
     			.path("salesforce")
@@ -146,17 +147,17 @@ public class SalesforceConnectorResource extends AbstractResource {
 	}
 	
 	public EnvironmentResource environment() {
-		return new EnvironmentResource(token);
+		return new EnvironmentResource(environment, token);
 	}
 	
 	public class SObjectDetailResource extends AbstractResource {
 		
-		public SObjectDetailResource(Token token) {
-			super(token);
+		public SObjectDetailResource(Environment environment, Token token) {
+			super(environment, token);
 		}
 		
 		public GetResult<SObjectDetail> get(String salesforceConnectorId, String key, String sobjectName) {
-			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
@@ -183,12 +184,12 @@ public class SalesforceConnectorResource extends AbstractResource {
 	
 	public class EnvironmentResource extends AbstractResource {
 		
-		public EnvironmentResource(Token token) {
-			super(token);
+		public EnvironmentResource(Environment environment, Token token) {
+			super(environment, token);
 		}
 		
-		public GetResult<Environment> get(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		public GetResult<Instance> get(String salesforceConnectorId, String key) {
+			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
@@ -198,11 +199,11 @@ public class SalesforceConnectorResource extends AbstractResource {
 	    			.path(key)
 	    			.execute();
 			
-			GetResult<Environment> result = null;
+			GetResult<Instance> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				Environment resource = httpResponse.getEntity(Environment.class);
-				result = new GetResultImpl<Environment>(resource);  
+				Instance resource = httpResponse.getEntity(Instance.class);
+				result = new GetResultImpl<Instance>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} 
@@ -210,8 +211,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 			return result;
 		}
 		
-		public CreateResult<Environment> add(String salesforceConnectorId, EnvironmentRequest environmentRequest) {
-			Environment environment = new Environment()
+		public CreateResult<Instance> add(String salesforceConnectorId, EnvironmentRequest environmentRequest) {
+			Instance instance = new Instance()
 					.withIsActive(environmentRequest.getIsActive())
 					.withAuthEndpoint(environmentRequest.getAuthEndpoint())
 					.withEnvironmentName(environmentRequest.getEnvironmentName())
@@ -219,7 +220,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.withUsername(environmentRequest.getUsername())
 					.withSecurityToken(environmentRequest.getSecurityToken());
 			
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
@@ -227,24 +228,24 @@ public class SalesforceConnectorResource extends AbstractResource {
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
 	    			.path("environment")
-	    			.body(environment)
+	    			.body(instance)
 					.execute();
 			
-			CreateResult<Environment> result = null;
+			CreateResult<Instance> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				Environment resource = httpResponse.getEntity(Environment.class);
-				result = new CreateResultImpl<Environment>(resource);  
+				Instance resource = httpResponse.getEntity(Instance.class);
+				result = new CreateResultImpl<Instance>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new CreateResultImpl<Environment>(error);
+				result = new CreateResultImpl<Instance>(error);
 			}
 			
 			return result;
 		}
 		
-		public UpdateResult<Environment> update(String salesforceConnectorId, String key, EnvironmentRequest environmentRequest) {
-			Environment environment = new Environment()
+		public UpdateResult<Instance> update(String salesforceConnectorId, String key, EnvironmentRequest environmentRequest) {
+			Instance instance = new Instance()
 					.withIsActive(environmentRequest.getIsActive())
 					.withAuthEndpoint(environmentRequest.getAuthEndpoint())
 					.withEnvironmentName(environmentRequest.getEnvironmentName())
@@ -252,7 +253,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.withUsername(environmentRequest.getUsername())
 					.withSecurityToken(environmentRequest.getUsername());
 			
-			HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.put(environment.getEnvironmentUrl())
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
@@ -261,26 +262,26 @@ public class SalesforceConnectorResource extends AbstractResource {
 	    			.path(salesforceConnectorId)
 	    			.path("environment")
 	    			.path(key)
-	    			.body(environment)
+	    			.body(instance)
 					.execute();
 			
-			UpdateResult<Environment> result = null;
+			UpdateResult<Instance> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				Environment resource = httpResponse.getEntity(Environment.class);
-				result = new UpdateResultImpl<Environment>(resource);  
+				Instance resource = httpResponse.getEntity(Instance.class);
+				result = new UpdateResultImpl<Instance>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Environment>(error);
+				result = new UpdateResultImpl<Instance>(error);
 			}
 			
 			return result;
 		}
 		
 		public DeleteResult delete(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("connectors")
 	    			.path("salesforce")
@@ -301,8 +302,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 			return deleteResult;
 		}
 		
-		public UpdateResult<Environment> test(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		public UpdateResult<Instance> test(String salesforceConnectorId, String key) {
+			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
 					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
@@ -315,23 +316,23 @@ public class SalesforceConnectorResource extends AbstractResource {
 	    			.path("invoke")
 	    			.execute();
 			
-			UpdateResult<Environment> result = null;
+			UpdateResult<Instance> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				Environment resource = httpResponse.getEntity(Environment.class);
-				result = new UpdateResultImpl<Environment>(resource);  
+				Instance resource = httpResponse.getEntity(Instance.class);
+				result = new UpdateResultImpl<Instance>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Environment>(error);
+				result = new UpdateResultImpl<Instance>(error);
 			}
 			
 			return result;
 		}
 		
-		public UpdateResult<Environment> build(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		public UpdateResult<Instance> build(String salesforceConnectorId, String key) {
+			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
 					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
@@ -344,23 +345,23 @@ public class SalesforceConnectorResource extends AbstractResource {
 	    			.path("invoke")
 	    			.execute();
 			
-			UpdateResult<Environment> result = null;
+			UpdateResult<Instance> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				Environment resource = httpResponse.getEntity(Environment.class);
-				result = new UpdateResultImpl<Environment>(resource);  
+				Instance resource = httpResponse.getEntity(Instance.class);
+				result = new UpdateResultImpl<Instance>(resource);  
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Environment>(error);
+				result = new UpdateResultImpl<Instance>(error);
 			}
 			
 			return result;
 		}
 		
 		public SObjectDetailResource sobjectDetail() {
-			return new SObjectDetailResource(token);
+			return new SObjectDetailResource(environment, token);
 		}
 	}
 }

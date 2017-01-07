@@ -11,10 +11,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.http.Header;
@@ -35,6 +38,8 @@ import org.apache.http.message.BasicNameValuePair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class HttpRequest {
+	
+	private static final Logger LOG = Logger.getLogger(HttpRequest.class.getName());
 	
 	private ObjectMapper objectMapper;
 	private HttpMethod httpMethod;
@@ -180,6 +185,8 @@ public abstract class HttpRequest {
 			
 			CloseableHttpClient httpClient = HttpClients.createDefault();
 			CloseableHttpResponse httpResponse = null;
+			
+			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, uri.getPath()));
 			
 			if (HttpMethod.POST.equals(httpMethod)) {
 				HttpPost post = new HttpPost(uri);

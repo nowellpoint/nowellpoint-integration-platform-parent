@@ -5,6 +5,7 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Token;
@@ -14,8 +15,8 @@ public class SalesforceResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "salesforce";
 	
-	public SalesforceResource(Token token) {
-		super(token);
+	public SalesforceResource(Environment environment, Token token) {
+		super(environment, token);
 	}
 	
 	/**
@@ -24,7 +25,7 @@ public class SalesforceResource extends AbstractResource {
 	 */
 	
 	public GetResult<String> getOauthRedirect() {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
     			.path(RESOURCE_CONTEXT)
     			.path("oauth")
@@ -50,7 +51,7 @@ public class SalesforceResource extends AbstractResource {
 	 */
 	
 	public GetResult<OauthToken> getOauthToken(String code) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
     			.path(RESOURCE_CONTEXT)
