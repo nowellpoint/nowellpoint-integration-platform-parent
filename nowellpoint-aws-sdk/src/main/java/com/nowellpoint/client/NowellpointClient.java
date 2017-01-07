@@ -19,13 +19,20 @@ import com.nowellpoint.client.resource.UserResource;
 
 public class NowellpointClient {
 	
+	private static Environment environment;
+	
 	private static Token token;
 	
 	public NowellpointClient() {
-		
+		if (System.getenv("NOWELLPOINT_API_ENDPOINT")  != null) {
+			environment = Environment.parseEnvironment("sandbox");
+		} else {
+			environment = Environment.parseEnvironment("production");
+		}
 	}
 	
 	public NowellpointClient(UsernamePasswordCredentials credentials) {
+		this();
 		PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setUsername(credentials.getUsername())
 				.setPassword(credentials.getPassword())
@@ -38,6 +45,7 @@ public class NowellpointClient {
 	}
 	
 	public NowellpointClient(TokenCredentials credentials) {
+		this();
 		token = credentials.getToken();
 	}
 	

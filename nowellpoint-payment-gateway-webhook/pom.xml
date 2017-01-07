@@ -24,6 +24,11 @@
 			<version>1.1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-sqs</artifactId>
+			<version>${version.aws.sdk}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.braintreepayments.gateway</groupId>
 			<artifactId>braintree-java</artifactId>
 			<version>${version.braintree.sdk}</version>

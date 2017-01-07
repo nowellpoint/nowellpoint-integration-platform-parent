@@ -318,6 +318,11 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		return accountProfile.getSubscription();
 	}
 	
+	/**
+	 * 
+	 * 
+	 */
+	
 	public void setSubscription(String accountProfileId, String paymentMethodToken, Subscription subscription) {
 		AccountProfile accountProfile = findById( accountProfileId );
 		
@@ -625,5 +630,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		} else {
 			LOGGER.error(creditCardResult.getMessage());
 		}
+	}
+	
+	public AccountProfile findBySubscriptionId(String subscriptionId) {
+		return super.findBySubscriptionId(subscriptionId);
 	}
 }

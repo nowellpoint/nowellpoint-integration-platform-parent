@@ -24,8 +24,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * @param id primary key for the AccountProfile
-	 * @return AccountProfile for id
 	 */
 	
 	protected AccountProfile findById(String id) {
@@ -35,7 +33,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * @param accountProfile the record to be created
 	 */
 	
 	protected void createAccountProfile(AccountProfile accountProfile) {
@@ -47,7 +44,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * @param accountProfile the record to be updated
 	 */
 	
 	protected void updateAccountProfile(AccountProfile accountProfile) {
@@ -59,7 +55,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * @param accountProfile the record the be deleted
 	 */
 	
 	protected void deleteAccountProfile(AccountProfile accountProfile) {
@@ -70,8 +65,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * @param href the value of href for looking up AccountProfile
-	 * @return the AccountProfile that was found
 	 */
 	
 	protected AccountProfile findByAccountHref(String accountHref) {
@@ -82,13 +75,21 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	/**
 	 * 
-	 * @param username the value of username for looking up AccountProfile
-	 * @return the AccountProfile that matches username
 	 */
 	
 	protected AccountProfile findAccountProfileByUsername(String username) {
 		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "username", username ) );
 		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
 		return accountProfile; 
+	}
+	
+	/**
+	 * 
+	 */
+	
+	protected AccountProfile findBySubscriptionId(String subscriptionId) {
+		com.nowellpoint.api.model.document.AccountProfile document = findOne( eq ( "subscription.subscriptionId", subscriptionId ) );
+		AccountProfile accountProfile = modelMapper.map(document, AccountProfile.class);
+		return accountProfile;
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +14,13 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
+import com.braintreegateway.Subscription;
 import com.braintreegateway.WebhookNotification;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,32 +51,53 @@ public class PaymentGatewayHandler implements RequestStreamHandler {
 		
 		gateway.clientToken().generate();
 		
-		String signature = null;
-		String payload = null;
-		
-		for (NameValuePair param : params) {
-			if ("bt_signature".equals(param.getName())) {
-				signature = param.getValue();
-			}
-			if ("bt_payload".equals(param.getName())) {
-				payload = param.getValue();
-			}
-		}
-		
-		Map<String, String> sampleNotification = gateway.webhookTesting().sampleNotification(
-				WebhookNotification.Kind.SUBSCRIPTION_CHARGED_SUCCESSFULLY, "4hnmnr"
-		);
+		String signature = getValue(params, "bt_signature");
+		String payload = getValue(params, "bt_payload");
 		
 		WebhookNotification webhookNotification = gateway.webhookNotification().parse(
 				signature,
 				payload
-				//sampleNotification.get("bt_signature"),
-				//sampleNotification.get("bt_payload")
 		);
 		
-		System.out.println("[Webhook Received " + webhookNotification.getTimestamp().getTime() + "] | Kind: " + webhookNotification.getKind());
+		logger.log("[Webhook Received " + webhookNotification.getTimestamp().getTime() + "] | Kind: " + webhookNotification.getKind());
 		
-		System.out.println("[Subscription Id Received " + webhookNotification.getSubscription().getId());
+		if (! webhookNotification.getKind().equals(WebhookNotification.Kind.CHECK)) {
+
+			logger.log("[Subscription Id Received " + webhookNotification.getSubscription().getId());
+			
+			Subscription subscription = webhookNotification.getSubscription();
+			
+			Map<String, MessageAttributeValue> messageAttributes = new HashMap<String, MessageAttributeValue>();
+			messageAttributes.put("WEBHOOK_NOTIFICATION_INSTANCE", new MessageAttributeValue().withDataType("String").withStringValue(node.get("instance").asText()));
+	        messageAttributes.put("WEBHOOK_NOTIFICATION_KIND", new MessageAttributeValue().withDataType("String").withStringValue(webhookNotification.getKind().name()));
+			
+			AmazonSQS sqs = new AmazonSQSClient();
+			
+			SendMessageRequest sendMessageRequest = new SendMessageRequest().withQueueUrl("https://sqs.us-east-1.amazonaws.com/600862814314/PAYMENT_GATEWAY_INBOUND")
+	        		.withMessageBody(objectMapper.writeValueAsString(subscription))
+	        		.withMessageAttributes(messageAttributes);
+	        
+	        sqs.sendMessage(sendMessageRequest);
+			
+			
+			/**
+			 * WebhookNotification.Kind.SUBSCRIPTION_CANCELED
+		WebhookNotification.Kind.SUBSCRIPTION_CHARGED_SUCCESSFULLY
+		WebhookNotification.Kind.SUBSCRIPTION_CHARGED_UNSUCCESSFULLY
+		WebhookNotification.Kind.SUBSCRIPTION_EXPIRED
+		WebhookNotification.Kind.SUBSCRIPTION_TRIAL_ENDED
+		WebhookNotification.Kind.SUBSCRIPTION_WENT_ACTIVE
+		WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 		
+			 */
+		}
+	}
+	
+	private String getValue(List<NameValuePair> params, String name) {
+		return params.stream()
+				.filter(param -> param.getName().equals(name))
+				.findFirst()
+				.get()
+				.getValue();
 	}
 }
