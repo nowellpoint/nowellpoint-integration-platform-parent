@@ -146,8 +146,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 		return deleteResult;
 	}
 	
-	public EnvironmentResource environment() {
-		return new EnvironmentResource(environment, token);
+	public InstanceResource instance() {
+		return new InstanceResource(environment, token);
 	}
 	
 	public class SObjectDetailResource extends AbstractResource {
@@ -182,9 +182,9 @@ public class SalesforceConnectorResource extends AbstractResource {
 		}
 	}
 	
-	public class EnvironmentResource extends AbstractResource {
+	public class InstanceResource extends AbstractResource {
 		
-		public EnvironmentResource(Environment environment, Token token) {
+		public InstanceResource(Environment environment, Token token) {
 			super(environment, token);
 		}
 		

@@ -1,7 +1,7 @@
 <#import "template.html" as t>
     <@t.page>
         <div>
-            <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
+            <a href="${labels['base.path']}/${id}#instances" id="back" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
         </div>
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
@@ -15,9 +15,9 @@
         <div class="hr-divider"></div>
         <br>
         <div class="flexgrid">
-            <#list environment.sobjects?sort_by( "label") as sobject>
+            <#list instance.sobjects?sort_by( "label") as sobject>
                 <div class="offer offer-radius offer-info">
-                    <a href="${labels['base.path']}/${id}/environments/${environment.key}/sobject/${sobject.name}" style="text-decoration: none">
+                    <a href="${labels['base.path']}/${id}/environments/${instance.key}/sobject/${sobject.name}" style="text-decoration: none">
                         <div class="offer-content">
                             <h3 class="lead">
 							<#if icons[ "${sobject.name}"]??>

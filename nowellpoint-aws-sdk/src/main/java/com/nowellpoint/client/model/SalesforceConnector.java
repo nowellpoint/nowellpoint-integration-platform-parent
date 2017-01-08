@@ -1,7 +1,6 @@
 package com.nowellpoint.client.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,7 +23,7 @@ public class SalesforceConnector extends AbstractResource {
 	private List<Instance> instances;
 	
 	public SalesforceConnector() {
-		setEnvironments(Collections.emptyList());
+		setInstances(new ArrayList<Instance>());
 	}
 	
 	public SalesforceConnector(String id) {
@@ -71,14 +70,11 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public List<Instance> getEnvironments() {
-		if (instances == null) {
-			setEnvironments(new ArrayList<Instance>());
-		}
+	public List<Instance> getInstances() {
 		return instances;
 	}
 
-	public void setEnvironments(List<Instance> instances) {
+	public void setInstances(List<Instance> instances) {
 		this.instances = instances;
 	}
 }

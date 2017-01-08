@@ -42,7 +42,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.domain.Backup;
-import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.ScheduledJob;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
@@ -118,13 +118,13 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// get environment associated with the ScheduledJob
 			//
 			
-			Environment environment = salesforceConnectorService.getEnvironment(scheduledJob.getConnectorId(), scheduledJob.getEnvironmentKey());
+			Instance instance = salesforceConnectorService.getEnvironment(scheduledJob.getConnectorId(), scheduledJob.getEnvironmentKey());
 			
 			//
 			// get User Properties
 			//
 			
-			Map<String, UserProperty> properties = getUserProperties(environment.getKey());
+			Map<String, UserProperty> properties = getUserProperties(instance.getKey());
 			
 			// 
 			// authenticate to the environment
@@ -132,8 +132,8 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			
 			String accessToken = null;
 			
-			if ("password".equals(environment.getGrantType())) {
-				accessToken = authenticate(environment.getAuthEndpoint(), environment.getUsername(), properties.get("password").getValue(), properties.get("securityToken").getValue());
+			if ("password".equals(instance.getGrantType())) {
+				accessToken = authenticate(instance.getAuthEndpoint(), instance.getUsername(), properties.get("password").getValue(), properties.get("securityToken").getValue());
 			} else {
 				accessToken = authenticate(properties.get("refresh.token").getValue());
 			}
@@ -142,7 +142,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// get the identity of the user associate to the environment
 			//
 			
-			Identity identity = getIdentity(accessToken, environment.getIdentityId());
+			Identity identity = getIdentity(accessToken, instance.getIdentityId());
 			
 			// 
 			// DescribeGlobal
@@ -154,7 +154,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// create keyName
 			//
 			
-			String keyName = String.format("%s/DescribeGlobalResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+			String keyName = String.format("%s/DescribeGlobalResult-%s", instance.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
 			
 			//
 			// write the result to S3
@@ -184,7 +184,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 				// create keyName
 				//
 				
-				keyName = String.format("%s/DescribeSobjectResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+				keyName = String.format("%s/DescribeSobjectResult-%s", instance.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
 				
 				//
 				// write the result to S3
@@ -203,7 +203,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// add theme
 			//
 			
-			keyName = String.format("%s/Theme-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+			keyName = String.format("%s/Theme-%s", instance.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
 			
 			//
 			// get theme
@@ -233,8 +233,8 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// udpate environment with lastest information
 			//
 			
-			environment.setTheme(theme);
-			environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+			instance.setTheme(theme);
+			instance.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 			
 			//
 			// create and add RunHistory

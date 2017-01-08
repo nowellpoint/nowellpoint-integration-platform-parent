@@ -3,7 +3,7 @@
 
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["environment.detail"]}</h3>
+                <h3 class="dashhead-title">${labels["instance.detail"]}</h3>
             </div>
         </div>
         <div class="hr-divider"></div>
@@ -26,8 +26,8 @@
 
                 <div class="row">
                     <div class="form-group col-md-2">
-                        <label class="control-label" for="environmentName">${labels["environment.name"]}</label>
-                        <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(environment.environmentName)!}" required autofocus="" tabindex="1" />
+                        <label class="control-label" for="environmentName">${labels["instance.name"]}</label>
+                        <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(instance.environmentName)!}" required autofocus="" tabindex="1" />
                     </div>
                     <div class="col-md-10"></div>
                 </div>
@@ -35,12 +35,12 @@
                 <div class="row">
                     <div class="form-group col-md-2">
                         <label class="control-label" for="authEndpoint">${labels["auth.endpoint"]}</label>
-                        <!-- <#if environment.isReadOnly> -->
-                        <input type="hidden" name="authEndpoint" value="${(environment.authEndpoint)!}" />
-                        <input type="text" class="form-control" value="${(environment.authEndpoint)!}" disabled tabindex="2" />
+                        <!-- <#if instance.isReadOnly> -->
+                        <input type="hidden" name="authEndpoint" value="${(instance.authEndpoint)!}" />
+                        <input type="text" class="form-control" value="${(instance.authEndpoint)!}" disabled tabindex="2" />
                         <!-- <#else> -->
                         <select id="authEndpoint" name="authEndpoint" class="form-control" required tabindex="2">
-                            <!-- <#if environment.authEndpoint=="https://login.salesforce.com"> -->
+                            <!-- <#if instance.authEndpoint=="https://login.salesforce.com"> -->
                             <option value="https://login.salesforce.com" selected>Production - https://login.salesforce.com</option>
                             <option value="https://test.salesforce.com">Sandbox - https://test.salesforce.com</option>
                             <!-- <#else> -->
@@ -56,11 +56,11 @@
                 <div class="row">
                     <div class="form-group col-md-2">
                         <label class="control-label" for="username">${labels["username"]}</label>
-                        <!-- <#if environment.isReadOnly> -->
-                            <input type="hidden" name="username" value="${(environment.username)!}" />
-                            <input type="text" class="form-control" value="${(environment.username)!}" disabled tabindex="3" />
+                        <!-- <#if instance.isReadOnly> -->
+                            <input type="hidden" name="username" value="${(instance.username)!}" />
+                            <input type="text" class="form-control" value="${(instance.username)!}" disabled tabindex="3" />
                             <!-- <#else> -->
-                            <input type="text" class="form-control" name="username" id="username" value="${(environment.username)!}" required tabindex="3" />
+                            <input type="text" class="form-control" name="username" id="username" value="${(instance.username)!}" required tabindex="3" />
                         <!-- </#if> -->
                     </div>
                     <div class="col-md-10"></div>
@@ -69,10 +69,10 @@
                 <div class="row">
                     <div class="form-group col-md-2">
                         <label class="control-label" for="password">${labels["password"]}</label>
-                        <!-- <#if environment.isReadOnly> -->
-                            <input type="password" class="form-control" value="${(environment.password)!}" disabled tabindex="4" />
+                        <!-- <#if instance.isReadOnly> -->
+                            <input type="password" class="form-control" value="${(instance.password)!}" disabled tabindex="4" />
                             <!-- <#else> -->
-                            <input type="password" class="form-control" name="password" id="password" value="${(environment.password)!}" required tabindex="4" />
+                            <input type="password" class="form-control" name="password" id="password" value="${(instance.password)!}" required tabindex="4" />
                         <!-- </#if> -->
                     </div>
                     <div class="col-md-10"></div>
@@ -81,10 +81,10 @@
                 <div class="row">
                     <div class="form-group col-md-2">
                         <label class="control-label" for="securityToken">${labels["security.token"]}</label>
-                        <!-- <#if environment.isReadOnly> -->
-                            <input type="password" class="form-control" value="${(environment.securityToken)!}" disabled tabindex="5" />
+                        <!-- <#if instance.isReadOnly> -->
+                            <input type="password" class="form-control" value="${(instance.securityToken)!}" disabled tabindex="5" />
                             <!-- <#else> -->
-                            <input type="password" class="form-control" name="securityToken" id="securityToken" value="${(environment.securityToken)!}" required tabindex="5" />
+                            <input type="password" class="form-control" name="securityToken" id="securityToken" value="${(instance.securityToken)!}" required tabindex="5" />
                         <!-- </#if> -->
                     </div>
                     <div class="col-md-10"></div>
@@ -95,7 +95,7 @@
                     <div class="row">
                         <div class="form-group col-md-2">
                             <label class="control-label" for="organization">${labels["organization.name"]}</label>
-                            <input type="text" class="form-control" name="organization" id="organization" value="${(environment.organizationName)!}" disabled tabindex="6" />
+                            <input type="text" class="form-control" name="organization" id="organization" value="${(instance.organizationName)!}" disabled tabindex="6" />
                             <div class="col-md-10"></div>
                         </div>
                         <div class="col-md-10"></div>
@@ -104,7 +104,7 @@
                     <div class="row">
                         <div class="form-group col-md-2">
                             <label class="control-label" for="serviceEndpoint">${labels["service.endpoint"]}</label>
-                            <input type="text" class="form-control" name="serviceEndpoint" id="serviceEndpoint" value="${(environment.serviceEndpoint)!}" disabled tabindex="7" />
+                            <input type="text" class="form-control" name="serviceEndpoint" id="serviceEndpoint" value="${(instance.serviceEndpoint)!}" disabled tabindex="7" />
                         </div>
                         <div class="col-md-10"></div>
                     </div>
@@ -112,7 +112,7 @@
                     <div class="row">
                         <div class="form-group col-md-2">
                             <label class="control-label" for="apiVersion">${labels["api.version"]}</label>
-                            <input type="text" class="form-control" name="apiVersion" id="apiVersion" value="${(environment.apiVersion)!}" disabled tabindex="8" />
+                            <input type="text" class="form-control" name="apiVersion" id="apiVersion" value="${(instance.apiVersion)!}" disabled tabindex="8" />
                         </div>
                         <div class="col-md-10"></div>
                     </div>
@@ -122,7 +122,7 @@
                 <div class="row">
                     <div class="form-group col-md-2">
                         <div class="pull-right">
-                            <a href="${labels['base.path']}/${id}#environments" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
+                            <a href="${labels['base.path']}/${id}#instances" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
                             <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
                         </div>
                     </div>
@@ -138,39 +138,39 @@
 
                 <div class="col-md-3">
                     <dl class="dl-vertical">
-                        <dt>${labels["environment.name"]}</dt>
-                        <dd>${(environment.environmentName)!}&emsp;</dd>
+                        <dt>${labels["instance.name"]}</dt>
+                        <dd>${(instance.environmentName)!}&emsp;</dd>
                         <hr>
                         <dt>${labels["username"]}</dt>
-                        <dd>${(environment.username)!}&emsp;</dd>
+                        <dd>${(instance.username)!}&emsp;</dd>
                         <hr>
                         <dt>${labels["organization.name"]}</dt>
-                        <dd>${(environment.organizationName)!}&emsp;</dd>
+                        <dd>${(instance.organizationName)!}&emsp;</dd>
                         <hr>
                         <dt>${labels["service.endpoint"]}</dt>
-                        <dd>${(environment.serviceEndpoint)!}&emsp;</dd>
+                        <dd>${(instance.serviceEndpoint)!}&emsp;</dd>
                         <hr>
                         <dt>${messages["added.on"]}</dt>
-                        <dd>${(environment.addedOn?date?string.iso)!} ${environment.addedOn?time?string.medium!}</dd>
+                        <dd>${(instance.addedOn?date?string.iso)!} ${instance.addedOn?time?string.medium!}</dd>
                     </dl>
                 </div>
 
                 <div class="col-md-3">
                     <dl class="dl-vertical">
                         <dt>${labels["auth.endpoint"]}</dt>
-                        <dd>${(environment.authEndpoint)!}&emsp;</dd>
+                        <dd>${(instance.authEndpoint)!}&emsp;</dd>
                         <hr>
                         <dt>${labels["user.id"]}</dt>
-                        <dd>${(environment.userId)!}&emsp;</dd>
+                        <dd>${(instance.userId)!}&emsp;</dd>
                         <hr>
                         <dt>${labels["organization.id"]}</dt>
-                        <dd>${(environment.organizationId)!}&emsp;</dd>
+                        <dd>${(instance.organizationId)!}&emsp;</dd>
                         <hr>
                         <dt>${labels["api.version"]}</dt>
-                        <dd>${(environment.apiVersion)!}&emsp;</dd>
+                        <dd>${(instance.apiVersion)!}&emsp;</dd>
                         <hr>
                         <dt>${messages["updated.on"]}</dt>
-                        <dd>${(environment.updatedOn?date?string.iso)!} ${environment.updatedOn?time?string.medium!}</dd>
+                        <dd>${(instance.updatedOn?date?string.iso)!} ${instance.updatedOn?time?string.medium!}</dd>
                     </dl>
                 </div>
 
@@ -179,11 +179,11 @@
 
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <a href="${labels['base.path']}/${id}#environments" id="back" class="btn btn-default" role="button">${labels["back"]}</a>
-                        <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
-                        <a href="${labels['base.path']}/${id}/environments/${(environment.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
-                        <#if environment.isSandbox>
-                            <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/environments/${environment.key}" data-id="${environment.key}" data-title="${labels['remove.environment']}" data-message="${labels['environment.name']}: ${environment.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
+                        <a href="${labels['base.path']}/${id}#instances" id="back" class="btn btn-default" role="button">${labels["back"]}</a>
+                        <a href="${labels['base.path']}/${id}/environments/${(instance.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                        <a href="${labels['base.path']}/${id}/environments/${(instance.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
+                        <#if instance.isSandbox>
+                            <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/environments/${instance.key}" data-id="${instance.key}" data-title="${labels['remove.environment']}" data-message="${labels['instance.name']}: ${instance.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                         </#if>
                     </div>
                 </div>
@@ -203,19 +203,19 @@
                     type: "POST",
                     dataType: "json",
                     data: $("#enviroment-form").serialize(),
-                    url: "${labels['base.path']}/${id}/environments/${(environment.key)!}/test",
+                    url: "${labels['base.path']}/${id}/environments/${(instance.key)!}/test",
                     success: function(response) {
                         var environment = response;
-                        if (environment.isValid) {
-                            $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + environment.testMessage + '</div></div>');
+                        if (instance.isValid) {
+                            $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + instance.testMessage + '</div></div>');
                         } else {
-                            $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + environment.testMessage + '</div></div>');
+                            $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + instance.testMessage + '</div></div>');
                         }
                     }
                 });
             });
         </script>
 
-        <script src="/js/environment.js"></script>
+        <script src="/js/instance.js"></script>
 
     </@t.page>

@@ -1,49 +1,24 @@
-package com.nowellpoint.api.model.document;
+package com.nowellpoint.api.model.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
-import com.nowellpoint.mongodb.document.DateDeserializer;
-import com.nowellpoint.mongodb.document.DateSerializer;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Environment implements Serializable {
+public class Instance {
 	
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -3274823131929250524L;
-
 	private String key;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date addedOn;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date updatedOn;
-	
-	private String grantType;
 	
 	private String environmentName;
 	
+	private String grantType;
+	
 	private Boolean isActive;
-	
-	private Boolean isReadOnly;
-	
-	private String identityId;
-	
-	private String organizationId;
-	
-	private String organizationName;
 	
 	private String serviceEndpoint;
 	
@@ -51,17 +26,29 @@ public class Environment implements Serializable {
 	
 	private String apiVersion;
 	
+	private String identityId;
+	
 	private String userId;
 	
 	private String username;
 	
-	private Boolean isSandbox;
+	private String password;
 	
-	private String accessToken;
+	private String securityToken;
 	
 	private String refreshToken;
 	
+	private Boolean isSandbox;
+	
+	private String organizationId;
+	
+	private String organizationName;
+	
+	private Boolean isReadOnly;
+	
 	private Boolean isValid;
+	
+	private String testMessage;
 	
 	private String email;
 	
@@ -69,14 +56,8 @@ public class Environment implements Serializable {
 	
 	private Theme theme;
 	
-	public Environment() {
+	public Instance() {
 
-	}
-	
-	public Environment(String name, Boolean active) {
-		super();
-		setEnvironmentName(name);
-		setIsActive(active);
 	}
 	
 	public String getKey() {
@@ -103,14 +84,6 @@ public class Environment implements Serializable {
 		this.updatedOn = updatedOn;
 	}
 
-	public String getGrantType() {
-		return grantType;
-	}
-
-	public void setGrantType(String grantType) {
-		this.grantType = grantType;
-	}
-
 	public String getEnvironmentName() {
 		return environmentName;
 	}
@@ -119,28 +92,20 @@ public class Environment implements Serializable {
 		this.environmentName = environmentName;
 	}
 
+	public String getGrantType() {
+		return grantType;
+	}
+
+	public void setGrantType(String grantType) {
+		this.grantType = grantType;
+	}
+
 	public Boolean getIsActive() {
 		return isActive;
 	}
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
-	}
-
-	public Boolean getIsReadOnly() {
-		return isReadOnly;
-	}
-
-	public void setIsReadOnly(Boolean isReadOnly) {
-		this.isReadOnly = isReadOnly;
-	}
-
-	public String getIdentityId() {
-		return identityId;
-	}
-
-	public void setIdentityId(String identityId) {
-		this.identityId = identityId;
 	}
 
 	public String getOrganizationId() {
@@ -158,7 +123,7 @@ public class Environment implements Serializable {
 	public void setOrganizationName(String organizationName) {
 		this.organizationName = organizationName;
 	}
-
+	
 	public String getServiceEndpoint() {
 		return serviceEndpoint;
 	}
@@ -183,6 +148,14 @@ public class Environment implements Serializable {
 		this.apiVersion = apiVersion;
 	}
 
+	public String getIdentityId() {
+		return identityId;
+	}
+
+	public void setIdentityId(String identityId) {
+		this.identityId = identityId;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -199,20 +172,20 @@ public class Environment implements Serializable {
 		this.username = username;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public String getAccessToken() {
-		return accessToken;
+	public String getSecurityToken() {
+		return securityToken;
 	}
 
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
+	public void setSecurityToken(String securityToken) {
+		this.securityToken = securityToken;
 	}
 
 	public String getRefreshToken() {
@@ -223,12 +196,36 @@ public class Environment implements Serializable {
 		this.refreshToken = refreshToken;
 	}
 
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}
+
+	public Boolean getIsReadOnly() {
+		return isReadOnly;
+	}
+
+	public void setIsReadOnly(Boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
+	}
+
 	public Boolean getIsValid() {
 		return isValid;
 	}
 
 	public void setIsValid(Boolean isValid) {
 		this.isValid = isValid;
+	}
+
+	public String getTestMessage() {
+		return testMessage;
+	}
+
+	public void setTestMessage(String testMessage) {
+		this.testMessage = testMessage;
 	}
 
 	public String getEmail() {

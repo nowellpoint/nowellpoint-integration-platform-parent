@@ -33,7 +33,7 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private String tag;
 	
-	private Set<Environment> environments;
+	private Set<Instance> instances;
 	
 	public SalesforceConnector() {
 		
@@ -95,11 +95,11 @@ public class SalesforceConnector extends MongoDocument {
 		this.tag = tag;
 	}
 
-	public Set<Environment> getEnvironments() {
-		return environments;
+	public Set<Instance> getInstances() {
+		return instances;
 	}
 
-	public void setEnvironments(Set<Environment> environments) {
-		this.environments = environments;
+	public void setInstances(Set<Instance> instances) {
+		this.instances = instances;
 	}
 }

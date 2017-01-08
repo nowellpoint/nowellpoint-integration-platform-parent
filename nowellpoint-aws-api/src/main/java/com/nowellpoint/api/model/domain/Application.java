@@ -11,7 +11,7 @@ public class Application extends AbstractResource {
 	
 	private String description;
 	
-	private Set<Environment> environments;
+	private Set<Instance> instances;
 	
 	private String status;
 	
@@ -43,19 +43,19 @@ public class Application extends AbstractResource {
 		this.description = description;
 	}
 
-	public Set<Environment> getEnvironments() {
-		return environments;
+	public Set<Instance> getEnvironments() {
+		return instances;
 	}
 
-	public void setEnvironments(Set<Environment> environments) {
-		this.environments = environments;
+	public void setEnvironments(Set<Instance> instances) {
+		this.instances = instances;
 	}
 	
-	public void addEnvironment(Environment environment) {
-		if (environments == null || environments.isEmpty()) {
-			environments = new HashSet<Environment>();
+	public void addEnvironment(Instance instance) {
+		if (instances == null || instances.isEmpty()) {
+			instances = new HashSet<Instance>();
 		}
-		environments.add(environment);
+		instances.add(instance);
 	}
 
 	public String getStatus() {

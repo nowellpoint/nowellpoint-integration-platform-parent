@@ -40,8 +40,8 @@ public class SalesforceConnectorController extends AbstractController {
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
 		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connectors-list.html");
-		public static final String ENVIRONMENT = String.format(APPLICATION_CONTEXT, "environment.html");
-		public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
+		public static final String SALESFORCE_INSTANCE = String.format(APPLICATION_CONTEXT, "salesforce-instance.html");
+		//public static final String ENVIRONMENTS = String.format(APPLICATION_CONTEXT, "environments.html");
 		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobject-list.html");
 		public static final String SOBJECT_DETAIL = String.format(APPLICATION_CONTEXT, "sobject-detail.html");
 		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
@@ -108,7 +108,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
 		model.put("environment", instance);
 		
-		return render(configuration, request, response, model, Template.ENVIRONMENT);
+		return render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 	};
 	
 	/**
@@ -128,7 +128,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.sobjectDetail()
 				.get(id, key, sobjectName);
 		
@@ -158,7 +158,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.get(id, key);
 		
 		Instance instance = result.getTarget();
@@ -187,7 +187,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
-		model.put("environment", instance);
+		model.put("instance", instance);
 		model.put("icons", icons);
 		
 		return render(configuration, request, response, model, Template.SOBJECTS);
@@ -209,7 +209,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.get(id, key);
 		
 		Instance instance = result.getTarget();
@@ -217,9 +217,9 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		model.put("mode", "view");
-		model.put("environment", instance);
+		model.put("instance", instance);
 		
-		return render(configuration, request, response, model, Template.ENVIRONMENT);
+		return render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 	};
 
 	/**
@@ -238,7 +238,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.get(id, key);
 		
 		Instance instance = result.getTarget();
@@ -247,9 +247,9 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("id", id);
 		model.put("mode", "edit");
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
-		model.put("environment", instance);
+		model.put("instance", instance);
 		
-		return render(configuration, request, response, model, Template.ENVIRONMENT);
+		return render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 	};
 
 	/**
@@ -281,7 +281,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		CreateResult<Instance> createResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.add(id, environmentRequest);
 
 		if (! createResult.isSuccess()) {
@@ -298,10 +298,10 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("id", id);
 			model.put("mode", "add");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments", id));
-			model.put("environment", instance);
+			model.put("instance", instance);
 			model.put("errorMessage", createResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
+			String output = render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 			
 			throw new BadRequestException(output);
 		}
@@ -342,7 +342,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.update(id, key, environmentRequest);
 		
 		if (! updateResult.isSuccess()) {
@@ -359,10 +359,10 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("id", id);
 			model.put("mode", "edit");
 			model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
-			model.put("environment", instance);
+			model.put("instance", instance);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.ENVIRONMENT);
+			String output = render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 			
 			throw new BadRequestException(output);
 		}
@@ -389,7 +389,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.delete(id, key);
 		
 		if (! deleteResult.isSuccess()) {
@@ -573,7 +573,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.build(id, key);
 		
 		if (! updateResult.isSuccess()) {
@@ -601,7 +601,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
-				.environment()
+				.instance()
 				.test(id, key);
 		
 		if (! updateResult.isSuccess()) {

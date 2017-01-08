@@ -112,4 +112,44 @@ public class EmailService {
 			}
 		});	
 	}
+	
+	public void sendInvoiceMessage(String email, String name) {
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				Email from = new Email();
+				from.setEmail("billing@nowellpoint.com");
+				from.setName("Nowellpoint Billing");
+			    
+			    Email to = new Email();
+			    to.setEmail(email);
+			    to.setName(name);
+			    
+			    Content content = new Content();
+			    content.setType("text/html");
+			    content.setValue("<html><body>some text here</body></html>");
+			    	    
+			    Personalization personalization = new Personalization();
+			    personalization.addTo(to);
+			    personalization.addSubstitution("%name%", name);
+			    
+			    Mail mail = new Mail();
+			    mail.setFrom(from);
+			    mail.addContent(content);
+			    mail.setTemplateId("d38cc1d5-d2ec-4b21-83b5-84b23aa44bc8");
+			    mail.addPersonalization(personalization);
+			    
+			    Request request = new Request();
+			    try {
+			    	request.method = Method.POST;
+			    	request.endpoint = "mail/send";
+			    	request.body = mail.build();
+			    	Response response = sendgrid.api(request);
+			    	LOGGER.info("sendInvoiceMessage: " + response.statusCode + " " + response.body);
+			    } catch (IOException e) {
+			    	LOGGER.error(e);
+			    }
+			}
+		});	
+	}
 }

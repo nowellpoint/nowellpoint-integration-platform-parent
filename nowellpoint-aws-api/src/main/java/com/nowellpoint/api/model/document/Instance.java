@@ -1,24 +1,49 @@
-package com.nowellpoint.api.model.domain;
+package com.nowellpoint.api.model.document;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.mongodb.document.DateDeserializer;
+import com.nowellpoint.mongodb.document.DateSerializer;
 
-public class Environment {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Instance implements Serializable {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -3274823131929250524L;
+
 	private String key;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date addedOn;
 	
+	@JsonSerialize(using = DateSerializer.class)
+	@JsonDeserialize(using = DateDeserializer.class)
 	private Date updatedOn;
-	
-	private String environmentName;
 	
 	private String grantType;
 	
+	private String environmentName;
+	
 	private Boolean isActive;
+	
+	private Boolean isReadOnly;
+	
+	private String identityId;
+	
+	private String organizationId;
+	
+	private String organizationName;
 	
 	private String serviceEndpoint;
 	
@@ -26,29 +51,17 @@ public class Environment {
 	
 	private String apiVersion;
 	
-	private String identityId;
-	
 	private String userId;
 	
 	private String username;
 	
-	private String password;
+	private Boolean isSandbox;
 	
-	private String securityToken;
+	private String accessToken;
 	
 	private String refreshToken;
 	
-	private Boolean isSandbox;
-	
-	private String organizationId;
-	
-	private String organizationName;
-	
-	private Boolean isReadOnly;
-	
 	private Boolean isValid;
-	
-	private String testMessage;
 	
 	private String email;
 	
@@ -56,8 +69,14 @@ public class Environment {
 	
 	private Theme theme;
 	
-	public Environment() {
+	public Instance() {
 
+	}
+	
+	public Instance(String name, Boolean active) {
+		super();
+		setEnvironmentName(name);
+		setIsActive(active);
 	}
 	
 	public String getKey() {
@@ -84,14 +103,6 @@ public class Environment {
 		this.updatedOn = updatedOn;
 	}
 
-	public String getEnvironmentName() {
-		return environmentName;
-	}
-
-	public void setEnvironmentName(String environmentName) {
-		this.environmentName = environmentName;
-	}
-
 	public String getGrantType() {
 		return grantType;
 	}
@@ -100,12 +111,36 @@ public class Environment {
 		this.grantType = grantType;
 	}
 
+	public String getEnvironmentName() {
+		return environmentName;
+	}
+
+	public void setEnvironmentName(String environmentName) {
+		this.environmentName = environmentName;
+	}
+
 	public Boolean getIsActive() {
 		return isActive;
 	}
 
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Boolean getIsReadOnly() {
+		return isReadOnly;
+	}
+
+	public void setIsReadOnly(Boolean isReadOnly) {
+		this.isReadOnly = isReadOnly;
+	}
+
+	public String getIdentityId() {
+		return identityId;
+	}
+
+	public void setIdentityId(String identityId) {
+		this.identityId = identityId;
 	}
 
 	public String getOrganizationId() {
@@ -123,7 +158,7 @@ public class Environment {
 	public void setOrganizationName(String organizationName) {
 		this.organizationName = organizationName;
 	}
-	
+
 	public String getServiceEndpoint() {
 		return serviceEndpoint;
 	}
@@ -148,14 +183,6 @@ public class Environment {
 		this.apiVersion = apiVersion;
 	}
 
-	public String getIdentityId() {
-		return identityId;
-	}
-
-	public void setIdentityId(String identityId) {
-		this.identityId = identityId;
-	}
-
 	public String getUserId() {
 		return userId;
 	}
@@ -172,20 +199,20 @@ public class Environment {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
+	public Boolean getIsSandbox() {
+		return isSandbox;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
 	}
 
-	public String getSecurityToken() {
-		return securityToken;
+	public String getAccessToken() {
+		return accessToken;
 	}
 
-	public void setSecurityToken(String securityToken) {
-		this.securityToken = securityToken;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
 	public String getRefreshToken() {
@@ -196,36 +223,12 @@ public class Environment {
 		this.refreshToken = refreshToken;
 	}
 
-	public Boolean getIsSandbox() {
-		return isSandbox;
-	}
-
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}
-
-	public Boolean getIsReadOnly() {
-		return isReadOnly;
-	}
-
-	public void setIsReadOnly(Boolean isReadOnly) {
-		this.isReadOnly = isReadOnly;
-	}
-
 	public Boolean getIsValid() {
 		return isValid;
 	}
 
 	public void setIsValid(Boolean isValid) {
 		this.isValid = isValid;
-	}
-
-	public String getTestMessage() {
-		return testMessage;
-	}
-
-	public void setTestMessage(String testMessage) {
-		this.testMessage = testMessage;
 	}
 
 	public String getEmail() {

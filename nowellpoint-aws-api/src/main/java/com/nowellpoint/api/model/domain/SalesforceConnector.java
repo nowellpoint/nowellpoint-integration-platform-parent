@@ -22,7 +22,7 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String tag;
 	
-	private Set<Environment> environments;
+	private Set<Instance> instances;
 	
 	public SalesforceConnector() {
 		
@@ -88,18 +88,18 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public Set<Environment> getEnvironments() {
-		return environments;
+	public Set<Instance> getInstances() {
+		return instances;
 	}
 
-	public void setEnvironments(Set<Environment> environments) {
-		this.environments = environments;
+	public void setInstances(Set<Instance> instances) {
+		this.instances = instances;
 	}
 	
-	public void addEnvironment(Environment environment) {
-		if (environments == null || environments.isEmpty()) {
-			environments = new HashSet<Environment>();
+	public void addEnvironment(Instance instance) {
+		if (instances == null || instances.isEmpty()) {
+			instances = new HashSet<Instance>();
 		}
-		environments.add(environment);
+		instances.add(instance);
 	}
 }

@@ -41,7 +41,7 @@ import com.mongodb.DBRef;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
@@ -144,27 +144,27 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			resource.setOwner(owner);
 		}
 		
-		Environment environment = new Environment();
-		environment.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
-		environment.setIdentityId(identity.getId());
-		environment.setEmail(identity.getEmail());
-		environment.setGrantType("token");
-		environment.setIsActive(Boolean.TRUE);
-		environment.setEnvironmentName("Production");
-		environment.setIsReadOnly(Boolean.TRUE);
-		environment.setIsSandbox(Boolean.FALSE);
-		environment.setIsValid(Boolean.TRUE);
-		environment.setAddedOn(Date.from(Instant.now()));
-		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setUserId(identity.getUserId());
-		environment.setUsername(identity.getUsername());
-		environment.setOrganizationId(organization.getId());
-		environment.setOrganizationName(organization.getName());
-		environment.setServiceEndpoint(token.getInstanceUrl());
-		environment.setAuthEndpoint("https://login.salesforce.com");
-		environment.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
+		Instance instance = new Instance();
+		instance.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
+		instance.setIdentityId(identity.getId());
+		instance.setEmail(identity.getEmail());
+		instance.setGrantType("token");
+		instance.setIsActive(Boolean.TRUE);
+		instance.setEnvironmentName("Production");
+		instance.setIsReadOnly(Boolean.TRUE);
+		instance.setIsSandbox(Boolean.FALSE);
+		instance.setIsValid(Boolean.TRUE);
+		instance.setAddedOn(Date.from(Instant.now()));
+		instance.setUpdatedOn(Date.from(Instant.now()));
+		instance.setUserId(identity.getUserId());
+		instance.setUsername(identity.getUsername());
+		instance.setOrganizationId(organization.getId());
+		instance.setOrganizationName(organization.getName());
+		instance.setServiceEndpoint(token.getInstanceUrl());
+		instance.setAuthEndpoint("https://login.salesforce.com");
+		instance.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
 		
-		resource.addEnvironment(environment);
+		resource.addEnvironment(instance);
 		
 		UserInfo userInfo = new UserInfo(getSubject());
 		
@@ -173,7 +173,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		super.createSalesforceConnector( resource );
 		
-		UserProperties.saveSalesforceTokens(getSubject(), environment.getKey(), token);
+		UserProperties.saveSalesforceTokens(getSubject(), instance.getKey(), token);
 		
 		return resource;
 	}
@@ -222,7 +222,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 
 		s3Client.deleteObjects(deleteObjectsRequest);
 		
-		salesforceConnector.getEnvironments().stream().forEach(e -> {
+		salesforceConnector.getInstances().stream().forEach(e -> {
 			removeEnvironment(e);
 		});
 		
@@ -245,9 +245,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Set<Environment> getEnvironments(String id) {
+	public Set<Instance> getInstances(String id) {
 		SalesforceConnector salesforceConnector = findSalesforceConnector(id);
-		return salesforceConnector.getEnvironments();
+		return salesforceConnector.getInstances();
 	}
 	
 	/**
@@ -257,56 +257,56 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Environment getEnvironment(String id, String key) {
+	public Instance getEnvironment(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getInstances()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst()
 				.get();
 		
-		return environment;
+		return instance;
 	}
 	
 	/**
 	 * 
 	 * @param id
-	 * @param environment
+	 * @param instance
 	 */
 	
-	public void addEnvironment(String id, Environment environment) {
-		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+	public void addEnvironment(String id, Instance instance) {
+		LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
-		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
+		if (resource.getInstances() != null && resource.getInstances().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: %s", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
 		}
 		
-		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
-		environment.setEmail(loginResult.getEmail());
-		environment.setIdentityId(loginResult.getId());
-		environment.setGrantType("password");
-		environment.setIsActive(Boolean.TRUE);
-		environment.setIsReadOnly(Boolean.FALSE);
-		environment.setIsValid(Boolean.TRUE);
-		environment.setAddedOn(Date.from(Instant.now()));
-		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
-		environment.setIsSandbox(Boolean.TRUE);
-		environment.setUserId(loginResult.getUserId());
-		environment.setUsername(loginResult.getUserName());
-		environment.setOrganizationId(loginResult.getOrganizationId());
-		environment.setOrganizationName(loginResult.getOrganizationName());
-		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+		instance.setKey(UUID.randomUUID().toString().replace("-", ""));
+		instance.setEmail(loginResult.getEmail());
+		instance.setIdentityId(loginResult.getId());
+		instance.setGrantType("password");
+		instance.setIsActive(Boolean.TRUE);
+		instance.setIsReadOnly(Boolean.FALSE);
+		instance.setIsValid(Boolean.TRUE);
+		instance.setAddedOn(Date.from(Instant.now()));
+		instance.setUpdatedOn(Date.from(Instant.now()));
+		instance.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
+		instance.setIsSandbox(Boolean.TRUE);
+		instance.setUserId(loginResult.getUserId());
+		instance.setUsername(loginResult.getUserName());
+		instance.setOrganizationId(loginResult.getOrganizationId());
+		instance.setOrganizationName(loginResult.getOrganizationName());
+		instance.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
-		environment.setPassword(null);
-		environment.setSecurityToken(null);
+		instance.setPassword(null);
+		instance.setSecurityToken(null);
 		
-		resource.addEnvironment(environment);
+		resource.addEnvironment(instance);
 		
 		updateSalesforceConnector(id, resource);
 	}
@@ -315,78 +315,78 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 * @param id
 	 * @param key
-	 * @param environment
+	 * @param instance
 	 * 
 	 */
 	
-	public void updateEnvironment(String id, String key, Environment environment) {
+	public void updateEnvironment(String id, String key, Instance instance) {
 		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
 		
-		environment.setKey(key);
+		instance.setKey(key);
 		
-		updateEnvironment(salesforceConnector, environment);
+		updateEnvironment(salesforceConnector, instance);
 
 	} 
 
 	/**
 	 * 
 	 * @param resource
-	 * @param environment
+	 * @param instance
 	 * 
 	 */
 	
-	public void updateEnvironment(SalesforceConnector resource, Environment environment) {
+	public void updateEnvironment(SalesforceConnector resource, Instance instance) {
 		
-		Environment original = resource.getEnvironments()
+		Instance original = resource.getInstances()
 				.stream()
-				.filter(e -> environment.getKey().equals(e.getKey()))
+				.filter(e -> instance.getKey().equals(e.getKey()))
 				.findFirst()
 				.get();
 		
-		resource.getEnvironments().removeIf(e -> environment.getKey().equals(e.getKey()));
+		resource.getInstances().removeIf(e -> instance.getKey().equals(e.getKey()));
 		
-		environment.setAddedOn(original.getAddedOn());
-		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setIsReadOnly(original.getIsReadOnly());
-		environment.setIsSandbox(original.getIsSandbox());
-		environment.setApiVersion(original.getApiVersion());
-		environment.setTestMessage(original.getTestMessage());
-		environment.setGrantType(original.getGrantType());
-		environment.setTheme(original.getTheme());
-		environment.setSobjects(original.getSobjects());
+		instance.setAddedOn(original.getAddedOn());
+		instance.setUpdatedOn(Date.from(Instant.now()));
+		instance.setIsReadOnly(original.getIsReadOnly());
+		instance.setIsSandbox(original.getIsSandbox());
+		instance.setApiVersion(original.getApiVersion());
+		instance.setTestMessage(original.getTestMessage());
+		instance.setGrantType(original.getGrantType());
+		instance.setTheme(original.getTheme());
+		instance.setSobjects(original.getSobjects());
 		
-		if (environment.getIsActive()) {
-			LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+		if (instance.getIsActive()) {
+			LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 			
 			if (! loginResult.getOrganizationId().equals(original.getOrganizationId()) 
-					&& resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
+					&& resource.getInstances().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 				
 				throw new ValidationException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
 			}
 			
-			environment.setIdentityId(loginResult.getId());
-			environment.setEmail(loginResult.getEmail());
-			environment.setUserId(loginResult.getUserId());
-			environment.setOrganizationId(loginResult.getOrganizationId());
-			environment.setOrganizationName(loginResult.getOrganizationName());
-			environment.setServiceEndpoint(loginResult.getServiceEndpoint());
-			environment.setIsValid(Boolean.TRUE);
+			instance.setIdentityId(loginResult.getId());
+			instance.setEmail(loginResult.getEmail());
+			instance.setUserId(loginResult.getUserId());
+			instance.setOrganizationId(loginResult.getOrganizationId());
+			instance.setOrganizationName(loginResult.getOrganizationName());
+			instance.setServiceEndpoint(loginResult.getServiceEndpoint());
+			instance.setIsValid(Boolean.TRUE);
 		} else {
-			environment.setIdentityId(original.getIdentityId());
-			environment.setEmail(original.getEmail());
-			environment.setUserId(original.getUserId());
-			environment.setOrganizationId(original.getOrganizationId());
-			environment.setOrganizationName(original.getOrganizationName());
-			environment.setServiceEndpoint(original.getServiceEndpoint());
-			environment.setIsValid(Boolean.FALSE);
+			instance.setIdentityId(original.getIdentityId());
+			instance.setEmail(original.getEmail());
+			instance.setUserId(original.getUserId());
+			instance.setOrganizationId(original.getOrganizationId());
+			instance.setOrganizationName(original.getOrganizationName());
+			instance.setServiceEndpoint(original.getServiceEndpoint());
+			instance.setIsValid(Boolean.FALSE);
 		}
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
-		environment.setPassword(null);
-		environment.setSecurityToken(null);
+		instance.setPassword(null);
+		instance.setSecurityToken(null);
 		
-		resource.addEnvironment(environment);
+		resource.addEnvironment(instance);
 		
 		updateSalesforceConnector(resource.getId(), resource);
 	}
@@ -399,43 +399,43 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
+	public Instance updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getInstances()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
 				.get();
 		
 		if (parameters.containsKey(IS_ACTIVE)) {
-			environment.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
+			instance.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
 		}
 		
 		if (parameters.containsKey(API_VERSION)) {
-			environment.setApiVersion(parameters.getFirst(API_VERSION));
+			instance.setApiVersion(parameters.getFirst(API_VERSION));
 		}
 		
 		if (parameters.containsKey(AUTH_ENDPOINT)) {
-			environment.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
+			instance.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
 		}
 		
 		if (parameters.containsKey(PASSWORD)) {
-			environment.setPassword(parameters.getFirst(PASSWORD));
+			instance.setPassword(parameters.getFirst(PASSWORD));
 		}
 		
 		if (parameters.containsKey(USERNAME)) {
-			environment.setUsername(parameters.getFirst(USERNAME));
+			instance.setUsername(parameters.getFirst(USERNAME));
 		}
 		
 		if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
-			environment.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
+			instance.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
 		}
 		
-		updateEnvironment(resource, environment);
+		updateEnvironment(resource, instance);
 		
-		return environment;
+		return instance;
 	}
 	
 	/**
@@ -445,66 +445,66 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Environment testConnection(String id, String key) {		
+	public Instance testConnection(String id, String key) {		
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getInstances()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
 				.get();
 		
-		Map<String, UserProperty> properties = UserProperties.queryBySubject(environment.getKey())
+		Map<String, UserProperty> properties = UserProperties.queryBySubject(instance.getKey())
 				.stream()
 				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
 		
-		if (environment.getIsSandbox()) {
-			environment.setPassword(properties.get(PASSWORD).getValue());
-			environment.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
+		if (instance.getIsSandbox()) {
+			instance.setPassword(properties.get(PASSWORD).getValue());
+			instance.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
 		} else {
-			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
+			instance.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		testConnection( environment );
+		testConnection( instance );
 		
-		environment.setPassword(null);
-		environment.setSecurityToken(null);
-		environment.setRefreshToken(null);
+		instance.setPassword(null);
+		instance.setSecurityToken(null);
+		instance.setRefreshToken(null);
 		
 		updateSalesforceConnector( id, resource );
 		
-		return environment;
+		return instance;
 	}
 	
-	public Environment buildEnvironment(String id, String key) {
+	public Instance buildEnvironment(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getInstances()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
 				.get();
 		
-		Map<String, UserProperty> properties = UserProperties.queryBySubject(environment.getKey())
+		Map<String, UserProperty> properties = UserProperties.queryBySubject(instance.getKey())
 				.stream()
 				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
 		
-		if (environment.getIsSandbox()) {
-			environment.setPassword(properties.get(PASSWORD).getValue());
-			environment.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
+		if (instance.getIsSandbox()) {
+			instance.setPassword(properties.get(PASSWORD).getValue());
+			instance.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
 		} else {
-			environment.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
+			instance.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		buildEnvironment( environment );
+		buildEnvironment( instance );
 		
-		environment.setPassword(null);
-		environment.setSecurityToken(null);
-		environment.setRefreshToken(null);
+		instance.setPassword(null);
+		instance.setSecurityToken(null);
+		instance.setRefreshToken(null);
 		
 		updateSalesforceConnector( id, resource );
 		
-		return environment;
+		return instance;
 	}
 	
 	/**
@@ -516,27 +516,27 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	public void removeEnvironment(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getInstances()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
 				.get();
 		
-		removeEnvironment(environment);
+		removeEnvironment(instance);
 		
-		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
+		resource.getInstances().removeIf(e -> key.equals(e.getKey()));
 		
 		updateSalesforceConnector(id, resource);
 	} 
 	
 	/**
 	 * 
-	 * @param environment
+	 * @param instance
 	 */
 	
-	private void removeEnvironment(Environment environment) {
-		UserProperties.clear(environment.getKey());
-		MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", environment.getKey() ) );
+	private void removeEnvironment(Instance instance) {
+		UserProperties.clear(instance.getKey());
+		MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", instance.getKey() ) );
 	}
 	
 	/**
@@ -575,22 +575,22 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		}
 	}
 	
-	private void buildEnvironment(Environment environment) {
+	private void buildEnvironment(Instance instance) {
 
 		try {
 			
-			if (environment.getIsSandbox()) {
+			if (instance.getIsSandbox()) {
 				
-				String authEndpoint = environment.getAuthEndpoint();
-				String username = environment.getUsername();
-				String password = environment.getPassword();
-				String securityToken = environment.getSecurityToken();
+				String authEndpoint = instance.getAuthEndpoint();
+				String username = instance.getUsername();
+				String password = instance.getPassword();
+				String securityToken = instance.getSecurityToken();
 				
 				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
-				environment.setUserId(loginResult.getUserId());
-				environment.setOrganizationId(loginResult.getOrganizationId());
-				environment.setOrganizationName(loginResult.getOrganizationName());
-				environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+				instance.setUserId(loginResult.getUserId());
+				instance.setOrganizationId(loginResult.getOrganizationId());
+				instance.setOrganizationName(loginResult.getOrganizationName());
+				instance.setServiceEndpoint(loginResult.getServiceEndpoint());
 				
 				Client client = new Client();
 				
@@ -606,7 +606,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 				
-				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+				instance.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				
 				ThemeRequest themeRequest = new ThemeRequest()
 						.withAccessToken(loginResult.getSessionId())
@@ -614,13 +614,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				Theme theme = client.getTheme(themeRequest);
 				
-				environment.setTheme(theme);
+				instance.setTheme(theme);
 				
-				describeSobjects(loginResult.getSessionId(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, environment.getKey());
+				describeSobjects(loginResult.getSessionId(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, instance.getKey());
 				
 			} else {
 				
-				String refreshToken = environment.getRefreshToken();
+				String refreshToken = instance.getRefreshToken();
 				
 				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
 				
@@ -636,11 +636,11 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				Organization organization = client.getOrganization(getOrganizationRequest);
 				
-				environment.setUserId(identity.getUserId());
-				environment.setOrganizationId(identity.getOrganizationId());
-				environment.setOrganizationName(organization.getName());
-				environment.setServiceEndpoint(token.getInstanceUrl());
-				environment.setIsValid(Boolean.TRUE);
+				instance.setUserId(identity.getUserId());
+				instance.setOrganizationId(identity.getOrganizationId());
+				instance.setOrganizationName(organization.getName());
+				instance.setServiceEndpoint(token.getInstanceUrl());
+				instance.setIsValid(Boolean.TRUE);
 				
 				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
 						.setAccessToken(token.getAccessToken())
@@ -648,7 +648,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 				
-				environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+				instance.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
 				
 				ThemeRequest themeRequest = new ThemeRequest()
 						.withAccessToken(token.getAccessToken())
@@ -656,20 +656,20 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				Theme theme = client.getTheme(themeRequest);
 				
-				environment.setTheme(theme);
+				instance.setTheme(theme);
 				
-				describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, environment.getKey());
+				describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, instance.getKey());
 			}
-			environment.setIsValid(Boolean.TRUE);
+			instance.setIsValid(Boolean.TRUE);
 		} catch (OauthException e) {
-			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getErrorDescription());
+			instance.setIsValid(Boolean.FALSE);
+			instance.setTestMessage(e.getErrorDescription());
 		} catch (ValidationException e) {
-			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getMessage());
+			instance.setIsValid(Boolean.FALSE);
+			instance.setTestMessage(e.getMessage());
 		} catch (Exception e) {
-			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getMessage());
+			instance.setIsValid(Boolean.FALSE);
+			instance.setTestMessage(e.getMessage());
 		}	
 	}
 	
@@ -733,27 +733,27 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		executor.awaitTermination(30, TimeUnit.SECONDS);
 	}
 	
-	private void testConnection(Environment environment) {
+	private void testConnection(Instance instance) {
 
 		try {
 			
-			if (environment.getIsSandbox()) {
+			if (instance.getIsSandbox()) {
 				
-				String authEndpoint = environment.getAuthEndpoint();
-				String username = environment.getUsername();
-				String password = environment.getPassword();
-				String securityToken = environment.getSecurityToken();
+				String authEndpoint = instance.getAuthEndpoint();
+				String username = instance.getUsername();
+				String password = instance.getPassword();
+				String securityToken = instance.getSecurityToken();
 				
 				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
 				
-				environment.setUserId(loginResult.getUserId());
-				environment.setOrganizationId(loginResult.getOrganizationId());
-				environment.setOrganizationName(loginResult.getOrganizationName());
-				environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+				instance.setUserId(loginResult.getUserId());
+				instance.setOrganizationId(loginResult.getOrganizationId());
+				instance.setOrganizationName(loginResult.getOrganizationName());
+				instance.setServiceEndpoint(loginResult.getServiceEndpoint());
 				
 			} else {
 				
-				String refreshToken = environment.getRefreshToken();
+				String refreshToken = instance.getRefreshToken();
 				
 				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
 				
@@ -769,21 +769,21 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				Organization organization = client.getOrganization(getOrganizationRequest);
 				
-				environment.setUserId(identity.getUserId());
-				environment.setOrganizationId(identity.getOrganizationId());
-				environment.setOrganizationName(organization.getName());
-				environment.setServiceEndpoint(token.getInstanceUrl());
+				instance.setUserId(identity.getUserId());
+				instance.setOrganizationId(identity.getOrganizationId());
+				instance.setOrganizationName(organization.getName());
+				instance.setServiceEndpoint(token.getInstanceUrl());
 			}
-			environment.setIsValid(Boolean.TRUE);
+			instance.setIsValid(Boolean.TRUE);
 		} catch (OauthException e) {
-			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getErrorDescription());
+			instance.setIsValid(Boolean.FALSE);
+			instance.setTestMessage(e.getErrorDescription());
 		} catch (ValidationException e) {
-			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getMessage());
+			instance.setIsValid(Boolean.FALSE);
+			instance.setTestMessage(e.getMessage());
 		} catch (Exception e) {
-			environment.setIsValid(Boolean.FALSE);
-			environment.setTestMessage(e.getMessage());
+			instance.setIsValid(Boolean.FALSE);
+			instance.setTestMessage(e.getMessage());
 		}			
 	}
 }

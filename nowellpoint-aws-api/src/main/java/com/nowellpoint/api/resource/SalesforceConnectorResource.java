@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.SObjectDetail;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.service.SObjectDetailService;
@@ -140,10 +140,10 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironments(@PathParam(value="id") String id) {	
 		
-		Set<Environment> environments = salesforceConnectorService.getEnvironments(id);
+		Set<Instance> instances = salesforceConnectorService.getInstances(id);
 		
 		return Response.ok()
-				.entity(environments)
+				.entity(instances)
 				.build(); 
 	}
 	
@@ -152,14 +152,14 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		Environment environment = salesforceConnectorService.getEnvironment(id, key);
+		Instance instance = salesforceConnectorService.getEnvironment(id, key);
 		
-		if (environment == null) {
+		if (instance == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
 		}
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 
@@ -167,7 +167,7 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, Environment resource) {
+	public Response addEnvironment(@PathParam(value="id") String id, Instance resource) {
 		
 		salesforceConnectorService.addEnvironment(id, resource);
 		
@@ -180,12 +180,12 @@ public class SalesforceConnectorResource {
 	@Path("salesforce/{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Environment environment) {
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Instance instance) {
 		
-		salesforceConnectorService.updateEnvironment(id, key, environment);
+		salesforceConnectorService.updateEnvironment(id, key, instance);
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 	
@@ -206,10 +206,10 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		Environment environment = salesforceConnectorService.updateEnvironment(id, key, parameters);
+		Instance instance = salesforceConnectorService.updateEnvironment(id, key, parameters);
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 	
@@ -234,18 +234,18 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="action") String action) {
 		
-		Environment environment = null;
+		Instance instance = null;
 		
 		if ("build".equalsIgnoreCase(action)) {
-			environment = salesforceConnectorService.buildEnvironment(id, key);
+			instance = salesforceConnectorService.buildEnvironment(id, key);
 		} else if ("test".equalsIgnoreCase(action)) {
-			environment = salesforceConnectorService.testConnection(id, key);
+			instance = salesforceConnectorService.testConnection(id, key);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 }

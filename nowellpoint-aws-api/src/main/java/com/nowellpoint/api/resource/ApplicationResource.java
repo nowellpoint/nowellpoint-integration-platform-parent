@@ -25,7 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.domain.Application;
-import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.service.ApplicationService;
 
 @Path("/applications")
@@ -124,14 +124,14 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		Environment environment = applicationService.getEnvironment( id, key);
+		Instance instance = applicationService.getEnvironment( id, key);
 		
-		if (environment == null) {
+		if (instance == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
 		}
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 	
@@ -139,12 +139,12 @@ public class ApplicationResource {
 	@Path("{id}/environment")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, Environment environment) {
+	public Response addEnvironment(@PathParam(value="id") String id, Instance instance) {
 		
-		applicationService.addEnvironment( id, environment);
+		applicationService.addEnvironment( id, instance);
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 	
@@ -152,12 +152,12 @@ public class ApplicationResource {
 	@Path("{id}/environment/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Environment environment) {
+	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Instance instance) {
 		
-		applicationService.updateEnvironment( id, key, environment);
+		applicationService.updateEnvironment( id, key, instance);
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 	
@@ -167,10 +167,10 @@ public class ApplicationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		Environment environment = applicationService.updateEnvironment( id, key, parameters);
+		Instance instance = applicationService.updateEnvironment( id, key, parameters);
 		
 		return Response.ok()
-				.entity(environment)
+				.entity(instance)
 				.build(); 
 	}
 	

@@ -11,7 +11,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Application;
-import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.mapper.ApplicationModelMapper;
@@ -54,9 +54,9 @@ public class ApplicationService extends ApplicationModelMapper {
 		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(connectorId);
 		
 		if (importSandboxes) {
-			application.setEnvironments(connector.getEnvironments());
+			application.setEnvironments(connector.getInstances());
 		} else {
-			application.addEnvironment(connector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
+			application.addEnvironment(connector.getInstances().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
 		}
 		
 		super.createApplication(application);
@@ -102,19 +102,19 @@ public class ApplicationService extends ApplicationModelMapper {
 		return super.findApplication(id);
 	}	
 	
-	public void updateEnvironment(String id, String key, Environment environment) {
+	public void updateEnvironment(String id, String key, Instance instance) {
 		Application application = findApplication( id );
 		
-		environment.setKey(key);
+		instance.setKey(key);
 		
-		updateEnvironment(application, environment);
+		updateEnvironment(application, instance);
 	} 
 	
-	public Environment updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
+	public Instance updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
 		Application application = findApplication( id );
 		
-		Environment environment = application.getEnvironments()
+		Instance instance = application.getEnvironments()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
@@ -124,32 +124,32 @@ public class ApplicationService extends ApplicationModelMapper {
 			
 			application.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 			
-			application.addEnvironment(environment);
+			application.addEnvironment(instance);
 			
 			updateApplication( id, application );
 			
 		} else {
 			
-			updateEnvironment(application, environment);
+			updateEnvironment(application, instance);
 		}
 		
-		return environment;
+		return instance;
 	}
 	
-	public Environment getEnvironment(String id, String key) {
+	public Instance getEnvironment(String id, String key) {
 		Application resource = findApplication(id);
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getEnvironments()
 				.stream()
 				.filter(p -> p.getKey().equals(key))
 				.findFirst()
 				.get();
 		
-		return environment;
+		return instance;
 	}
 	
-	public void addEnvironment(String id, Environment environment) {
-		LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+	public void addEnvironment(String id, Instance instance) {
+		LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 
 		Application resource = findApplication(id);
 		
@@ -157,48 +157,48 @@ public class ApplicationService extends ApplicationModelMapper {
 			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: %s", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
 		}
 		
-		environment.setKey(UUID.randomUUID().toString().replace("-", ""));
-		environment.setIsActive(Boolean.TRUE);
-		environment.setIsReadOnly(Boolean.FALSE);
-		environment.setIsValid(Boolean.TRUE);
-		environment.setAddedOn(Date.from(Instant.now()));
-		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
-		environment.setIsSandbox(Boolean.TRUE);
-		environment.setUserId(loginResult.getUserId());
-		environment.setOrganizationId(loginResult.getOrganizationId());
-		environment.setOrganizationName(loginResult.getOrganizationName());
-		environment.setServiceEndpoint(loginResult.getServiceEndpoint());
+		instance.setKey(UUID.randomUUID().toString().replace("-", ""));
+		instance.setIsActive(Boolean.TRUE);
+		instance.setIsReadOnly(Boolean.FALSE);
+		instance.setIsValid(Boolean.TRUE);
+		instance.setAddedOn(Date.from(Instant.now()));
+		instance.setUpdatedOn(Date.from(Instant.now()));
+		instance.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
+		instance.setIsSandbox(Boolean.TRUE);
+		instance.setUserId(loginResult.getUserId());
+		instance.setOrganizationId(loginResult.getOrganizationId());
+		instance.setOrganizationName(loginResult.getOrganizationName());
+		instance.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
-		environment.setPassword(null);
-		environment.setSecurityToken(null);
+		instance.setPassword(null);
+		instance.setSecurityToken(null);
 		
-		resource.addEnvironment(environment);
+		resource.addEnvironment(instance);
 		
 		updateApplication(id, resource);
 	}
 	
-	public void updateEnvironment(Application resource, Environment environment) {
+	public void updateEnvironment(Application resource, Instance instance) {
 		
-		Environment original = resource.getEnvironments()
+		Instance original = resource.getEnvironments()
 				.stream()
-				.filter(e -> environment.getKey().equals(e.getKey()))
+				.filter(e -> instance.getKey().equals(e.getKey()))
 				.findFirst()
 				.get();
 		
-		resource.getEnvironments().removeIf(e -> environment.getKey().equals(e.getKey()));
+		resource.getEnvironments().removeIf(e -> instance.getKey().equals(e.getKey()));
 		
-		environment.setAddedOn(original.getAddedOn());
-		environment.setUpdatedOn(Date.from(Instant.now()));
-		environment.setIsReadOnly(original.getIsReadOnly());
-		environment.setIsSandbox(original.getIsSandbox());
-		environment.setApiVersion(original.getApiVersion());
-		environment.setTestMessage(original.getTestMessage());
+		instance.setAddedOn(original.getAddedOn());
+		instance.setUpdatedOn(Date.from(Instant.now()));
+		instance.setIsReadOnly(original.getIsReadOnly());
+		instance.setIsSandbox(original.getIsSandbox());
+		instance.setApiVersion(original.getApiVersion());
+		instance.setTestMessage(original.getTestMessage());
 		
-		if (environment.getIsActive()) {
-			LoginResult loginResult = salesforceService.login(environment.getAuthEndpoint(), environment.getUsername(), environment.getPassword(), environment.getSecurityToken());
+		if (instance.getIsActive()) {
+			LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 			
 			if (! loginResult.getOrganizationId().equals(original.getOrganizationId()) 
 					&& resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
@@ -206,25 +206,25 @@ public class ApplicationService extends ApplicationModelMapper {
 				throw new ValidationException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
 			}
 			
-			environment.setUserId(loginResult.getUserId());
-			environment.setOrganizationId(loginResult.getOrganizationId());
-			environment.setOrganizationName(loginResult.getOrganizationName());
-			environment.setServiceEndpoint(loginResult.getServiceEndpoint());
-			environment.setIsValid(Boolean.TRUE);
+			instance.setUserId(loginResult.getUserId());
+			instance.setOrganizationId(loginResult.getOrganizationId());
+			instance.setOrganizationName(loginResult.getOrganizationName());
+			instance.setServiceEndpoint(loginResult.getServiceEndpoint());
+			instance.setIsValid(Boolean.TRUE);
 		} else {
-			environment.setUserId(original.getUserId());
-			environment.setOrganizationId(original.getOrganizationId());
-			environment.setOrganizationName(original.getOrganizationName());
-			environment.setServiceEndpoint(original.getServiceEndpoint());
-			environment.setIsValid(Boolean.FALSE);
+			instance.setUserId(original.getUserId());
+			instance.setOrganizationId(original.getOrganizationId());
+			instance.setOrganizationName(original.getOrganizationName());
+			instance.setServiceEndpoint(original.getServiceEndpoint());
+			instance.setIsValid(Boolean.FALSE);
 		}
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
-		environment.setPassword(null);
-		environment.setSecurityToken(null);
+		instance.setPassword(null);
+		instance.setSecurityToken(null);
 		
-		resource.addEnvironment(environment);
+		resource.addEnvironment(instance);
 		
 		updateApplication(resource.getId(), resource);
 	}
@@ -232,13 +232,13 @@ public class ApplicationService extends ApplicationModelMapper {
 	public void removeEnvironment(String id, String key) {
 		Application resource = findApplication(id);
 		
-		Environment environment = resource.getEnvironments()
+		Instance instance = resource.getEnvironments()
 				.stream()
 				.filter(e -> key.equals(e.getKey()))
 				.findFirst()
 				.get();
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), environment.getKey(), environment.getPassword(), environment.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		

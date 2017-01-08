@@ -22,7 +22,7 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Backup;
 import com.nowellpoint.api.model.domain.Deactivate;
-import com.nowellpoint.api.model.domain.Environment;
+import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.ScheduledJob;
@@ -316,28 +316,28 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}
 
-			Optional<Environment> environment = null;
+			Optional<Instance> instance = null;
 			if (scheduledJob.getEnvironmentKey() != null && ! scheduledJob.getEnvironmentKey().trim().isEmpty()) {
-				environment = salesforceConnector.getEnvironments()
+				instance = salesforceConnector.getInstances()
 						.stream()
 						.filter(e -> scheduledJob.getEnvironmentKey().equals(e.getKey()))
 						.findFirst();
 				
-				if (! environment.isPresent()) {
+				if (! instance.isPresent()) {
 					throw new ValidationException(String.format("Invalid environment key: %s", scheduledJob.getEnvironmentKey()));
 				}
 				
 			} else {
-				environment = salesforceConnector.getEnvironments().stream().filter(e -> ! e.getIsSandbox()).findFirst();
+				instance = salesforceConnector.getInstances().stream().filter(e -> ! e.getIsSandbox()).findFirst();
 			}
 
 			if (scheduledJob.getNotificationEmail() == null) {
-				scheduledJob.setNotificationEmail(environment.get().getEmail());
+				scheduledJob.setNotificationEmail(instance.get().getEmail());
 			}
 			
-			scheduledJob.setIsSandbox(environment.get().getIsSandbox());
-			scheduledJob.setEnvironmentKey(environment.get().getKey());
-			scheduledJob.setEnvironmentName(environment.get().getEnvironmentName());
+			scheduledJob.setIsSandbox(instance.get().getIsSandbox());
+			scheduledJob.setEnvironmentKey(instance.get().getKey());
+			scheduledJob.setEnvironmentName(instance.get().getEnvironmentName());
 		}
 
 		scheduledJob.setConnectorType(scheduledJobType.getConnectorType().getCode());
