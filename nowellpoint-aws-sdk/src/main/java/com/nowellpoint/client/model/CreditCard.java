@@ -4,93 +4,33 @@ import java.util.Date;
 
 public class CreditCard {
 	
-	/**
-	 * 
-	 */
-	
 	private String cardType;
-	
-	/**
-	 * 
-	 */
 	
 	private String cardholderName;
 	
-	/**
-	 * 
-	 */
-	
 	private String cvv;
-	
-	/**
-	 * 
-	 */
 	
 	private String number;
 	
-	/**
-	 * 
-	 */
-	
 	private String expirationMonth;
-	
-	/**
-	 * 
-	 */
 	
 	private String expirationYear;
 	
-	/**
-	 * 
-	 */
-	
 	private String lastFour;
-	
-	/**
-	 * 
-	 */
 	
 	private String token;
 	
-	/**
-	 * 
-	 */
-	
 	private String imageUrl;
-	
-	/**
-	 * 
-	 */
 	
 	private Address billingAddress;
 	
-	/**
-	 * 
-	 */
-	
 	private Contact billingContact;
 	
-	/**
-	 * 
-	 */
-	
 	private Boolean primary;
-
-	/**
-	 * 
-	 */
 	
 	private Date addedOn;
 	
-	/**
-	 * 
-	 */
-	
 	private Date updatedOn;
-	
-	/**
-	 * 
-	 */
 	
 	public CreditCard() {
 		

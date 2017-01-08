@@ -78,23 +78,7 @@
                 </dl>
             </div>
 
-            <div class="col-md-2">
-
-                <dl class="dl-vertical">
-                    <dt>${labels["plan.name"]}</dt>
-                    <dd>${(accountProfile.subscription.planName)!}&emsp;</dd>
-                    <dt>${labels["price"]}</dt>
-                    <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}&emsp;</dd>
-                    <dt>${labels["billed"]}&emsp;</dt>
-                    <dd>${(accountProfile.subscription.billingFrequency)!}
-                        <br>
-                </dl>
-
-                <a href="${labels['base.path']}/${accountProfile.id}/plans" id="update-subscription" class="btn btn-success" role="button">${labels["change.subscription"]}</a>
-
-            </div>
-
-            <div class="col-md-4">
+            <div class="col-md-6">
 
             </div>
         </div>

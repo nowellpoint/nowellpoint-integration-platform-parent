@@ -138,161 +138,51 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void updateAccountProfile(AccountProfile accountProfile) {
 		AccountProfile original = findById( accountProfile.getId() );
 		
-		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
-		accountProfile.setHasFullAccess(original.getHasFullAccess());
-		accountProfile.setCreatedBy(original.getCreatedBy());
-		accountProfile.setCreatedDate(original.getCreatedDate());
-		accountProfile.setSystemCreatedDate(original.getSystemCreatedDate());
-		
-		if (isNull(accountProfile.getDivision())) {
-			accountProfile.setDivision(original.getDivision());
-		} else if (isEmpty(accountProfile.getDivision())) {
-			accountProfile.setDivision(null);
-		}
-		
-		if (isNull(accountProfile.getFirstName())) {
-			accountProfile.setFirstName(original.getFirstName());
-		} else if (isEmpty(accountProfile.getFirstName())) {
-			accountProfile.setFirstName(null);
-		}
-		
-		if (isNull(accountProfile.getCompany())) {
-			accountProfile.setCompany(original.getCompany());
-		} else if (isEmpty(accountProfile.getCompany())) {
-			accountProfile.setCompany(null);
-		}
-		
-		if (isNull(accountProfile.getDepartment())) {
-			accountProfile.setDepartment(original.getDepartment());
-		} else if (isEmpty(accountProfile.getDepartment())) {
-			accountProfile.setDepartment(null);
-		}
-		
-		if (isNull(accountProfile.getTitle())) {
-			accountProfile.setTitle(original.getTitle());
-		} else if (isEmpty(accountProfile.getTitle())) {
-			accountProfile.setTitle(null);
-		}
-		
-		if (isNull(accountProfile.getFax())) {
-			accountProfile.setFax(original.getFax());
-		} else if (isEmpty(accountProfile.getFax())) {
-			accountProfile.setFax(null);
-		}
-		
-		if (isNull(accountProfile.getMobilePhone())) {
-			accountProfile.setMobilePhone(original.getMobilePhone());
-		} else if (isEmpty(accountProfile.getMobilePhone())) {
-			accountProfile.setMobilePhone(null);
-		}
-		
-		if (isNull(accountProfile.getPhone())) {
-			accountProfile.setPhone(original.getPhone());
-		} else if (isEmpty(accountProfile.getPhone())) {
-			accountProfile.setPhone(null);
-		}
-		
-		if (isNull(accountProfile.getExtension())) {
-			accountProfile.setExtension(original.getExtension());
-		} else if (isEmpty(accountProfile.getExtension())) {
-			accountProfile.setExtension(null);
-		}
-		
-		if (isNull(accountProfile.getLastName())) {
-			accountProfile.setLastName(original.getLastName());
-		}
-		
-		if (isNull(accountProfile.getEmail())) {
-			accountProfile.setEmail(original.getEmail());
-		}
-		
-		if (isNull(accountProfile.getHref())) {
-			accountProfile.setHref(original.getHref());
-		}
-		
-		if (isNull(accountProfile.getAccountHref())) {
-			accountProfile.setAccountHref(original.getAccountHref());
-		}
-		
-		if (isNull(accountProfile.getLocaleSidKey())) {
-			accountProfile.setLocaleSidKey(original.getLocaleSidKey());
-		}
-
-		if (isNull(accountProfile.getLanguageSidKey())) {
-			accountProfile.setLanguageSidKey(original.getLanguageSidKey());
-		}
-
-		if (isNull(accountProfile.getTimeZoneSidKey())) {
-			accountProfile.setTimeZoneSidKey(original.getTimeZoneSidKey());
-		}
-		
-		if (isNull(accountProfile.getEnableSalesforceLogin())) {
-			accountProfile.setEnableSalesforceLogin(original.getEnableSalesforceLogin());
-		}
-		
-		if (isNull(accountProfile.getAddress())) {
-			accountProfile.setAddress(original.getAddress());
-		}
-		
-		if (isNull(accountProfile.getLastLoginDate())) {
-			accountProfile.setLastLoginDate(original.getLastLoginDate());
-		}
-		
-		if (isNull(accountProfile.getPhotos())) {
-			accountProfile.setPhotos(original.getPhotos());
-		}
-		
-		if (isNull(accountProfile.getCreditCards())) {
-			accountProfile.setCreditCards(original.getCreditCards());
-		}
-		
-		if (isNull(accountProfile.getIsActive())) {
-			accountProfile.setIsActive(original.getIsActive());
-		}
-		
-		if (isNull(accountProfile.getSubscription())) {
-			accountProfile.setSubscription(original.getSubscription());
-		}
-		
-		if (isNull(accountProfile.getHasFullAccess())) {
-			accountProfile.setHasFullAccess(original.getHasFullAccess());
-		}
-		
-		accountProfile.setUsername(accountProfile.getEmail());
-		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
+		updateAccountProfile(accountProfile, original);
 		
 		super.updateAccountProfile(accountProfile);
 		
 		if (accountProfile.getIsActive() && isNotNull(accountProfile.getHref())) {
 			
-			identityProviderService.updateAccount(
-					accountProfile.getHref(), 
-					accountProfile.getEmail(), 
-					accountProfile.getFirstName(), 
-					accountProfile.getLastName());
+			if (accountProfile.getEmail() != original.getEmail() ||
+					accountProfile.getFirstName() != original.getFirstName() ||
+					accountProfile.getLastName() != original.getLastName()) {
+				
+				identityProviderService.updateAccount(
+						accountProfile.getHref(), 
+						accountProfile.getEmail(), 
+						accountProfile.getFirstName(), 
+						accountProfile.getLastName());
+			}
 		}
 		
 		if (isNotNull(accountProfile.getSubscription())) {
 			
-			CustomerRequest customerRequest = new CustomerRequest()
-					.id(accountProfile.getId())
-					.company(accountProfile.getCompany())
-					.email(accountProfile.getEmail())
-					.firstName(accountProfile.getFirstName())
-					.lastName(accountProfile.getLastName())
-					.phone(accountProfile.getPhone());
-			
-			Result<com.braintreegateway.Customer> customerResult = null;
-			
-			try {
-				customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
-			} catch (NotFoundException e) {
-				LOGGER.error(e);
-			}
-			
-			if (! customerResult.isSuccess()) {
-				LOGGER.error(customerResult.getMessage());
+			if (accountProfile.getCompany() != original.getCompany() ||
+					accountProfile.getEmail() != original.getEmail() ||
+					accountProfile.getFirstName() != original.getFirstName() ||
+					accountProfile.getLastName() != original.getLastName() ||
+					accountProfile.getPhone() != original.getPhone()) {
+				
+				CustomerRequest customerRequest = new CustomerRequest()
+						.id(accountProfile.getId())
+						.company(accountProfile.getCompany())
+						.email(accountProfile.getEmail())
+						.firstName(accountProfile.getFirstName())
+						.lastName(accountProfile.getLastName())
+						.phone(accountProfile.getPhone());
+				
+				Result<com.braintreegateway.Customer> customerResult = null;
+				
+				try {
+					customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+				} catch (NotFoundException e) {
+					LOGGER.error(e);
+				}
+				
+				if (! customerResult.isSuccess()) {
+					LOGGER.error(customerResult.getMessage());
+				}
 			}
 		}
 	}
@@ -634,5 +524,135 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	
 	public AccountProfile findBySubscriptionId(String subscriptionId) {
 		return super.findBySubscriptionId(subscriptionId);
+	}
+	
+	public void updateAccountProfile(AccountProfile accountProfile, AccountProfile original) {
+		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
+		accountProfile.setHasFullAccess(original.getHasFullAccess());
+		accountProfile.setCreatedBy(original.getCreatedBy());
+		accountProfile.setCreatedDate(original.getCreatedDate());
+		accountProfile.setSystemCreatedDate(original.getSystemCreatedDate());
+		
+		if (isNull(accountProfile.getDivision())) {
+			accountProfile.setDivision(original.getDivision());
+		} else if (isEmpty(accountProfile.getDivision())) {
+			accountProfile.setDivision(null);
+		}
+		
+		if (isNull(accountProfile.getFirstName())) {
+			accountProfile.setFirstName(original.getFirstName());
+		} else if (isEmpty(accountProfile.getFirstName())) {
+			accountProfile.setFirstName(null);
+		}
+		
+		if (isNull(accountProfile.getCompany())) {
+			accountProfile.setCompany(original.getCompany());
+		} else if (isEmpty(accountProfile.getCompany())) {
+			accountProfile.setCompany(null);
+		}
+		
+		if (isNull(accountProfile.getDepartment())) {
+			accountProfile.setDepartment(original.getDepartment());
+		} else if (isEmpty(accountProfile.getDepartment())) {
+			accountProfile.setDepartment(null);
+		}
+		
+		if (isNull(accountProfile.getTitle())) {
+			accountProfile.setTitle(original.getTitle());
+		} else if (isEmpty(accountProfile.getTitle())) {
+			accountProfile.setTitle(null);
+		}
+		
+		if (isNull(accountProfile.getFax())) {
+			accountProfile.setFax(original.getFax());
+		} else if (isEmpty(accountProfile.getFax())) {
+			accountProfile.setFax(null);
+		}
+		
+		if (isNull(accountProfile.getMobilePhone())) {
+			accountProfile.setMobilePhone(original.getMobilePhone());
+		} else if (isEmpty(accountProfile.getMobilePhone())) {
+			accountProfile.setMobilePhone(null);
+		}
+		
+		if (isNull(accountProfile.getPhone())) {
+			accountProfile.setPhone(original.getPhone());
+		} else if (isEmpty(accountProfile.getPhone())) {
+			accountProfile.setPhone(null);
+		}
+		
+		if (isNull(accountProfile.getExtension())) {
+			accountProfile.setExtension(original.getExtension());
+		} else if (isEmpty(accountProfile.getExtension())) {
+			accountProfile.setExtension(null);
+		}
+		
+		if (isNull(accountProfile.getLastName())) {
+			accountProfile.setLastName(original.getLastName());
+		}
+		
+		if (isNull(accountProfile.getEmail())) {
+			accountProfile.setEmail(original.getEmail());
+		}
+		
+		if (isNull(accountProfile.getHref())) {
+			accountProfile.setHref(original.getHref());
+		}
+		
+		if (isNull(accountProfile.getAccountHref())) {
+			accountProfile.setAccountHref(original.getAccountHref());
+		}
+		
+		if (isNull(accountProfile.getLocaleSidKey())) {
+			accountProfile.setLocaleSidKey(original.getLocaleSidKey());
+		}
+
+		if (isNull(accountProfile.getLanguageSidKey())) {
+			accountProfile.setLanguageSidKey(original.getLanguageSidKey());
+		}
+
+		if (isNull(accountProfile.getTimeZoneSidKey())) {
+			accountProfile.setTimeZoneSidKey(original.getTimeZoneSidKey());
+		}
+		
+		if (isNull(accountProfile.getEnableSalesforceLogin())) {
+			accountProfile.setEnableSalesforceLogin(original.getEnableSalesforceLogin());
+		}
+		
+		if (isNull(accountProfile.getAddress())) {
+			accountProfile.setAddress(original.getAddress());
+		}
+		
+		if (isNull(accountProfile.getLastLoginDate())) {
+			accountProfile.setLastLoginDate(original.getLastLoginDate());
+		}
+		
+		if (isNull(accountProfile.getPhotos())) {
+			accountProfile.setPhotos(original.getPhotos());
+		}
+		
+		if (isNull(accountProfile.getCreditCards())) {
+			accountProfile.setCreditCards(original.getCreditCards());
+		}
+		
+		if (isNull(accountProfile.getIsActive())) {
+			accountProfile.setIsActive(original.getIsActive());
+		}
+		
+		if (isNull(accountProfile.getSubscription())) {
+			accountProfile.setSubscription(original.getSubscription());
+		}
+		
+		if (isNull(accountProfile.getTransactions())) {
+			accountProfile.setTransactions(original.getTransactions());
+		}
+		
+		if (isNull(accountProfile.getHasFullAccess())) {
+			accountProfile.setHasFullAccess(original.getHasFullAccess());
+		}
+		
+		accountProfile.setUsername(accountProfile.getEmail());
+		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
+		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
 	}
 }

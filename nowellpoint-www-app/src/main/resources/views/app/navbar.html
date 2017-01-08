@@ -23,7 +23,7 @@
     <ul class="nav navbar-nav navbar-right p-r">
 
         <li>
-            <a href="/app/account-profile/${account.id}/plans">${messages["plan.name"]}:&emsp;<span class="text-success">${(account.subscription.planName)!}</span></a>
+            <a href="/app/account-profile/${account.id}/current-plan">${messages["plan.name"]}:&emsp;<span class="text-success">${(account.subscription.planName)!}</span></a>
         </li>
 
         <#if account.hasFullAccess?? && account.hasFullAccess>

@@ -54,6 +54,7 @@ public class AccountProfileController extends AbstractController {
 		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-address-edit.html");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile-deactivate.html");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
+		public static final String ACCOUNT_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
 	}
 	
 	public AccountProfileController() {
@@ -65,6 +66,7 @@ public class AccountProfileController extends AbstractController {
 		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> reviewPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> currentPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> setPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_EDIT, (request, response) -> editAccountProfile(configuration, request, response));
@@ -191,6 +193,24 @@ public class AccountProfileController extends AbstractController {
 		model.put("plan", plan);
 			
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String currentPlan(Configuration configuration, Request request, Response response) {
+		AccountProfile accountProfile = getAccount(request);
+		
+		Map<String, Object> model = getModel();
+		model.put("account", accountProfile);
+		model.put("accountProfile", accountProfile);
+		
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_CURRENT_PLAN);	
 	}
 	
 	/**

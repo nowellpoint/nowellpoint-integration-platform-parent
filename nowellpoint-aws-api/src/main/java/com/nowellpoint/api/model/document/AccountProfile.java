@@ -76,6 +76,8 @@ public class AccountProfile extends MongoDocument {
 	
 	private Set<CreditCard> creditCards;
 	
+	private Set<Transaction> transactions;
+	
 	private Boolean hasFullAccess;
 	
 	private String emailVerificationToken;
@@ -292,6 +294,14 @@ public class AccountProfile extends MongoDocument {
 
 	public void setCreditCards(Set<CreditCard> creditCards) {
 		this.creditCards = creditCards;
+	}
+
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 
 	public Boolean getHasFullAccess() {

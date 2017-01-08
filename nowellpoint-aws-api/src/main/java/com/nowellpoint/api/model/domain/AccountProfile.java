@@ -69,6 +69,9 @@ public class AccountProfile extends AbstractResource {
 	private Set<CreditCard> creditCards;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Set<Transaction> transactions;
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean hasFullAccess;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -303,6 +306,23 @@ public class AccountProfile extends AbstractResource {
 			this.creditCards = new HashSet<CreditCard>();
 		}
 		this.creditCards.add(creditCard);
+	}
+
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+	
+	public void addTransaction(Transaction transaction) {
+		if (this.getTransactions() == null) {
+			this.transactions = new HashSet<Transaction>();
+		} else {
+			this.transactions.removeIf(t -> t.getId().equals(transaction.getId()));
+		}
+		this.transactions.add(transaction);
 	}
 
 	public Boolean getHasFullAccess() {
