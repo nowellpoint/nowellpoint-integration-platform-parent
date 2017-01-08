@@ -204,11 +204,16 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	private String currentPlan(Configuration configuration, Request request, Response response) {
-		AccountProfile accountProfile = getAccount(request);
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+				.accountProfile()
+				.get(id);
 		
 		Map<String, Object> model = getModel();
-		model.put("account", accountProfile);
-		model.put("accountProfile", accountProfile);
+		model.put("accountProfile", getResult.getTarget());
 		
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_CURRENT_PLAN);	
 	}

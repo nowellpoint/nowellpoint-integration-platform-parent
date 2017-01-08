@@ -197,6 +197,7 @@ public class AccountProfileResource {
 			resource.setCreditCards(null);
 			resource.setHasFullAccess(null);
 			resource.setEnableSalesforceLogin(null);
+			resource.setTransactions(null);
 		} 
 		
 		return Response.ok(resource)

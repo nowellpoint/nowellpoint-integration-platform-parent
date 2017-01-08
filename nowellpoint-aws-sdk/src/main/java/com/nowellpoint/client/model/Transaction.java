@@ -12,6 +12,8 @@ public class Transaction {
 	
 	private String status;
 	
+	private CreditCard creditCard;
+	
 	private Date createdOn;
 	
 	private Date updatedOn;
@@ -50,6 +52,14 @@ public class Transaction {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 
 	public Date getCreatedOn() {

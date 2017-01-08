@@ -20,6 +20,8 @@ public class Transaction implements Serializable {
 	
 	private String status;
 	
+	private CreditCard creditCard;
+	
 	@JsonSerialize(using = DateSerializer.class)
 	@JsonDeserialize(using = DateDeserializer.class)
 	private Date createdOn;
@@ -62,6 +64,14 @@ public class Transaction implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 
 	public Date getCreatedOn() {

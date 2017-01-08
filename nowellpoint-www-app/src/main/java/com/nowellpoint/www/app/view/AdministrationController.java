@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
@@ -89,7 +90,9 @@ public class AdministrationController extends AbstractController {
 				.path("cache")
 				.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		if (httpResponse.getStatusCode() != Status.OK) {
+			LOGGER.error(httpResponse.getAsString());
+		}
 		
 		AccountProfile account = getAccount(request);
 		Map<String, Object> model = getModel();
