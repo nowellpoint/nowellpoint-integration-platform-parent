@@ -136,9 +136,9 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/environments")
+	@Path("salesforce/{id}/instances")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getEnvironments(@PathParam(value="id") String id) {	
+	public Response getInstances(@PathParam(value="id") String id) {	
 		
 		Set<Instance> instances = salesforceConnectorService.getInstances(id);
 		
@@ -148,11 +148,11 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/environment/{key}")
+	@Path("salesforce/{id}/instance/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
+	public Response getInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
-		Instance instance = salesforceConnectorService.getEnvironment(id, key);
+		Instance instance = salesforceConnectorService.getInstance(id, key);
 		
 		if (instance == null) {
 			throw new NotFoundException(String.format("Environment for key %s was not found",key));
@@ -164,12 +164,12 @@ public class SalesforceConnectorResource {
 	}
 
 	@POST
-	@Path("salesforce/{id}/environment")
+	@Path("salesforce/{id}/instance")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addEnvironment(@PathParam(value="id") String id, Instance resource) {
+	public Response addInstance(@PathParam(value="id") String id, Instance resource) {
 		
-		salesforceConnectorService.addEnvironment(id, resource);
+		salesforceConnectorService.addInstance(id, resource);
 		
 		return Response.ok()
 				.entity(resource)
@@ -177,12 +177,12 @@ public class SalesforceConnectorResource {
 	}
 	
 	@PUT
-	@Path("salesforce/{id}/environment/{key}")
+	@Path("salesforce/{id}/instance/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, Instance instance) {
+	public Response updateInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, Instance instance) {
 		
-		salesforceConnectorService.updateEnvironment(id, key, instance);
+		salesforceConnectorService.updateInstance(id, key, instance);
 		
 		return Response.ok()
 				.entity(instance)
@@ -190,23 +190,23 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("salesforce/{id}/environment/{key}")
+	@Path("salesforce/{id}/instance/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key) {
+	public Response removeInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
-		salesforceConnectorService.removeEnvironment(id, key);
+		salesforceConnectorService.removeInstance(id, key);
 		
 		return Response.ok()
 				.build(); 
 	}
 	
 	@POST
-	@Path("salesforce/{id}/environment/{key}")
+	@Path("salesforce/{id}/instance/{key}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateEnvironment(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
+	public Response updateInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
 		
-		Instance instance = salesforceConnectorService.updateEnvironment(id, key, parameters);
+		Instance instance = salesforceConnectorService.updateInstance(id, key, parameters);
 		
 		return Response.ok()
 				.entity(instance)
@@ -214,7 +214,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/environment/{key}/sobject/{sobjectName}")
+	@Path("salesforce/{id}/instance/{key}/sobject/{sobjectName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSObjectDetails(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="sobjectName") String sobjectName) {		
 		
@@ -230,7 +230,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/environment/{key}/actions/{action}/invoke")
+	@Path("salesforce/{id}/instance/{key}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="action") String action) {
 		

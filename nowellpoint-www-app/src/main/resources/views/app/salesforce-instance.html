@@ -180,10 +180,10 @@
                 <div class="col-md-6">
                     <div class="pull-right">
                         <a href="${labels['base.path']}/${id}#instances" id="back" class="btn btn-default" role="button">${labels["back"]}</a>
-                        <a href="${labels['base.path']}/${id}/environments/${(instance.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
-                        <a href="${labels['base.path']}/${id}/environments/${(instance.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
+                        <a href="${labels['base.path']}/${id}/instances/${(instance.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                        <a href="${labels['base.path']}/${id}/instances/${(instance.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
                         <#if instance.isSandbox>
-                            <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/environments/${instance.key}" data-id="${instance.key}" data-title="${labels['remove.environment']}" data-message="${labels['instance.name']}: ${instance.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
+                            <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/instances/${instance.key}" data-id="${instance.key}" data-title="${labels['remove.environment']}" data-message="${labels['instance.name']}: ${instance.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
                         </#if>
                     </div>
                 </div>

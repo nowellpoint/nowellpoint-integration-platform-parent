@@ -13,21 +13,21 @@ $('#confirm').click(function (e) {
 });
 
 
-$('#confirm-remove-environment').on('click', function (e) {
+$('#confirm-remove-instance').on('click', function (e) {
     var id = $(this).data('id');
     var message = $(this).data('message');
     var title = $(this).data('title');
     var href = $(this).data('href');
 
-    $('#confirm-remove-environment-dialog').find('.modal-body p').text(message);
-    $('#confirm-remove-environment-dialog').find('.modal-title').text(title);
-    $('#confirm-remove-environment-dialog').find('#href').val(href);
-    $('#confirm-remove-environment-dialog').data('id', id).modal('show');
+    $('#confirm-remove-instance-dialog').find('.modal-body p').text(message);
+    $('#confirm-remove-instance-dialog').find('.modal-title').text(title);
+    $('#confirm-remove-instance-dialog').find('#href').val(href);
+    $('#confirm-remove-instance-dialog').data('id', id).modal('show');
 });
 
 
-$('#confirm-remove-environment-button').click(function (e) {
-    var id = $('#confirm-remove-environment-dialog').data('id');
+$('#confirm-remove-instance-button').click(function (e) {
+    var id = $('#confirm-remove-instance-dialog').data('id');
     var row = $('#'.concat(id));
     var href = $('#href').val();
     $.ajax({
@@ -37,7 +37,7 @@ $('#confirm-remove-environment-button').click(function (e) {
             row.remove();
         }
     });
-    $('#confirm-remove-environment-dialog').modal('hide');
+    $('#confirm-remove-instance-dialog').modal('hide');
 });
 
 $('.test-connection').on('click', function (e) {
@@ -61,7 +61,7 @@ $('.test-connection').on('click', function (e) {
     $('#test-connection-dialog').modal('hide');
 });
 
-$('.build-environment').on('click', function (e) {
+$('.build-instance').on('click', function (e) {
     var id = $(this).data('id');
     var row = $('#'.concat(id));
     var href = $(this).data('href');

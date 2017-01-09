@@ -86,13 +86,13 @@ public class TestAuthenticators {
 		
 		assertTrue(updateResult.isSuccess());
 		
-		GetResult<SalesforceConnector> getSalesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		salesforceConnector = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.get(salesforceConnector.getId());
 		
-		assertEquals(getSalesforceConnector.getTarget().getName(), name);
+		assertEquals(salesforceConnector.getName(), name);
 		
-		System.out.println(getSalesforceConnector.getTarget().getName());
+		System.out.println(salesforceConnector.getName());
 	}
 	
 	@Test
@@ -100,11 +100,9 @@ public class TestAuthenticators {
 		
 		LOG.info("start createAndDeleteEnvironment");
 		
-		GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
+		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
 				.salesforceConnector()
 				.get("5838ae0d25075c7a81115253");
-		
-		SalesforceConnector salesforceConnector = getResult.getTarget();
 		
 		String authEndpoint = "https://login.salesforce.com";
 		String environmentName = "Test Environment";

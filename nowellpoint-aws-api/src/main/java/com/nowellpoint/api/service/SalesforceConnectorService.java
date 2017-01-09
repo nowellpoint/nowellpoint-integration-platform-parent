@@ -223,7 +223,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		s3Client.deleteObjects(deleteObjectsRequest);
 		
 		salesforceConnector.getInstances().stream().forEach(e -> {
-			removeEnvironment(e);
+			removeInstance(e);
 		});
 		
 		super.deleteSalesforceConnector( salesforceConnector );
@@ -257,7 +257,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Instance getEnvironment(String id, String key) {
+	public Instance getInstance(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		Instance instance = resource.getInstances()
@@ -275,7 +275,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @param instance
 	 */
 	
-	public void addEnvironment(String id, Instance instance) {
+	public void addInstance(String id, Instance instance) {
 		LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 
 		SalesforceConnector resource = findSalesforceConnector(id);
@@ -319,12 +319,12 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public void updateEnvironment(String id, String key, Instance instance) {
+	public void updateInstance(String id, String key, Instance instance) {
 		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
 		
 		instance.setKey(key);
 		
-		updateEnvironment(salesforceConnector, instance);
+		updateInstance(salesforceConnector, instance);
 
 	} 
 
@@ -335,7 +335,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * 
 	 */
 	
-	public void updateEnvironment(SalesforceConnector resource, Instance instance) {
+	public void updateInstance(SalesforceConnector resource, Instance instance) {
 		
 		Instance original = resource.getInstances()
 				.stream()
@@ -399,7 +399,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Instance updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
+	public Instance updateInstance(String id, String key, MultivaluedMap<String, String> parameters) {
 		
 		SalesforceConnector resource = findSalesforceConnector( id );
 		
@@ -433,7 +433,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			instance.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
 		}
 		
-		updateEnvironment(resource, instance);
+		updateInstance(resource, instance);
 		
 		return instance;
 	}
@@ -496,7 +496,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			instance.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
 		}
 		
-		buildEnvironment( instance );
+		buildInstance( instance );
 		
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
@@ -513,7 +513,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @param key
 	 */
 	
-	public void removeEnvironment(String id, String key) {
+	public void removeInstance(String id, String key) {
 		SalesforceConnector resource = findSalesforceConnector(id);
 		
 		Instance instance = resource.getInstances()
@@ -522,7 +522,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				.findFirst()
 				.get();
 		
-		removeEnvironment(instance);
+		removeInstance(instance);
 		
 		resource.getInstances().removeIf(e -> key.equals(e.getKey()));
 		
@@ -534,7 +534,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @param instance
 	 */
 	
-	private void removeEnvironment(Instance instance) {
+	private void removeInstance(Instance instance) {
 		UserProperties.clear(instance.getKey());
 		MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", instance.getKey() ) );
 	}
@@ -575,7 +575,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		}
 	}
 	
-	private void buildEnvironment(Instance instance) {
+	private void buildInstance(Instance instance) {
 
 		try {
 			

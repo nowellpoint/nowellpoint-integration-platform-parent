@@ -17,7 +17,7 @@
         <div class="flexgrid">
             <#list instance.sobjects?sort_by( "label") as sobject>
                 <div class="offer offer-radius offer-info">
-                    <a href="${labels['base.path']}/${id}/environments/${instance.key}/sobject/${sobject.name}" style="text-decoration: none">
+                    <a href="${labels['base.path']}/${id}/instances/${instance.key}/sobject/${sobject.name}" style="text-decoration: none">
                         <div class="offer-content">
                             <h3 class="lead">
 							<#if icons[ "${sobject.name}"]??>

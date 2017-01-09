@@ -144,9 +144,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		if (accountProfile.getIsActive() && isNotNull(accountProfile.getHref())) {
 			
-			if (accountProfile.getEmail() != original.getEmail() ||
-					accountProfile.getFirstName() != original.getFirstName() ||
-					accountProfile.getLastName() != original.getLastName()) {
+			if (Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
+					Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
+					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName())) {
 				
 				identityProviderService.updateAccount(
 						accountProfile.getHref(), 
@@ -158,11 +158,17 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		if (isNotNull(accountProfile.getSubscription())) {
 			
-			if (accountProfile.getCompany() != original.getCompany() ||
-					accountProfile.getEmail() != original.getEmail() ||
-					accountProfile.getFirstName() != original.getFirstName() ||
-					accountProfile.getLastName() != original.getLastName() ||
-					accountProfile.getPhone() != original.getPhone()) {
+			if (Assert.isNotEqual(accountProfile.getCompany(), original.getCompany()) ||
+					Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
+					Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
+					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()) ||
+					Assert.isNotEqual(accountProfile.getPhone(), original.getPhone())) {
+				
+				System.out.println(accountProfile.getCompany() != original.getCompany());
+				System.out.println(accountProfile.getEmail() != original.getEmail());
+				System.out.println(accountProfile.getFirstName() != original.getFirstName());
+				System.out.println(accountProfile.getLastName() != original.getLastName());
+				System.out.println(Assert.isNotEqual(accountProfile.getPhone(), original.getPhone()));
 				
 				CustomerRequest customerRequest = new CustomerRequest()
 						.id(accountProfile.getId())

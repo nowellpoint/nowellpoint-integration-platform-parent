@@ -76,7 +76,7 @@ public class SalesforceConnectorResource extends AbstractResource {
     	return result;
 	}
 	
-	public GetResult<SalesforceConnector> get(String id) {
+	public SalesforceConnector get(String id) {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
@@ -85,19 +85,17 @@ public class SalesforceConnectorResource extends AbstractResource {
     			.path(id)
     			.execute();
 		
-		GetResult<SalesforceConnector> result = null;
+		SalesforceConnector resource = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			SalesforceConnector resource = httpResponse.getEntity(SalesforceConnector.class);
-    		result = new GetResultImpl<SalesforceConnector>(resource); 
+			resource = httpResponse.getEntity(SalesforceConnector.class);
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-    		Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<SalesforceConnector>(error);
+    		throw new NotFoundException(httpResponse.getAsString());
     	}
     	
-    	return result;
+    	return resource;
 	}
 	
 	public UpdateResult<SalesforceConnector> update(String id, SalesforceConnectorRequest salesforceConnectorRequest) {
@@ -163,7 +161,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path(RESOURCE_CONTEXT)
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.path(key)
 	    			.path("sobject")
 	    			.path(sobjectName)
@@ -195,7 +193,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path(RESOURCE_CONTEXT)
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.path(key)
 	    			.execute();
 			
@@ -227,7 +225,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path("connectors")
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.body(instance)
 					.execute();
 			
@@ -260,7 +258,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path("connectors")
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.path(key)
 	    			.body(instance)
 					.execute();
@@ -286,7 +284,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path("connectors")
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.path(key)
 					.execute();
 			
@@ -309,7 +307,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path(RESOURCE_CONTEXT)
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.path(key)
 	    			.path("actions")
 	    			.path("test")
@@ -338,7 +336,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.path(RESOURCE_CONTEXT)
 	    			.path("salesforce")
 	    			.path(salesforceConnectorId)
-	    			.path("environment")
+	    			.path("instance")
 	    			.path(key)
 	    			.path("actions")
 	    			.path("build")

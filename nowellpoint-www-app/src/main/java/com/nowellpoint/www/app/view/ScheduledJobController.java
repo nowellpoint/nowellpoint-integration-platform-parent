@@ -195,11 +195,9 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
+			SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
 					.salesforceConnector()
 					.get(connectorId);
-			
-			SalesforceConnector salesforceConnector = getResult.getTarget();
 			
 			List<Instance> instances = salesforceConnector.getInstances();
 			
