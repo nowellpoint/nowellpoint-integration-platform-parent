@@ -338,18 +338,18 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
 				.get(id);
 		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", result.getTarget().getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", result.getTarget().getLastModifiedBy().getId());
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getLastModifiedBy().getId());
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJob", result.getTarget());
+		model.put("scheduledJob", scheduledJob);
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
-		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", result.getTarget().getConnectorId()));
+		model.put("connectorHref", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", scheduledJob.getConnectorId()));
 		model.put("successMessage", getValue(token, "success.message"));
 		
 		if (model.get("successMessage") != null) {
@@ -374,12 +374,12 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJob()
 				.get(id);
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJob", result.getTarget());
+		model.put("scheduledJob", scheduledJob);
 		model.put("mode", "edit");
 		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 		
@@ -496,14 +496,14 @@ public class ScheduledJobController extends AbstractController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 					.scheduledJob()
 					.get(id);
 			
 			String view = request.queryParams("view");
 			
 			Map<String, Object> model = getModel();
-			model.put("scheduledJob", result.getTarget());
+			model.put("scheduledJob", scheduledJob);
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
@@ -528,14 +528,14 @@ public class ScheduledJobController extends AbstractController {
 		
 		if (! updateResult.isSuccess()) {
 			
-			GetResult<ScheduledJob> result = new NowellpointClient(new TokenCredentials(token))
+			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
 					.scheduledJob()
 					.get(id);
 			
 			String view = request.queryParams("view");
 			
 			Map<String, Object> model = getModel();
-			model.put("scheduledJob", result.getTarget());
+			model.put("scheduledJob", scheduledJob);
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 			model.put("errorMessage", updateResult.getErrorMessage());

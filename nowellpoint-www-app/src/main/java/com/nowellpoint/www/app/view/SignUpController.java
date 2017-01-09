@@ -88,8 +88,7 @@ public class SignUpController extends AbstractController {
 		
 		Plan plan = new NowellpointClient()
 				.plan()
-				.get(planId)
-				.getTarget();
+				.get(planId);
 		
 		SignUpRequest signUpRequest = new SignUpRequest()
 				.withCountryCode("US")
@@ -154,8 +153,7 @@ public class SignUpController extends AbstractController {
     		
     		Plan plan = new NowellpointClient()
     				.plan()
-    				.get(planId)
-    				.getTarget();
+    				.get(planId);
     		
     		model.put("action", "createAccount");
     		model.put("signUpRequest", signUpRequest);

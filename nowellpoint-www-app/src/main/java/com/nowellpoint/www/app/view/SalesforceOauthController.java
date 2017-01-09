@@ -10,19 +10,15 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.sforce.OauthToken;
 import com.nowellpoint.www.app.util.Path;
 
-import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
 public class SalesforceOauthController extends AbstractController {
-	
-	private static final Logger LOGGER = Logger.getLogger(SalesforceOauthController.class.getName());
 	
 	public static final class Template {
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth-callback.html");
@@ -49,16 +45,11 @@ public class SalesforceOauthController extends AbstractController {
 	
 	private String oauth(Configuration configuration, Request request, Response response) {
 		
-		GetResult<String> result = new NowellpointClient(new TokenCredentials(getToken(request)))
+		String oauthRedirect = new NowellpointClient(new TokenCredentials(getToken(request)))
 				.salesforce()
 				.getOauthRedirect();
 		
-		if (result.isSuccess()) {
-			response.redirect(result.getTarget());		
-		} else {
-			LOGGER.error(result.getErrorMessage());
-			throw new BadRequestException(result.getErrorMessage());
-		}
+		response.redirect(oauthRedirect);
 		
 		return "";
 	};
@@ -92,17 +83,15 @@ public class SalesforceOauthController extends AbstractController {
 	
     private String getSalesforceToken(Configuration configuration, Request request, Response response) {
     	
-    	GetResult<OauthToken> getResult = new NowellpointClient(new TokenCredentials(getToken(request)))
+    	OauthToken oauthToken = new NowellpointClient(new TokenCredentials(getToken(request)))
     			.salesforce()
     			.getOauthToken(request.queryParams("code"));
     	
-    	OauthToken token = getResult.getTarget();
-    	
     	CreateSalesforceConnectorRequest createSalesforceConnectorRequest = new CreateSalesforceConnectorRequest()
-    			.withId(token.getId())
-    			.withAccessToken(token.getAccessToken())
-    			.withInstanceUrl(token.getInstanceUrl())
-    			.withRefreshToken(token.getRefreshToken());
+    			.withId(oauthToken.getId())
+    			.withAccessToken(oauthToken.getAccessToken())
+    			.withInstanceUrl(oauthToken.getInstanceUrl())
+    			.withRefreshToken(oauthToken.getRefreshToken());
     	
     	CreateResult<SalesforceConnector> createResult = new NowellpointClient(new TokenCredentials(getToken(request)))
     			.salesforceConnector()

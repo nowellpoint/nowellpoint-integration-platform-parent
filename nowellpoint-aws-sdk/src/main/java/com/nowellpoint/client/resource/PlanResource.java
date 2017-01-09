@@ -9,9 +9,10 @@ import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
-import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.exception.NotFoundException;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 
 public class PlanResource extends AbstractResource {
 	
@@ -19,25 +20,23 @@ public class PlanResource extends AbstractResource {
 		super(environment, token);
 	}
 	
-	public GetResult<Plan> get(String id) {
+	public Plan get(String id) {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.path("plans")
 				.path(id)
 				.execute();
 		
-		GetResult<Plan> result = null;
+		Plan resource = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			Plan plan = httpResponse.getEntity(Plan.class);
-			result = new GetResultImpl<Plan>(plan);
+			resource = httpResponse.getEntity(Plan.class);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<Plan>(error);
-		}
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
 		
-		return result;
+		return resource;
 	}
 	
 	public GetResult<List<Plan>> getPlans(GetPlansRequest getPlansRequest) {

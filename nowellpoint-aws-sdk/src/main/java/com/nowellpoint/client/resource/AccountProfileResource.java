@@ -15,10 +15,10 @@ import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetResult;
-import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.model.exception.NotFoundException;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
@@ -43,7 +43,7 @@ public class AccountProfileResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public GetResult<AccountProfile> get() {
+	public AccountProfile get() {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
@@ -51,19 +51,17 @@ public class AccountProfileResource extends AbstractResource {
 				.path("me")
 				.execute();
 		
-		GetResult<AccountProfile> result = null;
+		AccountProfile resource = null;
     	
     	if (httpResponse.getStatusCode() == Status.OK) {
-    		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-    		result = new GetResultImpl<AccountProfile>(accountProfile); 
+    		resource = httpResponse.getEntity(AccountProfile.class);
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-    		Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<AccountProfile>(error);
+			throw new ServiceUnavailableException(httpResponse.getAsString());
     	}
     	
-    	return result;
+    	return resource;
 	} 
 	
 	/**
@@ -72,7 +70,7 @@ public class AccountProfileResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public GetResult<AccountProfile> get(String id) {
+	public AccountProfile get(String id) {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
@@ -80,19 +78,17 @@ public class AccountProfileResource extends AbstractResource {
 				.path(id)
 				.execute();
 		
-		GetResult<AccountProfile> result = null;
+		AccountProfile resource = null;
     	
     	if (httpResponse.getStatusCode() == Status.OK) {
-    		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-    		result = new GetResultImpl<AccountProfile>(accountProfile); 
+    		resource = httpResponse.getEntity(AccountProfile.class);
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-    		Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<AccountProfile>(error);
+			throw new ServiceUnavailableException(httpResponse.getAsString());
     	}
     	
-    	return result;
+    	return resource;
 	} 
 	
 	/**
@@ -241,7 +237,7 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public GetResult<Address> get(String accountProfileId) {
+		public Address get(String accountProfileId) {
 			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
@@ -249,19 +245,17 @@ public class AccountProfileResource extends AbstractResource {
 					.path("address")
 					.execute();
 			
-			GetResult<Address> result = null;
+			Address resource = null;
 	    	
 	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		Address resource = httpResponse.getEntity(Address.class);
-	    		result = new GetResultImpl<Address>(resource); 
+	    		resource = httpResponse.getEntity(Address.class);
 	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {
-	    		Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<Address>(error);
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
 	    	
-	    	return result;
+	    	return resource;
 		}
 		
 		/**
@@ -502,7 +496,7 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public GetResult<CreditCard> get(String accountProfileId, String paymentMethodToken) {
+		public CreditCard get(String accountProfileId, String paymentMethodToken) {
 			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
@@ -511,19 +505,17 @@ public class AccountProfileResource extends AbstractResource {
 					.path(paymentMethodToken)
 					.execute();
 			
-			GetResult<CreditCard> result = null;
+			CreditCard resource = null;
 	    	
 	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		CreditCard resource = httpResponse.getEntity(CreditCard.class);
-	    		result = new GetResultImpl<CreditCard>(resource); 
+	    		resource = httpResponse.getEntity(CreditCard.class);
 	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {
-	    		Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<CreditCard>(error);
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
 	    	
-	    	return result;
+	    	return resource;
 		}
 		
 		/**

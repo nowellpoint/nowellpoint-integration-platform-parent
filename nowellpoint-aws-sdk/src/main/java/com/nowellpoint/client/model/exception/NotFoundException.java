@@ -1,4 +1,4 @@
-package com.nowellpoint.client.model;
+package com.nowellpoint.client.model.exception;
 
 public class NotFoundException extends RuntimeException {
 

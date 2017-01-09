@@ -15,7 +15,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.TokenCredentials;
@@ -134,22 +133,22 @@ public class AccountProfileController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.get(id);
 		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", getResult.getTarget().getLastModifiedBy().getId());
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastModifiedBy().getId());
 		
 		Map<String, Object> model = getModel();
-		model.put("accountProfile", getResult.getTarget());
-		model.put("locales", getLocales(getResult.getTarget()));
+		model.put("accountProfile", accountProfile);
+		model.put("locales", getLocales(accountProfile));
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
 		model.put("successMessage", request.cookie("update.profile.success"));
 		
-		if (getResult.getTarget().getId().equals(id)) {
+		if (accountProfile.getId().equals(id)) {
 			return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
 		}
 
@@ -173,8 +172,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Plan plan = new NowellpointClient(new TokenCredentials(token))
 				.plan()
-				.get(planId)
-				.getTarget();
+				.get(planId);
 		
 		Address address = new Address();
 		address.setCountryCode(accountProfile.getAddress().getCountryCode());
@@ -208,12 +206,12 @@ public class AccountProfileController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.get(id);
 		
 		Map<String, Object> model = getModel();
-		model.put("accountProfile", getResult.getTarget());
+		model.put("accountProfile", accountProfile);
 		
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_CURRENT_PLAN);	
 	}
@@ -283,8 +281,7 @@ public class AccountProfileController extends AbstractController {
 				
 				Plan plan = new NowellpointClient(new TokenCredentials(token))
 						.plan()
-						.get(planId)
-						.getTarget();
+						.get(planId);
 				
 				CreditCard creditCard = new CreditCard()
 						.withBillingAddress(new Address()
@@ -450,13 +447,13 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.get(request.params(":id"));
 			
 		Map<String, Object> model = getModel();
 		model.put("account", account);
-		model.put("accountProfile", getResult.getTarget());
+		model.put("accountProfile", accountProfile);
 			
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_DEACTIVATE);		
 	};
@@ -526,7 +523,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		GetResult<Address> getResult = new NowellpointClient(new TokenCredentials(token))
+		Address address = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.address()
 				.get(request.params(":id"));
@@ -534,7 +531,7 @@ public class AccountProfileController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("account", account);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
-		model.put("address", getResult.getTarget());
+		model.put("address", address);
 			
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ADDRESS_EDIT);	
 	}
@@ -603,16 +600,10 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		GetResult<CreditCard> getRequest = new NowellpointClient(new TokenCredentials(token))
+		CreditCard creditCard = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
-		
-		if (! getRequest.isSuccess()) {
-			throw new NotFoundException(getRequest.getErrorMessage());
-		}
-		
-		CreditCard creditCard = getRequest.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("account", account);
@@ -634,11 +625,9 @@ public class AccountProfileController extends AbstractController {
 	private String newCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.get(request.params(":id"));
-			
-		AccountProfile accountProfile = getResult.getTarget();
 		
 		Address address = new Address();
 		address.setCountryCode(accountProfile.getAddress().getCountryCode());
@@ -669,22 +658,14 @@ public class AccountProfileController extends AbstractController {
 	private String editCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		GetResult<CreditCard> creditCardRequest = new NowellpointClient(new TokenCredentials(token))
+		CreditCard creditCard = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
 		
-		if (! creditCardRequest.isSuccess()) {
-			throw new NotFoundException(creditCardRequest.getErrorMessage());
-		}
-		
-		CreditCard creditCard = creditCardRequest.getTarget();
-		
-		GetResult<AccountProfile> accountProfileRequest = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.get(request.params(":id"));
-		
-		AccountProfile accountProfile = accountProfileRequest.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);

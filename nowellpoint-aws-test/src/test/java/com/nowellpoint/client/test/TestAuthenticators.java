@@ -162,15 +162,15 @@ public class TestAuthenticators {
 		
 		long start = System.currentTimeMillis();
 		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
 				.accountProfile()
 				.get();
 		
-		assertTrue(getResult.isSuccess());	
+		assertNotNull(accountProfile);	
 		
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
-		System.out.println(getResult.getTarget().getName());
+		System.out.println(accountProfile.getName());
 	}
 	
 	@Test

@@ -28,7 +28,6 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -74,20 +73,13 @@ public class AuthenticationController extends AbstractController {
 	public void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
 		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
     	if (cookie.isPresent()) {
+    		
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
     		request.attribute(AUTH_TOKEN, token);
     		
-    		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
+    		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
     				.accountProfile()
     				.get();
-    		
-    		AccountProfile accountProfile = null;
-    		    		
-    		if (getResult.isSuccess()) {
-    			accountProfile = getResult.getTarget();
-    		} else {
-    			throw new NotAuthorizedException(getResult.getErrorMessage());
-    		}
     		
     		request.attribute("account", accountProfile);
     		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(configuration, accountProfile));

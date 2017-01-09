@@ -6,13 +6,13 @@ public class Assert {
 		
 	}
 	
-	public static void notNull(Object value, String message) {
+	public static void assertNotNull(Object value, String message) {
 		if (value == null) {
 			throw new IllegalArgumentException(message);
 		}
 	}
 	
-	public static void isNotNullOrEmpty(String value, String message) {
+	public static void assertNotNullOrEmpty(String value, String message) {
 		if (value == null || value.isEmpty()) {
 			throw new IllegalArgumentException(message);
 		}

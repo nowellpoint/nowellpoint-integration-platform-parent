@@ -21,8 +21,8 @@ public class Authenticators {
 	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(PasswordGrantRequest passwordGrantRequest) {
 			
-			Assert.notNull(passwordGrantRequest.getUsername(), "missing username");
-			Assert.notNull(passwordGrantRequest.getPassword(), "missing password");
+			Assert.assertNotNull(passwordGrantRequest.getUsername(), "missing username");
+			Assert.assertNotNull(passwordGrantRequest.getPassword(), "missing password");
 			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 	    			.accept(MediaType.APPLICATION_JSON)
@@ -51,8 +51,8 @@ public class Authenticators {
 	public static class ClientCredentialsGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
 			
-			Assert.notNull(grantRequest.getApiKeyId(), "missing api key id");
-			Assert.notNull(grantRequest.getApiKeySecret(), "missing api key secret");
+			Assert.assertNotNull(grantRequest.getApiKeyId(), "missing api key id");
+			Assert.assertNotNull(grantRequest.getApiKeySecret(), "missing api key secret");
 			
 			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
 	    			.accept(MediaType.APPLICATION_JSON)

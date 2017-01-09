@@ -13,13 +13,14 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
-import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.model.exception.NotFoundException;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 
 public class SalesforceConnectorResource extends AbstractResource {
 	
@@ -92,7 +93,7 @@ public class SalesforceConnectorResource extends AbstractResource {
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-    		throw new NotFoundException(httpResponse.getAsString());
+			throw new ServiceUnavailableException(httpResponse.getAsString());
     	}
     	
     	return resource;

@@ -6,9 +6,8 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.client.model.sforce.OauthToken;
 
 public class SalesforceResource extends AbstractResource {
@@ -24,24 +23,22 @@ public class SalesforceResource extends AbstractResource {
 	 * @return Salesforce OAuth redirect URL
 	 */
 	
-	public GetResult<String> getOauthRedirect() {
+	public String getOauthRedirect() {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
     			.path(RESOURCE_CONTEXT)
     			.path("oauth")
     			.execute();
 		
-		GetResult<String> result = null;
+		String oauthRedirect = null;
 		
 		if (httpResponse.getStatusCode() == Status.ACCEPTED) {
-			String oauthRedirect = httpResponse.getHeaders().get("Location");
-			result = new GetResultImpl<String>(oauthRedirect);
+			oauthRedirect = httpResponse.getHeaders().get("Location");
 		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<String>(error);
-		}
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
 		
-		return result;	
+		return oauthRedirect;	
 	}
 	
 	/**
@@ -50,7 +47,7 @@ public class SalesforceResource extends AbstractResource {
 	 * @return the Salesforce OAuth Token
 	 */
 	
-	public GetResult<OauthToken> getOauthToken(String code) {
+	public OauthToken getOauthToken(String code) {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
@@ -60,16 +57,14 @@ public class SalesforceResource extends AbstractResource {
     			.queryParameter("code", code)
     			.execute();
 		
-		GetResult<OauthToken> result = null;
+		OauthToken oauthToken = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			OauthToken resource = httpResponse.getEntity(OauthToken.class);
-			result = new GetResultImpl<OauthToken>(resource);
+			oauthToken = httpResponse.getEntity(OauthToken.class);
 		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<OauthToken>(error);
-		}
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
 		
-		return result;
+		return oauthToken;
 	}
 }
