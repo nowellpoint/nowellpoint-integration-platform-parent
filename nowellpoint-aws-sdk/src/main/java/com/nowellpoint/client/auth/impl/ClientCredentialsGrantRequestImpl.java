@@ -1,5 +1,6 @@
 package com.nowellpoint.client.auth.impl;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 
 public class ClientCredentialsGrantRequestImpl implements ClientCredentialsGrantRequest {
@@ -8,7 +9,10 @@ public class ClientCredentialsGrantRequestImpl implements ClientCredentialsGrant
 	
 	private String apiKeySecret;
 	
-	public ClientCredentialsGrantRequestImpl(String apiKeyId, String apiKeySecret) {
+	private Environment environment;
+	
+	public ClientCredentialsGrantRequestImpl(Environment environment, String apiKeyId, String apiKeySecret) {
+		this.environment = environment;
 		this.apiKeyId = apiKeyId;
 		this.apiKeySecret = apiKeySecret;
 	}
@@ -21,5 +25,10 @@ public class ClientCredentialsGrantRequestImpl implements ClientCredentialsGrant
 	@Override
 	public String getApiKeySecret() {
 		return apiKeySecret;
+	}
+	
+	@Override
+	public Environment getEnvironment() {
+		return environment;
 	}
 }

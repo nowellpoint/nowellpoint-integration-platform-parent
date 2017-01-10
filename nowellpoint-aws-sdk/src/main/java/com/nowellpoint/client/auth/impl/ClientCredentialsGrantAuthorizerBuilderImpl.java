@@ -1,5 +1,6 @@
 package com.nowellpoint.client.auth.impl;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.auth.ClientCredentialsGrantAuthorizerBuilder;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 
@@ -8,6 +9,8 @@ public class ClientCredentialsGrantAuthorizerBuilderImpl implements ClientCreden
 	private String apiKeyId;
 	
 	private String apiKeySecret;
+	
+	private Environment environment;
 
 	@Override
 	public ClientCredentialsGrantAuthorizerBuilder setApiKeyId(String apiKeyId) {
@@ -22,7 +25,13 @@ public class ClientCredentialsGrantAuthorizerBuilderImpl implements ClientCreden
 	}
 	
 	@Override
+	public ClientCredentialsGrantAuthorizerBuilder setEnvionrment(Environment environment) {
+		this.environment = environment;
+		return this;
+	}
+	
+	@Override
 	public ClientCredentialsGrantRequest build() {
-		return new ClientCredentialsGrantRequestImpl(apiKeyId, apiKeySecret);
+		return new ClientCredentialsGrantRequestImpl(environment, apiKeyId, apiKeySecret);
 	}
 }

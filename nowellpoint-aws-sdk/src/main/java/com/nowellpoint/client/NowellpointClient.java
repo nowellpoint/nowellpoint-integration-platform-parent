@@ -23,7 +23,7 @@ public class NowellpointClient {
 	
 	private static Environment environment;
 	
-	private static Token token;
+	private Token token;
 	
 	public NowellpointClient() {
 		if (System.getenv("NOWELLPOINT_API_ENDPOINT")  != null) {
@@ -36,6 +36,7 @@ public class NowellpointClient {
 	public NowellpointClient(ClientCredentials credentials) {
 		this();
 		ClientCredentialsGrantRequest grantRequest = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
+				.setEnvionrment(environment)
 				.setApiKeyId(credentials.getApiKeyId())
 				.setApiKeySecret(credentials.getApiKeySecret()).build();
 		

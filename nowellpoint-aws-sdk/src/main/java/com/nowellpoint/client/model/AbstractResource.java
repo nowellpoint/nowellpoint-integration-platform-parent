@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractResource {
+public abstract class AbstractResource implements Resource {
 
 	private String id;
 	

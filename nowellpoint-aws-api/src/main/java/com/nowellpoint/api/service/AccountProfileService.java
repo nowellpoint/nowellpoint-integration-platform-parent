@@ -164,10 +164,10 @@ public class AccountProfileService extends AccountProfileModelMapper {
 					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()) ||
 					Assert.isNotEqual(accountProfile.getPhone(), original.getPhone())) {
 				
-				System.out.println(accountProfile.getCompany() != original.getCompany());
-				System.out.println(accountProfile.getEmail() != original.getEmail());
-				System.out.println(accountProfile.getFirstName() != original.getFirstName());
-				System.out.println(accountProfile.getLastName() != original.getLastName());
+				System.out.println(Assert.isNotEqual(accountProfile.getCompany(), original.getCompany()));
+				System.out.println(Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()));
+				System.out.println(Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()));
+				System.out.println(Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()));
 				System.out.println(Assert.isNotEqual(accountProfile.getPhone(), original.getPhone()));
 				
 				CustomerRequest customerRequest = new CustomerRequest()

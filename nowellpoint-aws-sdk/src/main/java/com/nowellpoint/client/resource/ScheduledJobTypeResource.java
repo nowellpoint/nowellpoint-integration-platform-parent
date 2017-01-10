@@ -10,6 +10,8 @@ import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.exception.NotFoundException;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 
 public class ScheduledJobTypeResource extends AbstractResource {
 	
@@ -19,24 +21,24 @@ public class ScheduledJobTypeResource extends AbstractResource {
 		super(environment, token);
 	}
 	
-	public GetResult<ScheduledJobType> get(String id) {
+	public ScheduledJobType get(String id) {
 		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
 		
-		GetResult<ScheduledJobType> result = null;
+		ScheduledJobType resource = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			ScheduledJobType resource = httpResponse.getEntity(ScheduledJobType.class);
-			result = new GetResultImpl<ScheduledJobType>(resource);
+			resource = httpResponse.getEntity(ScheduledJobType.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<ScheduledJobType>(error);
-		}
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
 		
-		return result;
+		return resource;
 	}
 
 	public GetResult<List<ScheduledJobType>> getScheduledJobTypesByLanguage(String language) {

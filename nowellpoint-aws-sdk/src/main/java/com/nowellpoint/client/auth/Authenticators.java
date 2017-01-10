@@ -51,10 +51,11 @@ public class Authenticators {
 	public static class ClientCredentialsGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
 			
+			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			Assert.assertNotNull(grantRequest.getApiKeyId(), "missing api key id");
 			Assert.assertNotNull(grantRequest.getApiKeySecret(), "missing api key secret");
 			
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
 	    			.accept(MediaType.APPLICATION_JSON)
 	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	    			.path("oauth")

@@ -138,15 +138,15 @@ public class ScheduledJobController extends AbstractController {
 		
 		String jobTypeId = request.queryParams("job-type-id");
 		
-		GetResult<ScheduledJobType> getScheduledJobTypeResult = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJobType scheduledJobType = new NowellpointClient(new TokenCredentials(token))
 				.scheduledJobType()
 				.get(jobTypeId);
 		
 		ScheduledJob scheduledJob = new ScheduledJob();
 		scheduledJob.setId(UUID.randomUUID().toString());
-		scheduledJob.setJobTypeId(getScheduledJobTypeResult.getTarget().getId());
-		scheduledJob.setJobTypeCode(getScheduledJobTypeResult.getTarget().getCode());
-		scheduledJob.setJobTypeName(getScheduledJobTypeResult.getTarget().getName());
+		scheduledJob.setJobTypeId(scheduledJobType.getId());
+		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
+		scheduledJob.setJobTypeName(scheduledJobType.getName());
 		
 		putValue(token, scheduledJob.getId(), objectMapper.writeValueAsString(scheduledJob));
 		

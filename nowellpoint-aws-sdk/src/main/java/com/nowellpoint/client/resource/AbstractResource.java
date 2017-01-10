@@ -17,7 +17,7 @@ import com.nowellpoint.client.model.Token;
 
 public abstract class AbstractResource {
 	
-	protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 	
 	protected Environment environment;
 	

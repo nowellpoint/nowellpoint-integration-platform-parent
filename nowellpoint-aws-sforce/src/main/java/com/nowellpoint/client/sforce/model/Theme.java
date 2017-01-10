@@ -1,8 +1,11 @@
 package com.nowellpoint.client.sforce.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Theme {
+public class Theme implements Serializable {
+	
+	private static final long serialVersionUID = -8690811511992145361L;
 	
 	private List<ThemeItem> themeItems;
 

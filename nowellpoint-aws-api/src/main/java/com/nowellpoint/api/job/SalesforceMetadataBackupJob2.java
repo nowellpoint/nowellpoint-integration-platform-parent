@@ -86,7 +86,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceMetadataBackupJob2.class);
 	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String bucketName = "nowellpoint-metadata-backups";
 	private static final Client client = new Client();
