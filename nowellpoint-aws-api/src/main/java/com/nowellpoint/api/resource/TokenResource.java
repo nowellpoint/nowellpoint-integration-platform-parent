@@ -25,6 +25,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -139,10 +140,19 @@ public class TokenResource {
 		loggedInEvent.fire(token);
 		
 		//
+		// build cache control
+		//
+		
+		CacheControl cacheControl = new CacheControl();
+		cacheControl.setNoStore(Boolean.TRUE);
+		
+		//
 		// return the Response with the token
 		//
-
+		
 		return Response.ok()
+				.cacheControl(cacheControl)
+				.header("Pragma", "no-cache")
 				.entity(token)
 				.type(MediaType.APPLICATION_JSON)
 				.build();	
@@ -206,6 +216,7 @@ public class TokenResource {
         		.setId(claims.getBody().getId())
         		.setHeaderParam("typ", "JWT")
         		.setIssuer(claims.getBody().getIssuer())
+        		.setAudience(uriInfo.getBaseUri().toString())
         		.setSubject(subject)
         		.setIssuedAt(claims.getBody().getIssuedAt())
         		.setExpiration(claims.getBody().getExpiration())

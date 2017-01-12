@@ -14,7 +14,6 @@ import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
@@ -99,7 +98,7 @@ public class ApplicationController extends AbstractController {
 		
 		String id = request.queryParams("id");
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		SalesforceConnector salesforceConnector = new NowellpointClient(token)
 				.salesforceConnector()
 				.get(id);
 		
@@ -156,7 +155,7 @@ public class ApplicationController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		Application application = new NowellpointClient(new TokenCredentials(token))
+		Application application = new NowellpointClient(token)
 				.application()
 				.getApplication(id);
 		
@@ -286,7 +285,7 @@ public class ApplicationController extends AbstractController {
 		
 		Token token = request.attribute("token");
 		
-		NowellpointClient client = new NowellpointClient(new TokenCredentials(token));
+		NowellpointClient client = new NowellpointClient(token);
 		client.application().deleteApplication(id);
 		
 		return "";	

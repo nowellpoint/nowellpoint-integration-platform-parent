@@ -59,6 +59,8 @@ public class TestIdentityProviderService {
 				.forApplication(application)
 				.authenticate(request);
 		
+		System.out.println(authenticationResult.getAccessToken().getJwt());
+		
 		assertNotNull(authenticationResult.getAccessToken().getAccount().getFullName());
 		assertNotNull(authenticationResult.getAccessToken().getJwt());
 		assertNotNull(authenticationResult.getAccessToken().getHref());

@@ -17,6 +17,11 @@
             <artifactId>nowellpoint-aws-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+  <groupId>org.infinispan</groupId>
+  <artifactId>infinispan-embedded</artifactId>
+  <version>7.1.0.Final</version>
+</dependency>
 		<dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

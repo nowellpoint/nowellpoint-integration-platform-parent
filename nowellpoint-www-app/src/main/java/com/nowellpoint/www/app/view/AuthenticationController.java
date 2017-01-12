@@ -25,7 +25,6 @@ import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Token;
@@ -77,7 +76,7 @@ public class AuthenticationController extends AbstractController {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
     		request.attribute(AUTH_TOKEN, token);
     		
-    		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+    		AccountProfile accountProfile = new NowellpointClient(token)
     				.accountProfile()
     				.get();
     		

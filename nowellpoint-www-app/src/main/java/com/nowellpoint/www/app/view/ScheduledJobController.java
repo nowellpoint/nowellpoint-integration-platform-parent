@@ -15,7 +15,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Instance;
@@ -82,7 +81,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		GetResult<List<ScheduledJob>> getResult = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<ScheduledJob>> getResult = new NowellpointClient(token)
 				.scheduledJob()
 				.getScheduledJobs();
 		
@@ -111,7 +110,7 @@ public class ScheduledJobController extends AbstractController {
 			halt();
 		}
 		
-		GetResult<List<ScheduledJobType>> getScheduledJobsTypes = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<ScheduledJobType>> getScheduledJobsTypes = new NowellpointClient(token)
 				.scheduledJobType()
 				.getScheduledJobTypesByLanguage(accountProfile.getLanguageSidKey());
 		
@@ -138,7 +137,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		String jobTypeId = request.queryParams("job-type-id");
 		
-		ScheduledJobType scheduledJobType = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJobType scheduledJobType = new NowellpointClient(token)
 				.scheduledJobType()
 				.get(jobTypeId);
 		
@@ -157,7 +156,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(new TokenCredentials(token))
+			GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(token)
 					.salesforceConnector()
 					.getSalesforceConnectors();
 
@@ -195,7 +194,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+			SalesforceConnector salesforceConnector = new NowellpointClient(token)
 					.salesforceConnector()
 					.get(connectorId);
 			
@@ -225,7 +224,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
-		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(scheduledJob.getConnectorId(), environmentKey);
@@ -296,7 +295,7 @@ public class ScheduledJobController extends AbstractController {
 				.withJobTypeId(scheduledJob.getJobTypeId())
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getLocale(request)).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 		
-		CreateResult<ScheduledJob> createScheduledJobResult = new NowellpointClient(new TokenCredentials(token))
+		CreateResult<ScheduledJob> createScheduledJobResult = new NowellpointClient(token)
 				.scheduledJob()
 				.create(createScheduledJobRequest);
 		
@@ -338,7 +337,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJob scheduledJob = new NowellpointClient(token)
 				.scheduledJob()
 				.get(id);
 		
@@ -374,7 +373,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJob scheduledJob = new NowellpointClient(token)
 				.scheduledJob()
 				.get(id);
 		
@@ -406,7 +405,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(token)
 				.scheduledJob() 
 				.start(id);
 		
@@ -431,7 +430,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+		ScheduledJob scheduledJob = new NowellpointClient(token)
 				.scheduledJob() 
 				.stop(id)
 				.getTarget();
@@ -457,7 +456,7 @@ public class ScheduledJobController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(token)
 				.scheduledJob() 
 				.terminate(id);
 		
@@ -496,7 +495,7 @@ public class ScheduledJobController extends AbstractController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+			ScheduledJob scheduledJob = new NowellpointClient(token)
 					.scheduledJob()
 					.get(id);
 			
@@ -522,13 +521,13 @@ public class ScheduledJobController extends AbstractController {
 				.withEnvironmentKey(environmentKey)
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getLocale(request)).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
 
-		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<ScheduledJob> updateResult = new NowellpointClient(token)
 				.scheduledJob() 
 				.update(scheduledJobRequest);
 		
 		if (! updateResult.isSuccess()) {
 			
-			ScheduledJob scheduledJob = new NowellpointClient(new TokenCredentials(token))
+			ScheduledJob scheduledJob = new NowellpointClient(token)
 					.scheduledJob()
 					.get(id);
 			
@@ -567,7 +566,7 @@ public class ScheduledJobController extends AbstractController {
 		String id = request.params(":id");
 		String fireInstanceId = request.params(":fireInstanceId");
 		
-		GetResult<RunHistory> getResult = new NowellpointClient(new TokenCredentials(token))
+		GetResult<RunHistory> getResult = new NowellpointClient(token)
 				.scheduledJob()
 				.runHistory()
 				.get(id, fireInstanceId);
@@ -595,7 +594,7 @@ public class ScheduledJobController extends AbstractController {
 		String fireInstanceId = request.params(":fireInstanceId");
 		String filename = request.params(":filename");
 		
-		GetResult<String> getResult = new NowellpointClient(new TokenCredentials(token))
+		GetResult<String> getResult = new NowellpointClient(token)
 				.scheduledJob()
 				.runHistory()
 				.getFile(id, fireInstanceId, filename);

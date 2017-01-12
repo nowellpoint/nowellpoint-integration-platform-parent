@@ -13,7 +13,6 @@ import javax.ws.rs.BadRequestException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Instance;
@@ -125,7 +124,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		String sobjectName = request.params(":sobjectName");
 		
-		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(new TokenCredentials(token))
+		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.sobjectDetail()
@@ -155,7 +154,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(id, key);
@@ -206,7 +205,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(id, key);
@@ -235,7 +234,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Instance> result = new NowellpointClient(new TokenCredentials(token))
+		GetResult<Instance> result = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(id, key);
@@ -278,7 +277,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		CreateResult<Instance> createResult = new NowellpointClient(new TokenCredentials(token))
+		CreateResult<Instance> createResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.add(id, environmentRequest);
@@ -339,7 +338,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.withUsername(username)
 				.withSecurityToken(securityToken);
 		
-		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.update(id, key, environmentRequest);
@@ -386,7 +385,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+		DeleteResult deleteResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.delete(id, key);
@@ -414,7 +413,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		SalesforceConnector salesforceConnector = new NowellpointClient(token)
 				.salesforceConnector()
 				.get(id);
 		
@@ -444,7 +443,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String view = request.queryParams("view");
     	
-		SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		SalesforceConnector salesforceConnector = new NowellpointClient(token)
 				.salesforceConnector()
 				.get(id);
 		
@@ -471,7 +470,7 @@ public class SalesforceConnectorController extends AbstractController {
 	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
@@ -501,7 +500,7 @@ public class SalesforceConnectorController extends AbstractController {
 				.withName(name)
 				.withTag(tag);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.update(id, salesforceConnectorRequest);
 		
@@ -509,7 +508,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		if (! updateResult.isSuccess()) {
 			
-			SalesforceConnector salesforceConnector = new NowellpointClient(new TokenCredentials(token))
+			SalesforceConnector salesforceConnector = new NowellpointClient(token)
 					.salesforceConnector()
 					.get(id);
 			
@@ -538,7 +537,7 @@ public class SalesforceConnectorController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+		DeleteResult deleteResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.delete(id);
 		
@@ -563,7 +562,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.build(id, key);
@@ -591,7 +590,7 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		UpdateResult<Instance> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Instance> updateResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.test(id, key);

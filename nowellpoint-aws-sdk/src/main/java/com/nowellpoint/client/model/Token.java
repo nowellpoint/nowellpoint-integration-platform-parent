@@ -8,10 +8,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Token implements Serializable {
-
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = 7118882001234268808L;
 	

@@ -7,7 +7,6 @@ import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.PasswordCredentials;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
@@ -59,9 +58,9 @@ public class NowellpointClient {
 		token = oauthAuthenticationResponse.getToken();
 	}
 	
-	public NowellpointClient(TokenCredentials credentials) {
+	public NowellpointClient(Token token) {
 		this();
-		token = credentials.getToken();
+		this.token = token;
 	}
 	
 	public void logout() {

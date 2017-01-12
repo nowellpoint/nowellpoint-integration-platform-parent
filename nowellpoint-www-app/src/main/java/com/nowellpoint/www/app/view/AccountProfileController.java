@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
@@ -100,7 +99,7 @@ public class AccountProfileController extends AbstractController {
 				.withLanguageSidKey(account.getLanguageSidKey())
 				.withLocaleSidKey(account.getLocaleSidKey());
 		
-		GetResult<List<Plan>> getResult = new NowellpointClient(new TokenCredentials(token))
+		GetResult<List<Plan>> getResult = new NowellpointClient(token)
 				.plan()
 				.getPlans(getPlansRequest);
 		
@@ -133,7 +132,7 @@ public class AccountProfileController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(id);
 		
@@ -170,7 +169,7 @@ public class AccountProfileController extends AbstractController {
 		
 		String planId = request.params(":planId");
 		
-		Plan plan = new NowellpointClient(new TokenCredentials(token))
+		Plan plan = new NowellpointClient(token)
 				.plan()
 				.get(planId);
 		
@@ -206,7 +205,7 @@ public class AccountProfileController extends AbstractController {
 		
 		String id = request.params(":id");
 		
-		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(id);
 		
@@ -270,7 +269,7 @@ public class AccountProfileController extends AbstractController {
 					.withFirstName(firstName)
 					.withLastName(lastName);
 			
-			AddResult<CreditCard> addResult = new NowellpointClient(new TokenCredentials(token))
+			AddResult<CreditCard> addResult = new NowellpointClient(token)
 					.accountProfile()
 					.creditCard()
 					.add(creditCardRequest);
@@ -279,7 +278,7 @@ public class AccountProfileController extends AbstractController {
 				paymentMethodToken = addResult.getTarget().getToken();
 			} else { 
 				
-				Plan plan = new NowellpointClient(new TokenCredentials(token))
+				Plan plan = new NowellpointClient(token)
 						.plan()
 						.get(planId);
 				
@@ -314,7 +313,7 @@ public class AccountProfileController extends AbstractController {
 				.withPaymentMethodToken(paymentMethodToken)
 				.withPlanId(planId);
 		
-		SetResult<Subscription> setResult = new NowellpointClient(new TokenCredentials(token))
+		SetResult<Subscription> setResult = new NowellpointClient(token)
 				.accountProfile()
 				.subscription()
 				.set(subscriptionRequest);
@@ -370,7 +369,7 @@ public class AccountProfileController extends AbstractController {
 				.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
 				.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
 
-		UpdateResult<AccountProfile> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<AccountProfile> updateResult = new NowellpointClient(token)
 				.accountProfile()
 				.update(request.params(":id"), accountProfileRequest);
 		
@@ -447,7 +446,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(request.params(":id"));
 			
@@ -469,7 +468,7 @@ public class AccountProfileController extends AbstractController {
 	private String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+		DeleteResult deleteResult = new NowellpointClient(token)
 				.accountProfile()
 				.deactivate(request.params(":id"));
 		
@@ -495,7 +494,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		UpdateResult<AccountProfile> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<AccountProfile> updateResult = new NowellpointClient(token)
 				.accountProfile()
 				.removeProfilePicture(request.params(":id"));
 		
@@ -523,7 +522,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		Address address = new NowellpointClient(new TokenCredentials(token))
+		Address address = new NowellpointClient(token)
 				.accountProfile()
 				.address()
 				.get(request.params(":id"));
@@ -556,7 +555,7 @@ public class AccountProfileController extends AbstractController {
 				.withState(request.queryParams("state"))
 				.withStreet(request.queryParams("street"));
 		
-		UpdateResult<Address> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<Address> updateResult = new NowellpointClient(token)
 				.accountProfile()
 				.address()
 				.update(request.params(":id"), addressRequest);
@@ -600,7 +599,7 @@ public class AccountProfileController extends AbstractController {
 		
 		AccountProfile account = getAccount(request);
 		
-		CreditCard creditCard = new NowellpointClient(new TokenCredentials(token))
+		CreditCard creditCard = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
@@ -625,7 +624,7 @@ public class AccountProfileController extends AbstractController {
 	private String newCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(request.params(":id"));
 		
@@ -658,12 +657,12 @@ public class AccountProfileController extends AbstractController {
 	private String editCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		CreditCard creditCard = new NowellpointClient(new TokenCredentials(token))
+		CreditCard creditCard = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
 		
-		AccountProfile accountProfile = new NowellpointClient(new TokenCredentials(token))
+		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(request.params(":id"));
 		
@@ -718,7 +717,7 @@ public class AccountProfileController extends AbstractController {
 				.withFirstName(firstName)
 				.withLastName(lastName);
 		
-		AddResult<CreditCard> addResult = new NowellpointClient(new TokenCredentials(token))
+		AddResult<CreditCard> addResult = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.add(creditCardRequest);
@@ -801,7 +800,7 @@ public class AccountProfileController extends AbstractController {
 				.withFirstName(firstName)
 				.withLastName(lastName);
 		
-		UpdateResult<CreditCard> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<CreditCard> updateResult = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.update(creditCardRequest);
@@ -851,7 +850,7 @@ public class AccountProfileController extends AbstractController {
 	private String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		UpdateResult<CreditCard> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<CreditCard> updateResult = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.setPrimary(request.params(":id"), request.params(":token"));
@@ -876,7 +875,7 @@ public class AccountProfileController extends AbstractController {
 	private String removeCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
+		DeleteResult deleteResult = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.delete(request.params(":id"), request.params(":token"));

@@ -158,18 +158,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		if (isNotNull(accountProfile.getSubscription())) {
 			
-			if (Assert.isNotEqual(accountProfile.getCompany(), original.getCompany()) ||
-					Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
-					Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
-					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()) ||
-					Assert.isNotEqual(accountProfile.getPhone(), original.getPhone())) {
-				
-				System.out.println(Assert.isNotEqual(accountProfile.getCompany(), original.getCompany()));
-				System.out.println(Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()));
-				System.out.println(Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()));
-				System.out.println(Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()));
-				System.out.println(Assert.isNotEqual(accountProfile.getPhone(), original.getPhone()));
-				
+			//if (Assert.isNotEqual(accountProfile.getCompany(), original.getCompany()) ||
+				//	Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
+				//	Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
+				//	Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()) ||
+				//	Assert.isNotEqual(accountProfile.getPhone(), original.getPhone())) {
+								
 				CustomerRequest customerRequest = new CustomerRequest()
 						.id(accountProfile.getId())
 						.company(accountProfile.getCompany())
@@ -189,7 +183,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 				if (! customerResult.isSuccess()) {
 					LOGGER.error(customerResult.getMessage());
 				}
-			}
+			//}
 		}
 	}
 	
