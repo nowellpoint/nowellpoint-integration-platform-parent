@@ -225,6 +225,8 @@ public class TokenResource {
         		.compact();	 
 		
 		Token token = new Token();
+		token.setEnvironmentUrl(uriInfo.getBaseUri().toString());
+		token.setId(uriInfo.getBaseUri().toString().concat("id/").concat(subject));
 		token.setAccessToken(jwt);
 		token.setExpiresIn(result.getExpiresIn());
 		token.setRefreshToken(result.getRefreshTokenString());

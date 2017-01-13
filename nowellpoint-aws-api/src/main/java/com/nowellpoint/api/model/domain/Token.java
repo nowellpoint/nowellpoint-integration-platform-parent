@@ -6,6 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_EMPTY)
 public class Token {
+	
+	private String id;
+	
+	private String environment_url;
 
 	private String access_token;
 	
@@ -17,6 +21,24 @@ public class Token {
 	
 	public Token() {
 		
+	}
+
+	@JsonProperty(value="id")
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@JsonProperty(value="environment_url")
+	public String getEnvironmentUrl() {
+		return environment_url;
+	}
+
+	public void setEnvironmentUrl(String environmentUrl) {
+		this.environment_url = environmentUrl;
 	}
 
 	@JsonProperty(value="access_token")

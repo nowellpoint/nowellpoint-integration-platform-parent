@@ -11,6 +11,10 @@ public class Token implements Serializable {
 	
 	private static final long serialVersionUID = 7118882001234268808L;
 	
+	private String id;
+	
+	private String environment_url;
+	
 	private String access_token;
 	
 	private String refresh_token;
@@ -21,6 +25,22 @@ public class Token implements Serializable {
 	
 	public Token() {
 		
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getEnvironmentUrl() {
+		return environment_url;
+	}
+
+	public void setEnvironment_url(String environmentUrl) {
+		this.environment_url = environmentUrl;
 	}
 
 	public String getAccessToken() {
