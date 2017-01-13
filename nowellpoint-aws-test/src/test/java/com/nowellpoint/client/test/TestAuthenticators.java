@@ -13,7 +13,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.braintreegateway.org.apache.commons.codec.binary.Base64;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
@@ -69,21 +68,15 @@ public class TestAuthenticators {
 		
 		start = System.currentTimeMillis();
 		
-		AccountProfile accountProfile = new NowellpointClient(token).accountProfile().get();
+		AccountProfile accountProfile = new NowellpointClient(token)
+				.accountProfile()
+				.get();
 		
-		System.out.println("accountProfile.get() 1: " + (System.currentTimeMillis() - start));
+		assertNotNull(accountProfile);	
 		
-		start = System.currentTimeMillis();
+		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
-		accountProfile = new NowellpointClient(token).accountProfile().get();
-		
-		System.out.println("accountProfile.get() 2: " + (System.currentTimeMillis() - start));
-		
-		start = System.currentTimeMillis();
-		
-		accountProfile = new NowellpointClient(token).accountProfile().get();
-		
-		System.out.println("accountProfile.get() 3: " + (System.currentTimeMillis() - start));
+		System.out.println(accountProfile.getName());
 	}
 	
 	@Test
@@ -116,6 +109,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void createAndDeleteEnvironment() {
 		
 		LOG.info("start createAndDeleteEnvironment");
@@ -194,6 +188,7 @@ public class TestAuthenticators {
 	}
 	
 	@Test
+	@Ignore
 	public void buildEnvironment() {
 		long start = System.currentTimeMillis();
 		

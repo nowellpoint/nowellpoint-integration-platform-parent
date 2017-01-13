@@ -79,6 +79,7 @@
                 <div class="content table-responsive">
                     <table class="table table-hover">
                         <thead>
+                            <th>${labels["id"]}</th>
                             <th>${labels["payment.method"]}</th>
                             <th class="text-right p-r-md">${labels["amount"]}</th>
                             <th>${labels["transaction.date"]}</th>
@@ -88,6 +89,7 @@
                         <tbody>
                             <#list accountProfile.transactions?sort_by( "createdOn")?reverse as transaction>
                                 <tr>
+                                    <td>${transaction.id}</td>
                                     <td><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
                                     <td class="text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.##"]}</td>
                                     <td>${(transaction.updatedOn?date?string.long)!}</td>

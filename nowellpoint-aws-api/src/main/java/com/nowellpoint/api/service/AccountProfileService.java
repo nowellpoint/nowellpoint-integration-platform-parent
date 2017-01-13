@@ -122,8 +122,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		accountProfile.setIsActive(Boolean.FALSE);
 		accountProfile.setCreditCards(null);
 		
-		if (isNotNull(accountProfile.getHref())) {
-			identityProviderService.deactivateAccount(accountProfile.getHref());
+		if (isNotNull(accountProfile.getAccountHref())) {
+			identityProviderService.deactivateAccount(accountProfile.getAccountHref());
 		}
 		
 		if (isNotNull(accountProfile.getSubscription())) {
@@ -142,14 +142,14 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		super.updateAccountProfile(accountProfile);
 		
-		if (accountProfile.getIsActive() && isNotNull(accountProfile.getHref())) {
+		if (accountProfile.getIsActive() && isNotNull(accountProfile.getAccountHref())) {
 			
 			if (Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
 					Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
 					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName())) {
 				
 				identityProviderService.updateAccount(
-						accountProfile.getHref(), 
+						accountProfile.getAccountHref(), 
 						accountProfile.getEmail(), 
 						accountProfile.getFirstName(), 
 						accountProfile.getLastName());
@@ -595,8 +595,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setEmail(original.getEmail());
 		}
 		
-		if (isNull(accountProfile.getHref())) {
-			accountProfile.setHref(original.getHref());
+		if (isNull(accountProfile.getMeta())) {
+			accountProfile.setMeta(original.getMeta());
 		}
 		
 		if (isNull(accountProfile.getAccountHref())) {

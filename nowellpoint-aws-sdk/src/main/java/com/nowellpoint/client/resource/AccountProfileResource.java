@@ -1,7 +1,5 @@
 package com.nowellpoint.client.resource;
 
-import org.infinispan.Cache;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -46,32 +44,23 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public AccountProfile get() {
-		Cache<String, AccountProfile> cache = cacheManager.getCache();
-		AccountProfile resource = cache.get(token.getAccessToken());
-		if (resource == null) {
-			
-			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-					.path("me")
-					.execute();
-	    	
-	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		resource = httpResponse.getEntity(AccountProfile.class);
-	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
-	    	
-	    	cache.put(token.getAccessToken(), resource);
-		}
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.path(RESOURCE_CONTEXT)
+				.path("me")
+				.execute();
 		
-		else {
-			System.out.println("found account profile in cache: " + resource.getId());
-		}
-    	
+		AccountProfile resource = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity(AccountProfile.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+	    }
+	    	
     	return resource;
 	} 
 	

@@ -1,18 +1,12 @@
 package com.nowellpoint.api.model.domain;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+@JsonInclude(Include.NON_EMPTY)
+public class Token {
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Token implements Serializable {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = 7118882001234268808L;
-	
 	private String access_token;
 	
 	private String refresh_token;
@@ -25,6 +19,7 @@ public class Token implements Serializable {
 		
 	}
 
+	@JsonProperty(value="access_token")
 	public String getAccessToken() {
 		return access_token;
 	}
@@ -33,6 +28,7 @@ public class Token implements Serializable {
 		this.access_token = accessToken;
 	}
 
+	@JsonProperty(value="refresh_token")
 	public String getRefreshToken() {
 		return refresh_token;
 	}
@@ -41,6 +37,7 @@ public class Token implements Serializable {
 		this.refresh_token = refreshToken;
 	}
 
+	@JsonProperty(value="token_type")
 	public String getTokenType() {
 		return token_type;
 	}
@@ -49,6 +46,7 @@ public class Token implements Serializable {
 		this.token_type = tokenType;
 	}
 
+	@JsonProperty(value="expires_in")
 	public Long getExpiresIn() {
 		return expires_in;
 	}

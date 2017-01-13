@@ -2,11 +2,9 @@ package com.nowellpoint.api.model.domain;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractResource implements Resource, Createable, Updateable {
 	
@@ -20,7 +18,7 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	
 	private Date systemModifiedDate;
 	
-	private String href;
+	private Meta meta;
 		
 	public AbstractResource() {
 		
@@ -70,11 +68,11 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		this.systemModifiedDate = systemModifiedDate;
 	}
 	
-	public String getHref() {
-		return href;
+	public Meta getMeta() {
+		return meta;
 	}
-	
-	public void setHref(String href) {
-		this.href = href;
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 }

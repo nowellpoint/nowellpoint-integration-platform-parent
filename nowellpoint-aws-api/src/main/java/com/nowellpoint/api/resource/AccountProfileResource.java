@@ -31,6 +31,7 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
+import com.nowellpoint.api.model.domain.Meta;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
@@ -55,9 +56,20 @@ public class AccountProfileResource {
 	@Path("me")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAccountProfile() {
+		
 		String subject = securityContext.getUserPrincipal().getName();
 		
 		AccountProfile accountProfile = accountProfileService.findById( subject );
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(AccountProfileResource.class)
+				.path("/{id}")
+				.build(accountProfile.getId());
+		
+		Meta meta = new Meta();
+		meta.setHref(uri.toString());
+		
+		accountProfile.setMeta(meta);
 				
 		return Response.ok(accountProfile)
 				.build();

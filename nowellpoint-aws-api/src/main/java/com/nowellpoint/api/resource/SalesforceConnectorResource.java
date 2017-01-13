@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.model.domain.Instance;
+import com.nowellpoint.api.model.domain.Meta;
 import com.nowellpoint.api.model.domain.SObjectDetail;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.service.SObjectDetailService;
@@ -101,7 +102,10 @@ public class SalesforceConnectorResource {
 				.path("/{id}")
 				.build(salesforceConnector.getId());
 		
-		salesforceConnector.setHref(uri.toString());
+		Meta meta = new Meta();
+		meta.setHref(uri.toString());
+		
+		salesforceConnector.setMeta(meta);
 		
 		return Response.ok(salesforceConnector).build();
 	}

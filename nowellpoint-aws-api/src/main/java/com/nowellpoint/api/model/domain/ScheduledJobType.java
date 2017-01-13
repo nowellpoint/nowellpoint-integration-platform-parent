@@ -1,12 +1,6 @@
 package com.nowellpoint.api.model.domain;
 
 public class ScheduledJobType extends AbstractResource {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -5368597023270502005L;
 	
 	private String name;
 	

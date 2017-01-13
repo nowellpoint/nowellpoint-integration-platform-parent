@@ -1,1 +1,1 @@
-web: java -jar nowellpoint-aws-api-swarm.jar -Dswarm.project.stage=production
+web: java -jar nowellpoint-aws-api-swarm.jar -Dswarm.project.stage=production -Dswarm.https.certificate.generate=true

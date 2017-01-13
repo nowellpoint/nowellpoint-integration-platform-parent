@@ -1,6 +1,5 @@
 package com.nowellpoint.api;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -18,17 +17,10 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		//
-		// set system properties from command line args
+		// build the container
 		//
 		
-		if (args != null && args.length > 0) {
-			Arrays.asList(args).stream().forEach(a -> {
-				if (a.startsWith("-D")) {
-					String[] param = a.replace("-D", "").split("=");
-					System.setProperty(param[0], param[1]);
-				}
-			});
-		}
+        Swarm container = new Swarm(args); 
 		
 		//
 		// set default system properties
@@ -36,13 +28,6 @@ public class Main {
 		
 		System.setProperty("swarm.http.port", getHttpPort());
 		System.setProperty("swarm.https.port", getHttpsPort());
-		System.setProperty("swarm.https.certificate.generate", "true");
-
-		//
-		// build the container
-		//
-		
-        Swarm container = new Swarm(); 
         
 		//
         // set system properties from configuration

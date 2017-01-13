@@ -5,6 +5,10 @@ project:
     stage: development
 logger:
     level: DEBUG
+swarm:
+    https:
+        certificate:
+            generate: true
 propertyStore: 
     name: sandbox    
 ---
@@ -12,5 +16,9 @@ project:
     stage: production
 logger:
     level: INFO
+swarm:
+    https:
+        certificate:
+            generate: true
 propertyStore:
     name: production  

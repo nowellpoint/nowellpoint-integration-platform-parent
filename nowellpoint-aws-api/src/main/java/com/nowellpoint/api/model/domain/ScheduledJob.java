@@ -6,12 +6,6 @@ import java.util.Set;
 import org.hibernate.validator.constraints.Email;
 
 public class ScheduledJob extends AbstractResource {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -1699588438360478864L;
 	
 	private UserInfo createdBy;
 	

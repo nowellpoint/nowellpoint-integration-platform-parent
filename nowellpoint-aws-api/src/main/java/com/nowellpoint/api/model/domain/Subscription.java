@@ -1,15 +1,8 @@
 package com.nowellpoint.api.model.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class Subscription implements Serializable {
-
-	/**
-	 * 
-	 */
-	
-	private static final long serialVersionUID = -7569793449815113870L;
+public class Subscription {
 	
 	private String subscriptionId;
 	

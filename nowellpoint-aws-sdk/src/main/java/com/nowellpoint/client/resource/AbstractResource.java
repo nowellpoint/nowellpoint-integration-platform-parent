@@ -3,8 +3,6 @@ package com.nowellpoint.client.resource;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.infinispan.manager.DefaultCacheManager;
-
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.CreateResult;
@@ -18,9 +16,7 @@ import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.Token;
 
 public abstract class AbstractResource {
-	
-	protected static final DefaultCacheManager cacheManager = new DefaultCacheManager();
-	
+		
 	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 	
 	protected Environment environment;
