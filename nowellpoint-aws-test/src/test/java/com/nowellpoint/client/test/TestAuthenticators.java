@@ -22,11 +22,11 @@ import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.SObjectDetail;
@@ -68,15 +68,15 @@ public class TestAuthenticators {
 		
 		start = System.currentTimeMillis();
 		
-		AccountProfile accountProfile = new NowellpointClient(token)
-				.accountProfile()
-				.get();
+		Identity identity = new NowellpointClient(token)
+				.identity()
+				.get(token.getId());
 		
-		assertNotNull(accountProfile);	
+		assertNotNull(identity);	
 		
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
-		System.out.println(accountProfile.getName());
+		System.out.println(identity.getName());
 	}
 	
 	@Test
@@ -172,19 +172,19 @@ public class TestAuthenticators {
 	}
 	
 	@Test
-	public void testGetAccountProfile() {
+	public void testGetIdentity() {
 		
 		long start = System.currentTimeMillis();
 		
-		AccountProfile accountProfile = new NowellpointClient(token)
-				.accountProfile()
-				.get();
+		Identity identity = new NowellpointClient(token)
+				.identity()
+				.get(token.getId());
 		
-		assertNotNull(accountProfile);	
+		assertNotNull(identity);	
 		
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
-		System.out.println(accountProfile.getName());
+		System.out.println(identity.getName());
 	}
 	
 	@Test

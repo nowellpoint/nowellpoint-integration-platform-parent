@@ -11,6 +11,7 @@ import com.nowellpoint.client.auth.PasswordCredentials;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
 import com.nowellpoint.client.resource.ApplicationResource;
+import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
@@ -69,6 +70,10 @@ public class NowellpointClient {
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
+	}
+	
+	public IdentityResource identity() {
+		return new IdentityResource(environment, token);
 	}
 	
 	public ApplicationResource application() {

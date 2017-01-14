@@ -27,6 +27,7 @@ import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -76,13 +77,13 @@ public class AuthenticationController extends AbstractController {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
     		request.attribute(AUTH_TOKEN, token);
     		
-    		AccountProfile accountProfile = new NowellpointClient(token)
-    				.accountProfile()
-    				.get();
+    		Identity identity = new NowellpointClient(token)
+    				.identity()
+    				.get(token.getId());
     		
-    		request.attribute("account", accountProfile);
-    		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(configuration, accountProfile));
-    		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(configuration, accountProfile));
+    		request.attribute("account", identity);
+    		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(configuration, identity));
+    		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(configuration, identity));
     		
     	} else {
     		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);

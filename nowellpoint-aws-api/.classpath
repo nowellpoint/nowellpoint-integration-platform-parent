@@ -72,7 +72,7 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.3/commons-logging-1.0.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.1/commons-io-2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/jcip/jcip-annotations/1.0/jcip-annotations-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/ejb/2016.11.0/ejb-2016.11.0.jar"/>
@@ -117,7 +117,7 @@
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/5.2.2.Final/hibernate-validator-5.2.2.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/classmate/1.1.0/classmate-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" sourcepath="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz-jobs/2.2.3/quartz-jobs-2.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/force/api/force-metadata-api/39.0.0/force-metadata-api-39.0.0.jar"/>
@@ -153,7 +153,5 @@
   <classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.8.1/jedis-2.8.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
-  <classpathentry kind="var" path="M2_REPO/com/auth0/java-jwt/3.1.0/java-jwt-3.1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk15on/1.55/bcprov-jdk15on-1.55.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar"/>
 </classpath>

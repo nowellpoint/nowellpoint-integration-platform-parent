@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import java.net.URI;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,7 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.exception.AuthenticationException;
@@ -224,9 +226,14 @@ public class TokenResource {
         		.claim("scope", groups.toArray(new String[groups.size()]))
         		.compact();	 
 		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(IdentityResource.class)
+				.path("/{id}")
+				.build(subject);
+		
 		Token token = new Token();
 		token.setEnvironmentUrl(uriInfo.getBaseUri().toString());
-		token.setId(uriInfo.getBaseUri().toString().concat("id/").concat(subject));
+		token.setId(uri.toString());
 		token.setAccessToken(jwt);
 		token.setExpiresIn(result.getExpiresIn());
 		token.setRefreshToken(result.getRefreshTokenString());

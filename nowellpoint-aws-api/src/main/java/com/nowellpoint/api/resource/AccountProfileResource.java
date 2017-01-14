@@ -53,25 +53,35 @@ public class AccountProfileResource {
 	private SecurityContext securityContext;
 	
 	@GET
-	@Path("me")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAccountProfile() {
+	@Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAccountProfile(@PathParam("id") String id) {
 		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		AccountProfile accountProfile = accountProfileService.findById( subject );
+		AccountProfile resource = accountProfileService.findById( id );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(AccountProfileResource.class)
 				.path("/{id}")
-				.build(accountProfile.getId());
+				.build(resource.getId());
 		
 		Meta meta = new Meta();
 		meta.setHref(uri.toString());
 		
-		accountProfile.setMeta(meta);
-				
-		return Response.ok(accountProfile)
+		/**
+		 * 
+		 * remove sensitive data elements from account profile
+		 * use id resource instead to get full list of data elements
+		 * 
+		 */
+		
+		resource.setSubscription(null);
+		resource.setCreditCards(null);
+		resource.setHasFullAccess(null);
+		resource.setEnableSalesforceLogin(null);
+		resource.setTransactions(null);
+		resource.setMeta(meta);
+		
+		return Response.ok(resource)
 				.build();
 	}
 	
@@ -193,26 +203,6 @@ public class AccountProfileResource {
 		accountProfileService.updateAccountProfile( accountProfile );
 		
 		return Response.ok(accountProfile)
-				.build();
-	}
-	
-	@GET
-	@Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAccountProfile(@PathParam("id") String id) {
-		
-		AccountProfile resource = accountProfileService.findById( id );
-		
-		String subject = securityContext.getUserPrincipal().getName();
-		
-		if (! subject.equals(resource.getId())) {
-			resource.setCreditCards(null);
-			resource.setHasFullAccess(null);
-			resource.setEnableSalesforceLogin(null);
-			resource.setTransactions(null);
-		} 
-		
-		return Response.ok(resource)
 				.build();
 	}
 

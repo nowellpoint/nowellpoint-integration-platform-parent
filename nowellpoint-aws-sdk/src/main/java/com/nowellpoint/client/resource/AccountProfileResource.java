@@ -32,37 +32,14 @@ public class AccountProfileResource extends AbstractResource {
 	private static final String RESOURCE_CONTEXT = "account-profile";
 	
 	/**
+	 * 
+	 * @param environment
 	 * @param token
 	 */
 	
 	public AccountProfileResource(Environment environment, Token token) {
 		super(environment, token);
 	}
-	
-	/**
-	 * @return
-	 */
-	
-	public AccountProfile get() {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path(RESOURCE_CONTEXT)
-				.path("me")
-				.execute();
-		
-		AccountProfile resource = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			resource = httpResponse.getEntity(AccountProfile.class);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			throw new ServiceUnavailableException(httpResponse.getAsString());
-	    }
-	    	
-    	return resource;
-	} 
 	
 	/**
 	 * 
