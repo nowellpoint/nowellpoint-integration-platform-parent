@@ -28,7 +28,6 @@ import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Instance;
-import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
@@ -323,9 +322,7 @@ public class TestAuthenticators {
 		} catch (OauthException e) {
 			System.out.println(e.getCode());
 			System.out.println(e.getMessage());
-		} catch (NowellpointServiceException e) {
-			System.out.println(e.getMessage());
-		} 
+		}
 	}
 	
 	@AfterClass

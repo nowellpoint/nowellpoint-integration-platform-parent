@@ -4,7 +4,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.Application;
-import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
@@ -43,7 +42,7 @@ public class ApplicationResource extends AbstractResource {
 				.execute();
 		
 		if (httpResponse.getStatusCode() != Status.OK) {
-			throw new NowellpointServiceException(httpResponse.getStatusCode(), httpResponse.getAsString());
+			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}
 	}
 }

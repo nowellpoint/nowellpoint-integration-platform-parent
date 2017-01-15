@@ -23,7 +23,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.IsoCountry;
-import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
@@ -156,8 +156,8 @@ public class Application implements SparkApplication {
         // exception handlers
         //
         
-        exception(NowellpointServiceException.class, (exception, request, response) ->{
-        	response.status(((NowellpointServiceException) exception).getStatusCode());
+        exception(ServiceUnavailableException.class, (exception, request, response) ->{
+        	response.status(Status.SERVICE_UNAVAILABLE);
         	response.body(exception.getMessage());
         });
         
