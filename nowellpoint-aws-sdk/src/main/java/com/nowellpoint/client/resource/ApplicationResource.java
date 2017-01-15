@@ -3,7 +3,6 @@ package com.nowellpoint.client.resource;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.NowellpointServiceException;
 import com.nowellpoint.client.model.Token;
@@ -12,12 +11,12 @@ import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 
 public class ApplicationResource extends AbstractResource {
 	
-	public ApplicationResource(Environment environment, Token token) {
-		super(environment, token);
+	public ApplicationResource(Token token) {
+		super(token);
 	}
 	
 	public Application getApplication(String id) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("applications")
 				.path(id)
@@ -37,7 +36,7 @@ public class ApplicationResource extends AbstractResource {
 	}
 
 	public void deleteApplication(String id) {
-		HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("application")
 				.path(id)

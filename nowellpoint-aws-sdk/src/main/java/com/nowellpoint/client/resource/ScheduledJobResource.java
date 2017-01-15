@@ -6,7 +6,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
@@ -26,12 +25,12 @@ public class ScheduledJobResource extends AbstractResource {
 	private static final String STOP = "stop";
 	private static final String TERMINATE = "terminate";
 	
-	public ScheduledJobResource(Environment environment, Token token) {
-		super(environment, token);
+	public ScheduledJobResource(Token token) {
+		super(token);
 	}
 
 	public GetResult<List<ScheduledJob>> getScheduledJobs() {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.execute();
@@ -52,7 +51,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public CreateResult<ScheduledJob> create(ScheduledJobRequest scheduledJobRequest) {		
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -81,7 +80,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public UpdateResult<ScheduledJob> update(ScheduledJobRequest scheduledJobRequest) {
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -110,7 +109,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public UpdateResult<ScheduledJob> stop(String id) {
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -137,7 +136,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public UpdateResult<ScheduledJob> terminate(String id) {
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -164,7 +163,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public UpdateResult<ScheduledJob> start(String id) {
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -191,7 +190,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public ScheduledJob get(String id) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
@@ -211,7 +210,7 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public DeleteResult delete(String id) {
-		HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
@@ -232,17 +231,17 @@ public class ScheduledJobResource extends AbstractResource {
 	}
 	
 	public RunHistoryResource runHistory() {
-		return new RunHistoryResource(environment, token);
+		return new RunHistoryResource(token);
 	}
 	
 	public class RunHistoryResource extends AbstractResource {
 
-		public RunHistoryResource(Environment environment, Token token) {
-			super(environment, token);
+		public RunHistoryResource(Token token) {
+			super(token);
 		}
 		
 		public GetResult<RunHistory> get(String scheduledJobId, String fireInstanceId) {
-			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
 					.path(scheduledJobId)
@@ -266,7 +265,7 @@ public class ScheduledJobResource extends AbstractResource {
 		}
 		
 		public GetResult<String> getFile(String scheduledJobId, String fireInstanceId, String filename) {
-			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
 					.path(scheduledJobId)

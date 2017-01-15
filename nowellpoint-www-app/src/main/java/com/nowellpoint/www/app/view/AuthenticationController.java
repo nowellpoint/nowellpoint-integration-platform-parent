@@ -19,6 +19,7 @@ import javax.ws.rs.NotAuthorizedException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -115,6 +116,7 @@ public class AuthenticationController extends AbstractController {
     public String login(Configuration configuration, Request request, Response response) {
     	
     	PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+    			.setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")))
 				.setUsername(request.queryParams("username"))
 				.setPassword(request.queryParams("password"))
 				.build();

@@ -1,5 +1,6 @@
 package com.nowellpoint.client.auth.impl;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.auth.PasswordGrantAuthorizerBuilder;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 
@@ -8,6 +9,8 @@ public class PasswordGrantAuthorizerBuilderImpl implements PasswordGrantAuthoriz
 	private String username;
 	
 	private String password;
+	
+	private Environment environment;
 
 	@Override
 	public PasswordGrantAuthorizerBuilder setUsername(String username) {
@@ -22,7 +25,13 @@ public class PasswordGrantAuthorizerBuilderImpl implements PasswordGrantAuthoriz
 	}
 	
 	@Override
+	public PasswordGrantAuthorizerBuilder setEnvironment(Environment environment) {
+		this.environment = environment;
+		return this;
+	}
+	
+	@Override
 	public PasswordGrantRequest build() {
-		return new PasswordGrantRequestImpl(username, password);
+		return new PasswordGrantRequestImpl(environment, username, password);
 	}
 }

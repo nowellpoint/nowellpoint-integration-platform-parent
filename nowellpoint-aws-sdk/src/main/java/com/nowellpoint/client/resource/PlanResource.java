@@ -5,23 +5,21 @@ import java.util.List;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 
 public class PlanResource extends AbstractResource {
 	
-	public PlanResource(Environment environment, Token token) {
-		super(environment, token);
+	public PlanResource(String environmentUrl) {
+		super(environmentUrl);
 	}
 	
 	public Plan get(String id) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(environmentUrl)
 				.path("plans")
 				.path(id)
 				.execute();
@@ -40,7 +38,7 @@ public class PlanResource extends AbstractResource {
 	}
 	
 	public GetResult<List<Plan>> getPlans(GetPlansRequest getPlansRequest) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(environmentUrl)
 				.path("plans")
 				.queryParameter("localeSidKey", getPlansRequest.getLocaleSidKey())
 				.queryParameter("languageLocaleKey", getPlansRequest.getLanguageSidKey())

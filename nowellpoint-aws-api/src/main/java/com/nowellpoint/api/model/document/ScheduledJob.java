@@ -22,6 +22,8 @@ public class ScheduledJob extends MongoDocument {
 	
 	private static final long serialVersionUID = 4880299116047933778L;
 	
+	private Meta meta;
+	
 	private UserRef createdBy;
 	
 	private UserRef lastModifiedBy;
@@ -66,6 +68,14 @@ public class ScheduledJob extends MongoDocument {
 	
 	public ScheduledJob() {
 		
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

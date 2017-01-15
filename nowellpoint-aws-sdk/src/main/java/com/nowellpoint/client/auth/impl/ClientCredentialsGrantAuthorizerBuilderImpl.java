@@ -25,7 +25,7 @@ public class ClientCredentialsGrantAuthorizerBuilderImpl implements ClientCreden
 	}
 	
 	@Override
-	public ClientCredentialsGrantAuthorizerBuilder setEnvionrment(Environment environment) {
+	public ClientCredentialsGrantAuthorizerBuilder setEnvironment(Environment environment) {
 		this.environment = environment;
 		return this;
 	}

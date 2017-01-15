@@ -3,7 +3,6 @@ package com.nowellpoint.client.resource;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
@@ -12,23 +11,22 @@ import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SignUpResult;
-import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 
 public abstract class AbstractResource {
 		
 	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 	
-	protected Environment environment;
+	protected String environmentUrl;
 	
 	protected Token token;
 	
-	public AbstractResource(Environment environment) {
-		this.environment = environment;
+	public AbstractResource(String environmentUrl) {
+		this.environmentUrl = environmentUrl;
 	}
 	
-	public AbstractResource(Environment environment, Token token) {
-		this.environment = environment;
+	public AbstractResource(Token token) {
 		this.token = token;
 	}
 	

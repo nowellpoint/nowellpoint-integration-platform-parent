@@ -31,11 +31,11 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
-import com.nowellpoint.api.model.domain.Meta;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.PlanService;
+import com.nowellpoint.util.Assert;
 
 @Path("account-profile")
 public class AccountProfileResource {
@@ -59,27 +59,23 @@ public class AccountProfileResource {
 		
 		AccountProfile resource = accountProfileService.findById( id );
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResource.class)
-				.path("/{id}")
-				.build(resource.getId());
+		String subject = securityContext.getUserPrincipal().getName();
 		
-		Meta meta = new Meta();
-		meta.setHref(uri.toString());
-		
-		/**
-		 * 
-		 * remove sensitive data elements from account profile
-		 * use id resource instead to get full list of data elements
-		 * 
-		 */
-		
-		resource.setSubscription(null);
-		resource.setCreditCards(null);
-		resource.setHasFullAccess(null);
-		resource.setEnableSalesforceLogin(null);
-		resource.setTransactions(null);
-		resource.setMeta(meta);
+		if (Assert.isNotEqual(id, subject)) {
+			
+			/**
+			 * 
+			 * remove sensitive data elements from account profile
+			 * use id resource instead to get full list of data elements
+			 * 
+			 */
+			
+			resource.setSubscription(null);
+			resource.setCreditCards(null);
+			resource.setHasFullAccess(null);
+			resource.setEnableSalesforceLogin(null);
+			resource.setTransactions(null);
+		}
 		
 		return Response.ok(resource)
 				.build();

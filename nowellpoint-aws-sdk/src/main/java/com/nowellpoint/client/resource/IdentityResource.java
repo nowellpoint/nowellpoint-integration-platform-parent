@@ -4,7 +4,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.ForbiddenException;
@@ -19,14 +18,14 @@ public class IdentityResource extends AbstractResource {
 	 * @param token
 	 */
 	
-	public IdentityResource(Environment environment, Token token) {
-		super(environment, token);
+	public IdentityResource(Token token) {
+		super(token);
 	}
 	
 	public Identity get(String id) {
 		HttpResponse httpResponse = RestResource.get(id)
-				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
 				.execute();
 		
 		Identity resource = null;

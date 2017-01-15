@@ -50,7 +50,7 @@ public class TestAuthenticators {
 		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
 				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.setApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
-				.setEnvionrment(Environment.SANDBOX)
+				.setEnvironment(Environment.SANDBOX)
 				.build();
 		
 		OauthAuthenticationResponse response = Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR

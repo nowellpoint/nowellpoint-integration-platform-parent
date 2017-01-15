@@ -8,7 +8,7 @@ public interface ClientCredentialsGrantAuthorizerBuilder {
 	
 	public ClientCredentialsGrantAuthorizerBuilder setApiKeySecret(String apiKeySecret);
 	
-	public ClientCredentialsGrantAuthorizerBuilder setEnvionrment(Environment environment);
+	public ClientCredentialsGrantAuthorizerBuilder setEnvironment(Environment environment);
 	
 	public ClientCredentialsGrantRequest build();
 

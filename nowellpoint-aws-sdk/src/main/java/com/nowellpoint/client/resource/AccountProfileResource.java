@@ -4,7 +4,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
@@ -33,12 +32,12 @@ public class AccountProfileResource extends AbstractResource {
 	
 	/**
 	 * 
-	 * @param environment
-	 * @param token
+	 * @param environmentUrl
+	 * @param accessToken
 	 */
 	
-	public AccountProfileResource(Environment environment, Token token) {
-		super(environment, token);
+	public AccountProfileResource(Token token) {
+		super(token);
 	}
 	
 	/**
@@ -48,9 +47,9 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public AccountProfile get(String id) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
-				.accept(MediaType.APPLICATION_JSON)
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
@@ -75,7 +74,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public DeleteResult deactivate(String id) {
-		HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
 				.path(id)
@@ -101,7 +100,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public UpdateResult<AccountProfile> update(String accountProfileId, AccountProfileRequest accountProfileRequest) {
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -144,7 +143,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public UpdateResult<AccountProfile> removeProfilePicture(String accountProfileId) {
-		HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
     			.bearerAuthorization(token.getAccessToken())
         		.path("account-profile")
         		.path(accountProfileId)
@@ -170,7 +169,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public AddressResource address() {
-		return new AddressResource(environment, token);
+		return new AddressResource(token);
 	}
 	
 	/**
@@ -179,7 +178,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public SubscriptionResource subscription() {
-		return new SubscriptionResource(environment, token);
+		return new SubscriptionResource(token);
 	}
 	
 	/**
@@ -188,7 +187,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public CreditCardResource creditCard() {
-		return new CreditCardResource(environment, token);
+		return new CreditCardResource(token);
 	}
 	
 	/**
@@ -201,11 +200,12 @@ public class AccountProfileResource extends AbstractResource {
 		
 		/**
 		 * 
-		 * @param token
+		 * @param environmentUrl
+		 * @param accessToken
 		 */
 		
-		public AddressResource(Environment environment, Token token) {
-			super(environment, token);
+		public AddressResource(Token token) {
+			super(token);
 		}
 		
 		/**
@@ -215,7 +215,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public Address get(String accountProfileId) {
-			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(accountProfileId)
@@ -243,7 +243,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public UpdateResult<Address> update(String accountProfileId, AddressRequest addressRequest) {
-			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -285,8 +285,8 @@ public class AccountProfileResource extends AbstractResource {
 		 * @param token
 		 */
 		
-		public SubscriptionResource(Environment environment, Token token) {
-			super(environment, token);
+		public SubscriptionResource(Token token) {
+			super(token);
 		}
 		
 		/**
@@ -296,10 +296,10 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public SetResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
-			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
 					.path(subscriptionRequest.getAccountProfileId())
 					.path("subscription")
@@ -334,8 +334,8 @@ public class AccountProfileResource extends AbstractResource {
 		 * @param token
 		 */
 		
-		public CreditCardResource(Environment environment, Token token) {
-			super(environment, token);
+		public CreditCardResource(Token token) {
+			super(token);
 		}
 		
 		/**
@@ -363,10 +363,10 @@ public class AccountProfileResource extends AbstractResource {
 					.withCvv(creditCardRequest.getCvv())
 					.withPrimary(creditCardRequest.getPrimary());
 			
-			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(creditCardRequest.getAccountProfileId())
 					.path("credit-card")
@@ -411,10 +411,10 @@ public class AccountProfileResource extends AbstractResource {
 					.withCvv(creditCardRequest.getCvv())
 					.withPrimary(creditCardRequest.getPrimary());
 			
-			HttpResponse httpResponse = RestResource.put(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.put(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(creditCardRequest.getAccountProfileId())
 					.path("credit-card")
@@ -443,7 +443,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public UpdateResult<CreditCard> setPrimary(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -474,7 +474,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public CreditCard get(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(accountProfileId)
@@ -503,7 +503,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public DeleteResult delete(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(accountProfileId)

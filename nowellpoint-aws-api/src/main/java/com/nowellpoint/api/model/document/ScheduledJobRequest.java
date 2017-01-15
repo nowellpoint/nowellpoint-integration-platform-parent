@@ -27,6 +27,8 @@ public class ScheduledJobRequest extends MongoDocument {
 	
 	private static final long serialVersionUID = -8426321555023081859L;
 	
+	private Meta meta;
+	
 	@JsonSerialize(using = ObjectIdSerializer.class)
 	@JsonDeserialize(using = ObjectIdDeserializer.class)
 	private ObjectId scheduledJobId;
@@ -89,6 +91,14 @@ public class ScheduledJobRequest extends MongoDocument {
 
 	public ScheduledJobRequest() {
 		
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public ObjectId getScheduledJobId() {

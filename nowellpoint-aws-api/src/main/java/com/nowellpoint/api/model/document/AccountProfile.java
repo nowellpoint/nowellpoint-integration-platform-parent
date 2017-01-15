@@ -22,6 +22,8 @@ public class AccountProfile extends MongoDocument {
 
 	private static final long serialVersionUID = 3163086585922281575L;
 	
+	private Meta meta;
+	
 	private UserRef createdBy;
 	
 	private UserRef lastModifiedBy;
@@ -86,6 +88,14 @@ public class AccountProfile extends MongoDocument {
 	
 	public AccountProfile() {
 		setHasFullAccess(Boolean.FALSE);
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

@@ -7,7 +7,6 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
@@ -21,13 +20,13 @@ public class UserResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "signup";
 	
-	public UserResource(Environment environment) {
-		super(environment);
+	public UserResource(String environmentUrl) {
+		super(environmentUrl);
 	}
 	
 	public SignUpResult<User> signUp(SignUpRequest signUpRequest) {
 		try {
-			HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.post(environmentUrl)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.acceptCharset("UTF-8")
 					.path(RESOURCE_CONTEXT)
@@ -63,7 +62,7 @@ public class UserResource extends AbstractResource {
 	}
 	
 	public SignUpResult<User> verifyEmail(String emailVerificationToken) {
-		HttpResponse httpResponse = RestResource.post(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(environmentUrl)
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path("signup")

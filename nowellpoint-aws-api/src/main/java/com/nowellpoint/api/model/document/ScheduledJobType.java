@@ -15,6 +15,8 @@ public class ScheduledJobType extends MongoDocument {
 	
 	private static final long serialVersionUID = -5368597023270502005L;
 	
+	private Meta meta;
+	
 	private String name;
 	
 	private String code;
@@ -27,6 +29,14 @@ public class ScheduledJobType extends MongoDocument {
 	
 	public ScheduledJobType() {
 		
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public String getName() {
