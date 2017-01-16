@@ -1,12 +1,11 @@
 package com.nowellpoint.client.resource;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
@@ -40,23 +39,21 @@ public class ScheduledJobTypeResource extends AbstractResource {
 		return resource;
 	}
 
-	public GetResult<List<ScheduledJobType>> getScheduledJobTypesByLanguage(String language) {
+	public List<ScheduledJobType> getScheduledJobTypesByLanguage(String language) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.queryParameter("languageSidKey", language)
 				.execute();
 		
-		GetResult<List<ScheduledJobType>> result = null;
+		List<ScheduledJobType> resources = Collections.emptyList();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			List<ScheduledJobType> resources = httpResponse.getEntityList(ScheduledJobType.class);
-			result = new GetResultImpl<List<ScheduledJobType>>(resources);
+			resources = httpResponse.getEntityList(ScheduledJobType.class);
 		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<List<ScheduledJobType>>(error);
+			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}
 		
-		return result;
+		return resources;
 	}
 }

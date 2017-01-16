@@ -27,7 +27,7 @@ import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.GetPlansRequest;
-import com.nowellpoint.client.model.GetResult;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
@@ -93,29 +93,34 @@ public class AccountProfileController extends AbstractController {
 	private String listPlans(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
-		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguageSidKey(account.getLanguageSidKey())
-				.withLocaleSidKey(account.getLocaleSidKey());
+		String id = request.params(":id");
 		
-		GetResult<List<Plan>> getResult = new NowellpointClient(token)
+		AccountProfile accountProfile = new NowellpointClient(token)
+				.accountProfile()
+				.get(id);
+		
+		GetPlansRequest plansRequest = new GetPlansRequest()
+				.withLanguageSidKey(identity.getLanguageSidKey())
+				.withLocaleSidKey(identity.getLocaleSidKey());
+
+		List<Plan> plans = new NowellpointClient(token)
 				.plan()
-				.getPlans(getPlansRequest);
-		
-		List<Plan> plans = getResult.getTarget().stream()
+				.getPlans(plansRequest)
+				.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());
 
 		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", account);
+		model.put("account", identity);
+		model.put("accountProfile", accountProfile);
 		model.put("action", "listPlans");
 		model.put("plans", plans);
-		model.put("locales", new TreeMap<String, String>(getLocales(account)));
+		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
-			
+
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
 	}
 	
@@ -141,7 +146,7 @@ public class AccountProfileController extends AbstractController {
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);
-		model.put("locales", getLocales(accountProfile));
+		model.put("locales", getLocales(accountProfile.getLocaleSidKey()));
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
@@ -165,7 +170,13 @@ public class AccountProfileController extends AbstractController {
 	private String reviewPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile accountProfile = getAccount(request);
+		Identity identity = getIdentity(request);
+		
+		String id = request.params(":id");
+		
+		AccountProfile accountProfile = new NowellpointClient(token)
+				.accountProfile()
+				.get(id);
 		
 		String planId = request.params(":planId");
 		
@@ -174,7 +185,7 @@ public class AccountProfileController extends AbstractController {
 				.get(planId);
 		
 		Address address = new Address();
-		address.setCountryCode(accountProfile.getAddress().getCountryCode());
+		address.setCountryCode(identity.getAddress().getCountryCode());
 		
 		CreditCard creditCard = new CreditCard();
 		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
@@ -183,7 +194,7 @@ public class AccountProfileController extends AbstractController {
 		creditCard.setBillingContact(new Contact());
 
 		Map<String, Object> model = getModel();
-		model.put("account", accountProfile);
+		model.put("account", identity);
 		model.put("accountProfile", accountProfile);
 		model.put("creditCard", creditCard);
 		model.put("action", "reviewPlan");
@@ -226,13 +237,17 @@ public class AccountProfileController extends AbstractController {
 	private String setPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile accountProfile = getAccount(request);
+		Identity identity = getIdentity(request);
+		
+		String id = request.params(":id");
+		
+		AccountProfile accountProfile = new NowellpointClient(token)
+				.accountProfile()
+				.get(id);
 		
 		Boolean newAccount = Assert.isNull(accountProfile.getSubscription().getPlanId()); 
 		
 		String planId = request.params(":planId");
-		
-		String id = request.params(":id");
 		String paymentMethodToken = request.queryParams("paymentMethodToken");
 		String cardholderName = request.queryParams("cardholderName");
 		String number = request.queryParams("number");
@@ -297,7 +312,7 @@ public class AccountProfileController extends AbstractController {
 						.withExpirationYear(expirationYear)
 						.withPrimary(primary);
 				
-				model.put("account", accountProfile);
+				model.put("account", identity);
 				model.put("accountProfile", accountProfile);
 				model.put("plan", plan);
 				model.put("creditCard", creditCard);
@@ -320,7 +335,7 @@ public class AccountProfileController extends AbstractController {
 		
 		if (! setResult.isSuccess()) {
 			
-			model.put("account", accountProfile);
+			model.put("account", identity);
 			model.put("accountProfile", accountProfile);
 			model.put("errorMessage", setResult.getErrorMessage());
 			
@@ -350,7 +365,7 @@ public class AccountProfileController extends AbstractController {
 	private String updateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		AccountProfileRequest accountProfileRequest = new AccountProfileRequest()
 				.withFirstName(request.queryParams("firstName"))
@@ -394,9 +409,9 @@ public class AccountProfileController extends AbstractController {
 					.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
 
 			Map<String, Object> model = getModel();
-			model.put("account", account);
+			model.put("account", identity);
 			model.put("accountProfile", accountProfile);
-			model.put("locales", new TreeMap<String, String>(getLocales(account)));
+			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
 			model.put("languages", getSupportedLanguages());
 			model.put("timeZones", getTimeZones());
 			model.put("errorMessage", updateResult.getErrorMessage());
@@ -421,12 +436,18 @@ public class AccountProfileController extends AbstractController {
 	 */
 	
 	private String editAccountProfile(Configuration configuration, Request request, Response response) {
-		AccountProfile account = getAccount(request);
+		Token token = getToken(request);
+		
+		Identity identity = getIdentity(request);
+		
+		AccountProfile accountProfile = new NowellpointClient(token)
+				.accountProfile()
+				.get(request.params(":id"));
 			
 		Map<String, Object> model = getModel();
-		model.put("account", account);
-		model.put("accountProfile", account);
-		model.put("locales", new TreeMap<String, String>(getLocales(account)));
+		model.put("account", identity);
+		model.put("accountProfile", accountProfile);
+		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 			
@@ -444,14 +465,14 @@ public class AccountProfileController extends AbstractController {
 	private String confirmDeactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(request.params(":id"));
 			
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		model.put("accountProfile", accountProfile);
 			
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_DEACTIVATE);		
@@ -492,7 +513,7 @@ public class AccountProfileController extends AbstractController {
 	private String removeProfilePicture(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		UpdateResult<AccountProfile> updateResult = new NowellpointClient(token)
 				.accountProfile()
@@ -503,7 +524,7 @@ public class AccountProfileController extends AbstractController {
 		}
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		model.put("accountProfile", updateResult.getTarget());
 		
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE);
@@ -520,7 +541,7 @@ public class AccountProfileController extends AbstractController {
 	private String editAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		Address address = new NowellpointClient(token)
 				.accountProfile()
@@ -528,7 +549,7 @@ public class AccountProfileController extends AbstractController {
 				.get(request.params(":id"));
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("address", address);
 			
@@ -546,7 +567,7 @@ public class AccountProfileController extends AbstractController {
 	private String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile accountProfile = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		AddressRequest addressRequest = new AddressRequest()
 				.withCity(request.queryParams("city"))
@@ -570,7 +591,7 @@ public class AccountProfileController extends AbstractController {
 
 			
 			Map<String, Object> model = getModel();
-			model.put("account", accountProfile);
+			model.put("account", identity);
 			model.put("accountProfile", new AccountProfile(request.params(":id")));
 			model.put("address", address);
 			model.put("errorMessage", updateResult.getErrorMessage());
@@ -597,7 +618,7 @@ public class AccountProfileController extends AbstractController {
 	private String getCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		CreditCard creditCard = new NowellpointClient(token)
 				.accountProfile()
@@ -605,7 +626,7 @@ public class AccountProfileController extends AbstractController {
 				.get(request.params(":id"), request.params(":token"));
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("creditCard", creditCard);
 		model.put("mode", "view");
@@ -895,8 +916,8 @@ public class AccountProfileController extends AbstractController {
 	 * @return Locale map 
 	 */
 	
-	private Map<String,String> getLocales(AccountProfile accountProfile) {
-		Locale.setDefault(new Locale(accountProfile.getLocaleSidKey()));
+	private Map<String,String> getLocales(String localeSidKey) {
+		Locale.setDefault(new Locale(localeSidKey));
 		
 		Map<String,String> localeMap = Arrays.asList(Locale.getAvailableLocales())
 				.stream()

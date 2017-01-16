@@ -1,5 +1,6 @@
 package com.nowellpoint.client.resource;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.nowellpoint.aws.http.HttpResponse;
@@ -9,7 +10,6 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.UpdateResult;
@@ -29,25 +29,21 @@ public class ScheduledJobResource extends AbstractResource {
 		super(token);
 	}
 
-	public GetResult<List<ScheduledJob>> getScheduledJobs() {
+	public List<ScheduledJob> getScheduledJobs() {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.execute();
 		
-		GetResult<List<ScheduledJob>> result = null;
+		List<ScheduledJob> resources = Collections.emptyList();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			List<ScheduledJob> resources = httpResponse.getEntityList(ScheduledJob.class);
-			result = new GetResultImpl<List<ScheduledJob>>(resources);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
+			resources = httpResponse.getEntityList(ScheduledJob.class);
 		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<List<ScheduledJob>>(error);
+			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}
 		
-		return result;
+		return resources;
 	}
 	
 	public CreateResult<ScheduledJob> create(ScheduledJobRequest scheduledJobRequest) {		
@@ -240,7 +236,7 @@ public class ScheduledJobResource extends AbstractResource {
 			super(token);
 		}
 		
-		public GetResult<RunHistory> get(String scheduledJobId, String fireInstanceId) {
+		public RunHistory get(String scheduledJobId, String fireInstanceId) {
 			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
@@ -249,22 +245,20 @@ public class ScheduledJobResource extends AbstractResource {
 					.path(fireInstanceId)
 					.execute();
 			
-			GetResult<RunHistory> result = null;
+			RunHistory resource = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				RunHistory resource = httpResponse.getEntity(RunHistory.class);
-				result = new GetResultImpl<RunHistory>(resource);
+				resource = httpResponse.getEntity(RunHistory.class);
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<RunHistory>(error);
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 			}
 			
-			return result;
+			return resource;
 		}
 		
-		public GetResult<String> getFile(String scheduledJobId, String fireInstanceId, String filename) {
+		public String getFile(String scheduledJobId, String fireInstanceId, String filename) {
 			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
@@ -275,19 +269,17 @@ public class ScheduledJobResource extends AbstractResource {
 					.path(filename)
 					.execute();
 			
-			GetResult<String> result = null;
+			String resource = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				String resource = httpResponse.getAsString();
-				result = new GetResultImpl<String>(resource);
+				resource = httpResponse.getAsString();
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<String>(error);
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 			}
 			
-			return result;
+			return resource;
 		}
 	}
 }

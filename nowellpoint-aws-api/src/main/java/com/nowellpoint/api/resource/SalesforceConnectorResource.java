@@ -33,7 +33,7 @@ import com.nowellpoint.api.service.SObjectDetailService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
-@Path("connectors")
+@Path("salesforce-connectors")
 public class SalesforceConnectorResource {
 	
 	@Inject
@@ -49,7 +49,6 @@ public class SalesforceConnectorResource {
 	private UriInfo uriInfo;
 	
 	@GET
-	@Path("salesforce")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
 		
@@ -60,7 +59,6 @@ public class SalesforceConnectorResource {
     }
 	
 	@POST
-	@Path("salesforce")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createSalesforceConnector(@FormParam("id") @NotEmpty(message = "Missing Token Id") String id,
@@ -87,7 +85,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
 		
@@ -111,7 +109,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}")
+	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateSalesforceConnector(@PathParam(value="id") String id, 
@@ -130,7 +128,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("salesforce/{id}")
+	@Path("{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id) {		
 
 		salesforceConnectorService.deleteSalesforceConnector(id);
@@ -140,7 +138,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/instances")
+	@Path("{id}/instances")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInstances(@PathParam(value="id") String id) {	
 		
@@ -152,7 +150,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/instance/{key}")
+	@Path("{id}/instance/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {		
 		
@@ -168,7 +166,7 @@ public class SalesforceConnectorResource {
 	}
 
 	@POST
-	@Path("salesforce/{id}/instance")
+	@Path("{id}/instance")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addInstance(@PathParam(value="id") String id, Instance resource) {
@@ -181,7 +179,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@PUT
-	@Path("salesforce/{id}/instance/{key}")
+	@Path("{id}/instance/{key}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, Instance instance) {
@@ -194,7 +192,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@DELETE
-	@Path("salesforce/{id}/instance/{key}")
+	@Path("{id}/instance/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeInstance(@PathParam(value="id") String id, @PathParam(value="key") String key) {
 		
@@ -205,7 +203,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/instance/{key}")
+	@Path("{id}/instance/{key}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateInstance(@PathParam(value="id") String id, @PathParam(value="key") String key, MultivaluedMap<String, String> parameters) {
@@ -218,7 +216,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@GET
-	@Path("salesforce/{id}/instance/{key}/sobject/{sobjectName}")
+	@Path("{id}/instance/{key}/sobject/{sobjectName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSObjectDetails(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="sobjectName") String sobjectName) {		
 		
@@ -234,7 +232,7 @@ public class SalesforceConnectorResource {
 	}
 	
 	@POST
-	@Path("salesforce/{id}/instance/{key}/actions/{action}/invoke")
+	@Path("{id}/instance/{key}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="action") String action) {
 		

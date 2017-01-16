@@ -112,7 +112,7 @@ public class NowellpointClient {
 	}
 	
 	public PlanResource plan() {
-		return new PlanResource(environment.getEnvironmentUrl());
+		return new PlanResource(token);
 	}
 	
 	public ScheduledJobResource scheduledJob() {

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 
 import freemarker.core.Environment;
@@ -110,7 +110,7 @@ abstract class AbstractController implements Controller {
 		return request.attribute("com.nowellpoint.auth.token");
 	}
 	
-	protected AccountProfile getAccount(Request request) {
+	protected Identity getIdentity(Request request) {
 		return request.attribute("account");
 	}
 	
@@ -127,10 +127,10 @@ abstract class AbstractController implements Controller {
 	}
 	
 	protected String render(Configuration configuration, Request request, Response response, Map<String,Object> model, String templateName) {	
-		AccountProfile accountProfile = getAccount(request);
+		Identity identity = getIdentity(request);
 		Locale locale = getLocale(request) != null ? getLocale(request) : configuration.getLocale();
 		TimeZone timeZone = getTimeZone(request) != null ? getTimeZone(request) : configuration.getTimeZone();
-		model.put("account", accountProfile);
+		model.put("account", identity);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));

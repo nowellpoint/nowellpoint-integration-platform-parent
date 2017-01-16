@@ -25,17 +25,13 @@
         <li>
             <form>
                 ${messages["current.plan"]}:&nbsp;
-                <a href="/app/account-profile/${account.id}/current-plan" class="btn btn-pill btn-success navbar-btn">&emsp;${(account.subscription.planName)!}&emsp;</a>
+                <a href="/app/account-profile/${account.id}/current-plan" class="btn btn-pill btn-success navbar-btn">&emsp;${(account.planName)!}&emsp;</a>
             </form>
         </li>
         
         <li>&emsp;</li>
 
-        <#if account.hasFullAccess?? && account.hasFullAccess>
-            <li>
-                <a href="/app/administration">${messages["adminsitration"]}</a>
-            </li>
-        </#if>
+       
         
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">${(account.name)!} <span class="caret"></span></a>

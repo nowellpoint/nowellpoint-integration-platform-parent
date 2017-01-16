@@ -7,7 +7,6 @@ import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SignUpResult;
@@ -63,17 +62,6 @@ public abstract class AbstractResource {
 			return errorMessage;
 		}
 	}
-	
-	class GetResultImpl <T> extends ResultImpl <T> implements GetResult <T> {
-		
-		public GetResultImpl(T target) {
-			super(target);
-		}
-		
-		public GetResultImpl(Error error) {
-			super(error);
-		}	
-	}	
 	
 	class CreateResultImpl <T> extends ResultImpl <T> implements CreateResult <T> {
 		

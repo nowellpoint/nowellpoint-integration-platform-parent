@@ -156,17 +156,20 @@ public class Application implements SparkApplication {
         // exception handlers
         //
         
-        exception(ServiceUnavailableException.class, (exception, request, response) ->{
+        exception(ServiceUnavailableException.class, (exception, request, response) -> {
+        	exception.printStackTrace();
         	response.status(Status.SERVICE_UNAVAILABLE);
         	response.body(exception.getMessage());
         });
         
         exception(BadRequestException.class, (exception, request, response) -> {
+        	exception.printStackTrace();
             response.status(400);
             response.body(exception.getMessage());
         });
         
         exception(NotFoundException.class, (exception, request, response) -> {
+        	exception.printStackTrace();
             response.status(404);
             response.body(exception.getMessage());
         });
@@ -191,6 +194,7 @@ public class Application implements SparkApplication {
         });
         
         exception(Exception.class, (exception, request, response) -> {
+        	exception.printStackTrace();
         	response.status(500);
             response.body(exception.getMessage());
         });
@@ -202,7 +206,7 @@ public class Application implements SparkApplication {
 	 */
 	
 	private static List<IsoCountry> loadCountries() {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NOWELLPOINT_API_ENDPOINT"))
+		HttpResponse httpResponse = RestResource.get(com.nowellpoint.client.Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("iso-countries")
 				.execute();
 		

@@ -7,7 +7,7 @@ import java.util.Map;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
@@ -46,10 +46,10 @@ public class AdministrationController extends AbstractController {
 	
 	private String showAdministrationHome(Configuration configuration, Request request, Response response) {
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		
 		return render(configuration, request, response, model, Template.ADMINISTRATION_HOME);
 		
@@ -65,10 +65,10 @@ public class AdministrationController extends AbstractController {
 	
 	private String showManageCache(Configuration configuration, Request request, Response response) {
 		
-		AccountProfile account = getAccount(request);
+		Identity identity = getIdentity(request);
 		
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		
 		return render(configuration, request, response, model, Template.CACHE_MANAGER);
 		
@@ -85,6 +85,8 @@ public class AdministrationController extends AbstractController {
 	private String purgeCache(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
+		Identity identity = getIdentity(request);
+		
 		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
@@ -94,9 +96,8 @@ public class AdministrationController extends AbstractController {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		AccountProfile account = getAccount(request);
 		Map<String, Object> model = getModel();
-		model.put("account", account);
+		model.put("account", identity);
 		
 		return render(configuration, request, response, model, Template.CACHE_MANAGER);
 	};

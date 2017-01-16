@@ -22,7 +22,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.GetPlansRequest;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
@@ -84,13 +83,13 @@ public class TestSignUp {
 				.withLanguageSidKey("en_US")
 				.withLocaleSidKey("en_US");
 		
-		GetResult<List<Plan>> getResult = new NowellpointClient()
+		List<Plan> plans = new NowellpointClient()
 				.plan()
 				.getPlans(getPlansRequest);
 		
-		assertNotNull(getResult.getTarget());
+		assertNotNull(plans);
 		
-		List<Plan> plans = getResult.getTarget().stream()
+		plans = plans.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());
 		

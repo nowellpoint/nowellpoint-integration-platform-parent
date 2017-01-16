@@ -18,7 +18,6 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Instance;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.ScheduledJob;
@@ -81,12 +80,12 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		GetResult<List<ScheduledJob>> getResult = new NowellpointClient(token)
+		List<ScheduledJob> scheduledJobs = new NowellpointClient(token)
 				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", getResult.getTarget());
+		model.put("scheduledJobList", scheduledJobs);
 
 		return render(configuration, request, response, model, Template.SCHEDULED_JOBS_LIST);
 	}
@@ -103,20 +102,24 @@ public class ScheduledJobController extends AbstractController {
 
 		Token token = getToken(request);
 		
-		AccountProfile accountProfile = getAccount(request);
+		String id = request.params(":id");
+		
+		AccountProfile accountProfile = new NowellpointClient(token)
+				.accountProfile()
+				.get(id);
 		
 		if (accountProfile.getSubscription().getPlanId() == null) {
 			response.redirect(Path.Route.ACCOUNT_PROFILE_LIST_PLANS.replace(":id", accountProfile.getId()));
 			halt();
 		}
 		
-		GetResult<List<ScheduledJobType>> getScheduledJobsTypes = new NowellpointClient(token)
+		List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(token)
 				.scheduledJobType()
 				.getScheduledJobTypesByLanguage(accountProfile.getLanguageSidKey());
 		
 		Map<String, Object> model = getModel();
 		model.put("step", "select-type");
-    	model.put("scheduledJobTypeList", getScheduledJobsTypes.getTarget());
+    	model.put("scheduledJobTypeList", scheduledJobTypes);
     	model.put("title", getLabel(request, "select.scheduled.job.type"));
     	
     	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
@@ -156,11 +159,11 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(token)
+			List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
 					.salesforceConnector()
 					.getSalesforceConnectors();
 
-	    	model.put("salesforceConnectorsList", getResult.getTarget());
+	    	model.put("salesforceConnectorsList", salesforceConnectors);
 		}
 		
     	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
@@ -224,14 +227,14 @@ public class ScheduledJobController extends AbstractController {
 		
 		ScheduledJob scheduledJob = objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
-		GetResult<Instance> result = new NowellpointClient(token)
+		Instance instance = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(scheduledJob.getConnectorId(), environmentKey);
 		
-		scheduledJob.setNotificationEmail(result.getTarget().getEmail());
-		scheduledJob.setEnvironmentKey(result.getTarget().getKey());
-		scheduledJob.setEnvironmentName(result.getTarget().getEnvironmentName());
+		scheduledJob.setNotificationEmail(instance.getEmail());
+		scheduledJob.setEnvironmentKey(instance.getKey());
+		scheduledJob.setEnvironmentName(instance.getEnvironmentName());
 		
 		putValue(token, scheduledJob.getId(), objectMapper.writeValueAsString(scheduledJob));
 			
@@ -566,14 +569,14 @@ public class ScheduledJobController extends AbstractController {
 		String id = request.params(":id");
 		String fireInstanceId = request.params(":fireInstanceId");
 		
-		GetResult<RunHistory> getResult = new NowellpointClient(token)
+		RunHistory runHistory = new NowellpointClient(token)
 				.scheduledJob()
 				.runHistory()
 				.get(id, fireInstanceId);
 		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", new ScheduledJob(id));
-		model.put("runHistory", getResult.getTarget());
+		model.put("runHistory", runHistory);
 		
 		return render(configuration, request, response, model, Template.SCHEDULE_JOB_RUN_HISTORY);
 	}
@@ -594,11 +597,11 @@ public class ScheduledJobController extends AbstractController {
 		String fireInstanceId = request.params(":fireInstanceId");
 		String filename = request.params(":filename");
 		
-		GetResult<String> getResult = new NowellpointClient(token)
+		String file = new NowellpointClient(token)
 				.scheduledJob()
 				.runHistory()
 				.getFile(id, fireInstanceId, filename);
 		
-		return getResult.getTarget();
+		return file;
 	}
 }

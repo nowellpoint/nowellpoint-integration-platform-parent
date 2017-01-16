@@ -27,7 +27,6 @@ import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.MessageProvider;
@@ -231,10 +230,10 @@ public class AuthenticationController extends AbstractController {
 	 * @return
 	 */
 	
-	private TimeZone getDefaultTimeZone(Configuration configuration, AccountProfile accountProfile) {		
+	private TimeZone getDefaultTimeZone(Configuration configuration, Identity identity) {		
 		TimeZone timeZone = null;
-		if (accountProfile != null && accountProfile.getTimeZoneSidKey() != null) {
-			timeZone = TimeZone.getTimeZone(accountProfile.getTimeZoneSidKey());
+		if (identity != null && identity.getTimeZoneSidKey() != null) {
+			timeZone = TimeZone.getTimeZone(identity.getTimeZoneSidKey());
 		} else {
 			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
 		}
@@ -249,10 +248,10 @@ public class AuthenticationController extends AbstractController {
 	 * @return
 	 */
 	
-	private Locale getDefaultLocale(Configuration configuration, AccountProfile accountProfile) {
+	private Locale getDefaultLocale(Configuration configuration, Identity identity) {
 		Locale locale = null;
-		if (accountProfile != null && accountProfile.getLocaleSidKey() != null) {
-			String[] attrs = accountProfile.getLocaleSidKey().split("_");
+		if (identity != null && identity.getLocaleSidKey() != null) {
+			String[] attrs = identity.getLocaleSidKey().split("_");
 			if (attrs.length == 1) {
 				locale = new Locale(attrs[0]);
 			} else if (attrs.length == 2) {

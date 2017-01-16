@@ -17,7 +17,6 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.EnvironmentRequest;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
@@ -124,13 +123,11 @@ public class SalesforceConnectorController extends AbstractController {
 		String key = request.params(":key");
 		String sobjectName = request.params(":sobjectName");
 		
-		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(token)
+		SObjectDetail sobjectDetail = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.sobjectDetail()
 				.get(id, key, sobjectName);
-		
-		SObjectDetail sobjectDetail = getSobjectDetailResult.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
@@ -154,12 +151,10 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Instance> result = new NowellpointClient(token)
+		Instance instance = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(id, key);
-		
-		Instance instance = result.getTarget();
 		
 		Map<String,String> icons = new HashMap<String,String>();
 		
@@ -205,12 +200,10 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Instance> result = new NowellpointClient(token)
+		Instance instance = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(id, key);
-		
-		Instance instance = result.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
@@ -234,12 +227,10 @@ public class SalesforceConnectorController extends AbstractController {
 		String id = request.params(":id");
 		String key = request.params(":key");
 		
-		GetResult<Instance> result = new NowellpointClient(token)
+		Instance instance = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
 				.get(id, key);
-		
-		Instance instance = result.getTarget();
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
@@ -470,12 +461,12 @@ public class SalesforceConnectorController extends AbstractController {
 	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		GetResult<List<SalesforceConnector>> getResult = new NowellpointClient(token)
+		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		Map<String, Object> model = getModel();
-    	model.put("salesforceConnectorsList", getResult.getTarget());
+    	model.put("salesforceConnectorsList", salesforceConnectors);
     	
     	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTORS_LIST);
     	

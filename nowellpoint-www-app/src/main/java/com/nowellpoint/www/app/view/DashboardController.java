@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.GetResult;
 import com.nowellpoint.client.model.ScheduledJob;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
@@ -33,7 +32,7 @@ public class DashboardController extends AbstractController {
 	
 	private String showStartPage(Configuration configuration, Request request, Response response) {
     	Map<String,Object> model = getModel();
-    	model.put("account", getAccount(request));
+    	model.put("account", getIdentity(request));
     	return render(configuration, request, response, model, Path.Template.START);
 	};
 	
@@ -41,14 +40,14 @@ public class DashboardController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		GetResult<List<ScheduledJob>> getResult = new NowellpointClient(token)
+		List<ScheduledJob> scheduledJobs = new NowellpointClient(token)
 				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", getResult.getTarget());
+		model.put("scheduledJobList", scheduledJobs);
 		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
-    	model.put("account", getAccount(request));
+    	model.put("account", getIdentity(request));
     	return render(configuration, request, response, model, Template.DASHBOARD);
 	};
 }

@@ -10,8 +10,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.model.domain.AccountProfile;
+import com.nowellpoint.api.model.domain.Identity;
+import com.nowellpoint.api.model.domain.Resources;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.util.Assert;
 
@@ -23,6 +27,9 @@ public class IdentityResource {
 	
 	@Context 
 	private SecurityContext securityContext;
+	
+	@Context
+	private UriInfo uriInfo;
 	
 	@GET
 	@Path("{id}")
@@ -36,8 +43,25 @@ public class IdentityResource {
 		}
 		
 		AccountProfile accountProfile = accountProfileService.findById( id );
+		
+		Resources resources = new Resources();
+		resources.setSalesforce(UriBuilder.fromUri(uriInfo.getBaseUri()).path(SalesforceConnectorResource.class).build().toString());
+		resources.setScheduledJobs(UriBuilder.fromUri(uriInfo.getBaseUri()).path(ScheduledJobResource.class).build().toString());
+		
+		Identity identity = new Identity();
+		identity.setId(accountProfile.getId());
+		identity.setFirstName(accountProfile.getFirstName());
+		identity.setLastName(accountProfile.getLastName());
+		identity.setName(accountProfile.getName());
+		identity.setPlanName(accountProfile.getSubscription().getPlanName());
+		identity.setAddress(accountProfile.getAddress());
+		identity.setLanguageSidKey(accountProfile.getLanguageSidKey());
+		identity.setLocaleSidKey(accountProfile.getLocaleSidKey());
+		identity.setTimeZoneSidKey(accountProfile.getTimeZoneSidKey());
+		identity.setMeta(accountProfile.getMeta());
+		identity.setResources(resources);
 				
-		return Response.ok(accountProfile)
+		return Response.ok(identity)
 				.build();
 	}
 }
