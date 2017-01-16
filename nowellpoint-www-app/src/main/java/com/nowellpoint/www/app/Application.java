@@ -23,6 +23,7 @@ import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.IsoCountry;
+import com.nowellpoint.client.model.IsoCountryList;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
@@ -213,7 +214,8 @@ public class Application implements SparkApplication {
 		List<IsoCountry> countries = Collections.emptyList();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			countries = httpResponse.getEntityList(IsoCountry.class);
+			IsoCountryList isoCountryList = httpResponse.getEntity(IsoCountryList.class);
+			countries = isoCountryList.getItems();
 		}
 		
 		return countries;

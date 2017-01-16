@@ -1,5 +1,8 @@
 package com.nowellpoint.client.model;
 
-public interface CollectionResource<T extends Resource> extends Resource, Iterable<T> {
+import java.util.List;
 
+public interface CollectionResource<T extends Resource> extends Resource, Iterable<T> {
+	int getSize();
+	List<T> getItems();
 }

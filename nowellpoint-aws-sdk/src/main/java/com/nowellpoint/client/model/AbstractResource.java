@@ -17,7 +17,7 @@ public abstract class AbstractResource implements Resource {
 	
 	private UserInfo lastModifiedBy;
 	
-	private String href;
+	private Meta meta;
 
 	public AbstractResource() {
 		
@@ -63,11 +63,11 @@ public abstract class AbstractResource implements Resource {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
-	public String getHref() {
-		return href;
+	public Meta getMeta() {
+		return meta;
 	}
-	
-	public void setHref(String href) {
-		this.href = href;
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 }

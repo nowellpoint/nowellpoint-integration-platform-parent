@@ -3,10 +3,6 @@ package com.nowellpoint.api.resource;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -15,28 +11,29 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.mongodb.client.MongoCollection;
+import com.mongodb.client.FindIterable;
 import com.nowellpoint.api.model.document.IsoCountry;
+import com.nowellpoint.api.model.domain.IsoCountryList;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 
 @Path("iso-countries")
 public class IsoCountryResource {
 	
-	private static final String COLLECTION_NAME = "iso.countries";
-	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
     public Response findAll() {
-			
-		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
-			
-		List<IsoCountry> countries = StreamSupport.stream(collection.find().spliterator(), false)
-				.collect(Collectors.toList());
 		
-		return Response.ok(countries).build();
+		String collectionName = MongoDatastore.getCollectionName(IsoCountry.class);
+		
+		FindIterable<IsoCountry> documents = MongoDatastore.getDatabase()
+				.getCollection(collectionName)
+				.withDocumentClass(IsoCountry.class)
+				.find();
+		
+		IsoCountryList isoCountries = new IsoCountryList(documents);
+		
+		return Response.ok(isoCountries).build();
     }
 	
 	@GET
@@ -45,14 +42,16 @@ public class IsoCountryResource {
 	@PermitAll
     public Response findByLanguage(@PathParam("language") String language) {
 		
-		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
+		String collectionName = MongoDatastore.getCollectionName(IsoCountry.class);
 		
-		List<IsoCountry> countries = StreamSupport.stream(collection.find( eq ( "language", language ) ).spliterator(), false)
-				.collect(Collectors.toList());
+		FindIterable<IsoCountry> documents = MongoDatastore.getDatabase()
+				.getCollection(collectionName)
+				.withDocumentClass(IsoCountry.class)
+				.find( eq ( "language", language ) );
 		
-		return Response.ok(countries).build();
+		IsoCountryList isoCountries = new IsoCountryList(documents);
+		
+		return Response.ok(isoCountries).build();
     }
 	
 	@GET
@@ -61,12 +60,16 @@ public class IsoCountryResource {
 	@PermitAll
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
-		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
-				
-		IsoCountry country = collection.find( and ( eq ( "language", language ), eq ( "code", code ) ) ).first();
+		String collectionName = MongoDatastore.getCollectionName(IsoCountry.class);
 		
-		return Response.ok(country).build();
+		IsoCountry document = MongoDatastore.getDatabase()
+				.getCollection(collectionName)
+				.withDocumentClass(IsoCountry.class)
+				.find( and ( eq ( "language", language ), eq ( "code", code ) ) )
+				.first();
+		
+		com.nowellpoint.api.model.domain.IsoCountry isoCountry = new com.nowellpoint.api.model.domain.IsoCountry(document);
+		
+		return Response.ok(isoCountry).build();
 	}
 }
