@@ -553,7 +553,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	private void removeInstance(Instance instance) {
 		UserProperties.clear(instance.getKey());
-		MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", instance.getKey() ) );
+		//MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", instance.getKey() ) );
 	}
 	
 	/**
@@ -722,7 +722,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 
 				com.nowellpoint.api.model.document.SObjectDetail sobjectDetail = null;
 				try {
-					sobjectDetail = MongoDatastore.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
+					sobjectDetail = null; //MongoDatastore.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
 				} catch (DocumentNotFoundException e) {
 					sobjectDetail = new com.nowellpoint.api.model.document.SObjectDetail();
 					sobjectDetail.setEnvironmentKey(environmentKey);
@@ -737,11 +737,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				sobjectDetail.setSystemModifiedDate(now);
 				sobjectDetail.setResult(describeSobjectResult);
 				if (isNull(sobjectDetail.getId())) {
-					System.out.println("inserting");
-					MongoDatastore.insertOne(sobjectDetail);
+					//MongoDatastore.insertOne(sobjectDetail);
 				} else {
-					System.out.println("updating");
-					MongoDatastore.replaceOne(sobjectDetail);
+					//MongoDatastore.replaceOne(sobjectDetail);
 				}
 			});
 		}

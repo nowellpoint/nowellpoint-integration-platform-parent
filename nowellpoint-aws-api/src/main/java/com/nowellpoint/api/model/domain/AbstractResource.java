@@ -158,4 +158,9 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	public String toJson() throws JsonProcessingException {
 		return new ObjectMapper().writeValueAsString(this);
 	}
+	
+	@JsonIgnore
+	public <T extends MongoDocument> T toDocument(Class<T> type) {
+		return modelMapper.map(this, type);
+	}
 }

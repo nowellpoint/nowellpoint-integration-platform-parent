@@ -20,15 +20,6 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	
 	public AccountProfileModelMapper() {
 		super(com.nowellpoint.api.model.document.AccountProfile.class);
-	}
-	
-	/**
-	 * 
-	 */
-	
-	protected AccountProfile findById(String id) {
-		com.nowellpoint.api.model.document.AccountProfile document = super.find(id);
-		return modelMapper.map(document, AccountProfile.class);
 	}	
 	
 	/**
@@ -36,7 +27,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 */
 	
 	protected void createAccountProfile(AccountProfile accountProfile) {
-		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
+		com.nowellpoint.api.model.document.AccountProfile document = accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class);
 		create(document);
 		hset(encode(getSubject()), document);
 		modelMapper.map(document, accountProfile);
@@ -47,7 +38,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 */
 	
 	protected void updateAccountProfile(AccountProfile accountProfile) {
-		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
+		com.nowellpoint.api.model.document.AccountProfile document = accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class);
 		replace(document);
 		hset(encode(getSubject()), document);
 		modelMapper.map(document, accountProfile);
@@ -58,7 +49,7 @@ public class AccountProfileModelMapper extends AbstractModelMapper<com.nowellpoi
 	 */
 	
 	protected void deleteAccountProfile(AccountProfile accountProfile) {
-		com.nowellpoint.api.model.document.AccountProfile document = modelMapper.map(accountProfile, com.nowellpoint.api.model.document.AccountProfile.class);
+		com.nowellpoint.api.model.document.AccountProfile document = accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class);
 		delete(document);
 		hdel(encode(getSubject()), document);
 	}

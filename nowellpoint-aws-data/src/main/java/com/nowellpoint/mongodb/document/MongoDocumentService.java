@@ -1,19 +1,26 @@
 package com.nowellpoint.mongodb.document;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.PublishRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.AbstractCacheService;
 
 public abstract class MongoDocumentService<T extends MongoDocument> extends AbstractCacheService {
@@ -57,17 +64,36 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected Set<T> find(Bson query) {
-		Set<T> documents = new HashSet<T>(); //hscan(documentClass, encode(toString(query)));
+	protected Set<T> query(Bson query) {
+		Set<T> documents = new HashSet<T>();
 		
 		if (documents.isEmpty()) {
 			try {
-				documents = MongoDatastore.find(documentClass, query);
-				//hset(encode(toString(query)), documents);
+				//documents = MongoDatastore.find(documentClass, query);
 			} catch (IllegalArgumentException e) {
 				LOGGER.error( "Find exception : ", e.getCause() );
 			}
 		}
+		
+		/**
+		 * String collectionName = getCollectionName( documentClass );
+		
+		Set<T> documents = new HashSet<T>();
+		
+		FindIterable<T> search = getDatabase()
+				.getCollection( collectionName )
+				.withDocumentClass( documentClass )
+				.find( query );
+		
+		search.forEach(new Block<T>() {
+			@Override
+			public void apply(final T document) {
+				documents.add(document);
+		    }
+		});
+		
+		return documents;
+		 */
 		
 		return documents;
 	}
@@ -84,14 +110,20 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	protected T findOne(Bson query) {
 		T document = null;
 		
-		if (document == null) {
-			try {
-				document = MongoDatastore.findOne(documentClass, query);
-			} catch (IllegalArgumentException e) {
-				LOGGER.error( "FindOne exception : ", e.getCause());
-			}
+		try {
+			document = MongoDatastore.getCollection(documentClass)
+					.withDocumentClass( documentClass )
+					.find( query )
+					.first();
+			
+		} catch (IllegalArgumentException e) {
+			LOGGER.error( "findOne exception : ", e.getCause());
 		}
-
+		
+		if (document == null) {
+			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found: %s", documentClass.getSimpleName(), toString(query) ) );
+		}
+		
 		return document;
 	}
 	
@@ -104,17 +136,27 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected T find(String id) {	
+	protected T fetch(String id) {	
 		T document = get(documentClass, id);
 		
 		if (document == null) {
 			try {
-				document = MongoDatastore.findById(documentClass, new ObjectId(id));
+				
+				document = MongoDatastore.getCollection( document )
+						.withDocumentClass( documentClass )
+						.find( eq ( "_id", id ) )
+						.first();
+				
+				if (document == null) {
+					throw new DocumentNotFoundException(String.format( "Resource of type: %s for Id: %s was not found", documentClass.getSimpleName(), id.toString() ) );
+				}
+				
 				set(id, document);
+				
 			} catch (IllegalArgumentException e) {
-				LOGGER.error( "FindById exception : ", e.getCause());
+				LOGGER.error( "fetch exception : ", e.getCause());
 			}
-		}
+		} 
 
 		return document;
 	}
@@ -142,9 +184,17 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		set(document.getId().toString(), document);
 		
 		try {
-			MongoDatastore.insertOne( document );
+
+			Executors.newSingleThreadExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					MongoDatastore.getCollection( document ).insertOne( document );
+				}
+			});
+			
 		} catch (MongoException e) {
 			LOGGER.error( "Create Document exception", e.getCause());
+			publish(e);
 			throw e;
 		}	
 	}
@@ -166,33 +216,17 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		set(document.getId().toString(), document);
 		
 		try {
-			MongoDatastore.replaceOne( document );
+			
+			Executors.newSingleThreadExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					MongoDatastore.getCollection( document ).replaceOne( Filters.eq ( "_id", document.getId() ), document );
+				}
+			});
+			
 		} catch (MongoException e) {
 			LOGGER.error( "Update Document exception", e.getCause());
-			throw e;
-		}
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param filter
-	 * @param document
-	 * 
-	 * 
-	 */
-	
-	protected void replace(Bson filter, T document) {
-		Date now = Date.from(Instant.now());
-		
-		document.setSystemModifiedDate(now);
-		
-		set(document.getId().toString(), document);
-		
-		try {
-			MongoDatastore.replaceOne( filter, document );
-		} catch (MongoException e) {
-			LOGGER.error( "Update Document exception", e.getCause() );
+			publish(e);
 			throw e;
 		}
 	}
@@ -209,11 +243,38 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		del(document.getId().toString());
 		
 		try {
-			MongoDatastore.deleteOne( document );
+			
+			Executors.newSingleThreadExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					MongoDatastore.getCollection( document ).deleteOne(  Filters.eq ( "_id", document.getId() ) );
+				}
+			});
+			
 		} catch (MongoException e) {
 			LOGGER.error( "Delete Document exception", e.getCause() );
+			publish(e);
 			throw e;
 		}
+	}
+	
+	protected void deleteMany(String collectionName, Bson query) {
+		
+		try {
+			
+			Executors.newSingleThreadExecutor().execute(new Runnable() {
+				@Override
+				public void run() {
+					MongoDatastore.getDatabase().getCollection( collectionName ).deleteMany( query );
+				}
+			});
+		
+		} catch (MongoException e) {
+			LOGGER.error( "Delete Document exception", e.getCause() );
+			publish(e);
+			throw e;
+		}
+		
 	}
 	
 	/**
@@ -238,8 +299,21 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	@SuppressWarnings("unused")
 	private String toString(Bson bson) {
 		return bson.toBsonDocument(Document.class, MongoClient.getDefaultCodecRegistry()).toString();
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param exception
+	 * 
+	 * 
+	 */
+	
+	private static void publish(MongoException exception) {
+		AmazonSNS snsClient = new AmazonSNSClient();
+		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:MONGODB_EXCEPTION", exception.getMessage());
+		snsClient.publish(publishRequest);
 	}
 }

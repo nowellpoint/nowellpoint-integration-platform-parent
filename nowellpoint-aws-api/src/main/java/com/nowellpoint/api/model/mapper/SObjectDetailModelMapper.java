@@ -30,7 +30,7 @@ public class SObjectDetailModelMapper extends AbstractModelMapper<com.nowellpoin
 	 */
 	
 	protected SObjectDetail findSObjectDetail(String id) {
-		com.nowellpoint.api.model.document.SObjectDetail document = find(id);
+		com.nowellpoint.api.model.document.SObjectDetail document = fetch(id);
 		return modelMapper.map(document, SObjectDetail.class);
 	}	
 	

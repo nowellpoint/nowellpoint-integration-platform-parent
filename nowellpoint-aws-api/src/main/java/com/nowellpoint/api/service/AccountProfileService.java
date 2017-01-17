@@ -1,9 +1,10 @@
 package com.nowellpoint.api.service;
 
+import static com.mongodb.client.model.Filters.eq;
 import static com.nowellpoint.util.Assert.isEmpty;
+import static com.nowellpoint.util.Assert.isEqual;
 import static com.nowellpoint.util.Assert.isNotNull;
 import static com.nowellpoint.util.Assert.isNull;
-import static com.nowellpoint.util.Assert.isEqual;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -48,11 +49,16 @@ import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.nowellpoint.mongodb.document.DocumentResolver;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.util.Assert;
 
 public class AccountProfileService extends AccountProfileModelMapper {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
+	
+	private DocumentResolver documentResolver = new DocumentResolver(); 
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -273,14 +279,31 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public Address getAddress(String id) {
 		AccountProfile resource = findById( id );
 		return resource.getAddress();
-	}
+	}	
 	
 	public AccountProfile findById(String id) {	
-		return super.findById(id);
+		com.nowellpoint.api.model.document.AccountProfile document = super.fetch(id);
+		AccountProfile resource = new AccountProfile( document );
+		return resource;
 	}
 	
 	public AccountProfile findByAccountHref(String accountHref) {
-		return super.findByAccountHref(accountHref);
+		
+		String collectionName = documentResolver.resolveDocument(com.nowellpoint.api.model.document.AccountProfile.class);
+		
+		com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
+				.getCollection( collectionName )
+				.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
+				.find( eq ( "accountHref", accountHref ) )
+				.first();
+		
+		if (document == null) {
+			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found for accountHref: %s", com.nowellpoint.api.model.document.AccountProfile.class.getSimpleName(), accountHref ) );
+		}
+		
+		AccountProfile resource = new AccountProfile( document );
+		
+		return resource;
 	}
 	
 	public AccountProfile findAccountProfileByUsername(String username) {

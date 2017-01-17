@@ -30,13 +30,13 @@ public class ScheduledJobTypeModelMapper extends AbstractModelMapper<com.nowellp
 	}
 	
 	protected Set<ScheduledJobType> findByLanguage(String languageSidKey) {
-		Set<com.nowellpoint.api.model.document.ScheduledJobType> documents = find( Filters.eq ( "languageSidKey", languageSidKey ) );
+		Set<com.nowellpoint.api.model.document.ScheduledJobType> documents = query( Filters.eq ( "languageSidKey", languageSidKey ) );
 		Set<ScheduledJobType> scheduledJobTypes = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJobType>>() {}.getType());
 		return scheduledJobTypes;
 	}
 
 	protected ScheduledJobType findScheduedJobTypeById(String id) {
-		com.nowellpoint.api.model.document.ScheduledJobType document = find(id);
+		com.nowellpoint.api.model.document.ScheduledJobType document = fetch(id);
 		return modelMapper.map(document, ScheduledJobType.class);
 	}
 	

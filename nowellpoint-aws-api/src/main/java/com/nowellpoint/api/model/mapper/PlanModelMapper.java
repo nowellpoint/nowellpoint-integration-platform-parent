@@ -40,7 +40,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	 */
 	
 	protected Plan findPlan(String id) {
-		com.nowellpoint.api.model.document.Plan document = find(id.toString());
+		com.nowellpoint.api.model.document.Plan document = fetch(id.toString());
 		Plan plan = modelMapper.map(document, Plan.class);
 		return plan;
 	}	
@@ -99,7 +99,7 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	 */
 	
 	protected Set<Plan> getAllActive(String localeSidKey, String languageLocaleKey) {
-		Set<com.nowellpoint.api.model.document.Plan> documents = super.find( and ( 
+		Set<com.nowellpoint.api.model.document.Plan> documents = super.query( and ( 
 							eq ( "isActive", Boolean.TRUE ), 
 							eq ( "localeSidKey", localeSidKey ), 
 							eq ( "languageLocaleKey", languageLocaleKey ) ) );

@@ -26,7 +26,7 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 	}
 	
 	protected Application findApplication(String id) {
-		com.nowellpoint.api.model.document.Application document = find(id);
+		com.nowellpoint.api.model.document.Application document = fetch(id);
 		return modelMapper.map(document, Application.class);
 	}	
 	

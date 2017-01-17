@@ -84,6 +84,10 @@ public class AccountProfile extends AbstractResource {
 	public AccountProfile(String id) {
 		super(id);
 	}
+	
+	public AccountProfile(com.nowellpoint.api.model.document.AccountProfile document) {
+		super(document);
+	}
 
 	public UserInfo getCreatedBy() {
 		return createdBy;

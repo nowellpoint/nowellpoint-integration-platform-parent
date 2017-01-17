@@ -642,7 +642,7 @@ class SalesforceConnectorService extends MongoDocumentService<SalesforceConnecto
 	}
 	
 	public Instance getEnvironment(String id, String key) {
-		SalesforceConnector salesforceConnector = super.find(id);
+		SalesforceConnector salesforceConnector = super.fetch(id);
 		
 		Instance instance = salesforceConnector.getInstances()
 				.stream()
@@ -672,7 +672,7 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 	
 	public Set<ScheduledJobRequest> getScheduledJobRequests() {
 		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
-		return super.find( and ( 
+		return super.query( and ( 
 				eq ( "status", "Scheduled" ), 
 				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
 				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
@@ -690,7 +690,7 @@ class ScheduledJobService extends MongoDocumentService<ScheduledJob> {
 	
 	public void replace(ScheduledJob scheduledJob) {
 		hset(encode(scheduledJob.getOwner().getIdentity().getId().toString()), scheduledJob);
-		super.replace( eq ( "_id", scheduledJob.getId() ), scheduledJob );
+		super.replace( scheduledJob );
 	}
 	
 	public ScheduledJob findById(ObjectId id) {

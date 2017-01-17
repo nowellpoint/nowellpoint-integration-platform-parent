@@ -34,7 +34,7 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	 */
 	
 	protected SalesforceConnector findSalesforceConnector(String id) {
-		com.nowellpoint.api.model.document.SalesforceConnector document = find(id);
+		com.nowellpoint.api.model.document.SalesforceConnector document = fetch(id);
 		return modelMapper.map(document, SalesforceConnector.class);
 	}
 	
