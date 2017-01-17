@@ -68,18 +68,6 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		modelMapper.map(document, scheduledJob);
 	}
 	
-	protected Set<ScheduledJob> findByOwner() {
-		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = super.findAllByOwner(getSubject());
-		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
-		return scheduledJobs;
-	}
-	
-	protected Set<ScheduledJob> findByOwner(String owner) {
-		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = super.findAllByOwner(owner);
-		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
-		return scheduledJobs;
-	}
-	
 	protected void deleteScheduledJob(ScheduledJob scheduledJob) {
 		com.nowellpoint.api.model.document.ScheduledJob document = modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
 		delete(document);

@@ -1,5 +1,6 @@
 package com.nowellpoint.api.service;
 
+import static com.mongodb.client.model.Filters.eq;
 import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
@@ -14,11 +15,15 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
+import org.bson.types.ObjectId;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.mongodb.DBRef;
+import com.mongodb.client.FindIterable;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Backup;
 import com.nowellpoint.api.model.domain.Deactivate;
@@ -26,16 +31,21 @@ import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.ScheduledJob;
+import com.nowellpoint.api.model.domain.ScheduledJobList;
 import com.nowellpoint.api.model.domain.ScheduledJobStatus;
 import com.nowellpoint.api.model.domain.ScheduledJobType;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.nowellpoint.mongodb.document.DocumentResolver;
+import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.util.Assert;
 
 public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
+	
+	private DocumentResolver documentResolver = new DocumentResolver();
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -63,8 +73,20 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public Set<ScheduledJob> findByOwner() {
-		return super.findByOwner();
+	public ScheduledJobList findByOwner(String ownerId) {
+		
+		String collectionName = documentResolver.resolveDocument(com.nowellpoint.api.model.document.ScheduledJob.class);
+		
+		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = MongoDatastore.getDatabase()
+				.getCollection( collectionName )
+				.withDocumentClass( com.nowellpoint.api.model.document.ScheduledJob.class )
+				.find( eq ( "owner.identity", new DBRef( 
+						documentResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
+						new ObjectId( ownerId ) ) ) );
+		
+		ScheduledJobList list = new ScheduledJobList(documents);
+		
+		return list;
 	}
 	
 	/**
@@ -282,8 +304,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public void terminateAllJobs(@Observes @Deactivate AccountProfile accountProfile) {
-		Set<ScheduledJob> scheduledJobs = findByOwner(accountProfile.getId());
-		scheduledJobs.stream().forEach(scheduledJob -> {
+		ScheduledJobList list = findByOwner(accountProfile.getId());
+		list.getItems().stream().forEach(scheduledJob -> {
 			scheduledJob.setStatus(ScheduledJobStatus.TERMINATED);
 			updateScheduledJob(scheduledJob);
 		});

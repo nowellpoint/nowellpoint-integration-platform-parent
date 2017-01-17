@@ -16,7 +16,7 @@ public class ProjectService extends ProjectModelMapper {
 	 */
 	
 	public Set<Project> findAllByOwner() {
-		return super.findAllByOwner();
+		return null;
 	}
 
 	/**

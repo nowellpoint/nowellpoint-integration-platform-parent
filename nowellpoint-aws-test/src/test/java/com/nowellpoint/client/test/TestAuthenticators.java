@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -29,6 +28,7 @@ import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -85,11 +85,11 @@ public class TestAuthenticators {
 		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
 				.withName(name);
 		
-		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectors.get(0);
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 		
 		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
 				.salesforceConnector()
@@ -190,11 +190,11 @@ public class TestAuthenticators {
 	public void buildEnvironment() {
 		long start = System.currentTimeMillis();
 		
-		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectors
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems()
 				.stream()
 				.filter(s -> s.getInstances() != null || s.getInstances().size() > 0)
 				.findFirst()
@@ -219,11 +219,11 @@ public class TestAuthenticators {
 	public void testConnection() {
 		long start = System.currentTimeMillis();
 		
-		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectors.get(0);
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 		
 		UpdateResult<Instance> updateResult = new NowellpointClient(token)
 				.salesforceConnector()

@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public interface DeleteResult {
+public interface DeleteResult extends Result {
 	
 	public Boolean isSuccess();
 	

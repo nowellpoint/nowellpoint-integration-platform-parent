@@ -38,11 +38,13 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.DBRef;
+import com.mongodb.client.FindIterable;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
+import com.nowellpoint.api.model.domain.SalesforceConnectorList;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
@@ -68,6 +70,7 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
+import com.nowellpoint.mongodb.document.DocumentResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 
 /**
@@ -79,6 +82,8 @@ import com.nowellpoint.mongodb.document.MongoDatastore;
  */
 
 public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
+	
+	private DocumentResolver documentResolver = new DocumentResolver(); 
 	
 	@Inject
 	private SalesforceService salesforceService;
@@ -106,8 +111,20 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 * @return
 	 */
 	
-	public Set<SalesforceConnector> findAllByOwner() {
-		return super.findAllByOwner();
+	public SalesforceConnectorList findAllByOwner(String ownerId) {
+		
+		String collectionName = documentResolver.resolveDocument(com.nowellpoint.api.model.document.SalesforceConnector.class);
+		
+		FindIterable<com.nowellpoint.api.model.document.SalesforceConnector> documents = MongoDatastore.getDatabase()
+				.getCollection( collectionName )
+				.withDocumentClass( com.nowellpoint.api.model.document.SalesforceConnector.class )
+				.find( eq ( "owner.identity", new DBRef( 
+						documentResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
+						new ObjectId( ownerId ) ) ) );
+		
+		SalesforceConnectorList list = new SalesforceConnectorList(documents);
+		
+		return list;
 	}
 	
 	/**

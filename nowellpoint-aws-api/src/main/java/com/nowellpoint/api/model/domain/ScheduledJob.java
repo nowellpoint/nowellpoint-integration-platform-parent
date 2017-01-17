@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.hibernate.validator.constraints.Email;
 
+import com.nowellpoint.mongodb.document.MongoDocument;
+
 public class ScheduledJob extends AbstractResource {
 	
 	private UserInfo createdBy;
@@ -48,6 +50,10 @@ public class ScheduledJob extends AbstractResource {
 	
 	public ScheduledJob() {
 		
+	}
+	
+	public ScheduledJob(MongoDocument document) {
+		super(document);
 	}
 
 	public UserInfo getCreatedBy() {

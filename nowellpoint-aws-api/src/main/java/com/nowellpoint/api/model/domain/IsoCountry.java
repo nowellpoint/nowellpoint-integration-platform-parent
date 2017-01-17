@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.domain;
 
+import com.nowellpoint.mongodb.document.MongoDocument;
+
 public class IsoCountry extends AbstractResource {
 	
 	private String language;
@@ -13,9 +15,13 @@ public class IsoCountry extends AbstractResource {
 	public IsoCountry() {
 		
 	}
+	
+	public IsoCountry(String id) {
+		super(id);
+	}
 
-	public IsoCountry(com.nowellpoint.api.model.document.IsoCountry document) {
-		modelMapper.map(document, IsoCountry.class);
+	public IsoCountry(MongoDocument document) {
+		super(document);
 	}
 
 	public String getLanguage() {

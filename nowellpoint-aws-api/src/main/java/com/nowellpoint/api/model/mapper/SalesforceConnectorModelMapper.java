@@ -1,10 +1,5 @@
 package com.nowellpoint.api.model.mapper;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.modelmapper.TypeToken;
-
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 
 /**
@@ -41,20 +36,6 @@ public class SalesforceConnectorModelMapper extends AbstractModelMapper<com.nowe
 	protected SalesforceConnector findSalesforceConnector(String id) {
 		com.nowellpoint.api.model.document.SalesforceConnector document = find(id);
 		return modelMapper.map(document, SalesforceConnector.class);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @return set of SalesforceConnectors found for current owner based on logged in user
-	 * 
-	 * 
-	 */
-	
-	protected Set<SalesforceConnector> findAllByOwner() {
-		Set<com.nowellpoint.api.model.document.SalesforceConnector> documents = findAllByOwner(getSubject());
-		Set<SalesforceConnector> resources = modelMapper.map(documents, new TypeToken<HashSet<SalesforceConnector>>() {}.getType());
-		return resources;
 	}
 	
 	/**

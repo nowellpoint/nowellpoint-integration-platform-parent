@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class SalesforceConnector extends AbstractResource {
 	
@@ -30,6 +31,10 @@ public class SalesforceConnector extends AbstractResource {
 	
 	public SalesforceConnector(String id) {
 		super(id);
+	}
+	
+	public SalesforceConnector(MongoDocument document) {
+		super(document);
 	}
 
 	public String getName() {

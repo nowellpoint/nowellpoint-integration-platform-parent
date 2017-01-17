@@ -39,7 +39,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	}
 	
 	public Set<Application> findAllByOwner() {
-		return super.findAllByOwner();
+		return null;
 	}
 	
 	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {

@@ -3,12 +3,11 @@ package com.nowellpoint.client.resource;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Result;
-import com.nowellpoint.client.model.SetResult;
+
 import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -29,108 +28,84 @@ public abstract class AbstractResource {
 		this.token = token;
 	}
 	
-	class DeleteResultImpl implements DeleteResult {
-		
-		private Boolean isSuccess;
-		
-		private Integer error;
-		
-		private String errorMessage;
+	class DeleteResultImpl extends ResultImpl implements DeleteResult {
 		
 		public DeleteResultImpl() {
-			this.isSuccess = Boolean.TRUE;
+			super();
 		}
 		
 		public DeleteResultImpl(Error error) {
-			this.isSuccess = Boolean.FALSE;
-			this.error = error.getCode();
-			this.errorMessage = error.getMessage();
-		}
-
-		@Override
-		public Boolean isSuccess() {
-			return isSuccess;
-		}
-
-		@Override
-		public Integer getError() {
-			return error;
-		}
-
-		@Override
-		public String getErrorMessage() {
-			return errorMessage;
+			super(error);
 		}
 	}
 	
-	class CreateResultImpl <T> extends ResultImpl <T> implements CreateResult <T> {
+	class CreateResultImpl<T> extends ResultImpl implements CreateResult<T> {
+		
+		private T target;
 		
 		public CreateResultImpl(T target) {
-			super(target);
+			super();
+			this.target = target;
 		}
 		
 		public CreateResultImpl(Error error) {
 			super(error);
-		}	
-	}	
-	
-	class AddResultImpl <T> extends ResultImpl <T>	implements AddResult <T> {
-		
-		public AddResultImpl(T target) {
-			super(target);
 		}
 		
-		public AddResultImpl(Error error) {
-			super(error);
+		@Override
+		public T getTarget() {
+			return target;
 		}
 	}
 	
-	class SetResultImpl <T> extends ResultImpl <T>	implements SetResult <T> {
+	class UpdateResultImpl<T> extends ResultImpl implements UpdateResult<T> {
 		
-		public SetResultImpl(T target) {
-			super(target);
-		}
-		
-		public SetResultImpl(Error error) {
-			super(error);
-		}
-	}
-	
-	class UpdateResultImpl <T> extends ResultImpl <T> implements UpdateResult <T> {
+		private T target;
 		
 		public UpdateResultImpl(T target) {
-			super(target);
+			super();
+			this.target = target;
 		}
 		
 		public UpdateResultImpl(Error error) {
 			super(error);
 		}	
+		
+		@Override
+		public T getTarget() {
+			return target;
+		}
 	}	
 	
-	class SignUpResultImpl <T> extends ResultImpl <T> implements SignUpResult <T> {
+	class SignUpResultImpl<T> extends ResultImpl implements SignUpResult<T> {
+		
+		private T target;
 		
 		public SignUpResultImpl(T target) {
-			super(target);
+			super();
+			this.target = target;
 		}
 		
 		public SignUpResultImpl(Error error) {
 			super(error);
-		}	
+		}
+		
+		@Override
+		public T getTarget() {
+			return target;
+		}
 	}	
 	
-	private class ResultImpl <T> implements Result <T> {
+	private class ResultImpl implements Result {
 		
-		private Boolean isSuccess;
+		protected Boolean isSuccess;
 		
-		private Integer error;
+		protected Integer error;
 		
-		private String errorMessage;
+		protected String errorMessage;
 		
-		private T target;
-		
-		public ResultImpl(T target) {
+		public ResultImpl() {
 			this.isSuccess = Boolean.TRUE;
-			this.target = target;
 		}
 		
 		public ResultImpl(Error error) {
@@ -152,11 +127,6 @@ public abstract class AbstractResource {
 		@Override
 		public String getErrorMessage() {
 			return errorMessage;
-		}
-
-		@Override
-		public T getTarget() {
-			return target;
 		}
 	}
 }

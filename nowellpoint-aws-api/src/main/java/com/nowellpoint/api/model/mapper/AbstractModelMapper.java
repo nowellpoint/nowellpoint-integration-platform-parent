@@ -3,7 +3,6 @@ package com.nowellpoint.api.model.mapper;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
@@ -85,22 +84,6 @@ public class AbstractModelMapper<T extends MongoDocument> extends MongoDocumentS
 				return user; 
 			}			
 		});
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param owner AccountProfile Id for the owner of all documents
-	 * @return Collection of documents for owner
-	 * 
-	 * 
-	 */
-	
-	protected Set<T> findAllByOwner(String owner) {		
-		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
-		ObjectId id = new ObjectId( owner );
-		Set<T> documents = find( eq ( "owner.identity", new DBRef( collectionName, id )));
-		return documents;
 	}
 	
 	/**

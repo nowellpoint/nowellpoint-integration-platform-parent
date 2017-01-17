@@ -21,15 +21,14 @@ import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
@@ -284,13 +283,13 @@ public class AccountProfileController extends AbstractController {
 					.withFirstName(firstName)
 					.withLastName(lastName);
 			
-			AddResult<CreditCard> addResult = new NowellpointClient(token)
+			CreateResult<CreditCard> createResult = new NowellpointClient(token)
 					.accountProfile()
 					.creditCard()
 					.add(creditCardRequest);
 				
-			if (addResult.isSuccess()) {
-				paymentMethodToken = addResult.getTarget().getToken();
+			if (createResult.isSuccess()) {
+				paymentMethodToken = createResult.getTarget().getToken();
 			} else { 
 				
 				Plan plan = new NowellpointClient(token)
@@ -317,7 +316,7 @@ public class AccountProfileController extends AbstractController {
 				model.put("plan", plan);
 				model.put("creditCard", creditCard);
 				model.put("action", "reviewPlan");
-				model.put("errorMessage", addResult.getErrorMessage());
+				model.put("errorMessage", createResult.getErrorMessage());
 				
 				return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
 			}
@@ -328,16 +327,16 @@ public class AccountProfileController extends AbstractController {
 				.withPaymentMethodToken(paymentMethodToken)
 				.withPlanId(planId);
 		
-		SetResult<Subscription> setResult = new NowellpointClient(token)
+		UpdateResult<Subscription> updateResult = new NowellpointClient(token)
 				.accountProfile()
 				.subscription()
 				.set(subscriptionRequest);
 		
-		if (! setResult.isSuccess()) {
+		if (! updateResult.isSuccess()) {
 			
 			model.put("account", identity);
 			model.put("accountProfile", accountProfile);
-			model.put("errorMessage", setResult.getErrorMessage());
+			model.put("errorMessage", updateResult.getErrorMessage());
 			
 			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
 			
@@ -738,7 +737,7 @@ public class AccountProfileController extends AbstractController {
 				.withFirstName(firstName)
 				.withLastName(lastName);
 		
-		AddResult<CreditCard> addResult = new NowellpointClient(token)
+		CreateResult<CreditCard> createResult = new NowellpointClient(token)
 				.accountProfile()
 				.creditCard()
 				.add(creditCardRequest);
@@ -746,8 +745,8 @@ public class AccountProfileController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 			
-		if (addResult.isSuccess()) {
-			CreditCard creditCard = addResult.getTarget();
+		if (createResult.isSuccess()) {
+			CreditCard creditCard = createResult.getTarget();
 			
 			model.put("creditCard", creditCard);
 			model.put("mode", "view");
@@ -772,7 +771,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("creditCard", creditCard);
 			model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 			model.put("mode", "new");
-			model.put("errorMessage", addResult.getErrorMessage());
+			model.put("errorMessage", createResult.getErrorMessage());
 		}
 		
 		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);

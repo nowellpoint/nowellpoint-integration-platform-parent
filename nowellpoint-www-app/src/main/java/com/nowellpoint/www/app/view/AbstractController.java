@@ -32,7 +32,7 @@ import spark.Response;
 abstract class AbstractController implements Controller {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractController.class.getName());
-	protected static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
+	protected static final String API_ENDPOINT = com.nowellpoint.client.Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl();
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	protected static final String APPLICATION_CONTEXT = "/app/%s";
 	private Class<?> controllerClass;

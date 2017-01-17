@@ -10,11 +10,15 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractResource implements Resource, Createable, Updateable {
@@ -94,6 +98,10 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		
 	}
 	
+	public <T extends MongoDocument> AbstractResource(T document) {
+		modelMapper.map(document, this);
+	}
+ 	
 	public AbstractResource(String id) {
 		setId(id);
 	}
@@ -144,5 +152,10 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 
 	public void setMeta(Meta meta) {
 		this.meta = meta;
+	}
+	
+	@JsonIgnore
+	public String toJson() throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(this);
 	}
 }

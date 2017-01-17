@@ -1,10 +1,5 @@
 package com.nowellpoint.api.model.mapper;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.modelmapper.TypeToken;
-
 import com.nowellpoint.api.model.domain.Application;
 
 /**
@@ -47,12 +42,6 @@ public class ApplicationModelMapper extends AbstractModelMapper<com.nowellpoint.
 		replace(document);
 		hset(encode(getSubject()), document);
 		modelMapper.map(document, application);
-	}
-	
-	protected Set<Application> findAllByOwner() {
-		Set<com.nowellpoint.api.model.document.Application> documents = findAllByOwner(getSubject());
-		Set<Application> resources = modelMapper.map(documents, new TypeToken<HashSet<Application>>() {}.getType());
-		return resources;
 	}
 	
 	protected void deleteApplication(Application application) {

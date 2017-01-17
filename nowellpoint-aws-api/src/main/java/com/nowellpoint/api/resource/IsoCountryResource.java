@@ -14,17 +14,20 @@ import javax.ws.rs.core.Response;
 import com.mongodb.client.FindIterable;
 import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.domain.IsoCountryList;
+import com.nowellpoint.mongodb.document.DocumentResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 
 @Path("iso-countries")
 public class IsoCountryResource {
+	
+	private DocumentResolver documentResolver = new DocumentResolver(); 
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
     public Response findAll() {
 		
-		String collectionName = MongoDatastore.getCollectionName(IsoCountry.class);
+		String collectionName = documentResolver.resolveDocument(IsoCountry.class);
 		
 		FindIterable<IsoCountry> documents = MongoDatastore.getDatabase()
 				.getCollection(collectionName)
@@ -42,7 +45,7 @@ public class IsoCountryResource {
 	@PermitAll
     public Response findByLanguage(@PathParam("language") String language) {
 		
-		String collectionName = MongoDatastore.getCollectionName(IsoCountry.class);
+		String collectionName = documentResolver.resolveDocument(IsoCountry.class);
 		
 		FindIterable<IsoCountry> documents = MongoDatastore.getDatabase()
 				.getCollection(collectionName)
@@ -60,7 +63,7 @@ public class IsoCountryResource {
 	@PermitAll
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
-		String collectionName = MongoDatastore.getCollectionName(IsoCountry.class);
+		String collectionName = documentResolver.resolveDocument(IsoCountry.class);
 		
 		IsoCountry document = MongoDatastore.getDatabase()
 				.getCollection(collectionName)

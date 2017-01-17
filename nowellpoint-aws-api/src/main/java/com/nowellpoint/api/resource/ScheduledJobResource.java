@@ -5,7 +5,6 @@ import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +30,7 @@ import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.ScheduledJob;
+import com.nowellpoint.api.model.domain.ScheduledJobList;
 import com.nowellpoint.api.service.ScheduledJobService;
 
 @Path("scheduled-jobs")
@@ -53,7 +53,7 @@ public class ScheduledJobResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAllByOwner() {
-		Set<ScheduledJob> resources = scheduledJobService.findByOwner();
+		ScheduledJobList resources = scheduledJobService.findByOwner(securityContext.getUserPrincipal().getName());
 		return Response.ok(resources).build();
     }
 	

@@ -44,6 +44,7 @@ public class MongoDatastore implements ServletContextListener {
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
 	private static MongoDatabase mongoDatabase;
+	private static DocumentResolver documentResolver = new DocumentResolver();
 	
 	private MongoDatastore() {
 		
@@ -224,7 +225,7 @@ public class MongoDatastore implements ServletContextListener {
 	}
 	
 	public static <T extends MongoDocument> String getCollectionName(Class<T> type) {
-		return type.getAnnotation(com.nowellpoint.mongodb.annotation.Document.class).collectionName();
+		return documentResolver.resolveDocument(type);
 	}
 	
 	@SuppressWarnings("unchecked")

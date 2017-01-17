@@ -2,11 +2,10 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 
-import java.util.List;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.ScheduledJob;
+import com.nowellpoint.client.model.ScheduledJobList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
@@ -40,12 +39,12 @@ public class DashboardController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		List<ScheduledJob> scheduledJobs = new NowellpointClient(token)
+		ScheduledJobList list = new NowellpointClient(token)
 				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", scheduledJobs);
+		model.put("scheduledJobList", list.getItems());
 		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
     	model.put("account", getIdentity(request));
     	return render(configuration, request, response, model, Template.DASHBOARD);

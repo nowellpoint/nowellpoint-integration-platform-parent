@@ -8,17 +8,16 @@ import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
-import com.nowellpoint.client.model.SetResult;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 
@@ -295,7 +294,7 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public SetResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
+		public UpdateResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
 			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -307,14 +306,14 @@ public class AccountProfileResource extends AbstractResource {
 					.parameter("paymentMethodToken", subscriptionRequest.getPaymentMethodToken())
 					.execute();
 			
-			SetResult<Subscription> result = null;
+			UpdateResult<Subscription> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
 				Subscription subscription = httpResponse.getEntity(Subscription.class);
-				result = new SetResultImpl<Subscription>(subscription);
+				result = new UpdateResultImpl<Subscription>(subscription);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new SetResultImpl<Subscription>(error);
+				result = new UpdateResultImpl<Subscription>(error);
 			}
 			
 			return result;
@@ -344,7 +343,7 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public AddResult<CreditCard> add(CreditCardRequest creditCardRequest) {
+		public CreateResult<CreditCard> add(CreditCardRequest creditCardRequest) {
 			
 			CreditCard creditCard = new CreditCard()
 					.withBillingAddress(new Address()
@@ -373,14 +372,14 @@ public class AccountProfileResource extends AbstractResource {
 					.body(creditCard)
 					.execute();
 			
-			AddResult<CreditCard> result = null;
+			CreateResult<CreditCard> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
 				creditCard = httpResponse.getEntity(CreditCard.class);
-				result = new AddResultImpl<CreditCard>(creditCard);
+				result = new CreateResultImpl<CreditCard>(creditCard);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new AddResultImpl<CreditCard>(error);
+				result = new CreateResultImpl<CreditCard>(error);
 			}
 			
 			return result;

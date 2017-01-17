@@ -1,8 +1,5 @@
 package com.nowellpoint.client.resource;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -15,6 +12,7 @@ import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -53,16 +51,16 @@ public class SalesforceConnectorResource extends AbstractResource {
     	return result;
 	}
 	
-	public List<SalesforceConnector> getSalesforceConnectors() {
+	public SalesforceConnectorList getSalesforceConnectors() {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
     			.execute();
 		
-		List<SalesforceConnector> resources = Collections.emptyList();
+		SalesforceConnectorList resources = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resources = httpResponse.getEntityList(SalesforceConnector.class);
+			resources = httpResponse.getEntity(SalesforceConnectorList.class);
     	} else {
     		throw new ServiceUnavailableException(httpResponse.getAsString());
     	}

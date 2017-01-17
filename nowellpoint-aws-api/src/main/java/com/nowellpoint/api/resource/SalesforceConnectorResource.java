@@ -29,6 +29,7 @@ import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.Meta;
 import com.nowellpoint.api.model.domain.SObjectDetail;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
+import com.nowellpoint.api.model.domain.SalesforceConnectorList;
 import com.nowellpoint.api.service.SObjectDetailService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
@@ -50,12 +51,9 @@ public class SalesforceConnectorResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll() {
-		
-		Set<SalesforceConnector> salesforceConnectors = salesforceConnectorService.findAllByOwner();
-		
-		return Response.ok(salesforceConnectors)
-				.build();
+    public Response findAllByOwner() {
+		SalesforceConnectorList resources = salesforceConnectorService.findAllByOwner(securityContext.getUserPrincipal().getName());
+		return Response.ok(resources).build();
     }
 	
 	@POST

@@ -5,7 +5,6 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +18,7 @@ import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.EnvironmentRequest;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -461,12 +461,12 @@ public class SalesforceConnectorController extends AbstractController {
 	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		Map<String, Object> model = getModel();
-    	model.put("salesforceConnectorsList", salesforceConnectors);
+    	model.put("salesforceConnectorsList", salesforceConnectors.getItems());
     	
     	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTORS_LIST);
     	

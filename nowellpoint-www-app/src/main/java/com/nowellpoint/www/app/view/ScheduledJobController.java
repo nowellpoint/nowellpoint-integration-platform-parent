@@ -20,7 +20,9 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.ScheduledJob;
+import com.nowellpoint.client.model.ScheduledJobList;
 import com.nowellpoint.client.model.ScheduledJobType;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.ScheduledJobRequest;
@@ -80,12 +82,12 @@ public class ScheduledJobController extends AbstractController {
 		
 		Token token = getToken(request);
 		
-		List<ScheduledJob> scheduledJobs = new NowellpointClient(token)
+		ScheduledJobList list = new NowellpointClient(token)
 				.scheduledJob()
 				.getScheduledJobs();
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", scheduledJobs);
+		model.put("scheduledJobList", list.getItems());
 
 		return render(configuration, request, response, model, Template.SCHEDULED_JOBS_LIST);
 	}
@@ -159,11 +161,11 @@ public class ScheduledJobController extends AbstractController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
 			
-			List<SalesforceConnector> salesforceConnectors = new NowellpointClient(token)
+			SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 					.salesforceConnector()
 					.getSalesforceConnectors();
 
-	    	model.put("salesforceConnectorsList", salesforceConnectors);
+	    	model.put("salesforceConnectorsList", salesforceConnectors.getItems());
 		}
 		
     	return render(configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);

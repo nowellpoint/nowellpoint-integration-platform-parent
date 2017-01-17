@@ -1,75 +1,53 @@
 package com.nowellpoint.api.model.domain;
 
-import static com.mongodb.client.model.Filters.eq;
+import java.lang.reflect.Constructor;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.bson.types.ObjectId;
-import org.modelmapper.AbstractConverter;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
-import org.modelmapper.convention.MatchingStrategies;
+import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
-import com.mongodb.DBRef;
-import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.mongodb.document.MongoDatastore;
-
-public abstract class AbstractCollectionResource<T extends Resource> implements CollectionResource<T> {
+public abstract class AbstractCollectionResource<R extends AbstractResource, D extends MongoDocument> implements CollectionResource<R> {
 	
-	protected static final ModelMapper modelMapper = new ModelMapper();
+	private Set<R> items = new HashSet<R>();
+	private Meta meta = new Meta();
 	
-	static {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
-		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
-			
+	public AbstractCollectionResource(FindIterable<D> documents) {
+		documents.forEach(new Block<D>() {
 			@Override
-			protected ObjectId convert(String source) {
-				return source == null ? null : new ObjectId(source);
-			}
+			public void apply(final D document) {
+				try {
+					@SuppressWarnings("unchecked")
+					Constructor<R> constructor = (Constructor<R>) Class.forName(getItemType().getName()).getConstructor(MongoDocument.class);
+					items.add(constructor.newInstance(document));
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+		    }
 		});
-		
-		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {		
-			
-			@Override
-			protected String convert(ObjectId source) {
-				return source == null ? null : source.toString();
-			}
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<UserRef,UserInfo>() {
+	}
+	
+	protected abstract Class<R> getItemType();
+	
+	@Override
+	public Meta getMeta() {
+		return meta;
+	}
 
-			@Override
-			protected UserInfo convert(UserRef source) {
-				UserInfo userInfo = new UserInfo();
-				if (source != null && source.getIdentity() != null) {
-					
-					com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
-							.getCollection( source.getIdentity().getCollectionName() )
-							.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
-							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
-							.first();
-					
-					userInfo = modelMapper.map(document, UserInfo.class );
-				}
-				
-				return userInfo; 
-			}			
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<UserInfo,UserRef>() {
+	@Override
+	public Iterator<R> iterator() {
+		return items.iterator();
+	}
 
-			@Override
-			protected UserRef convert(UserInfo source) {
-				UserRef user = new UserRef();
-				if (source != null) {		
-					String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
-					ObjectId id = new ObjectId( source.getId() );
+	@Override
+	public int getSize() {
+		return items.size();
+	}
 
-					DBRef reference = new DBRef( collectionName, id );
-					user.setIdentity(reference);
-				}
-				
-				return user; 
-			}			
-		});
+	@Override
+	public Set<R> getItems() {
+		return items;
 	}
 }

@@ -1,8 +1,5 @@
 package com.nowellpoint.client.resource;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -12,6 +9,7 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.ScheduledJob;
+import com.nowellpoint.client.model.ScheduledJobList;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
@@ -29,16 +27,16 @@ public class ScheduledJobResource extends AbstractResource {
 		super(token);
 	}
 
-	public List<ScheduledJob> getScheduledJobs() {
+	public ScheduledJobList getScheduledJobs() {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.execute();
 		
-		List<ScheduledJob> resources = Collections.emptyList();
+		ScheduledJobList resources = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resources = httpResponse.getEntityList(ScheduledJob.class);
+			resources = httpResponse.getEntity(ScheduledJobList.class);
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}
