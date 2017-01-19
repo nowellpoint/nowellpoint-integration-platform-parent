@@ -3,12 +3,9 @@ package com.nowellpoint.api.model.mapper;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.modelmapper.TypeToken;
-
+import com.mongodb.client.FindIterable;
 import com.nowellpoint.api.model.domain.Plan;
+import com.nowellpoint.api.model.domain.PlanList;
 
 /**
  * 
@@ -98,19 +95,15 @@ public class PlanModelMapper extends AbstractModelMapper<com.nowellpoint.api.mod
 	 * 
 	 */
 	
-	protected Set<Plan> getAllActive(String localeSidKey, String languageLocaleKey) {
-		Set<com.nowellpoint.api.model.document.Plan> documents = super.query( and ( 
+	protected PlanList getAllActive(String localeSidKey, String languageLocaleKey) {
+		FindIterable<com.nowellpoint.api.model.document.Plan> documents = super.query( and ( 
 							eq ( "isActive", Boolean.TRUE ), 
 							eq ( "localeSidKey", localeSidKey ), 
 							eq ( "languageLocaleKey", languageLocaleKey ) ) );
 		
-		Set<Plan> plans = null;
+		PlanList resources = new PlanList(documents);
 		
-		if (! documents.isEmpty()) {
-			plans = modelMapper.map(documents, new TypeToken<HashSet<Plan>>() {}.getType());
-		}
-		
-		return plans;
+		return resources;
 	}
 	
 	/**

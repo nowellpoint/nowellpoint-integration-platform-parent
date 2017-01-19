@@ -117,7 +117,8 @@ public class ScheduledJobController extends AbstractController {
 		
 		List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(token)
 				.scheduledJobType()
-				.getScheduledJobTypesByLanguage(accountProfile.getLanguageSidKey());
+				.getScheduledJobTypesByLanguage(accountProfile.getLanguageSidKey())
+				.getItems();
 		
 		Map<String, Object> model = getModel();
 		model.put("step", "select-type");

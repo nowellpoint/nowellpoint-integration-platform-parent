@@ -1,7 +1,5 @@
 package com.nowellpoint.api.resource;
 
-import java.util.Set;
-
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -13,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.model.domain.Plan;
+import com.nowellpoint.api.model.domain.PlanList;
 import com.nowellpoint.api.service.PlanService;
 
 @Path("plans")
@@ -26,9 +25,9 @@ public class PlanResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllActive(@QueryParam(value="localeSidKey") String localeSidKey, @QueryParam(value="languageLocaleKey") String languageLocaleKey) {
 		
-		Set<Plan> plans = planService.getAllActive(localeSidKey, languageLocaleKey);
+		PlanList resources = planService.getAllActive(localeSidKey, languageLocaleKey);
 		
-		return Response.ok(plans)
+		return Response.ok(resources)
 				.build();
 	}
 	

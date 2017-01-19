@@ -36,7 +36,7 @@ public class JobSchedulerManager2 {
 		Date runTime = evenMinuteDate(new Date());
 		
 		ScheduledJobService scheduledJobService = new ScheduledJobService();
-		Set<ScheduledJob> scheduledJobs = scheduledJobService.findAllScheduled();
+		Set<ScheduledJob> scheduledJobs = scheduledJobService.findScheduled().getItems();
 		
 		scheduledJobs.stream().forEach(job -> {
 			

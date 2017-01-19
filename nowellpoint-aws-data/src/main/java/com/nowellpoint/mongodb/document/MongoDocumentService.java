@@ -5,8 +5,6 @@ import static com.mongodb.client.model.Filters.eq;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Executors;
 
 import org.bson.Document;
@@ -20,6 +18,7 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.aws.data.AbstractCacheService;
 
@@ -51,7 +50,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected String getCollectionName() {
+	public String getCollectionName() {
 		return MongoDatastore.getCollectionName( documentClass );
 	}
 	
@@ -64,38 +63,21 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected Set<T> query(Bson query) {
-		Set<T> documents = new HashSet<T>();
+	public FindIterable<T> query(Bson query) {
 		
-		if (documents.isEmpty()) {
-			try {
-				//documents = MongoDatastore.find(documentClass, query);
-			} catch (IllegalArgumentException e) {
-				LOGGER.error( "Find exception : ", e.getCause() );
-			}
+		FindIterable<T> search = null;
+		
+		try {
+			
+			search = MongoDatastore.getCollection( documentClass )
+					.withDocumentClass( documentClass )
+					.find( query );
+			
+		} catch (IllegalArgumentException e) {
+			LOGGER.error( "query exception : ", e.getCause() );
 		}
 		
-		/**
-		 * String collectionName = getCollectionName( documentClass );
-		
-		Set<T> documents = new HashSet<T>();
-		
-		FindIterable<T> search = getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( documentClass )
-				.find( query );
-		
-		search.forEach(new Block<T>() {
-			@Override
-			public void apply(final T document) {
-				documents.add(document);
-		    }
-		});
-		
-		return documents;
-		 */
-		
-		return documents;
+		return search;
 	}
 	
 	/**
@@ -107,10 +89,12 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected T findOne(Bson query) {
+	public T findOne(Bson query) {
+		
 		T document = null;
 		
 		try {
+			
 			document = MongoDatastore.getCollection(documentClass)
 					.withDocumentClass( documentClass )
 					.find( query )
@@ -136,15 +120,16 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected T fetch(String id) {	
+	public T fetch(String id) {	
+		
 		T document = get(documentClass, id);
 		
 		if (document == null) {
 			try {
 				
-				document = MongoDatastore.getCollection( document )
+				document = MongoDatastore.getCollection( documentClass )
 						.withDocumentClass( documentClass )
-						.find( eq ( "_id", id ) )
+						.find( eq ( "_id", new ObjectId( id ) ) )
 						.first();
 				
 				if (document == null) {
@@ -169,7 +154,8 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected void create(T document) {	
+	public void create(T document) {	
+		
 		Date now = Date.from(Instant.now());
 		
 		document.setId(new ObjectId());
@@ -207,7 +193,8 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected void replace(T document) {
+	public void replace(T document) {
+		
 		Date now = Date.from(Instant.now());
 		
 		document.setLastModifiedDate(now);
@@ -239,7 +226,8 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected void delete(T document) {
+	public void delete(T document) {
+		
 		del(document.getId().toString());
 		
 		try {
@@ -258,7 +246,16 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 		}
 	}
 	
-	protected void deleteMany(String collectionName, Bson query) {
+	/**
+	 * 
+	 *
+	 * @param collectionName
+	 * @param query
+	 * 
+	 * 
+	 */
+	
+	public void deleteMany(String collectionName, Bson query) {
 		
 		try {
 			
@@ -286,7 +283,7 @@ public abstract class MongoDocumentService<T extends MongoDocument> extends Abst
 	 * 
 	 */
 	
-	protected static String encode(String src) {
+	public static String encode(String src) {
 		return Base64.getEncoder().encodeToString(src.getBytes());
 	}
 	

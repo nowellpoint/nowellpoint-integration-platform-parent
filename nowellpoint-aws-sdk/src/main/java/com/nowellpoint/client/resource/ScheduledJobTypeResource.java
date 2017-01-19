@@ -1,12 +1,10 @@
 package com.nowellpoint.client.resource;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.ScheduledJobType;
+import com.nowellpoint.client.model.ScheduledJobTypeList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
@@ -39,17 +37,17 @@ public class ScheduledJobTypeResource extends AbstractResource {
 		return resource;
 	}
 
-	public List<ScheduledJobType> getScheduledJobTypesByLanguage(String language) {
+	public ScheduledJobTypeList getScheduledJobTypesByLanguage(String language) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.queryParameter("languageSidKey", language)
 				.execute();
 		
-		List<ScheduledJobType> resources = Collections.emptyList();
+		ScheduledJobTypeList resources = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resources = httpResponse.getEntityList(ScheduledJobType.class);
+			resources = httpResponse.getEntity(ScheduledJobTypeList.class);
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}

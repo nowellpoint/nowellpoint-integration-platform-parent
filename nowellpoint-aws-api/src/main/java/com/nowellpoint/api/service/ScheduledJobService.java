@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -37,7 +36,7 @@ import com.nowellpoint.api.model.domain.ScheduledJobType;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.DocumentResolver;
+import com.nowellpoint.mongodb.document.CollectionNameResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.util.Assert;
 
@@ -45,7 +44,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
 	
-	private DocumentResolver documentResolver = new DocumentResolver();
+	private CollectionNameResolver collectionNameResolver = new CollectionNameResolver();
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -75,13 +74,13 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public ScheduledJobList findByOwner(String ownerId) {
 		
-		String collectionName = documentResolver.resolveDocument(com.nowellpoint.api.model.document.ScheduledJob.class);
+		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.ScheduledJob.class);
 		
 		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = MongoDatastore.getDatabase()
 				.getCollection( collectionName )
 				.withDocumentClass( com.nowellpoint.api.model.document.ScheduledJob.class )
 				.find( eq ( "owner.identity", new DBRef( 
-						documentResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
+						collectionNameResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
 						new ObjectId( ownerId ) ) ) );
 		
 		ScheduledJobList list = new ScheduledJobList(documents);
@@ -95,8 +94,18 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 	
-	public Set<ScheduledJob> findAllScheduled() {
-		return super.findAllScheduled();
+	public ScheduledJobList findScheduled() {
+		
+		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.ScheduledJob.class);
+		
+		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = MongoDatastore.getDatabase()
+				.getCollection( collectionName )
+				.withDocumentClass( com.nowellpoint.api.model.document.ScheduledJob.class )
+				.find( eq ( "status", "Scheduled" ) );
+		
+		ScheduledJobList list = new ScheduledJobList(documents);
+		
+		return list;
 	}
 	
 	/**

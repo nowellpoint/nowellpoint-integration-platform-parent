@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.modelmapper.TypeToken;
 
 import com.mongodb.DBRef;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
@@ -52,7 +53,7 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 	protected void createScheduledJob(ScheduledJob scheduledJob) {
 		scheduledJob.setCreatedBy(new UserInfo(getSubject()));
 		scheduledJob.setLastModifiedBy(new UserInfo(getSubject()));
-		com.nowellpoint.api.model.document.ScheduledJob document = scheduledJob.toDocument(com.nowellpoint.api.model.document.ScheduledJob.class); //modelMapper.map(scheduledJob, com.nowellpoint.api.model.document.ScheduledJob.class);
+		com.nowellpoint.api.model.document.ScheduledJob document = scheduledJob.toDocument(com.nowellpoint.api.model.document.ScheduledJob.class); 
 		create(document);
 		hset(encode(getSubject()), document);
 		submitScheduledJobRequest(document);
@@ -74,11 +75,15 @@ public class ScheduledJobModelMapper extends AbstractModelMapper<com.nowellpoint
 		hdel(encode(getSubject()), document);
 	}
 	
-	protected Set<ScheduledJob> findAllScheduled() {
-		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = super.query( eq ( "status", "Scheduled" ) );
-		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
-		return scheduledJobs;
+	protected FindIterable<com.nowellpoint.api.model.document.ScheduledJob> findAllScheduled() {
+		return super.query(eq ( "status", "Scheduled" ));
 	}
+	
+//	protected Set<ScheduledJob> findAllScheduled() {
+//		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = super.query( eq ( "status", "Scheduled" ) );
+//		Set<ScheduledJob> scheduledJobs = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJob>>() {}.getType());
+//		return scheduledJobs;
+//	}
 	
 	private void submitScheduledJobRequest(com.nowellpoint.api.model.document.ScheduledJob scheduledJob) {
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));

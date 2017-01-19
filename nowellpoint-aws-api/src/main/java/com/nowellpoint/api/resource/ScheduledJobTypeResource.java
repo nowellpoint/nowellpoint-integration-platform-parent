@@ -1,7 +1,6 @@
 package com.nowellpoint.api.resource;
 
 import java.net.URI;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -21,6 +20,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.model.domain.ScheduledJobType;
+import com.nowellpoint.api.model.domain.ScheduledJobTypeList;
 import com.nowellpoint.api.service.ScheduledJobTypeService;
 
 @Path("scheduled-job-types")
@@ -38,8 +38,8 @@ public class ScheduledJobTypeResource {
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByLanguage(@QueryParam("languageSidKey") String languageSidKey) {
-		Set<ScheduledJobType> scheduledJobTypes = scheduledJobTypeService.findByLanguage(languageSidKey);
-		return Response.ok(scheduledJobTypes).build();
+		ScheduledJobTypeList resource = scheduledJobTypeService.findByLanguage(languageSidKey);
+		return Response.ok(resource).build();
     }
 	
 	@GET

@@ -1,13 +1,11 @@
 package com.nowellpoint.client.resource;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
+import com.nowellpoint.client.model.PlanList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
@@ -41,17 +39,17 @@ public class PlanResource extends AbstractResource {
 		return resource;
 	}
 	
-	public List<Plan> getPlans(GetPlansRequest getPlansRequest) {
+	public PlanList getPlans(GetPlansRequest getPlansRequest) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.path("plans")
 				.queryParameter("localeSidKey", getPlansRequest.getLocaleSidKey())
 				.queryParameter("languageLocaleKey", getPlansRequest.getLanguageSidKey())
 				.execute();
 		
-		List<Plan> resources = Collections.emptyList();
+		PlanList resources = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resources = httpResponse.getEntityList(Plan.class);
+			resources = httpResponse.getEntity(PlanList.class);
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}

@@ -31,7 +31,7 @@ public class MongoDatastore implements ServletContextListener {
 	private static MongoClientURI mongoClientURI;
 	private static MongoClient mongoClient;
 	private static MongoDatabase mongoDatabase;
-	private static DocumentResolver documentResolver = new DocumentResolver();
+	private static CollectionNameResolver collectionNameResolver = new CollectionNameResolver();
 	
 	private MongoDatastore() {
 		
@@ -68,16 +68,16 @@ public class MongoDatastore implements ServletContextListener {
 		}
 	}
 	
-	public static <T extends MongoDocument> String getCollectionName(Class<T> type) {
-		return documentResolver.resolveDocument(type);
+	public static <T> String getCollectionName(Class<T> type) {
+		return collectionNameResolver.resolveDocument(type);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends MongoDocument> MongoCollection<T> getCollection(MongoDocument document) {
+	public static <T> MongoCollection<T> getCollection(MongoDocument document) {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(document.getClass()), document.getClass());
 	}
 	
-	public static <T extends MongoDocument> MongoCollection<T> getCollection(Class<T> type) {
+	public static <T> MongoCollection<T> getCollection(Class<T> type) {
 		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(type), type);
 	}
 }

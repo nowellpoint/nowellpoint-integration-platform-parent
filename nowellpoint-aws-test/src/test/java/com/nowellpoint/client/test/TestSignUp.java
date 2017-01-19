@@ -83,9 +83,9 @@ public class TestSignUp {
 				.withLanguageSidKey("en_US")
 				.withLocaleSidKey("en_US");
 		
-		List<Plan> plans = new NowellpointClient()
-				.plan()
-				.getPlans(getPlansRequest);
+		List<Plan> plans = new NowellpointClient().plan()
+				.getPlans(getPlansRequest)
+				.getItems();
 		
 		assertNotNull(plans);
 		

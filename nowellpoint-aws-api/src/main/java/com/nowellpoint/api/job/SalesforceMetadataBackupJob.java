@@ -39,7 +39,9 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.Block;
 import com.mongodb.DBRef;
+import com.mongodb.client.FindIterable;
 import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Instance;
 import com.nowellpoint.api.model.document.RunHistory;
@@ -672,13 +674,25 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 	
 	public Set<ScheduledJobRequest> getScheduledJobRequests() {
 		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
-		return super.query( and ( 
+		FindIterable<ScheduledJobRequest> documents = super.query( and ( 
 				eq ( "status", "Scheduled" ), 
 				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
 				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
 				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
 				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
 				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
+		
+		Set<ScheduledJobRequest> scheduledJobs = new HashSet<ScheduledJobRequest>();
+		
+		documents.forEach(new Block<ScheduledJobRequest>() {
+			@Override
+			public void apply(final ScheduledJobRequest document) {
+				scheduledJobs.add(document);
+		    }
+		});
+		
+		return scheduledJobs;
+		
 	}
 }
 

@@ -1,8 +1,7 @@
 package com.nowellpoint.api.service;
 
-import java.util.Set;
-
 import com.nowellpoint.api.model.domain.ScheduledJobType;
+import com.nowellpoint.api.model.domain.ScheduledJobTypeList;
 import com.nowellpoint.api.model.mapper.ScheduledJobTypeModelMapper;
 
 public class ScheduledJobTypeService extends ScheduledJobTypeModelMapper {
@@ -15,7 +14,7 @@ public class ScheduledJobTypeService extends ScheduledJobTypeModelMapper {
 		return super.findScheduedJobTypeById(id);
 	}
 	
-	public Set<ScheduledJobType> findByLanguage(String languageSidKey) {
+	public ScheduledJobTypeList findByLanguage(String languageSidKey) {
 		return super.findByLanguage(languageSidKey);
 	}
 	

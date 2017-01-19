@@ -26,6 +26,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
+import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -47,18 +48,22 @@ import com.nowellpoint.api.model.domain.Deactivate;
 import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.UserInfo;
-import com.nowellpoint.api.model.mapper.AccountProfileModelMapper;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.DocumentResolver;
+import com.nowellpoint.mongodb.document.CollectionNameResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDocumentService2;
 import com.nowellpoint.util.Assert;
 
-public class AccountProfileService extends AccountProfileModelMapper {
+public class AccountProfileService  {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
-	private DocumentResolver documentResolver = new DocumentResolver(); 
+	private static final Class<com.nowellpoint.api.model.document.AccountProfile> documentClass = com.nowellpoint.api.model.document.AccountProfile.class;
+	
+	private CollectionNameResolver collectionNameResolver = new CollectionNameResolver(); 
+	
+	private MongoDocumentService2 mongoDocumentService = new MongoDocumentService2();
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -115,12 +120,16 @@ public class AccountProfileService extends AccountProfileModelMapper {
 
 		accountProfile.setPhotos(photos);
 		
-		UserInfo userInfo = new UserInfo(getSubject());
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
 		
 		accountProfile.setCreatedBy(userInfo);
 		accountProfile.setLastModifiedBy(userInfo);
-
-		super.createAccountProfile(accountProfile);
+		accountProfile.setSystemCreatedDate(now);
+		accountProfile.setSystemModifiedDate(now);
+		
+		mongoDocumentService.create(accountProfile.toDocument(documentClass));
 	}
 	
 	public void deactivateAccountProfile(String id) {
@@ -146,7 +155,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		updateAccountProfile(accountProfile, original);
 		
-		super.updateAccountProfile(accountProfile);
+		mongoDocumentService.replace(accountProfile.toDocument(documentClass));
 		
 		if (accountProfile.getIsActive() && isNotNull(accountProfile.getAccountHref())) {
 			
@@ -196,7 +205,6 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	public void updateAddress(String id, Address address) {
 		AccountProfile accountProfile = findById( id );
 		
-		
 		if (isEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
 			address.setCountry(accountProfile.getAddress().getCountry());
 		} else {
@@ -206,7 +214,7 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		accountProfile.setAddress(address);
 		
-		super.updateAccountProfile(accountProfile);
+		mongoDocumentService.replace(accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class));
 	}
 	
 	public Subscription getSubscription(String id) {
@@ -273,7 +281,8 @@ public class AccountProfileService extends AccountProfileModelMapper {
 		
 		accountProfile.setSubscription(subscription);
 		
-		super.updateAccountProfile(accountProfile);
+		mongoDocumentService.replace(accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class));
+		
 	}
 	
 	public Address getAddress(String id) {
@@ -282,14 +291,14 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}	
 	
 	public AccountProfile findById(String id) {	
-		com.nowellpoint.api.model.document.AccountProfile document = super.fetch(id);
+		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.find(com.nowellpoint.api.model.document.AccountProfile.class, new ObjectId( id ) );
 		AccountProfile resource = new AccountProfile( document );
 		return resource;
 	}
 	
 	public AccountProfile findByAccountHref(String accountHref) {
 		
-		String collectionName = documentResolver.resolveDocument(com.nowellpoint.api.model.document.AccountProfile.class);
+		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.AccountProfile.class);
 		
 		com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
 				.getCollection( collectionName )
@@ -307,7 +316,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public AccountProfile findAccountProfileByUsername(String username) {
-		return super.findAccountProfileByUsername(username);
+		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "username", username ) );
+		AccountProfile accountProfile = new AccountProfile(document);
+		return accountProfile;
 	}
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
@@ -546,7 +557,9 @@ public class AccountProfileService extends AccountProfileModelMapper {
 	}
 	
 	public AccountProfile findBySubscriptionId(String subscriptionId) {
-		return super.findBySubscriptionId(subscriptionId);
+		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "subscription.subscriptionId", subscriptionId ) );
+		AccountProfile accountProfile = new AccountProfile(document);
+		return accountProfile;
 	}
 	
 	public void updateAccountProfile(AccountProfile accountProfile, AccountProfile original) {
@@ -674,8 +687,12 @@ public class AccountProfileService extends AccountProfileModelMapper {
 			accountProfile.setHasFullAccess(original.getHasFullAccess());
 		}
 		
+		Date now = Date.from(Instant.now());
+		
+		accountProfile.setLastModifiedDate(now);
+		accountProfile.setSystemModifiedDate(now);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		accountProfile.setLastModifiedBy(new UserInfo(getSubject()));
+		accountProfile.setLastModifiedBy(new UserInfo(UserContext.getPrincipal().getName()));
 	}
 }

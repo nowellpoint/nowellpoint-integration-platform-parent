@@ -70,7 +70,7 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.DocumentResolver;
+import com.nowellpoint.mongodb.document.CollectionNameResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
 
 /**
@@ -83,7 +83,7 @@ import com.nowellpoint.mongodb.document.MongoDatastore;
 
 public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
-	private DocumentResolver documentResolver = new DocumentResolver(); 
+	private CollectionNameResolver collectionNameResolver = new CollectionNameResolver(); 
 	
 	@Inject
 	private SalesforceService salesforceService;
@@ -113,13 +113,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	public SalesforceConnectorList findAllByOwner(String ownerId) {
 		
-		String collectionName = documentResolver.resolveDocument(com.nowellpoint.api.model.document.SalesforceConnector.class);
+		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.SalesforceConnector.class);
 		
 		FindIterable<com.nowellpoint.api.model.document.SalesforceConnector> documents = MongoDatastore.getDatabase()
 				.getCollection( collectionName )
 				.withDocumentClass( com.nowellpoint.api.model.document.SalesforceConnector.class )
 				.find( eq ( "owner.identity", new DBRef( 
-						documentResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
+						collectionNameResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
 						new ObjectId( ownerId ) ) ) );
 		
 		SalesforceConnectorList list = new SalesforceConnectorList(documents);

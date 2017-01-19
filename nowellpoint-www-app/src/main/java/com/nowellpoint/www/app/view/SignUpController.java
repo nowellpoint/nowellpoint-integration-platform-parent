@@ -58,9 +58,9 @@ public class SignUpController extends AbstractController {
 				.withLanguageSidKey("en_US")
 				.withLocaleSidKey("en_US");
 		
-		List<Plan> plans = new NowellpointClient()
-				.plan()
+		List<Plan> plans = new NowellpointClient().plan()
 				.getPlans(getPlansRequest)
+				.getItems()
 				.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());

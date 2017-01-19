@@ -1,12 +1,9 @@
 package com.nowellpoint.api.model.mapper;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.modelmapper.TypeToken;
-
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.model.domain.ScheduledJobType;
+import com.nowellpoint.api.model.domain.ScheduledJobTypeList;
 
 /**
  * 
@@ -29,9 +26,9 @@ public class ScheduledJobTypeModelMapper extends AbstractModelMapper<com.nowellp
 		super(com.nowellpoint.api.model.document.ScheduledJobType.class);
 	}
 	
-	protected Set<ScheduledJobType> findByLanguage(String languageSidKey) {
-		Set<com.nowellpoint.api.model.document.ScheduledJobType> documents = query( Filters.eq ( "languageSidKey", languageSidKey ) );
-		Set<ScheduledJobType> scheduledJobTypes = modelMapper.map(documents, new TypeToken<HashSet<ScheduledJobType>>() {}.getType());
+	protected ScheduledJobTypeList findByLanguage(String languageSidKey) {
+		FindIterable<com.nowellpoint.api.model.document.ScheduledJobType> documents = query( Filters.eq ( "languageSidKey", languageSidKey ) );
+		ScheduledJobTypeList scheduledJobTypes = new ScheduledJobTypeList(documents);
 		return scheduledJobTypes;
 	}
 

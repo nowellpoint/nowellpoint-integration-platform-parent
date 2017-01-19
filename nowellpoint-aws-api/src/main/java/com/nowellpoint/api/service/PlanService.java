@@ -1,8 +1,7 @@
 package com.nowellpoint.api.service;
 
-import java.util.Set;
-
 import com.nowellpoint.api.model.domain.Plan;
+import com.nowellpoint.api.model.domain.PlanList;
 import com.nowellpoint.api.model.mapper.PlanModelMapper;
 import com.nowellpoint.util.Assert;
 
@@ -12,7 +11,7 @@ public class PlanService extends PlanModelMapper {
 		super();
 	}
 	
-	public Set<Plan> getAllActive(String localeSidKey, String languageLocaleKey) {
+	public PlanList getAllActive(String localeSidKey, String languageLocaleKey) {
 		if (Assert.isNull(localeSidKey)) {
 			throw new IllegalArgumentException("Missing localeSidKey query parameter");
 		}

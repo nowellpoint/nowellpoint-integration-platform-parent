@@ -104,9 +104,9 @@ public class AccountProfileController extends AbstractController {
 				.withLanguageSidKey(identity.getLanguageSidKey())
 				.withLocaleSidKey(identity.getLocaleSidKey());
 
-		List<Plan> plans = new NowellpointClient(token)
-				.plan()
+		List<Plan> plans = new NowellpointClient(token).plan()
 				.getPlans(plansRequest)
+				.getItems()
 				.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());
