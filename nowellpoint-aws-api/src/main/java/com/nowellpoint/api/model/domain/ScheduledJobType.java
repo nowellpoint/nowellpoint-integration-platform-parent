@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.domain;
 
+import com.nowellpoint.mongodb.document.MongoDocument;
+
 public class ScheduledJobType extends AbstractResource {
 	
 	private String name;
@@ -14,6 +16,10 @@ public class ScheduledJobType extends AbstractResource {
 	
 	public ScheduledJobType() {
 		
+	}
+	
+	public ScheduledJobType(MongoDocument document) {
+		super(document);
 	}
 
 	public String getName() {
@@ -54,5 +60,10 @@ public class ScheduledJobType extends AbstractResource {
 
 	public void setConnectorType(ConnectorType connectorType) {
 		this.connectorType = connectorType;
+	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.ScheduledJobType.class);
 	}
 }

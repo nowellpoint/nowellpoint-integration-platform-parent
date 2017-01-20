@@ -171,7 +171,7 @@ public class SignUpService {
 		 * 
 		 */
 		
-		Plan plan = planService.findPlan(planId);
+		Plan plan = planService.findById(planId);
 		
 		Subscription subscription = new Subscription();
 		subscription.setPlanId(planId);

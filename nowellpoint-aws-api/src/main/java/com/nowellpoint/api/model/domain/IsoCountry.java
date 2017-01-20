@@ -54,5 +54,10 @@ public class IsoCountry extends AbstractResource {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.IsoCountry.class);
 	}	
 }

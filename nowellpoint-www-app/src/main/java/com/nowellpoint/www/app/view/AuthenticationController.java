@@ -7,6 +7,8 @@ import static spark.Spark.post;
 import static spark.Spark.exception;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,7 +43,7 @@ public class AuthenticationController extends AbstractController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
-	private static final String REDIRECT_URL = "com.nowellpoint.redirect.url";
+	private static final String REDIRECT_URI = "redirect_uri";
 	
 	public static class Template {
 		public static final String LOGIN = "login.html";
@@ -86,8 +88,7 @@ public class AuthenticationController extends AbstractController {
     		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(configuration, identity));
     		
     	} else {
-    		response.cookie("/", REDIRECT_URL, request.pathInfo(), 72000, Boolean.TRUE);
-    		response.redirect(Path.Route.LOGIN);
+    		response.redirect(Path.Route.LOGIN.concat("?").concat(REDIRECT_URI).concat("=").concat(URLEncoder.encode(request.pathInfo(), "UTF-8")));
     		halt();
     	}
 	}
@@ -98,10 +99,13 @@ public class AuthenticationController extends AbstractController {
 	 * @param request
 	 * @param response
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	
 	public String showLoginPage(Configuration configuration, Request request, Response response) {
-        return render(configuration, request, response, new HashMap<>(), Template.LOGIN);
+		Map<String, Object> model = getModel();
+		model.put(REDIRECT_URI, request.queryParams(REDIRECT_URI));
+        return render(configuration, request, response, model, Template.LOGIN);
     };
     
     /**
@@ -156,9 +160,8 @@ public class AuthenticationController extends AbstractController {
     		}
 		}
 		
-		if (request.cookie(REDIRECT_URL) != null) {
-    		response.redirect(request.cookie(REDIRECT_URL));
-    		response.removeCookie(REDIRECT_URL);
+		if (request.queryParams(REDIRECT_URI) != null) {
+    		response.redirect(request.queryParams(REDIRECT_URI));
     	} else {
     		response.redirect(Path.Route.START);
     	}
@@ -193,8 +196,7 @@ public class AuthenticationController extends AbstractController {
 					.build();
 			
 			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
-        	
-	    	response.removeCookie(REDIRECT_URL);
+
         	response.removeCookie(AUTH_TOKEN); 
     	}
     	

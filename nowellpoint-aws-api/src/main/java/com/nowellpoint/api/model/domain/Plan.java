@@ -2,6 +2,8 @@ package com.nowellpoint.api.model.domain;
 
 import java.util.Set;
 
+import com.nowellpoint.mongodb.document.MongoDocument;
+
 public class Plan extends AbstractResource {
 	
 	private Boolean recommendedPlan;
@@ -22,6 +24,10 @@ public class Plan extends AbstractResource {
 	
 	public Plan() {
 		
+	}
+	
+	public Plan(MongoDocument document) {
+		super(document);
 	}
 
 	public Boolean getRecommendedPlan() {
@@ -86,5 +92,10 @@ public class Plan extends AbstractResource {
 
 	public void setPrice(Price price) {
 		this.price = price;
+	}
+
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.Plan.class);
 	}	
 }

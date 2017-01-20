@@ -207,4 +207,9 @@ public class ScheduledJob extends AbstractResource {
 	public void setRunHistories(Set<RunHistory> runHistories) {
 		this.runHistories = runHistories;
 	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.ScheduledJob.class);
+	}
 }

@@ -9,14 +9,17 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.bson.types.ObjectId;
+
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Application;
 import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
-import com.nowellpoint.api.model.mapper.ApplicationModelMapper;
+import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;
+import com.nowellpoint.mongodb.document.MongoDocumentService;
 
 /**
  * 
@@ -26,7 +29,9 @@ import com.nowellpoint.client.sforce.model.LoginResult;
  * 
  */
 
-public class ApplicationService extends ApplicationModelMapper {
+public class ApplicationService {
+	
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
@@ -45,13 +50,13 @@ public class ApplicationService extends ApplicationModelMapper {
 	public void createApplication(Application application, String connectorId, Boolean importSandboxes, Boolean importServices) {
 		
 		if (application.getOwner() == null) {
-			AccountProfile owner = new AccountProfile(getSubject());
+			AccountProfile owner = new AccountProfile(UserContext.getPrincipal().getName());
 			application.setOwner(owner);
 		}
 		
 		application.setStatus("WORK_IN_PROGRESS");
 		
-		SalesforceConnector connector = salesforceConnectorService.findSalesforceConnector(connectorId);
+		SalesforceConnector connector = salesforceConnectorService.findById(connectorId);
 		
 		if (importSandboxes) {
 			application.setEnvironments(connector.getInstances());
@@ -59,11 +64,22 @@ public class ApplicationService extends ApplicationModelMapper {
 			application.addEnvironment(connector.getInstances().stream().filter(e -> ! e.getIsSandbox()).findFirst().get());
 		}
 		
-		super.createApplication(application);
+		//UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
+		application.setCreatedDate(now);
+		//application.setCreatedBy(userInfo);
+		application.setLastModifiedDate(now);
+		//application.setLastModifiedBy(userInfo);
+		application.setSystemCreatedDate(now);
+		application.setSystemModifiedDate(now);
+		
+		mongoDocumentService.create(application.toDocument());
 	}
 	
 	public void updateApplication(String id, Application application) {
-		Application original = findApplication( id );
+		Application original = findById( id );
 		
 		application.setId(id);
 		application.setCreatedDate(original.getCreatedDate());
@@ -90,20 +106,30 @@ public class ApplicationService extends ApplicationModelMapper {
 			application.setOwner(original.getOwner());
 		}
 		
-		super.updateApplication(application);
+		//UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+				
+		application.setLastModifiedDate(now);
+		//application.setLastModifiedBy(userInfo);
+		application.setSystemModifiedDate(now);
+				
+		mongoDocumentService.create(application.toDocument());
 	}
 	
 	public void deleteApplication(String id) {		
-		Application resource = findApplication(id);
-		super.deleteApplication(resource);
+		Application resource = findById(id);
+		mongoDocumentService.delete(resource.toDocument());
 	}
 	
-	public Application findApplication(String id) {
-		return super.findApplication(id);
+	public Application findById(String id) {
+		com.nowellpoint.api.model.document.Application document = mongoDocumentService.find(com.nowellpoint.api.model.document.Application.class, new ObjectId( id ));
+		Application resource = new Application(document);
+		return resource;
 	}	
 	
 	public void updateEnvironment(String id, String key, Instance instance) {
-		Application application = findApplication( id );
+		Application application = findById( id );
 		
 		instance.setKey(key);
 		
@@ -112,7 +138,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	
 	public Instance updateEnvironment(String id, String key, MultivaluedMap<String, String> parameters) {
 		
-		Application application = findApplication( id );
+		Application application = findById( id );
 		
 		Instance instance = application.getEnvironments()
 				.stream()
@@ -137,7 +163,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	}
 	
 	public Instance getEnvironment(String id, String key) {
-		Application resource = findApplication(id);
+		Application resource = findById(id);
 		
 		Instance instance = resource.getEnvironments()
 				.stream()
@@ -151,7 +177,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	public void addEnvironment(String id, Instance instance) {
 		LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 
-		Application resource = findApplication(id);
+		Application resource = findById(id);
 		
 		if (resource.getEnvironments() != null && resource.getEnvironments().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: %s", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
@@ -170,7 +196,7 @@ public class ApplicationService extends ApplicationModelMapper {
 		instance.setOrganizationName(loginResult.getOrganizationName());
 		instance.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
@@ -219,7 +245,7 @@ public class ApplicationService extends ApplicationModelMapper {
 			instance.setIsValid(Boolean.FALSE);
 		}
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
@@ -230,7 +256,7 @@ public class ApplicationService extends ApplicationModelMapper {
 	}
 	
 	public void removeEnvironment(String id, String key) {
-		Application resource = findApplication(id);
+		Application resource = findById(id);
 		
 		Instance instance = resource.getEnvironments()
 				.stream()
@@ -238,7 +264,7 @@ public class ApplicationService extends ApplicationModelMapper {
 				.findFirst()
 				.get();
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
 		resource.getEnvironments().removeIf(e -> key.equals(e.getKey()));
 		

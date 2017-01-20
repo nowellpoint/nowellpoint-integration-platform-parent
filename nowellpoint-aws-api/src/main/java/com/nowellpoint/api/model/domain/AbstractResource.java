@@ -17,7 +17,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.mongodb.document.MongoDatastore; 
+import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDocument; 
 
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractResource implements Resource, Createable, Updateable {
@@ -158,8 +159,5 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		return new ObjectMapper().writeValueAsString(this);
 	}
 	
-	@JsonIgnore
-	public <T> T toDocument(Class<T> type) {
-		return modelMapper.map(this, type);
-	}
+	public abstract MongoDocument toDocument();
 }

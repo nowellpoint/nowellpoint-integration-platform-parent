@@ -69,7 +69,7 @@ public class MongoDatastore implements ServletContextListener {
 	}
 	
 	public static <T> String getCollectionName(Class<T> type) {
-		return collectionNameResolver.resolveDocument(type);
+		return collectionNameResolver.resolveCollectionName(type);
 	}
 	
 	@SuppressWarnings("unchecked")

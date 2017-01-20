@@ -27,7 +27,7 @@ public class IsoCountryResource {
 	@PermitAll
     public Response findAll() {
 		
-		String collectionName = collectionNameResolver.resolveDocument(IsoCountry.class);
+		String collectionName = collectionNameResolver.resolveCollectionName(IsoCountry.class);
 		
 		FindIterable<IsoCountry> documents = MongoDatastore.getDatabase()
 				.getCollection(collectionName)
@@ -45,7 +45,7 @@ public class IsoCountryResource {
 	@PermitAll
     public Response findByLanguage(@PathParam("language") String language) {
 		
-		String collectionName = collectionNameResolver.resolveDocument(IsoCountry.class);
+		String collectionName = collectionNameResolver.resolveCollectionName(IsoCountry.class);
 		
 		FindIterable<IsoCountry> documents = MongoDatastore.getDatabase()
 				.getCollection(collectionName)
@@ -63,7 +63,7 @@ public class IsoCountryResource {
 	@PermitAll
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		
-		String collectionName = collectionNameResolver.resolveDocument(IsoCountry.class);
+		String collectionName = collectionNameResolver.resolveCollectionName(IsoCountry.class);
 		
 		IsoCountry document = MongoDatastore.getDatabase()
 				.getCollection(collectionName)

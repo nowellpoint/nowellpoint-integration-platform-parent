@@ -87,7 +87,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id) {		
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( id );
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
 		
 		if (salesforceConnector == null){
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
@@ -114,7 +114,7 @@ public class SalesforceConnectorResource {
 			@FormParam(value="name") String name, 
 			@FormParam(value="tag") String tag) {	
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findSalesforceConnector( id );
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
 		salesforceConnector.setName(name);
 		salesforceConnector.setTag(tag);
 		
@@ -218,7 +218,7 @@ public class SalesforceConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSObjectDetails(@PathParam(value="id") String id, @PathParam(value="key") String key, @PathParam(value="sobjectName") String sobjectName) {		
 		
-		SObjectDetail resource = sobjectDetailService.findSObjectDetailByName(key, sobjectName);
+		SObjectDetail resource = sobjectDetailService.findByName(key, sobjectName);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("SObject for name %s was not found", sobjectName));

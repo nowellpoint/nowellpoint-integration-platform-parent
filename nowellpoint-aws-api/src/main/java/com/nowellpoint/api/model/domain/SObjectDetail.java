@@ -1,6 +1,7 @@
 package com.nowellpoint.api.model.domain;
 
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class SObjectDetail extends AbstractResource {
 	
@@ -18,6 +19,10 @@ public class SObjectDetail extends AbstractResource {
 	
 	public SObjectDetail() {
 		
+	}
+	
+	public SObjectDetail(MongoDocument document) {
+		super(document);
 	}
 
 	public UserInfo getCreatedBy() {
@@ -66,5 +71,10 @@ public class SObjectDetail extends AbstractResource {
 
 	public void setResult(DescribeSobjectResult result) {
 		this.result = result;
+	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.SObjectDetail.class);
 	}
 }

@@ -1,11 +1,17 @@
 package com.nowellpoint.api.service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.Set;
 
-import com.nowellpoint.api.model.domain.Project;
-import com.nowellpoint.api.model.mapper.ProjectModelMapper;
+import org.bson.types.ObjectId;
 
-public class ProjectService extends ProjectModelMapper {
+import com.nowellpoint.api.model.domain.Project;
+import com.nowellpoint.mongodb.document.MongoDocumentService;
+
+public class ProjectService {
+	
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	public ProjectService() {
 		super();
@@ -25,7 +31,17 @@ public class ProjectService extends ProjectModelMapper {
 	 */
 	
 	public void createProject(Project project) {
-		super.createServiceProvider(project);
+		
+		Date now = Date.from(Instant.now());
+		
+		project.setCreatedDate(now);
+		//project.setCreatedBy(userInfo);
+		project.setLastModifiedDate(now);
+		//project.setLastModifiedBy(userInfo);
+		project.setSystemCreatedDate(now);
+		project.setSystemModifiedDate(now);
+		
+		mongoDocumentService.create(project.toDocument());
 	}
 	
 	/**
@@ -38,8 +54,16 @@ public class ProjectService extends ProjectModelMapper {
 		Project original = findProject( id );
 		project.setId(id);
 		project.setCreatedDate(original.getCreatedDate());
+		project.setSystemCreatedDate(original.getSystemCreatedDate());
 		
-		super.updateServiceProvider(project);
+		Date now = Date.from(Instant.now());
+		
+		//project.setCreatedBy(userInfo);
+		project.setLastModifiedDate(now);
+		//project.setLastModifiedBy(userInfo);
+		project.setSystemModifiedDate(now);
+		
+		mongoDocumentService.replace(project.toDocument());
 	}
 	
 	/**
@@ -49,7 +73,7 @@ public class ProjectService extends ProjectModelMapper {
 	
 	public void deleteProject(String id) {
 		Project project = findProject(id);
-		super.deleteServiceProvider(project);
+		mongoDocumentService.delete(project.toDocument());
 	}
 	
 	/**
@@ -59,7 +83,8 @@ public class ProjectService extends ProjectModelMapper {
 	 */
 	
 	public Project findProject(String id) {
-		Project project = super.findServiceProvider(id);
+		com.nowellpoint.api.model.document.Project document = mongoDocumentService.find(com.nowellpoint.api.model.document.Project.class, new ObjectId( id ) );
+		Project project = new Project( document );
 		return project;
 	}
 }

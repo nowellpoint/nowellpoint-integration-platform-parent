@@ -50,20 +50,14 @@ import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.CollectionNameResolver;
-import com.nowellpoint.mongodb.document.MongoDatastore;
-import com.nowellpoint.mongodb.document.MongoDocumentService2;
+import com.nowellpoint.mongodb.document.MongoDocumentService;
 import com.nowellpoint.util.Assert;
 
-public class AccountProfileService  {
+public class AccountProfileService {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
 	
-	private static final Class<com.nowellpoint.api.model.document.AccountProfile> documentClass = com.nowellpoint.api.model.document.AccountProfile.class;
-	
-	private CollectionNameResolver collectionNameResolver = new CollectionNameResolver(); 
-	
-	private MongoDocumentService2 mongoDocumentService = new MongoDocumentService2();
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -82,6 +76,13 @@ public class AccountProfileService  {
 		super();
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public void loggedInEvent(@Observes Token token) {		
 		UserContext.setUserContext(token.getAccessToken());
 		
@@ -92,6 +93,13 @@ public class AccountProfileService  {
 		
 		updateAccountProfile( accountProfile );
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public void createAccountProfile(AccountProfile accountProfile) {
 		accountProfile.setEnableSalesforceLogin(Boolean.FALSE);
@@ -124,13 +132,22 @@ public class AccountProfileService  {
 		
 		Date now = Date.from(Instant.now());
 		
+		accountProfile.setCreatedDate(now);
 		accountProfile.setCreatedBy(userInfo);
+		accountProfile.setLastModifiedDate(now);
 		accountProfile.setLastModifiedBy(userInfo);
 		accountProfile.setSystemCreatedDate(now);
 		accountProfile.setSystemModifiedDate(now);
 		
-		mongoDocumentService.create(accountProfile.toDocument(documentClass));
+		mongoDocumentService.create(accountProfile.toDocument());
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public void deactivateAccountProfile(String id) {
 		AccountProfile accountProfile = findById(id);
@@ -150,12 +167,19 @@ public class AccountProfileService  {
 		deactivateEvent.fire( accountProfile );
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public void updateAccountProfile(AccountProfile accountProfile) {
 		AccountProfile original = findById( accountProfile.getId() );
 		
 		updateAccountProfile(accountProfile, original);
 		
-		mongoDocumentService.replace(accountProfile.toDocument(documentClass));
+		mongoDocumentService.replace(accountProfile.toDocument());
 		
 		if (accountProfile.getIsActive() && isNotNull(accountProfile.getAccountHref())) {
 			
@@ -173,12 +197,11 @@ public class AccountProfileService  {
 		
 		if (isNotNull(accountProfile.getSubscription())) {
 			
-			//if (Assert.isNotEqual(accountProfile.getCompany(), original.getCompany()) ||
-				//	Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
-				//	Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
-				//	Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()) ||
-				//	Assert.isNotEqual(accountProfile.getPhone(), original.getPhone())) {
-								
+			if (Assert.isNotEqual(accountProfile.getEmail(), original.getEmail()) ||
+					Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
+					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName()) ||
+					Assert.isNotEqual(accountProfile.getCompany(), original.getCompany())) {
+				
 				CustomerRequest customerRequest = new CustomerRequest()
 						.id(accountProfile.getId())
 						.company(accountProfile.getCompany())
@@ -198,9 +221,16 @@ public class AccountProfileService  {
 				if (! customerResult.isSuccess()) {
 					LOGGER.error(customerResult.getMessage());
 				}
-			//}
+			}
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public void updateAddress(String id, Address address) {
 		AccountProfile accountProfile = findById( id );
@@ -214,8 +244,15 @@ public class AccountProfileService  {
 		
 		accountProfile.setAddress(address);
 		
-		mongoDocumentService.replace(accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class));
+		mongoDocumentService.replace(accountProfile.toDocument());
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public Subscription getSubscription(String id) {
 		AccountProfile accountProfile = findById( id );
@@ -223,6 +260,8 @@ public class AccountProfileService  {
 	}
 	
 	/**
+	 * 
+	 * 
 	 * 
 	 * 
 	 */
@@ -281,14 +320,28 @@ public class AccountProfileService  {
 		
 		accountProfile.setSubscription(subscription);
 		
-		mongoDocumentService.replace(accountProfile.toDocument(com.nowellpoint.api.model.document.AccountProfile.class));
+		mongoDocumentService.replace(accountProfile.toDocument());
 		
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public Address getAddress(String id) {
 		AccountProfile resource = findById( id );
 		return resource.getAddress();
 	}	
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public AccountProfile findById(String id) {	
 		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.find(com.nowellpoint.api.model.document.AccountProfile.class, new ObjectId( id ) );
@@ -296,15 +349,16 @@ public class AccountProfileService  {
 		return resource;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public AccountProfile findByAccountHref(String accountHref) {
 		
-		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.AccountProfile.class);
-		
-		com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
-				.find( eq ( "accountHref", accountHref ) )
-				.first();
+		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "accountHref", accountHref ) );
 		
 		if (document == null) {
 			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found for accountHref: %s", com.nowellpoint.api.model.document.AccountProfile.class.getSimpleName(), accountHref ) );
@@ -315,11 +369,25 @@ public class AccountProfileService  {
 		return resource;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public AccountProfile findAccountProfileByUsername(String username) {
 		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "username", username ) );
 		AccountProfile accountProfile = new AccountProfile(document);
 		return accountProfile;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
 		
@@ -344,6 +412,13 @@ public class AccountProfileService  {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public CreditCard getCreditCard(String id, String token) {
 		AccountProfile resource = findById(id);
 		
@@ -355,6 +430,13 @@ public class AccountProfileService  {
 		return creditCard.get();
 		
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public void addCreditCard(String id, CreditCard creditCard) {
 		AccountProfile accountProfile = findById(id);
@@ -436,6 +518,13 @@ public class AccountProfileService  {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public void updateCreditCard(String id, String token, CreditCard creditCard) {
 		AccountProfile accountProfile = findById(id);
 		
@@ -510,6 +599,13 @@ public class AccountProfileService  {
 		}
 	}
 
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
 		
 		CreditCard creditCard = getCreditCard(id, token);
@@ -535,6 +631,13 @@ public class AccountProfileService  {
 		return creditCard;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public void removeCreditCard(String id, String token) {
 		
 		AccountProfile accountProfile = findById(id);
@@ -556,11 +659,25 @@ public class AccountProfileService  {
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public AccountProfile findBySubscriptionId(String subscriptionId) {
 		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "subscription.subscriptionId", subscriptionId ) );
 		AccountProfile accountProfile = new AccountProfile(document);
 		return accountProfile;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	public void updateAccountProfile(AccountProfile accountProfile, AccountProfile original) {
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());

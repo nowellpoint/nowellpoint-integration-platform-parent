@@ -51,6 +51,7 @@ import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
+import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
@@ -637,14 +638,13 @@ public class SalesforceMetadataBackupJob implements Job {
 	}
 }
 
-class SalesforceConnectorService extends MongoDocumentService<SalesforceConnector> {
+class SalesforceConnectorService {
 	
-	public SalesforceConnectorService() {
-		super(SalesforceConnector.class);
-	}
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	public Instance getEnvironment(String id, String key) {
-		SalesforceConnector salesforceConnector = super.fetch(id);
+		
+		SalesforceConnector salesforceConnector = mongoDocumentService.findOne(SalesforceConnector.class, eq ( "_id", new ObjectId( id ) ) );
 		
 		Instance instance = salesforceConnector.getInstances()
 				.stream()
@@ -656,25 +656,23 @@ class SalesforceConnectorService extends MongoDocumentService<SalesforceConnecto
 	}
 }
 
-class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobRequest> {
-
-	public ScheduledJobRequestService() {
-		super(ScheduledJobRequest.class);
-	}
+class ScheduledJobRequestService extends AbstractCacheService {
+	
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	public void create(ScheduledJobRequest scheduledJobRequest) {
-		super.create(scheduledJobRequest);
-		hset(encode(System.getProperty(Properties.DEFAULT_SUBJECT)), scheduledJobRequest);
+		mongoDocumentService.create(scheduledJobRequest);
+		hset(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
 	}
 	
 	public void replace(ScheduledJobRequest scheduledJobRequest) {
-		super.replace(scheduledJobRequest);
-		hset(encode(System.getProperty(Properties.DEFAULT_SUBJECT)), scheduledJobRequest);
+		mongoDocumentService.replace(scheduledJobRequest);
+		hset(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
 	}
 	
 	public Set<ScheduledJobRequest> getScheduledJobRequests() {
 		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
-		FindIterable<ScheduledJobRequest> documents = super.query( and ( 
+		FindIterable<ScheduledJobRequest> documents = mongoDocumentService.find(ScheduledJobRequest.class, and ( 
 				eq ( "status", "Scheduled" ), 
 				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
 				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
@@ -696,18 +694,16 @@ class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobReques
 	}
 }
 
-class ScheduledJobService extends MongoDocumentService<ScheduledJob> {
-
-	public ScheduledJobService() {
-		super(ScheduledJob.class);
-	}
+class ScheduledJobService extends AbstractCacheService {
+	
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	public void replace(ScheduledJob scheduledJob) {
-		hset(encode(scheduledJob.getOwner().getIdentity().getId().toString()), scheduledJob);
-		super.replace( scheduledJob );
+		hset(scheduledJob.getOwner().getIdentity().getId().toString(), scheduledJob);
+		mongoDocumentService.replace( scheduledJob );
 	}
 	
 	public ScheduledJob findById(ObjectId id) {
-		return super.findOne( eq ( "_id", id ) );
+		return mongoDocumentService.findOne(ScheduledJob.class, eq ( "_id", id ) );
 	}
 }

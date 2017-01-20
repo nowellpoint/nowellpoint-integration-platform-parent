@@ -37,7 +37,7 @@ public class PlanResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findById(@PathParam(value="id") String id) {
 		
-		Plan plan = planService.findPlan(id);
+		Plan plan = planService.findById(id);
 		
 		return Response.ok(plan)
 				.build();

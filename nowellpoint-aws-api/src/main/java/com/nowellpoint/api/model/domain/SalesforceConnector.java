@@ -107,4 +107,9 @@ public class SalesforceConnector extends AbstractResource {
 		}
 		instances.add(instance);
 	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.SalesforceConnector.class);
+	}
 }

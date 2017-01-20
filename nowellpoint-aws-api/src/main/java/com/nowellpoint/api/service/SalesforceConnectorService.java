@@ -48,7 +48,7 @@ import com.nowellpoint.api.model.domain.SalesforceConnectorList;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
-import com.nowellpoint.api.model.mapper.SalesforceConnectorModelMapper;
+import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.CountRequest;
@@ -70,8 +70,8 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.CollectionNameResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDocumentService;
 
 /**
  * 
@@ -81,9 +81,9 @@ import com.nowellpoint.mongodb.document.MongoDatastore;
  * 
  */
 
-public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
+public class SalesforceConnectorService {
 	
-	private CollectionNameResolver collectionNameResolver = new CollectionNameResolver(); 
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	@Inject
 	private SalesforceService salesforceService;
@@ -113,18 +113,13 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	public SalesforceConnectorList findAllByOwner(String ownerId) {
 		
-		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.SalesforceConnector.class);
-		
-		FindIterable<com.nowellpoint.api.model.document.SalesforceConnector> documents = MongoDatastore.getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( com.nowellpoint.api.model.document.SalesforceConnector.class )
-				.find( eq ( "owner.identity", new DBRef( 
-						collectionNameResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
+		FindIterable<com.nowellpoint.api.model.document.SalesforceConnector> documents = mongoDocumentService.find(com.nowellpoint.api.model.document.SalesforceConnector.class,
+				eq ( "owner.identity", new DBRef( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), 
 						new ObjectId( ownerId ) ) ) );
 		
-		SalesforceConnectorList list = new SalesforceConnectorList(documents);
+		SalesforceConnectorList resources = new SalesforceConnectorList(documents);
 		
-		return list;
+		return resources;
 	}
 	
 	/**
@@ -156,9 +151,10 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		
 		if (resource.getOwner() == null) {
-			UserInfo owner = new UserInfo(getSubject());
-			resource.setOwner(owner);
+			resource.setOwner(userInfo);
 		}
 		
 		Instance instance = new Instance();
@@ -183,14 +179,18 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		
 		resource.addEnvironment(instance);
 		
-		UserInfo userInfo = new UserInfo(getSubject());
+		Date now = Date.from(Instant.now());
 		
+		resource.setCreatedDate(now);
 		resource.setCreatedBy(userInfo);
+		resource.setLastModifiedDate(now);
 		resource.setLastModifiedBy(userInfo);
+		resource.setSystemCreatedDate(now);
+		resource.setSystemModifiedDate(now);
 		
-		super.createSalesforceConnector( resource );
+		mongoDocumentService.create(resource.toDocument());
 		
-		UserProperties.saveSalesforceTokens(getSubject(), instance.getKey(), token);
+		UserProperties.saveSalesforceTokens(UserContext.getPrincipal().getName(), instance.getKey(), token);
 		
 		return resource;
 	}
@@ -202,7 +202,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public void updateSalesforceConnector(String id, SalesforceConnector salesforceConnector) {		
-		SalesforceConnector original = findSalesforceConnector(id);
+		SalesforceConnector original = findById(id);
 		
 		salesforceConnector.setId(original.getId());
 		salesforceConnector.setCreatedDate(original.getCreatedDate());
@@ -215,9 +215,15 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			salesforceConnector.setTag(null);
 		}
 		
-		salesforceConnector.setLastModifiedBy(new UserInfo(getSubject()));
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		
-		super.updateSalesforceConnector(salesforceConnector);
+		Date now = Date.from(Instant.now());
+		
+		salesforceConnector.setLastModifiedDate(now);
+		salesforceConnector.setLastModifiedBy(userInfo);
+		salesforceConnector.setSystemModifiedDate(now);
+		
+		mongoDocumentService.replace(salesforceConnector.toDocument());
 	}
 	
 	/**
@@ -227,7 +233,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public void deleteSalesforceConnector(String id) {
-		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
+		SalesforceConnector salesforceConnector = findById( id );
 		
 		Photos photos = salesforceConnector.getIdentity().getPhotos();
 
@@ -243,7 +249,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			removeInstance(e);
 		});
 		
-		super.deleteSalesforceConnector( salesforceConnector );
+		mongoDocumentService.delete(salesforceConnector.toDocument());
 	}
 	
 	/**
@@ -252,8 +258,10 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 *  
 	 */
 	
-	public SalesforceConnector findSalesforceConnector(String id) {		
-		return super.findSalesforceConnector(id);
+	public SalesforceConnector findById(String id) {		
+		com.nowellpoint.api.model.document.SalesforceConnector document = mongoDocumentService.find(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( id ) );
+		SalesforceConnector resource = new SalesforceConnector( document );
+		return resource;
 	}
 	
 	/**
@@ -263,7 +271,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public Set<Instance> getInstances(String id) {
-		SalesforceConnector salesforceConnector = findSalesforceConnector(id);
+		SalesforceConnector salesforceConnector = findById(id);
 		return salesforceConnector.getInstances();
 	}
 	
@@ -275,7 +283,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public Instance getInstance(String id, String key) {
-		SalesforceConnector resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findById(id);
 		
 		Instance instance = resource.getInstances()
 				.stream()
@@ -295,7 +303,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	public void addInstance(String id, Instance instance) {
 		LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
 
-		SalesforceConnector resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findById(id);
 		
 		if (resource.getInstances() != null && resource.getInstances().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
 			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: %s", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
@@ -318,7 +326,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 		instance.setOrganizationName(loginResult.getOrganizationName());
 		instance.setServiceEndpoint(loginResult.getServiceEndpoint());
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
@@ -337,7 +345,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public void updateInstance(String id, String key, Instance instance) {
-		SalesforceConnector salesforceConnector = findSalesforceConnector( id );
+		SalesforceConnector salesforceConnector = findById( id );
 		
 		instance.setKey(key);
 		
@@ -398,7 +406,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 			instance.setIsValid(Boolean.FALSE);
 		}
 		
-		UserProperties.saveSalesforceCredentials(getSubject(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
+		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
 		
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
@@ -418,7 +426,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	public Instance updateInstance(String id, String key, MultivaluedMap<String, String> parameters) {
 		
-		SalesforceConnector resource = findSalesforceConnector( id );
+		SalesforceConnector resource = findById( id );
 		
 		Instance instance = resource.getInstances()
 				.stream()
@@ -463,7 +471,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public Instance testConnection(String id, String key) {		
-		SalesforceConnector resource = findSalesforceConnector( id );
+		SalesforceConnector resource = findById( id );
 		
 		Instance instance = resource.getInstances()
 				.stream()
@@ -494,7 +502,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	}
 	
 	public Instance buildEnvironment(String id, String key) {
-		SalesforceConnector resource = findSalesforceConnector( id );
+		SalesforceConnector resource = findById( id );
 		
 		Instance instance = resource.getInstances()
 				.stream()
@@ -531,7 +539,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	 */
 	
 	public void removeInstance(String id, String key) {
-		SalesforceConnector resource = findSalesforceConnector(id);
+		SalesforceConnector resource = findById(id);
 		
 		Instance instance = resource.getInstances()
 				.stream()
@@ -553,7 +561,7 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 	
 	private void removeInstance(Instance instance) {
 		UserProperties.clear(instance.getKey());
-		//MongoDatastore.deleteMany( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.SObjectDetail.class ), eq ( "environmentKey", instance.getKey() ) );
+		mongoDocumentService.deleteMany(com.nowellpoint.api.model.document.SObjectDetail.class, eq ( "environmentKey", instance.getKey() ));
 	}
 	
 	/**
@@ -715,14 +723,14 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				
 				UserRef user = new UserRef();
 				String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
-				ObjectId id = new ObjectId( getSubject() );
+				ObjectId id = new ObjectId( UserContext.getPrincipal().getName() );
 
 				DBRef dbref = new DBRef( collectionName, id );
 				user.setIdentity(dbref);
 
 				com.nowellpoint.api.model.document.SObjectDetail sobjectDetail = null;
 				try {
-					sobjectDetail = null; //MongoDatastore.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
+					sobjectDetail = mongoDocumentService.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
 				} catch (DocumentNotFoundException e) {
 					sobjectDetail = new com.nowellpoint.api.model.document.SObjectDetail();
 					sobjectDetail.setEnvironmentKey(environmentKey);
@@ -737,9 +745,9 @@ public class SalesforceConnectorService extends SalesforceConnectorModelMapper {
 				sobjectDetail.setSystemModifiedDate(now);
 				sobjectDetail.setResult(describeSobjectResult);
 				if (isNull(sobjectDetail.getId())) {
-					//MongoDatastore.insertOne(sobjectDetail);
+					mongoDocumentService.create(sobjectDetail);
 				} else {
-					//MongoDatastore.replaceOne(sobjectDetail);
+					mongoDocumentService.replace(sobjectDetail);
 				}
 			});
 		}

@@ -98,7 +98,7 @@ public class AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response setSubscription(@PathParam("id") String id, @FormParam(value = "planId") String planId, @FormParam(value = "paymentMethodToken") String paymentMethodToken) {
 		
-		Plan plan = planService.findPlan(planId);
+		Plan plan = planService.findById(planId);
 		
 		Subscription subscription = new Subscription();
 		subscription.setPlanId(planId);

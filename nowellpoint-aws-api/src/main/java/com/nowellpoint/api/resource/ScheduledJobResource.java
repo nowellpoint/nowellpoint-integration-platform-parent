@@ -61,7 +61,7 @@ public class ScheduledJobResource {
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getScheduledJob(@PathParam("id") String id) {
-		ScheduledJob scheduledJob = scheduledJobService.findScheduledJobById( id );
+		ScheduledJob scheduledJob = scheduledJobService.findById( id );
 		
 		if (scheduledJob == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", ScheduledJob.class.getSimpleName(), id ) );

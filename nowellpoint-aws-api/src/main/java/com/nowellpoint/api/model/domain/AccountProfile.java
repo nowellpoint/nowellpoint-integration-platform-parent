@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
+import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class AccountProfile extends AbstractResource {
 	
@@ -85,7 +86,7 @@ public class AccountProfile extends AbstractResource {
 		super(id);
 	}
 	
-	public AccountProfile(com.nowellpoint.api.model.document.AccountProfile document) {
+	public AccountProfile(MongoDocument document) {
 		super(document);
 	}
 
@@ -350,5 +351,10 @@ public class AccountProfile extends AbstractResource {
 			return null;
 		}
 		return creditCards.stream().filter(c -> c.getPrimary()).findFirst().get();
+	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.AccountProfile.class);
 	}
 }

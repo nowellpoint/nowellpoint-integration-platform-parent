@@ -1,12 +1,16 @@
 package com.nowellpoint.api.service;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -23,6 +27,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.mongodb.DBRef;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.UpdateOptions;
+import com.nowellpoint.api.model.document.ScheduledJobRequest;
+import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Backup;
 import com.nowellpoint.api.model.domain.Deactivate;
@@ -34,17 +41,18 @@ import com.nowellpoint.api.model.domain.ScheduledJobList;
 import com.nowellpoint.api.model.domain.ScheduledJobStatus;
 import com.nowellpoint.api.model.domain.ScheduledJobType;
 import com.nowellpoint.api.model.domain.UserInfo;
-import com.nowellpoint.api.model.mapper.ScheduledJobModelMapper;
+import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.CollectionNameResolver;
 import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.document.MongoDocumentService;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 
-public class ScheduledJobService extends ScheduledJobModelMapper {
+public class ScheduledJobService {
+	
+	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
-	
-	private CollectionNameResolver collectionNameResolver = new CollectionNameResolver();
 	
 	@Inject
 	private ScheduledJobTypeService scheduledJobTypeService;
@@ -74,18 +82,12 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public ScheduledJobList findByOwner(String ownerId) {
 		
-		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.ScheduledJob.class);
+		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = mongoDocumentService.find(com.nowellpoint.api.model.document.ScheduledJob.class, 
+				eq ( "owner.identity", new DBRef( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), new ObjectId( ownerId ) ) ) );
 		
-		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = MongoDatastore.getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( com.nowellpoint.api.model.document.ScheduledJob.class )
-				.find( eq ( "owner.identity", new DBRef( 
-						collectionNameResolver.resolveDocument( com.nowellpoint.api.model.document.AccountProfile.class ), 
-						new ObjectId( ownerId ) ) ) );
+		ScheduledJobList resources = new ScheduledJobList(documents);
 		
-		ScheduledJobList list = new ScheduledJobList(documents);
-		
-		return list;
+		return resources;
 	}
 	
 	/**
@@ -96,16 +98,12 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	
 	public ScheduledJobList findScheduled() {
 		
-		String collectionName = collectionNameResolver.resolveDocument(com.nowellpoint.api.model.document.ScheduledJob.class);
+		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = mongoDocumentService.find(com.nowellpoint.api.model.document.ScheduledJob.class, 
+				eq ( "status", "Scheduled" ) );
 		
-		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = MongoDatastore.getDatabase()
-				.getCollection( collectionName )
-				.withDocumentClass( com.nowellpoint.api.model.document.ScheduledJob.class )
-				.find( eq ( "status", "Scheduled" ) );
+		ScheduledJobList resources = new ScheduledJobList(documents);
 		
-		ScheduledJobList list = new ScheduledJobList(documents);
-		
-		return list;
+		return resources;
 	}
 	
 	/**
@@ -115,15 +113,29 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public void createScheduledJob(ScheduledJob scheduledJob) {
+		
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		
 		if (isNull(scheduledJob.getOwner())) {
-			scheduledJob.setOwner(new UserInfo(getSubject()));
+			scheduledJob.setOwner(userInfo);
 		}
 		
 		scheduledJob.setStatus(ScheduledJobStatus.SCHEDULED);
 		
 		setupScheduledJob(scheduledJob);
 		
-		super.createScheduledJob(scheduledJob);
+		Date now = Date.from(Instant.now());
+		
+		scheduledJob.setCreatedDate(now);
+		scheduledJob.setCreatedBy(userInfo);
+		scheduledJob.setLastModifiedDate(now);
+		scheduledJob.setLastModifiedBy(userInfo);
+		scheduledJob.setSystemCreatedDate(now);
+		scheduledJob.setSystemModifiedDate(now);
+		
+		mongoDocumentService.create(scheduledJob.toDocument());
+		
+		submitScheduledJobRequest(scheduledJob);
 	}
 	
 	/**
@@ -136,7 +148,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public void updateScheduledJob(String id, ScheduledJob scheduledJob) {
-		ScheduledJob original = findScheduledJobById(id);
+		ScheduledJob original = findById(id);
 		
 		if (ScheduledJobStatus.TERMINATED.equals(original.getStatus())) {
 			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
@@ -186,7 +198,17 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		
 		setupScheduledJob(scheduledJob);
 		
-		super.updateScheduledJob(scheduledJob);
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
+		scheduledJob.setLastModifiedDate(now);
+		scheduledJob.setLastModifiedBy(userInfo);
+		scheduledJob.setSystemModifiedDate(now);
+		
+		mongoDocumentService.replace(scheduledJob.toDocument());
+		
+		submitScheduledJobRequest(scheduledJob);
 	}
 	
 	/**
@@ -195,9 +217,9 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public ScheduledJob terminateScheduledJob(String id) {
-		ScheduledJob scheduledJob = findScheduledJobById(id);
+		ScheduledJob scheduledJob = findById(id);
 		scheduledJob.setStatus(ScheduledJobStatus.TERMINATED);
-		updateScheduledJob(scheduledJob);
+		mongoDocumentService.replace(scheduledJob.toDocument());
 		return scheduledJob;
 	}
 	
@@ -207,9 +229,9 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public ScheduledJob startScheduledJob(String id) {
-		ScheduledJob scheduledJob = findScheduledJobById(id);
+		ScheduledJob scheduledJob = findById(id);
 		scheduledJob.setStatus(ScheduledJobStatus.SCHEDULED);
-		updateScheduledJob(scheduledJob);
+		mongoDocumentService.replace(scheduledJob.toDocument());
 		return scheduledJob;
 	}
 	
@@ -219,9 +241,9 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public ScheduledJob stopScheduledJob(String id) {
-		ScheduledJob scheduledJob = findScheduledJobById(id);
+		ScheduledJob scheduledJob = findById(id);
 		scheduledJob.setStatus(ScheduledJobStatus.STOPPED);
-		updateScheduledJob(scheduledJob);
+		mongoDocumentService.replace(scheduledJob.toDocument());
 		return scheduledJob;
 	}
 	
@@ -234,7 +256,8 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public void deleteScheduledJob(String id) {
-		super.deleteScheduledJob(findScheduledJobById(id));
+		ScheduledJob resource = findById(id);
+		mongoDocumentService.delete(resource);
 	}
 	
 	/**
@@ -246,8 +269,10 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 * 
 	 */
 
-	public ScheduledJob findScheduledJobById(String id) {
-		return super.findScheduedJobById(id);
+	public ScheduledJob findById(String id) {
+		com.nowellpoint.api.model.document.ScheduledJob document = mongoDocumentService.find(com.nowellpoint.api.model.document.ScheduledJob.class, new ObjectId( id ) );
+		ScheduledJob resource = new ScheduledJob( document );
+		return resource;
 	}
 	
 	/**
@@ -261,7 +286,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 	 */
 	
 	public RunHistory findRunHistory(String id, String fireInstanceId) {
-		ScheduledJob scheduledJob = findScheduledJobById( id );
+		ScheduledJob scheduledJob = findById( id );
 		
 		Optional<RunHistory> filter = scheduledJob.getRunHistories()
 				.stream()
@@ -316,7 +341,7 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		ScheduledJobList list = findByOwner(accountProfile.getId());
 		list.getItems().stream().forEach(scheduledJob -> {
 			scheduledJob.setStatus(ScheduledJobStatus.TERMINATED);
-			updateScheduledJob(scheduledJob);
+			mongoDocumentService.replace(scheduledJob.toDocument());
 		});
 	}
 	
@@ -336,13 +361,13 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 			throw new ValidationException( String.format( "Invalid status: %s", scheduledJob.getStatus() ) );
 		}
 		
-		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( scheduledJob.getJobTypeId() );
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById( scheduledJob.getJobTypeId() );
 
 		if ("SALESFORCE".equals(scheduledJobType.getConnectorType().getCode())) {
 			
 			SalesforceConnector salesforceConnector = null;
 			try {
-				salesforceConnector = salesforceConnectorService.findSalesforceConnector( scheduledJob.getConnectorId() );
+				salesforceConnector = salesforceConnectorService.findById( scheduledJob.getConnectorId() );
 			} catch (DocumentNotFoundException e) {
 				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", scheduledJob.getConnectorId()));
 			}
@@ -375,5 +400,52 @@ public class ScheduledJobService extends ScheduledJobModelMapper {
 		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
 		scheduledJob.setJobTypeName(scheduledJobType.getName());
 
+	}
+	
+	private void submitScheduledJobRequest(ScheduledJob scheduledJob) {
+		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
+		Date now = Date.from(Instant.now());
+		
+		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
+
+		DBRef reference = new DBRef( collectionName, id );
+		
+		UserRef userRef = new UserRef();
+		userRef.setIdentity(reference);
+
+		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest();
+		scheduledJobRequest.setScheduledJobId(new ObjectId(scheduledJob.getId()));
+		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
+		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
+		scheduledJobRequest.setOwner(new UserRef(new DBRef( collectionName, new ObjectId(scheduledJob.getOwner().getId() ) ) ) );
+		scheduledJobRequest.setCreatedDate(now);
+		scheduledJobRequest.setCreatedBy(userRef);
+		scheduledJobRequest.setDescription(scheduledJob.getDescription());
+		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
+		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
+		scheduledJobRequest.setIsSandbox(scheduledJob.getIsSandbox());
+		scheduledJobRequest.setJobTypeCode(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeCode());
+		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
+		scheduledJobRequest.setLastModifiedDate(now);
+		scheduledJobRequest.setLastModifiedBy(userRef);
+		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
+		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
+		scheduledJobRequest.setStatus(scheduledJob.getStatus());
+		scheduledJobRequest.setSystemCreatedDate(now);
+		scheduledJobRequest.setSystemModifiedDate(now);
+		scheduledJobRequest.setYear(dateTime.getYear());
+		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
+		scheduledJobRequest.setDay(dateTime.getDayOfMonth());
+		scheduledJobRequest.setHour(dateTime.getHour());
+		scheduledJobRequest.setMinute(dateTime.getMinute());
+		scheduledJobRequest.setSecond(dateTime.getSecond());
+		
+		MongoDatastore.getCollection( ScheduledJobRequest.class ).replaceOne( and ( 
+				eq ( "scheduledJobId", scheduledJob.getId().toString() ), 
+				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" ))), 
+				scheduledJobRequest, 
+				new UpdateOptions().upsert(true));
 	}
 }

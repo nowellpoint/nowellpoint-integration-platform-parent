@@ -1,5 +1,7 @@
 package com.nowellpoint.api.model.domain;
 
+import com.nowellpoint.mongodb.document.MongoDocument;
+
 public class Project extends AbstractResource {
 
 	private String name;
@@ -15,6 +17,10 @@ public class Project extends AbstractResource {
 	
 	public Project(String id) {
 		super(id);
+	}
+	
+	public Project(MongoDocument document) {
+		super(document);
 	}
 
 	public String getName() {
@@ -47,5 +53,11 @@ public class Project extends AbstractResource {
 
 	public void setOwner(AccountProfile owner) {
 		this.owner = owner;
+	}
+
+	@Override
+	public MongoDocument toDocument() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

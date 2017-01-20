@@ -3,6 +3,8 @@ package com.nowellpoint.api.model.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.nowellpoint.mongodb.document.MongoDocument;
+
 public class Application extends AbstractResource {
 	
 	private AccountProfile owner;
@@ -17,6 +19,10 @@ public class Application extends AbstractResource {
 	
 	public Application() {
 		
+	}
+	
+	public Application(MongoDocument document) {
+		super(document);
 	}
 
 	public AccountProfile getOwner() {
@@ -64,5 +70,10 @@ public class Application extends AbstractResource {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.AccountProfile.class);
 	}
 }

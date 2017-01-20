@@ -43,6 +43,8 @@
                     <br>
 
                     <form class="form-vertical" role="form" method="post" action="/login">
+                        
+                        <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
 
                         <div class="form-group">
                             <label class="control-label" for="username">${labels["email"]}</label>

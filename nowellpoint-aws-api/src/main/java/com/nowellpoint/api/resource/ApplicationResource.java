@@ -54,7 +54,7 @@ public class ApplicationResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getApplication(@PathParam("id") String id) {
 		
-		Application application = applicationService.findApplication( id );
+		Application application = applicationService.findById( id );
 		
 		if (application == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Application.class.getSimpleName(), id ) );

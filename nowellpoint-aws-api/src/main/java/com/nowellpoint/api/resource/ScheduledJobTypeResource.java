@@ -46,7 +46,7 @@ public class ScheduledJobTypeResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getServiceProvider(@PathParam("id") String id) {		
-		ScheduledJobType scheduledJobType = scheduledJobTypeService.findScheduedJobTypeById( id );		
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById( id );		
 		return Response.ok(scheduledJobType)
 				.build();
 	}

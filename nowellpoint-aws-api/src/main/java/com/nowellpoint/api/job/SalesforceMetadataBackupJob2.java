@@ -65,7 +65,6 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.mongodb.document.MongoDatastore;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
 import com.nowellpoint.util.Assert;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -101,7 +100,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 		ScheduledJob scheduledJob = null;
 		
 		try {
-			scheduledJob = scheduledJobService.findScheduledJobById(context.getJobDetail().getKey().getName());
+			scheduledJob = scheduledJobService.findById(context.getJobDetail().getKey().getName());
 		} catch (DocumentNotFoundException e) {
 			LOGGER.error(e);
 			return;
