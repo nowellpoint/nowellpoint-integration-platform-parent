@@ -69,7 +69,6 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
-import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.mongodb.document.MongoDocumentService;
 import com.nowellpoint.util.Assert;
 import com.sendgrid.Content;
@@ -86,6 +85,7 @@ import com.sforce.ws.ConnectorConfig;
 
 public class SalesforceMetadataBackupJob implements Job {
 	
+	private static final MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String bucketName = "nowellpoint-metadata-backups";
@@ -346,7 +346,7 @@ public class SalesforceMetadataBackupJob implements Job {
 	private ScheduledJobRequest setupNextScheduledJobRequest(ScheduledJob scheduledJob) {
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 		
-		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		String collectionName = mongoDocumentService.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
     	DBRef reference = new DBRef( collectionName, id );		
 		UserRef userRef = new UserRef(reference);

@@ -21,7 +21,7 @@ public class TestMongoClientAsync {
 	
 	@Test
 	public void testMongoClientConnect() {
-		//Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 		
 		final CountDownLatch latch = new CountDownLatch(1);
 		
@@ -35,8 +35,8 @@ public class TestMongoClientAsync {
 		    }
 		};
 		
-		//ConnectionString connectionString = new ConnectionString("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
-		ConnectionString connectionString = new ConnectionString("mongodb://".concat("admin_nowellpoint:27AxTIZYFoJi@ds047365.mongolab.com:47365/nowellpoint-sandbox"));
+		ConnectionString connectionString = new ConnectionString("mongodb://".concat(Properties.getProperty(Properties.MONGO_CLIENT_URI)));
+		
 		MongoClient mongoClient = MongoClients.create(connectionString);
 		MongoDatabase mongoDatabase = mongoClient.getDatabase(connectionString.getDatabase());
 		MongoCollection<Document> collection = mongoDatabase.getCollection("account.profiles");

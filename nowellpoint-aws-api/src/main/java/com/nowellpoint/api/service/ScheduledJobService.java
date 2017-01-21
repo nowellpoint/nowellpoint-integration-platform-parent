@@ -83,7 +83,7 @@ public class ScheduledJobService {
 	public ScheduledJobList findByOwner(String ownerId) {
 		
 		FindIterable<com.nowellpoint.api.model.document.ScheduledJob> documents = mongoDocumentService.find(com.nowellpoint.api.model.document.ScheduledJob.class, 
-				eq ( "owner.identity", new DBRef( MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), new ObjectId( ownerId ) ) ) );
+				eq ( "owner.identity", new DBRef( mongoDocumentService.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), new ObjectId( ownerId ) ) ) );
 		
 		ScheduledJobList resources = new ScheduledJobList(documents);
 		
@@ -406,7 +406,7 @@ public class ScheduledJobService {
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 		Date now = Date.from(Instant.now());
 		
-		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		String collectionName = mongoDocumentService.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
 
 		DBRef reference = new DBRef( collectionName, id );

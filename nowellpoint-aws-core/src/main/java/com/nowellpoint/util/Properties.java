@@ -68,6 +68,10 @@ public class Properties {
 		return propertyService.getProperties(input);
 	}
 	
+	public static String getProperty(String key) {
+		return System.getProperty(key);
+	}
+	
 	private static Map<String,String> buildPropertyStore(String propertyStore) {
 		return Collections.unmodifiableMap(Stream.of(new AbstractMap.SimpleEntry<>("propertyStore", propertyStore))
 				.collect(Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue())));

@@ -70,7 +70,7 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 			protected UserRef convert(UserInfo source) {
 				UserRef user = new UserRef();
 				if (source != null) {		
-					String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+					String collectionName = MongoDatastore.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 					ObjectId id = new ObjectId( source.getId() );
 
 					DBRef reference = new DBRef( collectionName, id );

@@ -68,16 +68,16 @@ public class MongoDatastore implements ServletContextListener {
 		}
 	}
 	
-	public static <T> String getCollectionName(Class<T> type) {
+	public static <T> String resolveCollectionName(Class<T> type) {
 		return collectionNameResolver.resolveCollectionName(type);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static <T> MongoCollection<T> getCollection(MongoDocument document) {
-		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(document.getClass()), document.getClass());
+		return (MongoCollection<T>) mongoDatabase.getCollection(resolveCollectionName(document.getClass()), document.getClass());
 	}
 	
 	public static <T> MongoCollection<T> getCollection(Class<T> type) {
-		return (MongoCollection<T>) mongoDatabase.getCollection(getCollectionName(type), type);
+		return (MongoCollection<T>) mongoDatabase.getCollection(resolveCollectionName(type), type);
 	}
 }

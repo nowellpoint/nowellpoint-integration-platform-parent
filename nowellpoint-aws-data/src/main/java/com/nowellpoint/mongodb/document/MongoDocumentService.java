@@ -47,6 +47,19 @@ public class MongoDocumentService extends AbstractCacheService {
 	/**
 	 * 
 	 * 
+	 * @param type
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	public <T> String resolveCollectionName(Class<T> type) {
+		return MongoDatastore.resolveCollectionName(type);
+	}
+	
+	/**
+	 * 
+	 * 
 	 * @param <T>
 	 * @param query
 	 * @return
