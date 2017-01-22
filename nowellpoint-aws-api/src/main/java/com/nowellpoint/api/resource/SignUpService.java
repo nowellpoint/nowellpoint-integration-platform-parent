@@ -124,7 +124,7 @@ public class SignUpService {
 		
 		try {
 			
-			accountProfile = accountProfileService.findAccountProfileByUsername(email);
+			accountProfile = accountProfileService.findByUsername(email);
 			
 			if (accountProfile.getIsActive()) {
 				Error error = new Error(1000, "Account for email is already enabled");

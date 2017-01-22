@@ -1,6 +1,5 @@
 package com.nowellpoint.api.service;
 
-import static com.mongodb.client.model.Filters.eq;
 import static com.nowellpoint.util.Assert.isEmpty;
 import static com.nowellpoint.util.Assert.isEqual;
 import static com.nowellpoint.util.Assert.isNotNull;
@@ -26,7 +25,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
-import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -49,15 +47,11 @@ import com.nowellpoint.api.model.domain.Subscription;
 import com.nowellpoint.api.model.domain.Token;
 import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
 import com.nowellpoint.util.Assert;
 
-public class AccountProfileService {
+public class AccountProfileService extends AbstractAccountProfileService {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountProfileService.class);
-	
-	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -139,7 +133,7 @@ public class AccountProfileService {
 		accountProfile.setSystemCreatedDate(now);
 		accountProfile.setSystemModifiedDate(now);
 		
-		mongoDocumentService.create(accountProfile.toDocument());
+		create(accountProfile);
 	}
 	
 	/**
@@ -179,7 +173,7 @@ public class AccountProfileService {
 		
 		updateAccountProfile(accountProfile, original);
 		
-		mongoDocumentService.replace(accountProfile.toDocument());
+		update(accountProfile);
 		
 		if (accountProfile.getIsActive() && isNotNull(accountProfile.getAccountHref())) {
 			
@@ -244,7 +238,7 @@ public class AccountProfileService {
 		
 		accountProfile.setAddress(address);
 		
-		mongoDocumentService.replace(accountProfile.toDocument());
+		update(accountProfile);
 	}
 	
 	/**
@@ -320,8 +314,7 @@ public class AccountProfileService {
 		
 		accountProfile.setSubscription(subscription);
 		
-		mongoDocumentService.replace(accountProfile.toDocument());
-		
+		update(accountProfile);	
 	}
 	
 	/**
@@ -344,9 +337,7 @@ public class AccountProfileService {
 	 */
 	
 	public AccountProfile findById(String id) {	
-		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.find(com.nowellpoint.api.model.document.AccountProfile.class, new ObjectId( id ) );
-		AccountProfile resource = new AccountProfile( document );
-		return resource;
+		return super.findById(id);
 	}
 	
 	/**
@@ -357,16 +348,7 @@ public class AccountProfileService {
 	 */
 	
 	public AccountProfile findByAccountHref(String accountHref) {
-		
-		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "accountHref", accountHref ) );
-		
-		if (document == null) {
-			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found for accountHref: %s", com.nowellpoint.api.model.document.AccountProfile.class.getSimpleName(), accountHref ) );
-		}
-		
-		AccountProfile resource = new AccountProfile( document );
-		
-		return resource;
+		return super.findByAccountHref(accountHref);
 	}
 	
 	/**
@@ -376,10 +358,8 @@ public class AccountProfileService {
 	 * 
 	 */
 	
-	public AccountProfile findAccountProfileByUsername(String username) {
-		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "username", username ) );
-		AccountProfile accountProfile = new AccountProfile(document);
-		return accountProfile;
+	public AccountProfile findByUsername(String username) {
+		return super.findByUsername(username);
 	}
 	
 	/**
@@ -667,9 +647,7 @@ public class AccountProfileService {
 	 */
 	
 	public AccountProfile findBySubscriptionId(String subscriptionId) {
-		com.nowellpoint.api.model.document.AccountProfile document = mongoDocumentService.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "subscription.subscriptionId", subscriptionId ) );
-		AccountProfile accountProfile = new AccountProfile(document);
-		return accountProfile;
+		return super.findBySubscriptionId(subscriptionId);
 	}
 	
 	/**

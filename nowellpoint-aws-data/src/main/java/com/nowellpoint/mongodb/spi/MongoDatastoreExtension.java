@@ -27,10 +27,9 @@ import javax.enterprise.util.AnnotationLiteral;
 import org.bson.codecs.Codec;
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.document.DocumentManagerFactoryImpl;
-import com.nowellpoint.util.Properties;
 
 /**
  * <p>
@@ -100,13 +99,13 @@ public class MongoDatastoreExtension implements Extension {
 	@SuppressWarnings("serial")
 	void afterBeanDiscovery(@Observes AfterBeanDiscovery discovery, BeanManager manager) {
 		
-		LOGGER.info("Registering DocumentManagerFactory...");
-		
 		if (bean == null) {
 			
-			DocumentManagerFactory instance = new DocumentManagerFactoryImpl("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)), codecs);
+			LOGGER.info("Registering DocumentManagerFactory...");
 			
 			bean = new Bean<DocumentManagerFactory>() {
+				
+				DocumentManagerFactory instance = Datastore.createDocumentManagerFactory(codecs);
 
 	            @Override
 	            public Class<?> getBeanClass() {

@@ -1,17 +1,18 @@
 package com.nowellpoint.client.auth.impl;
 
 import com.nowellpoint.client.auth.RevokeTokenRequest;
+import com.nowellpoint.client.model.Token;
 
 public class RevokeTokenRequestImpl implements RevokeTokenRequest {
 	
-	private String accessToken;
+	private Token token;
 	
-	public RevokeTokenRequestImpl(String accessToken) {
-		this.accessToken = accessToken;
+	public RevokeTokenRequestImpl(Token token) {
+		this.token = token;
 	}
 
 	@Override
-	public String getAccessToken() {
-		return accessToken;
+	public Token getToken() {
+		return token;
 	}
 }

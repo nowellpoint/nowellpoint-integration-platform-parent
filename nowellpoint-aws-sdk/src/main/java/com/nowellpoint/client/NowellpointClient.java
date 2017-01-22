@@ -97,7 +97,7 @@ public class NowellpointClient {
 	
 	public void logout() {
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);

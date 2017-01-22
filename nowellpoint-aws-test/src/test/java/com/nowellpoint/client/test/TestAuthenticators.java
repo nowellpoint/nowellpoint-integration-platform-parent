@@ -267,7 +267,7 @@ public class TestAuthenticators {
 			System.out.println(token.getAccessToken());
 			
 			RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-					.setAccessToken(token.getAccessToken())
+					.setToken(token)
 					.build();
 			
 			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
@@ -328,7 +328,7 @@ public class TestAuthenticators {
 	public static void afterClass() {
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);

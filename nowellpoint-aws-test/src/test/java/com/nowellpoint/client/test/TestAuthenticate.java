@@ -35,7 +35,7 @@ public class TestAuthenticate {
 		System.out.println(token.getAccessToken());
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
@@ -63,7 +63,7 @@ public class TestAuthenticate {
 		System.out.println(token.getAccessToken());
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);

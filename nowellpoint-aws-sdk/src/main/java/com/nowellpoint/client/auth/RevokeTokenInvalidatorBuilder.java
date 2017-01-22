@@ -1,8 +1,10 @@
 package com.nowellpoint.client.auth;
 
+import com.nowellpoint.client.model.Token;
+
 public interface RevokeTokenInvalidatorBuilder {
 	
-	public RevokeTokenInvalidatorBuilder setAccessToken(String accessToken);
+	public RevokeTokenInvalidatorBuilder setToken(Token token);
 	
 	public RevokeTokenRequest build();
 

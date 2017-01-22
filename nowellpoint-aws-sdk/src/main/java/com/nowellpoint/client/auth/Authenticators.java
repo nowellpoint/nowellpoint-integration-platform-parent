@@ -12,24 +12,22 @@ import com.nowellpoint.util.Assert;
 
 public class Authenticators {
 	
-	private static final String API_ENDPOINT = System.getenv("NOWELLPOINT_API_ENDPOINT");
-	
 	public static final PasswordGrantResponseFactory PASSWORD_GRANT_AUTHENTICATOR = new PasswordGrantResponseFactory();
 	public static final ClientCredentialsGrantResponseFactory CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR = new ClientCredentialsGrantResponseFactory();
 	public static final RevokeTokenResponseFactory REVOKE_TOKEN_INVALIDATOR = new RevokeTokenResponseFactory();
 	
 	public static class PasswordGrantResponseFactory {
-		public OauthAuthenticationResponse authenticate(PasswordGrantRequest passwordGrantRequest) {
+		public OauthAuthenticationResponse authenticate(PasswordGrantRequest grantRequest) {
 			
-			Assert.assertNotNull(passwordGrantRequest.getUsername(), "missing username");
-			Assert.assertNotNull(passwordGrantRequest.getPassword(), "missing password");
+			Assert.assertNotNull(grantRequest.getUsername(), "missing username");
+			Assert.assertNotNull(grantRequest.getPassword(), "missing password");
 			
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
 	    			.accept(MediaType.APPLICATION_JSON)
 	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	    			.path("oauth")
 	    			.path("token")
-	    			.basicAuthorization(passwordGrantRequest.getUsername(), passwordGrantRequest.getPassword())
+	    			.basicAuthorization(grantRequest.getUsername(), grantRequest.getPassword())
 	    			.parameter("grant_type", "password")
 	    			.execute();
 		
@@ -81,8 +79,8 @@ public class Authenticators {
 	
 	public static class RevokeTokenResponseFactory {
 		public void revoke(RevokeTokenRequest revokeTokenRequest) {
-			HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
-					.bearerAuthorization(revokeTokenRequest.getAccessToken())
+			HttpResponse httpResponse = RestResource.delete(revokeTokenRequest.getToken().getEnvironmentUrl())
+					.bearerAuthorization(revokeTokenRequest.getToken().getAccessToken())
 	    			.path("oauth")
 	    			.path("token")
 	    			.execute();

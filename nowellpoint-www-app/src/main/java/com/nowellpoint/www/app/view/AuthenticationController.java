@@ -118,6 +118,9 @@ public class AuthenticationController extends AbstractController {
     
     public String login(Configuration configuration, Request request, Response response) {
     	
+    	System.out.println(System.getenv("NOWELLPOINT_ENVIRONMENT"));
+    	System.out.println(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl());
+    	
     	PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
     			.setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")))
 				.setUsername(request.queryParams("username"))
@@ -192,7 +195,7 @@ public class AuthenticationController extends AbstractController {
         	}
     		
     		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-					.setAccessToken(token.getAccessToken())
+					.setToken(token)
 					.build();
 			
 			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
