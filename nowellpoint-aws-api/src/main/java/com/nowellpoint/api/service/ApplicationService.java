@@ -19,7 +19,6 @@ import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
 
 /**
  * 
@@ -30,8 +29,6 @@ import com.nowellpoint.mongodb.document.MongoDocumentService;
  */
 
 public class ApplicationService {
-	
-	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
@@ -75,7 +72,7 @@ public class ApplicationService {
 		application.setSystemCreatedDate(now);
 		application.setSystemModifiedDate(now);
 		
-		mongoDocumentService.create(application.toDocument());
+		//mongoDocumentService.create(application.toDocument());
 	}
 	
 	public void updateApplication(String id, Application application) {
@@ -114,16 +111,16 @@ public class ApplicationService {
 		//application.setLastModifiedBy(userInfo);
 		application.setSystemModifiedDate(now);
 				
-		mongoDocumentService.create(application.toDocument());
+		//mongoDocumentService.create(application.toDocument());
 	}
 	
 	public void deleteApplication(String id) {		
 		Application resource = findById(id);
-		mongoDocumentService.delete(resource.toDocument());
+		//mongoDocumentService.delete(resource.toDocument());
 	}
 	
 	public Application findById(String id) {
-		com.nowellpoint.api.model.document.Application document = mongoDocumentService.find(com.nowellpoint.api.model.document.Application.class, new ObjectId( id ));
+		com.nowellpoint.api.model.document.Application document = new com.nowellpoint.api.model.document.Application(); //mongoDocumentService.find(com.nowellpoint.api.model.document.Application.class, new ObjectId( id ));
 		Application resource = new Application(document);
 		return resource;
 	}	

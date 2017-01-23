@@ -1,4 +1,4 @@
-package com.nowellpoint.api.service;
+package com.nowellpoint.api.service.impl;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -16,20 +16,27 @@ import com.nowellpoint.util.Assert;
 abstract class AbstractAccountProfileService extends AbstractCacheService {
 	
 	@Inject
-	private DocumentManagerFactory documentManagerFactory;
+	protected DocumentManagerFactory documentManagerFactory;
 	
 	protected void create(AccountProfile accountProfile) {
 		MongoDocument document = accountProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.insertOne(document);
+		documentManager.insertOne( document );
 		set(accountProfile.getId(), document);
 	}
 	
 	protected void update(AccountProfile accountProfile) {
 		MongoDocument document = accountProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.replaceOne(document);
+		documentManager.replaceOne( document );
 		set(accountProfile.getId(), document);
+	}
+	
+	protected void delete(AccountProfile accountProfile) {
+		MongoDocument document = accountProfile.toDocument();
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		documentManager.deleteOne(document);
+		del(accountProfile.getId());
 	}
 	
 	protected AccountProfile findById(String id) {

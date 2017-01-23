@@ -36,8 +36,8 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.api.exception.AuthenticationException;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Token;
-import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
@@ -54,7 +54,7 @@ public class TokenResource {
 	private IdentityProviderService identityProviderService;
 	
 	@Inject
-	private AccountProfileService accountProfileService;
+	private AccountProfileServiceImpl accountProfileServiceImpl;
 	
 	@Inject
 	private Event<Token> loggedInEvent;
@@ -127,7 +127,7 @@ public class TokenResource {
 		// lookup account profile
 		//
 		
-		AccountProfile accountProfile = accountProfileService.findByAccountHref(result.getAccessToken().getAccount().getHref());
+		AccountProfile accountProfile = accountProfileServiceImpl.findByAccountHref(result.getAccessToken().getAccount().getHref());
         
 		//
 		// create the token

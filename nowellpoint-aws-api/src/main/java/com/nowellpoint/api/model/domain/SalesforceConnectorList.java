@@ -1,10 +1,10 @@
 package com.nowellpoint.api.model.domain;
 
-import com.mongodb.client.FindIterable;
+import java.util.Set;
 
 public class SalesforceConnectorList extends AbstractCollectionResource<SalesforceConnector, com.nowellpoint.api.model.document.SalesforceConnector> {
 	
-	public SalesforceConnectorList(FindIterable<com.nowellpoint.api.model.document.SalesforceConnector> documents) {
+	public SalesforceConnectorList(Set<com.nowellpoint.api.model.document.SalesforceConnector> documents) {
 		super(documents);
 	}
 

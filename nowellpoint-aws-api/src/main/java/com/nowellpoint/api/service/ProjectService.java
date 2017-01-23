@@ -7,11 +7,8 @@ import java.util.Set;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.model.domain.Project;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
 
 public class ProjectService {
-	
-	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
 	
 	public ProjectService() {
 		super();
@@ -41,7 +38,7 @@ public class ProjectService {
 		project.setSystemCreatedDate(now);
 		project.setSystemModifiedDate(now);
 		
-		mongoDocumentService.create(project.toDocument());
+		//mongoDocumentService.create(project.toDocument());
 	}
 	
 	/**
@@ -63,7 +60,7 @@ public class ProjectService {
 		//project.setLastModifiedBy(userInfo);
 		project.setSystemModifiedDate(now);
 		
-		mongoDocumentService.replace(project.toDocument());
+		//mongoDocumentService.replace(project.toDocument());
 	}
 	
 	/**
@@ -73,7 +70,7 @@ public class ProjectService {
 	
 	public void deleteProject(String id) {
 		Project project = findProject(id);
-		mongoDocumentService.delete(project.toDocument());
+		//mongoDocumentService.delete(project.toDocument());
 	}
 	
 	/**
@@ -83,7 +80,7 @@ public class ProjectService {
 	 */
 	
 	public Project findProject(String id) {
-		com.nowellpoint.api.model.document.Project document = mongoDocumentService.find(com.nowellpoint.api.model.document.Project.class, new ObjectId( id ) );
+		com.nowellpoint.api.model.document.Project document = new com.nowellpoint.api.model.document.Project(); //.find(com.nowellpoint.api.model.document.Project.class, new ObjectId( id ) );
 		Project project = new Project( document );
 		return project;
 	}

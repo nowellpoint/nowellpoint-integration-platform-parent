@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.bson.codecs.Codec;
 import org.bson.types.ObjectId;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -39,9 +40,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.Block;
 import com.mongodb.DBRef;
-import com.mongodb.client.FindIterable;
 import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Instance;
 import com.nowellpoint.api.model.document.RunHistory;
@@ -51,8 +50,6 @@ import com.nowellpoint.api.model.document.ScheduledJobRequest;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
-import com.nowellpoint.aws.data.AbstractCacheService;
-import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -69,8 +66,12 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
+import com.nowellpoint.mongodb.Datastore;
+import com.nowellpoint.mongodb.DocumentManager;
+import com.nowellpoint.mongodb.DocumentManagerFactory;
+import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -85,7 +86,8 @@ import com.sforce.ws.ConnectorConfig;
 
 public class SalesforceMetadataBackupJob implements Job {
 	
-	private static final MongoDocumentService mongoDocumentService = new MongoDocumentService();
+	private DocumentManagerFactory documentManagerFactory;
+	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String bucketName = "nowellpoint-metadata-backups";
@@ -94,11 +96,26 @@ public class SalesforceMetadataBackupJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
-		ScheduledJobService scheduledJobService = new ScheduledJobService();
-		ScheduledJobRequestService scheduledJobRequestService = new ScheduledJobRequestService();
-		SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
+		List<Codec<?>> codecs = new ArrayList<>();
+		try {
+			codecs.add((Codec<?>) ScheduledJobRequest.class.getAnnotation(Document.class).codec().newInstance());
+			codecs.add((Codec<?>) ScheduledJob.class.getAnnotation(Document.class).codec().newInstance());
+			codecs.add((Codec<?>) SalesforceConnector.class.getAnnotation(Document.class).codec().newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		
-		Set<ScheduledJobRequest> scheduledJobRequests = scheduledJobRequestService.getScheduledJobRequests();
+		documentManagerFactory = Datastore.createDocumentManagerFactory(codecs);
+		
+		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		Set<ScheduledJobRequest> scheduledJobRequests = documentManager.find(ScheduledJobRequest.class, and ( 
+				eq ( "status", "Scheduled" ), 
+				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
+				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
+				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
+				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
+				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
 		
 		if (scheduledJobRequests.size() > 0) {
 			ExecutorService executor = Executors.newFixedThreadPool(scheduledJobRequests.size());
@@ -121,21 +138,27 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			scheduledJobRequest.setFireInstanceId(context.getFireInstanceId());
 		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
 		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
-		    			scheduledJobRequestService.replace( scheduledJobRequest );
+		    			documentManager.replaceOne( scheduledJobRequest );
 
 		    			//
 		    			// update ScheduledJob
 		    			//
 		    			
-		    			scheduledJob = scheduledJobService.findById(scheduledJobRequest.getScheduledJobId());
+		    			scheduledJob = documentManager.findOne(ScheduledJob.class, scheduledJobRequest.getScheduledJobId() );
 		    			scheduledJob.setStatus(scheduledJobRequest.getStatus());
-		    			scheduledJobService.replace(scheduledJob);
+		    			documentManager.replaceOne(scheduledJob);
 
 			    		//
 			    		// get environment associated with the ScheduledJob
 			    		//
-			    		
-			    		Instance instance = salesforceConnectorService.getEnvironment(scheduledJobRequest.getConnectorId(), scheduledJobRequest.getEnvironmentKey());
+		    			
+		    			SalesforceConnector salesforceConnector = documentManager.findOne(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( scheduledJobRequest.getConnectorId() ) );
+		    			
+		    			Instance instance = salesforceConnector.getInstances()
+		    					.stream()
+		    					.filter(p -> p.getKey().equals(scheduledJobRequest.getEnvironmentKey()))
+		    					.findFirst()
+		    					.get();
 			    		
 			    		//
 			    		// get User Properties
@@ -287,7 +310,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		//
 		    		
 		    		scheduledJobRequest.setJobRunTime(System.currentTimeMillis() - fireTime.getTime());
-			    	scheduledJobRequestService.replace( scheduledJobRequest );
+			    	documentManager.replaceOne( scheduledJobRequest );
 			    	
 			    	//
 			    	// create and add RunHistory
@@ -321,13 +344,13 @@ public class SalesforceMetadataBackupJob implements Job {
 		    		scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
 			    	scheduledJob.setLastRunDate(fireTime);
 			    	scheduledJob.setSystemModifiedDate(Date.from(Instant.now()));		    	
-			    	scheduledJobService.replace(scheduledJob);
+			    	documentManager.replaceOne(scheduledJob);
 			    	
 			    	//
 			    	// setup the next scheduled job
 			    	//			    	
 			    	
-			    	scheduledJobRequestService.create(setupNextScheduledJobRequest(scheduledJob));
+			    	documentManager.insertOne(setupNextScheduledJobRequest(scheduledJob));
 			    	
 			    	return null;
 		    	});
@@ -339,14 +362,18 @@ public class SalesforceMetadataBackupJob implements Job {
 				executor.awaitTermination(30, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				throw new JobExecutionException(e.getMessage());
+			} finally {
+				documentManagerFactory.close();
 			}
 		}
 	}
 	
 	private ScheduledJobRequest setupNextScheduledJobRequest(ScheduledJob scheduledJob) {
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 		
-		String collectionName = mongoDocumentService.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+		String collectionName = documentManager.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
     	DBRef reference = new DBRef( collectionName, id );		
 		UserRef userRef = new UserRef(reference);
@@ -638,72 +665,72 @@ public class SalesforceMetadataBackupJob implements Job {
 	}
 }
 
-class SalesforceConnectorService {
-	
-	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
-	
-	public Instance getEnvironment(String id, String key) {
-		
-		SalesforceConnector salesforceConnector = mongoDocumentService.findOne(SalesforceConnector.class, eq ( "_id", new ObjectId( id ) ) );
-		
-		Instance instance = salesforceConnector.getInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("Invalid environment key: " + key));
-		
-		return instance;
-	}
-}
+//class SalesforceConnectorService {
+//	
+//	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
+//	
+//	public Instance getEnvironment(String id, String key) {
+//		
+//		SalesforceConnector salesforceConnector = mongoDocumentService.findOne(SalesforceConnector.class, eq ( "_id", new ObjectId( id ) ) );
+//		
+//		Instance instance = salesforceConnector.getInstances()
+//				.stream()
+//				.filter(e -> key.equals(e.getKey()))
+//				.findFirst()
+//				.orElseThrow(() -> new IllegalArgumentException("Invalid environment key: " + key));
+//		
+//		return instance;
+//	}
+//}
 
-class ScheduledJobRequestService extends AbstractCacheService {
-	
-	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
-	
-	public void create(ScheduledJobRequest scheduledJobRequest) {
-		mongoDocumentService.create(scheduledJobRequest);
-		hset(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
-	}
-	
-	public void replace(ScheduledJobRequest scheduledJobRequest) {
-		mongoDocumentService.replace(scheduledJobRequest);
-		hset(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
-	}
-	
-	public Set<ScheduledJobRequest> getScheduledJobRequests() {
-		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
-		FindIterable<ScheduledJobRequest> documents = mongoDocumentService.find(ScheduledJobRequest.class, and ( 
-				eq ( "status", "Scheduled" ), 
-				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
-				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
-				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
-				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
-				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
-		
-		Set<ScheduledJobRequest> scheduledJobs = new HashSet<ScheduledJobRequest>();
-		
-		documents.forEach(new Block<ScheduledJobRequest>() {
-			@Override
-			public void apply(final ScheduledJobRequest document) {
-				scheduledJobs.add(document);
-		    }
-		});
-		
-		return scheduledJobs;
-		
-	}
-}
+//class ScheduledJobRequestService extends AbstractCacheService {
+//	
+//	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
+//	
+//	public void create(ScheduledJobRequest scheduledJobRequest) {
+//		mongoDocumentService.create(scheduledJobRequest);
+//		hset(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
+//	}
+//	
+//	public void replace(ScheduledJobRequest scheduledJobRequest) {
+//		mongoDocumentService.replace(scheduledJobRequest);
+//		hset(System.getProperty(Properties.DEFAULT_SUBJECT), scheduledJobRequest);
+//	}
+//	
+//	public Set<ScheduledJobRequest> getScheduledJobRequests() {
+//		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
+//		FindIterable<ScheduledJobRequest> documents = mongoDocumentService.find(ScheduledJobRequest.class, and ( 
+//				eq ( "status", "Scheduled" ), 
+//				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
+//				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
+//				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
+//				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
+//				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
+//		
+//		Set<ScheduledJobRequest> scheduledJobs = new HashSet<ScheduledJobRequest>();
+//		
+//		documents.forEach(new Block<ScheduledJobRequest>() {
+//			@Override
+//			public void apply(final ScheduledJobRequest document) {
+//				scheduledJobs.add(document);
+//		    }
+//		});
+//		
+//		return scheduledJobs;
+//		
+//	}
+//}
 
-class ScheduledJobService extends AbstractCacheService {
-	
-	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
-	
-	public void replace(ScheduledJob scheduledJob) {
-		hset(scheduledJob.getOwner().getIdentity().getId().toString(), scheduledJob);
-		mongoDocumentService.replace( scheduledJob );
-	}
-	
-	public ScheduledJob findById(ObjectId id) {
-		return mongoDocumentService.findOne(ScheduledJob.class, eq ( "_id", id ) );
-	}
-}
+//class ScheduledJobService extends AbstractCacheService {
+//	
+//	private MongoDocumentService mongoDocumentService = new MongoDocumentService();
+//	
+//	public void replace(ScheduledJob scheduledJob) {
+//		hset(scheduledJob.getOwner().getIdentity().getId().toString(), scheduledJob);
+//		mongoDocumentService.replace( scheduledJob );
+//	}
+//	
+//	public ScheduledJob findById(ObjectId id) {
+//		return mongoDocumentService.findOne(ScheduledJob.class, eq ( "_id", id ) );
+//	}
+//}

@@ -15,7 +15,6 @@ import org.jboss.logging.Logger;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.PublishRequest;
-import com.mongodb.MongoException;
 import com.mongodb.async.client.MongoCollection;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.annotation.Id;
@@ -201,7 +200,7 @@ public abstract class AbstractDocumentManager {
 	 * 
 	 */
 	
-	private static void publish(MongoException exception) {
+	protected static void publish(Throwable exception) {
 		AmazonSNS snsClient = new AmazonSNSClient();
 		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:MONGODB_EXCEPTION", exception.getMessage());
 		snsClient.publish(publishRequest);

@@ -1,10 +1,10 @@
 package com.nowellpoint.api.model.domain;
 
-import com.mongodb.client.FindIterable;
+import java.util.Set;
 
 public class ScheduledJobTypeList extends AbstractCollectionResource<ScheduledJobType, com.nowellpoint.api.model.document.ScheduledJobType> {
 	
-	public ScheduledJobTypeList(FindIterable<com.nowellpoint.api.model.document.ScheduledJobType> documents) {
+	public ScheduledJobTypeList(Set<com.nowellpoint.api.model.document.ScheduledJobType> documents) {
 		super(documents);
 	}
 

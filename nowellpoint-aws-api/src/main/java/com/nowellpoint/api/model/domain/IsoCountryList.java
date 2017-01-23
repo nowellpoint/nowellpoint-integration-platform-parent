@@ -1,10 +1,10 @@
 package com.nowellpoint.api.model.domain;
 
-import com.mongodb.client.FindIterable;
+import java.util.Set;
 
 public class IsoCountryList extends AbstractCollectionResource<IsoCountry, com.nowellpoint.api.model.document.IsoCountry> {
 	
-	public IsoCountryList(FindIterable<com.nowellpoint.api.model.document.IsoCountry> documents) {
+	public IsoCountryList(Set<com.nowellpoint.api.model.document.IsoCountry> documents) {
 		super(documents);
 	}
 

@@ -16,8 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Transaction;
-import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
+import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 import com.nowellpoint.aws.data.QueueListener;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Properties;
@@ -27,7 +27,7 @@ public class PaymentGatewayInboundListener implements MessageListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(PaymentGatewayInboundListener.class);
 	
-	private AccountProfileService accountProfileService = new AccountProfileService();
+	private AccountProfileServiceImpl accountProfileServiceImpl = new AccountProfileServiceImpl();
 	private EmailService emailService = new EmailService();
 
 	@Override
@@ -43,7 +43,7 @@ public class PaymentGatewayInboundListener implements MessageListener {
 				JsonNode transactions = subscription.get("transactions");
 				
 				try {
-					AccountProfile accountProfile = accountProfileService.findBySubscriptionId(subscription.get("id").asText());
+					AccountProfile accountProfile = accountProfileServiceImpl.findBySubscriptionId(subscription.get("id").asText());
 					accountProfile.getSubscription().setStatus(subscription.get("status").asText());
 					accountProfile.getSubscription().setNextBillingDate(new Date(subscription.get("nextBillingDate").asLong()));
 					accountProfile.getSubscription().setUpdatedOn(Date.from(Instant.now()));
@@ -74,7 +74,7 @@ public class PaymentGatewayInboundListener implements MessageListener {
 						}
 					}
 					
-					accountProfileService.updateAccountProfile(accountProfile);
+					accountProfileServiceImpl.updateAccountProfile(accountProfile);
 					
 					emailService.sendInvoiceMessage(accountProfile.getEmail(), accountProfile.getName());
 					

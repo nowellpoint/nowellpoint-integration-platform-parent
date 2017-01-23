@@ -1,3 +1,2 @@
-com.nowellpoint.mongodb.spi.MongoBootstrapExtension
-com.nowellpoint.sqs.spi.SQSBootstrapExtension
 com.nowellpoint.mongodb.spi.MongoDatastoreExtension
+com.nowellpoint.sqs.spi.SQSBootstrapExtension

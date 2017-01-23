@@ -33,8 +33,8 @@ import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
-import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.PlanService;
+import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.util.Assert;
 
 @Path("account-profile")

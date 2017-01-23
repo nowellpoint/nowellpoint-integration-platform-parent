@@ -46,11 +46,11 @@ import com.nowellpoint.api.model.domain.CreditCard;
 import com.nowellpoint.api.model.domain.Error;
 import com.nowellpoint.api.model.domain.Plan;
 import com.nowellpoint.api.model.domain.Subscription;
-import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.api.service.PlanService;
+import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.resource.ResourceException;
@@ -64,7 +64,7 @@ public class SignUpService {
 	private EmailService emailService;
 	
 	@Inject
-	private AccountProfileService accountProfileService;
+	private AccountProfileServiceImpl accountProfileServiceImpl;
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -124,7 +124,7 @@ public class SignUpService {
 		
 		try {
 			
-			accountProfile = accountProfileService.findByUsername(email);
+			accountProfile = accountProfileServiceImpl.findByUsername(email);
 			
 			if (accountProfile.getIsActive()) {
 				Error error = new Error(1000, "Account for email is already enabled");
@@ -158,9 +158,9 @@ public class SignUpService {
 			accountProfile.setAddress(address);
 			
 			if (isNull(accountProfile.getId())) {	
-				accountProfileService.createAccountProfile( accountProfile );
+				accountProfileServiceImpl.createAccountProfile( accountProfile );
 			} else {
-				accountProfileService.updateAccountProfile( accountProfile );
+				accountProfileServiceImpl.updateAccountProfile( accountProfile );
 			}
 		}
 		
@@ -330,7 +330,7 @@ public class SignUpService {
 		
 		accountProfile.setSubscription(subscription);
 		
-		accountProfileService.updateAccountProfile( accountProfile );
+		accountProfileServiceImpl.updateAccountProfile( accountProfile );
 		
 		/**
 		 * 
@@ -379,7 +379,7 @@ public class SignUpService {
 			throw new WebApplicationException(builder.build());
 		}
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findByAccountHref(account.getHref()));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileServiceImpl.findByAccountHref(account.getHref()));
 		
 		if (! query.isPresent()) {
 			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", account.getHref()));
@@ -392,7 +392,7 @@ public class SignUpService {
 		accountProfile.setIsActive(Boolean.TRUE);
 		accountProfile.setEmailVerificationToken(null);
 		
-		accountProfileService.updateAccountProfile(accountProfile);
+		accountProfileServiceImpl.updateAccountProfile(accountProfile);
 		
 		emailService.sendWelcomeMessage(accountProfile.getEmail(), accountProfile.getUsername(), accountProfile.getName());
 		

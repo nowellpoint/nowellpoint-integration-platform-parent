@@ -4,6 +4,8 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
@@ -17,7 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.MongoDocument; 
 
 @JsonInclude(Include.NON_EMPTY)
@@ -51,11 +53,13 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 				UserInfo userInfo = new UserInfo();
 				if (source != null && source.getIdentity() != null) {
 					
-					com.nowellpoint.api.model.document.AccountProfile document = MongoDatastore.getDatabase()
-							.getCollection( source.getIdentity().getCollectionName() )
-							.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
-							.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
-							.first();
+
+					
+					com.nowellpoint.api.model.document.AccountProfile document = new com.nowellpoint.api.model.document.AccountProfile(); //MongoDatastore.getDatabase()
+							//.getCollection( source.getIdentity().getCollectionName() )
+							//.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
+							//.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
+							//.first();
 					
 					userInfo = modelMapper.map(document, UserInfo.class );
 				}
@@ -70,7 +74,7 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 			protected UserRef convert(UserInfo source) {
 				UserRef user = new UserRef();
 				if (source != null) {		
-					String collectionName = MongoDatastore.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
+					String collectionName = "account.profiles";
 					ObjectId id = new ObjectId( source.getId() );
 
 					DBRef reference = new DBRef( collectionName, id );

@@ -1,24 +1,24 @@
 package com.nowellpoint.mongodb.document;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.jboss.logging.Logger;
 
+import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
-import com.mongodb.async.client.FindIterable;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 
 public class DocumentManagerImpl extends AbstractDocumentManager implements DocumentManager {
-	
-	private static final Logger LOGGER = Logger.getLogger(DocumentManager.class);
 	
 	public DocumentManagerImpl(DocumentManagerFactory documentManagerFactory) {
 		super(documentManagerFactory);
@@ -27,6 +27,34 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 	@Override
 	public <T> String resolveCollectionName(Class<T> documentClass) {
 		return resolveCollectionName(documentClass);
+	}
+	
+	@Override
+	public <T> Set<T> findAll(Class<T> documentClass) {
+		
+		final AtomicReference<Set<T>> documents = new AtomicReference<>();
+		final AtomicReference<Throwable> throwable = new AtomicReference<>();
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		SingleResultCallback<Void> callback = (Void, t) -> {
+			if (t != null) {
+	    		throwable.set(t);
+	    	} 
+			latch.countDown();
+		};
+		
+		documents.set(new HashSet<>());
+		
+		Block<T> block = new Block<T>() {
+		    @Override
+		    public void apply(final T document) {
+		        documents.get().add(document);
+		    }
+		};
+		
+		getCollection( documentClass ).withDocumentClass( documentClass ).find().forEach(block, callback);
+		
+		return documents.get();
 	}
 	
 	@Override
@@ -70,21 +98,31 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 	}
 	
 	@Override
-	public <T> FindIterable<T> find(Class<T> documentClass, Bson query) {
+	public <T> Set<T> find(Class<T> documentClass, Bson query) {
 		
-		FindIterable<T> search = null;
+		final AtomicReference<Set<T>> documents = new AtomicReference<>();
+		final AtomicReference<Throwable> throwable = new AtomicReference<>();
+		final CountDownLatch latch = new CountDownLatch(1);
 		
-		try {
-			
-			search = getCollection( documentClass )
-					.withDocumentClass( documentClass )
-					.find( query );
-			
-		} catch (IllegalArgumentException e) {
-			LOGGER.error( "query exception : ", e.getCause() );
-		}
+		SingleResultCallback<Void> callback = (Void, t) -> {
+			if (t != null) {
+	    		throwable.set(t);
+	    	} 
+			latch.countDown();
+		};
 		
-		return search;
+		documents.set(new HashSet<>());
+		
+		Block<T> block = new Block<T>() {
+		    @Override
+		    public void apply(final T document) {
+		        documents.get().add(document);
+		    }
+		};
+		
+		getCollection( documentClass ).withDocumentClass( documentClass ).find( query ).forEach(block, callback);
+		
+		return documents.get();
 	}
 
 	@Override
@@ -94,15 +132,27 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 		
 		SingleResultCallback<Void> callback = (result, t) -> {
 			if (t != null) {
-	    		//throwable.set(t);
-	    	} else {
-	    		//document.set(result);
+				publish(t);
 	    	}
 		};
 		
 		@SuppressWarnings("unchecked")
 		MongoCollection<T> collection = (MongoCollection<T>) getCollection( document.getClass() );
         collection.insertOne(document, callback);
+	}
+	
+	@Override
+	public <T> void upsert(Bson query, T document) {
+		
+		SingleResultCallback<UpdateResult> callback = (result, t) -> {
+			if (t != null) {
+				publish(t);
+	    	}
+		};
+		
+		@SuppressWarnings("unchecked")
+		MongoCollection<T> collection = (MongoCollection<T>) getCollection( document.getClass() );
+		collection.replaceOne(query, document, new UpdateOptions().upsert(true), callback);
 	}
 	
 	@Override

@@ -19,6 +19,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import com.nowellpoint.api.model.domain.ScheduledJob;
 import com.nowellpoint.api.service.ScheduledJobService;
+import com.nowellpoint.api.service.impl.ScheduledJobServiceImpl;
 
 public class JobSchedulerManager2 {
 	
@@ -35,7 +36,7 @@ public class JobSchedulerManager2 {
 		
 		Date runTime = evenMinuteDate(new Date());
 		
-		ScheduledJobService scheduledJobService = new ScheduledJobService();
+		ScheduledJobService scheduledJobService = new ScheduledJobServiceImpl();
 		Set<ScheduledJob> scheduledJobs = scheduledJobService.findScheduled().getItems();
 		
 		scheduledJobs.stream().forEach(job -> {

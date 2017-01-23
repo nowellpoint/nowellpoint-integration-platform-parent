@@ -21,8 +21,8 @@ import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Project;
-import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.ProjectService;
+import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 
 @Path("/project")
 public class ProjectResource {
@@ -31,7 +31,7 @@ public class ProjectResource {
 	private ProjectService projectService;
 	
 	@Inject
-	private AccountProfileService accountProfileService;
+	private AccountProfileServiceImpl accountProfileServiceImpl;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -76,7 +76,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response createProject(Project project) {
 		
-		AccountProfile owner = accountProfileService.findByAccountHref(project.getOwner().getAccountHref());	
+		AccountProfile owner = accountProfileServiceImpl.findByAccountHref(project.getOwner().getAccountHref());	
 		
 		project.setOwner(owner);
 		

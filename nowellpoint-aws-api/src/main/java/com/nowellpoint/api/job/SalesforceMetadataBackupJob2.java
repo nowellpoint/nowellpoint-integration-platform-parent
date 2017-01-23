@@ -1,25 +1,18 @@
 package com.nowellpoint.api.job;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.util.Assert.isNotNull;
 import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +20,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -40,14 +32,15 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBRef;
-import com.nowellpoint.api.model.domain.Backup;
 import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.RunHistory;
 import com.nowellpoint.api.model.domain.ScheduledJob;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.api.service.SalesforceConnectorService;
+import com.nowellpoint.api.service.ScheduledJobService;
+import com.nowellpoint.api.service.impl.SalesforceConnectorServiceImpl;
+import com.nowellpoint.api.service.impl.ScheduledJobServiceImpl;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -64,8 +57,8 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.MongoDatastore;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -77,9 +70,6 @@ import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
-
-import com.nowellpoint.api.service.SalesforceConnectorService;
-import com.nowellpoint.api.service.ScheduledJobService;
 
 public class SalesforceMetadataBackupJob2 implements Job {
 	
@@ -95,7 +85,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 		System.out.println(context.getJobDetail().getKey().getGroup());
 		System.out.println(context.getJobDetail().getKey().getName());
 		
-		ScheduledJobService scheduledJobService = new ScheduledJobService();
+		ScheduledJobService scheduledJobService = new ScheduledJobServiceImpl();
 		
 		ScheduledJob scheduledJob = null;
 		
@@ -108,7 +98,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 		
 		try {
 			
-			SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
+			SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorServiceImpl();
 			
 			scheduledJob.setStatus("Running");
 			scheduledJobService.updateScheduledJob(scheduledJob.getId(), scheduledJob);

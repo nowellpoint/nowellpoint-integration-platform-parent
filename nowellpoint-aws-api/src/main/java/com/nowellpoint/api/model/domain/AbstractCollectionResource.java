@@ -29,6 +29,18 @@ public abstract class AbstractCollectionResource<R extends AbstractResource, D e
 		});
 	}
 	
+	public AbstractCollectionResource(Set<D> documents) {
+		documents.forEach(document -> {
+			try {
+				@SuppressWarnings("unchecked")
+				Constructor<R> constructor = (Constructor<R>) Class.forName(getItemType().getName()).getConstructor(MongoDocument.class);
+				items.add(constructor.newInstance(document));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+	
 	protected abstract Class<R> getItemType();
 	
 	@Override

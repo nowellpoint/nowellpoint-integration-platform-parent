@@ -20,7 +20,6 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.inject.spi.Producer;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.enterprise.util.AnnotationLiteral;
 
@@ -30,36 +29,6 @@ import org.jboss.logging.Logger;
 import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.annotation.Document;
-
-/**
- * <p>
- * The container fires an event of this type for each {@linkplain javax.enterprise.inject.Produces producer method or field} of
- * each enabled bean, including resources.
- * </p>
- * <p>
- * Any observer of this event is permitted to wrap and/or replace the {@code Producer}. The container must use the final value
- * of this property, after all observers have been called, whenever it calls the producer or disposer.
- * </p>
- * <p>
- * For example, this observer decorates the {@code Producer} for the all producer methods and field of type
- * {@code EntityManager}.
- * </p>
- * 
- * <pre>
- * void decorateEntityManager(@Observes ProcessProducer<?, EntityManager> pp) {
- *     pit.setProducer(decorate(pp.getProducer()));
- * }
- * </pre>
- * <p>
- * If any observer method of a {@code ProcessProducer} event throws an exception, the exception is treated as a definition error
- * by the container.
- * </p>
- * 
- * @see Producer
- * @author David Allen
- * @param <T> The bean class of the bean that declares the producer method or field
- * @param <X> The return type of the producer method or the type of the producer field
- */
 
 public class MongoDatastoreExtension implements Extension {
 	
@@ -85,16 +54,9 @@ public class MongoDatastoreExtension implements Extension {
     	LOGGER.info("beginning the scanning process");
     }
     
-    public void afterBeanDiscovery(@Observes AfterBeanDiscovery discovery) {
+    void afterBeanDiscovery(@Observes AfterBeanDiscovery discovery) {
     	LOGGER.info("finished the scanning process");
     }
-    
-    /**
-    * Returns the {@link javax.enterprise.inject.spi.AnnotatedField} representing the producer field or the
-    * {@link javax.enterprise.inject.spi.AnnotatedMethod} representing the producer method.
-    * 
-    * @return the {@link javax.enterprise.inject.spi.AnnotatedMember} representing the producer
-    */
     
 	@SuppressWarnings("serial")
 	void afterBeanDiscovery(@Observes AfterBeanDiscovery discovery, BeanManager manager) {
