@@ -1,10 +1,6 @@
 package com.nowellpoint.api.model.domain;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.util.Date;
-
-import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
@@ -19,12 +15,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.UserRef;
+import com.nowellpoint.mongodb.Datastore;
+import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.MongoDocument; 
 
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractResource implements Resource, Createable, Updateable {
-	
+
 	protected static final ModelMapper modelMapper = new ModelMapper();
 	
 	static {
@@ -53,15 +51,21 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 				UserInfo userInfo = new UserInfo();
 				if (source != null && source.getIdentity() != null) {
 					
-
+					System.out.println(source.getIdentity().getCollectionName() );
+					System.out.println(source.getIdentity().getId() );
 					
-					com.nowellpoint.api.model.document.AccountProfile document = new com.nowellpoint.api.model.document.AccountProfile(); //MongoDatastore.getDatabase()
-							//.getCollection( source.getIdentity().getCollectionName() )
-							//.withDocumentClass( com.nowellpoint.api.model.document.AccountProfile.class )
-							//.find( eq ( "_id", new ObjectId( source.getIdentity().getId().toString() ) ) )
-							//.first();
+					DocumentManager documentManager = Datastore.getCurrentSession().createDocumentManager();
 					
-					userInfo = modelMapper.map(document, UserInfo.class );
+//					com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne( 
+//							com.nowellpoint.api.model.document.AccountProfile.class, 
+//							new ObjectId( source.getIdentity().getId().toString() ) );
+					
+					com.nowellpoint.api.model.document.AccountProfile document = new com.nowellpoint.api.model.document.AccountProfile();
+					document.setName("My name");
+					
+					userInfo = modelMapper.map( document, UserInfo.class );
+					
+					System.out.println( userInfo.getCompany() );
 				}
 				
 				return userInfo; 
@@ -74,9 +78,8 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 			protected UserRef convert(UserInfo source) {
 				UserRef user = new UserRef();
 				if (source != null) {		
-					String collectionName = "account.profiles";
+					String collectionName = Datastore.getCurrentSession().resolveCollectionName(com.nowellpoint.api.model.document.AccountProfile.class);
 					ObjectId id = new ObjectId( source.getId() );
-
 					DBRef reference = new DBRef( collectionName, id );
 					user.setIdentity(reference);
 				}
@@ -97,6 +100,8 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	private Date systemModifiedDate;
 	
 	private Meta meta;
+	
+	protected DocumentManagerFactory datastore;
 		
 	public AbstractResource() {
 		

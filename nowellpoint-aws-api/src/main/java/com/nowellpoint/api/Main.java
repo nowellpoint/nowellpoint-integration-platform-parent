@@ -8,7 +8,6 @@ import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
-import org.wildfly.swarm.logging.LoggingFraction;
 
 import com.nowellpoint.util.Properties;
 
@@ -39,7 +38,7 @@ public class Main {
                 .getValue());
         
         //
-        // set default timezone to UTC
+        // set default time zone to UTC
         //
         
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -52,15 +51,14 @@ public class Main {
         		.addPackages(true, Package.getPackage("com.nowellpoint.api"))
         		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties")
-        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        
-        deployment.addAllDependencies();
+        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+        		.addAllDependencies();
         
         //
-        // start the container and deploy the archives
+        // start the container and deploy the archive
         //
-
-        container.fraction(LoggingFraction.createDefaultLoggingFraction()).start().deploy(deployment);
+        
+        container.start().deploy(deployment);
 
     }
 	

@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
@@ -12,9 +13,6 @@ import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 
@@ -31,30 +29,20 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 	
 	@Override
 	public <T> Set<T> findAll(Class<T> documentClass) {
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( documentClass );
+		Set<T> objects = new HashSet<>();
+		Set<Document> documents = findAll( collection );
+		documents.forEach(document -> {
+			T object = null;
+			try {
+				object = convertToObject(documentClass, document);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			objects.add(object);
+		});
 		
-		final AtomicReference<Set<T>> documents = new AtomicReference<>();
-		final AtomicReference<Throwable> throwable = new AtomicReference<>();
-		final CountDownLatch latch = new CountDownLatch(1);
-		
-		SingleResultCallback<Void> callback = (Void, t) -> {
-			if (t != null) {
-	    		throwable.set(t);
-	    	} 
-			latch.countDown();
-		};
-		
-		documents.set(new HashSet<>());
-		
-		Block<T> block = new Block<T>() {
-		    @Override
-		    public void apply(final T document) {
-		        documents.get().add(document);
-		    }
-		};
-		
-		getCollection( documentClass ).withDocumentClass( documentClass ).find().forEach(block, callback);
-		
-		return documents.get();
+		return objects;
 	}
 	
 	@Override
@@ -64,145 +52,75 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 	
 	@Override
 	public <T> T findOne(Class<T> documentClass, Bson query) {
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( documentClass );
+		Document document = findOne(collection, query);
 		
-		final AtomicReference<T> document = new AtomicReference<>();
-		final AtomicReference<Throwable> throwable = new AtomicReference<>();
-		final CountDownLatch latch = new CountDownLatch(1);
-		
-		SingleResultCallback<T> callback = (result, t) -> {
-			if (t != null) {
-	    		throwable.set(t);
-	    	} else {
-	    		document.set(result);
-	    	}
-			latch.countDown();
-		};
-		
-		getCollection( documentClass ).withDocumentClass( documentClass ).find( query ).first( callback );
-		
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-		
-		if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
-		}
-		
-		if (document.get() == null) {
+		if (document == null) {
 			throw new DocumentNotFoundException(String.format( "Document of type: %s was not found: %s", documentClass.getSimpleName(), bsonToString(query) ) );
 		}
 		
-		return document.get();
+		T object = null;
+		try {
+			object = convertToObject(documentClass, document);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return object;
 	}
 	
 	@Override
 	public <T> Set<T> find(Class<T> documentClass, Bson query) {
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( documentClass );
+		Set<T> objects = new HashSet<>();
+		Set<Document> documents = find( collection, query );
+		documents.forEach(document -> {
+			T object = null;
+			try {
+				object = convertToObject(documentClass, document);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			objects.add(object);
+		});
 		
-		final AtomicReference<Set<T>> documents = new AtomicReference<>();
-		final AtomicReference<Throwable> throwable = new AtomicReference<>();
-		final CountDownLatch latch = new CountDownLatch(1);
-		
-		SingleResultCallback<Void> callback = (Void, t) -> {
-			if (t != null) {
-	    		throwable.set(t);
-	    	} 
-			latch.countDown();
-		};
-		
-		documents.set(new HashSet<>());
-		
-		Block<T> block = new Block<T>() {
-		    @Override
-		    public void apply(final T document) {
-		        documents.get().add(document);
-		    }
-		};
-		
-		getCollection( documentClass ).withDocumentClass( documentClass ).find( query ).forEach(block, callback);
-		
-		return documents.get();
+		return objects;
 	}
 
 	@Override
 	public <T> void insertOne(T document) {
-		
-		setIdValue(document, new ObjectId());
-		
-		SingleResultCallback<Void> callback = (result, t) -> {
-			if (t != null) {
-				publish(t);
-	    	}
-		};
-		
-		@SuppressWarnings("unchecked")
-		MongoCollection<T> collection = (MongoCollection<T>) getCollection( document.getClass() );
-        collection.insertOne(document, callback);
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( document.getClass() );
+		Document bson = convertToBson(document);
+		insertOne(collection, bson);
+		setIdValue(document, bson.get(ID));
 	}
 	
 	@Override
 	public <T> void upsert(Bson query, T document) {
-		
-		SingleResultCallback<UpdateResult> callback = (result, t) -> {
-			if (t != null) {
-				publish(t);
-	    	}
-		};
-		
-		@SuppressWarnings("unchecked")
-		MongoCollection<T> collection = (MongoCollection<T>) getCollection( document.getClass() );
-		collection.replaceOne(query, document, new UpdateOptions().upsert(true), callback);
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( document.getClass() );
+		Document bson = convertToBson(document);
+		upsert(collection, bson, query);
+		setIdValue(document, bson.get(ID));
 	}
 	
 	@Override
 	public <T> void replaceOne(T document) {
-		
 		Object id = resolveId(document);
-		
-		SingleResultCallback<UpdateResult> callback = (result, t) -> {
-			if (t != null) {
-	    		//throwable.set(t);
-	    	} else {
-	    		//document.set(result);
-	    	}
-		};
-		
-		@SuppressWarnings("unchecked")
-		MongoCollection<T> collection = (MongoCollection<T>) getCollection( document.getClass() );
-		collection.replaceOne( Filters.eq ( "_id", id ), document, callback );
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( document.getClass() );
+		Document bson = convertToBson(document);
+		replaceOne( collection, bson, Filters.eq ( "_id", id ) );
 	}
 	
 	@Override
 	public <T> void deleteOne(T document) {
-		
 		Object id = resolveId(document);
-		
-		SingleResultCallback<DeleteResult> callback = (result, t) -> {
-			if (t != null) {
-	    		//throwable.set(t);
-	    	} else {
-	    		//document.set(result);
-	    	}
-		};
-		
-		@SuppressWarnings("unchecked")
-		MongoCollection<T> collection = (MongoCollection<T>) getCollection( document.getClass() );
-		collection.deleteOne(  Filters.eq ( "_id", id ), callback );
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( document.getClass() );
+		deleteOne(  collection, Filters.eq ( ID, id ) );
 	}
 	
 	@Override
 	public <T> void deleteMany(Class<T> documentClass, Bson query) {
-		
-		SingleResultCallback<DeleteResult> callback = (result, t) -> {
-			if (t != null) {
-	    		//throwable.set(t);
-	    	} else {
-	    		//document.set(result);
-	    	}
-		};
-		
-		MongoCollection<T> collection = (MongoCollection<T>) getCollection( documentClass );
-		collection.deleteMany( query, callback );
+		MongoCollection<Document> collection = (MongoCollection<Document>) getCollection( documentClass );
+		deleteMany( collection, query );
 	}
 }

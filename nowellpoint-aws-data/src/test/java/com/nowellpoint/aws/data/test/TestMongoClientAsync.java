@@ -1,59 +1,42 @@
 package com.nowellpoint.aws.data.test;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.Set;
 
-import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.junit.Test;
 
-import com.mongodb.Block;
-import com.mongodb.ConnectionString;
-import com.mongodb.async.SingleResultCallback;
-import com.mongodb.async.client.FindIterable;
-import com.mongodb.async.client.MongoClient;
-import com.mongodb.async.client.MongoClients;
-import com.mongodb.async.client.MongoCollection;
-import com.mongodb.async.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
+import com.nowellpoint.mongodb.Datastore;
+import com.nowellpoint.mongodb.DocumentManager;
+import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.util.Properties;
 
 public class TestMongoClientAsync {
 	
 	@Test
 	public void testMongoClientConnect() {
-		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		//Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 		
-		final CountDownLatch latch = new CountDownLatch(1);
+		System.setProperty("mongo.client.uri", "");
 		
-		SingleResultCallback<Void> callback = new SingleResultCallback<Void>() {
-		    @Override
-		    public void onResult(final Void result, final Throwable t) {
-		    	if (t != null) {
-		    		System.out.println(t.getMessage());
-		    	}
-		        latch.countDown();
-		    }
-		};
+		AccountProfile accountProfile = new AccountProfile();
+		accountProfile.setName("John Herson");
+		accountProfile.setFirstName("John");
+		accountProfile.setLastName("Herson");
+		accountProfile.setEmail("email@gmail.com");
+		accountProfile.setCompany("Nowellpoint");
 		
-		ConnectionString connectionString = new ConnectionString("mongodb://".concat(Properties.getProperty(Properties.MONGO_CLIENT_URI)));
+		DocumentManagerFactory dmf = Datastore.createDocumentManagerFactory();
+		DocumentManager dm = dmf.createDocumentManager();
+		dm.insertOne( accountProfile );
 		
-		MongoClient mongoClient = MongoClients.create(connectionString);
-		MongoDatabase mongoDatabase = mongoClient.getDatabase(connectionString.getDatabase());
-		MongoCollection<Document> collection = mongoDatabase.getCollection("account.profiles");
-		FindIterable<Document> documents = collection.withDocumentClass(Document.class).find( Filters.eq ( "_id", new ObjectId( "5808408e392e00330aeef78d" ) ) );
-		documents.forEach(new Block<Document>() {
-			@Override
-		       public void apply(final Document document) {
-		           System.out.println(document.toJson());
-		       }
-		}, callback);
+		accountProfile = dm.findOne(AccountProfile.class, accountProfile.getId() );
 		
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			mongoClient.close();
-		}
+		System.out.println( accountProfile.getId() );
+		
+		dm.deleteOne( accountProfile );
+		
+		Set<AccountProfile> accountProfiles = dm.findAll(AccountProfile.class);
+		System.out.println(accountProfiles.size());
+		
+		dmf.close();
 	}	
 }

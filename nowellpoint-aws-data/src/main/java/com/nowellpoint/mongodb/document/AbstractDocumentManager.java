@@ -3,26 +3,27 @@ package com.nowellpoint.mongodb.document;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClient;
-import com.amazonaws.services.sns.model.PublishRequest;
 import com.mongodb.async.client.MongoCollection;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.annotation.Id;
 import com.nowellpoint.mongodb.annotation.MappedSuperclass;
 
-public abstract class AbstractDocumentManager {
+public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractDocumentManager.class);
+	
+	protected static final String ID = "_id"; 			
 	
 	private DocumentManagerFactory documentManagerFactory;
 	
@@ -64,7 +65,7 @@ public abstract class AbstractDocumentManager {
 	 * 
 	 */
 	
-	protected <T> MongoCollection<T> getCollection(Class<T> documentClass) {
+	protected MongoCollection<Document> getCollection(Class<?> documentClass) {
 		return documentManagerFactory.getCollection( documentClass );
 	}
 	
@@ -100,6 +101,49 @@ public abstract class AbstractDocumentManager {
 		}
 		return id;
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param object
+	 * @return
+	 * 
+	 * 
+	 */
+	
+	protected Document convertToBson(Object object) {
+		Document document = new Document();
+		Set<Field> fields = getAllFields(object);
+		fields.stream().forEach(field -> {
+			if (! Modifier.isStatic(field.getModifiers())) {
+				if (field.isAnnotationPresent(Id.class)) {
+					document.put(ID, getIdValue(object, field));
+				} else {
+					document.put(field.getName(), getFieldValue(object, field));
+				}
+			}
+		});
+		
+		return document;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	protected <T> T convertToObject(Class<T> type, Document bson) throws InstantiationException, IllegalAccessException {
+		Object object = type.newInstance();
+		Set<Field> fields = getAllFields(object);
+		fields.stream().forEach(field -> {
+			if (! Modifier.isStatic(field.getModifiers())) {
+				if (field.isAnnotationPresent(Id.class)) {
+					setFieldValue(field.getDeclaringClass(), object, field, bson.get(ID));
+				} else {
+					setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
+				}
+			}
+		});
+		
+		return (T) object;
+	}
 
 	/**
 	 * 
@@ -132,7 +176,11 @@ public abstract class AbstractDocumentManager {
 	private Object getIdValue(Object object, Field field) {
 		Object id = getFieldValue(object, field);
 		if (field.getType().isAssignableFrom(ObjectId.class)) {
-	    	id = new ObjectId(id.toString()); 	
+			if (id != null) {
+				id = new ObjectId(id.toString()); 	
+			} else {
+				id = new ObjectId();
+			}
 	    } 
 		return id;
 	}
@@ -195,14 +243,28 @@ public abstract class AbstractDocumentManager {
 	/**
 	 * 
 	 * 
-	 * @param exception
+	 * @param clazz
+	 * @param object
+	 * @param field
+	 * @param value
 	 * 
 	 * 
 	 */
 	
-	protected static void publish(Throwable exception) {
-		AmazonSNS snsClient = new AmazonSNSClient();
-		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:MONGODB_EXCEPTION", exception.getMessage());
-		snsClient.publish(publishRequest);
+	private void setFieldValue(Class<?> clazz, Object object, Field field, Object value) {
+		if (value != null) {
+			try {
+			    Method method = clazz.getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});	
+			    if (field.getType().isAssignableFrom(Locale.class)) {
+			    	value = Locale.forLanguageTag(value.toString());
+			    }
+			    method.invoke(object, new Object[] {value});
+			} catch (NoSuchMethodException e) {
+				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+				return;
+			} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }
