@@ -25,6 +25,12 @@ public class Datastore implements Serializable {
 		return documentManagerFactory;
 	}
 	
+	public static DocumentManagerFactory createDocumentManagerFactory(String mongoClientUri) {
+		ConnectionString connectionString = new ConnectionString( mongoClientUri.startsWith("mongodb://") ?  mongoClientUri : "mongodb://".concat(mongoClientUri) );
+		documentManagerFactory = new DocumentManagerFactoryImpl(connectionString);
+		return documentManagerFactory;
+	}
+	
 	public static DocumentManagerFactory createDocumentManagerFactory(List<Codec<?>> codecs) {
 		ConnectionString connectionString = new ConnectionString("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
 		documentManagerFactory = new DocumentManagerFactoryImpl(connectionString, codecs);

@@ -3,23 +3,20 @@ package com.nowellpoint.aws.data.test;
 import java.util.Date;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.document.DateDeserializer;
-import com.nowellpoint.mongodb.document.DateSerializer;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
+import com.nowellpoint.mongodb.annotation.Transient;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="account.profiles", codec=Object.class)
 public class AccountProfile extends MongoDocument {
 
-	/**
-	 * 
-	 */
-
 	private static final long serialVersionUID = 3163086585922281575L;
+	
+	@Reference
+	private UserInfo identity;
 
 	private String username;
 
@@ -56,12 +53,11 @@ public class AccountProfile extends MongoDocument {
 	private String localeSidKey;
 
 	private String emailEncodingKey;
+	
+	@Transient
+	private String temp;
 
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastLoginDate;
-	
-	
 	
 	private Boolean hasFullAccess;
 	
@@ -69,11 +65,32 @@ public class AccountProfile extends MongoDocument {
 	
 	private Boolean enableSalesforceLogin;
 	
+	private Integer integerNumber;
+	
+	private Double doubleNumber;
+	
+	private Long longNumber;
+	
+	@EmbedOne
+	private Address address;
+
+	@EmbedOne
+	private Photos photos;
+	
+	@EmbedMany
+	private Set<Transaction> transactions;
+	
 	public AccountProfile() {
 		setHasFullAccess(Boolean.FALSE);
 	}
 
-	
+	public UserInfo getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(UserInfo identity) {
+		this.identity = identity;
+	}
 
 	public String getUsername() {
 		return username;
@@ -227,7 +244,13 @@ public class AccountProfile extends MongoDocument {
 		this.lastLoginDate = lastLoginDate;
 	}
 
-	
+	public String getTemp() {
+		return temp;
+	}
+
+	public void setTemp(String temp) {
+		this.temp = temp;
+	}
 
 	public Boolean getHasFullAccess() {
 		return hasFullAccess;
@@ -251,5 +274,53 @@ public class AccountProfile extends MongoDocument {
 
 	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
 		this.enableSalesforceLogin = enableSalesforceLogin;
+	}
+	
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
+	}
+
+	public Integer getIntegerNumber() {
+		return integerNumber;
+	}
+
+	public void setIntegerNumber(Integer integerNumber) {
+		this.integerNumber = integerNumber;
+	}
+
+	public Double getDoubleNumber() {
+		return doubleNumber;
+	}
+
+	public void setDoubleNumber(Double doubleNumber) {
+		this.doubleNumber = doubleNumber;
+	}
+
+	public Long getLongNumber() {
+		return longNumber;
+	}
+
+	public void setLongNumber(Long longNumber) {
+		this.longNumber = longNumber;
+	}
+
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 }

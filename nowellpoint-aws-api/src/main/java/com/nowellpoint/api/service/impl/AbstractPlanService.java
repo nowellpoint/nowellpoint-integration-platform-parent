@@ -47,7 +47,7 @@ public class AbstractPlanService extends AbstractCacheService {
 		com.nowellpoint.api.model.document.Plan document = get(com.nowellpoint.api.model.document.Plan.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-			document = documentManager.findOne(com.nowellpoint.api.model.document.Plan.class, new ObjectId( id ) );
+			document = documentManager.fetch(com.nowellpoint.api.model.document.Plan.class, new ObjectId( id ) );
 			set(id, document);
 		}
 		Plan resource = new Plan( document );

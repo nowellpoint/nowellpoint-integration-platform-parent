@@ -144,7 +144,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		    			// update ScheduledJob
 		    			//
 		    			
-		    			scheduledJob = documentManager.findOne(ScheduledJob.class, scheduledJobRequest.getScheduledJobId() );
+		    			scheduledJob = documentManager.fetch(ScheduledJob.class, scheduledJobRequest.getScheduledJobId() );
 		    			scheduledJob.setStatus(scheduledJobRequest.getStatus());
 		    			documentManager.replaceOne(scheduledJob);
 
@@ -152,7 +152,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    		// get environment associated with the ScheduledJob
 			    		//
 		    			
-		    			SalesforceConnector salesforceConnector = documentManager.findOne(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( scheduledJobRequest.getConnectorId() ) );
+		    			SalesforceConnector salesforceConnector = documentManager.fetch(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( scheduledJobRequest.getConnectorId() ) );
 		    			
 		    			Instance instance = salesforceConnector.getInstances()
 		    					.stream()

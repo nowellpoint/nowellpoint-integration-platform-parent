@@ -11,11 +11,13 @@ public interface DocumentManager {
 	
 	<T> Set<T> findAll(Class<T> documentClass);
 	
-	<T> T findOne(Class<T> documentClass, ObjectId id);
+	<T> T fetch(Class<T> documentClass, ObjectId id);
 	
 	<T> T findOne(Class<T> documentClass, Bson query);
 	
 	<T> Set<T> find(Class<T> documentClass, Bson query);
+	
+	<T> void refresh(T document);
 	
 	<T> void insertOne(T document);
 	
@@ -26,5 +28,7 @@ public interface DocumentManager {
 	<T> void deleteMany(Class<T> documentClass, Bson query);
 	
 	<T> void upsert(Bson query, T document);
+	
+	<T> T getReference(Class<T> documentClass, Object id);
 
 }

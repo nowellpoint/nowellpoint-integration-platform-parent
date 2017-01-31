@@ -24,7 +24,7 @@ abstract class AbstractScheduledJobTypeService extends AbstractCacheService {
 		com.nowellpoint.api.model.document.ScheduledJobType document = get(com.nowellpoint.api.model.document.ScheduledJobType.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-			document = documentManager.findOne(com.nowellpoint.api.model.document.ScheduledJobType.class, new ObjectId( id ) ); 
+			document = documentManager.fetch(com.nowellpoint.api.model.document.ScheduledJobType.class, new ObjectId( id ) ); 
 			set(id, document);
 		}
 		ScheduledJobType scheduledJobType = new ScheduledJobType( document );

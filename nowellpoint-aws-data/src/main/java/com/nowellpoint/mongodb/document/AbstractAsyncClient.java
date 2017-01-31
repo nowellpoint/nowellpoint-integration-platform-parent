@@ -17,6 +17,16 @@ import com.mongodb.client.result.UpdateResult;
 
 public abstract class AbstractAsyncClient {
 	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param query
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	public Document findOne(MongoCollection<Document> collection, Bson query) {
 		
 		final AtomicReference<Document> document = new AtomicReference<>();
@@ -37,15 +47,25 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
 		
 		if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 		
 		return document.get();
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param query
+	 * @return
+	 * 
+	 * 
+	 */
 	
 	public Set<Document> find(MongoCollection<Document> collection, Bson query) {
 		
@@ -71,15 +91,24 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
 		
 		if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 		
 		return documents.get();
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @return
+	 * 
+	 * 
+	 */
 	
 	public Set<Document> findAll(MongoCollection<Document> collection) {
 		
@@ -105,15 +134,24 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
 		
 		if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 		
 		return documents.get();
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param document
+	 * 
+	 * 
+	 */
 	
 	public void insertOne(MongoCollection<Document> collection, Document document) {
 		
@@ -132,13 +170,22 @@ public abstract class AbstractAsyncClient {
         try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
         
         if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param document
+	 * @param query
+	 * 
+	 */
 	
 	public void replaceOne(MongoCollection<Document> collection, Document document, Bson query) {
 		
@@ -157,13 +204,23 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
         
         if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param document
+	 * @param query
+	 * 
+	 * 
+	 */
 	
 	public void upsert(MongoCollection<Document> collection, Document document, Bson query) {
 		
@@ -182,13 +239,22 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
         
         if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param query
+	 * 
+	 * 
+	 */
 	
 	public void deleteOne(MongoCollection<Document> collection, Bson query) {
 		
@@ -207,13 +273,22 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
         
         if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 	}
+	
+	/**
+	 * 
+	 * 
+	 * @param collection
+	 * @param query
+	 * 
+	 * 
+	 */
 	
 	public void deleteMany(MongoCollection<Document> collection, Bson query) {
 		
@@ -234,12 +309,11 @@ public abstract class AbstractAsyncClient {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new DocumentManagerException(e);
 		}
         
         if (throwable.get() != null) {
-			throw new RuntimeException(throwable.get());
+			throw new DocumentManagerException(throwable.get());
 		}
 	}
-
 }

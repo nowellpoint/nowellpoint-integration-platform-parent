@@ -51,21 +51,7 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 				UserInfo userInfo = new UserInfo();
 				if (source != null && source.getIdentity() != null) {
 					
-					System.out.println(source.getIdentity().getCollectionName() );
-					System.out.println(source.getIdentity().getId() );
-					
-					DocumentManager documentManager = Datastore.getCurrentSession().createDocumentManager();
-					
-//					com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne( 
-//							com.nowellpoint.api.model.document.AccountProfile.class, 
-//							new ObjectId( source.getIdentity().getId().toString() ) );
-					
-					com.nowellpoint.api.model.document.AccountProfile document = new com.nowellpoint.api.model.document.AccountProfile();
-					document.setName("My name");
-					
-					userInfo = modelMapper.map( document, UserInfo.class );
-					
-					System.out.println( userInfo.getCompany() );
+					userInfo = modelMapper.map( source, UserInfo.class );
 				}
 				
 				return userInfo; 

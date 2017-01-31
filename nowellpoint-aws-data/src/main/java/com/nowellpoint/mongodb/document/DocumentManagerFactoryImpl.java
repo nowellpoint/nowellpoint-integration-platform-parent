@@ -1,6 +1,5 @@
 package com.nowellpoint.mongodb.document;
 
-import java.io.Closeable;
 import java.util.List;
 
 import org.bson.Document;
@@ -25,7 +24,7 @@ import com.mongodb.connection.SslSettings;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 
-public class DocumentManagerFactoryImpl implements DocumentManagerFactory, Closeable {
+public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoCloseable {
 	
 	private static final Logger LOGGER = Logger.getLogger(DocumentManagerFactory.class);
 	
@@ -35,8 +34,21 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, Close
 	private static MongoDatabase database;
 	
 	public DocumentManagerFactoryImpl(ConnectionString connectionString) {
-		client = MongoClients.create(connectionString);
+		
+		MongoClientSettings settings = MongoClientSettings.builder()
+	            .readPreference(ReadPreference.nearest())
+	            .codecRegistry(MongoClients.getDefaultCodecRegistry())
+	            .connectionPoolSettings(ConnectionPoolSettings.builder().applyConnectionString(connectionString).build())
+	            .sslSettings(SslSettings.builder().applyConnectionString(connectionString).build())
+	            .writeConcern(WriteConcern.ACKNOWLEDGED)
+	            .clusterSettings(ClusterSettings.builder().applyConnectionString(connectionString).build())
+	            .credentialList(connectionString.getCredentialList())
+	            .socketSettings(SocketSettings.builder().applyConnectionString(connectionString).build())
+	            .build();
+		
+		client = MongoClients.create(settings);
 		database = client.getDatabase(connectionString.getDatabase());
+		
 		LOGGER.info("***Connected to: " + database.getName());
 	}
 	
@@ -59,6 +71,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, Close
 		
 		client = MongoClients.create(settings);
 		database = client.getDatabase(connectionString.getDatabase());
+		
 		LOGGER.info("***Connected to: " + database.getName());
 	}
 	
@@ -68,8 +81,13 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, Close
 	}
 	
 	@Override
+	public MongoCollection<Document> getCollection(String collectionName) {
+		return (MongoCollection<Document>) database.getCollection(collectionName);
+	}
+	
+	@Override
 	public MongoCollection<Document> getCollection(Class<?> documentClass) {
-		return (MongoCollection<Document>) database.getCollection(resolveCollectionName(documentClass));
+		return (MongoCollection<Document>) getCollection(resolveCollectionName(documentClass));
 	}
 	
 	@Override

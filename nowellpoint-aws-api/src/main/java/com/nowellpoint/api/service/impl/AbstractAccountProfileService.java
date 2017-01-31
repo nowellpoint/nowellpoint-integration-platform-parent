@@ -43,7 +43,7 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		com.nowellpoint.api.model.document.AccountProfile document = get(com.nowellpoint.api.model.document.AccountProfile.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-			document = documentManager.findOne( com.nowellpoint.api.model.document.AccountProfile.class, new ObjectId( id ) );
+			document = documentManager.fetch( com.nowellpoint.api.model.document.AccountProfile.class, new ObjectId( id ) );
 			set(id, document);
 		}
 		AccountProfile accountProfile = new AccountProfile( document );

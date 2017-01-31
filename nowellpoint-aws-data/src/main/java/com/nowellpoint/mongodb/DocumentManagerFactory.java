@@ -8,6 +8,8 @@ import com.mongodb.async.client.MongoDatabase;
 
 public interface DocumentManagerFactory {
 	
+	MongoCollection<Document> getCollection(String collectionName);
+	
 	MongoCollection<Document> getCollection(Class<?> documentClass);
 	
 	MongoDatabase getDatabase();
