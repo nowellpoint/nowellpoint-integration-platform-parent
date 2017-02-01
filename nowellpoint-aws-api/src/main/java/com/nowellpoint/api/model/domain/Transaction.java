@@ -2,6 +2,8 @@ package com.nowellpoint.api.model.domain;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Transaction {
 	
 	private String id;
@@ -14,8 +16,10 @@ public class Transaction {
 	
 	private CreditCard creditCard;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date createdOn;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date updatedOn;
 	
 	public Transaction() {

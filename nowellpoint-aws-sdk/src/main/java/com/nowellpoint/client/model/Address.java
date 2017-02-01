@@ -2,58 +2,22 @@ package com.nowellpoint.client.model;
 
 public class Address {
 	
-	/**
-	 * 
-	 */
-
 	private String street;
 
-	/**
-	 * 
-	 */
-	
 	private String city;
-
-	/**
-	 * 
-	 */
 
 	private String state;
 
-	/**
-	 * 
-	 */
-
 	private String postalCode;
-
-	/**
-	 * 
-	 */
 
 	private String countryCode;
 	
-	/**
-	 * 
-	 */
-
 	private String country;
 	
-	/**
-	 * 
-	 */
-
 	private String latitude;
-
-	/**
-	 * 
-	 */
 
 	private String longitude;
 	
-	/**
-	 * 
-	 */
-
 	public Address() {
 		
 	}

@@ -2,99 +2,42 @@ package com.nowellpoint.api.model.domain;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
 
 public class CreditCard {
 
-	/**
-	 * 
-	 */
-	
 	private String cardType;
-	
-	/**
-	 * 
-	 */
 	
 	private String cardholderName;
 	
-	/**
-	 * 
-	 */
-	
 	private String cvv;
-	
-	/**
-	 * 
-	 */
 	
 	private String number;
 	
-	/**
-	 * 
-	 */
-	
 	private String expirationMonth;
-	
-	/**
-	 * 
-	 */
 	
 	private String expirationYear;
 	
-	/**
-	 * 
-	 */
-	
 	private String lastFour;
-	
-	/**
-	 * 
-	 */
 	
 	private String token;
 	
-	/**
-	 * 
-	 */
-	
 	private String imageUrl;
-	
-	/**
-	 * 
-	 */
 	
 	private Address billingAddress;
 	
-	/**
-	 * 
-	 */
-	
 	private Contact billingContact;
 	
-	/**
-	 * 
-	 */
-	
 	private Boolean primary;
-	
-	/**
-	 * 
-	 */
-	
+
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date addedOn;
-	
-	/**
-	 * 
-	 */
-	
+
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date updatedOn;
 	
-	/**
-	 * 
-	 */
-
 	public CreditCard() {
 		
 	}

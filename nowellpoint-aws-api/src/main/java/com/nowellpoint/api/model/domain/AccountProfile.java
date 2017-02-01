@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nowellpoint.api.model.document.Address;
@@ -14,7 +15,7 @@ public class AccountProfile extends AbstractResource {
 	
 	private UserInfo createdBy;
 	
-	private UserInfo lastModifiedBy;
+	private UserInfo lastUpdatedBy;
 
 	private String username;
 
@@ -52,6 +53,7 @@ public class AccountProfile extends AbstractResource {
 
 	private String emailEncodingKey;
 
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date lastLoginDate;
 	
 	private Address address;
@@ -98,12 +100,12 @@ public class AccountProfile extends AbstractResource {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserInfo lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getUsername() {

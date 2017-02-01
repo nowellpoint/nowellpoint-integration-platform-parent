@@ -20,17 +20,21 @@ package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
 
+import org.bson.types.ObjectId;
+
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Id;
 
 @Document(collectionName="account.profiles")
 public class UserInfo implements Serializable {
 	
 	private static final long serialVersionUID = -6822014779492972113L;
 
-	private String id; 
+	@Id
+	private ObjectId id; 
 
 	private String lastName;
 
@@ -68,15 +72,15 @@ public class UserInfo implements Serializable {
 		
 	}
 	
-	public UserInfo(String id) {
+	public UserInfo(ObjectId id) {
 		setId(id);
 	}
 
-	public String getId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(ObjectId id) {
 		this.id = id;
 	}
 

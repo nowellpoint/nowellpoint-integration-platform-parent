@@ -27,6 +27,8 @@ public class TestMongoClientAsync {
 		Assert.assertNotNull(query.getIsActive());
 		Assert.assertNotNull(query.getTimeZoneSidKey());
 		Assert.assertNotNull(query.getCreatedBy());
+		Assert.assertNotNull(query.getCreatedBy().getId());
+		Assert.assertNotNull(query.getCreatedBy().getName());
 		Assert.assertNotNull(query.getCreatedDate());
 		Assert.assertNotNull(query.getLastUpdatedBy());
 		Assert.assertNotNull(query.getLastModifiedDate());

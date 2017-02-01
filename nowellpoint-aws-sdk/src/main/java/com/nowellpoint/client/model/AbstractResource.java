@@ -15,7 +15,7 @@ public abstract class AbstractResource implements Resource {
 	
 	private UserInfo createdBy;
 	
-	private UserInfo lastModifiedBy;
+	private UserInfo lastUpdatedBy;
 	
 	private Meta meta;
 
@@ -54,13 +54,13 @@ public abstract class AbstractResource implements Resource {
 	public void setCreatedBy(UserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
-
-	public UserInfo getLastModifiedBy() {
-		return lastModifiedBy;
+	
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserInfo lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public Meta getMeta() {

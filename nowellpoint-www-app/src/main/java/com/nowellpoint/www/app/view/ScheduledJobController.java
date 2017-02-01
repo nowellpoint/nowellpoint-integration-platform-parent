@@ -348,7 +348,7 @@ public class ScheduledJobController extends AbstractController {
 				.get(id);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getLastModifiedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", scheduledJob.getLastUpdatedBy().getId());
 		
 		Map<String, Object> model = getModel();
 		model.put("scheduledJob", scheduledJob);

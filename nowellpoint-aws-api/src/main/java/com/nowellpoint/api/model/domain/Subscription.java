@@ -2,14 +2,18 @@ package com.nowellpoint.api.model.domain;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Subscription {
 	
 	private String subscriptionId;
 	
 	private String planId;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date addedOn;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date updatedOn;
 	
 	private String planName;
@@ -26,6 +30,7 @@ public class Subscription {
 	
 	private String status;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date nextBillingDate;
 	
 	public Subscription() {

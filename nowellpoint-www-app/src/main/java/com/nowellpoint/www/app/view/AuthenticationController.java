@@ -160,8 +160,6 @@ public class AuthenticationController extends AbstractController {
     		}
 		}
 		
-		System.out.println(request.queryParams(REDIRECT_URI));
-		
 		if (request.queryParams(REDIRECT_URI) != null && ! request.queryParams(REDIRECT_URI).isEmpty()) {
     		response.redirect(request.queryParams(REDIRECT_URI));
     	} else {

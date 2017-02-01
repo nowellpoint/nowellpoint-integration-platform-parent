@@ -141,7 +141,7 @@ public class AccountProfileController extends AbstractController {
 				.get(id);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastModifiedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastUpdatedBy().getId());
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);

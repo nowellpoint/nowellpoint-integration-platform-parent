@@ -134,7 +134,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		accountProfile.setCreatedDate(now);
 		accountProfile.setCreatedBy(userInfo);
 		accountProfile.setLastModifiedDate(now);
-		accountProfile.setLastModifiedBy(userInfo);
+		accountProfile.setLastUpdatedBy(userInfo);
 		accountProfile.setSystemCreatedDate(now);
 		accountProfile.setSystemModifiedDate(now);
 		
@@ -308,7 +308,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		accountProfile.setSystemModifiedDate(now);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		accountProfile.setLastModifiedBy(new UserInfo(UserContext.getPrincipal().getName()));
+		accountProfile.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
 		
 		update(accountProfile);
 		
