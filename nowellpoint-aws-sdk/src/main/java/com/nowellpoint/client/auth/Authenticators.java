@@ -21,6 +21,7 @@ public class Authenticators {
 			
 			Assert.assertNotNull(grantRequest.getUsername(), "missing username");
 			Assert.assertNotNull(grantRequest.getPassword(), "missing password");
+			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
 	    			.accept(MediaType.APPLICATION_JSON)
@@ -52,6 +53,7 @@ public class Authenticators {
 			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			Assert.assertNotNull(grantRequest.getApiKeyId(), "missing api key id");
 			Assert.assertNotNull(grantRequest.getApiKeySecret(), "missing api key secret");
+			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
 	    			.accept(MediaType.APPLICATION_JSON)

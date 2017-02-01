@@ -41,12 +41,6 @@ public class MongoDatastoreExtension implements Extension {
     <T> void processAnnotatedType(@Observes @WithAnnotations({Document.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
     	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(Document.class)) {    
     		LOGGER.info("processAnnotatedType: " + type.getAnnotatedType().getJavaClass().getName());
-    		try {
-    			Document document = type.getAnnotatedType().getJavaClass().getAnnotation(Document.class);
-    			codecs.add((Codec<?>) document.codec().newInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
-				LOGGER.error(e);
-			}
     	}
     } 
     

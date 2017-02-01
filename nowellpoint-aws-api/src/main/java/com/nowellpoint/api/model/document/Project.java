@@ -1,16 +1,33 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api.model.document;
 
 import java.util.List;
 
 import org.bson.types.ObjectId;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.api.model.codec.ProjectCodec;
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="projects", codec=ProjectCodec.class)
+@Document(collectionName="projects")
 public class Project extends MongoDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
@@ -21,8 +38,10 @@ public class Project extends MongoDocument {
 	
 	private String stage;
 	
-	private UserRef owner;
+	@Reference
+	private UserInfo owner;
 	
+	@EmbedMany
 	private List<Application> salesforceOrganizations;
 
 	public Project() {
@@ -57,11 +76,11 @@ public class Project extends MongoDocument {
 		this.stage = stage;
 	}
 
-	public UserRef getOwner() {
+	public UserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserRef owner) {
+	public void setOwner(UserInfo owner) {
 		this.owner = owner;
 	}
 	

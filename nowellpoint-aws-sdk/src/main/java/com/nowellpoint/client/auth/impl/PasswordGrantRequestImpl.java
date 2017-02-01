@@ -12,6 +12,7 @@ public class PasswordGrantRequestImpl implements PasswordGrantRequest {
 	private Environment environment;
 	
 	public PasswordGrantRequestImpl(Environment environment, String username, String password) {
+		this.environment = environment;
 		this.username = username;
 		this.password = password;
 	}

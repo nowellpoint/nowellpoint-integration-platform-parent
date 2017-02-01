@@ -37,10 +37,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mongodb.DBRef;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.Instance;
 import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.domain.SalesforceConnectorList;
@@ -726,12 +724,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 
 				Date now = Date.from(Instant.now());
 				
-				UserRef user = new UserRef();
-				String collectionName = documentManager.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 				ObjectId id = new ObjectId( UserContext.getPrincipal().getName() );
-
-				DBRef dbref = new DBRef( collectionName, id );
-				user.setIdentity(dbref);
 
 				com.nowellpoint.api.model.document.SObjectDetail sobjectDetail = null;
 				try {
@@ -742,10 +735,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 					sobjectDetail.setName(describeSobjectResult.getName());
 					sobjectDetail.setCreatedDate(now);
 					sobjectDetail.setSystemCreatedDate(now);
-					sobjectDetail.setCreatedBy(user);
+					sobjectDetail.setCreatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));
 				}
 				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
-				sobjectDetail.setLastModifiedBy(user);
+				sobjectDetail.setLastUpdatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));
 				sobjectDetail.setLastModifiedDate(now);
 				sobjectDetail.setSystemModifiedDate(now);
 				sobjectDetail.setResult(describeSobjectResult);

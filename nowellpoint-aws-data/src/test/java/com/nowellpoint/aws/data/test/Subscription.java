@@ -17,7 +17,7 @@
  * 
  */
 
-package com.nowellpoint.api.model.document;
+package com.nowellpoint.aws.data.test;
 
 import java.io.Serializable;
 import java.util.Date;

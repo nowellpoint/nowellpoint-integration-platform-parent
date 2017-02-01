@@ -26,9 +26,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
-import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
-import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.api.model.domain.Backup;
 import com.nowellpoint.api.model.domain.Deactivate;
@@ -405,21 +403,15 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 		Date now = Date.from(Instant.now());
 		
-		String collectionName = documentManager.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
-
-		DBRef reference = new DBRef( collectionName, id );
-		
-		UserRef userRef = new UserRef();
-		userRef.setIdentity(reference);
 
 		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest();
 		scheduledJobRequest.setScheduledJobId(new ObjectId(scheduledJob.getId()));
 		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
 		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
-		scheduledJobRequest.setOwner(new UserRef(new DBRef( collectionName, new ObjectId(scheduledJob.getOwner().getId() ) ) ) );
+		scheduledJobRequest.setOwner( documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id) );
 		scheduledJobRequest.setCreatedDate(now);
-		scheduledJobRequest.setCreatedBy(userRef);
+		scheduledJobRequest.setCreatedBy( documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id) );
 		scheduledJobRequest.setDescription(scheduledJob.getDescription());
 		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
 		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
@@ -428,7 +420,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeCode());
 		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
 		scheduledJobRequest.setLastModifiedDate(now);
-		scheduledJobRequest.setLastModifiedBy(userRef);
+		scheduledJobRequest.setLastUpdatedBy( documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id) );
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
 		scheduledJobRequest.setStatus(scheduledJob.getStatus());

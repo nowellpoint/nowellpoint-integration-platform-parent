@@ -7,16 +7,21 @@ import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
-import com.nowellpoint.mongodb.annotation.Transient;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@Document(collectionName="account.profiles", codec=Object.class)
+@Document(collectionName="account.profiles")
 public class AccountProfile extends MongoDocument {
 
 	private static final long serialVersionUID = 3163086585922281575L;
 	
+	@EmbedOne
+	private Meta meta;
+	
 	@Reference
-	private UserInfo identity;
+	private UserInfo createdBy;
+	
+	@Reference
+	private UserInfo lastUpdatedBy;
 
 	private String username;
 
@@ -53,11 +58,25 @@ public class AccountProfile extends MongoDocument {
 	private String localeSidKey;
 
 	private String emailEncodingKey;
-	
-	@Transient
-	private String temp;
 
 	private Date lastLoginDate;
+	
+	@EmbedOne
+	private Address address;
+
+	private String accountHref;
+	
+	@EmbedOne
+	private Photos photos;
+	
+	@EmbedOne
+	private Subscription subscription;
+	
+	@EmbedMany
+	private Set<CreditCard> creditCards;
+	
+	@EmbedMany
+	private Set<Transaction> transactions;
 	
 	private Boolean hasFullAccess;
 	
@@ -65,31 +84,32 @@ public class AccountProfile extends MongoDocument {
 	
 	private Boolean enableSalesforceLogin;
 	
-	private Integer integerNumber;
-	
-	private Double doubleNumber;
-	
-	private Long longNumber;
-	
-	@EmbedOne
-	private Address address;
-
-	@EmbedOne
-	private Photos photos;
-	
-	@EmbedMany
-	private Set<Transaction> transactions;
-	
 	public AccountProfile() {
 		setHasFullAccess(Boolean.FALSE);
 	}
 
-	public UserInfo getIdentity() {
-		return identity;
+	public Meta getMeta() {
+		return meta;
 	}
 
-	public void setIdentity(UserInfo identity) {
-		this.identity = identity;
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
+
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getUsername() {
@@ -244,12 +264,52 @@ public class AccountProfile extends MongoDocument {
 		this.lastLoginDate = lastLoginDate;
 	}
 
-	public String getTemp() {
-		return temp;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setTemp(String temp) {
-		this.temp = temp;
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public String getAccountHref() {
+		return accountHref;
+	}
+
+	public void setAccountHref(String accountHref) {
+		this.accountHref = accountHref;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
+	}
+
+	public Set<CreditCard> getCreditCards() {
+		return creditCards;
+	}
+
+	public void setCreditCards(Set<CreditCard> creditCards) {
+		this.creditCards = creditCards;
+	}
+
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 
 	public Boolean getHasFullAccess() {
@@ -274,53 +334,5 @@ public class AccountProfile extends MongoDocument {
 
 	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
 		this.enableSalesforceLogin = enableSalesforceLogin;
-	}
-	
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
-	}
-
-	public Photos getPhotos() {
-		return photos;
-	}
-
-	public void setPhotos(Photos photos) {
-		this.photos = photos;
-	}
-
-	public Integer getIntegerNumber() {
-		return integerNumber;
-	}
-
-	public void setIntegerNumber(Integer integerNumber) {
-		this.integerNumber = integerNumber;
-	}
-
-	public Double getDoubleNumber() {
-		return doubleNumber;
-	}
-
-	public void setDoubleNumber(Double doubleNumber) {
-		this.doubleNumber = doubleNumber;
-	}
-
-	public Long getLongNumber() {
-		return longNumber;
-	}
-
-	public void setLongNumber(Long longNumber) {
-		this.longNumber = longNumber;
-	}
-
-	public Set<Transaction> getTransactions() {
-		return transactions;
-	}
-
-	public void setTransactions(Set<Transaction> transactions) {
-		this.transactions = transactions;
 	}
 }

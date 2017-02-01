@@ -118,9 +118,6 @@ public class AuthenticationController extends AbstractController {
     
     public String login(Configuration configuration, Request request, Response response) {
     	
-    	System.out.println(System.getenv("NOWELLPOINT_ENVIRONMENT"));
-    	System.out.println(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl());
-    	
     	PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
     			.setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")))
 				.setUsername(request.queryParams("username"))
@@ -163,7 +160,9 @@ public class AuthenticationController extends AbstractController {
     		}
 		}
 		
-		if (request.queryParams(REDIRECT_URI) != null) {
+		System.out.println(request.queryParams(REDIRECT_URI));
+		
+		if (request.queryParams(REDIRECT_URI) != null && ! request.queryParams(REDIRECT_URI).isEmpty()) {
     		response.redirect(request.queryParams(REDIRECT_URI));
     	} else {
     		response.redirect(Path.Route.START);

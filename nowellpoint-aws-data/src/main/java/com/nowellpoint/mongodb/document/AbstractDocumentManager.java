@@ -116,16 +116,20 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	 */
 
 	protected Object resolveId(Object object) {
-		Object id = null;
-		Set<Field> fields = getAllFields(object);
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(Id.class)) {					
-				id = getIdValue(object, field);
-				break;
+		if ( object != null ) {
+			Object id = null;
+			Set<Field> fields = getAllFields(object);
+			for (Field field : fields) {
+				if (field.isAnnotationPresent(Id.class)) {					
+					id = getIdValue(object, field);
+					break;
+				}
 			}
+			
+			return id;
 		}
 		
-		return id;
+		return null;
 	}
 	
 	/**
@@ -138,34 +142,51 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	 */
 	
 	protected Document toBsonDocument(Object object) {
-		Document document = new Document();
-		Set<Field> fields = getAllFields(object);
-		fields.stream().forEach(field -> {
-			if (field.isAnnotationPresent(Id.class)) {
-				document.put(ID, getIdValue(object, field));
-			} else if (field.isAnnotationPresent(Reference.class)) {
-				document.put(field.getName(), resolveId(getFieldValue( object, field )));
-			} else if (field.isAnnotationPresent(EmbedOne.class)) {
-				document.put(field.getName(), toBsonDocument(getFieldValue(object, field)));
-			} else if (field.isAnnotationPresent(EmbedMany.class)) {
-				document.put(field.getName(), toBsonArray(field, getFieldValue(object, field)));
-			} else {	
-				document.put(field.getName(), getFieldValue(object, field));
-			}
-		});
+		if ( object != null ) {
+			Document document = new Document();
+			Set<Field> fields = getAllFields(object);
+			fields.stream().forEach(field -> {
+				if (field.isAnnotationPresent(Id.class)) {
+					document.put(ID, getIdValue(object, field));
+				} else if (field.isAnnotationPresent(Reference.class)) {
+					document.put(field.getName(), resolveId(getFieldValue( object, field )));
+				} else if (field.isAnnotationPresent(EmbedOne.class)) {
+					document.put(field.getName(), toBsonDocument(getFieldValue( object, field )));
+				} else if (field.isAnnotationPresent(EmbedMany.class)) {
+					document.put(field.getName(), toBsonArray(field, getFieldValue(object, field)));
+				} else {	
+					document.put(field.getName(), getFieldValue(object, field));
+				}
+			});
+			
+			return document;
+		}
 		
-		return document;
+		return null;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param field
+	 * @param object
+	 * @return
+	 * 
+	 * 
+	 */
+	
 	protected List<Document> toBsonArray(Field field, Object object) {
-		List<Document> documents = new ArrayList<>();
-		Set<?> items = (Set<?>) object;
-		items.stream().forEach(item -> {
-			System.out.println(item.getClass().getName());
-			documents.add(toBsonDocument(item));
-		});
+		if ( object != null ) {
+			List<Document> documents = new ArrayList<>();
+			Set<?> items = (Set<?>) object;
+			items.stream().forEach(item -> {
+				documents.add(toBsonDocument(item));
+			});
+			
+			return documents;
+		}
 		
-		return documents;
+		return null;
 	}
 	
 	/**
@@ -212,7 +233,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	}
 	
 	private <T> Set<T> parseEmbedMany(Field embeddedField, ArrayList<?> items) {
-		if (items != null) {
+		if ( items != null ) {
 			ParameterizedType type = (ParameterizedType) embeddedField.getGenericType();
 			Class<?> embeddedClass = (Class<?>) type.getActualTypeArguments()[0];
 			
@@ -240,7 +261,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	@SuppressWarnings("unchecked")
 	private <T> T parseEmbedOne(Class<?> type, Document bson) {
-		if (bson != null) {
+		if ( bson != null ) {
 			Object object = instantiate(type);
 			Set<Field> fields = getAllFields(object);
 			for (Field field : fields) {
@@ -271,6 +292,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	@SuppressWarnings("unchecked")
 	private <T> T parseReference(Field referenceField, Object value) {
+		
 		if (! referenceField.getType().isAnnotationPresent(com.nowellpoint.mongodb.annotation.Document.class)) {
     		throw new DocumentManagerException("Missing Document annotation from " + referenceField.getType().getClass().getName());
     	}
@@ -318,7 +340,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	 */
 	
 	private Set<Field> getAllFields(Object object) {
-		Set<Field> fields = null; //fieldCache.get(object.getClass().getName());
+		Set<Field> fields = fieldCache.get(object.getClass().getName());
 		if (fields == null) {
 			fields = new LinkedHashSet<Field>();
 			if (object.getClass().getSuperclass().isAnnotationPresent(MappedSuperclass.class)) {
@@ -394,7 +416,6 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	private Object getFieldValue(Object object, Field field) {
 		try {
 		    Method method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});	
-		    System.out.println(method.getName());
 		    Object value = method.invoke(object, new Object[] {});
             if (field.getType().isAssignableFrom(Locale.class)) {            	
 		    	value = String.valueOf(value);

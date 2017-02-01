@@ -11,13 +11,14 @@ import org.junit.Test;
 import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
+import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 public class TestMongoClientAsync {
 	
 	@Test
 	public void testMongoClientConnect() {		
 		
-		DocumentManagerFactory dmf = Datastore.createDocumentManagerFactory("");
+		DocumentManagerFactory dmf = Datastore.createDocumentManagerFactory(System.getenv("MONGO_CLIENT_URI"));
 		DocumentManager dm = dmf.createDocumentManager();
 		
 		AccountProfile query = dm.fetch( AccountProfile.class, new ObjectId("5808408e392e00330aeef78d") );
@@ -25,10 +26,13 @@ public class TestMongoClientAsync {
 		Assert.assertNotNull(query.getPhotos());
 		Assert.assertNotNull(query.getIsActive());
 		Assert.assertNotNull(query.getTimeZoneSidKey());
+		Assert.assertNotNull(query.getCreatedBy());
 		Assert.assertNotNull(query.getCreatedDate());
-		Assert.assertNotNull(query.getIdentity().getAddress());
-		Assert.assertNotNull(query.getIdentity().getAddress().getCity());
-		Assert.assertNotNull(query.getIdentity().getAddress().getState());
+		Assert.assertNotNull(query.getLastUpdatedBy());
+		Assert.assertNotNull(query.getLastModifiedDate());
+		Assert.assertNotNull(query.getAddress());
+		Assert.assertNotNull(query.getAddress().getCity());
+		Assert.assertNotNull(query.getAddress().getState());
 		Assert.assertNotNull(query.getTransactions());
 		
 		query.getTransactions().stream().forEach( t -> {
@@ -45,22 +49,20 @@ public class TestMongoClientAsync {
 		accountProfile.setLastName("Herson");
 		accountProfile.setEmail("email@gmail.com");
 		accountProfile.setCompany("Nowellpoint");
-		accountProfile.setIdentity(identity);
+		accountProfile.setCreatedBy(identity);
+		accountProfile.setLastUpdatedBy(identity);
 		accountProfile.setAddress(query.getAddress());
 		accountProfile.setPhotos(query.getPhotos());
 		accountProfile.setCreatedDate(Date.from(Instant.now()));
 		accountProfile.setLastModifiedDate(Date.from(Instant.now()));
 		accountProfile.setIsActive(Boolean.TRUE);
-		accountProfile.setDoubleNumber(new Double(56.00));
-		accountProfile.setIntegerNumber(403);
-		accountProfile.setLongNumber(new Long(120000));
 		accountProfile.setLocaleSidKey("en_US");
 		accountProfile.setTransactions(query.getTransactions());
 		
 		dm.insertOne( accountProfile );
 		
 		Assert.assertNotNull(accountProfile.getId());
-		Assert.assertNotNull(accountProfile.getIdentity().getId());
+		Assert.assertNotNull(accountProfile.getCreatedBy().getId());
 		Assert.assertNotNull(accountProfile.getPhotos());
 		Assert.assertNotNull(accountProfile.getAddress());
 				
@@ -73,13 +75,19 @@ public class TestMongoClientAsync {
 		accountProfile = dm.fetch( AccountProfile.class, accountProfile.getId() );
 		
 		Assert.assertNotNull(accountProfile.getId() );
-		Assert.assertNotNull(accountProfile.getIdentity().getId() );
-		Assert.assertNotNull(accountProfile.getIdentity().getName() );
+		Assert.assertNotNull(accountProfile.getCreatedBy().getId() );
+		Assert.assertNotNull(accountProfile.getCreatedBy().getName() );
 		Assert.assertNotNull(accountProfile.getPhotos());
 		Assert.assertNotNull(accountProfile.getAddress());
-		Assert.assertNotNull(accountProfile.getIdentity().getAddress());
+		Assert.assertNotNull(accountProfile.getCreatedBy().getAddress());
 		
-		//dm.deleteOne( accountProfile );
+		dm.deleteOne( accountProfile );
+		
+		try {
+			accountProfile = dm.fetch( AccountProfile.class, accountProfile.getId() );
+		} catch (DocumentNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
 		
 		Set<AccountProfile> accountProfiles = dm.findAll(AccountProfile.class);
 		

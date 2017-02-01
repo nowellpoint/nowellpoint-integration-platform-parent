@@ -27,7 +27,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.bson.codecs.Codec;
 import org.bson.types.ObjectId;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -40,14 +39,13 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBRef;
 import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Instance;
 import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
 import com.nowellpoint.api.model.document.ScheduledJob;
 import com.nowellpoint.api.model.document.ScheduledJobRequest;
-import com.nowellpoint.api.model.document.UserRef;
+import com.nowellpoint.api.model.document.UserInfo;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.client.sforce.Authenticators;
@@ -69,7 +67,6 @@ import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
-import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
@@ -96,16 +93,7 @@ public class SalesforceMetadataBackupJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
-		List<Codec<?>> codecs = new ArrayList<>();
-		try {
-			codecs.add((Codec<?>) ScheduledJobRequest.class.getAnnotation(Document.class).codec().newInstance());
-			codecs.add((Codec<?>) ScheduledJob.class.getAnnotation(Document.class).codec().newInstance());
-			codecs.add((Codec<?>) SalesforceConnector.class.getAnnotation(Document.class).codec().newInstance());
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		
-		documentManagerFactory = Datastore.createDocumentManagerFactory(codecs);
+		documentManagerFactory = Datastore.getCurrentSession();
 		
 		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
@@ -362,8 +350,6 @@ public class SalesforceMetadataBackupJob implements Job {
 				executor.awaitTermination(30, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				throw new JobExecutionException(e.getMessage());
-			} finally {
-				documentManagerFactory.close();
 			}
 		}
 	}
@@ -373,10 +359,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 		
-		String collectionName = documentManager.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
 		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
-    	DBRef reference = new DBRef( collectionName, id );		
-		UserRef userRef = new UserRef(reference);
 
 		Date now = Date.from(Instant.now());
     	
@@ -386,7 +369,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
 		scheduledJobRequest.setOwner(scheduledJob.getOwner());
 		scheduledJobRequest.setCreatedDate(now);
-		scheduledJobRequest.setCreatedBy(userRef);
+		scheduledJobRequest.setCreatedBy(documentManager.getReference(UserInfo.class, id));
 		scheduledJobRequest.setDescription(scheduledJob.getDescription());
 		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
 		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
@@ -396,7 +379,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
 		scheduledJobRequest.setStatus(scheduledJob.getStatus());
 		scheduledJobRequest.setLastModifiedDate(now);
-		scheduledJobRequest.setLastModifiedBy(userRef);
+		scheduledJobRequest.setLastUpdatedBy(documentManager.getReference(UserInfo.class, id));
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
 		scheduledJobRequest.setSystemCreatedDate(now);

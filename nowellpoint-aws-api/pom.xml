@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>nowellpoint-aws-api</artifactId>
-    <name>Nowellpoint Rest Api</name>
-    <packaging>jar</packaging>
-    
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>nowellpoint-aws-api</artifactId>
+	<name>Nowellpoint Rest Api</name>
+	<packaging>jar</packaging>
+
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
@@ -28,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly.swarm>2016.11.0</version.wildfly.swarm>
+		<version.wildfly.swarm>2017.1.1</version.wildfly.swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -46,6 +47,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>cdi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>jaxrs</artifactId>
 		</dependency>
 		<dependency>
@@ -61,9 +66,9 @@
 			<artifactId>logging</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>management</artifactId>
-        </dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>management</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jaxrs</artifactId>

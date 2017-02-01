@@ -1,40 +1,61 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api.model.document;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.api.model.codec.SalesforceConnectionCodec;
 import com.nowellpoint.api.model.sforce.Identity;
 import com.nowellpoint.api.model.sforce.Organization;
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collectionName="salesforce.connectors")
 public class SalesforceConnector extends MongoDocument {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -3438714915624952119L;
 	
+	@EmbedOne
 	private Meta meta;
 	
 	private String name;
 	
-	private UserRef createdBy;
+	@Reference
+	private UserInfo createdBy;
 	
-	private UserRef lastModifiedBy;
+	@Reference
+	private UserInfo lastUpdatedBy;
+
+	@Reference
+	private UserInfo owner;
 	
-	private UserRef owner;
-	
+	@EmbedOne
 	private Identity identity;
 	
+	@EmbedOne
 	private Organization organization;
 	
 	private String tag;
 	
+	@EmbedMany
 	private Set<Instance> instances;
 	
 	public SalesforceConnector() {
@@ -57,27 +78,27 @@ public class SalesforceConnector extends MongoDocument {
 		this.name = name;
 	}
 
-	public UserRef getCreatedBy() {
+	public UserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserRef createdBy) {
+	public void setCreatedBy(UserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserRef getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserRef lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public UserRef getOwner() {
+	public UserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserRef owner) {
+	public void setOwner(UserInfo owner) {
 		this.owner = owner;
 	}
 

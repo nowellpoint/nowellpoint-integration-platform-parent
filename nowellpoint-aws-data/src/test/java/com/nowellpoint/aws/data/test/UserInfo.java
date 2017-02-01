@@ -11,7 +11,7 @@ import com.nowellpoint.mongodb.annotation.Id;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="account.profiles", codec=String.class)
+@Document(collectionName="account.profiles")
 public class UserInfo extends MongoDocument implements Serializable {
 	
 	private static final long serialVersionUID = -6822014779492972113L;

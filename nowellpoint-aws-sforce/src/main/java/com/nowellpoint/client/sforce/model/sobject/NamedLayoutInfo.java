@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NamedLayoutInfo implements Serializable {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -7984076664176001329L;
 	
 	private String name;

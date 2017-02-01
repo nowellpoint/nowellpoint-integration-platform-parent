@@ -13,10 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBRef;
-import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.mongodb.Datastore;
-import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.MongoDocument; 
 
@@ -42,36 +38,6 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 			protected String convert(ObjectId source) {
 				return source == null ? null : source.toString();
 			}
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<UserRef,UserInfo>() {
-
-			@Override
-			protected UserInfo convert(UserRef source) {
-				UserInfo userInfo = new UserInfo();
-				if (source != null && source.getIdentity() != null) {
-					
-					userInfo = modelMapper.map( source, UserInfo.class );
-				}
-				
-				return userInfo; 
-			}			
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<UserInfo,UserRef>() {
-
-			@Override
-			protected UserRef convert(UserInfo source) {
-				UserRef user = new UserRef();
-				if (source != null) {		
-					String collectionName = Datastore.getCurrentSession().resolveCollectionName(com.nowellpoint.api.model.document.AccountProfile.class);
-					ObjectId id = new ObjectId( source.getId() );
-					DBRef reference = new DBRef( collectionName, id );
-					user.setIdentity(reference);
-				}
-				
-				return user; 
-			}			
 		});
 	}
 	

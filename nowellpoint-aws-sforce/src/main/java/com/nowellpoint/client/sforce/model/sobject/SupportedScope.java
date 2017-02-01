@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SupportedScope implements Serializable {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -1537380964305421895L;
 	
 	private String label;

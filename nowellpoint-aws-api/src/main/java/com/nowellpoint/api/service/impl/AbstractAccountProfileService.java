@@ -23,6 +23,7 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
 		set(accountProfile.getId(), document);
+		set(accountProfile.getAccountHref(), document);
 	}
 	
 	protected void update(AccountProfile accountProfile) {
@@ -30,6 +31,7 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
 		set(accountProfile.getId(), document);
+		set(accountProfile.getAccountHref(), document);
 	}
 	
 	protected void delete(AccountProfile accountProfile) {
@@ -62,12 +64,8 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 	}
 	
 	protected AccountProfile findByUsername(String username) {
-		com.nowellpoint.api.model.document.AccountProfile document = get(com.nowellpoint.api.model.document.AccountProfile.class, username);
-		if (Assert.isNull(document)) {
-			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-			document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "username", username ) );
-			set(username, document);
-		}
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "username", username ) );			
 		AccountProfile accountProfile = new AccountProfile( document );
 		return accountProfile;
 	}

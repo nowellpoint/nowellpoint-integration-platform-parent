@@ -1,34 +1,48 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.api.model.codec.ScheduledJobCodec;
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.document.DateDeserializer;
-import com.nowellpoint.mongodb.document.DateSerializer;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="scheduled.jobs", codec=ScheduledJobCodec.class)
+@Document(collectionName="scheduled.jobs")
 public class ScheduledJob extends MongoDocument {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 4880299116047933778L;
 	
+	@EmbedOne
 	private Meta meta;
 	
-	private UserRef createdBy;
+	@Reference
+	private UserInfo createdBy;
 	
-	private UserRef lastModifiedBy;
+	@Reference
+	private UserInfo lastUpdatedBy;
 	
-	private UserRef owner;
+	@Reference
+	private UserInfo owner;
 	
 	private String environmentKey;
 	
@@ -48,14 +62,10 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String description;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date scheduleDate;
 	
 	private String status;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastRunDate;
 	
 	private String lastRunStatus;
@@ -64,6 +74,7 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String notificationEmail;
 	
+	@EmbedMany
 	private Set<RunHistory> runHistories;
 	
 	public ScheduledJob() {
@@ -78,27 +89,27 @@ public class ScheduledJob extends MongoDocument {
 		this.meta = meta;
 	}
 
-	public UserRef getCreatedBy() {
+	public UserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserRef createdBy) {
+	public void setCreatedBy(UserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserRef getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserRef lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public UserRef getOwner() {
+	public UserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserRef owner) {
+	public void setOwner(UserInfo owner) {
 		this.owner = owner;
 	}
 
