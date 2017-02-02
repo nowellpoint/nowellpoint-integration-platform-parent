@@ -131,12 +131,10 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		
 		Date now = Date.from(Instant.now());
 		
-		accountProfile.setCreatedDate(now);
+		accountProfile.setCreatedOn(now);
 		accountProfile.setCreatedBy(userInfo);
-		accountProfile.setLastModifiedDate(now);
+		accountProfile.setLastUpdatedOn(now);
 		accountProfile.setLastUpdatedBy(userInfo);
-		accountProfile.setSystemCreatedDate(now);
-		accountProfile.setSystemModifiedDate(now);
 		
 		create(accountProfile);
 	}
@@ -181,8 +179,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
 		accountProfile.setHasFullAccess(original.getHasFullAccess());
 		accountProfile.setCreatedBy(original.getCreatedBy());
-		accountProfile.setCreatedDate(original.getCreatedDate());
-		accountProfile.setSystemCreatedDate(original.getSystemCreatedDate());
+		accountProfile.setCreatedOn(original.getCreatedOn());
 		
 		if (isNull(accountProfile.getDivision())) {
 			accountProfile.setDivision(original.getDivision());
@@ -304,8 +301,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		
 		Date now = Date.from(Instant.now());
 		
-		accountProfile.setLastModifiedDate(now);
-		accountProfile.setSystemModifiedDate(now);
+		accountProfile.setLastUpdatedOn(now);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
 		accountProfile.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));

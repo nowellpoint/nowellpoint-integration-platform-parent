@@ -29,9 +29,9 @@ public class TestMongoClientAsync {
 		Assert.assertNotNull(query.getCreatedBy());
 		Assert.assertNotNull(query.getCreatedBy().getId());
 		Assert.assertNotNull(query.getCreatedBy().getName());
-		Assert.assertNotNull(query.getCreatedDate());
+		Assert.assertNotNull(query.getCreatedOn());
 		Assert.assertNotNull(query.getLastUpdatedBy());
-		Assert.assertNotNull(query.getLastModifiedDate());
+		Assert.assertNotNull(query.getLastUpdatedOn());
 		Assert.assertNotNull(query.getAddress());
 		Assert.assertNotNull(query.getAddress().getCity());
 		Assert.assertNotNull(query.getAddress().getState());
@@ -55,8 +55,8 @@ public class TestMongoClientAsync {
 		accountProfile.setLastUpdatedBy(identity);
 		accountProfile.setAddress(query.getAddress());
 		accountProfile.setPhotos(query.getPhotos());
-		accountProfile.setCreatedDate(Date.from(Instant.now()));
-		accountProfile.setLastModifiedDate(Date.from(Instant.now()));
+		accountProfile.setCreatedOn(Date.from(Instant.now()));
+		accountProfile.setLastUpdatedOn(Date.from(Instant.now()));
 		accountProfile.setIsActive(Boolean.TRUE);
 		accountProfile.setLocaleSidKey("en_US");
 		accountProfile.setTransactions(query.getTransactions());

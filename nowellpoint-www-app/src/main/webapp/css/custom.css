@@ -22,7 +22,6 @@ body {
     left: 250px;
     width: 0;
     height: 100%;
-    top: 51px;
     margin-left: -250px;
     overflow-y: auto;
     background: #605F5F;
@@ -30,7 +29,6 @@ body {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    border: none;
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -93,7 +91,7 @@ body {
 
 .sidebar-nav > .sidebar-brand {
     height: 65px;
-    font-size: 18px;
+    font-size: 24px;
     line-height: 60px;
 }
 
@@ -117,7 +115,6 @@ body {
 
     #sidebar-wrapper {
         width: 250px;
-        padding-top: 100px;
     }
 
     #wrapper.toggled #sidebar-wrapper {

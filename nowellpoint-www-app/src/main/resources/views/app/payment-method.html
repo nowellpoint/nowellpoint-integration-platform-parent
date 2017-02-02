@@ -236,7 +236,7 @@
                             <dt>${labels["billing.address"]}</dt>
                             <dd>
                                 <address>${(creditCard.billingAddress.street)!}<br>
-                                            ${(creditCard.billingAddress.city)!}, ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}<br>
+                                            ${(creditCard.billingAddress.city)!} ${(creditCard.billingAddress.state)???then(",","")} ${(creditCard.billingAddress.state)!} ${(creditCard.billingAddress.postalCode)!}<br>
                                             ${(creditCard.billingAddress.country)!}&emsp;<br>
                                         </address>
                                 <br>

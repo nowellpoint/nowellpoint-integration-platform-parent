@@ -172,12 +172,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		Date now = Date.from(Instant.now());
 		
-		resource.setCreatedDate(now);
+		resource.setCreatedOn(now);
 		resource.setCreatedBy(userInfo);
-		resource.setLastModifiedDate(now);
+		resource.setLastUpdatedOn(now);
 		resource.setLastModifiedBy(userInfo);
-		resource.setSystemCreatedDate(now);
-		resource.setSystemModifiedDate(now);
 		
 		create(resource);
 		
@@ -197,9 +195,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		SalesforceConnector original = findById(id);
 		
 		salesforceConnector.setId(original.getId());
-		salesforceConnector.setCreatedDate(original.getCreatedDate());
-		salesforceConnector.setSystemCreatedDate(original.getSystemCreatedDate());
-		salesforceConnector.setSystemModifiedDate(original.getSystemModifiedDate());
+		salesforceConnector.setCreatedOn(original.getCreatedOn());
 		
 		if (isNull(salesforceConnector.getTag())) {
 			salesforceConnector.setTag(original.getTag());
@@ -211,9 +207,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		Date now = Date.from(Instant.now());
 		
-		salesforceConnector.setLastModifiedDate(now);
+		salesforceConnector.setLastUpdatedOn(now);
 		salesforceConnector.setLastModifiedBy(userInfo);
-		salesforceConnector.setSystemModifiedDate(now);
 		
 		update(salesforceConnector);
 	}
@@ -733,14 +728,12 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 					sobjectDetail = new com.nowellpoint.api.model.document.SObjectDetail();
 					sobjectDetail.setEnvironmentKey(environmentKey);
 					sobjectDetail.setName(describeSobjectResult.getName());
-					sobjectDetail.setCreatedDate(now);
-					sobjectDetail.setSystemCreatedDate(now);
+					sobjectDetail.setCreatedOn(now);
 					sobjectDetail.setCreatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));
 				}
 				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
 				sobjectDetail.setLastUpdatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));
-				sobjectDetail.setLastModifiedDate(now);
-				sobjectDetail.setSystemModifiedDate(now);
+				sobjectDetail.setLastUpdatedOn(now);
 				sobjectDetail.setResult(describeSobjectResult);
 				if (isNull(sobjectDetail.getId())) {
 					documentManager.insertOne(sobjectDetail);

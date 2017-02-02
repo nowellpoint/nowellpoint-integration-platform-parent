@@ -4,6 +4,12 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class ScheduledJobType extends AbstractResource {
 	
+	private Meta meta;
+	
+	private UserInfo createdBy;
+	
+	private UserInfo lastUpdatedBy;
+	
 	private String name;
 	
 	private String code;
@@ -18,6 +24,30 @@ public class ScheduledJobType extends AbstractResource {
 		
 	}
 	
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
+
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
 	public ScheduledJobType(MongoDocument document) {
 		super(document);
 	}

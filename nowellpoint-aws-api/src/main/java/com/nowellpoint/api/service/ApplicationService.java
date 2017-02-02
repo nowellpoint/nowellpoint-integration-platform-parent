@@ -65,12 +65,10 @@ public class ApplicationService {
 		
 		Date now = Date.from(Instant.now());
 		
-		application.setCreatedDate(now);
+		application.setCreatedOn(now);
 		//application.setCreatedBy(userInfo);
-		application.setLastModifiedDate(now);
+		application.setLastUpdatedOn(now);
 		//application.setLastModifiedBy(userInfo);
-		application.setSystemCreatedDate(now);
-		application.setSystemModifiedDate(now);
 		
 		//mongoDocumentService.create(application.toDocument());
 	}
@@ -79,9 +77,7 @@ public class ApplicationService {
 		Application original = findById( id );
 		
 		application.setId(id);
-		application.setCreatedDate(original.getCreatedDate());
-		application.setSystemCreatedDate(original.getSystemCreatedDate());
-		application.setSystemModifiedDate(original.getSystemModifiedDate());
+		application.setCreatedOn(original.getCreatedOn());
 		
 		if (application.getName() == null) {
 			application.setName(original.getName());
@@ -107,9 +103,8 @@ public class ApplicationService {
 		
 		Date now = Date.from(Instant.now());
 				
-		application.setLastModifiedDate(now);
+		application.setLastUpdatedOn(now);
 		//application.setLastModifiedBy(userInfo);
-		application.setSystemModifiedDate(now);
 				
 		//mongoDocumentService.create(application.toDocument());
 	}

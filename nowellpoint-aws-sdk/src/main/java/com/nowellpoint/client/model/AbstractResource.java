@@ -9,9 +9,9 @@ public abstract class AbstractResource implements Resource {
 
 	private String id;
 	
-	private Date createdDate;
+	private Date createdOn;
 	
-	private Date lastModifiedDate;
+	private Date lastUpdatedOn;
 	
 	private UserInfo createdBy;
 	
@@ -30,23 +30,23 @@ public abstract class AbstractResource implements Resource {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
 	
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Date getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Date lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
+	}
+
 	public UserInfo getCreatedBy() {
 		return createdBy;
 	}

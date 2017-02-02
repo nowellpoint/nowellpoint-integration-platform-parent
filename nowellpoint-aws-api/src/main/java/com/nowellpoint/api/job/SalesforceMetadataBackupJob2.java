@@ -255,8 +255,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 			//scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 			//scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
-			//scheduledJob.setLastRunDate(fireTime);
-			scheduledJob.setSystemModifiedDate(Date.from(Instant.now()));		    	
+			//scheduledJob.setLastRunDate(fireTime);		    	
 			
 			
 			//

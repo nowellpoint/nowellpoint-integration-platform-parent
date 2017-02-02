@@ -35,6 +35,9 @@ public class UserInfo implements Serializable {
 
 	@Id
 	private ObjectId id; 
+	
+	@EmbedOne
+	private Meta meta;
 
 	private String lastName;
 

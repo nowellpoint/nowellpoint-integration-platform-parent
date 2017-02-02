@@ -68,7 +68,7 @@ public class ProjectController extends AbstractController {
 		
 		List<Project> projects = httpResponse.getEntityList(Project.class);
 		
-		projects = projects.stream().sorted((p1, p2) -> p1.getCreatedDate().compareTo(p2.getCreatedDate())).collect(Collectors.toList());
+		projects = projects.stream().sorted((p1, p2) -> p1.getCreatedOn().compareTo(p2.getCreatedOn())).collect(Collectors.toList());
 		
 		AccountProfile account = request.attribute("account");
 		

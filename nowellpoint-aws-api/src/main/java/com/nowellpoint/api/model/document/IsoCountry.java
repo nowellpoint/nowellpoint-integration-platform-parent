@@ -20,6 +20,7 @@ package com.nowellpoint.api.model.document;
 
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Document(collectionName="iso.countries")
@@ -37,6 +38,12 @@ public class IsoCountry extends MongoDocument {
 	private String name;
 	
 	private String description;
+	
+	@Reference
+	private UserInfo createdBy;
+	
+	@Reference
+	private UserInfo lastUpdatedBy;
 
 	public IsoCountry() {
 		
@@ -72,5 +79,29 @@ public class IsoCountry extends MongoDocument {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
+
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}	
 }

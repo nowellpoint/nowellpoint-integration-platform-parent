@@ -330,8 +330,7 @@ public class SalesforceMetadataBackupJob implements Job {
 			    	scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 			    	scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 		    		scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
-			    	scheduledJob.setLastRunDate(fireTime);
-			    	scheduledJob.setSystemModifiedDate(Date.from(Instant.now()));		    	
+			    	scheduledJob.setLastRunDate(fireTime);	    	
 			    	documentManager.replaceOne(scheduledJob);
 			    	
 			    	//
@@ -368,7 +367,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
 		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
 		scheduledJobRequest.setOwner(scheduledJob.getOwner());
-		scheduledJobRequest.setCreatedDate(now);
+		scheduledJobRequest.setCreatedOn(now);
 		scheduledJobRequest.setCreatedBy(documentManager.getReference(UserInfo.class, id));
 		scheduledJobRequest.setDescription(scheduledJob.getDescription());
 		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
@@ -378,12 +377,10 @@ public class SalesforceMetadataBackupJob implements Job {
 		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeId());
 		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
 		scheduledJobRequest.setStatus(scheduledJob.getStatus());
-		scheduledJobRequest.setLastModifiedDate(now);
+		scheduledJobRequest.setLastUpdatedOn(now);
 		scheduledJobRequest.setLastUpdatedBy(documentManager.getReference(UserInfo.class, id));
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
-		scheduledJobRequest.setSystemCreatedDate(now);
-		scheduledJobRequest.setSystemModifiedDate(now);
 		scheduledJobRequest.setYear(dateTime.getYear());
 		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
 		scheduledJobRequest.setDay(dateTime.getDayOfMonth());

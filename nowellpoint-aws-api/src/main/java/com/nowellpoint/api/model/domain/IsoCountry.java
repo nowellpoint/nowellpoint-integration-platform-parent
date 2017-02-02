@@ -4,6 +4,10 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class IsoCountry extends AbstractResource {
 	
+	private UserInfo createdBy;
+	
+	private UserInfo lastUpdatedBy;
+	
 	private String language;
 	
 	private String code;
@@ -22,6 +26,22 @@ public class IsoCountry extends AbstractResource {
 
 	public IsoCountry(MongoDocument document) {
 		super(document);
+	}
+
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getLanguage() {

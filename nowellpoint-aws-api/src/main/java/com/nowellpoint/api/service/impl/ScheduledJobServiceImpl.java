@@ -114,12 +114,10 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		
 		Date now = Date.from(Instant.now());
 		
-		scheduledJob.setCreatedDate(now);
+		scheduledJob.setCreatedOn(now);
 		scheduledJob.setCreatedBy(userInfo);
-		scheduledJob.setLastModifiedDate(now);
+		scheduledJob.setLastUpdatedOn(now);
 		scheduledJob.setLastModifiedBy(userInfo);
-		scheduledJob.setSystemCreatedDate(now);
-		scheduledJob.setSystemModifiedDate(now);
 		
 		create(scheduledJob);
 		
@@ -148,8 +146,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		scheduledJob.setJobTypeId(original.getJobTypeId());
 		scheduledJob.setJobTypeCode(original.getJobTypeCode());
 		scheduledJob.setJobTypeName(original.getJobTypeName());
-		scheduledJob.setCreatedDate(original.getCreatedDate());
-		scheduledJob.setSystemCreatedDate(original.getSystemCreatedDate());
+		scheduledJob.setCreatedOn(original.getCreatedOn());
 		scheduledJob.setLastRunDate(original.getLastRunDate());
 		scheduledJob.setLastRunStatus(original.getLastRunStatus());
 		scheduledJob.setLastRunFailureMessage(original.getLastRunFailureMessage());
@@ -191,9 +188,8 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		
 		Date now = Date.from(Instant.now());
 		
-		scheduledJob.setLastModifiedDate(now);
+		scheduledJob.setLastUpdatedOn(now);
 		scheduledJob.setLastModifiedBy(userInfo);
-		scheduledJob.setSystemModifiedDate(now);
 		
 		update(scheduledJob);
 		
@@ -410,7 +406,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
 		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
 		scheduledJobRequest.setOwner( documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id) );
-		scheduledJobRequest.setCreatedDate(now);
+		scheduledJobRequest.setCreatedOn(now);
 		scheduledJobRequest.setCreatedBy( documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id) );
 		scheduledJobRequest.setDescription(scheduledJob.getDescription());
 		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
@@ -419,13 +415,11 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		scheduledJobRequest.setJobTypeCode(scheduledJob.getJobTypeCode());
 		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeCode());
 		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
-		scheduledJobRequest.setLastModifiedDate(now);
+		scheduledJobRequest.setLastUpdatedOn(now);
 		scheduledJobRequest.setLastUpdatedBy( documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id) );
 		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
 		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
 		scheduledJobRequest.setStatus(scheduledJob.getStatus());
-		scheduledJobRequest.setSystemCreatedDate(now);
-		scheduledJobRequest.setSystemModifiedDate(now);
 		scheduledJobRequest.setYear(dateTime.getYear());
 		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
 		scheduledJobRequest.setDay(dateTime.getDayOfMonth());

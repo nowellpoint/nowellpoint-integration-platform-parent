@@ -45,16 +45,10 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	private String id;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date createdDate;
+	private Date createdOn;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date lastModifiedDate;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date systemCreatedDate;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date systemModifiedDate;
+	private Date lastUpdatedOn;
 	
 	private Meta meta;
 	
@@ -80,38 +74,22 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		this.id = id;
 	}
 	
-	public Date getCreatedDate() {
-		return createdDate;
+	public Date getCreatedOn() {
+		return createdOn;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
 	}
 
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
+	public Date getLastUpdatedOn() {
+		return lastUpdatedOn;
 	}
 
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
-	public Date getSystemCreatedDate() {
-		return systemCreatedDate;
+	public void setLastUpdatedOn(Date lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
-	public void setSystemCreatedDate(Date systemCreatedDate) {
-		this.systemCreatedDate = systemCreatedDate;
-	}
-
-	public Date getSystemModifiedDate() {
-		return systemModifiedDate;
-	}
-
-	public void setSystemModifiedDate(Date systemModifiedDate) {
-		this.systemModifiedDate = systemModifiedDate;
-	}
-	
 	public Meta getMeta() {
 		return meta;
 	}

@@ -31,12 +31,10 @@ public class ProjectService {
 		
 		Date now = Date.from(Instant.now());
 		
-		project.setCreatedDate(now);
+		project.setCreatedOn(now);
 		//project.setCreatedBy(userInfo);
-		project.setLastModifiedDate(now);
+		project.setLastUpdatedOn(now);
 		//project.setLastModifiedBy(userInfo);
-		project.setSystemCreatedDate(now);
-		project.setSystemModifiedDate(now);
 		
 		//mongoDocumentService.create(project.toDocument());
 	}
@@ -50,15 +48,13 @@ public class ProjectService {
 	public void updateProject(String id, Project project) {
 		Project original = findProject( id );
 		project.setId(id);
-		project.setCreatedDate(original.getCreatedDate());
-		project.setSystemCreatedDate(original.getSystemCreatedDate());
+		project.setCreatedOn(original.getCreatedOn());
 		
 		Date now = Date.from(Instant.now());
 		
 		//project.setCreatedBy(userInfo);
-		project.setLastModifiedDate(now);
+		project.setLastUpdatedOn(now);
 		//project.setLastModifiedBy(userInfo);
-		project.setSystemModifiedDate(now);
 		
 		//mongoDocumentService.replace(project.toDocument());
 	}

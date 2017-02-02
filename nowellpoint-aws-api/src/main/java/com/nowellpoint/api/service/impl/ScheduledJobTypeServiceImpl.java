@@ -6,7 +6,9 @@ import java.util.Date;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.model.domain.ScheduledJobType;
 import com.nowellpoint.api.model.domain.ScheduledJobTypeList;
+import com.nowellpoint.api.model.domain.UserInfo;
 import com.nowellpoint.api.service.ScheduledJobTypeService;
+import com.nowellpoint.api.util.UserContext;
 
 public class ScheduledJobTypeServiceImpl extends AbstractScheduledJobTypeService implements ScheduledJobTypeService {
 
@@ -26,16 +28,14 @@ public class ScheduledJobTypeServiceImpl extends AbstractScheduledJobTypeService
 	
 	@Override
 	public void createScheduledJobType(ScheduledJobType scheduledJobType) {
-		//UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 		
-		scheduledJobType.setCreatedDate(now);
-		//scheduledJobType.setCreatedBy(userInfo);
-		scheduledJobType.setLastModifiedDate(now);
-		//scheduledJobType.setLastModifiedBy(userInfo);
-		scheduledJobType.setSystemCreatedDate(now);
-		scheduledJobType.setSystemModifiedDate(now);
+		scheduledJobType.setCreatedOn(now);
+		scheduledJobType.setCreatedBy(userInfo);
+		scheduledJobType.setLastUpdatedOn(now);
+		scheduledJobType.setLastUpdatedBy(userInfo);
 		
 		create(scheduledJobType);
 	}
@@ -44,13 +44,12 @@ public class ScheduledJobTypeServiceImpl extends AbstractScheduledJobTypeService
 	public void updateScheduledJobType(String id, ScheduledJobType scheduledJobType) {
 		scheduledJobType.setId(id);
 		
-		//UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 				
-		scheduledJobType.setLastModifiedDate(now);
-		//scheduledJobType.setLastModifiedBy(userInfo);
-		scheduledJobType.setSystemModifiedDate(now);
+		scheduledJobType.setLastUpdatedOn(now);
+		scheduledJobType.setLastUpdatedBy(userInfo);
 		
 		update(scheduledJobType);
 	}

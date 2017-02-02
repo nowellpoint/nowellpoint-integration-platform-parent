@@ -34,12 +34,10 @@ public class SObjectDetailServiceImpl extends AbstractSObjectDetailService imple
 		
 		Date now = Date.from(Instant.now());
 		
-		sobjectDetail.setCreatedDate(now);
+		sobjectDetail.setCreatedOn(now);
 		sobjectDetail.setCreatedBy(userInfo);
-		sobjectDetail.setLastModifiedDate(now);
+		sobjectDetail.setLastUpdatedOn(now);
 		sobjectDetail.setLastModifiedBy(userInfo);
-		sobjectDetail.setSystemCreatedDate(now);
-		sobjectDetail.setSystemModifiedDate(now);
 		
 		create(sobjectDetail);
 	}
@@ -50,9 +48,8 @@ public class SObjectDetailServiceImpl extends AbstractSObjectDetailService imple
 		
 		Date now = Date.from(Instant.now());
 		
-		sobjectDetail.setLastModifiedDate(now);
+		sobjectDetail.setLastUpdatedOn(now);
 		sobjectDetail.setLastModifiedBy(userInfo);
-		sobjectDetail.setSystemModifiedDate(now);
 		
 		update(sobjectDetail);
 	}

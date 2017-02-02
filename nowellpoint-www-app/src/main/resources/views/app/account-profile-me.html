@@ -96,8 +96,6 @@
                         <a href="${labels['base.path']}/${accountProfile.id}/address" id="edit-account-profile-address" class="btn btn-primary-outline" role="button">${labels["edit.address"]}</a>
                     </div>
                 </div>
-
-                <br>
                 <div class="hr-divider"></div>
                 <br>
                 <address>
@@ -121,11 +119,6 @@
                         <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" id="add-card" class="btn btn-primary-outline" role="button">${labels["add.payment.method"]}</a>
                     </div>
                 </div>
-
-                <br>
-                <div class="hr-divider"></div>
-                <br>
-
                 <div class="content table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -168,20 +161,19 @@
                         <h3 class="dashhead-title">${labels["settings"]}</h3>
                     </div>
                 </div>
-                <br>
                 <div class="hr-divider"></div>
                 <br>
             </div>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${createdByHref}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdDate?date?string.long!} ${accountProfile.createdDate?time?string.medium!}</dd>
+                    <dd><a href="${createdByHref}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdOn?date?string.long!} ${accountProfile.createdOn?time?string.medium!}</dd>
                 </dl>
             </div>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${lastModifiedByHref}">${accountProfile.lastUpdatedBy.name}</a>, ${accountProfile.lastModifiedDate?date?string.long!} ${accountProfile.lastModifiedDate?time?string.medium!}</dd>
+                    <dd><a href="${lastModifiedByHref}">${accountProfile.lastUpdatedBy.name}</a>, ${accountProfile.lastUpdatedOn?date?string.long!} ${accountProfile.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
         </div>

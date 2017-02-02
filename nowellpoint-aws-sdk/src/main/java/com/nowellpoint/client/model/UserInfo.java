@@ -4,6 +4,8 @@ public class UserInfo {
 	
 	private String id; 
 	
+	private Meta meta;
+	
 	private String lastName;
 
 	private String firstName;
@@ -40,6 +42,14 @@ public class UserInfo {
 	
 	public UserInfo(String id) {
 		setId(id);
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public String getId() {

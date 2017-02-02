@@ -6,6 +6,8 @@ import com.nowellpoint.api.model.document.Photos;
 public class UserInfo {
 	
 	private String id; 
+	
+	private Meta meta;
 
 	private String lastName;
 
@@ -51,6 +53,14 @@ public class UserInfo {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public String getLastName() {
