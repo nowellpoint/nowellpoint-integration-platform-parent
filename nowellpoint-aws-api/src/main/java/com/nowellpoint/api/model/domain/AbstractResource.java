@@ -103,5 +103,10 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		return new ObjectMapper().writeValueAsString(this);
 	}
 	
+	@JsonIgnore
+	public void toResource(MongoDocument document) {
+		modelMapper.map(document, this);
+	}
+	
 	public abstract MongoDocument toDocument();
 }

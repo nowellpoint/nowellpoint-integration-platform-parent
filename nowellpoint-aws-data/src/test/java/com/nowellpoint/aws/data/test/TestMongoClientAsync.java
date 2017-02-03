@@ -67,12 +67,16 @@ public class TestMongoClientAsync {
 		Assert.assertNotNull(accountProfile.getCreatedBy().getId());
 		Assert.assertNotNull(accountProfile.getPhotos());
 		Assert.assertNotNull(accountProfile.getAddress());
+		Assert.assertNull(accountProfile.getCreatedBy().getName());
+		Assert.assertNull(accountProfile.getLastUpdatedBy().getName());
 				
 		dm.refresh( identity );
 		
 		Assert.assertNotNull(identity.getId());
 		Assert.assertNotNull(identity.getPhotos());
 		Assert.assertNotNull(identity.getAddress());
+		Assert.assertNotNull(accountProfile.getCreatedBy().getName());
+		Assert.assertNotNull(accountProfile.getLastUpdatedBy().getName());
 		
 		accountProfile = dm.fetch( AccountProfile.class, accountProfile.getId() );
 		
@@ -94,6 +98,10 @@ public class TestMongoClientAsync {
 		Set<AccountProfile> accountProfiles = dm.findAll(AccountProfile.class);
 		
 		Assert.assertNotEquals(accountProfiles.size(), 0);
+		
+		Set<SalesforceConnector> connectorList = dm.findAll(SalesforceConnector.class);
+		
+		System.out.println(connectorList.size());
 		
 		dmf.close();
 	}	

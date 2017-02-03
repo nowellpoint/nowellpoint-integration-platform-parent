@@ -66,7 +66,7 @@ public class AccountProfileController extends AbstractController {
 		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> currentPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> setPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_EDIT, (request, response) -> editAccountProfile(configuration, request, response));
+        //get(Path.Route.ACCOUNT_PROFILE_EDIT, (request, response) -> editAccountProfile(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> confirmDeactivateAccountProfile(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> deactivateAccountProfile(configuration, request, response));
         delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> removeProfilePicture(configuration, request, response));
@@ -134,6 +134,8 @@ public class AccountProfileController extends AbstractController {
 	private String getAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
+		Identity identity = getIdentity(request);
+		
 		String id = request.params(":id");
 		
 		AccountProfile accountProfile = new NowellpointClient(token)
@@ -150,6 +152,10 @@ public class AccountProfileController extends AbstractController {
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
 		model.put("successMessage", request.cookie("update.profile.success"));
+		
+		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
+		model.put("languages", getSupportedLanguages());
+		model.put("timeZones", getTimeZones());
 		
 		if (accountProfile.getId().equals(id)) {
 			return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
@@ -420,10 +426,24 @@ public class AccountProfileController extends AbstractController {
 			throw new BadRequestException(output);	
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.profile.success"), 3);
-		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", updateResult.getTarget().getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", updateResult.getTarget().getLastUpdatedBy().getId());
 		
-		return "";	
+		Map<String, Object> model = getModel();
+		model.put("account", identity);
+		model.put("accountProfile", updateResult.getTarget());
+		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
+		model.put("languages", getSupportedLanguages());
+		model.put("timeZones", getTimeZones());
+		model.put("successMessage", MessageProvider.getMessage(getLocale(request), "update.profile.success"));
+		model.put("createdByHref", createdByHref);
+		model.put("lastModifiedByHref", lastModifiedByHref);
+		
+		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.profile.success"), 3);
+		//response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
+		
+		//return "";
+		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
 	}
 	
 	/**
@@ -434,24 +454,24 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String editAccountProfile(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
-		
-		AccountProfile accountProfile = new NowellpointClient(token)
-				.accountProfile()
-				.get(request.params(":id"));
-			
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		model.put("accountProfile", accountProfile);
-		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
-		model.put("languages", getSupportedLanguages());
-		model.put("timeZones", getTimeZones());
-			
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);		
-	};
+//	private String editAccountProfile(Configuration configuration, Request request, Response response) {
+//		Token token = getToken(request);
+//		
+//		Identity identity = getIdentity(request);
+//		
+//		AccountProfile accountProfile = new NowellpointClient(token)
+//				.accountProfile()
+//				.get(request.params(":id"));
+//			
+//		Map<String, Object> model = getModel();
+//		model.put("account", identity);
+//		model.put("accountProfile", accountProfile);
+//		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
+//		model.put("languages", getSupportedLanguages());
+//		model.put("timeZones", getTimeZones());
+//			
+//		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);		
+//	};
 	
 	/**
 	 * 

@@ -5,6 +5,10 @@ import static com.mongodb.client.model.Filters.eq;
 import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
+import org.modelmapper.AbstractConverter;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
+import org.modelmapper.convention.MatchingStrategies;
 
 import com.nowellpoint.api.model.domain.AccountProfile;
 import com.nowellpoint.aws.data.AbstractCacheService;
@@ -22,6 +26,7 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		MongoDocument document = accountProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
+		documentManager.refresh( document );
 		set(accountProfile.getId(), document);
 		set(accountProfile.getAccountHref(), document);
 	}
@@ -30,8 +35,11 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		MongoDocument document = accountProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
+		documentManager.refresh( document );
 		set(accountProfile.getId(), document);
 		set(accountProfile.getAccountHref(), document);
+		accountProfile.toResource(document);
+		
 	}
 	
 	protected void delete(AccountProfile accountProfile) {

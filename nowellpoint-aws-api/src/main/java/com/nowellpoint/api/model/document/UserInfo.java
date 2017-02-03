@@ -86,6 +86,14 @@ public class UserInfo implements Serializable {
 	public void setId(ObjectId id) {
 		this.id = id;
 	}
+	
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
 
 	public String getLastName() {
 		return lastName;

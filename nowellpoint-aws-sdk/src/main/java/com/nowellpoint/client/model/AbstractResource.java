@@ -3,6 +3,8 @@ package com.nowellpoint.client.model;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractResource implements Resource {
@@ -69,5 +71,14 @@ public abstract class AbstractResource implements Resource {
 
 	public void setMeta(Meta meta) {
 		this.meta = meta;
+	}
+	
+	public String toJson() {
+		try {
+			return new ObjectMapper().writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
