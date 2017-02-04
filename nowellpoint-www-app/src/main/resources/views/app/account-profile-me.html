@@ -1,12 +1,7 @@
 <#import "template.html" as t>
     <@t.page>
 
-        <#if successMessage??>
-            <div id="success" class="alert alert-success">
-                <a class="close" data-dismiss="alert">&times;</a>
-                <div class="text-center">${successMessage!}</div>
-            </div>
-        </#if>
+
         <div class="flextable mt-1">
             <div class="flextable-item flextable-primary">
                 <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
@@ -181,8 +176,9 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form class="form-vertical" id="account-profile-form" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}">
+                    <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form">
                         <div class="modal-body">
+                            <#include "spinner.html"/>
                             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -299,26 +295,51 @@
 
 
         <#include "confirm-dialog.html"/>
-        <#include "spinner.html"/>
 
         <script>
-            $(document).ready(function() {
-                $("#account-profile-form").submit(function(event) {
-                    alert("Handler for .submit() called.");
-                    event.preventDefault();
+            $("#submit").click(function(e) {
+
+                $.ajax({
+                    method: "POST",
+                    url: "${labels['base.path']}/${accountProfile.id}",
+                    dataType: "text/html",
+                    data: $("#account-profile-form").serialize(),
+                    beforeSend: function() {
+                        $('#spinner').show();
+                    },
+                    complete: function(response) {
+                        $('#spinner').hide();
+                        $("#account-profile-dialog").html(response.responseText);
+                        setTimeout(function() {
+                            $('#account-profile-dialog').slideUp('slow').fadeOut(function() {
+                                // window.location.reload();
+                                window.location = window.location.href;
+                            });
+                        }, 1000);
+                    },
+                    success: function(response, status, jqXHR) {
+                        console.log(response);
+                    }
+
                 });
-            }
+
+                e.preventDefault();
+
+                //$('#account-profile-dialog').modal('hide');
+
+            });
+
 
             var accountProfile = {
-                    basePath: "${labels['base.path']}",
-                    id: "${accountProfile.id!}",
-                    firstName: "${accountProfile.firstName!}",
-                    lastName: "${accountProfile.lastName!}",
-                    street: "${(accountProfile.address.street)!}",
-                    city: "${(accountProfile.address.city)!}",
-                    state: "${(accountProfile.address.state)!}",
-                    postalCode: "${(accountProfile.address.postalCode)!}",
-                    countryCode: "${(accountProfile.address.countryCode)!}"
+                basePath: "${labels['base.path']}",
+                id: "${accountProfile.id!}",
+                firstName: "${accountProfile.firstName!}",
+                lastName: "${accountProfile.lastName!}",
+                street: "${(accountProfile.address.street)!}",
+                city: "${(accountProfile.address.city)!}",
+                state: "${(accountProfile.address.state)!}",
+                postalCode: "${(accountProfile.address.postalCode)!}",
+                countryCode: "${(accountProfile.address.countryCode)!}"
             }
             jQuery.data(document.body, "accountProfile", accountProfile);
         </script>
