@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.model.domain.Project;
+import com.nowellpoint.api.rest.domain.Project;
 
 public class ProjectService {
 	

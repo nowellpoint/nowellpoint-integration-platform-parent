@@ -10,9 +10,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.api.model.domain.Plan;
-import com.nowellpoint.api.model.domain.PlanList;
-import com.nowellpoint.api.service.PlanService;
+import com.nowellpoint.api.rest.PlanService;
+import com.nowellpoint.api.rest.domain.Plan;
+import com.nowellpoint.api.rest.domain.PlanList;
 
 @Path("plans")
 public class PlanResource {

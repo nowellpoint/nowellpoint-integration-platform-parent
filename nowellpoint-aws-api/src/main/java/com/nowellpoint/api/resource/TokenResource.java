@@ -34,10 +34,10 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.exception.AuthenticationException;
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.Token;
+import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.Token;
+import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;

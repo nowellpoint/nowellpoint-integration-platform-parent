@@ -1,6 +1,6 @@
 package com.nowellpoint.api.service;
 
-import com.nowellpoint.api.model.domain.SObjectDetail;
+import com.nowellpoint.api.rest.domain.SObjectDetail;
 
 public interface SObjectDetailService {
 	

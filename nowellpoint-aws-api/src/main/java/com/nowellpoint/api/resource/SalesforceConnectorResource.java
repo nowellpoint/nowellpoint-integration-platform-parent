@@ -25,11 +25,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.domain.Instance;
-import com.nowellpoint.api.model.domain.Meta;
-import com.nowellpoint.api.model.domain.SObjectDetail;
-import com.nowellpoint.api.model.domain.SalesforceConnector;
-import com.nowellpoint.api.model.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.Instance;
+import com.nowellpoint.api.rest.domain.Meta;
+import com.nowellpoint.api.rest.domain.SObjectDetail;
+import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.service.SObjectDetailService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;

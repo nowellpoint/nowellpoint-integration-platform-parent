@@ -11,11 +11,11 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.Application;
-import com.nowellpoint.api.model.domain.Instance;
-import com.nowellpoint.api.model.domain.SalesforceConnector;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
+import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.Application;
+import com.nowellpoint.api.rest.domain.Instance;
+import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.model.LoginResult;

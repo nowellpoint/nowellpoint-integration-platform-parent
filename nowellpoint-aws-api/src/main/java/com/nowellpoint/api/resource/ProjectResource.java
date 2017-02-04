@@ -19,10 +19,10 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.Project;
+import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.Project;
+import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
 import com.nowellpoint.api.service.ProjectService;
-import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 
 @Path("/project")
 public class ProjectResource {

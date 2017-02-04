@@ -41,16 +41,17 @@ import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.model.document.Address;
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.CreditCard;
-import com.nowellpoint.api.model.domain.Error;
-import com.nowellpoint.api.model.domain.Plan;
-import com.nowellpoint.api.model.domain.Subscription;
+import com.nowellpoint.api.rest.AccountProfileEndpoint;
+import com.nowellpoint.api.rest.PlanService;
+import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.CreditCard;
+import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.Plan;
+import com.nowellpoint.api.rest.domain.Subscription;
+import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.PaymentGatewayService;
-import com.nowellpoint.api.service.PlanService;
-import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.resource.ResourceException;
@@ -348,7 +349,7 @@ public class SignUpService {
 				.build(accountProfile.getEmailVerificationToken());
 		
 		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResource.class)
+				.path(AccountProfileEndpoint.class)
 				.path("/{id}")
 				.build(accountProfile.getId());
 		
@@ -397,7 +398,7 @@ public class SignUpService {
 		emailService.sendWelcomeMessage(accountProfile.getEmail(), accountProfile.getUsername(), accountProfile.getName());
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResource.class)
+				.path(AccountProfileEndpoint.class)
 				.path("/{id}")
 				.build(accountProfile.getId());
 		

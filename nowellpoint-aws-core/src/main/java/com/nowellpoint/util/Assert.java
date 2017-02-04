@@ -59,7 +59,11 @@ public class Assert {
 	}
 	
 	public static Boolean isEqual(String value1, String value2) {
-		if (value1.equals(value2)) {
+		if (value1 == null && value2 == null) {
+			return Boolean.TRUE;
+		} else if (value1 == null && value2 != null) {
+			return Boolean.FALSE;
+		} else if (value1.equals(value2)) {
 			return Boolean.TRUE;
 		} else {
 			return Boolean.FALSE;
@@ -67,10 +71,14 @@ public class Assert {
 	}
 	
 	public static Boolean isNotEqual(String value1, String value2) {
-		if (! value1.equals(value2)) {
-			return Boolean.TRUE;
-		} else {
+		if (value1 == null && value2 == null) {
 			return Boolean.FALSE;
+		} else if (value1 == null && value2 != null) {
+			return Boolean.TRUE;
+		} else if (value1.equals(value2)) {
+			return Boolean.FALSE;
+		} else {
+			return Boolean.TRUE;
 		}
 	}
 	

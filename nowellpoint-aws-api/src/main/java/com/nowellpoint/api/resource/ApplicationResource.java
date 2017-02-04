@@ -24,8 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.nowellpoint.api.model.domain.Application;
-import com.nowellpoint.api.model.domain.Instance;
+import com.nowellpoint.api.rest.domain.Application;
+import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.service.ApplicationService;
 
 @Path("/applications")

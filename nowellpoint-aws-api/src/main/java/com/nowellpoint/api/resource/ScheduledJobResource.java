@@ -28,9 +28,9 @@ import javax.ws.rs.core.UriInfo;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.model.domain.RunHistory;
-import com.nowellpoint.api.model.domain.ScheduledJob;
-import com.nowellpoint.api.model.domain.ScheduledJobList;
+import com.nowellpoint.api.rest.domain.RunHistory;
+import com.nowellpoint.api.rest.domain.ScheduledJob;
+import com.nowellpoint.api.rest.domain.ScheduledJobList;
 import com.nowellpoint.api.service.ScheduledJobService;
 
 @Path("scheduled-jobs")

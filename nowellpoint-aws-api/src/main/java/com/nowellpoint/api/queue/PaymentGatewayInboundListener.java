@@ -13,11 +13,11 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.CreditCard;
-import com.nowellpoint.api.model.domain.Transaction;
+import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.CreditCard;
+import com.nowellpoint.api.rest.domain.Transaction;
+import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
 import com.nowellpoint.api.service.EmailService;
-import com.nowellpoint.api.service.impl.AccountProfileServiceImpl;
 import com.nowellpoint.aws.data.QueueListener;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Properties;

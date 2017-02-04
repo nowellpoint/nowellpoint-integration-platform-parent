@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.model.domain.Error;
+import com.nowellpoint.api.rest.domain.Error;
 import com.stormpath.sdk.resource.ResourceException;
 
 @Provider

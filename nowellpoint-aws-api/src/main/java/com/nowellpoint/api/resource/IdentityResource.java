@@ -13,10 +13,10 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.domain.AccountProfile;
-import com.nowellpoint.api.model.domain.Identity;
-import com.nowellpoint.api.model.domain.Resources;
-import com.nowellpoint.api.service.AccountProfileService;
+import com.nowellpoint.api.rest.AccountProfileService;
+import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.Identity;
+import com.nowellpoint.api.rest.domain.Resources;
 import com.nowellpoint.util.Assert;
 
 @Path("identity")

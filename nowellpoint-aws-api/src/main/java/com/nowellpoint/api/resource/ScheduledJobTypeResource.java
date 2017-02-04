@@ -19,8 +19,8 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.model.domain.ScheduledJobType;
-import com.nowellpoint.api.model.domain.ScheduledJobTypeList;
+import com.nowellpoint.api.rest.domain.ScheduledJobType;
+import com.nowellpoint.api.rest.domain.ScheduledJobTypeList;
 import com.nowellpoint.api.service.ScheduledJobTypeService;
 
 @Path("scheduled-job-types")

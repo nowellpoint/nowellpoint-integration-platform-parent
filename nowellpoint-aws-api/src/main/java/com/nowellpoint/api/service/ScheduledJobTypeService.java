@@ -1,7 +1,7 @@
 package com.nowellpoint.api.service;
 
-import com.nowellpoint.api.model.domain.ScheduledJobType;
-import com.nowellpoint.api.model.domain.ScheduledJobTypeList;
+import com.nowellpoint.api.rest.domain.ScheduledJobType;
+import com.nowellpoint.api.rest.domain.ScheduledJobTypeList;
 
 public interface ScheduledJobTypeService {
 	

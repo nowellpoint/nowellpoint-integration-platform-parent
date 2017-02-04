@@ -4,9 +4,9 @@ import java.util.Set;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import com.nowellpoint.api.model.domain.Instance;
-import com.nowellpoint.api.model.domain.SalesforceConnector;
-import com.nowellpoint.api.model.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.Instance;
+import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.client.sforce.model.Token;
 
 /**

@@ -17,9 +17,9 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import com.nowellpoint.api.model.domain.ScheduledJob;
+import com.nowellpoint.api.rest.domain.ScheduledJob;
+import com.nowellpoint.api.rest.service.ScheduledJobServiceImpl;
 import com.nowellpoint.api.service.ScheduledJobService;
-import com.nowellpoint.api.service.impl.ScheduledJobServiceImpl;
 
 public class JobSchedulerManager2 {
 	

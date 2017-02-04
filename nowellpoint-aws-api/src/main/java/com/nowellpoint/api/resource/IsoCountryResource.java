@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.model.document.IsoCountry;
-import com.nowellpoint.api.model.domain.IsoCountryList;
+import com.nowellpoint.api.rest.domain.IsoCountryList;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 
@@ -53,7 +53,7 @@ public class IsoCountryResource {
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		IsoCountry document = documentManager.findOne(IsoCountry.class, and ( eq ( "language", language ), eq ( "code", code ) ) );
-		com.nowellpoint.api.model.domain.IsoCountry isoCountry = new com.nowellpoint.api.model.domain.IsoCountry(document);
+		com.nowellpoint.api.rest.domain.IsoCountry isoCountry = new com.nowellpoint.api.rest.domain.IsoCountry(document);
 		return Response.ok(isoCountry).build();
 	}
 }
