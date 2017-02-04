@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.ValidationException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
@@ -139,7 +138,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		accountProfile.setLastUpdatedOn(now);
 		accountProfile.setLastUpdatedBy(userInfo);
 		
-		create(accountProfile);
+		create( accountProfile );
 	}
 	
 	/**
@@ -177,6 +176,15 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	
 	@Override
 	public void updateAccountProfile(AccountProfile accountProfile) {
+		
+		if (Assert.isNullOrEmpty(accountProfile.getLastName())) {
+			throw new IllegalArgumentException("Missing required value last name");
+		}
+		
+		if (Assert.isNullOrEmpty(accountProfile.getLocaleSidKey())) {
+			throw new IllegalArgumentException("Missing required value locale sid key");
+		}
+		
 		AccountProfile original = findById( accountProfile.getId() );
 		
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
@@ -375,7 +383,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		
 		accountProfile.setAddress(address);
 		
-		update(accountProfile);
+		updateAccountProfile(accountProfile);
 	}
 	
 	/**
@@ -453,7 +461,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		
 		accountProfile.setSubscription(subscription);
 		
-		update(accountProfile);	
+		updateAccountProfile( accountProfile );	
 	}
 	
 	/**
@@ -724,39 +732,6 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			LOGGER.error(creditCardResult.getMessage());
 			throw new ValidationException(creditCardResult.getMessage());
 		}
-	}
-
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	@Override
-	public CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters) {
-		
-		CreditCard creditCard = getCreditCard(id, token);
-		
-		if (parameters.containsKey("cardholderName")) {
-			creditCard.setCardholderName(parameters.getFirst("cardholderName"));
-		}
-		
-		if (parameters.containsKey("expirationMonth")) {
-			creditCard.setExpirationMonth(parameters.getFirst("expirationMonth"));
-		}
-		
-		if (parameters.containsKey("expirationYear")) {
-			creditCard.setExpirationYear(parameters.getFirst("expirationYear"));
-		}
-		
-		if (parameters.containsKey("primary")) {
-			creditCard.setPrimary(Boolean.valueOf(parameters.getFirst("primary")));
-		}
-		
-		updateCreditCard(id, token, creditCard);
-		
-		return creditCard;
 	}
 	
 	/**

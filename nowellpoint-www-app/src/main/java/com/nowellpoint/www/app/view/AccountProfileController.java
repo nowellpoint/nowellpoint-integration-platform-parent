@@ -47,8 +47,6 @@ public class AccountProfileController extends AbstractController {
 		public static final String ACCOUNT_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile-me.html");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile.html");
 		public static final String ACCOUNT_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "account-profile-plans.html");
-		public static final String ACCOUNT_PROFILE_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-edit.html");
-		public static final String ACCOUNT_PROFILE_ADDRESS_EDIT = String.format(APPLICATION_CONTEXT, "account-profile-address-edit.html");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile-deactivate.html");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String ACCOUNT_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
@@ -69,7 +67,6 @@ public class AccountProfileController extends AbstractController {
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> confirmDeactivateAccountProfile(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> deactivateAccountProfile(configuration, request, response));
         delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> removeProfilePicture(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> editAddress(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> getCreditCard(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), (request, response) -> newCreditCard(configuration, request, response));
@@ -420,7 +417,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("timeZones", getTimeZones());
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_EDIT);
+			String output = render(configuration, request, response, model, "");
 			
 			throw new BadRequestException(output);	
 		}
@@ -514,32 +511,6 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String editAddress(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
-		
-		Address address = new NowellpointClient(token)
-				.accountProfile()
-				.address()
-				.get(request.params(":id"));
-		
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		model.put("accountProfile", new AccountProfile(request.params(":id")));
-		model.put("address", address);
-			
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ADDRESS_EDIT);	
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
 	private String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -565,22 +536,20 @@ public class AccountProfileController extends AbstractController {
 					.withState(request.queryParams("state"))
 					.withStreet(request.queryParams("street"));
 
-			
 			Map<String, Object> model = getModel();
 			model.put("account", identity);
 			model.put("accountProfile", new AccountProfile(request.params(":id")));
 			model.put("address", address);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ADDRESS_EDIT);
+			String output = render(configuration, request, response, model, "");
 			
 			throw new BadRequestException(output);
 		}
 		
-		response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "update.address.success"), 3);
-		response.redirect(String.format("/app/account-profile/%s", request.params(":id")));
+		String html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.address.success") + "</strong></div></div>";
 		
-		return "";		
+		return html;	
 	}
 	
 	/**

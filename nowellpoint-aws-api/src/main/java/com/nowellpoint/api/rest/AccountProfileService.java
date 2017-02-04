@@ -1,7 +1,5 @@
 package com.nowellpoint.api.rest;
 
-import javax.ws.rs.core.MultivaluedMap;
-
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.CreditCard;
@@ -135,15 +133,6 @@ public interface AccountProfileService {
 	
 	void updateCreditCard(String id, String token, CreditCard creditCard);
 
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	CreditCard updateCreditCard(String id, String token, MultivaluedMap<String,String> parameters);
-	
 	/**
 	 * 
 	 * 

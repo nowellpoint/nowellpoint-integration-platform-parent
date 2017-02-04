@@ -1,7 +1,5 @@
 <#import "template.html" as t>
     <@t.page>
-
-
         <div class="flextable mt-1">
             <div class="flextable-item flextable-primary">
                 <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
@@ -9,9 +7,8 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <a href="${labels['base.path']}/${accountProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>&emsp;
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#account-profile-dialog" data-whatever="@mdo">${labels["edit.user.profile"]}</button>
-            <!--<a id="edit-user-profile" href="${labels['base.path']}/${accountProfile.id}/edit" class="btn btn-outline-primary" role="button">${labels["edit.user.profile"]}</a>-->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#account-profile-dialog">${labels["edit.user.profile"]}</button>&emsp;
+            <a href="${labels['base.path']}/${accountProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
         </div>
         <br>
         <div class="row">
@@ -39,7 +36,6 @@
                     <hr>
                     <dt>${labels["timezone.key"]}</dt>
                     <dd>${accountProfile.timeZoneSidKey!}&emsp;</dd>
-                    <hr>
                 </dl>
             </div>
 
@@ -73,6 +69,7 @@
         </div>
 
         <br>
+        <div class="hr-divider"></div>
         <br>
 
         <div id="address" class="row">
@@ -81,11 +78,11 @@
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["address"]}</h3>
                     </div>
-                    <div class="flextable-item">
-                        <a href="${labels['base.path']}/${accountProfile.id}/address" id="edit-account-profile-address" class="btn btn-outline-primary" role="button">${labels["edit.address"]}</a>
-                    </div>
                 </div>
-                <div class="hr-divider"></div>
+                <br>
+                <div class="btn-toolbar" role="toolbar">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#address-dialog">${labels["edit.address"]}</button>
+                </div>
                 <br>
                 <address>
                             ${(accountProfile.address.street)!}<br>
@@ -96,6 +93,7 @@
         </div>
 
         <br>
+        <div class="hr-divider"></div>
         <br>
 
         <div id="payment-methods" class="row">
@@ -104,10 +102,12 @@
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["payment.methods"]}</h3>
                     </div>
-                    <div class="flextable-item">
-                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/new" id="add-card" class="btn btn-outline-primary" role="button">${labels["add.payment.method"]}</a>
-                    </div>
                 </div>
+                <br>
+                <div class="btn-toolbar" role="toolbar">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#address-dialog">${labels["add.payment.method"]}</button>
+                </div>
+                <br>
                 <div class="content table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -126,7 +126,7 @@
                                     </td>
                                     <td>${creditCard.cardholderName}</td>
                                     <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
-                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" data-toggle="modal" data-title="${labels['edit']}"><span class="icon icon-edit"></span>${labels["edit"]}</a>
+                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a>
                                         <#if ! creditCard.primary>
                                             &emsp;
                                             <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a> &emsp;
@@ -141,18 +141,11 @@
         </div>
 
         <br>
+        <div class="hr-divider"></div>
         <br>
 
         <div id="settings" class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["settings"]}</h3>
-                    </div>
-                </div>
-                <div class="hr-divider"></div>
-                <br>
-            </div>
+            <br>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
@@ -167,6 +160,71 @@
             </div>
         </div>
 
+        <div class="modal fade" id="address-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">${labels["edit.user.address"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <#include "spinner.html"/>
+                        <form class="form-vertical" name="address-form" id="address-form" role="form" action="${labels['base.path']}/${accountProfile.id}/address">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="street">${labels["street"]}</label>
+                                    <input type="text" class="form-control" name="street" id="street" autofocus="" value="${(accountProfile.address.street)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="city">${labels["city"]}</label>
+                                    <input type="text" class="form-control" name="city" id="city" value="${(accountProfile.address.city)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="state">${labels["state"]}</label>
+                                    <input type="text" class="form-control" name="state" id="state" value="${(accountProfile.address.state)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(accountProfile.address.postalCode)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                                    <select id="countryCode" name="countryCode" class="form-control" required>
+                                        <#list countryList as country>
+                                            <#if country.code==accountProfile.address.countryCode>
+                                                <option value="${country.code}" selected="selected">${country.name}</option>
+                                            </#if>
+                                            <#if country.code !=accountProfile.address.countryCode>
+                                                <option value="${country.code}">${country.name}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="submit" id="update-address" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="account-profile-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -176,9 +234,9 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form">
-                        <div class="modal-body">
-                            <#include "spinner.html"/>
+                    <div class="modal-body">
+                        <#include "spinner.html"/>
+                        <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form" action="${labels['base.path']}/${accountProfile.id}">
                             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -283,12 +341,12 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
-                            <button type="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="submit" id="update-account-profile" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -297,22 +355,25 @@
         <#include "confirm-dialog.html"/>
 
         <script>
-            $("#submit").click(function(e) {
+            $("#update-account-profile").click(function(e) {
+
+                $form = $("#account-profile-form");
+                $dialog = $("#account-profile-dialog")
 
                 $.ajax({
                     method: "POST",
-                    url: "${labels['base.path']}/${accountProfile.id}",
+                    url: $form.attr('action'),
                     dataType: "text/html",
-                    data: $("#account-profile-form").serialize(),
+                    data: $form.serialize(),
                     beforeSend: function() {
+                        $form.hide();
                         $('#spinner').show();
                     },
                     complete: function(response) {
                         $('#spinner').hide();
-                        $("#account-profile-dialog").html(response.responseText);
+                        $dialog.html(response.responseText);
                         setTimeout(function() {
-                            $('#account-profile-dialog').slideUp('slow').fadeOut(function() {
-                                // window.location.reload();
+                            $dialog.slideUp('slow').fadeOut(function() {
                                 window.location = window.location.href;
                             });
                         }, 1000);
@@ -325,7 +386,38 @@
 
                 e.preventDefault();
 
-                //$('#account-profile-dialog').modal('hide');
+            });
+            
+            $("#update-address").click(function(e) {
+
+                $form = $("#address-form");
+                $dialog = $("#address-dialog");
+
+                $.ajax({
+                    method: "POST",
+                    url: $form.attr('action'),
+                    dataType: "text/html",
+                    data: $form.serialize(),
+                    beforeSend: function() {
+                        $form.hide();
+                        $('#spinner').show();
+                    },
+                    complete: function(response) {
+                        $('#spinner').hide();
+                        $dialog.html(response.responseText);
+                        setTimeout(function() {
+                            $dialog.slideUp('slow').fadeOut(function() {
+                                window.location = "${labels['base.path']}/${accountProfile.id}#address";
+                            });
+                        }, 1000);
+                    },
+                    success: function(response, status, jqXHR) {
+                        console.log(response);
+                    }
+
+                });
+
+                e.preventDefault();
 
             });
 
