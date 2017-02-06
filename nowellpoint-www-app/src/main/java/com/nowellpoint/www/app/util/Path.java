@@ -17,7 +17,7 @@ public class Path {
 		public static final String SIGN_UP = "/signup";
 		public static final String LIST_PLANS = "/list-plans";
 		public static final String SETUP_ACCOUNT = "/create-account";
-		public static final String CONTACT_US = "/contact";
+		public static final String CONTACT = "/contact";
 		public static final String SERVICES = "/services";
 		public static final String HEALTH_CHECK = "/healthcheck";
 		public static final String VERIFY_EMAIL = "/verify-email";
@@ -86,8 +86,6 @@ public class Path {
 	}
 
 	public static class Template {
-		public static final String INDEX = "index.html";
-		public static final String CONTACT_US = "contact.html";
 		public static final String SERVICES = "services.html";
 		public static final String START = String.format(APPLICATION_CONTEXT, "start.html");
 		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "query-edit.html");

@@ -391,40 +391,48 @@ public class AccountProfileController extends AbstractController {
 		
 		if (! updateResult.isSuccess()) {
 			
-			AccountProfile accountProfile = new AccountProfile()
-					.withId(request.params(":id"))
-					.withFirstName(request.queryParams("firstName"))
-					.withLastName(request.queryParams("lastName"))
-					.withCompany(request.queryParams("company"))
-					.withDivision(request.queryParams("division"))
-					.withDepartment(request.queryParams("department"))
-					.withTitle(request.queryParams("title"))
-					.withEmail(request.queryParams("email"))
-					.withFax(request.queryParams("fax"))
-					.withMobilePhone(request.queryParams("mobilePhone"))
-					.withPhone(request.queryParams("phone"))
-					.withExtension(request.queryParams("extension"))
-					.withLanguageSidKey(request.queryParams("languageSidKey"))
-					.withLocaleSidKey(request.queryParams("localeSidKey"))
-					.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
-					.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
-
-			Map<String, Object> model = getModel();
-			model.put("account", identity);
-			model.put("accountProfile", accountProfile);
-			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
-			model.put("languages", getSupportedLanguages());
-			model.put("timeZones", getTimeZones());
-			model.put("errorMessage", updateResult.getErrorMessage());
+//			AccountProfile accountProfile = new AccountProfile()
+//					.withId(request.params(":id"))
+//					.withFirstName(request.queryParams("firstName"))
+//					.withLastName(request.queryParams("lastName"))
+//					.withCompany(request.queryParams("company"))
+//					.withDivision(request.queryParams("division"))
+//					.withDepartment(request.queryParams("department"))
+//					.withTitle(request.queryParams("title"))
+//					.withEmail(request.queryParams("email"))
+//					.withFax(request.queryParams("fax"))
+//					.withMobilePhone(request.queryParams("mobilePhone"))
+//					.withPhone(request.queryParams("phone"))
+//					.withExtension(request.queryParams("extension"))
+//					.withLanguageSidKey(request.queryParams("languageSidKey"))
+//					.withLocaleSidKey(request.queryParams("localeSidKey"))
+//					.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
+//					.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
+//
+//			Map<String, Object> model = getModel();
+//			model.put("account", identity);
+//			model.put("accountProfile", accountProfile);
+//			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
+//			model.put("languages", getSupportedLanguages());
+//			model.put("timeZones", getTimeZones());
+//			model.put("errorMessage", updateResult.getErrorMessage());
+//			
+//			String output = render(configuration, request, response, model, "");
+//			
+//			throw new BadRequestException(output);	
 			
-			String output = render(configuration, request, response, model, "");
+			String html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
 			
-			throw new BadRequestException(output);	
+			response.status(400);
+			
+			return html;
+		} else {
+			String html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.profile.success") + "</strong></div></div>";
+			
+			return html;
 		}
 		
-		String html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.profile.success") + "</strong></div></div>";
 		
-		return html;
 	}
 	
 	/**
@@ -529,25 +537,31 @@ public class AccountProfileController extends AbstractController {
 				.update(request.params(":id"), addressRequest);
 		
 		if (! updateResult.isSuccess()) {
-			Address address = new Address()
-					.withCity(request.queryParams("city"))
-					.withCountryCode(request.queryParams("countryCode"))
-					.withPostalCode(request.queryParams("postalCode"))
-					.withState(request.queryParams("state"))
-					.withStreet(request.queryParams("street"));
-
-			Map<String, Object> model = getModel();
-			model.put("account", identity);
-			model.put("accountProfile", new AccountProfile(request.params(":id")));
-			model.put("address", address);
-			model.put("errorMessage", updateResult.getErrorMessage());
+//			Address address = new Address()
+//					.withCity(request.queryParams("city"))
+//					.withCountryCode(request.queryParams("countryCode"))
+//					.withPostalCode(request.queryParams("postalCode"))
+//					.withState(request.queryParams("state"))
+//					.withStreet(request.queryParams("street"));
+//
+//			Map<String, Object> model = getModel();
+//			model.put("account", identity);
+//			model.put("accountProfile", new AccountProfile(request.params(":id")));
+//			model.put("address", address);
+//			model.put("errorMessage", updateResult.getErrorMessage());
+//			
+//			String output = render(configuration, request, response, model, "");
 			
-			String output = render(configuration, request, response, model, "");
+			//throw new BadRequestException(output);
 			
-			throw new BadRequestException(output);
+			String html = "<div class='alert alert-danger'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
+			
+			response.status(400);
 		}
 		
 		String html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.address.success") + "</strong></div></div>";
+		
+		//response.status(400);
 		
 		return html;	
 	}

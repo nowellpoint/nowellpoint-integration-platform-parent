@@ -23,13 +23,18 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import com.nowellpoint.api.rest.domain.Error;
+
 @Provider
 public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
 	
 	@Override
 	public Response toResponse(IllegalArgumentException exception) {
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(exception.getMessage());
+		Error error = new Error();
+		error.setCode(3000);
+		error.setMessage(exception.getMessage());
+		builder.entity(error);
 		return builder.build();
 	}
 }

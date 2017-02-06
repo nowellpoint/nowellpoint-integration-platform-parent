@@ -30,8 +30,8 @@ import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
 //import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
-import com.nowellpoint.www.app.view.ContactUsController;
 import com.nowellpoint.www.app.view.DashboardController;
+import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.NotificationController;
 //import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
@@ -117,6 +117,7 @@ public class Application implements SparkApplication {
         //
         //
         
+        new IndexController(configuration);
         AuthenticationController authenticationController = new AuthenticationController();
         AccountProfileController accountProfileController = new AccountProfileController();
         DashboardController dashboardController = new DashboardController();
@@ -125,7 +126,6 @@ public class Application implements SparkApplication {
         NotificationController notificationController = new NotificationController();
         //SetupController setupController = new SetupController();
         SalesforceOauthController salesforceOauthController = new SalesforceOauthController();
-        ContactUsController contactUsController = new ContactUsController();
         //ApplicationController applicationController = new ApplicationController();
         //ProjectController projectController = new ProjectController();
         SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController();
@@ -142,11 +142,10 @@ public class Application implements SparkApplication {
         dashboardController.configureRoutes(configuration);
         signUpController.configureRoutes(configuration);
         notificationController.configureRoutes(configuration);
-        contactUsController.configureRoutes(configuration);
         salesforceConnectorController.configureRoutes(configuration);
         scheduledJobsController.configureRoutes(configuration);
 
-        get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(configuration));
+        
         
         get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(configuration));
         
@@ -219,18 +218,6 @@ public class Application implements SparkApplication {
 		}
 		
 		return countries;
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView getContextRoot(Request request, Response response) {
-    	Map<String,Object> model = new HashMap<String,Object>();
-    	return new ModelAndView(model, Path.Template.INDEX);
 	}
 	
 	/**

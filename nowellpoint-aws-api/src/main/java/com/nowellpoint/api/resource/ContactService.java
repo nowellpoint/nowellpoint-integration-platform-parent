@@ -43,20 +43,19 @@ public class ContactService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response contact(
-			@FormParam("leadSource") @NotEmpty(message = "Lead Source must be filled in") String leadSource,
     		@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
     		@FormParam("email") @Email @NotEmpty(message="Email must be filled in") String email,
     		@FormParam("phone") String phone,
     		@FormParam("company") String company,
-    		@FormParam("description") String description) {
+    		@FormParam("message") String message) {
 		
 		Lead lead = new Lead();
-		lead.setLeadSource(leadSource);
+		lead.setLeadSource("Contact");
 		lead.setFirstName(firstName);
 		lead.setLastName(lastName);
 		lead.setEmail(email);
-		lead.setDescription(description);
+		lead.setDescription(message);
 		lead.setCompany(company);
 		lead.setPhone(phone);
 		

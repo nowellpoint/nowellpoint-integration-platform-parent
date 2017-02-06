@@ -7,7 +7,7 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#account-profile-dialog">${labels["edit.user.profile"]}</button>&emsp;
+            <button type="button" id="edit-user-profile" class="btn btn-primary" data-toggle="modal" data-target="#account-profile-dialog">${labels["edit.user.profile"]}</button>&emsp;
             <a href="${labels['base.path']}/${accountProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
         </div>
         <br>
@@ -171,6 +171,7 @@
                     </div>
                     <div class="modal-body">
                         <#include "spinner.html"/>
+                        <div id="error"></div>
                         <form class="form-vertical" name="address-form" id="address-form" role="form" action="${labels['base.path']}/${accountProfile.id}/address">
                             <div class="row">
                                 <div class="form-group col-md-12">
@@ -219,7 +220,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
-                        <button type="submit" id="update-address" class="btn btn-primary">${labels["save"]}</button>
+                        <button type="button" id="update-address" class="btn btn-primary">${labels["save"]}</button>
                     </div>
                 </div>
             </div>
@@ -236,6 +237,7 @@
                     </div>
                     <div class="modal-body">
                         <#include "spinner.html"/>
+                        <div id="error1"></div>
                         <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form" action="${labels['base.path']}/${accountProfile.id}">
                             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
                             <div class="row">
@@ -345,7 +347,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
-                        <button type="submit" id="update-account-profile" class="btn btn-primary">${labels["save"]}</button>
+                        <button type="button" id="update-account-profile" class="btn btn-primary">${labels["save"]}</button>
                     </div>
                 </div>
             </div>
@@ -355,6 +357,25 @@
         <#include "confirm-dialog.html"/>
 
         <script>
+            
+            $("#edit-user-profile").click(function (e) {
+                accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
+                $("#firstName").val(accountProfile.firstName);
+                $("#lastName").val(accountProfile.lastName);
+                $("#division").val(accountProfile.division);
+                $("#company").val(accountProfile.company);
+                $("#department").val(accountProfile.department);
+                $("#title").val(accountProfile.title);
+                $("#email").val(accountProfile.email);
+                $("#mobilePhone").val(accountProfile.mobilePhone);
+                $("#phone").val(accountProfile.phone);
+                $("#extension").val(accountProfile.extension);
+                $("#fax").val(accountProfile.fax);
+                $("#languageSidKey").val(accountProfile.languageSidKey);
+                $("#localeSidKey").val(accountProfile.localeSidKey);
+                $("#timeZoneSidKey").val(accountProfile.timeZoneSidKey);                
+            });
+            
             $("#update-account-profile").click(function(e) {
 
                 $form = $("#account-profile-form");
@@ -363,31 +384,27 @@
                 $.ajax({
                     method: "POST",
                     url: $form.attr('action'),
-                    dataType: "text/html",
+                    dataType: "html",
                     data: $form.serialize(),
-                    beforeSend: function() {
-                        $form.hide();
-                        $('#spinner').show();
-                    },
                     complete: function(response) {
-                        $('#spinner').hide();
-                        $dialog.html(response.responseText);
-                        setTimeout(function() {
-                            $dialog.slideUp('slow').fadeOut(function() {
-                                window.location = window.location.href;
-                            });
-                        }, 1000);
-                    },
-                    success: function(response, status, jqXHR) {
-                        console.log(response);
-                    }
+                        if (response.status == 200) {
+                            $dialog.html(response.responseText);
+                            setTimeout(function() {
+                                $dialog.slideUp('slow').fadeOut(function() {
+                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error1").html(response.responseText);
+                        }
 
+                    }
                 });
 
                 e.preventDefault();
 
             });
-            
+
             $("#update-address").click(function(e) {
 
                 $form = $("#address-form");
@@ -396,23 +413,19 @@
                 $.ajax({
                     method: "POST",
                     url: $form.attr('action'),
-                    dataType: "text/html",
+                    dataType: "html",
                     data: $form.serialize(),
-                    beforeSend: function() {
-                        $form.hide();
-                        $('#spinner').show();
-                    },
                     complete: function(response) {
-                        $('#spinner').hide();
-                        $dialog.html(response.responseText);
-                        setTimeout(function() {
-                            $dialog.slideUp('slow').fadeOut(function() {
-                                window.location = "${labels['base.path']}/${accountProfile.id}#address";
-                            });
-                        }, 1000);
-                    },
-                    success: function(response, status, jqXHR) {
-                        console.log(response);
+                        if (response.status == 200) {
+                            $dialog.html(response.responseText);
+                            setTimeout(function() {
+                                $dialog.slideUp('slow').fadeOut(function() {
+                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").html(response.responseText);
+                        }
                     }
 
                 });
@@ -420,7 +433,6 @@
                 e.preventDefault();
 
             });
-
 
             var accountProfile = {
                 basePath: "${labels['base.path']}",
@@ -431,9 +443,22 @@
                 city: "${(accountProfile.address.city)!}",
                 state: "${(accountProfile.address.state)!}",
                 postalCode: "${(accountProfile.address.postalCode)!}",
-                countryCode: "${(accountProfile.address.countryCode)!}"
+                countryCode: "${(accountProfile.address.countryCode)!}",
+                company: "${(accountProfile.company)!}",
+                department: "${(accountProfile.department)!}",
+                title: "${(accountProfile.title)!}",
+                email: "${(accountProfile.email)!}",
+                mobilePhone: "${(accountProfile.mobilePhone)!}",
+                phone: "${(accountProfile.phone)!}",
+                extension: "${(accountProfile.extension)!}",
+                fax: "${(accountProfile.fax)!}",
+                languageSidKey: "${(accountProfile.languageSidKey)!}",
+                localeSidKey: "${(accountProfile.localeSidKey)!}",
+                timeZoneSidKey: "${(accountProfile.timeZoneSidKey)!}"
             }
-            jQuery.data(document.body, "accountProfile", accountProfile);
+            
+            sessionStorage.setItem("accountProfile", JSON.stringify(accountProfile));
+            
         </script>
 
         <script src="/js/account-profile.js"></script>
