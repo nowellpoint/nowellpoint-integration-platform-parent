@@ -22,8 +22,11 @@ import javax.ws.rs.NotFoundException;
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.IsoCountry;
 import com.nowellpoint.client.model.IsoCountryList;
+import com.nowellpoint.client.model.Plan;
+import com.nowellpoint.client.model.PlanList;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
@@ -40,16 +43,13 @@ import com.nowellpoint.www.app.view.ScheduledJobController;
 //import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
-import freemarker.core.Environment;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.servlet.SparkApplication;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class Application implements SparkApplication {
 	
@@ -93,7 +93,10 @@ public class Application implements SparkApplication {
 					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
 					.collect(Collectors.toList());
 			
+			List<Plan> plans = loadPlans();
+			
 			configuration.setSharedVariable("countryList", filteredList);
+			configuration.setSharedVariable("planList", plans);
 			
 		} catch (TemplateModelException e) {
 			e.printStackTrace();
@@ -144,10 +147,6 @@ public class Application implements SparkApplication {
         notificationController.configureRoutes(configuration);
         salesforceConnectorController.configureRoutes(configuration);
         scheduledJobsController.configureRoutes(configuration);
-
-        
-        
-        get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(configuration));
         
         get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
@@ -182,7 +181,7 @@ public class Application implements SparkApplication {
         	Writer output = new StringWriter();
     		try {
     			Template template = configuration.getTemplate("error.html");
-    			Environment environment = template.createProcessingEnvironment(model, output);
+    			freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
     			environment.process();
     			response.status(500);
             	response.body(output.toString());
@@ -206,7 +205,7 @@ public class Application implements SparkApplication {
 	 */
 	
 	private static List<IsoCountry> loadCountries() {
-		HttpResponse httpResponse = RestResource.get(com.nowellpoint.client.Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("iso-countries")
 				.execute();
 		
@@ -220,16 +219,27 @@ public class Application implements SparkApplication {
 		return countries;
 	}
 	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView getServices(Request request, Response response) {
-    	Map<String,Object> model = new HashMap<String,Object>();
-		return new ModelAndView(model, Path.Template.SERVICES);
+	private static List<Plan> loadPlans() {
+		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+				.path("plans")
+				.queryParameter("localeSidKey", "en_US")
+				.queryParameter("languageSidKey", "en_US")
+				.execute();
+		
+		PlanList planList = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			planList = httpResponse.getEntity(PlanList.class);
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+		}
+		
+		List<Plan> plans = planList.getItems()
+				.stream()
+				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
+				.collect(Collectors.toList());
+		
+		return plans;
 	}
 	
 	/**

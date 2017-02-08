@@ -41,7 +41,7 @@ import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.model.document.Address;
-import com.nowellpoint.api.rest.AccountProfileEndpoint;
+import com.nowellpoint.api.rest.AccountProfileResource;
 import com.nowellpoint.api.rest.PlanService;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.CreditCard;
@@ -349,7 +349,7 @@ public class SignUpService {
 				.build(accountProfile.getEmailVerificationToken());
 		
 		URI resourceUri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileEndpoint.class)
+				.path(AccountProfileResource.class)
 				.path("/{id}")
 				.build(accountProfile.getId());
 		
@@ -398,7 +398,7 @@ public class SignUpService {
 		emailService.sendWelcomeMessage(accountProfile.getEmail(), accountProfile.getUsername(), accountProfile.getName());
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileEndpoint.class)
+				.path(AccountProfileResource.class)
 				.path("/{id}")
 				.build(accountProfile.getId());
 		

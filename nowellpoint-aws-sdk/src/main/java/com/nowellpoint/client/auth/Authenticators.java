@@ -8,6 +8,7 @@ import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.util.Assert;
 
 public class Authenticators {
@@ -33,17 +34,17 @@ public class Authenticators {
 	    			.execute();
 		
 	    	int statusCode = httpResponse.getStatusCode();
-
-	    	if (statusCode != Status.OK) {
+	    	
+	    	if (statusCode == Status.OK) {
+	    		Token token = httpResponse.getEntity(Token.class);
+		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
+		    	return response;
+	    	} else if (statusCode == Status.BAD_REQUEST) {
 	    		Error error = httpResponse.getEntity(Error.class);
 	    		throw new OauthException(error.getCode(), error.getMessage());
+	    	} else {
+	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
-	
-	    	Token token = httpResponse.getEntity(Token.class);
-	    	
-	    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
-	    	
-	    	return response;
 		}
 	}
 	

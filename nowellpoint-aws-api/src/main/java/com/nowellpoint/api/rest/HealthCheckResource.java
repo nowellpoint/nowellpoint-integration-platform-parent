@@ -1,4 +1,4 @@
-package com.nowellpoint.api.resource;
+package com.nowellpoint.api.rest;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -6,19 +6,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 @Path("health")
-public class HealthCheckResource {
+public interface HealthCheckResource {
 	
 	@GET
 	@Path("status")
 	@PermitAll
-	public Response checkHealth() {
-		return Response.ok().build();
-	}
+	public Response checkHealth();
 	
 	@GET
 	@Path("database")
 	@PermitAll
-	public Response checkDatabase() {
-		return Response.ok().build();
-	}
+	public Response checkDatabase();
+
 }

@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 
 @Path("account-profile")
-public interface AccountProfileEndpoint {
+public interface AccountProfileResource {
 	
 	@GET
 	@Path("{id}")

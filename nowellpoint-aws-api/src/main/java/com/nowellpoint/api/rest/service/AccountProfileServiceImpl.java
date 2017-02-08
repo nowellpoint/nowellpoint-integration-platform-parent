@@ -177,13 +177,13 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	@Override
 	public void updateAccountProfile(AccountProfile accountProfile) {
 		
-		if (Assert.isNullOrEmpty(accountProfile.getLastName())) {
-			throw new IllegalArgumentException("Missing required value last name");
-		}
-		
-		if (Assert.isNullOrEmpty(accountProfile.getLocaleSidKey())) {
-			throw new IllegalArgumentException("Missing required value locale sid key");
-		}
+//		if (Assert.isNullOrEmpty(accountProfile.getLastName())) {
+//			throw new IllegalArgumentException("Missing required value last name");
+//		}
+//		
+//		if (Assert.isNullOrEmpty(accountProfile.getLocaleSidKey())) {
+//			throw new IllegalArgumentException("Missing required value locale sid key");
+//		}
 		
 		AccountProfile original = findById( accountProfile.getId() );
 		

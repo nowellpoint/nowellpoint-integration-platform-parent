@@ -19,23 +19,23 @@ import javax.ws.rs.BadRequestException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
-import com.nowellpoint.client.model.CreditCardRequest;
-import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
+import com.nowellpoint.client.model.CreditCardRequest;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Subscription;
-import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.util.Assert;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
-import com.nowellpoint.util.Assert;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -96,12 +96,12 @@ public class AccountProfileController extends AbstractController {
 				.accountProfile()
 				.get(id);
 		
-		GetPlansRequest plansRequest = new GetPlansRequest()
+		GetPlansRequest getPlansRequest = new GetPlansRequest()
 				.withLanguageSidKey(identity.getLanguageSidKey())
 				.withLocaleSidKey(identity.getLocaleSidKey());
-
-		List<Plan> plans = new NowellpointClient(token).plan()
-				.getPlans(plansRequest)
+		
+		List<Plan> plans = new NowellpointClient().plan()
+				.getPlans(getPlansRequest)
 				.getItems()
 				.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
@@ -366,8 +366,6 @@ public class AccountProfileController extends AbstractController {
 	private String updateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		Identity identity = getIdentity(request);
-		
 		AccountProfileRequest accountProfileRequest = new AccountProfileRequest()
 				.withFirstName(request.queryParams("firstName"))
 				.withLastName(request.queryParams("lastName"))
@@ -522,8 +520,6 @@ public class AccountProfileController extends AbstractController {
 	private String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		Identity identity = getIdentity(request);
-		
 		AddressRequest addressRequest = new AddressRequest()
 				.withCity(request.queryParams("city"))
 				.withCountryCode(request.queryParams("countryCode"))
@@ -557,6 +553,8 @@ public class AccountProfileController extends AbstractController {
 			String html = "<div class='alert alert-danger'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
 			
 			response.status(400);
+			
+			return html;
 		}
 		
 		String html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.address.success") + "</strong></div></div>";

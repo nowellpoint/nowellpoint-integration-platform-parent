@@ -21,6 +21,7 @@ package com.nowellpoint.api.model.document;
 import java.util.Set;
 
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -53,8 +54,10 @@ public class Plan extends MongoDocument {
 	
 	private Boolean isActive;
 	
+	@EmbedOne
 	private Price price;
 	
+	@EmbedMany
 	private Set<Service> services;
 	
 	public Plan() {

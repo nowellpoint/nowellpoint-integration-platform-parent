@@ -64,7 +64,8 @@
                             <div class="leftside">
                                 <h3>${labels["headline"]}</h3>
                                 <h4>${labels["tagline"]}</h4>
-                                <a href="#about">${labels["sign.up"]}</a>
+                                <a href="/list-plans">${labels["get.started"]}</a>&emsp;
+                                <a href="/login">${labels["log.in"]}</a>
                             </div>
                         </div>
                     </div>
@@ -72,12 +73,11 @@
                 </div>
             </div>
 
-            <div id="Container">
+            <div id="container">
                 <div class="About_sec" id="about">
                     <div class="Center">
                         <h2>${labels["about.us"]}</h2>
-                        <p>Aenean sollicitudin, lorem quis bibendum auctor, nisi elit consequat ipsum, nec sagittis sem nibh id elit. Duis sed odio sit amet nibh vulputate cursus a sit
-                            <br> amet mauris. Morbi accumsan ipsum velit. Nam nec tellus a odio tincidunt auctor a ornare odio.</p>
+                        <p>${labels["about.us.headline"]}</p>
                         <div class="Line"></div>
                         <div class="Tabside">
                             <ul>
@@ -160,117 +160,65 @@
                 <div class="Pricing_sec" id="pricing">
                     <div class="Center">
                         <h2>${labels["pricing"]}</h2>
-                        <p>All plans come with unlimited disk space. Our support can be as quick as 15 minutes to get a response. Sed non
-                            <br> mauris vitae erat consequat auctor eu in elit. Class aptent taciti sociosqu.</p>
+                        <p>${labels["pricing.headline"]}</p>
                         <div class="Line"></div>
                         <!-- \\ Begin Pricing Side \\ -->
-                        <div class="Pricingside">
+                        <div class="pricingside">
                             <ul>
-                                 <li>
-                                    <div class="Basic">
-                                        <h5>freee</h5>
-                                    </div>
-                                    <div class="Dollar">
-                                        <h2>$0.00</h2>
-                                    </div>
-                                    <div class="Band">
-                                        <p>2,000 GB <span>Band width</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>32 GB<span>memory</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>Support<span>24 Hours</span></p>
-                                    </div>
-                                    <div class="Band last">
-                                        <p>Update<span>$20</span></p>
-                                    </div>
-                                    <div class="Order">
-                                        <a href="#">order now</a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="Basic">
-                                        <h5>basic</h5>
-                                    </div>
-                                    <div class="Dollar">
-                                        <h2>$27.50</h2>
-                                    </div>
-                                    <div class="Band">
-                                        <p>2,000 GB <span>Band width</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>32 GB<span>memory</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>Support<span>24 Hours</span></p>
-                                    </div>
-                                    <div class="Band last">
-                                        <p>Update<span>$20</span></p>
-                                    </div>
-                                    <div class="Order">
-                                        <a href="#">order now</a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="Basic">
-                                        <h5>Biz</h5>
-                                    </div>
-                                    <div class="Dollar">
-                                        <h2>$44.50</h2>
-                                    </div>
-                                    <div class="Band">
-                                        <p>5,500 GB <span>Band width</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>64 GB<span>memory</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>Support<span>1 Hour</span></p>
-                                    </div>
-                                    <div class="Band last">
-                                        <p>Update<span>$10</span></p>
-                                    </div>
-                                    <div class="Order">
-                                        <a href="#">order now</a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="Basic">
-                                        <h5>Pro</h5>
-                                    </div>
-                                    <div class="Dollar">
-                                        <h2>$72.50</h2>
-                                    </div>
-                                    <div class="Band">
-                                        <p>12,000 GB <span>Band width</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>128 GB<span>memory</span></p>
-                                    </div>
-                                    <div class="Band">
-                                        <p>Support<span>15 Mins</span></p>
-                                    </div>
-                                    <div class="Band last">
-                                        <p>Update<span>Free</span></p>
-                                    </div>
-                                    <div class="Order">
-                                        <a href="#">order now</a>
-                                    </div>
-                                </li>
+                                <#list planList as plan>
+
+                                    <li>
+                                        <div class="Basic">
+                                            <h5>${plan.planName}</h5>
+                                        </div>
+
+                                        <div class="Dollar">
+                                            <h2>${plan.price.unitPrice?string.currency}</h2>
+                                        </div>
+
+                                        <#list plan.services?sort_by( "sortOrder") as service>
+
+                                            <#if service.code=="SALESFORCE_ORGANIZATIONS">
+                                                <div class="Band">
+                                                    <p>${service.quantity} <span>${labels["organizations"]}</span></p>
+                                                </div>
+                                            </#if>
+
+                                            <#if service.code=="SALESFORCE_SANDBOXES">
+                                                <div class="Band">
+                                                    <p>${service.quantity} <span>${labels["sandboxes"]}</span></p>
+                                                </div>
+                                            </#if>
+
+                                            <#if service.code=="USERS">
+                                                <div class="Band">
+                                                    <p>${service.quantity} <span>${labels["users"]}</span></p>
+                                                </div>
+                                            </#if>
+
+                                            <#if service.code=="DISK_SPACE">
+                                                <div class="Band">
+                                                    <p>${service.quantity} <span>${labels["disk.space"]}</span></p>
+                                                </div>
+                                            </#if>
+
+                                        </#list>
+
+                                        <div class="Order">
+                                            <a href="#">${labels["order.now"]}</a>
+                                        </div>
+                                    </li>
+                                </#list>
                             </ul>
                         </div>
-                        <!-- // End Pricing Side // -->
                     </div>
                 </div>
-                <!-- // End Pricing Section // -->
-                <!-- \\ Begin Contact Section \\ -->
-                <div class="Contact_sec">
 
+                <div class="Contact_sec">
                     <div class="Get_sec" id="contact">
                         <div class="Center">
                             <h2>${labels["contact.us"]}</h2>
-                            <p>${labels["contact.us.heading"]}</p>
+                            <p>${labels["contact.us.headline"]}</p>
                             <div class="Line"></div>
                         </div>
 
@@ -326,7 +274,7 @@
                                         <a id="twitter" href="https://twitter.com/nowellpoint"><i class="fa fa-lg fa-twitter"></i> ${labels["twitter"]}</a>
                                     </li>
                                 </ul>
-                                
+
                                 <br>
                                 <br>
                                 <br>

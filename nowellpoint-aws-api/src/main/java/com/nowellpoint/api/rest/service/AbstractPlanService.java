@@ -21,22 +21,23 @@ public class AbstractPlanService extends AbstractCacheService {
 	@Inject
 	private DocumentManagerFactory documentManagerFactory;
 	
-	public PlanList getAllActive(String localeSidKey, String languageLocaleKey) {
+	public PlanList getAllActive(String localeSidKey, String languageSidKey) {
 		
 		if (Assert.isNull(localeSidKey)) {
 			throw new IllegalArgumentException("Missing localeSidKey query parameter");
 		}
 		
-		if (Assert.isNull(languageLocaleKey)) {
-			throw new IllegalArgumentException("Missing languageLocaleKey query parameter");
+		if (Assert.isNull(languageSidKey)) {
+			throw new IllegalArgumentException("Missing languageSidKey query parameter");
 		}
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		
-		Set<com.nowellpoint.api.model.document.Plan> documents = documentManager.find(com.nowellpoint.api.model.document.Plan.class, and ( 
-				eq ( "isActive", Boolean.TRUE ), 
-				eq ( "localeSidKey", localeSidKey ), 
-				eq ( "languageLocaleKey", languageLocaleKey ) ) );
+		Set<com.nowellpoint.api.model.document.Plan> documents = documentManager.find(
+				com.nowellpoint.api.model.document.Plan.class, and ( 
+						eq ( "isActive", Boolean.TRUE ), 
+						eq ( "localeSidKey", localeSidKey ), 
+						eq ( "languageSidKey", languageSidKey ) ) );
 		
 		PlanList resources = new PlanList(documents);
 		

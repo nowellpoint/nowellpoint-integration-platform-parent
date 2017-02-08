@@ -1,31 +1,13 @@
-package com.nowellpoint.api.resource;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+package com.nowellpoint.api.rest.impl;
 
 import java.net.URI;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.security.PermitAll;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -34,6 +16,8 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.exception.AuthenticationException;
+import com.nowellpoint.api.resource.IdentityResource;
+import com.nowellpoint.api.rest.TokenResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Token;
 import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
@@ -43,9 +27,12 @@ import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 
-@Path("oauth")
-@Api(value = "/oauth")
-public class TokenResource {
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+public class TokenResourceImpl implements TokenResource {
 	
 	private static final String CLIENT_CREDENTIALS = "client_credentials";
 	private static final String PASSWORD = "password";
@@ -62,13 +49,8 @@ public class TokenResource {
 	@Context
 	private UriInfo uriInfo;
 	
-	@POST
-	@PermitAll
-	@Path("token")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@ApiOperation(value = "Authenticate with the API", notes = "Returns the OAuth Token", response = Token.class)
-	public Response authenticate(@ApiParam(value = "basic authorization header", required = true) @HeaderParam("Authorization") String authorization, @FormParam("grant_type") String grantType) {
+	@Override
+	public Response authenticate(String authorization, String grantType) {
 
 		//
 		// ensure that the authorization header has a basic token
@@ -160,13 +142,8 @@ public class TokenResource {
 				.build();	
 	}
 	
-	@DELETE
-	@Path("token")
-	@ApiOperation(value = "Expire the OAuth token", notes = "Access to the API will be revoked until a new token is issued")
-	@ApiResponses(value = { 
-		      @ApiResponse(code = 204, message = "successful operation") 
-		  })
-	public Response revokeToken(@ApiParam(value = "bearer authorization header", required = true) @HeaderParam("Authorization") String authorization) {
+	@Override
+	public Response revokeToken(String authorization) {
 		
 		//
 		// ensure that the authorization header has a bearer token

@@ -10,14 +10,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.nowellpoint.aws.http.HttpResponse;
+import com.nowellpoint.aws.http.RestResource;
+import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
-import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
+import com.nowellpoint.client.model.PlanList;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.User;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -54,13 +59,21 @@ public class SignUpController extends AbstractController {
 	
 	private String listPlans(Configuration configuration, Request request, Response response) {
 		
-		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguageSidKey("en_US")
-				.withLocaleSidKey("en_US");
+		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+				.path("plans")
+				.queryParameter("localeSidKey", "en_US")
+				.queryParameter("languageSidKey", "en_US")
+				.execute();
 		
-		List<Plan> plans = new NowellpointClient().plan()
-				.getPlans(getPlansRequest)
-				.getItems()
+		PlanList planList = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			planList = httpResponse.getEntity(PlanList.class);
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+		}
+		
+		List<Plan> plans = planList.getItems()
 				.stream()
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());

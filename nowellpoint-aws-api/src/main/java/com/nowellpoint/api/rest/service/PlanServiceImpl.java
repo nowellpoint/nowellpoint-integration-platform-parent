@@ -11,8 +11,8 @@ public class PlanServiceImpl extends AbstractPlanService implements PlanService 
 	}
 	
 	@Override
-	public PlanList getAllActive(String localeSidKey, String languageLocaleKey) {
-		return super.getAllActive(localeSidKey, languageLocaleKey);
+	public PlanList getAllActive(String localeSidKey, String languageSidKey) {
+		return super.getAllActive(localeSidKey, languageSidKey);
 	}
 	
 	@Override

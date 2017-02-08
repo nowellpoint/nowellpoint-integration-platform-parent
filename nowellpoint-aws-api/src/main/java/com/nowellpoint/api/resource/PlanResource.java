@@ -23,9 +23,9 @@ public class PlanResource {
 	@GET
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllActive(@QueryParam(value="localeSidKey") String localeSidKey, @QueryParam(value="languageLocaleKey") String languageLocaleKey) {
+	public Response getAllActive(@QueryParam(value="localeSidKey") String localeSidKey, @QueryParam(value="languageSidKey") String languageSidKey) {
 		
-		PlanList resources = planService.getAllActive(localeSidKey, languageLocaleKey);
+		PlanList resources = planService.getAllActive(localeSidKey, languageSidKey);
 		
 		return Response.ok(resources)
 				.build();

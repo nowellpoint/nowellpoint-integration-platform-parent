@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 
-import com.mongodb.DBRef;
 import com.nowellpoint.api.rest.domain.ScheduledJob;
 import com.nowellpoint.api.rest.domain.ScheduledJobList;
 import com.nowellpoint.aws.data.AbstractCacheService;
@@ -24,16 +23,17 @@ public class AbstractScheduledJobService extends AbstractCacheService {
 	
 	protected ScheduledJobList findAllByOwner(String ownerId) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
-		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = documentManager.find(com.nowellpoint.api.model.document.ScheduledJob.class,
-				eq ( "owner.identity", new DBRef( documentManager.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), 
-						new ObjectId( ownerId ) ) ) );
+		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = documentManager.find(
+				com.nowellpoint.api.model.document.ScheduledJob.class,
+				eq ( "identity", new ObjectId( ownerId ) ) );
 		ScheduledJobList resources = new ScheduledJobList(documents);
 		return resources;
 	}
 	
 	protected ScheduledJobList findByStatus(String status) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
-		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = documentManager.find(com.nowellpoint.api.model.document.ScheduledJob.class, 
+		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = documentManager.find(
+				com.nowellpoint.api.model.document.ScheduledJob.class, 
 				eq ( "status", status ) );
 		ScheduledJobList resources = new ScheduledJobList(documents);
 		return resources;

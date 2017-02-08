@@ -43,7 +43,7 @@ public class PlanResource extends AbstractResource {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.path("plans")
 				.queryParameter("localeSidKey", getPlansRequest.getLocaleSidKey())
-				.queryParameter("languageLocaleKey", getPlansRequest.getLanguageSidKey())
+				.queryParameter("languageSidKey", getPlansRequest.getLanguageSidKey())
 				.execute();
 		
 		PlanList resources = null;

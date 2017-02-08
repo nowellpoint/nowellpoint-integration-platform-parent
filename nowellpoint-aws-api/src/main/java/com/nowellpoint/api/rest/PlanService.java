@@ -5,7 +5,7 @@ import com.nowellpoint.api.rest.domain.PlanList;
 
 public interface PlanService {
 	
-	PlanList getAllActive(String localeSidKey, String languageLocaleKey);
+	PlanList getAllActive(String localeSidKey, String languageSidKey);
 	
 	Plan findById(String id);
 	

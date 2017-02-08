@@ -20,7 +20,6 @@ import javax.ws.rs.NotAuthorizedException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
@@ -133,12 +132,14 @@ public class AuthenticationController extends AbstractController {
 	    	Long expiresIn = token.getExpiresIn();
 	
 	    	try {
-	    		response.cookie(AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true);
+	    		response.cookie(AUTH_TOKEN, objectMapper.writeValueAsString(token), expiresIn.intValue(), true);
 	    	} catch (IOException e) {
 	    		throw new InternalServerErrorException(e);
 	    	}
 
 		} catch (OauthException e) {
+			
+			LOGGER.error(e.getMessage());
 			
 			String acceptLanguages = request.headers("Accept-Language");
 			
@@ -161,8 +162,10 @@ public class AuthenticationController extends AbstractController {
 		}
 		
 		if (request.queryParams(REDIRECT_URI) != null && ! request.queryParams(REDIRECT_URI).isEmpty()) {
+			System.out.println(request.queryParams(REDIRECT_URI));
     		response.redirect(request.queryParams(REDIRECT_URI));
     	} else {
+    		System.out.println("going to start");
     		response.redirect(Path.Route.START);
     	}
     		

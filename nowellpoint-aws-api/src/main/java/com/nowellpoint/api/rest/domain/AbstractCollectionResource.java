@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.mongodb.Block;
-import com.mongodb.client.FindIterable;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 public abstract class AbstractCollectionResource<R extends AbstractResource, D extends MongoDocument> implements CollectionResource<R> {
@@ -14,31 +12,18 @@ public abstract class AbstractCollectionResource<R extends AbstractResource, D e
 	private Set<R> items = new HashSet<R>();
 	private Meta meta = new Meta();
 	
-	public AbstractCollectionResource(FindIterable<D> documents) {
-		documents.forEach(new Block<D>() {
-			@Override
-			public void apply(final D document) {
+	public AbstractCollectionResource(Set<D> documents) {
+		if (documents != null && ! documents.isEmpty()) {
+			documents.forEach(document -> {
 				try {
 					@SuppressWarnings("unchecked")
 					Constructor<R> constructor = (Constructor<R>) Class.forName(getItemType().getName()).getConstructor(MongoDocument.class);
 					items.add(constructor.newInstance(document));
 				} catch (Exception e) {
 					e.printStackTrace();
-				} 
-		    }
-		});
-	}
-	
-	public AbstractCollectionResource(Set<D> documents) {
-		documents.forEach(document -> {
-			try {
-				@SuppressWarnings("unchecked")
-				Constructor<R> constructor = (Constructor<R>) Class.forName(getItemType().getName()).getConstructor(MongoDocument.class);
-				items.add(constructor.newInstance(document));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+				}
+			});
+		}
 	}
 	
 	protected abstract Class<R> getItemType();

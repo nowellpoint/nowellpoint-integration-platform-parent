@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 
-import com.mongodb.DBRef;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
@@ -33,9 +32,9 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 	
 	protected SalesforceConnectorList findAllByOwner(String ownerId) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
-		Set<com.nowellpoint.api.model.document.SalesforceConnector> documents = documentManager.find(com.nowellpoint.api.model.document.SalesforceConnector.class,
-				eq ( "owner.identity", new DBRef( documentManager.resolveCollectionName( com.nowellpoint.api.model.document.AccountProfile.class ), 
-						new ObjectId( ownerId ) ) ) );
+		Set<com.nowellpoint.api.model.document.SalesforceConnector> documents = documentManager.find(
+				com.nowellpoint.api.model.document.SalesforceConnector.class,
+				eq ( "identity", new ObjectId( ownerId ) ) );
 		SalesforceConnectorList resources = new SalesforceConnectorList(documents);
 		return resources;
 	}

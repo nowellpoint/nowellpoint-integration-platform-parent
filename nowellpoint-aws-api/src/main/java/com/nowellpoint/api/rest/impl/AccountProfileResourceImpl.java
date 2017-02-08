@@ -1,4 +1,4 @@
-package com.nowellpoint.api.rest.endpoint;
+package com.nowellpoint.api.rest.impl;
 
 import java.net.URI;
 
@@ -16,7 +16,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
 import com.nowellpoint.api.model.document.Photos;
-import com.nowellpoint.api.rest.AccountProfileEndpoint;
+import com.nowellpoint.api.rest.AccountProfileResource;
 import com.nowellpoint.api.rest.AccountProfileService;
 import com.nowellpoint.api.rest.PlanService;
 import com.nowellpoint.api.rest.domain.AccountProfile;
@@ -25,7 +25,7 @@ import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.util.Assert;
 
-public class AccountProfileResource implements AccountProfileEndpoint {
+public class AccountProfileResourceImpl implements AccountProfileResource {
 	
 	@Inject
 	private AccountProfileService accountProfileService;
@@ -171,7 +171,7 @@ public class AccountProfileResource implements AccountProfileEndpoint {
 		accountProfileService.createAccountProfile( accountProfile );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResource.class)
+				.path(AccountProfileResourceImpl.class)
 				.path("/{id}")
 				.build(accountProfile.getId());
 		

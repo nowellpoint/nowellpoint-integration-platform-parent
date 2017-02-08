@@ -77,7 +77,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	 */
 	
 	protected <T> String resolveCollectionName(Class<T> documentClass) {
-		return documentManagerFactory.resolveCollectionName(documentClass);
+		return documentManagerFactory.resolveCollectionName( documentClass );
 	}
 	
 	/**
@@ -305,6 +305,10 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 				MongoCollection<Document> collection = documentManagerFactory.getCollection( documentManagerFactory.resolveCollectionName( referenceField.getType() ) );
 				Document bson = findOne(collection, Filters.eq ( ID, value ));
 				
+				if (bson == null) {
+					throw new DocumentManagerException(String.format("Unable to find reference document from collection %s with id %s", documentManagerFactory.resolveCollectionName( referenceField.getType() ), value.toString()));
+				}
+				
 				Set<Field> fields = getAllFields(object);
 				for (Field field : fields) {
 					if (! referenceField.getType().equals(field.getType())) {
@@ -446,6 +450,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			    Method method = clazz.getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
 			    if (field.getType().isAssignableFrom(Locale.class)) {
 			    	value = Locale.forLanguageTag(value.toString());
+			    } else if (field.getType().isAssignableFrom(Double.class)) {
+			    	value = Double.valueOf(value.toString());
 			    }
 			    method.invoke(object, new Object[] {value});
 			} catch (NoSuchMethodException e) {
