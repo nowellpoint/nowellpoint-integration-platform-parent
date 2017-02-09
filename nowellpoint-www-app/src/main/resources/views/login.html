@@ -27,7 +27,7 @@
     <section>
         <div class="container">
             <div class="Contact_sec">
-                <div class="login_section" id="contact">
+                <div class="login_section" id="login">
                     <div class="Center">
                         <h2>${labels["welcome.back"]}</h2>
                         <br>
@@ -37,22 +37,33 @@
                     <div class="Mid">
                         <div class="Leftside">
                             <#if errorMessage??>
-                        <div id="alert" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">×</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
+                                <div id="alert" class="alert alert-danger">
+                                    <a class="close" data-dismiss="alert">×</a>
+                                    <div class="text-center">${errorMessage}</div>
+                                </div>
+                            </#if>
                             <form role="form" id="login-form" method="post" action="/login">
                                 <fieldset>
                                     <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
-                                    <p>
-                                        <input type="email" value="" name="username" id="username" placeholder="${labels['email']}" autofocus class="field">
+                                    <p class="form-group">
+                                        <input type="email" 
+                                               name="username" 
+                                               id="username" 
+                                               placeholder="${labels['email']}" 
+                                               required data-msg="${messages['username.required']}" 
+                                               autofocus 
+                                               class="field">
                                     </p>
-                                    <p>
-                                        <input type="password" value="" name="password" id="password" placeholder="${labels['password']}" autocomplete="off" class="field">
+                                    <p class="form-group">
+                                        <input type="password" 
+                                               name="password" 
+                                               id="password" 
+                                               placeholder="${labels['password']}" 
+                                               required data-msg="${messages['password.required']}" 
+                                               autocomplete="off" 
+                                               class="field">
                                     </p>
-
-                                    <p>
+                                    <p class="form-group">
                                         <input type="submit" id="submit" value="${labels['login']}" class="button">
                                     </p>
                                 </fieldset>
@@ -77,6 +88,12 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+    <script>
+        $("#login-form").validate();
+    </script>
 
 </body>
 

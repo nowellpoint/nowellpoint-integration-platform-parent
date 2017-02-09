@@ -165,7 +165,6 @@ public class AuthenticationController extends AbstractController {
 			System.out.println(request.queryParams(REDIRECT_URI));
     		response.redirect(request.queryParams(REDIRECT_URI));
     	} else {
-    		System.out.println("going to start");
     		response.redirect(Path.Route.START);
     	}
     		

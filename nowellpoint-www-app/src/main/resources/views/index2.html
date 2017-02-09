@@ -224,27 +224,55 @@
 
                         <div class="Mid">
                             <div class="Leftside">
-                                <form role="form" id="contact-form" action="/contact">
+                                <form role="form" id="contact-form" method="post" action="/contact">
                                     <fieldset>
-                                        <p>
-                                            <input type="text" value="" name="firstName" id="firstName" placeholder="${labels['first.name']}" class="field">
+                                        <p class="form-group">
+                                            <input type="text" 
+                                                   name="firstName" 
+                                                   id="firstName" 
+                                                   placeholder="${labels['first.name']}" 
+                                                   class="field">
                                         </p>
-                                        <p>
-                                            <input type="text" value="" name="lastName" id="lastName" placeholder="${labels['last.name']}" class="field">
+                                        <p class="form-group">
+                                            <input type="text" 
+                                                   name="lastName" 
+                                                   id="lastName" 
+                                                   placeholder="${labels['last.name']}" 
+                                                   required data-msg="${messages['last.name.required']}" 
+                                                   class="field">
                                         </p>
-                                        <p>
-                                            <input type="email" value="" name="email" id="email" placeholder="${labels['email']}" class="field">
+                                        <p class="form-group">
+                                            <input type="email" 
+                                                   name="email" 
+                                                   id="email" 
+                                                   placeholder="${labels['email']}" 
+                                                   required data-msg="${messages['email.required']}" 
+                                                   class="field">
                                         </p>
-                                        <p>
-                                            <input type="text" value="" name="phone" id="phone" placeholder="${labels['phone']}" class="field">
+                                        <p class="form-group">
+                                            <input type="text" 
+                                                   name="phone" 
+                                                   id="phone" 
+                                                   placeholder="${labels['phone']}" 
+                                                   class="field">
                                         </p>
-                                        <p>
-                                            <input type="text" value="" name="company" id="company" placeholder="${labels['company']}" class="field">
+                                        <p class="form-group">
+                                            <input type="text" 
+                                                   name="company" 
+                                                   id="company" 
+                                                   placeholder="${labels['company']}" 
+                                                   class="field">
                                         </p>
-                                        <p>
-                                            <textarea class="form-control" name="message" id="message" rows="3" placeholder="${labels['message']}" required></textarea>
+                                        <p class="form-group">
+                                            <textarea class="form-control" 
+                                                      name="message" 
+                                                      id="message" 
+                                                      placeholder="${labels['message']}" 
+                                                      required data-msg="${messages['message.required']}" 
+                                                      required>
+                                            </textarea>
                                         </p>
-                                        <p>
+                                        <p class="form-group">
                                             <input type="submit" id="submit" value="${labels['send']}" class="button">
                                         </p>
                                     </fieldset>
@@ -298,6 +326,11 @@
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/modernizr.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+    <script>
+        $("#contact-form").validate();
+    </script>
 
 </body>
 

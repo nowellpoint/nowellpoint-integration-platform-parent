@@ -59,12 +59,6 @@ public class IndexController extends AbstractController {
 	 */
 	
 	private String contactUs(Configuration configuration, Request request, Response response) {
-		System.out.println(request.queryParams("firstName"));
-		System.out.println(request.queryParams("lastName"));
-		System.out.println(request.queryParams("email"));
-		System.out.println(request.queryParams("phone"));
-		System.out.println(request.queryParams("company"));
-		System.out.println(request.queryParams("message"));
 		
 //    	HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 //    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)

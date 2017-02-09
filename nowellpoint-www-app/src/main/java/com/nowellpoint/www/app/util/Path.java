@@ -86,7 +86,6 @@ public class Path {
 	}
 
 	public static class Template {
-		public static final String SERVICES = "services.html";
 		public static final String START = String.format(APPLICATION_CONTEXT, "start.html");
 		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "query-edit.html");
 		public static final String SALESFORCE_OUTBOUND_MESSAGE = String.format(APPLICATION_CONTEXT, "salesforce-outbound-messages.html");

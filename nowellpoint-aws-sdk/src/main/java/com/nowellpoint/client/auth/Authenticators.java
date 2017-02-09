@@ -20,8 +20,8 @@ public class Authenticators {
 	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(PasswordGrantRequest grantRequest) {
 			
-			Assert.assertNotNull(grantRequest.getUsername(), "missing username");
-			Assert.assertNotNull(grantRequest.getPassword(), "missing password");
+			Assert.assertNotNullOrEmpty(grantRequest.getUsername(), "missing username");
+			Assert.assertNotNullOrEmpty(grantRequest.getPassword(), "missing password");
 			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
@@ -51,9 +51,8 @@ public class Authenticators {
 	public static class ClientCredentialsGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
 			
-			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
-			Assert.assertNotNull(grantRequest.getApiKeyId(), "missing api key id");
-			Assert.assertNotNull(grantRequest.getApiKeySecret(), "missing api key secret");
+			Assert.assertNotNullOrEmpty(grantRequest.getApiKeyId(), "missing api key id");
+			Assert.assertNotNullOrEmpty(grantRequest.getApiKeySecret(), "missing api key secret");
 			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())

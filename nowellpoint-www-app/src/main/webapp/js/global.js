@@ -83,8 +83,6 @@ $(document).ready(function(){
       $('header').toggleClass("smaller");
     }
   });
-  
-  loadGoogleMap();
 
 }); 
 
