@@ -1,0 +1,55 @@
+<#import "template-no-sidebar.html" as t>
+
+    <@t.page>
+        
+        
+
+        <div class="jumbotron jumbotron-fluid mt-5">
+            <div class="container">
+            <div class="text-center">
+                <h2>${messages["welcome"]}</h2>
+                <p class="lead">${messages["welcome.text"]}</p>
+                <hr class="my-4">
+            </div>
+                
+                <div class="row">
+                <div class="col-lg-4 col-md-4 text-center">
+                    <h4><b>${messages["step1"]}</b></h4>
+                    <a href="/app/connectors/salesforce" style="text-decoration:none;">
+                        <span class="center-block icon icon-database fa fa-4x"></span>
+                        <h3>${messages["connectors"]}</h3>
+                        <p class="text-muted">${messages["connector.headline"]}</p>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-4 text-center">
+                    <h4><b>${messages["step2"]}</b></h4>
+                    <a href="/app/scheduled-jobs" style="text-decoration:none;">
+                        <span class="center-block icon icon-clock fa fa-4x"></span>
+                        <h3>${messages["scheduled.jobs"]}</h3>
+                        <p class="text-muted">${messages["scheduled.jobs.headline"]}</p>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-4 text-center">
+                    <h4><b>${messages["step3"]}</b></h4>
+                    <a href="/app/dashboard" style="text-decoration:none;">
+                        <span class="center-block icon icon-gauge fa fa-4x"></span>
+                        <h3>${messages["dashboard"]}</h3>
+                        <p class="text-muted">${messages["dashboard.headline"]}</p>
+                    </a>
+                </div>
+
+                <!--
+                    <div class="col-lg-4 col-md-4 text-center p-a-lg">
+                        <a href="/app/applications" style="text-decoration:none;">
+                            <img class="media-object center-block" src="/images/application.png">
+                            <h3>${messages["applications"]}</h3>
+                            <p class="text-muted">${messages["application.headline"]}</p>
+                        </a>
+                    </div> -->
+
+            </div>
+                </div>
+        </div>
+    </@t.page>

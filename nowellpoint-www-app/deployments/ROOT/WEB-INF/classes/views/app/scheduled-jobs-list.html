@@ -1,0 +1,58 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h6 class="dashhead-subtitle">&emsp;</h6>
+                <h2 class="dashhead-title">${labels["scheduled.jobs"]}</h2>
+            </div>
+            <#if scheduledJobList?size gt 0>
+                <div class="dashhead-toolbar">
+                    <p class="pull-right">
+                        <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+                    </p>
+                </div>
+            </#if>
+        </div>
+        <div class="hr-divider"></div>
+        <#if scheduledJobList?size==0>
+            <br>
+            <br>
+            <br>
+            <p class="text-center">
+                <span class="icon icon-flow-tree fa fa-4x"></span>
+            </p>    
+            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+            <p class="text-center">
+                <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+            </p>
+        </#if>
+        <br>
+        <div class="flexgrid">
+            <#list scheduledJobList?sort_by( "createdDate") as scheduledJob>
+                <div class="offer offer-radius offer-info">
+                    <a href="${labels['base.path']}/${scheduledJob.id}" style="text-decoration: none">
+                    <div class="offer-content">
+                        <h3 class="lead">
+							${scheduledJob.jobTypeName}
+						</h3>
+                        <p>
+                            ${scheduledJob.environmentName} - 
+                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                            <span class="text-danger">(${(scheduledJob.lastRunStatus)!})</span>
+                            <!-- </#if> -->
+                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                            <span class="text-success">(${(scheduledJob.lastRunStatus)!})</span>
+                            <!-- </#if> -->
+                            <br> <small>${labels["by"]}</small>&nbsp;${scheduledJob.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${scheduledJob.createdDate?date?string.long}
+                        </p>
+                        <div class="text-right">
+                            <a href="${labels['base.path']}/${scheduledJob.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                        </div>
+                    </div>
+                    </a>    
+                </div>
+            </#list>
+        </div>
+    </@t.page>

@@ -1,0 +1,221 @@
+<#import "template.html" as t>
+    <@t.page>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["instance.detail"]}</h3>
+            </div>
+        </div>
+        <div class="hr-divider"></div>
+        <#if errorMessage??>
+            <div id="alert" class="alert alert-danger">
+                <a class="close" data-dismiss="alert">×</a>
+                <div class="text-center">${errorMessage}</div>
+            </div>
+        </#if>
+        <#if successMessage??>
+            <div id="success" class="alert alert-success">
+                <a class="close" data-dismiss="alert">&times;</a>
+                <div class="text-center">${successMessage!}</div>
+            </div>
+        </#if>
+        <br>
+        <#if mode=="add" || mode=="edit">
+
+            <form class="form-vertical" role="form" method="post" action="${action}">
+
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="environmentName">${labels["instance.name"]}</label>
+                        <input type="text" class="form-control" name="environmentName" id="environmentName" value="${(instance.environmentName)!}" required autofocus="" tabindex="1" />
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="authEndpoint">${labels["auth.endpoint"]}</label>
+                        <!-- <#if instance.isReadOnly> -->
+                        <input type="hidden" name="authEndpoint" value="${(instance.authEndpoint)!}" />
+                        <input type="text" class="form-control" value="${(instance.authEndpoint)!}" disabled tabindex="2" />
+                        <!-- <#else> -->
+                        <select id="authEndpoint" name="authEndpoint" class="form-control" required tabindex="2">
+                            <!-- <#if instance.authEndpoint=="https://login.salesforce.com"> -->
+                            <option value="https://login.salesforce.com" selected>Production - https://login.salesforce.com</option>
+                            <option value="https://test.salesforce.com">Sandbox - https://test.salesforce.com</option>
+                            <!-- <#else> -->
+                            <option value="https://login.salesforce.com">Production - https://login.salesforce.com</option>
+                            <option value="https://test.salesforce.com" selected>Sandbox - https://test.salesforce.com</option>
+                            <!-- </#if> -->
+                        </select>
+                        <!--    </#if> -->
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="username">${labels["username"]}</label>
+                        <!-- <#if instance.isReadOnly> -->
+                            <input type="hidden" name="username" value="${(instance.username)!}" />
+                            <input type="text" class="form-control" value="${(instance.username)!}" disabled tabindex="3" />
+                            <!-- <#else> -->
+                            <input type="text" class="form-control" name="username" id="username" value="${(instance.username)!}" required tabindex="3" />
+                        <!-- </#if> -->
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="password">${labels["password"]}</label>
+                        <!-- <#if instance.isReadOnly> -->
+                            <input type="password" class="form-control" value="${(instance.password)!}" disabled tabindex="4" />
+                            <!-- <#else> -->
+                            <input type="password" class="form-control" name="password" id="password" value="${(instance.password)!}" required tabindex="4" />
+                        <!-- </#if> -->
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="securityToken">${labels["security.token"]}</label>
+                        <!-- <#if instance.isReadOnly> -->
+                            <input type="password" class="form-control" value="${(instance.securityToken)!}" disabled tabindex="5" />
+                            <!-- <#else> -->
+                            <input type="password" class="form-control" name="securityToken" id="securityToken" value="${(instance.securityToken)!}" required tabindex="5" />
+                        <!-- </#if> -->
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+
+                <#if mode=="edit">
+
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <label class="control-label" for="organization">${labels["organization.name"]}</label>
+                            <input type="text" class="form-control" name="organization" id="organization" value="${(instance.organizationName)!}" disabled tabindex="6" />
+                            <div class="col-md-10"></div>
+                        </div>
+                        <div class="col-md-10"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <label class="control-label" for="serviceEndpoint">${labels["service.endpoint"]}</label>
+                            <input type="text" class="form-control" name="serviceEndpoint" id="serviceEndpoint" value="${(instance.serviceEndpoint)!}" disabled tabindex="7" />
+                        </div>
+                        <div class="col-md-10"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-2">
+                            <label class="control-label" for="apiVersion">${labels["api.version"]}</label>
+                            <input type="text" class="form-control" name="apiVersion" id="apiVersion" value="${(instance.apiVersion)!}" disabled tabindex="8" />
+                        </div>
+                        <div class="col-md-10"></div>
+                    </div>
+
+                </#if>
+
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <div class="pull-right">
+                            <a href="${labels['base.path']}/${id}#instances" class="btn btn-default" role="button" tabindex="9">${labels["cancel"]}</a>
+                            <button type="submit" name="submit" id="submit" class="btn btn-primary" tabindex="15">${labels["save"]}</button>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+
+            </form>
+
+        </#if>
+
+        <#if mode=="view">
+            <div class="row">
+
+                <div class="col-md-3">
+                    <dl class="dl-vertical">
+                        <dt>${labels["instance.name"]}</dt>
+                        <dd>${(instance.environmentName)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["username"]}</dt>
+                        <dd>${(instance.username)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["organization.name"]}</dt>
+                        <dd>${(instance.organizationName)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["service.endpoint"]}</dt>
+                        <dd>${(instance.serviceEndpoint)!}&emsp;</dd>
+                        <hr>
+                        <dt>${messages["added.on"]}</dt>
+                        <dd>${(instance.addedOn?date?string.iso)!} ${instance.addedOn?time?string.medium!}</dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-3">
+                    <dl class="dl-vertical">
+                        <dt>${labels["auth.endpoint"]}</dt>
+                        <dd>${(instance.authEndpoint)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["user.id"]}</dt>
+                        <dd>${(instance.userId)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["organization.id"]}</dt>
+                        <dd>${(instance.organizationId)!}&emsp;</dd>
+                        <hr>
+                        <dt>${labels["api.version"]}</dt>
+                        <dd>${(instance.apiVersion)!}&emsp;</dd>
+                        <hr>
+                        <dt>${messages["updated.on"]}</dt>
+                        <dd>${(instance.updatedOn?date?string.iso)!} ${instance.updatedOn?time?string.medium!}</dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-6"></div>
+
+
+                <div class="col-md-6">
+                    <div class="pull-right">
+                        <a href="${labels['base.path']}/${id}#instances" id="back" class="btn btn-default" role="button">${labels["back"]}</a>
+                        <a href="${labels['base.path']}/${id}/instances/${(instance.key)!}/edit" id="edit" class="btn btn-default" role="button">${labels["edit"]}</a>
+                        <a href="${labels['base.path']}/${id}/instances/${(instance.key)!}/test" id="test-connection" class="btn btn-default" role="button">${labels["test.connection"]}</a>
+                        <#if instance.isSandbox>
+                            <a href="#" data-toggle="modal" aria-hidden="true" data-href="${labels['base.path']}/${id}/instances/${instance.key}" data-id="${instance.key}" data-title="${labels['remove.environment']}" data-message="${labels['instance.name']}: ${instance.environmentName}" id="delete" class="confirm-delete btn btn-danger" role="button">${labels["delete"]}</a>
+                        </#if>
+                    </div>
+                </div>
+
+                <div class="col-md-6"></div>
+
+            </div>
+        </#if>
+
+        <#include "confirm-dialog.html"/>
+        <#include "spinner.html"/>
+
+        <script>
+            $('#test-connection').click(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    data: $("#enviroment-form").serialize(),
+                    url: "${labels['base.path']}/${id}/environments/${(instance.key)!}/test",
+                    success: function(response) {
+                        var environment = response;
+                        if (instance.isValid) {
+                            $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + instance.testMessage + '</div></div>');
+                        } else {
+                            $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">&times;</button><div class="text-center">' + instance.testMessage + '</div></div>');
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <script src="/js/instance.js"></script>
+
+    </@t.page>

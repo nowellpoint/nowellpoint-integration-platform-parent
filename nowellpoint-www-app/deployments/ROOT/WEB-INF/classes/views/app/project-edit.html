@@ -1,0 +1,56 @@
+<!-- Modal Dialog -->
+<div class="modal fade" id="projectDialog" role="dialog" tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="form-vertical" role="form" method="post" action="/app/projects">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" name="id" id="id" value="${project.id!}" />
+                    <input type="hidden" name="ownerId" id="ownerId" value="${project.owner.id!}" />
+
+                    <div class="form-group">
+                        <label class="control-label" for="name">${name}</label>
+                        <input type="text" class="form-control" name="name" id="name" required="" autocomplete="off" autofocus="" value="${project.name!}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="stage">${stage}</label>
+                        <input type="text" class="form-control" name="stage" id="stage" required="" autocomplete="off" value="${(project.stage)!}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="owner">${owner}</label>
+                        <select id="owner" name="owner" class="form-control" required>
+                            <option value="${project.owner.href}" selected="selected">${project.owner.name}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="description">${description}</label>
+                        <textarea class="form-control" name="description" id="description" rows="3" required="">${project.description!}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <#if errorMessage??>
+                            <div id="alert" class="alert alert-danger">
+                                <a class="close" data-dismiss="alert">×</a>
+                                <div class="text-center">${errorMessage}</div>
+                            </div>
+                        </#if>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" name="cancel" id="cancel" class="btn btn-default" data-dismiss="modal">${cancel}</button>
+                    <button type="submit" name="save" id="save" class="btn btn-primary pull-right">${save}</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,466 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div class="flextable mt-1">
+            <div class="flextable-item flextable-primary">
+                <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div class="btn-toolbar" role="toolbar">
+            <button type="button" id="edit-user-profile" class="btn btn-primary" data-toggle="modal" data-target="#account-profile-dialog">${labels["edit.user.profile"]}</button>&emsp;
+            <a href="${labels['base.path']}/${accountProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+        </div>
+        <br>
+        <div class="row">
+
+            <div class="col-md-3">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["name"]}</dt>
+                    <dd>${accountProfile.name!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["email"]}</dt>
+                    <dd>${accountProfile.email!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["title"]}</dt>
+                    <dd>${accountProfile.title!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["company"]}</dt>
+                    <dd>${accountProfile.company!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["division"]}</dt>
+                    <dd>${accountProfile.division!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["language.key"]}</dt>
+                    <dd>${languages[accountProfile.languageSidKey]!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["timezone.key"]}</dt>
+                    <dd>${accountProfile.timeZoneSidKey!}&emsp;</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-3">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["department"]}</dt>
+                    <dd>${accountProfile.department!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["mobile.phone"]}</dt>
+                    <dd>${accountProfile.mobilePhone!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["phone"]}</dt>
+                    <dd>${accountProfile.phone!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["extension"]}</dt>
+                    <dd>${accountProfile.extension!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["fax"]}</dt>
+                    <dd>${accountProfile.fax!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["locale.key"]}</dt>
+                    <dd>${locales[accountProfile.localeSidKey]!}&emsp;</dd>
+                    <hr>
+                </dl>
+            </div>
+
+            <div class="col-md-6">
+
+            </div>
+        </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="address" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["address"]}</h3>
+                    </div>
+                </div>
+                <br>
+                <div class="btn-toolbar" role="toolbar">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#address-dialog">${labels["edit.address"]}</button>
+                </div>
+                <br>
+                <address>
+                            ${(accountProfile.address.street)!}<br>
+                            ${(accountProfile.address.city)!}<#if accountProfile.address.city??>,</#if> ${(accountProfile.address.state)!} ${(accountProfile.address.postalCode)!}<br>
+                            ${(accountProfile.address.country)!}<br>
+                        </address>
+            </div>
+        </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="payment-methods" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["payment.methods"]}</h3>
+                    </div>
+                </div>
+                <br>
+                <div class="btn-toolbar" role="toolbar">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#address-dialog">${labels["add.payment.method"]}</button>
+                </div>
+                <br>
+                <div class="content table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>${labels["card.type"]}</th>
+                            <th class="text-center">${labels['primary']}</th>
+                            <th>${labels["name.on.card"]}</th>
+                            <th>${labels["expires.on"]}</th>
+                            <th>${labels["action"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list accountProfile.creditCards?sort_by( "addedOn") as creditCard>
+                                <tr id="${creditCard.token}">
+                                    <td><img src="${(creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view">${(creditCard.cardType)!} ${labels["ending.in"]} ${(creditCard.lastFour)!}</a></td>
+                                    <td class="text-center">
+                                        <#if creditCard.primary><span class="icon icon-check text-success"></span></#if>
+                                    </td>
+                                    <td>${creditCard.cardholderName}</td>
+                                    <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
+                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a>
+                                        <#if ! creditCard.primary>
+                                            &emsp;
+                                            <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a> &emsp;
+                                            <a href="#" data-target="#confirm-dialog" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-backdrop="static" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
+                                    </td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="settings" class="row">
+            <br>
+            <div class="col-md-6">
+                <dl class="dl-vertical">
+                    <dt>${labels["created.by"]}</dt>
+                    <dd><a href="${createdByHref}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdOn?date?string.long!} ${accountProfile.createdOn?time?string.medium!}</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-vertical">
+                    <dt>${labels["last.modified.by"]}</dt>
+                    <dd><a href="${lastModifiedByHref}">${accountProfile.lastUpdatedBy.name}</a>, ${accountProfile.lastUpdatedOn?date?string.long!} ${accountProfile.lastUpdatedOn?time?string.medium!}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="modal fade" id="address-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">${labels["edit.user.address"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <#include "spinner.html"/>
+                        <div id="error"></div>
+                        <form class="form-vertical" name="address-form" id="address-form" role="form" action="${labels['base.path']}/${accountProfile.id}/address">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="street">${labels["street"]}</label>
+                                    <input type="text" class="form-control" name="street" id="street" autofocus="" value="${(accountProfile.address.street)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="city">${labels["city"]}</label>
+                                    <input type="text" class="form-control" name="city" id="city" value="${(accountProfile.address.city)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="state">${labels["state"]}</label>
+                                    <input type="text" class="form-control" name="state" id="state" value="${(accountProfile.address.state)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(accountProfile.address.postalCode)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                                    <select id="countryCode" name="countryCode" class="form-control" required>
+                                        <#list countryList as country>
+                                            <#if country.code==accountProfile.address.countryCode>
+                                                <option value="${country.code}" selected="selected">${country.name}</option>
+                                            </#if>
+                                            <#if country.code !=accountProfile.address.countryCode>
+                                                <option value="${country.code}">${country.name}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="button" id="update-address" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="account-profile-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">${labels["edit.user.profile"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <#include "spinner.html"/>
+                        <div id="error1"></div>
+                        <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form" action="${labels['base.path']}/${accountProfile.id}">
+                            <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="firstName">${labels["first.name"]}</label>
+                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" autofocus="" value="${accountProfile.firstName!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="lastName">${labels["last.name"]}</label>
+                                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${accountProfile.lastName!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="company">${labels["company"]}</label>
+                                    <input type="text" class="form-control" name="company" id="company" placeholder="${labels['company']}" value="${accountProfile.company!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="division">${labels["division"]}</label>
+                                    <input type="text" class="form-control" name="division" id="division" placeholder="${labels['division']}" value="${accountProfile.division!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="department">${labels["department"]}</label>
+                                    <input type="text" class="form-control" name="department" id="department" placeholder="${labels['department']}" value="${accountProfile.department!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="title">${labels["title"]}</label>
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="${labels['title']}" value="${accountProfile.title!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="email">${labels["email"]}</label>
+                                    <input type="text" class="form-control" name="email" id="email" placeholder="${labels['email']}" value="${accountProfile.email!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="mobilPhone">${labels["mobile.phone"]}</label>
+                                    <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" placeholder="${labels['mobile.phone']}" value="${accountProfile.mobilePhone!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="phone">${labels["phone"]}</label>
+                                    <input type="text" class="form-control" name="phone" id="phone" placeholder="${labels['phone']}" value="${accountProfile.phone!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="extension">${labels["extension"]}</label>
+                                    <input type="text" class="form-control" name="extension" id="extension" placeholder="${labels['extension']}" value="${accountProfile.extension!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="fax">${labels["fax"]}</label>
+                                    <input type="text" class="form-control" name="fax" id="fax" placeholder="${labels['fax']}" value="${accountProfile.fax!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
+                                    <select id="languageSidKey" name="languageSidKey" class="form-control" required>
+                                        <#list languages?keys as key>
+                                            <#if accountProfile.languageSidKey==key>
+                                                <option value="${key}" selected="selected">${languages[key]}</option>
+                                            </#if>
+                                            <#if accountProfile.languageSidKey !=key>
+                                                <option value="${key}">${languages[key]}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
+                                    <select id="localeSidKey" name="localeSidKey" class="form-control" required>
+                                        <#list locales?keys as key>
+                                            <#if accountProfile.localeSidKey==key>
+                                                <option value="${key}" selected="selected">${locales[key]}</option>
+                                            </#if>
+                                            <#if accountProfile.localeSidKey !=key>
+                                                <option value="${key}">${locales[key]}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
+                                    <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
+                                        <#list timeZones as timeZone>
+                                            <#if accountProfile.timeZoneSidKey==timeZone>
+                                                <option value="${timeZone}" selected="selected">${timeZone}</option>
+                                            </#if>
+                                            <#if accountProfile.timeZoneSidKey !=timeZone>
+                                                <option value="${timeZone}">${timeZone}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="button" id="update-account-profile" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <#include "confirm-dialog.html"/>
+
+        <script>
+            
+            $("#edit-user-profile").click(function (e) {
+                accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
+                $("#firstName").val(accountProfile.firstName);
+                $("#lastName").val(accountProfile.lastName);
+                $("#division").val(accountProfile.division);
+                $("#company").val(accountProfile.company);
+                $("#department").val(accountProfile.department);
+                $("#title").val(accountProfile.title);
+                $("#email").val(accountProfile.email);
+                $("#mobilePhone").val(accountProfile.mobilePhone);
+                $("#phone").val(accountProfile.phone);
+                $("#extension").val(accountProfile.extension);
+                $("#fax").val(accountProfile.fax);
+                $("#languageSidKey").val(accountProfile.languageSidKey);
+                $("#localeSidKey").val(accountProfile.localeSidKey);
+                $("#timeZoneSidKey").val(accountProfile.timeZoneSidKey);                
+            });
+            
+            $("#update-account-profile").click(function(e) {
+
+                $form = $("#account-profile-form");
+                $dialog = $("#account-profile-dialog")
+
+                $.ajax({
+                    method: "POST",
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            $dialog.html(response.responseText);
+                            setTimeout(function() {
+                                $dialog.slideUp('slow').fadeOut(function() {
+                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error1").html(response.responseText);
+                        }
+
+                    }
+                });
+
+                e.preventDefault();
+
+            });
+
+            $("#update-address").click(function(e) {
+
+                $form = $("#address-form");
+                $dialog = $("#address-dialog");
+
+                $.ajax({
+                    method: "POST",
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            $dialog.html(response.responseText);
+                            setTimeout(function() {
+                                $dialog.slideUp('slow').fadeOut(function() {
+                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").html(response.responseText);
+                        }
+                    }
+
+                });
+
+                e.preventDefault();
+
+            });
+
+            var accountProfile = {
+                basePath: "${labels['base.path']}",
+                id: "${accountProfile.id!}",
+                firstName: "${accountProfile.firstName!}",
+                lastName: "${accountProfile.lastName!}",
+                street: "${(accountProfile.address.street)!}",
+                city: "${(accountProfile.address.city)!}",
+                state: "${(accountProfile.address.state)!}",
+                postalCode: "${(accountProfile.address.postalCode)!}",
+                countryCode: "${(accountProfile.address.countryCode)!}",
+                company: "${(accountProfile.company)!}",
+                department: "${(accountProfile.department)!}",
+                title: "${(accountProfile.title)!}",
+                email: "${(accountProfile.email)!}",
+                mobilePhone: "${(accountProfile.mobilePhone)!}",
+                phone: "${(accountProfile.phone)!}",
+                extension: "${(accountProfile.extension)!}",
+                fax: "${(accountProfile.fax)!}",
+                languageSidKey: "${(accountProfile.languageSidKey)!}",
+                localeSidKey: "${(accountProfile.localeSidKey)!}",
+                timeZoneSidKey: "${(accountProfile.timeZoneSidKey)!}"
+            }
+            
+            sessionStorage.setItem("accountProfile", JSON.stringify(accountProfile));
+            
+        </script>
+
+        <script src="/js/account-profile.js"></script>
+
+    </@t.page>

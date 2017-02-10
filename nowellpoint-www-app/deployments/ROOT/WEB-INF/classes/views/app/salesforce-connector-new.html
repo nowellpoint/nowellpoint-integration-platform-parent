@@ -1,0 +1,43 @@
+<#import "template.html" as t>
+    <@t.page>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h2 class="dashhead-title">${labels["new.salesforce.connector"]}</h2>
+            </div>
+        </div>
+        <div class="hr-divider"></div>
+
+        <br>
+
+        <ol>
+            <li>${labels["step1"]}</li>
+            <li>${labels["step2"]}</li>
+            <li>${labels["step3"]}</li>
+            <li>${labels["step4"]}</li>
+        </ol>
+
+        <br>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+
+                <p>
+
+
+                    <b>${labels["description"]}:</b>&nbsp;${labels["description.text"]}
+                    <br>
+                    <b>${labels["resolution"]}:</b>&nbsp;${labels["resolution.text"]}
+                    <br>
+                    <br>${labels["resolution.description"]}
+                </p>
+
+            </div>
+        </div>
+
+        <p class="pull-right">
+            <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+            <a href="/app/salesforce/oauth" class="btn btn-primary" role="button">${labels["create.connector"]}</a>
+        </p>
+
+    </@t.page>

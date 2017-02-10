@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>${applicationTitle}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+    <!-- Include the CSS -->
+    <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/custom.css" type="text/css" />
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand">
+                <a href="/"><b>${messages["application.title"]}</b></a>
+            </div>
+        </div>
+    </nav>
+    <div class="container p-t-lg">
+        <div class="row">
+            <div>
+                <br>
+                <#if successMessage??>
+                    <div id="success" class="alert alert-success">
+                        <div class="text-center">${successMessage}</div>
+                    </div>
+                </#if>
+                <#if errorMessage??>
+                    <div id="error" class="alert alert-danger">
+                        <a class="close" data-dismiss="alert">×</a>
+                        <div class="text-center">${errorMessage}</div>
+                    </div>
+                </#if>
+            </div>
+        </div>
+
+        <#if action=="listPlans">
+            <div class="row">
+                <ul class="breadcrumb">
+                    <li class="active"><span class="badge">1</span>&emsp;${labels["select.plan"]}</li>
+                    <li class="active"><span class="badge">2</span>&emsp;${labels["create.account"]}</li>
+                </ul>
+            </div>
+            <br>
+            <div class="row m-l m-r">
+                <div class="dashhead p-t">
+                    <div class="dashhead-titles">
+                        <h3 class="dashhead-title">${labels["select.plan"]}</h3>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+                <br>
+                <div class="table-responsive">
+                    <div class="membership-pricing-table">
+                        <table style="text-align:center; margin-left:auto; margin-right:auto;">
+                            <tbody>
+                                <tr>
+                                    <th></th>
+                                    <#list plans as plan>
+                                        <#if plan.recommendedPlan==true>
+                                            <th class="plan-header plan-header-standard">
+                                                <div class="header-plan-inner">
+                                                    <span class="recommended-plan-ribbon">${labels["recommended"]}</span>
+                                                    <div class="pricing-plan-name">${plan.planName}</div>
+                                                    <div class="pricing-plan-price">
+                                                        <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                    </div>
+                                                    <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                                </div>
+                                            </th>
+                                        </#if>
+                                        <#if plan.recommendedPlan==false && plan.price.unitPrice==0>
+                                            <th class="plan-header plan-header-free">
+                                                <div class="pricing-plan-name">${plan.planName}</div>
+                                                <div class="pricing-plan-price">
+                                                    <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                </div>
+                                                <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                            </th>
+                                        </#if>
+                                        <#if plan.recommendedPlan==false && plan.price.unitPrice gt 0>
+                                            <th class="plan-header plan-header-blue">
+                                                <div class="pricing-plan-name">${plan.planName}</div>
+                                                <div class="pricing-plan-price">
+                                                    <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                </div>
+                                                <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                            </th>
+                                        </#if>
+                                    </#list>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <#list plans as plan>
+                                        <#if plan.recommendedPlan==true>
+                                            <td class="action-header">
+                                                <a href="/create-account?planId=${plan.id}" class="btn btn-success">${labels["select"]}</a>
+                                            </td>
+                                        </#if>
+                                        <#if plan.recommendedPlan !=true>
+                                            <td class="action-header">
+                                                <a href="/create-account?planId=${plan.id}" class="btn btn-default">${labels["select"]}</a>
+                                            </td>
+                                        </#if>
+                                    </#list>
+                                </tr>
+                                <#list plans[0].services?sort_by( "sortOrder") as service>
+                                    <tr id="${service?index}">
+                                        <td>${service.name}</td>
+                                        <#list plans as plan>
+                                            <#assign x=plan.services?sort_by( "sortOrder")[service?index] />
+                                            <td>
+                                                <#if x.enabled?? && x.enabled==true>
+                                                    <span class="icon-yes glyphicon glyphicon-ok-circle"></span>
+                                                </#if>
+                                                <#if x.enabled?? && x.enabled==false>
+                                                    <span class="icon-no glyphicon glyphicon-remove-circle"></span>
+                                                </#if>
+                                                <#if x.quantity??>
+                                                    ${x.quantity}
+                                                </#if>
+                                            </td>
+                                        </#list>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </#if>
+
+        <#if action="createAccount">
+            <div class="row">
+                <ul class="breadcrumb">
+                    <li><span class="badge">1</span>&emsp;<a href="/list-plans">${labels["select.plan"]}</a></li>
+                    <#if plan.price.unitPrice gt 0>
+                        <li class="active"><span class="badge">2</span>&emsp;${labels["create.account.payment"]}</li>
+                    </#if>
+                    <#if plan.price.unitPrice==0>
+                        <li class="active"><span class="badge">2</span>&emsp;${labels["create.account"]}</li>
+                    </#if>
+                </ul>
+            </div>
+            <div class="row m-l m-r">
+                <div class="dashhead p-t">
+                    <div class="dashhead-titles">
+                        <h3 class="dashhead-title">${labels["create.account"]}</h3>
+                    </div>
+                </div>
+                <div class="hr-divider"></div>
+                <br>
+            </div>
+            <form class="form-vertical" id="signup" role="form" method="post" action="/signup">
+                <div class="row m-l m-r">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <label class="control-label">${labels["account.information"]}</label>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="hidden" name="planId" value="${signUpRequest.planId}" />
+                                <div class="form-group">
+                                    <!-- <label class="control-label" for="firstName">${firstName}</label> -->
+                                    <input class="form-control" name="firstName" id="firstName" placeholder="${firstName}" value="${signUpRequest.firstName!}" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <!-- <label class="control-label" for="lastName">${lastName}*</label> -->
+                                    <input class="form-control" name="lastName" id="lastName" placeholder="${lastName}" value="${signUpRequest.lastName!}" required>
+                                </div>
+                                <div class="form-group">
+                                    <!-- <label class="control-label" for="email">${email}*</label> -->
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="${email}" value="${signUpRequest.email!}" required>
+                                </div>
+                                <div>
+                                    <p>${labels["password.policy"]}</p>
+                                </div>
+                                <div class="form-group">
+                                    <!-- <label class="control-label" for="password">${password}*</label> -->
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="${password}" value="${signUpRequest.password!}" required autocomplete="off" />
+                                </div>
+                                <div class="form-group">
+                                    <!-- <label class="control-label" for="confirmPassword">${retypePassword}*</label> -->
+                                    <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="${retypePassword}" required autocomplete="off" />
+                                </div>
+                                <div class="form-group">
+                                    <!--<label class="control-label" for="countryCode">${country}*</label> -->
+                                    <select id="countryCode" name="countryCode" class="form-control" required>
+                                        <#list countryList as country>
+                                            <#if country.code==signUpRequest.countryCode>
+                                                <option value="${country.code}" selected="selected">${country.name}</option>
+                                            </#if>
+                                            <#if country.code !=signUpRequest.countryCode>
+                                                <option value="${country.code}">${country.name}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <#if plan.price.unitPrice gt 0>
+                            <div class="row">
+                                <div class="hr-divider"></div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label class="control-label">${labels["credit.card"]}</label>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="cardNumber" id="cardNumber" placeholder="${labels['number']}">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-6 col-lg-6">
+                                                <select class="form-control" name="expirationMonth" id="expirationMonth">
+                                                    <#assign x=12 />
+                                                    <#list 1..x as month>
+                                                        <#if creditCard.expirationMonth?eval==month>
+                                                            <option value="${month?c}" selected="selected">${month?c}</option>
+                                                        </#if>
+                                                        <#if creditCard.expirationMonth?eval !=month>
+                                                            <option value="${month?c}">${month?c}</option>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-6 col-lg-6">
+                                                <select class="form-control" name="expirationYear" id="expirationYear">
+                                                    <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                    <#list .now?string[ "yyyy"]?number..x as year>
+                                                        <#if creditCard.expirationYear?eval==year>
+                                                            <option value="${year?c}" selected="selected">${year?c}</option>
+                                                        </#if>
+                                                        <#if creditCard.expirationYear?eval !=year>
+                                                            <option value="${year?c}">${year?c}</option>
+                                                        </#if>
+                                                    </#list>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-offset-7 col-md-5">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-xs-6 col-lg-6">
+                                                <input type="text" class="form-control" name="securityCode" id="securityCode" placeholder="${labels['cvv']}" />
+                                            </div>
+                                            <div class="col-xs-6 col-lg-6">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </#if>
+                        <div class="row">
+                            <div class="col-md-offset-7 col-md-5">
+                                <div class="form-group">
+                                    <button type="submit" name="submit" id="submit" class="btn btn-primary btn-block">${labels["sign.up"]}</button>
+                                    <a href="/" class="btn btn-default btn-block" role="button">${labels["cancel"]}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-offset-1 col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">${labels["selected.plan"]}</div>
+                            <div class="panel-body">
+                                <dl class="dl-vertical">
+                                    <dt>${labels["plan.name"]}</dt>
+                                    <dd>${(plan.planName)!}</dd>
+                                    <hr>
+                                    <dt>${labels["price"]}</dt>
+                                    <dd>${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.##"])!}</dd>
+                                    <hr>
+                                    <dt>${labels["billed"]}</dt>
+                                    <dd>${(plan.billingFrequency)!}
+                                </dl>
+                                <div class="pull-right">
+                                    <a href="/list-plans" class="btn btn-success" role="button">${labels["change"]}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </#if>
+
+        <#if action="signUpSuccess">
+
+
+        </#if>
+    </div>
+</body>
+
+<!-- jQuery -->
+<script src="js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+</html>

@@ -1,0 +1,46 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["edit.salesforce.connector"]}</h3>
+            </div>
+        </div>
+        <div class="hr-divider"></div>
+        <#if errorMessage??>
+            <div id="alert" class="alert alert-danger">
+                <a class="close" data-dismiss="alert">×</a>
+                <div class="text-center">${errorMessage}</div>
+            </div>
+        </#if>
+        <br>
+
+        <form class="form-vertical" role="form" method="post" action="${labels['base.path']}/${(salesforceConnector.id)!}">
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="tag">${labels["name"]}</label>
+                    <input type="text" class="form-control" name="name" id="name" required autofocus="" value="${(salesforceConnector.name)!}" />
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="tag">${labels["tag"]}</label>
+                    <input type="text" class="form-control" name="tag" id="tag" value="${(salesforceConnector.tag)!}" />
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <div class="pull-right">
+                        <a href="${cancel}">${labels["cancel"]}</a>&nbsp;
+                        <button type="submit" name="save" id="save" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+        </form>
+
+    </@t.page>
