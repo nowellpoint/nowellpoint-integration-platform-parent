@@ -983,8 +983,6 @@ header.smaller .Navigation li {
 .Get_sec {
     width: 100%;
     overflow: hidden;
-    background: url(../img/Get-bg.jpg) top center no-repeat;
-    background-size: cover;
     height: auto;
 }
 .Get_sec .Mid {
@@ -1017,7 +1015,7 @@ header.smaller .Navigation li {
     -webkit-box-shadow: 0px 2px 6px 0px #242424;
     -moz-box-shadow: 0px 2px 6px 0px #242424;
     -o-box-shadow: 0px 2px 6px 0px #242424;
-    border-radius: 0px;
+    border-radius: 8px;
 }
 .Get_sec .Leftside input:focus {
     outline: none;
@@ -1036,7 +1034,7 @@ header.smaller .Navigation li {
     -webkit-box-shadow: 0px 2px 6px 0px #242424;
     -moz-box-shadow: 0px 2px 6px 0px #242424;
     -o-box-shadow: 0px 2px 6px 0px #242424;
-    border-radius: 0px;
+    border-radius: 8px;
 }
 .Get_sec .Leftside textarea:focus {
     outline: none;
@@ -1058,7 +1056,7 @@ header.smaller .Navigation li {
     -webkit-box-shadow: 0px 2px 6px 0px #242424;
     -moz-box-shadow: 0px 2px 6px 0px #242424;
     -o-box-shadow: 0px 2px 6px 0px #242424;
-    border-radius: 0px;
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
 .Get_sec .Leftside .button:hover {
@@ -1121,35 +1119,75 @@ header.smaller .Navigation li {
 }
 
 /* <<< Login Section >>> */
-
-.login_section {
+.login_container {
     padding: 0px 0px 0px 0px;
     width: 100%;
     overflow: hidden;
     background: url(../img/Get-bg.jpg) top center no-repeat;
     background-size: cover;
-    height: 100vh;
+    height: auto;
 }
-.login_section .Mid {
-    padding: 0px 0px 95px 0px;
+.login_container .center {
+    padding: 100px 0px 77px 0px;
     max-width: 1100px;
     margin: auto;
     overflow: hidden;
+    text-align: center;
 }
-.login_section .Leftside {
-    width: 48.2%;
-    float: left;
+.login_container h2 {
+    font-size: 57px;
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 0px;
+    text-transform: uppercase;
+    line-height: 60px;
 }
-.login_section .Leftside fieldset {
+.login_container h3 {
+    font-size: 24px;
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 0px;
+    line-height: 60px;
+}
+.login_container p {
+    padding: 24px 0px 35px 0px;
+    font-size: 14px;
+    color: #ebebeb;
+    margin: 0px;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 25px;
+    font-weight: 400;
+}
+.login_container .line {
+    border: solid 1px #ff9408;
+    height: 2px;
+    width: 252px;
+    margin: auto;
+}
+.login_section {
+    padding: 112px 0px 108px 0px;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+.login_section .mid {
+    padding: 0px 0px 95px 0px;
+    max-width: 400px;
+    margin: auto;
+    overflow: hidden;
+}
+.login_section fieldset {
     padding: 0px;
     margin: 0px;
 }
-.login_section .Leftside p {
+.login_section p {
     padding: 0px;
     margin: 0px 0px 25px 0px;
 }
-.login_section .Leftside input.field {
-    padding: 18px 20px 17px 20px;
+.login_section input.field {
+    padding: 15px 20px 14px 20px;
     font-size: 14px;
     color: #979797;
     font-family: 'Open Sans', sans-serif;
@@ -1160,15 +1198,15 @@ header.smaller .Navigation li {
     -webkit-box-shadow: 0px 2px 6px 0px #242424;
     -moz-box-shadow: 0px 2px 6px 0px #242424;
     -o-box-shadow: 0px 2px 6px 0px #242424;
-    border-radius: 0px;
+    border-radius: 8px;
 }
-.login_section .Leftside input:focus {
+.login_section input:focus {
     outline: none;
 }
-.login_section .Leftside textarea:focus {
+.login_section textarea:focus {
     outline: none;
 }
-.login_section .Leftside .button {
+.login_section .button {
     padding: 16px 0px 17px 0px;
     margin-top: -3px;
     font-size: 14px;
@@ -1185,39 +1223,23 @@ header.smaller .Navigation li {
     -webkit-box-shadow: 0px 2px 6px 0px #242424;
     -moz-box-shadow: 0px 2px 6px 0px #242424;
     -o-box-shadow: 0px 2px 6px 0px #242424;
-    border-radius: 0px;
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
-.login_section .Leftside .button:hover {
+.login_section .button:hover {
     background: #2d2d2d;
     color: #fff;
 }
-.login_section .Rightside {
-    padding-top: 12px;
-    width: 48.18%;
-    float: right;
-}
-.login_section .Rightside h3 {
-    padding-bottom: 44px;
-    font-size: 46px;
-    color: #f88e04;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 400;
-    margin: 0px;
-    text-transform: uppercase;
-    line-height: 46px;
-}
-.login_section .Rightside ul {
+.login_section ul {
     list-style: none;
     margin: 0px;
-    padding: 27px 0px 0px 3px;
+    padding: 27px 0px 0px 0px;
 }
-.login_section .Rightside li {
-    float: left;
+.login_section li {
     padding: 0px;
-    margin: 0px 22px 0px 0px;
+    text-align: center;
 }
-.login_section .Rightside li a {
+.login_section li a {
     text-decoration: none;
     color: #f88e04;
 }

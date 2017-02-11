@@ -25,62 +25,69 @@
 <body>
 
     <section>
+        <header class="smaller">
+            <div class="Center">
+                <div class="site-logo">
+                    <h1><a href="/">Nowell<span>point</span></a></h1>
+                </div>
+                <div id="mobile_sec">
+                    <div class="mobile"><i class="fa fa-bars"></i><i class="fa fa-times"></i></div>
+                    <div class="menumobile">
+                        <nav class="Navigation">
+                            <ul>
+                                <li class="active">
+                                    <a href="/list-plans" class="btn btn-warning">${labels["sign.up"]}</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </header>
+
         <div class="container">
+            <div class="login_container">
                 <div class="login_section" id="login">
-                    <div class="Center">
+                    <div class="center">
                         <h2>${labels["welcome.back"]}</h2>
                         <br>
-                        <div class="Line"></div>
+                        <div class="line"></div>
                     </div>
 
-                    <div class="Mid">
-                        <div class="Leftside">
-                            <#if errorMessage??>
-                                <div id="alert" class="alert alert-danger">
-                                    <a class="close" data-dismiss="alert">×</a>
-                                    <div class="text-center">${errorMessage}</div>
-                                </div>
-                            </#if>
-                            <form role="form" id="login-form" method="post" action="/login">
-                                <fieldset>
-                                    <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
-                                    <p class="form-group">
-                                        <input type="email" 
-                                               name="username" 
-                                               id="username" 
-                                               placeholder="${labels['email']}" 
-                                               required data-msg="${messages['username.required']}" 
-                                               autofocus 
-                                               class="field">
-                                    </p>
-                                    
-                                        
-                                    <p class="form-group">
-                                        <input type="password" 
-                                               name="password" 
-                                               id="password" 
-                                               placeholder="${labels['password']}" 
-                                               required data-msg="${messages['password.required']}" 
-                                               autocomplete="off" 
-                                               class="field">
-                                    </p>
-                                    <p class="form-group">
-                                        <input type="submit" id="submit" value="${labels['login']}" class="button">
-                                    </p>
-                                </fieldset>
-                            </form>
-                        </div>
-
-                        <div class="Rightside">
-
-                            <div class="panel panel-default">
-                                <div class="panel-body text-center">${labels["new.to.nowellpoint"]}<a href="/list-plans">&nbsp;${labels["sign.up"]}</a></div>
+                    <div class="mid">
+                        <#if errorMessage??>
+                            <div id="alert" class="alert alert-danger">
+                                <a class="close" data-dismiss="alert">×</a>
+                                <div class="text-center">${errorMessage}</div>
                             </div>
+                        </#if>
 
-                        </div>
+                        <form role="form" id="login-form" method="post" action="/login">
+                            <fieldset>
+                                <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
+                                <p class="form-group">
+                                    <input type="email" name="username" id="username" placeholder="${labels['email']}" required data-msg="${messages['username.required']}" autofocus class="field">
+                                </p>
+                                <p class="form-group">
+                                    <input type="password" name="password" id="password" placeholder="${labels['password']}" required data-msg="${messages['password.required']}" autocomplete="off" class="field">
+                                </p>
+                                <p class="form-group">
+                                    <input type="submit" id="submit" value="${labels['login']}" class="button">
+                                </p>
+                            </fieldset>
+                        </form>
+
+                        <ul>
+                            <li>
+                                <a href="/list-plans" class="btn btn-warning">${labels["create.free.account"]}</a>
+                            </li>
+                        </ul>
+
                     </div>
                 </div>
             </div>
+        </div>
     </section>
 
     <script type="text/javascript" src="js/jquery.js"></script>
