@@ -88,10 +88,10 @@
                             <div class="tabcontent" id="cont-1-1">
                                 <div class="TabImage">
                                     <div class="img1">
-                                        <figure><img src="img/about-img2.jpg" alt="image"></figure>
+                                        <figure><img src="images/code.png" alt="image"></figure>
                                     </div>
                                     <div class="img2">
-                                        <figure><img src="img/about-img1.jpg" alt="image"></figure>
+                                        <figure><img src="images/screen.png" alt="image"></figure>
                                     </div>
                                 </div>
                                 <div class="Description">
@@ -227,53 +227,25 @@
                                 <form role="form" id="contact-form" method="post" action="/contact">
                                     <fieldset>
                                         <p class="form-group">
-                                            <input type="text" 
-                                                   name="firstName" 
-                                                   id="firstName" 
-                                                   placeholder="${labels['first.name']}" 
-                                                   class="field">
+                                            <input type="text" name="firstName" id="firstName" placeholder="${labels['first.name']}" class="field">
                                         </p>
                                         <p class="form-group">
-                                            <input type="text" 
-                                                   name="lastName" 
-                                                   id="lastName" 
-                                                   placeholder="${labels['last.name']}" 
-                                                   required data-msg="${messages['last.name.required']}" 
-                                                   class="field">
+                                            <input type="text" name="lastName" id="lastName" placeholder="${labels['last.name']}" required data-msg="${messages['last.name.required']}" class="field">
                                         </p>
                                         <p class="form-group">
-                                            <input type="email" 
-                                                   name="email" 
-                                                   id="email" 
-                                                   placeholder="${labels['email']}" 
-                                                   required data-msg="${messages['email.required']}" 
-                                                   class="field">
+                                            <input type="email" name="email" id="email" placeholder="${labels['email']}" required data-msg="${messages['email.required']}" class="field">
                                         </p>
                                         <p class="form-group">
-                                            <input type="text" 
-                                                   name="phone" 
-                                                   id="phone" 
-                                                   placeholder="${labels['phone']}" 
-                                                   class="field">
+                                            <input type="text" name="phone" id="phone" placeholder="${labels['phone']}" class="field">
                                         </p>
                                         <p class="form-group">
-                                            <input type="text" 
-                                                   name="company" 
-                                                   id="company" 
-                                                   placeholder="${labels['company']}" 
-                                                   class="field">
+                                            <input type="text" name="company" id="company" placeholder="${labels['company']}" class="field">
                                         </p>
                                         <p class="form-group">
-                                            <textarea class="form-control" 
-                                                      name="message" 
-                                                      id="message" 
-                                                      placeholder="${labels['message']}" 
-                                                      required data-msg="${messages['message.required']}" 
-                                                      required>
-                                            </textarea>
+                                            <textarea name="message" id="message" placeholder="${labels['enter.message']}" required data-msg="${messages['message.required']}"></textarea>
                                         </p>
                                         <p class="form-group">
-                                            <input type="submit" id="submit" value="${labels['send']}" class="button">
+                                            <input type="submit" id="submit" value="${labels['send.message']}" class="button">
                                         </p>
                                     </fieldset>
                                 </form>
@@ -309,6 +281,13 @@
                                 <p id="response"></p>
                             </div>
                         </div>
+
+                        <footer>
+                            <div class="Cntr">
+                                <p>${labels["copyright"]}
+                            </div>
+                        </footer>
+
                     </div>
                 </div>
             </div>
@@ -325,12 +304,8 @@
     <script type="text/javascript" src="js/jquery.sudoSlider.min.js"></script>
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript" src="js/modernizr.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="js/jquery.validate.min.js"></script>
-
-    <script>
-        $("#contact-form").validate();
-    </script>
+    <script type="text/javascript" src="js/index.js"></script>
 
 </body>
 

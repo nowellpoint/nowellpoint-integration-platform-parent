@@ -171,7 +171,7 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		accountProfileService.createAccountProfile( accountProfile );
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResourceImpl.class)
+				.path(AccountProfileResource.class)
 				.path("/{id}")
 				.build(accountProfile.getId());
 		

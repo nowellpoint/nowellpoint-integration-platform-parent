@@ -6,10 +6,7 @@ import static spark.Spark.post;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,7 +32,6 @@ import freemarker.template.Configuration;
 import jdk.nashorn.api.scripting.NashornScriptEngine;
 import spark.Request;
 import spark.Response;
-import spark.Spark;
 
 public class IndexController extends AbstractController {
 	
@@ -89,24 +85,18 @@ public class IndexController extends AbstractController {
 	
 	private String contactUs(Configuration configuration, Request request, Response response) {
 		
-//    	HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-//    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//    			.path("contact")
-//				.parameter("firstName", request.queryParams("firstName"))
-//				.parameter("lastName", request.queryParams("lastName"))
-//				.parameter("email", request.queryParams("email"))
-//				.parameter("phone", request.queryParams("phone"))
-//				.parameter("company", request.queryParams("company"))
-//				.parameter("message", request.queryParams("message"))
-//    			.execute();
-//    	
-//    	logger.info("Status Code: " + httpResponse.getStatusCode());
+    	HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    			.path("leads")
+				.parameter("firstName", request.queryParams("firstName"))
+				.parameter("lastName", request.queryParams("lastName"))
+				.parameter("email", request.queryParams("email"))
+				.parameter("phone", request.queryParams("phone"))
+				.parameter("company", request.queryParams("company"))
+				.parameter("message", request.queryParams("message"))
+    			.execute();
     	
-    	Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("successMessage", MessageProvider.getMessage(Locale.US, "contactConfirm"));
-    	//return render(configuration, request, response, model, Path.Template.CONTACT_US);
-    	
-    	//response.redirect(Path.Route.INDEX.concat("#contact"));
+    	logger.info(httpResponse.getHeaders().get("Location"));
     	
     	return MessageProvider.getMessage(Locale.US, "contactConfirm");
 	};
