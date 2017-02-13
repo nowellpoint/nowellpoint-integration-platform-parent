@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.aws.http.HttpResponse;
@@ -22,6 +23,7 @@ import com.nowellpoint.client.model.PlanList;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.User;
+import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -44,7 +46,8 @@ public class SignUpController extends AbstractController {
 	@Override
 	public void configureRoutes(Configuration configuration) {
 		get(Path.Route.LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
-		get(Path.Route.SETUP_ACCOUNT, (request, response) -> setupAccount(configuration, request, response));
+		get(Path.Route.FREE_ACCOUNT, (request, response) -> freeAccount(configuration, request, response));
+		get(Path.Route.SIGN_UP, (request, response) -> newAccount(configuration, request, response));
 		post(Path.Route.SIGN_UP, (request, response) -> signUp(configuration, request, response));
 		get(Path.Route.VERIFY_EMAIL, (request, response) -> verifyEmail(configuration, request, response));
 	}
@@ -93,17 +96,30 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String setupAccount(Configuration configuration, Request request, Response response) {
+	private String freeAccount(Configuration configuration, Request request, Response response) {
 		
-		String planId = request.queryParams("planId");
+		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+				.path("plans")
+				.queryParameter("localeSidKey", "en_US")
+				.queryParameter("languageSidKey", "en_US")
+				.execute();
 		
-		Plan plan = new NowellpointClient()
-				.plan()
-				.get(planId);
+		PlanList planList = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			planList = httpResponse.getEntity(PlanList.class);
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+		}
+		
+		Optional<Plan> freePlan = planList.getItems()
+				.stream()
+				.filter(plan -> plan.getPlanCode().equals("FREE"))
+				.findFirst();
 		
 		SignUpRequest signUpRequest = new SignUpRequest()
 				.withCountryCode("US")
-				.withPlanId(planId);
+				.withPlanId(freePlan.get().getId());
 		
 		CreditCard creditCard = new CreditCard();
 		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
@@ -112,11 +128,86 @@ public class SignUpController extends AbstractController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("signUpRequest", signUpRequest);
-		model.put("plan", plan);
+		model.put("plan", freePlan.get());
 		model.put("creditCard", creditCard);
 		model.put("action", "createAccount");
 		
 		return render(configuration, request, response, model, Template.SIGN_UP);
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private String newAccount(Configuration configuration, Request request, Response response) {
+		
+		String planId = request.queryParams("planId");
+		
+		if (planId != null) {
+			
+			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+					.path("plans")
+					.path(planId)
+					.execute();
+			
+			Plan plan = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				plan = httpResponse.getEntity(Plan.class);
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+	    	}
+			
+			SignUpRequest signUpRequest = new SignUpRequest()
+					.withCountryCode("US")
+					.withPlanId(planId);
+			
+			CreditCard creditCard = new CreditCard();
+			creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
+			creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
+			creditCard.setBillingContact(new Contact());
+			
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("signUpRequest", signUpRequest);
+			model.put("plan", plan);
+			model.put("creditCard", creditCard);
+			model.put("action", "createAccount");
+			
+			return render(configuration, request, response, model, Template.SIGN_UP);
+			
+		} else {
+			
+			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+					.path("plans")
+					.queryParameter("localeSidKey", "en_US")
+					.queryParameter("languageSidKey", "en_US")
+					.execute();
+			
+			PlanList planList = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				planList = httpResponse.getEntity(PlanList.class);
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+			}
+			
+			List<Plan> plans = planList.getItems()
+					.stream()
+					.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
+					.collect(Collectors.toList());
+			
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("plans", plans);
+			model.put("action", "listPlans");
+			
+			return render(configuration, request, response, model, Template.SIGN_UP);
+		}
 	}
 	
 	/**

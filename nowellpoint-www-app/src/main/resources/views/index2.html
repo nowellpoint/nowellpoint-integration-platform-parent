@@ -64,7 +64,7 @@
                             <div class="leftside">
                                 <h3>${labels["headline"]}</h3>
                                 <h4>${labels["tagline"]}</h4>
-                                <a href="/list-plans">${labels["get.started"]}</a>&emsp;
+                                <a href="/signup">${labels["get.started"]}</a>&emsp;
                                 <a href="/login">${labels["log.in"]}</a>
                             </div>
                         </div>
@@ -205,7 +205,7 @@
                                         </#list>
 
                                         <div class="Order">
-                                            <a href="#">${labels["order.now"]}</a>
+                                            <a href="/signup?planId=${plan.id}">${labels["order.now"]}</a>
                                         </div>
                                     </li>
                                 </#list>

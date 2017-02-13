@@ -49,11 +49,13 @@ public class Main {
 		//
         // set system properties from configuration
         //
+		
+		Properties.loadProperties("sandbox");
 
-        Properties.loadProperties(container
-                .stageConfig()
-                .resolve("propertyStore.name")
-                .getValue());
+//        Properties.loadProperties(container.
+//                .stageConfig()
+//                .resolve("propertyStore.name")
+//                .getValue());
         
         //
         // set default time zone to UTC

@@ -25,44 +25,21 @@
 <body>
 
     <section>
-        <header class="smaller">
-            <div class="Center">
-                <div class="site-logo">
-                    <h1><a href="/">Nowell<span>point</span></a></h1>
-                </div>
-                <div id="mobile_sec">
-                    <div class="mobile"><i class="fa fa-bars"></i><i class="fa fa-times"></i></div>
-                    <div class="menumobile">
-                        <nav class="Navigation">
-                            <ul>
-                                <li class="active">
-                                    <a href="/list-plans" class="btn btn-warning">${labels["sign.up"]}</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-                <div class="clear"></div>
-            </div>
-        </header>
-
         <div class="container">
             <div class="login_container">
                 <div class="login_section" id="login">
                     <div class="center">
+                        <div class="site-logo">
+                            <h1><a href="/">${messages["application.title"]}</a></h1>
+                        </div>
+
                         <h2>${labels["welcome.back"]}</h2>
-                        <br>
                         <div class="line"></div>
                     </div>
 
-                    <div class="mid">
-                        <#if errorMessage??>
-                            <div id="alert" class="alert alert-danger">
-                                <a class="close" data-dismiss="alert">×</a>
-                                <div class="text-center">${errorMessage}</div>
-                            </div>
-                        </#if>
+                    <p class="error">${errorMessage!}</p>
 
+                    <div class="mid">
                         <form role="form" id="login-form" method="post" action="/login">
                             <fieldset>
                                 <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
@@ -77,13 +54,11 @@
                                 </p>
                             </fieldset>
                         </form>
-
                         <ul>
                             <li>
-                                <a href="/list-plans" class="btn btn-warning">${labels["create.free.account"]}</a>
+                                <a href="/free" class="btn btn-warning">${labels["create.free.account"]}</a>
                             </li>
                         </ul>
-
                     </div>
                 </div>
             </div>
@@ -95,7 +70,7 @@
     <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 
     <script>
-        $("#login-form").validate();
+        ///$("#login-form").validate();
     </script>
 
 </body>

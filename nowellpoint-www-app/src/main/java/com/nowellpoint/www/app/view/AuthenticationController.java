@@ -4,7 +4,6 @@ import static spark.Spark.before;
 import static spark.Spark.get;
 import static spark.Spark.halt;
 import static spark.Spark.post;
-import static spark.Spark.exception;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAuthorizedException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -58,7 +56,6 @@ public class AuthenticationController extends AbstractController {
 		get(Path.Route.LOGIN, (request, response) -> showLoginPage(configuration, request, response));
         post(Path.Route.LOGIN, (request, response) -> login(configuration, request, response));
         get(Path.Route.LOGOUT, (request, response) -> logout(configuration, request, response));
-        exception(NotAuthorizedException.class, (exception, request, response) -> handleNotAuthorizedException(configuration, exception, request, response));
 	}
 	
 	/**
@@ -152,9 +149,13 @@ public class AuthenticationController extends AbstractController {
 			LOGGER.info(locales[0]);
 		
 			if (e.getCode() == 7100) {
-    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "login.error"));
+				Map<String, Object> model = new HashMap<>();
+				model.put("errorMessage", MessageProvider.getMessage(Locale.US, "login.error"));
+				return render(configuration, request, response, model, Template.LOGIN);
     		} else if (e.getCode() == 7101) {
-    			throw new NotAuthorizedException(MessageProvider.getMessage(Locale.US, "disabled.account"));
+    			Map<String, Object> model = new HashMap<>();
+				model.put("errorMessage", MessageProvider.getMessage(Locale.US, "disabled.account"));
+				return render(configuration, request, response, model, Template.LOGIN);
     		} else {
     			LOGGER.error(e.getMessage());
     			throw new InternalServerErrorException(e.getMessage());
@@ -162,7 +163,6 @@ public class AuthenticationController extends AbstractController {
 		}
 		
 		if (request.queryParams(REDIRECT_URI) != null && ! request.queryParams(REDIRECT_URI).isEmpty()) {
-			System.out.println(request.queryParams(REDIRECT_URI));
     		response.redirect(request.queryParams(REDIRECT_URI));
     	} else {
     		response.redirect(Path.Route.START);
@@ -207,24 +207,6 @@ public class AuthenticationController extends AbstractController {
     	response.redirect(Path.Route.INDEX);
     	
     	return "";
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param exception
-	 * @param request
-	 * @param response
-	 */
-	
-	private void handleNotAuthorizedException(Configuration configuration, Exception exception, Request request, Response response) {		
-		Map<String, Object> model = new HashMap<>();
-    	model.put("errorMessage", exception.getMessage());
-    	
-    	String output = render(configuration, request, response, model, Template.LOGIN);
-    	
-    	response.status(401);
-    	response.body(output);
 	};
 	
 	/**

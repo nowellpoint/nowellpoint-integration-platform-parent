@@ -15,6 +15,7 @@ public class Path {
 		public static final String LOGIN = "/login";
 		public static final String LOGOUT = "/logout"; 
 		public static final String SIGN_UP = "/signup";
+		public static final String FREE_ACCOUNT = "/free";
 		public static final String LIST_PLANS = "/list-plans";
 		public static final String SETUP_ACCOUNT = "/create-account";
 		public static final String CONTACT = "/contact";
