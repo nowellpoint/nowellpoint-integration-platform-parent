@@ -48,12 +48,12 @@ public class ScheduledJobController extends AbstractController {
 		public static final String SCHEDULE = String.format(APPLICATION_CONTEXT, "schedule.html");
 	}
 
-	public ScheduledJobController() {
+	public ScheduledJobController(Configuration configuration) {
 		super(ScheduledJobController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
         get(Path.Route.SCHEDULED_JOBS_LIST, (request, response) -> getScheduledJobs(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, (request, response) -> selectType(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));

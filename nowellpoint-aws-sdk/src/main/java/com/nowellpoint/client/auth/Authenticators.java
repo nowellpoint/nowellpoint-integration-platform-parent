@@ -1,5 +1,7 @@
 package com.nowellpoint.client.auth;
 
+import java.util.Locale;
+
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.MediaType;
 import com.nowellpoint.aws.http.RestResource;
@@ -9,7 +11,7 @@ import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
-import com.nowellpoint.util.Assert;
+import com.nowellpoint.client.util.MessageProvider;
 
 public class Authenticators {
 	
@@ -19,10 +21,6 @@ public class Authenticators {
 	
 	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(PasswordGrantRequest grantRequest) {
-			
-			Assert.assertNotNullOrEmpty(grantRequest.getUsername(), "missing username");
-			Assert.assertNotNullOrEmpty(grantRequest.getPassword(), "missing password");
-			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
 			
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
 	    			.accept(MediaType.APPLICATION_JSON)
@@ -36,12 +34,23 @@ public class Authenticators {
 	    	int statusCode = httpResponse.getStatusCode();
 	    	
 	    	if (statusCode == Status.OK) {
+	    		
 	    		Token token = httpResponse.getEntity(Token.class);
 		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 		    	return response;
+		    	
 	    	} else if (statusCode == Status.BAD_REQUEST) {
+	    		
 	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getMessage());
+	    		
+	    		if (error.getCode() == 7100) {
+					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "login.error"));
+	    		} else if (error.getCode() == 7101) {
+					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "disabled.account"));
+	    		} else {
+	    			throw new ServiceUnavailableException(error.getMessage());
+	    		}
+	    		
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
@@ -50,11 +59,7 @@ public class Authenticators {
 	
 	public static class ClientCredentialsGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
-			
-			Assert.assertNotNullOrEmpty(grantRequest.getApiKeyId(), "missing api key id");
-			Assert.assertNotNullOrEmpty(grantRequest.getApiKeySecret(), "missing api key secret");
-			Assert.assertNotNull(grantRequest.getEnvironment(), "environment has not been set");
-			
+						
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
 	    			.accept(MediaType.APPLICATION_JSON)
 	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -66,16 +71,27 @@ public class Authenticators {
 	    			
 	    	int statusCode = httpResponse.getStatusCode();
 	    			
-	    	if (statusCode != Status.OK) {
+	    	if (statusCode == Status.OK) {
+	    		
+	    		Token token = httpResponse.getEntity(Token.class);
+		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
+		    	return response;
+		    	
+	    	} else if (statusCode == Status.BAD_REQUEST) {
+	    		
 	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getMessage());
+	    		
+	    		if (error.getCode() == 7100) {
+					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "login.error"));
+	    		} else if (error.getCode() == 7101) {
+					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "disabled.account"));
+	    		} else {
+	    			throw new ServiceUnavailableException(error.getMessage());
+	    		}
+	    		
+	    	} else {
+	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
-	    			
-	    	Token token = httpResponse.getEntity(Token.class);
-	    	
-	    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
-	    	
-	    	return response;
 		}
 	}
 	

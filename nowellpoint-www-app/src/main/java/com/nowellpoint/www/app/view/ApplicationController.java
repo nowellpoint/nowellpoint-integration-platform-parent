@@ -36,12 +36,12 @@ public class ApplicationController extends AbstractController {
 		public static final String APPLICATIONS_LIST = String.format(APPLICATION_CONTEXT, "applications-list.html");
 	}
 	
-	public ApplicationController() {
+	public ApplicationController(Configuration configuration) {
 		super(ApplicationController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.APPLICATION_CONNECTOR_SELECT, (request, response) -> selectSalesforceConnector(configuration, request, response));
 		get(Path.Route.APPLICATION_EDIT, (request, response) -> editApplication(configuration, request, response));
 		get(Path.Route.APPLICATION_NEW, (request, response) -> newApplication(configuration, request, response));

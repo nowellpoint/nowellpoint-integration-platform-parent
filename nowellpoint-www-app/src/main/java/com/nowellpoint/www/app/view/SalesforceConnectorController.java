@@ -44,12 +44,12 @@ public class SalesforceConnectorController extends AbstractController {
 		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
 	}
 	
-	public SalesforceConnectorController() {
+	public SalesforceConnectorController(Configuration configuration) {
 		super(SalesforceConnectorController.class);      
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> getSalesforceConnectors(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> newSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> viewSalesforceConnector(configuration, request, response));

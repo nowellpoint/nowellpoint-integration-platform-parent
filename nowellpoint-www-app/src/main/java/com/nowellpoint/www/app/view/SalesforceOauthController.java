@@ -24,12 +24,12 @@ public class SalesforceOauthController extends AbstractController {
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth-callback.html");
 	}
 	
-	public SalesforceOauthController() {
+	public SalesforceOauthController(Configuration configuration) {
 		super(SalesforceOauthController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.SALESFORCE_OAUTH, (request, response) -> oauth(configuration, request, response));
         get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), (request, response) -> callback(configuration, request, response));
         get(Path.Route.SALESFORCE_OAUTH.concat("/token"), (request, response) -> getSalesforceToken(configuration, request, response));

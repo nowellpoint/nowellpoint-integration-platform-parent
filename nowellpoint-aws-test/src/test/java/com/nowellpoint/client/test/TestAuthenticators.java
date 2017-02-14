@@ -40,8 +40,6 @@ public class TestAuthenticators {
 	
 	@BeforeClass
 	public static void before() {
-		System.setProperty("javax.net.ssl.trustStore", "/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/security/keystore.jks");
-		System.setProperty("javax.net.ssl.trustStorePassword", "secret");
 		
 		long start = System.currentTimeMillis();
 		
@@ -75,6 +73,11 @@ public class TestAuthenticators {
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
 		System.out.println(identity.getName());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testIllegalArgumentException() {
+		OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder().build();
 	}
 	
 	@Test

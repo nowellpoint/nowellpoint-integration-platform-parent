@@ -23,7 +23,7 @@ public class SalesforceResource extends AbstractResource {
 	 */
 	
 	public String getOauthRedirect() {
-		HttpResponse httpResponse = RestResource.get(environmentUrl)
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
     			.path(RESOURCE_CONTEXT)
     			.path("oauth")
@@ -47,7 +47,7 @@ public class SalesforceResource extends AbstractResource {
 	 */
 	
 	public OauthToken getOauthToken(String code) {
-		HttpResponse httpResponse = RestResource.get(environmentUrl)
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 				.bearerAuthorization(token.getAccessToken())
     			.path(RESOURCE_CONTEXT)

@@ -25,12 +25,12 @@ public class AdministrationController extends AbstractController {
 		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "cache.html");
 	}
 	
-	public AdministrationController() {
+	public AdministrationController(Configuration configuration) {
 		super(AdministrationController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.ADMINISTRATION, (request, response) -> showAdministrationHome(configuration, request, response));	
         get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> showManageCache(configuration, request, response));	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(configuration, request, response));

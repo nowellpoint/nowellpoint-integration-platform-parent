@@ -17,12 +17,12 @@ public class SetupController extends AbstractController {
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup.html");
 	}
 	
-	public SetupController() {
-		super(SetupController.class);		
+	public SetupController(Configuration configuration) {
+		super(SetupController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.SETUP, (request, response) -> showSetup(configuration, request, response));
 	}
 	

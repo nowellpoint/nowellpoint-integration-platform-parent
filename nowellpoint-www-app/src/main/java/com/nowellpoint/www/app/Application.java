@@ -6,6 +6,7 @@ import static spark.Spark.halt;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,22 +26,18 @@ import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.IsoCountry;
 import com.nowellpoint.client.model.IsoCountryList;
-import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.PlanList;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
-//import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
+import com.nowellpoint.www.app.view.Controller;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.NotificationController;
-//import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.ScheduledJobController;
-//import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 
 import freemarker.template.Configuration;
@@ -93,10 +90,7 @@ public class Application implements SparkApplication {
 					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
 					.collect(Collectors.toList());
 			
-			List<Plan> plans = loadPlans();
-			
 			configuration.setSharedVariable("countryList", filteredList);
-			configuration.setSharedVariable("planList", plans);
 			
 		} catch (TemplateModelException e) {
 			e.printStackTrace();
@@ -120,33 +114,22 @@ public class Application implements SparkApplication {
         //
         //
         
-        new IndexController(configuration);
-        AuthenticationController authenticationController = new AuthenticationController();
-        AccountProfileController accountProfileController = new AccountProfileController();
-        DashboardController dashboardController = new DashboardController();
-        AdministrationController administrationController = new AdministrationController();
-        SignUpController signUpController = new SignUpController();
-        NotificationController notificationController = new NotificationController();
-        //SetupController setupController = new SetupController();
-        SalesforceOauthController salesforceOauthController = new SalesforceOauthController();
-        //ApplicationController applicationController = new ApplicationController();
-        //ProjectController projectController = new ProjectController();
-        SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController();
-        ScheduledJobController scheduledJobsController = new ScheduledJobController();
-        
-        //
-        // setup routes
-        //
-        
-        authenticationController.configureRoutes(configuration);
-        accountProfileController.configureRoutes(configuration);
-        administrationController.configureRoutes(configuration);
-        salesforceOauthController.configureRoutes(configuration);
-        dashboardController.configureRoutes(configuration);
-        signUpController.configureRoutes(configuration);
-        notificationController.configureRoutes(configuration);
-        salesforceConnectorController.configureRoutes(configuration);
-        scheduledJobsController.configureRoutes(configuration);
+        try {
+			newController(IndexController.class, configuration);
+			newController(AuthenticationController.class, configuration);
+			newController(DashboardController.class, configuration);
+			newController(AccountProfileController.class, configuration);
+			newController(AdministrationController.class, configuration);
+			newController(SignUpController.class, configuration);
+			newController(NotificationController.class, configuration);
+			newController(SalesforceOauthController.class, configuration);
+			newController(SalesforceConnectorController.class, configuration);
+			newController(ScheduledJobController.class, configuration);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+
+			e.printStackTrace();
+		}
         
         get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
@@ -199,6 +182,10 @@ public class Application implements SparkApplication {
         });
 	}
 	
+	private static <T extends Controller> Controller newController(Class<T> type, Configuration configuration) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return type.getConstructor(Configuration.class).newInstance(configuration);
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -217,29 +204,6 @@ public class Application implements SparkApplication {
 		}
 		
 		return countries;
-	}
-	
-	private static List<Plan> loadPlans() {
-		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-				.path("plans")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageSidKey", "en_US")
-				.execute();
-		
-		PlanList planList = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			planList = httpResponse.getEntity(PlanList.class);
-		} else {
-			throw new ServiceUnavailableException(httpResponse.getAsString());
-		}
-		
-		List<Plan> plans = planList.getItems()
-				.stream()
-				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
-				.collect(Collectors.toList());
-		
-		return plans;
 	}
 	
 	/**

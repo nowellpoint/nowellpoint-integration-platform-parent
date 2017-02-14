@@ -19,12 +19,12 @@ public class DashboardController extends AbstractController {
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
 	}
 	
-	public DashboardController() {     
+	public DashboardController(Configuration configuration) {     
 		super(DashboardController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.START, (request, response) -> showStartPage(configuration, request, response));
         get(Path.Route.DASHBOARD, (request, response) -> showDashboard(configuration, request, response));
 	}

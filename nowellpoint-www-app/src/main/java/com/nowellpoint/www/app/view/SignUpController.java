@@ -35,19 +35,20 @@ import spark.Response;
 public class SignUpController extends AbstractController {
 	
 	public static class Template {
+		public static final String PLANS = "plans.html";
 		public static final String SIGN_UP = "signup.html";
 		public static final String VERIFY_EMAIL = "verify-email.html";
 	}
 	
-	public SignUpController() {
+	public SignUpController(Configuration configuration) {
 		super(SignUpController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		get(Path.Route.LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
+	private void configureRoutes(Configuration configuration) {
+		get(Path.Route.PLANS, (request, response) -> plans(configuration, request, response));
 		get(Path.Route.FREE_ACCOUNT, (request, response) -> freeAccount(configuration, request, response));
-		get(Path.Route.SIGN_UP, (request, response) -> newAccount(configuration, request, response));
+		get(Path.Route.SIGN_UP, (request, response) -> paidAccount(configuration, request, response));
 		post(Path.Route.SIGN_UP, (request, response) -> signUp(configuration, request, response));
 		get(Path.Route.VERIFY_EMAIL, (request, response) -> verifyEmail(configuration, request, response));
 	}
@@ -60,7 +61,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String listPlans(Configuration configuration, Request request, Response response) {
+	private String plans(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -82,10 +83,9 @@ public class SignUpController extends AbstractController {
 				.collect(Collectors.toList());
 		
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("plans", plans);
-		model.put("action", "listPlans");
+		model.put("planList", plans);
 		
-		return render(configuration, request, response, model, Template.SIGN_UP);
+		return render(configuration, request, response, model, Template.PLANS);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String newAccount(Configuration configuration, Request request, Response response) {
+	private String paidAccount(Configuration configuration, Request request, Response response) {
 		
 		String planId = request.queryParams("planId");
 		

@@ -26,12 +26,12 @@ public class NotificationController extends AbstractController {
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notification-list.html");
 	}
 	
-	public NotificationController() {
+	public NotificationController(Configuration configuration) {
 		super(NotificationController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		get(Path.Route.NOTIFICATIONS, (request, response) -> showNotifications(configuration, request, response));
 	}
 	

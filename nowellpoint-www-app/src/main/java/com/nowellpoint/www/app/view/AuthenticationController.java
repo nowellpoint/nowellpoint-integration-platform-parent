@@ -28,7 +28,7 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.www.app.util.MessageProvider;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
@@ -46,12 +46,12 @@ public class AuthenticationController extends AbstractController {
 		public static final String LOGIN = "login.html";
 	}
 	
-	public AuthenticationController() {
+	public AuthenticationController(Configuration configuration) {
 		super(AuthenticationController.class);
+		configureRoutes(configuration);
 	}
 	
-	@Override
-	public void configureRoutes(Configuration configuration) {
+	private void configureRoutes(Configuration configuration) {
 		before("/app/*", (request, response) -> verify(configuration, request, response));
 		get(Path.Route.LOGIN, (request, response) -> showLoginPage(configuration, request, response));
         post(Path.Route.LOGIN, (request, response) -> login(configuration, request, response));
@@ -114,13 +114,16 @@ public class AuthenticationController extends AbstractController {
     
     public String login(Configuration configuration, Request request, Response response) {
     	
-    	PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-    			.setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")))
-				.setUsername(request.queryParams("username"))
-				.setPassword(request.queryParams("password"))
-				.build();
+    	String username = request.queryParams("username");
+    	String password = request.queryParams("password");
 		
 		try {
+			PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+	    			.setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")))
+					.setUsername(username)
+					.setPassword(password)
+					.build();
+			
 			OauthAuthenticationResponse oauthAuthenticationResponse = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(passwordGrantRequest);
 
@@ -133,10 +136,14 @@ public class AuthenticationController extends AbstractController {
 	    	} catch (IOException e) {
 	    		throw new InternalServerErrorException(e);
 	    	}
-
-		} catch (OauthException e) {
+	    	
+		} catch (IllegalArgumentException e) {	
 			
-			LOGGER.error(e.getMessage());
+			Map<String, Object> model = new HashMap<>();
+			model.put("errorMessage", e.getMessage());
+			return render(configuration, request, response, model, Template.LOGIN);
+			
+		} catch (OauthException e) {
 			
 			String acceptLanguages = request.headers("Accept-Language");
 			
@@ -148,18 +155,13 @@ public class AuthenticationController extends AbstractController {
 			
 			LOGGER.info(locales[0]);
 		
-			if (e.getCode() == 7100) {
-				Map<String, Object> model = new HashMap<>();
-				model.put("errorMessage", MessageProvider.getMessage(Locale.US, "login.error"));
-				return render(configuration, request, response, model, Template.LOGIN);
-    		} else if (e.getCode() == 7101) {
-    			Map<String, Object> model = new HashMap<>();
-				model.put("errorMessage", MessageProvider.getMessage(Locale.US, "disabled.account"));
-				return render(configuration, request, response, model, Template.LOGIN);
-    		} else {
-    			LOGGER.error(e.getMessage());
-    			throw new InternalServerErrorException(e.getMessage());
-    		}
+			Map<String, Object> model = new HashMap<>();
+			model.put("errorMessage", e.getMessage());
+			return render(configuration, request, response, model, Template.LOGIN);
+			
+		} catch (ServiceUnavailableException e) {
+			LOGGER.error(e.getMessage());
+			throw new InternalServerErrorException(e.getMessage());
 		}
 		
 		if (request.queryParams(REDIRECT_URI) != null && ! request.queryParams(REDIRECT_URI).isEmpty()) {
