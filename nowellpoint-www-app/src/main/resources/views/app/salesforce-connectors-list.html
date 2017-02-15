@@ -30,7 +30,7 @@
         </#if>
         <br>
         <div class="flexgrid">
-            <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+            <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
                 <div class="offer offer-radius offer-info">
                     <a href="${labels['base.path']}/${salesforceConnector.id}" style="text-decoration: none">
                     <div class="offer-content">
@@ -40,7 +40,7 @@
                         <h4>${salesforceConnector.organization.name}</h4>
                         <p>
                             ${salesforceConnector.organization.instanceName} - ${salesforceConnector.organization.organizationType} (${salesforceConnector.identity.displayName})
-                            <br> <small>${labels["by"]}</small>&nbsp;${salesforceConnector.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${salesforceConnector.createdDate?date?string.long}
+                            <br> <small>${labels["by"]}</small>&nbsp;${salesforceConnector.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${salesforceConnector.createdOn?date?string.long}
                         </p>
                         <div class="text-right">
                             <a href="${labels['base.path']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a>

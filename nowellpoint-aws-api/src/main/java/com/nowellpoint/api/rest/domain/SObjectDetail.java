@@ -9,7 +9,7 @@ public class SObjectDetail extends AbstractResource {
 	
 	private UserInfo lastModifiedBy;
 	
-	private String environmentKey;
+	private String instanceKey;
 	
 	private Long totalSize;
 	
@@ -41,12 +41,12 @@ public class SObjectDetail extends AbstractResource {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
-	public String getEnvironmentKey() {
-		return environmentKey;
+	public String getInstanceKey() {
+		return instanceKey;
 	}
 
-	public void setEnvironmentKey(String environmentKey) {
-		this.environmentKey = environmentKey;
+	public void setInstanceKey(String instanceKey) {
+		this.instanceKey = instanceKey;
 	}
 
 	public String getName() {

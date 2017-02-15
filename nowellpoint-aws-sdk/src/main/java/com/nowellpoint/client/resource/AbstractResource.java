@@ -16,13 +16,7 @@ public abstract class AbstractResource {
 		
 	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 	
-	protected String environmentUrl;
-	
 	protected Token token;
-	
-	public AbstractResource(String environmentUrl) {
-		this.environmentUrl = environmentUrl;
-	}
 	
 	public AbstractResource(Token token) {
 		this.token = token;

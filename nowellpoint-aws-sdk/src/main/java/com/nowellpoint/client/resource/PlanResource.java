@@ -16,10 +16,6 @@ public class PlanResource extends AbstractResource {
 		super(token);
 	}
 	
-	public PlanResource(String environmentUrl) {
-		super(environmentUrl);
-	}
-	
 	public Plan get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.path("plans")

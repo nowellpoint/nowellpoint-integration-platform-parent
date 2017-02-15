@@ -82,30 +82,9 @@ public class ScheduledJobResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createScheduledJob(
-			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
-			@FormParam("notificationEmail") String notificationEmail,
-			@FormParam("description") String description,
-			@FormParam("connectorId") @NotEmpty String connectorId,
-			@FormParam("environmentKey") String environmentKey,
-			@FormParam("scheduleDate") @NotEmpty String scheduleDate) {
+	public Response createScheduledJob(@FormParam("scheduledJobTypeId") @NotEmpty String scheduledJobTypeId) {
 		
-		ScheduledJob scheduledJob = new ScheduledJob();
-		scheduledJob.setNotificationEmail(notificationEmail);
-		scheduledJob.setConnectorId(connectorId);
-		scheduledJob.setEnvironmentKey(environmentKey);
-		scheduledJob.setJobTypeId(jobTypeId);
-		scheduledJob.setDescription(description);
-
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
-			scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
-		} catch (Exception e) {
-			LOGGER.warn(httpServletRequest.getRequestURI() + " " + e.getMessage());
-			throw new BadRequestException(e.getMessage());
-		}
-		
-		scheduledJobService.createScheduledJob(scheduledJob);
+		ScheduledJob scheduledJob = scheduledJobService.createScheduledJob(scheduledJobTypeId);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(ScheduledJobResource.class)
@@ -116,6 +95,44 @@ public class ScheduledJobResource {
 				.entity(scheduledJob)
 				.build();	
 	}
+	
+//	@POST
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Response createScheduledJob(
+//			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
+//			@FormParam("notificationEmail") String notificationEmail,
+//			@FormParam("description") String description,
+//			@FormParam("connectorId") @NotEmpty String connectorId,
+//			@FormParam("environmentKey") String environmentKey,
+//			@FormParam("scheduleDate") @NotEmpty String scheduleDate) {
+//		
+//		ScheduledJob scheduledJob = new ScheduledJob();
+//		scheduledJob.setNotificationEmail(notificationEmail);
+//		scheduledJob.setConnectorId(connectorId);
+//		scheduledJob.setEnvironmentKey(environmentKey);
+//		scheduledJob.setJobTypeId(jobTypeId);
+//		scheduledJob.setDescription(description);
+//
+//		try {
+//			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+//			scheduledJob.setScheduleDate(sdf.parse(scheduleDate));
+//		} catch (Exception e) {
+//			LOGGER.warn(httpServletRequest.getRequestURI() + " " + e.getMessage());
+//			throw new BadRequestException(e.getMessage());
+//		}
+//		
+//		scheduledJobService.createScheduledJob(scheduledJob);
+//		
+//		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+//				.path(ScheduledJobResource.class)
+//				.path("/{id}")
+//				.build(scheduledJob.getId());
+//		
+//		return Response.created(uri)
+//				.entity(scheduledJob)
+//				.build();	
+//	}
 	
 	@POST
 	@Path("{id}")

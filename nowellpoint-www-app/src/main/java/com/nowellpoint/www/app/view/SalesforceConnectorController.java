@@ -31,7 +31,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class SalesforceConnectorController extends AbstractController {
+public class SalesforceConnectorController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
@@ -44,12 +44,7 @@ public class SalesforceConnectorController extends AbstractController {
 		public static final String TARGETS = String.format(APPLICATION_CONTEXT, "targets.html");
 	}
 	
-	public SalesforceConnectorController(Configuration configuration) {
-		super(SalesforceConnectorController.class);      
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> getSalesforceConnectors(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> newSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> viewSalesforceConnector(configuration, request, response));
@@ -76,13 +71,13 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String newSalesforceConnector(Configuration configuration, Request request, Response response) {		
+	private static String newSalesforceConnector(Configuration configuration, Request request, Response response) {		
 		String id = request.params(":id");
 		
 		Map<String, Object> model = getModel();
 		model.put("id", id);
 		
-		return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR_NEW);
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_NEW);
 	};
 	
 	/**
@@ -93,7 +88,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String newInstance(Configuration configuration, Request request, Response response) {	
+	private static String newInstance(Configuration configuration, Request request, Response response) {	
 		String id = request.params(":id");
 		
 		Instance instance = new Instance();
@@ -105,7 +100,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("action", String.format("/app/connectors/salesforce/%s/instances", id));
 		model.put("instance", instance);
 		
-		return render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 	};
 	
 	/**
@@ -116,7 +111,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String getSobjectDetail(Configuration configuration, Request request, Response response) {
+	private static String getSobjectDetail(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -134,7 +129,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("key", key);
 		model.put("sobjectDetail", sobjectDetail);
 		
-		return render(configuration, request, response, model, Template.SOBJECT_DETAIL);
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SOBJECT_DETAIL);
 	}
 	
 	/**
@@ -145,7 +140,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String sobjectsList(Configuration configuration, Request request, Response response) {		
+	private static String sobjectsList(Configuration configuration, Request request, Response response) {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -183,7 +178,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("instance", instance);
 		model.put("icons", icons);
 		
-		return render(configuration, request, response, model, Template.SOBJECTS);
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SOBJECTS);
 	};
 	
 	/**
@@ -194,7 +189,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String viewInstance(Configuration configuration, Request request, Response response) {		
+	private static String viewInstance(Configuration configuration, Request request, Response response) {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -210,7 +205,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("mode", "view");
 		model.put("instance", instance);
 		
-		return render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 	};
 
 	/**
@@ -221,7 +216,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 
-	private String editInstance(Configuration configuration, Request request, Response response) {		
+	private static String editInstance(Configuration configuration, Request request, Response response) {		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -238,7 +233,7 @@ public class SalesforceConnectorController extends AbstractController {
 		model.put("action", String.format("/app/connectors/salesforce/%s/environments/%s", id, key));
 		model.put("instance", instance);
 		
-		return render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 	};
 
 	/**
@@ -249,7 +244,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String addInstance(Configuration configuration, Request request, Response response) {
+	private static String addInstance(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -290,7 +285,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("instance", instance);
 			model.put("errorMessage", createResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
+			String output = render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 			
 			throw new BadRequestException(output);
 		}
@@ -309,7 +304,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 
-	private String updateInstance(Configuration configuration, Request request, Response response) {	
+	private static String updateInstance(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -351,7 +346,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("instance", instance);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.SALESFORCE_INSTANCE);
+			String output = render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_INSTANCE);
 			
 			throw new BadRequestException(output);
 		}
@@ -370,7 +365,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String removeInstance(Configuration configuration, Request request, Response response) {
+	private static String removeInstance(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -399,7 +394,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String viewSalesforceConnector(Configuration configuration, Request request, Response response) {
+	private static String viewSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -417,7 +412,7 @@ public class SalesforceConnectorController extends AbstractController {
     	model.put("createdByHref", createdByHref);
     	model.put("lastModifiedByHref", lastModifiedByHref);
 		
-    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
+    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
 	};
 
 	/**
@@ -428,7 +423,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 
-	private String editSalesforceConnector(Configuration configuration, Request request, Response response) {
+	private static String editSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -447,7 +442,7 @@ public class SalesforceConnectorController extends AbstractController {
 			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		}
 		
-    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR_EDIT);
+    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_EDIT);
 	};
 
 	/**
@@ -458,7 +453,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 
-	private String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
+	private static String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
@@ -468,7 +463,7 @@ public class SalesforceConnectorController extends AbstractController {
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnectorsList", salesforceConnectors.getItems());
     	
-    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTORS_LIST);
+    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTORS_LIST);
     	
 	};
 
@@ -480,7 +475,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 
-	private String updateSalesforceConnector(Configuration configuration, Request request, Response response) {	
+	private static String updateSalesforceConnector(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -507,7 +502,7 @@ public class SalesforceConnectorController extends AbstractController {
 	    	model.put("salesforceConnector", salesforceConnector);
 	    	model.put("errorMessage", message);
 			
-	    	return render(configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
+	    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
 		}
 
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
@@ -523,7 +518,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 
-	private String deleteSalesforceConnector(Configuration configuration, Request request, Response response) {
+	private static String deleteSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -547,7 +542,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @return
 	 */
 	
-	private String buildInstance(Configuration configuration, Request request, Response response) {
+	private static String buildInstance(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -575,7 +570,7 @@ public class SalesforceConnectorController extends AbstractController {
 	 * @throws JsonProcessingException
 	 */
 
-	private String testConnection(Configuration configuration, Request request, Response response) throws JsonProcessingException {
+	private static String testConnection(Configuration configuration, Request request, Response response) throws JsonProcessingException {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");

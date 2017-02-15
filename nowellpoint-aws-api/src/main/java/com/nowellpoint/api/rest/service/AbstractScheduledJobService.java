@@ -25,7 +25,7 @@ public class AbstractScheduledJobService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
 		Set<com.nowellpoint.api.model.document.ScheduledJob> documents = documentManager.find(
 				com.nowellpoint.api.model.document.ScheduledJob.class,
-				eq ( "identity", new ObjectId( ownerId ) ) );
+				eq ( "owner", new ObjectId( ownerId ) ) );
 		ScheduledJobList resources = new ScheduledJobList(documents);
 		return resources;
 	}
@@ -54,6 +54,8 @@ public class AbstractScheduledJobService extends AbstractCacheService {
 		MongoDocument document = scheduledJob.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
+		documentManager.refresh( document );
+		scheduledJob.fromDocument(document);
 		set(scheduledJob.getId(), document);
 	}
 	
@@ -61,6 +63,8 @@ public class AbstractScheduledJobService extends AbstractCacheService {
 		MongoDocument document = scheduledJob.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
+		documentManager.refresh( document );
+		scheduledJob.fromDocument(document);
 		set(scheduledJob.getId(), document);
 	}
 	

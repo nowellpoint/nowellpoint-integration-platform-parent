@@ -6,7 +6,7 @@
                 <h3 class="dashhead-title">${title}</h3>
             </div>
         </div>
-        <div class="hr-divider"></div>
+
         <br>
 
         <!-- <#if step=="select-type"> -->
@@ -14,18 +14,18 @@
         <div class="content table-responsive">
             <table class="table table-hover">
                 <thead>
-                    <th class="col-md-3">${labels["name"]}</th>
-                    <th class="col-md-6">${labels["description"]}</th>
-                    <th class="col-md-2">${labels["connector.type"]}</th>
-                    <th class="col-md-1"></th>
+                    <th>${labels["name"]}</th>
+                    <th>${labels["description"]}</th>
+                    <th>${labels["connector.type"]}</th>
+                    <th></th>
                 </thead>
                 <tbody>
-                    <#list scheduledJobTypeList?sort_by( "createdDate") as scheduledJobType>
+                    <#list scheduledJobTypeList?sort_by( "createdOn") as scheduledJobType>
                         <tr>
                             <td>${scheduledJobType.name}</td>
                             <td class="p-r">${scheduledJobType.description}</td>
                             <td>${scheduledJobType.connectorType.name}</td>
-                            <td><a href="${labels['base.path']}/new/select-connector?job-type-id=${scheduledJobType.id}">${labels["select"]}</a></td>
+                            <td><a href="${labels['base.path']}/new/select-connector?scheduledJobTypeId=${scheduledJobType.id}">${labels["select"]}</a></td>
                         </tr>
                     </#list>
                 </tbody>
@@ -35,7 +35,7 @@
         <br>
 
         <div class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+            <a href="${labels['base.path']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
         </div>
 
         <!-- </#if> -->
@@ -52,7 +52,7 @@
                     <th class="col-md-1"></th>
                 </thead>
                 <tbody>
-                    <#list salesforceConnectorsList?sort_by( "createdDate") as salesforceConnector>
+                    <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
                         <tr>
                             <td>${salesforceConnector.organization.name}</td>
                             <td>${salesforceConnector.organization.organizationType}</td>

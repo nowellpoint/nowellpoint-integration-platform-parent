@@ -36,7 +36,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AuthenticationController extends AbstractController {
+public class AuthenticationController extends AbstractStaticController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
@@ -46,12 +46,7 @@ public class AuthenticationController extends AbstractController {
 		public static final String LOGIN = "login.html";
 	}
 	
-	public AuthenticationController(Configuration configuration) {
-		super(AuthenticationController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		before("/app/*", (request, response) -> verify(configuration, request, response));
 		get(Path.Route.LOGIN, (request, response) -> showLoginPage(configuration, request, response));
         post(Path.Route.LOGIN, (request, response) -> login(configuration, request, response));
@@ -68,18 +63,19 @@ public class AuthenticationController extends AbstractController {
 	 * @throws IOException
 	 */
 	
-	public void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
+	public static void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
 		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
     	if (cookie.isPresent()) {
     		
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
+    		
     		request.attribute(AUTH_TOKEN, token);
     		
     		Identity identity = new NowellpointClient(token)
     				.identity()
     				.get(token.getId());
     		
-    		request.attribute("account", identity);
+    		request.attribute("com.nowellpoint.auth.identity", identity);
     		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(configuration, identity));
     		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(configuration, identity));
     		
@@ -98,10 +94,10 @@ public class AuthenticationController extends AbstractController {
 	 * @throws UnsupportedEncodingException 
 	 */
 	
-	public String showLoginPage(Configuration configuration, Request request, Response response) {
+	public static String showLoginPage(Configuration configuration, Request request, Response response) {
 		Map<String, Object> model = getModel();
 		model.put(REDIRECT_URI, request.queryParams(REDIRECT_URI));
-        return render(configuration, request, response, model, Template.LOGIN);
+        return render(AuthenticationController.class, configuration, request, response, model, Template.LOGIN);
     };
     
     /**
@@ -112,7 +108,7 @@ public class AuthenticationController extends AbstractController {
      * @return
      */
     
-    public String login(Configuration configuration, Request request, Response response) {
+    public static String login(Configuration configuration, Request request, Response response) {
     	
     	String username = request.queryParams("username");
     	String password = request.queryParams("password");
@@ -141,7 +137,7 @@ public class AuthenticationController extends AbstractController {
 			
 			Map<String, Object> model = new HashMap<>();
 			model.put("errorMessage", e.getMessage());
-			return render(configuration, request, response, model, Template.LOGIN);
+			return render(AuthenticationController.class, configuration, request, response, model, Template.LOGIN);
 			
 		} catch (OauthException e) {
 			
@@ -157,7 +153,7 @@ public class AuthenticationController extends AbstractController {
 		
 			Map<String, Object> model = new HashMap<>();
 			model.put("errorMessage", e.getMessage());
-			return render(configuration, request, response, model, Template.LOGIN);
+			return render(AuthenticationController.class, configuration, request, response, model, Template.LOGIN);
 			
 		} catch (ServiceUnavailableException e) {
 			LOGGER.error(e.getMessage());
@@ -181,7 +177,7 @@ public class AuthenticationController extends AbstractController {
      * @return
      */
 	
-    public String logout(Configuration configuration, Request request, Response response) {
+    public static String logout(Configuration configuration, Request request, Response response) {
 		
 		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
     	
@@ -218,7 +214,7 @@ public class AuthenticationController extends AbstractController {
 	 * @return
 	 */
 	
-	private TimeZone getDefaultTimeZone(Configuration configuration, Identity identity) {		
+	private static TimeZone getDefaultTimeZone(Configuration configuration, Identity identity) {		
 		TimeZone timeZone = null;
 		if (identity != null && identity.getTimeZoneSidKey() != null) {
 			timeZone = TimeZone.getTimeZone(identity.getTimeZoneSidKey());
@@ -236,7 +232,7 @@ public class AuthenticationController extends AbstractController {
 	 * @return
 	 */
 	
-	private Locale getDefaultLocale(Configuration configuration, Identity identity) {
+	private static Locale getDefaultLocale(Configuration configuration, Identity identity) {
 		Locale locale = null;
 		if (identity != null && identity.getLocaleSidKey() != null) {
 			String[] attrs = identity.getLocaleSidKey().split("_");

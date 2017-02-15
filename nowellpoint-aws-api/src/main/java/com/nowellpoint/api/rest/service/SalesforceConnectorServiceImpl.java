@@ -168,14 +168,14 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		instance.setAuthEndpoint("https://login.salesforce.com");
 		instance.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
 		
-		resource.addEnvironment(instance);
+		resource.addInstance(instance);
 		
 		Date now = Date.from(Instant.now());
 		
 		resource.setCreatedOn(now);
 		resource.setCreatedBy(userInfo);
 		resource.setLastUpdatedOn(now);
-		resource.setLastModifiedBy(userInfo);
+		resource.setLastUpdatedBy(userInfo);
 		
 		create(resource);
 		
@@ -208,7 +208,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		Date now = Date.from(Instant.now());
 		
 		salesforceConnector.setLastUpdatedOn(now);
-		salesforceConnector.setLastModifiedBy(userInfo);
+		salesforceConnector.setLastUpdatedBy(userInfo);
 		
 		update(salesforceConnector);
 	}
@@ -321,7 +321,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
 		
-		resource.addEnvironment(instance);
+		resource.addInstance(instance);
 		
 		updateSalesforceConnector(id, resource);
 	}
@@ -403,7 +403,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		instance.setPassword(null);
 		instance.setSecurityToken(null);
 		
-		resource.addEnvironment(instance);
+		resource.addInstance(instance);
 		
 		updateSalesforceConnector(resource.getId(), resource);
 	}
@@ -694,7 +694,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		}	
 	}
 	
-	private void describeSobjects(String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String environmentKey) throws InterruptedException, ExecutionException, JsonProcessingException {
+	private void describeSobjects(String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String instanceKey) throws InterruptedException, ExecutionException, JsonProcessingException {
 		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
 		
 		final Client client = new Client();
@@ -723,10 +723,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 
 				com.nowellpoint.api.model.document.SObjectDetail sobjectDetail = null;
 				try {
-					sobjectDetail = documentManager.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "environmentKey", environmentKey ) ) );
+					sobjectDetail = documentManager.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "instanceKey", instanceKey ) ) );
 				} catch (DocumentNotFoundException e) {
 					sobjectDetail = new com.nowellpoint.api.model.document.SObjectDetail();
-					sobjectDetail.setEnvironmentKey(environmentKey);
+					sobjectDetail.setInstanceKey(instanceKey);
 					sobjectDetail.setName(describeSobjectResult.getName());
 					sobjectDetail.setCreatedOn(now);
 					sobjectDetail.setCreatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));

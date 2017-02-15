@@ -38,7 +38,7 @@ public class SObjectDetail extends MongoDocument {
 	
 	private ObjectId connectorId;
 	
-	private String environmentKey;
+	private String instanceKey;
 	
 	private String name;
 	
@@ -74,12 +74,12 @@ public class SObjectDetail extends MongoDocument {
 		this.connectorId = connectorId;
 	}
 
-	public String getEnvironmentKey() {
-		return environmentKey;
+	public String getInstanceKey() {
+		return instanceKey;
 	}
 
-	public void setEnvironmentKey(String environmentKey) {
-		this.environmentKey = environmentKey;
+	public void setInstanceKey(String instanceKey) {
+		this.instanceKey = instanceKey;
 	}
 
 	public String getName() {

@@ -13,29 +13,17 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class DashboardController extends AbstractController {
+public class DashboardController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
 	}
 	
-	public DashboardController(Configuration configuration) {     
-		super(DashboardController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
-		get(Path.Route.START, (request, response) -> showStartPage(configuration, request, response));
+	public static void configureRoutes(Configuration configuration) {
         get(Path.Route.DASHBOARD, (request, response) -> showDashboard(configuration, request, response));
 	}
 	
-	private String showStartPage(Configuration configuration, Request request, Response response) {
-    	Map<String,Object> model = getModel();
-    	model.put("account", getIdentity(request));
-    	return render(configuration, request, response, model, Path.Template.START);
-	};
-	
-	private String showDashboard(Configuration configuration, Request request, Response response) {
+	private static String showDashboard(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -46,7 +34,6 @@ public class DashboardController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("scheduledJobList", list.getItems());
 		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
-    	model.put("account", getIdentity(request));
-    	return render(configuration, request, response, model, Template.DASHBOARD);
+    	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};
 }

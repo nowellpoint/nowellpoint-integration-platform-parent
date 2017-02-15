@@ -23,9 +23,9 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
 		documentManager.refresh( document );
+		accountProfile.fromDocument(document);
 		set(accountProfile.getId(), document);
 		set(accountProfile.getAccountHref(), document);
-		accountProfile.fromDocument(document);
 	}
 	
 	protected void update(AccountProfile accountProfile) {
@@ -33,9 +33,9 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
 		documentManager.refresh( document );
+		accountProfile.fromDocument(document);
 		set(accountProfile.getId(), document);
 		set(accountProfile.getAccountHref(), document);
-		accountProfile.fromDocument(document);
 	}
 	
 	protected void delete(AccountProfile accountProfile) {

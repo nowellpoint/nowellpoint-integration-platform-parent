@@ -83,10 +83,4 @@ public class Path {
 		public static final String APPLICATION_ENVIRONMENT_REMOVE = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key");
 		public static final String PROJECTS = String.format(APPLICATION_CONTEXT, "projects");
 	}
-
-	public static class Template {
-		public static final String START = String.format(APPLICATION_CONTEXT, "start.html");
-		public static final String QUERY_EDIT = String.format(APPLICATION_CONTEXT, "query-edit.html");
-		public static final String SALESFORCE_OUTBOUND_MESSAGE = String.format(APPLICATION_CONTEXT, "salesforce-outbound-messages.html");
-	}
 }

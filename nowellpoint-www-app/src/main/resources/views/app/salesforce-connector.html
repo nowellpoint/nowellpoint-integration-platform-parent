@@ -227,13 +227,13 @@
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${createdByHref}">${salesforceConnector.createdBy.name}</a>, ${salesforceConnector.createdDate?date?string.long!} ${salesforceConnector.createdDate?time?string.medium!}</dd>
+                    <dd><a href="${createdByHref}">${salesforceConnector.createdBy.name}</a>, ${salesforceConnector.createdOn?date?string.long!} ${salesforceConnector.createdOn?time?string.medium!}</dd>
                 </dl>
             </div>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${lastModifiedByHref}">${salesforceConnector.lastModifiedBy.name}</a>, ${salesforceConnector.lastModifiedDate?date?string.long!} ${salesforceConnector.lastModifiedDate?time?string.medium!}</dd>
+                    <dd><a href="${lastModifiedByHref}">${salesforceConnector.lastUpdatedBy.name}</a>, ${salesforceConnector.lastUpdatedOn?date?string.long!} ${salesforceConnector.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
         </div>

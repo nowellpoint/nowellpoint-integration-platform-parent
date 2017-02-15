@@ -34,6 +34,14 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
+	public ScheduledJob createScheduledJob(String scheduledJobTypeId);
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 */
+	
 	public void createScheduledJob(ScheduledJob scheduledJob);
 	
 	/**

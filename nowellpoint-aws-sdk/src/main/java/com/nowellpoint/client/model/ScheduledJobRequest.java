@@ -6,7 +6,7 @@ public class ScheduledJobRequest {
 	
 	private String id;
 	
-	private String jobTypeId;
+	private String scheduledJobTypeId;
 	
 	private String environmentKey;
 	
@@ -53,13 +53,13 @@ public class ScheduledJobRequest {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	public String getJobTypeId() {
-		return jobTypeId;
+
+	public String getScheduledJobTypeId() {
+		return scheduledJobTypeId;
 	}
 
-	public void setJobTypeId(String jobTypeId) {
-		this.jobTypeId = jobTypeId;
+	public void setScheduledJobTypeId(String scheduledJobTypeId) {
+		this.scheduledJobTypeId = scheduledJobTypeId;
 	}
 
 	public String getConnectorId() {
@@ -98,8 +98,8 @@ public class ScheduledJobRequest {
 		return this;
 	}
 	
-	public ScheduledJobRequest withJobTypeId(String jobTypeId) {
-		setJobTypeId(jobTypeId);
+	public ScheduledJobRequest withScheduledJobTypeId(String scheduledJobTypeId) {
+		setScheduledJobTypeId(scheduledJobTypeId);
 		return this;
 	}
 	

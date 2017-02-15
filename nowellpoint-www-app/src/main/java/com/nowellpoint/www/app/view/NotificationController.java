@@ -18,7 +18,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class NotificationController extends AbstractController {
+public class NotificationController extends AbstractStaticController {
 	
 	private static final Logger LOGGER = Logger.getLogger(NotificationController.class.getName());
 	
@@ -26,16 +26,11 @@ public class NotificationController extends AbstractController {
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notification-list.html");
 	}
 	
-	public NotificationController(Configuration configuration) {
-		super(NotificationController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.NOTIFICATIONS, (request, response) -> showNotifications(configuration, request, response));
 	}
 	
-	private String showNotifications(Configuration configuration, Request request, Response response) {
+	private static String showNotifications(Configuration configuration, Request request, Response response) {
 		
 		Token token = request.attribute("token");
 		
@@ -55,6 +50,6 @@ public class NotificationController extends AbstractController {
 		model.put("account", request.attribute("account"));
 		model.put("applicationList", applications);
 		
-		return render(configuration, request, response, model, Template.NOTIFICATIONS);
+		return render(NotificationController.class, configuration, request, response, model, Template.NOTIFICATIONS);
 	};
 }

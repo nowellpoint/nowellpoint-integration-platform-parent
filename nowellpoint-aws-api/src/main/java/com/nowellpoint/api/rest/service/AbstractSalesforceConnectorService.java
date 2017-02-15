@@ -34,7 +34,7 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
 		Set<com.nowellpoint.api.model.document.SalesforceConnector> documents = documentManager.find(
 				com.nowellpoint.api.model.document.SalesforceConnector.class,
-				eq ( "identity", new ObjectId( ownerId ) ) );
+				eq ( "owner", new ObjectId( ownerId ) ) );
 		SalesforceConnectorList resources = new SalesforceConnectorList(documents);
 		return resources;
 	}
@@ -43,6 +43,8 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		MongoDocument document = salesforceConnector.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
+		documentManager.refresh( document );
+		salesforceConnector.fromDocument(document);
 		set(salesforceConnector.getId(), document);
 	}
 	
@@ -50,6 +52,8 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		MongoDocument document = salesforceConnector.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
+		documentManager.refresh( document );
+		salesforceConnector.fromDocument(document);
 		set(salesforceConnector.getId(), document);
 	}
 	
@@ -62,7 +66,7 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 	
 	protected void deleteSobjects(String instanceKey) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.deleteMany(com.nowellpoint.api.model.document.SObjectDetail.class, Filters.eq ( "environmentKey", instanceKey ));
+		documentManager.deleteMany(com.nowellpoint.api.model.document.SObjectDetail.class, Filters.eq ( "instanceKey", instanceKey ));
 	}
 	
 	protected SalesforceConnector findById(String id) {		

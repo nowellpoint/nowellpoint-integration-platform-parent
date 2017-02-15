@@ -2,12 +2,9 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 
-import java.util.Map;
-
 import com.nowellpoint.aws.http.HttpResponse;
 import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
@@ -16,7 +13,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AdministrationController extends AbstractController {
+public class AdministrationController extends AbstractStaticController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AdministrationController.class.getName());
 	
@@ -25,12 +22,7 @@ public class AdministrationController extends AbstractController {
 		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "cache.html");
 	}
 	
-	public AdministrationController(Configuration configuration) {
-		super(AdministrationController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.ADMINISTRATION, (request, response) -> showAdministrationHome(configuration, request, response));	
         get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> showManageCache(configuration, request, response));	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(configuration, request, response));
@@ -44,14 +36,8 @@ public class AdministrationController extends AbstractController {
 	 * @return
 	 */
 	
-	private String showAdministrationHome(Configuration configuration, Request request, Response response) {
-		
-		Identity identity = getIdentity(request);
-		
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		
-		return render(configuration, request, response, model, Template.ADMINISTRATION_HOME);
+	private static String showAdministrationHome(Configuration configuration, Request request, Response response) {
+		return render(AdministrationController.class, configuration, request, response, getModel(), Template.ADMINISTRATION_HOME);
 		
 	};
 	
@@ -63,14 +49,8 @@ public class AdministrationController extends AbstractController {
 	 * @return
 	 */
 	
-	private String showManageCache(Configuration configuration, Request request, Response response) {
-		
-		Identity identity = getIdentity(request);
-		
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		
-		return render(configuration, request, response, model, Template.CACHE_MANAGER);
+	private static String showManageCache(Configuration configuration, Request request, Response response) {
+		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
 		
 	};
 	
@@ -82,12 +62,10 @@ public class AdministrationController extends AbstractController {
 	 * @return
 	 */
 	
-	private String purgeCache(Configuration configuration, Request request, Response response) {
+	private static String purgeCache(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		Identity identity = getIdentity(request);
-		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
 				.execute();
@@ -96,9 +74,6 @@ public class AdministrationController extends AbstractController {
 			LOGGER.error(httpResponse.getAsString());
 		}
 		
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		
-		return render(configuration, request, response, model, Template.CACHE_MANAGER);
+		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
 	};
 }

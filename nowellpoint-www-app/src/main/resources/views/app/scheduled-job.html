@@ -181,13 +181,13 @@
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${createdByHref}">${(scheduledJob.createdBy.name)!}</a>, ${scheduledJob.createdDate?date?string.long!} ${scheduledJob.createdDate?time?string.medium!}</dd>
+                    <dd><a href="${createdByHref}">${(scheduledJob.createdBy.name)!}</a>, ${scheduledJob.createdOn?date?string.long!} ${scheduledJob.createdOn?time?string.medium!}</dd>
                 </dl>
             </div>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${lastModifiedByHref}">${(scheduledJob.lastModifiedBy.name)!}</a>, ${scheduledJob.lastModifiedDate?date?string.long!} ${scheduledJob.lastModifiedDate?time?string.medium!}</dd>
+                    <dd><a href="${lastModifiedByHref}">${(scheduledJob.lastUpdatedBy.name)!}</a>, ${scheduledJob.lastUpdatedOn?date?string.long!} ${scheduledJob.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
         </div>

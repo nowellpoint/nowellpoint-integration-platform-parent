@@ -1,7 +1,7 @@
-package com.nowellpoint.api.resource;
+package com.nowellpoint.api.rest.impl;
 
-import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNotNull;
+import static com.nowellpoint.util.Assert.isNull;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -11,27 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.logging.Logger;
 
 import com.braintreegateway.AddressRequest;
@@ -43,6 +31,7 @@ import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.rest.AccountProfileResource;
 import com.nowellpoint.api.rest.PlanService;
+import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.Error;
@@ -56,10 +45,9 @@ import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.resource.ResourceException;
 
-@Path("/signup")
-public class SignUpService {
+public class SignUpServiceImpl implements SignUpService {
 	
-	private static final Logger LOGGER = Logger.getLogger(SignUpService.class);
+	private static final Logger LOGGER = Logger.getLogger(SignUpServiceImpl.class);
 	
 	@Inject
 	private EmailService emailService;
@@ -79,27 +67,18 @@ public class SignUpService {
 	@Context
 	private UriInfo uriInfo;
 
-	@PermitAll
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
     public Response signUp(
-    		@FormParam("firstName") String firstName,
-    		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
-    		@FormParam("email") @Email String email,
-    		@FormParam("countryCode") @NotEmpty String countryCode,
-    		@FormParam("password") @Length(min=8, max=100, message="Password must be between {min} and {max}") @Pattern.List({
-    	        @Pattern(regexp = "(?=.*[0-9]).+", message = "Password must contain one digit."),
-    	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one lowercase letter."),
-    	        @Pattern(regexp = "(?=.*[a-z]).+", message = "Password must contain one upper letter."),
-    	        @Pattern(regexp = "(?=.*[!@#$%^&*+=?-_()/\"\\.,<>~`;:]).+", message ="Password must contain one special character."),
-    	        @Pattern(regexp = "(?=\\S+$).+", message = "Password must contain no whitespace.") }) String password,
-    		@FormParam("confirmPassword") @NotEmpty(message="Confirmation Password must be filled in") String confirmPassword,
-    		@FormParam("planId") @NotEmpty(message="No plan has been specified") String planId,
-    		@FormParam("cardNumber") String cardNumber,
-    		@FormParam("expirationMonth") String expirationMonth,
-    		@FormParam("expirationYear") String expirationYear,
-    		@FormParam("securityCode") String securityCode) {
+    		String firstName,
+    		String lastName,
+    		String email,
+    		String countryCode,
+    		String password,
+    		String confirmPassword,
+    		String planId,
+    		String cardNumber,
+    		String expirationMonth,
+    		String expirationYear,
+    		String securityCode) {
 		
 		/**
 		 * 
@@ -343,7 +322,7 @@ public class SignUpService {
 		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), accountProfile.getEmailVerificationToken());
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SignUpService.class)
+				.path(SignUpServiceImpl.class)
 				.path("verify-email")
 				.path("{emailVerificationToken}")
 				.build(accountProfile.getEmailVerificationToken());
@@ -362,12 +341,7 @@ public class SignUpService {
 				.build();
 	}
 	
-	@PermitAll
-	@POST
-	@Path("verify-email/{emailVerificationToken}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response verifyEmail(@PathParam("emailVerificationToken") String emailVerificationToken) {
+	public Response verifyEmail(String emailVerificationToken) {
 		
 		Account account = null;
 		

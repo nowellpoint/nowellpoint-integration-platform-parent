@@ -11,7 +11,7 @@ public class ScheduledJob extends AbstractResource {
 	
 	private UserInfo createdBy;
 	
-	private UserInfo lastModifiedBy;
+	private UserInfo lastUpdatedBy;
 	
 	private UserInfo owner;
 	
@@ -64,12 +64,12 @@ public class ScheduledJob extends AbstractResource {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserInfo lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public UserInfo getOwner() {

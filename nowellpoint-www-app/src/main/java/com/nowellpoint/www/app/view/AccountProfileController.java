@@ -41,7 +41,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AccountProfileController extends AbstractController {
+public class AccountProfileController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String ACCOUNT_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile-me.html");
@@ -52,12 +52,7 @@ public class AccountProfileController extends AbstractController {
 		public static final String ACCOUNT_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
 	}
 	
-	public AccountProfileController(Configuration configuration) {
-		super(AccountProfileController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> reviewPlan(configuration, request, response));
@@ -85,7 +80,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String listPlans(Configuration configuration, Request request, Response response) {
+	private static String listPlans(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -116,7 +111,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
 	}
 	
 	/**
@@ -127,7 +122,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String getAccountProfile(Configuration configuration, Request request, Response response) {
+	private static String getAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -154,10 +149,10 @@ public class AccountProfileController extends AbstractController {
 		model.put("timeZones", getTimeZones());
 		
 		if (accountProfile.getId().equals(id)) {
-			return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
+			return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
 		}
 
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE);
 	}
 	
 	/**
@@ -168,7 +163,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String reviewPlan(Configuration configuration, Request request, Response response) {
+	private static String reviewPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -201,7 +196,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("action", "reviewPlan");
 		model.put("plan", plan);
 			
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
 	}
 	
 	/**
@@ -212,7 +207,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String currentPlan(Configuration configuration, Request request, Response response) {
+	private static String currentPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -224,7 +219,7 @@ public class AccountProfileController extends AbstractController {
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);
 		
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_CURRENT_PLAN);	
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_CURRENT_PLAN);	
 	}
 	
 	/**
@@ -235,7 +230,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String setPlan(Configuration configuration, Request request, Response response) {
+	private static String setPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -320,7 +315,7 @@ public class AccountProfileController extends AbstractController {
 				model.put("action", "reviewPlan");
 				model.put("errorMessage", createResult.getErrorMessage());
 				
-				return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
+				return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
 			}
 		}
 		
@@ -340,7 +335,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("accountProfile", accountProfile);
 			model.put("errorMessage", updateResult.getErrorMessage());
 			
-			String output = render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
+			String output = render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
 			
 			throw new BadRequestException(output);	
 		}
@@ -363,7 +358,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String updateAccountProfile(Configuration configuration, Request request, Response response) {
+	private static String updateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfileRequest accountProfileRequest = new AccountProfileRequest()
@@ -441,20 +436,17 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String confirmDeactivateAccountProfile(Configuration configuration, Request request, Response response) {
+	private static String confirmDeactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
 		
 		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
 				.get(request.params(":id"));
 			
 		Map<String, Object> model = getModel();
-		model.put("account", identity);
 		model.put("accountProfile", accountProfile);
 			
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_DEACTIVATE);		
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_DEACTIVATE);		
 	};
 	
 	/**
@@ -465,7 +457,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
+	private static String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		DeleteResult deleteResult = new NowellpointClient(token)
@@ -489,10 +481,8 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String removeProfilePicture(Configuration configuration, Request request, Response response) {
+	private static String removeProfilePicture(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
 		
 		UpdateResult<AccountProfile> updateResult = new NowellpointClient(token)
 				.accountProfile()
@@ -503,10 +493,9 @@ public class AccountProfileController extends AbstractController {
 		}
 		
 		Map<String, Object> model = getModel();
-		model.put("account", identity);
 		model.put("accountProfile", updateResult.getTarget());
 		
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE);
 	}
 	
 	/**
@@ -517,7 +506,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
+	private static String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AddressRequest addressRequest = new AddressRequest()
@@ -572,10 +561,8 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String getCreditCard(Configuration configuration, Request request, Response response) {
+	private static String getCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
 		
 		CreditCard creditCard = new NowellpointClient(token)
 				.accountProfile()
@@ -583,12 +570,11 @@ public class AccountProfileController extends AbstractController {
 				.get(request.params(":id"), request.params(":token"));
 		
 		Map<String, Object> model = getModel();
-		model.put("account", identity);
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("creditCard", creditCard);
 		model.put("mode", "view");
 		
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
@@ -599,7 +585,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String newCreditCard(Configuration configuration, Request request, Response response) {
+	private static String newCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = new NowellpointClient(token)
@@ -621,7 +607,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
 		model.put("mode", "new");
 		
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
@@ -632,7 +618,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String editCreditCard(Configuration configuration, Request request, Response response) {
+	private static String editCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		CreditCard creditCard = new NowellpointClient(token)
@@ -650,7 +636,7 @@ public class AccountProfileController extends AbstractController {
 		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
 		model.put("mode", "edit");
 		
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
@@ -661,7 +647,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String addCreditCard(Configuration configuration, Request request, Response response) {
+	private static String addCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -732,7 +718,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("errorMessage", createResult.getErrorMessage());
 		}
 		
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
@@ -743,7 +729,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String updateCreditCard(Configuration configuration, Request request, Response response) {
+	private static String updateCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String accountProfileId = request.params(":id");
@@ -814,7 +800,7 @@ public class AccountProfileController extends AbstractController {
 			model.put("errorMessage", updateResult.getErrorMessage());
 		}
 			
-		return render(configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
 	
 	/**
@@ -825,7 +811,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
+	private static String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		UpdateResult<CreditCard> updateResult = new NowellpointClient(token)
@@ -850,7 +836,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return
 	 */
 	
-	private String removeCreditCard(Configuration configuration, Request request, Response response) {
+	private static String removeCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		DeleteResult deleteResult = new NowellpointClient(token)
@@ -873,7 +859,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return Locale map 
 	 */
 	
-	private Map<String,String> getLocales(String localeSidKey) {
+	private static Map<String,String> getLocales(String localeSidKey) {
 		Locale.setDefault(new Locale(localeSidKey));
 		
 		Map<String,String> localeMap = Arrays.asList(Locale.getAvailableLocales())
@@ -889,7 +875,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return application supported languages
 	 */
 	
-	private Map<String,String> getSupportedLanguages() {
+	private static Map<String,String> getSupportedLanguages() {
 		Map<String,String> languageMap = new HashMap<String,String>();
 		languageMap.put(Locale.US.toString(), Locale.US.getDisplayLanguage());
 		return languageMap;
@@ -900,7 +886,7 @@ public class AccountProfileController extends AbstractController {
 	 * @return application supported timezones
 	 */
 	
-	private List<String> getTimeZones() {
+	private static List<String> getTimeZones() {
 		return Arrays.asList(TimeZone.getAvailableIDs());
 	}
 }

@@ -32,7 +32,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class SignUpController extends AbstractController {
+public class SignUpController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String PLANS = "plans.html";
@@ -40,12 +40,7 @@ public class SignUpController extends AbstractController {
 		public static final String VERIFY_EMAIL = "verify-email.html";
 	}
 	
-	public SignUpController(Configuration configuration) {
-		super(SignUpController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.PLANS, (request, response) -> plans(configuration, request, response));
 		get(Path.Route.FREE_ACCOUNT, (request, response) -> freeAccount(configuration, request, response));
 		get(Path.Route.SIGN_UP, (request, response) -> paidAccount(configuration, request, response));
@@ -61,7 +56,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String plans(Configuration configuration, Request request, Response response) {
+	private static String plans(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -85,7 +80,7 @@ public class SignUpController extends AbstractController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("planList", plans);
 		
-		return render(configuration, request, response, model, Template.PLANS);
+		return render(SignUpController.class, configuration, request, response, model, Template.PLANS);
 	}
 	
 	/**
@@ -96,7 +91,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String freeAccount(Configuration configuration, Request request, Response response) {
+	private static String freeAccount(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -132,7 +127,7 @@ public class SignUpController extends AbstractController {
 		model.put("creditCard", creditCard);
 		model.put("action", "createAccount");
 		
-		return render(configuration, request, response, model, Template.SIGN_UP);
+		return render(SignUpController.class, configuration, request, response, model, Template.SIGN_UP);
 	}
 	
 	/**
@@ -143,7 +138,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String paidAccount(Configuration configuration, Request request, Response response) {
+	private static String paidAccount(Configuration configuration, Request request, Response response) {
 		
 		String planId = request.queryParams("planId");
 		
@@ -179,7 +174,7 @@ public class SignUpController extends AbstractController {
 			model.put("creditCard", creditCard);
 			model.put("action", "createAccount");
 			
-			return render(configuration, request, response, model, Template.SIGN_UP);
+			return render(SignUpController.class, configuration, request, response, model, Template.SIGN_UP);
 			
 		} else {
 			
@@ -206,7 +201,7 @@ public class SignUpController extends AbstractController {
 			model.put("plans", plans);
 			model.put("action", "listPlans");
 			
-			return render(configuration, request, response, model, Template.SIGN_UP);
+			return render(SignUpController.class, configuration, request, response, model, Template.SIGN_UP);
 		}
 	}
 	
@@ -218,7 +213,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String signUp(Configuration configuration, Request request, Response response) {
+	private static String signUp(Configuration configuration, Request request, Response response) {
 		
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
@@ -262,13 +257,13 @@ public class SignUpController extends AbstractController {
     		model.put("plan", plan);
     		model.put("errorMessage", signUpResult.getErrorMessage());
     		
-    		return render(configuration, request, response, model, Template.SIGN_UP);
+    		return render(SignUpController.class, configuration, request, response, model, Template.SIGN_UP);
     	}
 
     	model.put("action", "signUpSuccess");
     	model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
     	
-    	return render(configuration, request, response, model, Template.SIGN_UP);
+    	return render(SignUpController.class, configuration, request, response, model, Template.SIGN_UP);
 	}
 	/**
 	 * 
@@ -278,7 +273,7 @@ public class SignUpController extends AbstractController {
 	 * @return
 	 */
 	
-	private String verifyEmail(Configuration configuration, Request request, Response response) {
+	private static String verifyEmail(Configuration configuration, Request request, Response response) {
 		
 		String emailVerificationToken = request.queryParams("emailVerificationToken");
 		
@@ -294,6 +289,6 @@ public class SignUpController extends AbstractController {
 			model.put("errorMessage", MessageProvider.getMessage(Locale.US, "email.verification.failure"));
 		}
 		
-    	return render(configuration, request, response, model, Template.VERIFY_EMAIL);
+    	return render(SignUpController.class, configuration, request, response, model, Template.VERIFY_EMAIL);
 	}
 }

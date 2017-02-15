@@ -21,16 +21,10 @@ import com.nowellpoint.client.resource.UserResource;
 
 public class NowellpointClient {
 	
-	private Environment environment;
-	
 	private Token token;
 	
 	public NowellpointClient() {
-		setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")));
-	}
-	
-	public NowellpointClient(Environment environment) {
-		setEnvironment(environment);
+		
 	}
 	
 	public NowellpointClient(ClientCredentials credentials) {
@@ -91,10 +85,6 @@ public class NowellpointClient {
 		this.token = token;
 	}
 	
-	private void setEnvironment(Environment environment) {
-		this.environment = environment;
-	}
-	
 	public void logout() {
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
 				.setToken(token)
@@ -132,7 +122,7 @@ public class NowellpointClient {
 	}
 	
 	public UserResource user() {
-		return new UserResource(environment.getEnvironmentUrl());
+		return new UserResource(token);
 	}
 	
 	public SalesforceResource salesforce() {

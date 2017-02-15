@@ -50,17 +50,12 @@ public class ScheduledJobResource extends AbstractResource {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.parameter("environmentKey", scheduledJobRequest.getEnvironmentKey())
-				.parameter("notificationEmail", scheduledJobRequest.getNotificationEmail())
-				.parameter("description", scheduledJobRequest.getDescription())
-				.parameter("connectorId", scheduledJobRequest.getConnectorId())
-				.parameter("jobTypeId", scheduledJobRequest.getJobTypeId())
-				.parameter("scheduleDate", dateFormat.format(scheduledJobRequest.getScheduleDate()))
+				.parameter("scheduledJobTypeId", scheduledJobRequest.getScheduledJobTypeId())
 				.execute();
 		
 		CreateResult<ScheduledJob> result = null;
 		
-		if (httpResponse.getStatusCode() == Status.OK) {
+		if (httpResponse.getStatusCode() == Status.CREATED) {
 			ScheduledJob resource = httpResponse.getEntity(ScheduledJob.class);
 			result = new CreateResultImpl<ScheduledJob>(resource);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {

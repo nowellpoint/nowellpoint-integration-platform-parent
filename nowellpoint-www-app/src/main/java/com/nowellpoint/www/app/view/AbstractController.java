@@ -111,7 +111,7 @@ abstract class AbstractController implements Controller {
 	}
 	
 	protected Identity getIdentity(Request request) {
-		return request.attribute("account");
+		return request.attribute("com.nowellpoint.auth.identity");
 	}
 	
 	protected Locale getLocale(Request request) {
@@ -130,7 +130,7 @@ abstract class AbstractController implements Controller {
 		Identity identity = getIdentity(request);
 		Locale locale = getLocale(request) != null ? getLocale(request) : configuration.getLocale();
 		TimeZone timeZone = getTimeZone(request) != null ? getTimeZone(request) : configuration.getTimeZone();
-		model.put("account", identity);
+		model.put("identity", identity);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));

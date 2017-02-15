@@ -6,13 +6,11 @@ import static spark.Spark.halt;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -31,7 +29,6 @@ import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
-import com.nowellpoint.www.app.view.Controller;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.NotificationController;
@@ -39,10 +36,10 @@ import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.ScheduledJobController;
 import com.nowellpoint.www.app.view.SignUpController;
+import com.nowellpoint.www.app.view.StartController;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
 import spark.Request;
 import spark.Response;
@@ -56,12 +53,6 @@ public class Application implements SparkApplication {
 
 	@Override
 	public void init() {
-		
-		//
-		// add resource bundle
-		//
-
-		ResourceBundle messages = ResourceBundle.getBundle("messages", Locale.US);
         
         //
 		// Configure FreeMarker
@@ -82,54 +73,24 @@ public class Application implements SparkApplication {
         // load countries list
         //
 		
+		List<IsoCountry> isoCountries = loadCountries(configuration.getLocale());
+		
 		try {			
-			List<IsoCountry> isoCountries = loadCountries();
-			
-			List<IsoCountry> filteredList = isoCountries.stream()
-					.filter(country -> "US".equals(country.getLanguage()))
-					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
-					.collect(Collectors.toList());
-			
-			configuration.setSharedVariable("countryList", filteredList);
-			
+			configuration.setSharedVariable("countryList", isoCountries);
 		} catch (TemplateModelException e) {
 			e.printStackTrace();
 			halt();
 		}
         
         //
-        // load messages for locale
+        // configure routes
         //
         
-        messages.keySet().stream().forEach(message -> {
-        	try {
-				configuration.setSharedVariable(message, messages.getString(message));
-			} catch (TemplateException e) {
-				e.printStackTrace();
-				halt();
-			}
-        });
+		configureRoutes(configuration);
         
-        //
-        //
-        //
-        
-        try {
-			newController(IndexController.class, configuration);
-			newController(AuthenticationController.class, configuration);
-			newController(DashboardController.class, configuration);
-			newController(AccountProfileController.class, configuration);
-			newController(AdministrationController.class, configuration);
-			newController(SignUpController.class, configuration);
-			newController(NotificationController.class, configuration);
-			newController(SalesforceOauthController.class, configuration);
-			newController(SalesforceConnectorController.class, configuration);
-			newController(ScheduledJobController.class, configuration);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-
-			e.printStackTrace();
-		}
+		//
+		//
+		//
         
         get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
         
@@ -182,8 +143,18 @@ public class Application implements SparkApplication {
         });
 	}
 	
-	private static <T extends Controller> Controller newController(Class<T> type, Configuration configuration) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		return type.getConstructor(Configuration.class).newInstance(configuration);
+	private static void configureRoutes(Configuration configuration) {
+		IndexController.configureRoutes(configuration);
+		SignUpController.configureRoutes(configuration);
+        AuthenticationController.configureRoutes(configuration);
+        StartController.configureRoutes(configuration);
+        DashboardController.configureRoutes(configuration);
+        AdministrationController.configureRoutes(configuration);
+        AccountProfileController.configureRoutes(configuration);
+        SalesforceOauthController.configureRoutes(configuration);
+        ScheduledJobController.configureRoutes(configuration);
+        SalesforceConnectorController.configureRoutes(configuration);
+        NotificationController.configureRoutes(configuration);
 	}
 	
 	/**
@@ -191,7 +162,7 @@ public class Application implements SparkApplication {
 	 * @return
 	 */
 	
-	private static List<IsoCountry> loadCountries() {
+	private static List<IsoCountry> loadCountries(Locale locale) {
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("iso-countries")
 				.execute();
@@ -199,8 +170,14 @@ public class Application implements SparkApplication {
 		List<IsoCountry> countries = Collections.emptyList();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
+			
 			IsoCountryList isoCountryList = httpResponse.getEntity(IsoCountryList.class);
-			countries = isoCountryList.getItems();
+			
+			countries = isoCountryList.getItems()
+					.stream()
+					.filter(country -> "US".equals(country.getLanguage()))
+					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
+					.collect(Collectors.toList());
 		}
 		
 		return countries;

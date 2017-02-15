@@ -1,4 +1,4 @@
-package com.nowellpoint.api.resource;
+package com.nowellpoint.api.rest.impl;
 
 import java.io.IOException;
 import java.lang.reflect.Method;

@@ -93,6 +93,30 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		return super.findByStatus("Scheduled");
 	}
 	
+	@Override
+	public ScheduledJob createScheduledJob(String scheduledJobTypeId) {
+		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(scheduledJobTypeId);
+		
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		Date now = Date.from(Instant.now());
+		
+		ScheduledJob scheduledJob = new ScheduledJob();
+		scheduledJob.setJobTypeId(scheduledJobType.getId());
+		scheduledJob.setJobTypeCode(scheduledJobType.getCode());
+		scheduledJob.setJobTypeName(scheduledJobType.getName());
+		scheduledJob.setConnectorType(scheduledJobType.getConnectorType().getName());
+		scheduledJob.setStatus(ScheduledJobStatus.NOT_SCHEDULED);
+		scheduledJob.setOwner(userInfo);
+		scheduledJob.setCreatedOn(now);
+		scheduledJob.setCreatedBy(userInfo);
+		scheduledJob.setLastUpdatedOn(now);
+		scheduledJob.setLastUpdatedBy(userInfo);
+		
+		create(scheduledJob);
+		
+		return scheduledJob;
+	}
+	
 	/**
 	 * 
 	 * 
@@ -108,7 +132,8 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 			scheduledJob.setOwner(userInfo);
 		}
 		
-		scheduledJob.setStatus(ScheduledJobStatus.SCHEDULED);
+		
+		scheduledJob.setStatus(ScheduledJobStatus.NOT_SCHEDULED);
 		
 		setupScheduledJob(scheduledJob);
 		
@@ -117,7 +142,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		scheduledJob.setCreatedOn(now);
 		scheduledJob.setCreatedBy(userInfo);
 		scheduledJob.setLastUpdatedOn(now);
-		scheduledJob.setLastModifiedBy(userInfo);
+		scheduledJob.setLastUpdatedBy(userInfo);
 		
 		create(scheduledJob);
 		
@@ -189,7 +214,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		Date now = Date.from(Instant.now());
 		
 		scheduledJob.setLastUpdatedOn(now);
-		scheduledJob.setLastModifiedBy(userInfo);
+		scheduledJob.setLastUpdatedBy(userInfo);
 		
 		update(scheduledJob);
 		

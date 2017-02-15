@@ -24,7 +24,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class IndexController extends AbstractController {
+public class IndexController extends AbstractStaticController {
 	
 	private static final Logger logger = Logger.getLogger(IndexController.class.getName());
 	
@@ -32,14 +32,9 @@ public class IndexController extends AbstractController {
 		public static final String INDEX = "index.html";
 	}
 	
-	public IndexController(Configuration configuration) {
-		super(IndexController.class);
-		configureRoutes(configuration);
-	}
-	
-	private void configureRoutes(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.INDEX, (request, response) -> index(configuration, request, response));
-		post(Path.Route.CONTACT, (request, response) -> contactUs(configuration, request, response));
+		post(Path.Route.CONTACT, (request, response) -> contact(configuration, request, response));
 	}
 	
 	/**
@@ -50,7 +45,7 @@ public class IndexController extends AbstractController {
 	 * @return
 	 */
 	
-	private String index(Configuration configuration, Request request, Response response) {
+	private static String index(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -74,7 +69,7 @@ public class IndexController extends AbstractController {
 		Map<String,Object> model = getModel();
 		model.put("planList", plans);
 		
-		return render(configuration, request, response, model, Template.INDEX);
+		return render(IndexController.class, configuration, request, response, model, Template.INDEX);
 	}
 	
 	/**
@@ -85,7 +80,7 @@ public class IndexController extends AbstractController {
 	 * @return
 	 */
 	
-	private String contactUs(Configuration configuration, Request request, Response response) {
+	private static String contact(Configuration configuration, Request request, Response response) {
 		
     	HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
