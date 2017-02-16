@@ -23,13 +23,7 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String connectorId;
 	
-	private String connectorType;
-	
-	private String jobTypeId;
-	
-	private String jobTypeCode;
-	
-	private String jobTypeName;
+	private JobType jobType;
 	
 	private String description;
 	
@@ -45,6 +39,20 @@ public class ScheduledJob extends AbstractResource {
 	
 	@Email
 	private String notificationEmail;
+	
+	private String seconds;
+	
+	private String minutes;
+	
+	private String hours;
+	
+	private String dayOfMonth;
+	
+	private String month;
+	
+	private String dayOfWeek;
+	
+	private String year;
 	
 	private Set<RunHistory> runHistories;
 	
@@ -112,36 +120,12 @@ public class ScheduledJob extends AbstractResource {
 		this.connectorId = connectorId;
 	}
 
-	public String getConnectorType() {
-		return connectorType;
+	public JobType getJobType() {
+		return jobType;
 	}
 
-	public void setConnectorType(String connectorType) {
-		this.connectorType = connectorType;
-	}
-
-	public String getJobTypeId() {
-		return jobTypeId;
-	}
-
-	public void setJobTypeId(String jobTypeId) {
-		this.jobTypeId = jobTypeId;
-	}
-
-	public String getJobTypeCode() {
-		return jobTypeCode;
-	}
-
-	public void setJobTypeCode(String jobTypeCode) {
-		this.jobTypeCode = jobTypeCode;
-	}
-
-	public String getJobTypeName() {
-		return jobTypeName;
-	}
-
-	public void setJobTypeName(String jobTypeName) {
-		this.jobTypeName = jobTypeName;
+	public void setJobType(JobType jobType) {
+		this.jobType = jobType;
 	}
 
 	public String getDescription() {
@@ -208,6 +192,62 @@ public class ScheduledJob extends AbstractResource {
 		this.runHistories = runHistories;
 	}
 	
+	public String getSeconds() {
+		return seconds;
+	}
+
+	public void setSeconds(String seconds) {
+		this.seconds = seconds;
+	}
+
+	public String getMinutes() {
+		return minutes;
+	}
+
+	public void setMinutes(String minutes) {
+		this.minutes = minutes;
+	}
+
+	public String getHours() {
+		return hours;
+	}
+
+	public void setHours(String hours) {
+		this.hours = hours;
+	}
+
+	public String getDayOfMonth() {
+		return dayOfMonth;
+	}
+
+	public void setDayOfMonth(String dayOfMonth) {
+		this.dayOfMonth = dayOfMonth;
+	}
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
+	public String getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(String dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
 	@Override
 	public MongoDocument toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.ScheduledJob.class);

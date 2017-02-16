@@ -42,14 +42,6 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public void createScheduledJob(ScheduledJob scheduledJob);
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	
 	public void updateScheduledJob(String id, ScheduledJob scheduledJob);
 	
 	/**

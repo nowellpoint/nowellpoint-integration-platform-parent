@@ -1,4 +1,4 @@
-package com.nowellpoint.api.job;
+ package com.nowellpoint.api.job;
 
 import static org.quartz.DateBuilder.evenMinuteDate;
 import static org.quartz.JobBuilder.newJob;
@@ -16,6 +16,8 @@ import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.CronExpression;
+import org.quartz.CronScheduleBuilder;
 
 import com.nowellpoint.api.rest.domain.ScheduledJob;
 import com.nowellpoint.api.rest.service.ScheduledJobServiceImpl;
@@ -41,11 +43,13 @@ public class JobSchedulerManager2 {
 		
 		scheduledJobs.stream().forEach(job -> {
 			
-			JobKey jobKey = new JobKey(job.getId(), job.getJobTypeCode());
+			JobKey jobKey = new JobKey(job.getId(), job.getJobType().getCode());
 			
 			JobDetail jobDetail = newJob(SalesforceMetadataBackupJob2.class)
 					.withIdentity(jobKey)
 		    		.build();
+			
+			//CronScheduleBuilder.cronSchedule(cronExpression);
 		    	
 		    Trigger trigger = newTrigger()
 		    		.withIdentity("EXECUTE_EVERY_MINUTE", job.getId())

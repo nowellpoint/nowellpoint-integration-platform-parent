@@ -45,11 +45,11 @@
         <div class="content table-responsive">
             <table class="table table-hover">
                 <thead>
-                    <th class="col-md-3">${labels["organization.name"]}</th>
-                    <th class="col-md-3">${labels["organization.type"]}</th>
-                    <th class="col-md-2">${labels["instance.name"]}</th>
-                    <th class="col-md-3">${labels["identity.name"]}</th>
-                    <th class="col-md-1"></th>
+                    <th>${labels["organization.name"]}</th>
+                    <th>${labels["organization.type"]}</th>
+                    <th>${labels["instance.name"]}</th>
+                    <th>${labels["identity.name"]}</th>
+                    <th></th>
                 </thead>
                 <tbody>
                     <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
@@ -79,10 +79,10 @@
         <div class="content table-responsive">
             <table class="table table-hover">
                 <thead>
-                    <th class="col-xs-2">${labels["name"]}</th>
-                    <th class="col-xs-3">${labels["service.endpoint"]}</th>
-                    <th class="col-xs-1">${labels["api.version"]}</th>
-                    <th class="col-md-1"></th>
+                    <th>${labels["name"]}</th>
+                    <th>${labels["service.endpoint"]}</th>
+                    <th>${labels["api.version"]}</th>
+                    <th></th>
                 </thead>
                 <tbody>
                     <#list environments?sort_by( "addedOn") as environment>

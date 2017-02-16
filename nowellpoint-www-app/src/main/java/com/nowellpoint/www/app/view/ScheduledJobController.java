@@ -51,7 +51,7 @@ public class ScheduledJobController extends AbstractStaticController {
 	
 	public static void configureRoutes(Configuration configuration) {
         get(Path.Route.SCHEDULED_JOBS_LIST, (request, response) -> getScheduledJobs(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, (request, response) -> selectType(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, (request, response) -> listScheduledJobTypes(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
@@ -96,7 +96,7 @@ public class ScheduledJobController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String selectType(Configuration configuration, Request request, Response response) {
+	private static String listScheduledJobTypes(Configuration configuration, Request request, Response response) {
 
 		Token token = getToken(request);
 		
@@ -144,7 +144,7 @@ public class ScheduledJobController extends AbstractStaticController {
 		model.put("scheduledJob", scheduledJob);
     	model.put("title", getLabel(ScheduledJobController.class, request, "select.connector"));
 		
-		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
+		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobType().getCode())) {
 			
 			SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 					.salesforceConnector()
@@ -182,7 +182,7 @@ public class ScheduledJobController extends AbstractStaticController {
 		model.put("scheduledJob", scheduledJob);
 		model.put("title", getLabel(ScheduledJobController.class, request, "select.environment"));
 		
-		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobTypeCode())) {
+		if ("SALESFORCE_METADATA_BACKUP".equals(scheduledJob.getJobType().getCode())) {
 			
 			SalesforceConnector salesforceConnector = new NowellpointClient(token)
 					.salesforceConnector()

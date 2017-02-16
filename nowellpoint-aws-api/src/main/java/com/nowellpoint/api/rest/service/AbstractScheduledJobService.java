@@ -1,13 +1,17 @@
 package com.nowellpoint.api.rest.service;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.ScheduledJob;
 import com.nowellpoint.api.rest.domain.ScheduledJobList;
 import com.nowellpoint.aws.data.AbstractCacheService;
@@ -57,6 +61,16 @@ public class AbstractScheduledJobService extends AbstractCacheService {
 		documentManager.refresh( document );
 		scheduledJob.fromDocument(document);
 		set(scheduledJob.getId(), document);
+	}
+	
+	protected void submit(Job job) {
+		Bson query = and ( 
+				eq ( "scheduledJobId", new ObjectId( job.getScheduledJobId() ) ), 
+				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" ))); 
+		
+		MongoDocument document = job.toDocument();
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		documentManager.upsert(query, document);
 	}
 	
 	protected void update(ScheduledJob scheduledJob) {

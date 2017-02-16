@@ -25,7 +25,7 @@
             </p>    
             <h4 class="text-muted text-center">${labels["no.records"]}</h4>
             <p class="text-center">
-                <a href="${labels['base.path']}/new/select-type" class="btn btn-lg btn-primary-outline" role="button">${labels["create.scheduled.job"]}</a>
+                <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-info btn-lg" role="button">${labels["create.scheduled.job"]}</a>
             </p>
         </#if>
         <br>
@@ -35,7 +35,7 @@
                     <a href="${labels['base.path']}/${scheduledJob.id}" style="text-decoration: none">
                     <div class="offer-content">
                         <h3 class="lead">
-							${scheduledJob.jobTypeName}
+							${scheduledJob.jobType.name}
 						</h3>
                         <p>
                             ${(scheduledJob.instanceName)!} - 
