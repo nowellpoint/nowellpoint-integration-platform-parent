@@ -13,12 +13,12 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response.Status;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Project;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;

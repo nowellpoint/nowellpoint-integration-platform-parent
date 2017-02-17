@@ -18,9 +18,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.nowellpoint.annotation.Deactivate;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Backup;
-import com.nowellpoint.api.rest.domain.Deactivate;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobStatus;
@@ -399,11 +399,13 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		Date now = Date.from(Instant.now());
 		
 		Job job = new Job();
+		job.setCreatedBy(scheduledJob.getCreatedBy());
 		job.setCreatedOn(now);
 		job.setDayOfMonth(scheduledJob.getDayOfMonth());
 		job.setDayOfWeek(scheduledJob.getDayOfWeek());
 		job.setHours(scheduledJob.getHours());
 		job.setJobName(scheduledJob.getJobType().getCode());
+		job.setLastUpdatedBy(scheduledJob.getLastUpdatedBy());
 		job.setLastUpdatedOn(now);
 		job.setMinutes(scheduledJob.getMinutes());
 		job.setMonth(scheduledJob.getMonth());

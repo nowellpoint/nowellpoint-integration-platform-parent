@@ -2,16 +2,16 @@ package com.nowellpoint.client.auth;
 
 import java.util.Locale;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.client.util.MessageProvider;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 public class Authenticators {
 	

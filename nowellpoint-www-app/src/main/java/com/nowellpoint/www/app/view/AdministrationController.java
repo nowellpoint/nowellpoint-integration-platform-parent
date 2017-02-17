@@ -2,10 +2,10 @@ package com.nowellpoint.www.app.view;
 
 import static spark.Spark.get;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;

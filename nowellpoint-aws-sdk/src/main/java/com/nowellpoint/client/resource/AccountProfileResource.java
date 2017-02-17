@@ -1,9 +1,5 @@
 package com.nowellpoint.client.resource;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
@@ -17,6 +13,10 @@ import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 

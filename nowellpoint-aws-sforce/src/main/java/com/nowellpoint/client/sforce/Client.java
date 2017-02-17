@@ -4,10 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -16,6 +12,10 @@ import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 public class Client {
 	

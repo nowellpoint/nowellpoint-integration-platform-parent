@@ -9,14 +9,14 @@ import java.util.Map;
 
 import javax.ws.rs.BadRequestException;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;

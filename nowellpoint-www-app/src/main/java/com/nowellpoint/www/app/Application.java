@@ -18,13 +18,13 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.IsoCountry;
 import com.nowellpoint.client.model.IsoCountryList;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;

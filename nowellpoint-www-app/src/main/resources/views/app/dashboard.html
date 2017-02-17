@@ -1,6 +1,9 @@
 <#import "template.html" as t>
 
     <@t.page>
+        
+       
+        
         <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -19,7 +22,7 @@
                                         <td class="text-center" colspan="3">&nbsp;</td>
                                     </tr>
                                 </#if>
-                                <#list scheduledJobList?sort_by( "environmentName") as scheduledJob>
+                                <#list scheduledJobList?sort_by( "instanceName") as scheduledJob>
                                     <tr>
                                         <td class="text-center">
                                             <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
@@ -33,7 +36,7 @@
                                             <!-- </#if> -->
                                         </td>
                                         <td>
-                                            <a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.environmentName}</a>
+                                            <a href="${scheduledJobPath}/${scheduledJob.id}">${scheduledJob.instanceName}</a>
                                         </td>
                                         <td class="text-right">
                                             <!--  <#if scheduledJob.lastRunDate??> -->

@@ -14,17 +14,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.domain.idp.Account;
 import com.nowellpoint.api.rest.domain.Token;
-import com.nowellpoint.aws.http.HttpRequestException;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.http.HttpRequestException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.util.Properties;
 
 public class TestRestApi {

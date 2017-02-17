@@ -13,11 +13,11 @@ import java.util.TimeZone;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;

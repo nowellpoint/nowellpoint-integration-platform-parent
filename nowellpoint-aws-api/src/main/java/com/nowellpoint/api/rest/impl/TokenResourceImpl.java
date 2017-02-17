@@ -16,7 +16,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.exception.AuthenticationException;
-import com.nowellpoint.api.resource.IdentityResource;
+import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.TokenResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Token;

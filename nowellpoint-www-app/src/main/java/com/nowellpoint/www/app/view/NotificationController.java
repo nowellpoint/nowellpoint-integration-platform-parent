@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;

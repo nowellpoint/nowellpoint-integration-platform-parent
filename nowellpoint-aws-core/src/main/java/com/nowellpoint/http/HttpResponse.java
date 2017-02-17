@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.http;
+package com.nowellpoint.http;
 
 import java.net.URL;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.nowellpoint.aws.http;
+package com.nowellpoint.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;

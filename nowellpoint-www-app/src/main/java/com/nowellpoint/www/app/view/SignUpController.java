@@ -11,9 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Contact;
@@ -25,6 +22,9 @@ import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.User;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 

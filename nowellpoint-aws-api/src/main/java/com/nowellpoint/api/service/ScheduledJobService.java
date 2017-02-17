@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javax.enterprise.event.Observes;
 
+import com.nowellpoint.annotation.Deactivate;
 import com.nowellpoint.api.rest.domain.AccountProfile;
-import com.nowellpoint.api.rest.domain.Deactivate;
 import com.nowellpoint.api.rest.domain.RunHistory;
 import com.nowellpoint.api.rest.domain.ScheduledJob;
 import com.nowellpoint.api.rest.domain.ScheduledJobList;

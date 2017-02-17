@@ -1,26 +1,23 @@
-package com.nowellpoint.api.resource;
+package com.nowellpoint.api.rest.impl;
 
 import javax.inject.Inject;
 import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.nowellpoint.api.resource.SalesforceConnectorResource;
+import com.nowellpoint.api.resource.ScheduledJobResource;
 import com.nowellpoint.api.rest.AccountProfileService;
+import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Identity;
 import com.nowellpoint.api.rest.domain.Resources;
 import com.nowellpoint.util.Assert;
 
-@Path("identity")
-public class IdentityResource {
+public class IdentityResourceImpl implements IdentityResource {
 	
 	@Inject
 	private AccountProfileService accountProfileService;
@@ -31,10 +28,8 @@ public class IdentityResource {
 	@Context
 	private UriInfo uriInfo;
 	
-	@GET
-	@Path("{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getId(@PathParam("id") String id) {
+	@Override
+	public Response getId(String id) {
 		
 		String subject = securityContext.getUserPrincipal().getName();
 		

@@ -19,6 +19,7 @@ body {
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
+    top: 50px;
     left: 250px;
     width: 0;
     height: 100%;
@@ -37,14 +38,13 @@ body {
 
 #page-content-separator {
     border-top: 1px solid #D5D8DC;
-    top 52px;
+    width: 100%;
 }
 
 #page-content-wrapper {
+    top: 60px;
     width: 100%;
-    top: 50px;
     position: fixed;
-    padding: 15px;
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -52,11 +52,18 @@ body {
     margin-right: -250px;
 }
 
+#top-bar {
+    color: #fff;
+    height: 100px;
+    width: 100%;
+    background: #969698;
+    margin-bottom: 15px;
+}
+
 /* Sidebar Styles */
 
 .sidebar-nav {
     position: absolute;
-    top: 75px;
     width: 250px;
     margin: 0;
     padding: 0;

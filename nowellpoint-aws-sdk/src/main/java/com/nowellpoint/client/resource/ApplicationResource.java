@@ -1,12 +1,12 @@
 package com.nowellpoint.client.resource;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.Application;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 public class ApplicationResource extends AbstractResource {
 	

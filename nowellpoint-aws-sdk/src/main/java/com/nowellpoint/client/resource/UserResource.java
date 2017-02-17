@@ -3,15 +3,15 @@ package com.nowellpoint.client.resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.User;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 /**
  * @author jherson

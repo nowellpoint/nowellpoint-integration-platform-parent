@@ -22,6 +22,10 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class Job extends AbstractResource {
 	
+	private UserInfo createdBy;
+	
+	private UserInfo lastUpdatedBy;
+	
 	private String scheduledJobId;
 	
 	private String fireInstanceId;
@@ -56,6 +60,22 @@ public class Job extends AbstractResource {
 	
 	public Job(MongoDocument document) {
 		super(document);
+	}
+
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getScheduledJobId() {
