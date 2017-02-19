@@ -107,7 +107,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// get environment associated with the ScheduledJob
 			//
 			
-			Instance instance = salesforceConnectorService.getInstance(jobSchedule.getConnectorId(), jobSchedule.getEnvironmentKey());
+			Instance instance = salesforceConnectorService.getInstance(jobSchedule.getConnector().getId(), jobSchedule.getConnector().getInstance().getKey());
 			
 			//
 			// get User Properties

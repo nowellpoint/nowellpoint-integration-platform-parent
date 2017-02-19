@@ -20,7 +20,7 @@ public class Instance {
 	
 	private Date updatedOn;
 	
-	private String environmentName;
+	private String name;
 	
 	private Boolean isActive;
 	
@@ -90,12 +90,12 @@ public class Instance {
 		this.updatedOn = updatedOn;
 	}
 
-	public String getEnvironmentName() {
-		return environmentName;
+	public String getName() {
+		return name;
 	}
 
-	public void setEnvironmentName(String environmentName) {
-		this.environmentName = environmentName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Boolean getIsActive() {
@@ -250,8 +250,8 @@ public class Instance {
 		this.theme = theme;
 	}
 
-	public Instance withEnvironmentName(String environmentName) {
-		setEnvironmentName(environmentName);
+	public Instance withName(String name) {
+		setName(name);
 		return this;
 	}
 	

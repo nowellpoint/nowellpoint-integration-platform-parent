@@ -33,7 +33,20 @@ public interface JobScheduleResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createScheduledJob(@FormParam("scheduledJobTypeId") @NotEmpty String scheduledJobTypeId);
+	public Response createScheduledJob(
+			@FormParam("scheduledJobTypeId") @NotEmpty String scheduledJobTypeId,
+			@FormParam("instanceKey") String instanceKey,
+			@FormParam("notificationEmail") String notificationEmail,
+			@FormParam("description") String description,
+			@FormParam("connectorId") String connectorId,
+			@FormParam("scheduleDate") String scheduleDate,
+			@FormParam("seconds") String seconds,
+			@FormParam("minutes") String minutes,
+			@FormParam("hours") String hours,
+			@FormParam("dayOfMonth") String dayOfMonth,
+			@FormParam("month") String month,
+			@FormParam("dayOfWeek") String dayOfWeek,
+			@FormParam("year") String year);
 	
 	@POST
 	@Path("{id}")
@@ -42,8 +55,6 @@ public interface JobScheduleResource {
 	public Response updateScheduledJob(@PathParam("id") String id,
 			@FormParam("notificationEmail") String notificationEmail,
 			@FormParam("description") String description,
-			@FormParam("connectorId") String connectorId,
-			@FormParam("environmentKey") String environmentKey,
 			@FormParam("scheduleDate") String scheduleDate,
 			@FormParam("seconds") String seconds,
 			@FormParam("minutes") String minutes,

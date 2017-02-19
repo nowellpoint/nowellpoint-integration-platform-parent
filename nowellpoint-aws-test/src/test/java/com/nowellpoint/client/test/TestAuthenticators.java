@@ -23,7 +23,7 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.EnvironmentRequest;
+import com.nowellpoint.client.model.InstanceRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.SObjectDetail;
@@ -125,7 +125,7 @@ public class TestAuthenticators {
 		String username = System.getenv("SALESFORCE_USERNAME");
 		String securityToken = System.getenv("SALESFORCE_SECURITY_TOKEN");
 		
-		EnvironmentRequest environmentRequest = new EnvironmentRequest()
+		InstanceRequest instanceRequest = new InstanceRequest()
 				.withIsActive(Boolean.TRUE)
 				.withAuthEndpoint(authEndpoint)
 				.withEnvironmentName(environmentName)
@@ -136,7 +136,7 @@ public class TestAuthenticators {
 		CreateResult<Instance> createResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
-				.add(salesforceConnector.getId(), environmentRequest);
+				.add(salesforceConnector.getId(), instanceRequest);
 		
 		assertTrue(createResult.isSuccess());
 		

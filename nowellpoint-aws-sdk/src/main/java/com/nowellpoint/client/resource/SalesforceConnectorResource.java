@@ -3,7 +3,7 @@ package com.nowellpoint.client.resource;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.EnvironmentRequest;
+import com.nowellpoint.client.model.InstanceRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.Instance;
@@ -194,14 +194,14 @@ public class SalesforceConnectorResource extends AbstractResource {
 			return resource;
 		}
 		
-		public CreateResult<Instance> add(String salesforceConnectorId, EnvironmentRequest environmentRequest) {
+		public CreateResult<Instance> add(String salesforceConnectorId, InstanceRequest instanceRequest) {
 			Instance instance = new Instance()
-					.withIsActive(environmentRequest.getIsActive())
-					.withAuthEndpoint(environmentRequest.getAuthEndpoint())
-					.withEnvironmentName(environmentRequest.getEnvironmentName())
-					.withPassword(environmentRequest.getPassword())
-					.withUsername(environmentRequest.getUsername())
-					.withSecurityToken(environmentRequest.getSecurityToken());
+					.withIsActive(instanceRequest.getIsActive())
+					.withAuthEndpoint(instanceRequest.getAuthEndpoint())
+					.withName(instanceRequest.getEnvironmentName())
+					.withPassword(instanceRequest.getPassword())
+					.withUsername(instanceRequest.getUsername())
+					.withSecurityToken(instanceRequest.getSecurityToken());
 			
 			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
@@ -226,14 +226,14 @@ public class SalesforceConnectorResource extends AbstractResource {
 			return result;
 		}
 		
-		public UpdateResult<Instance> update(String salesforceConnectorId, String key, EnvironmentRequest environmentRequest) {
+		public UpdateResult<Instance> update(String salesforceConnectorId, String key, InstanceRequest instanceRequest) {
 			Instance instance = new Instance()
-					.withIsActive(environmentRequest.getIsActive())
-					.withAuthEndpoint(environmentRequest.getAuthEndpoint())
-					.withEnvironmentName(environmentRequest.getEnvironmentName())
-					.withPassword(environmentRequest.getPassword())
-					.withUsername(environmentRequest.getUsername())
-					.withSecurityToken(environmentRequest.getUsername());
+					.withIsActive(instanceRequest.getIsActive())
+					.withAuthEndpoint(instanceRequest.getAuthEndpoint())
+					.withName(instanceRequest.getEnvironmentName())
+					.withPassword(instanceRequest.getPassword())
+					.withUsername(instanceRequest.getUsername())
+					.withSecurityToken(instanceRequest.getUsername());
 			
 			HttpResponse httpResponse = RestResource.put(token.getEnvironmentUrl())
 					.contentType(MediaType.APPLICATION_JSON)

@@ -1,13 +1,13 @@
 <#import "template.html" as t>
 
     <@t.page>
-        
+
 
         <!-- <#if step=="select-type"> -->
-        
+
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["select.job.type"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">1</span>&nbsp;${labels["select.job.type"]}</h3>
             </div>
         </div>
 
@@ -43,37 +43,42 @@
         <!-- </#if> -->
 
         <!-- <#if step=="select-connector"> -->
-        
+
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["job.type"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["job.type"]}</h3>
+            </div>
+            <div class="dashhead-toolbar">
+                <p class="pull-right">
+                    <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
+                </p>
             </div>
         </div>
 
         <br>
-        
+
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${jobType.name}&emsp;</dd>
+            <dd>${jobType.name}</dd>
             <hr>
             <dt>${labels["description"]}</dt>
-            <dd>${jobType.description}&emsp;</dd>
+            <dd>${jobType.description}</dd>
             <hr>
             <dt>${labels["connector.type"]}</dt>
-            <dd>${jobType.connectorType.name}&emsp;</dd>
+            <dd>${jobType.connectorType.name}</dd>
             <hr>
-        </dl>    
-        
+        </dl>
+
         <br>
-        
+
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["select.connector"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">2</span>&nbsp;${labels["select.connector"]}</h3>
             </div>
         </div>
 
         <br>
-        
+
         <div class="content table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -102,25 +107,29 @@
         <br>
 
         <div class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-            <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["previous"]}</a>
+            <a href="${labels['base.path']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
         </div>
 
         <!-- </#if> -->
 
         <!-- <#if step=="select-environment"> -->
-        
+
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["job.type"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["job.type"]}</h3>
+            </div>
+            <div class="dashhead-toolbar">
+                <p class="pull-right">
+                    <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
+                </p>
             </div>
         </div>
 
         <br>
-        
+
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${jobType.name}</dd>
+            <dd>${jobType.name}&emsp;</dd>
             <hr>
             <dt>${labels["description"]}</dt>
             <dd>${jobType.description}</dd>
@@ -128,18 +137,23 @@
             <dt>${labels["connector.type"]}</dt>
             <dd>${jobType.connectorType.name}</dd>
             <hr>
-        </dl>    
-        
+        </dl>
+
         <br>
-        
+
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["connector"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">2</span>&nbsp;${labels["connector"]}</h3>
+            </div>
+            <div class="dashhead-toolbar">
+                <p class="pull-right">
+                    <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
+                </p>
             </div>
         </div>
 
         <br>
-        
+
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
             <dd>${(salesforceConnector.name)!}</dd>
@@ -150,13 +164,13 @@
             <dt>${labels["instance.name"]}</dt>
             <dd>${salesforceConnector.organization.instanceName}</dd>
             <hr>
-        </dl>    
-        
+        </dl>
+
         <br>
-        
+
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${labels["select.instance"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">3</span>&nbsp;${labels["select.instance"]}</h3>
             </div>
         </div>
 
@@ -173,7 +187,7 @@
                 <tbody>
                     <#list salesforceConnector.instances?sort_by( "addedOn") as instance>
                         <tr>
-                            <td>${(instance.environmentName)!}</td>
+                            <td>${(instance.name)!}</td>
                             <td>${(instance.serviceEndpoint)!}</td>
                             <td>${(instance.apiVersion)!}</td>
                             <td><a href="${labels['base.path']}/new/set-schedule?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}&instanceKey=${instance.key}">${labels["select"]}</a></td>
@@ -186,44 +200,106 @@
         <br>
 
         <div class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-            <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobType.id}" class="btn btn-primary" role="button">${labels["previous"]}</a>
+            <a href="${labels['base.path']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
         </div>
 
         <!-- </#if> -->
 
         <!-- <#if step == "set-schedule"> -->
 
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["job.type"]}</h3>
+            </div>
+            <div class="dashhead-toolbar">
+                <p class="pull-right">
+                    <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
+                </p>
+            </div>
+        </div>
+
+        <dl class="dl-horizontal">
+            <dt>${labels["name"]}</dt>
+            <dd>${jobSchedule.jobType.name}&emsp;</dd>
+            <hr>
+            <dt>${labels["description"]}</dt>
+            <dd>${jobSchedule.jobType.description}</dd>
+            <hr>
+            <dt>${labels["connector.type"]}</dt>
+            <dd>${jobSchedule.jobType.connectorType.name}</dd>
+            <hr>
+        </dl>
+
+        <br>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">2</span>&nbsp;${labels["connector"]}</h3>
+            </div>
+            <div class="dashhead-toolbar">
+                <p class="pull-right">
+                    <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobSchedule.jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
+                </p>
+            </div>
+        </div>
+
+        <dl class="dl-horizontal">
+            <dt>${labels["name"]}</dt>
+            <dd>${(salesforceConnector.name)!}</dd>
+            <hr>
+            <dt>${labels["organization.name"]}</dt>
+            <dd>${salesforceConnector.organization.name}</dd>
+            <hr>
+            <dt>${labels["instance.name"]}</dt>
+            <dd>${salesforceConnector.organization.instanceName}</dd>
+            <hr>
+        </dl>
+
+        <br>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">3</span>&nbsp;${labels["instance"]}</h3>
+            </div>
+        </div>
+
+        <dl class="dl-horizontal">
+            <dt>${labels["name"]}</dt>
+            <dd>${(instance.name)!}</dd>
+            <hr>
+            <dt>${labels["service.endpoint"]}</dt>
+            <dd>${(instance.serviceEndpoint)!}</dd>
+            <hr>
+            <dt>${labels["api.version"]}</dt>
+            <dd>${(instance.apiVersion)!}</dd>
+            <hr>
+        </dl>
+
+        <br>
+
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">4</span>&nbsp;${labels["set.schedule"]}</h3>
+            </div>
+        </div>
+
         <form class="form-vertical" role="form" id="schedule-form" method="post" action="${action}">
 
-            <input type="hidden" name="id" id="id" value="${scheduledJob.id}" />
-            <input type="hidden" name="connectorId" id="connectorId" value="${scheduledJob.connectorId}" />
-
-            <div class="row">
-                <div class="form-group col-md-2">
-                    <label class="control-label" for="environmentName">${labels["type"]}</label>
-                    <input type="text" class="form-control" value="${(scheduledJob.jobTypeName)!}" disabled />
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group col-md-2">
-                    <label class="control-label" for="environmentName">${labels["environment.name"]}</label>
-                    <input type="text" class="form-control" value="${(scheduledJob.environmentName)!}" disabled />
-                </div>
-            </div>
+            <input type="hidden" name="jobTypeId" id="jobTypeId" value="${jobSchedule.jobType.id}" />
+            <input type="hidden" name="connectorId" id="connectorId" value="${jobSchedule.connector.id}" />
+            <input type="hidden" name="instanceKey" id="instanceKey" value="${jobSchedule.connector.instance.key}" />
 
             <div class="row">
                 <div class="form-group col-md-2">
                     <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
-                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(scheduledJob.notificationEmail)!}" required autofocus="" />
+                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(jobSchedule.notificationEmail)!}" required autofocus="" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="form-group col-md-2">
                     <label class="control-label" for="description">${labels["description"]}</label>
-                    <textarea class="form-control" name="description" id="description" value="${(scheduledJob.description)!}" rows="3"></textarea>
+                    <textarea class="form-control" name="description" id="description" value="${(jobSchedule.description)!}" rows="3"></textarea>
                 </div>
             </div>
 
@@ -242,13 +318,79 @@
 
             <div class="row">
                 <div class="form-group col-md-2">
-                    <label class="control-label" for="scheduleTime">${labels["scheduled.time"]}*</label>
+                    <label class="control-label" for="seconds">${labels["seconds"]}</label>
                     <div class="input-group">
-                        <input type="text" id="scheduleTime" name="scheduleTime" class="form-control" required/>
-                        <span class="input-group-addon">${labels["time.format"]}
-                                    </span>
+                        <input type="text" id="seconds" name="seconds" value="${(jobSchedule.seconds)!}" class="form-control" />
+                        <span class="input-group-addon">[0,59]</span>
                     </div>
                 </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="minutes">${labels["minutes"]}</label>
+                    <div class="input-group">
+                        <input type="text" id="minutes" name="minutes" value="${(jobSchedule.minutes)!}" class="form-control" />
+                        <span class="input-group-addon">[0,59]</span>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="hours">${labels["hours"]}</label>
+                    <div class="input-group">
+                        <input type="text" id="hours" name="hours" value="${(jobSchedule.hours)!}" class="form-control" />
+                        <span class="input-group-addon">[0,23]</span>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="dayOfMonth">${labels["day.of.month"]}</label>
+                    <div class="input-group">
+                        <input type="text" id="dayOfMonth" name="dayOfMonth" value="${(jobSchedule.dayOfMonth)!}" class="form-control" />
+                        <span class="input-group-addon">[1,31] ${labels["or"]} ${labels["last"]}</span>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="month">${labels["month"]}</label>
+                    <div class="input-group">
+                        <input type="text" id="month" name="month" value="${(jobSchedule.month)!}" class="form-control" />
+                        <span class="input-group-addon">[1,12]</span>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="dayOfWeek">${labels["day.of.week"]}</label>
+                    <div class="input-group">
+                        <input type="text" id="dayOfWeek" name="dayOfWeek" value="${(jobSchedule.dayOfWeek)!}" class="form-control" />
+                        <span class="input-group-addon">[0,7]</span>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label class="control-label" for="year">${labels["year"]}</label>
+                    <div class="input-group">
+                        <input type="text" id="year" name="year" value="${(jobSchedule.year)!}" class="form-control" />
+                        <span class="input-group-addon">${labels["year.format"]}</span>
+                    </div>
+                </div>
+                <div class="col-md-10"></div>
             </div>
 
             <div class="row">
@@ -260,7 +402,7 @@
                 </div>
                 <div class="col-md-10"></div>
             </div>
-
+            
         </form>
 
         <!-- </#if> -->

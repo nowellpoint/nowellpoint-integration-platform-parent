@@ -21,6 +21,7 @@ import com.amazonaws.util.IOUtils;
 import com.nowellpoint.annotation.Deactivate;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Backup;
+import com.nowellpoint.api.rest.domain.ConnectorInfo;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobStatus;
@@ -160,6 +161,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		jobSchedule.setId(id);
 		jobSchedule.setStatus(original.getStatus());
 		jobSchedule.setJobType(original.getJobType());
+		jobSchedule.setConnector(original.getConnector());
 		jobSchedule.setCreatedOn(original.getCreatedOn());
 		jobSchedule.setLastRunDate(original.getLastRunDate());
 		jobSchedule.setLastRunStatus(original.getLastRunStatus());
@@ -174,10 +176,6 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 			jobSchedule.setDescription(original.getDescription());
 		} else if (isEmpty(jobSchedule.getDescription())) {
 			jobSchedule.setDescription(null);
-		}
-
-		if (isNull(jobSchedule.getConnectorId())) {
-			jobSchedule.setConnectorId(original.getConnectorId());
 		}
 
 		if (isNull(jobSchedule.getOwner())) {
@@ -224,38 +222,40 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 		 * add type specific elements
 		 */
 		
-		if ("SALESFORCE".equals(jobSchedule.getJobType().getConnectorType().getCode())) {
-			
-			SalesforceConnector salesforceConnector = null;
-			try {
-				salesforceConnector = salesforceConnectorService.findById( jobSchedule.getConnectorId() );
-			} catch (DocumentNotFoundException e) {
-				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", jobSchedule.getConnectorId()));
-			}
-
-			Optional<Instance> instance = null;
-			if (jobSchedule.getEnvironmentKey() != null && ! jobSchedule.getEnvironmentKey().trim().isEmpty()) {
-				instance = salesforceConnector.getInstances()
-						.stream()
-						.filter(e -> jobSchedule.getEnvironmentKey().equals(e.getKey()))
-						.findFirst();
-				
-				if (! instance.isPresent()) {
-					throw new ValidationException(String.format("Invalid environment key: %s", jobSchedule.getEnvironmentKey()));
-				}
-				
-			} else {
-				instance = salesforceConnector.getInstances().stream().filter(e -> ! e.getIsSandbox()).findFirst();
-			}
-
-			if (jobSchedule.getNotificationEmail() == null) {
-				jobSchedule.setNotificationEmail(instance.get().getEmail());
-			}
-			
-			jobSchedule.setIsSandbox(instance.get().getIsSandbox());
-			jobSchedule.setEnvironmentKey(instance.get().getKey());
-			jobSchedule.setEnvironmentName(instance.get().getEnvironmentName());
-		}
+//		if ("SALESFORCE".equals(jobSchedule.getJobType().getConnectorType().getCode())) {
+//			
+//			SalesforceConnector salesforceConnector = null;
+//			try {
+//				salesforceConnector = salesforceConnectorService.findById( jobSchedule.getConnector().getId() );
+//			} catch (DocumentNotFoundException e) {
+//				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", jobSchedule.getConnector().getId()));
+//			}
+//
+//			Optional<Instance> instance = null;
+//			if (jobSchedule.getConnector().getInstance().getKey() != null && ! jobSchedule.getConnector().getInstance().getKey().trim().isEmpty()) {
+//				instance = salesforceConnector.getInstances()
+//						.stream()
+//						.filter(e -> jobSchedule.getConnector().getInstance().getKey().equals(e.getKey()))
+//						.findFirst();
+//				
+//				if (! instance.isPresent()) {
+//					throw new ValidationException(String.format("Invalid environment key: %s", jobSchedule.getConnector().getInstance().getKey()));
+//				}
+//				
+//			} else {
+//				instance = salesforceConnector.getInstances().stream().filter(e -> ! e.getIsSandbox()).findFirst();
+//			}
+//
+//			if (jobSchedule.getNotificationEmail() == null) {
+//				jobSchedule.setNotificationEmail(instance.get().getEmail());
+//			}
+//			
+//			ConnectorInfo connectorInfo = new ConnectorInfo();
+//			connectorInfo.setId(salesforceConnector.getId());
+//			connectorInfo.setName(salesforceConnector.getName());
+//			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
+//			
+//		}
 		
 		/**
 		 * add audit fields

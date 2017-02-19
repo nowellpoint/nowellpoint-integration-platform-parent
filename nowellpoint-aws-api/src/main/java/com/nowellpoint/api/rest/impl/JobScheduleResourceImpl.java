@@ -65,7 +65,20 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	}
 	
 	@Override
-	public Response createScheduledJob(String scheduledJobTypeId) {
+	public Response createScheduledJob(
+			String scheduledJobTypeId,
+			String instanceKey,
+			String notificationEmail,
+			String description,
+			String connectorId,
+			String scheduleDate,
+			String seconds,
+			String minutes,
+			String hours,
+			String dayOfMonth,
+			String month,
+			String dayOfWeek,
+			String year) {
 		
 		JobSchedule jobSchedule = scheduledJobService.createScheduledJob(scheduledJobTypeId);
 		
@@ -80,11 +93,10 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	}
 	
 	@Override
-	public Response updateScheduledJob(String id,
+	public Response updateScheduledJob(
+			String id,
 			String notificationEmail,
 			String description,
-			String connectorId,
-			String environmentKey,
 			String scheduleDate,
 			String seconds,
 			String minutes,
@@ -97,8 +109,6 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 		JobSchedule jobSchedule = new JobSchedule();
 		jobSchedule.setNotificationEmail(notificationEmail);
 		jobSchedule.setDescription(description);
-		jobSchedule.setConnectorId(isNotNullOrEmpty(connectorId) ? connectorId : null);
-		jobSchedule.setEnvironmentKey(isNotNullOrEmpty(environmentKey) ? environmentKey : null);
 		jobSchedule.setSeconds(seconds);
 		jobSchedule.setMinutes(minutes);
 		jobSchedule.setHours(hours);

@@ -15,7 +15,7 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Instance;
-import com.nowellpoint.client.model.EnvironmentRequest;
+import com.nowellpoint.client.model.InstanceRequest;
 import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
@@ -255,7 +255,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		String username = request.queryParams("username");
 		String securityToken = request.queryParams("securityToken");
 		
-		EnvironmentRequest environmentRequest = new EnvironmentRequest()
+		InstanceRequest instanceRequest = new InstanceRequest()
 				.withIsActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
 				.withEnvironmentName(environmentName)
@@ -266,14 +266,14 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		CreateResult<Instance> createResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
-				.add(id, environmentRequest);
+				.add(id, instanceRequest);
 
 		if (! createResult.isSuccess()) {
 			
 			Instance instance = new Instance()
 					.withIsActive(Boolean.valueOf(active))
 					.withAuthEndpoint(authEndpoint)
-					.withEnvironmentName(environmentName)
+					.withName(environmentName)
 					.withPassword(password)
 					.withUsername(username)
 					.withSecurityToken(securityToken);
@@ -316,7 +316,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		String username = request.queryParams("username");
 		String securityToken = request.queryParams("securityToken");
 		
-		EnvironmentRequest environmentRequest = new EnvironmentRequest()
+		InstanceRequest instanceRequest = new InstanceRequest()
 				.withIsActive(Boolean.valueOf(active))
 				.withAuthEndpoint(authEndpoint)
 				.withEnvironmentName(environmentName)
@@ -327,14 +327,14 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		UpdateResult<Instance> updateResult = new NowellpointClient(token)
 				.salesforceConnector()
 				.instance()
-				.update(id, key, environmentRequest);
+				.update(id, key, instanceRequest);
 		
 		if (! updateResult.isSuccess()) {
 			
 			Instance instance = new Instance()
 					.withIsActive(Boolean.valueOf(active))
 					.withAuthEndpoint(authEndpoint)
-					.withEnvironmentName(environmentName)
+					.withName(environmentName)
 					.withPassword(password)
 					.withUsername(username)
 					.withSecurityToken(securityToken);

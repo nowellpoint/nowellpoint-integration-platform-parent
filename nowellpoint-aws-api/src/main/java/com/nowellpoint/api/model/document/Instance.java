@@ -51,7 +51,7 @@ public class Instance implements Serializable {
 	
 	private String grantType;
 	
-	private String environmentName;
+	private String name;
 	
 	private Boolean isActive;
 	
@@ -93,7 +93,7 @@ public class Instance implements Serializable {
 	
 	public Instance(String name, Boolean active) {
 		super();
-		setEnvironmentName(name);
+		setName(name);
 		setIsActive(active);
 	}
 	
@@ -129,12 +129,12 @@ public class Instance implements Serializable {
 		this.grantType = grantType;
 	}
 
-	public String getEnvironmentName() {
-		return environmentName;
+	public String getName() {
+		return name;
 	}
 
-	public void setEnvironmentName(String environmentName) {
-		this.environmentName = environmentName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Boolean getIsActive() {

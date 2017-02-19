@@ -15,13 +15,7 @@ public class JobSchedule extends AbstractResource {
 	
 	private UserInfo owner;
 	
-	private String environmentKey;
-	
-	private String environmentName;
-	
-	private Boolean isSandbox;
-	
-	private String connectorId;
+	private ConnectorInfo connector;
 	
 	private JobTypeInfo jobType;
 	
@@ -88,36 +82,12 @@ public class JobSchedule extends AbstractResource {
 		this.owner = owner;
 	}
 
-	public String getEnvironmentKey() {
-		return environmentKey;
+	public ConnectorInfo getConnector() {
+		return connector;
 	}
 
-	public void setEnvironmentKey(String environmentKey) {
-		this.environmentKey = environmentKey;
-	}
-
-	public String getEnvironmentName() {
-		return environmentName;
-	}
-
-	public void setEnvironmentName(String environmentName) {
-		this.environmentName = environmentName;
-	}
-
-	public Boolean getIsSandbox() {
-		return isSandbox;
-	}
-
-	public void setIsSandbox(Boolean isSandbox) {
-		this.isSandbox = isSandbox;
-	}
-
-	public String getConnectorId() {
-		return connectorId;
-	}
-
-	public void setConnectorId(String connectorId) {
-		this.connectorId = connectorId;
+	public void setConnector(ConnectorInfo connector) {
+		this.connector = connector;
 	}
 
 	public JobTypeInfo getJobType() {

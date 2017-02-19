@@ -6,9 +6,9 @@ public class JobScheduleRequest {
 	
 	private String id;
 	
-	private String scheduledJobTypeId;
+	private String jobTypeId;
 	
-	private String environmentKey;
+	private String instanceKey;
 	
 	private String notificationEmail;
 	
@@ -43,13 +43,13 @@ public class JobScheduleRequest {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	public String getEnvironmentKey() {
-		return environmentKey;
+
+	public String getInstanceKey() {
+		return instanceKey;
 	}
 
-	public void setEnvironmentKey(String environmentKey) {
-		this.environmentKey = environmentKey;
+	public void setInstanceKey(String instanceKey) {
+		this.instanceKey = instanceKey;
 	}
 
 	public String getNotificationEmail() {
@@ -67,13 +67,13 @@ public class JobScheduleRequest {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public String getScheduledJobTypeId() {
-		return scheduledJobTypeId;
+	
+	public String getJobTypeId() {
+		return jobTypeId;
 	}
 
-	public void setScheduledJobTypeId(String scheduledJobTypeId) {
-		this.scheduledJobTypeId = scheduledJobTypeId;
+	public void setJobTypeId(String jobTypeId) {
+		this.jobTypeId = jobTypeId;
 	}
 
 	public String getConnectorId() {
@@ -153,8 +153,8 @@ public class JobScheduleRequest {
 		return this;
 	}
 	
-	public JobScheduleRequest withEnvironmentKey(String environmentKey) {
-		setEnvironmentKey(environmentKey);
+	public JobScheduleRequest withInstanceKey(String instanceKey) {
+		setInstanceKey(instanceKey);
 		return this;
 	}
 	
@@ -168,8 +168,8 @@ public class JobScheduleRequest {
 		return this;
 	}
 	
-	public JobScheduleRequest withScheduledJobTypeId(String scheduledJobTypeId) {
-		setScheduledJobTypeId(scheduledJobTypeId);
+	public JobScheduleRequest withJobTypeId(String jobTypeId) {
+		setJobTypeId(jobTypeId);
 		return this;
 	}
 	

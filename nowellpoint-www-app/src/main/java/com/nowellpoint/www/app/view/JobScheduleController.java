@@ -6,20 +6,23 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.model.ConnectorInfo;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Instance;
+import com.nowellpoint.client.model.InstanceInfo;
 import com.nowellpoint.client.model.JobScheduleList;
 import com.nowellpoint.client.model.JobSchedule;
 import com.nowellpoint.client.model.JobScheduleRequest;
 import com.nowellpoint.client.model.JobType;
+import com.nowellpoint.client.model.JobTypeInfo;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
@@ -195,26 +198,69 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		String environmentKey = request.queryParams("environment-key");
+		String jobTypeId = request.queryParams("jobTypeId");
+		String connectorId = request.queryParams("connectorId");
+		String instanceKey = request.queryParams("instanceKey");
 		
-		JobSchedule jobSchedule = new JobSchedule(); //objectMapper.readValue(getValue(token, id), ScheduledJob.class);
+		JobType jobType = new NowellpointClient(token)
+				.scheduledJobType()
+				.get(jobTypeId);
 		
-		Instance instance = new NowellpointClient(token)
-				.salesforceConnector()
-				.instance()
-				.get(jobSchedule.getConnectorId(), environmentKey);
-		
-		jobSchedule.setNotificationEmail(instance.getEmail());
-		jobSchedule.setEnvironmentKey(instance.getKey());
-		jobSchedule.setEnvironmentName(instance.getEnvironmentName());
-		
-		//putValue(token, scheduledJob.getId(), objectMapper.writeValueAsString(scheduledJob));
-			
 		Map<String, Object> model = getModel();
 		model.put("step", "set-schedule");
-		model.put("scheduledJob", jobSchedule);
+		
+		SalesforceConnector salesforceConnector = null;
+		Instance instance = null;
+		
+		JobTypeInfo jobTypeInfo = new JobTypeInfo();
+		jobTypeInfo.setCode(jobType.getCode());
+		jobTypeInfo.setConnectorType(jobType.getConnectorType());
+		jobTypeInfo.setDescription(jobType.getDescription());
+		jobTypeInfo.setId(jobType.getId());
+		jobTypeInfo.setName(jobType.getName());
+		
+		JobSchedule jobSchedule = new JobSchedule();
+		jobSchedule.setJobType(jobTypeInfo);
+		
+		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
+			
+			salesforceConnector = new NowellpointClient(token)
+					.salesforceConnector()
+					.get(connectorId);
+			
+			ConnectorInfo connectorInfo = new ConnectorInfo();
+			connectorInfo.setId(salesforceConnector.getId());
+			connectorInfo.setName(salesforceConnector.getName());
+			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
+			
+			Optional<Instance> optional = salesforceConnector.getInstances()
+					.stream()
+					.filter(i -> i.getKey().equals(instanceKey))
+					.findFirst();
+			
+			if (optional.isPresent()) {
+				
+				instance = optional.get();
+				
+				InstanceInfo instanceInfo = new InstanceInfo();
+				instanceInfo.setApiVersion(instance.getApiVersion());
+				instanceInfo.setIsSandbox(instance.getIsSandbox());
+				instanceInfo.setKey(instance.getKey());
+				instanceInfo.setName(instance.getName());
+				instanceInfo.setServiceEndpoint(instance.getServiceEndpoint());
+				
+				connectorInfo.setInstance(instanceInfo);
+				
+				jobSchedule.setConnector(connectorInfo);
+				jobSchedule.setNotificationEmail(instance.getEmail());
+
+			}
+		}
+
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("instance", instance);
+		model.put("jobSchedule", jobSchedule);
 		model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-		model.put("title", getLabel(JobScheduleController.class, request, "schedule.job"));
 		
 		return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 	}
@@ -235,15 +281,17 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
+		String jobTypeId = request.queryParams("jobTypeId");
+		String connectorId = request.queryParams("connectorId");
+		String instanceKey = request.queryParams("instanceKey");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		String scheduleDate = request.queryParams("scheduleDate");
-		String scheduleTime = request.queryParams("scheduleTime");
+		
 		
 		try {
 			
 			new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate);
-			new SimpleDateFormat("HH:mm").parse(scheduleTime);
 			
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
@@ -258,16 +306,14 @@ public class JobScheduleController extends AbstractStaticController {
 			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
 			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 		}
-
-		JobSchedule jobSchedule = new JobSchedule(); //objectMapper.readValue(getValue(token, id), ScheduledJob.class);
 		
 		JobScheduleRequest createScheduledJobRequest = new JobScheduleRequest()
-				.withConnectorId(jobSchedule.getConnectorId())
+				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
-				.withEnvironmentKey(jobSchedule.getEnvironmentKey())
-				.withScheduledJobTypeId(jobSchedule.getId())
-				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", getLocale(request)).parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00")));
+				.withInstanceKey(instanceKey)
+				.withJobTypeId(jobTypeId)
+				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
 		
 		CreateResult<JobSchedule> createScheduledJobResult = new NowellpointClient(token)
 				.jobSchedule()
@@ -275,11 +321,10 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		if (! createScheduledJobResult.isSuccess()) {
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
-			
+			JobSchedule jobSchedule = new JobSchedule();
 			jobSchedule.setNotificationEmail(notificationEmail);
 			jobSchedule.setDescription(description);
-			jobSchedule.setScheduleDate(sdf.parse(scheduleDate.concat("T").concat(scheduleTime).concat(":00.SSSZ")));
+			jobSchedule.setScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
@@ -289,8 +334,6 @@ public class JobScheduleController extends AbstractStaticController {
 			model.put("errorMessage", createScheduledJobResult.getErrorMessage());
 			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 		}
-		
-		//removeValue(token, id);
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createScheduledJobResult.getTarget().getId()));
 		
@@ -322,7 +365,7 @@ public class JobScheduleController extends AbstractStaticController {
 		model.put("jobSchedule", jobSchedule);
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
-		model.put("connectorHref", jobSchedule.getConnectorId() != null ? Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", jobSchedule.getConnectorId()) : null);
+		model.put("connectorHref", jobSchedule.getConnector() != null ? Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", jobSchedule.getConnector().getId()) : null);
 		model.put("successMessage", null); //getValue(token, "success.message"));
 		
 		if (model.get("successMessage") != null) {
@@ -497,7 +540,7 @@ public class JobScheduleController extends AbstractStaticController {
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
-				.withEnvironmentKey(environmentKey)
+				.withInstanceKey(environmentKey)
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
 				.withSeconds(seconds)
 				.withMinutes(minutes)

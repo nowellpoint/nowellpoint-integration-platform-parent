@@ -14,7 +14,7 @@ public class Instance {
 	
 	private Date updatedOn;
 	
-	private String environmentName;
+	private String name;
 	
 	private String grantType;
 	
@@ -84,12 +84,12 @@ public class Instance {
 		this.updatedOn = updatedOn;
 	}
 
-	public String getEnvironmentName() {
-		return environmentName;
+	public String getName() {
+		return name;
 	}
 
-	public void setEnvironmentName(String environmentName) {
-		this.environmentName = environmentName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getGrantType() {

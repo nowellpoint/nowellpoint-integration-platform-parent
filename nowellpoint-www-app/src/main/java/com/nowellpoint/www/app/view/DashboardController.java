@@ -36,7 +36,7 @@ public class DashboardController extends AbstractStaticController {
 		
 		List<JobSchedule> jobSchedules = list.getItems()
 				.stream()
-				.filter(job -> job.getEnvironmentKey() != null)
+				.filter(job -> job.getConnector().getInstance().getKey() != null)
 				.collect(Collectors.toList());
 		
 		Map<String, Object> model = getModel();

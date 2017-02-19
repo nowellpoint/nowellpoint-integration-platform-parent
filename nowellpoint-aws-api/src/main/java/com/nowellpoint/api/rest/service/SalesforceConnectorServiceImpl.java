@@ -154,7 +154,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		instance.setEmail(identity.getEmail());
 		instance.setGrantType("token");
 		instance.setIsActive(Boolean.TRUE);
-		instance.setEnvironmentName("Production");
+		instance.setName("Production");
 		instance.setIsReadOnly(Boolean.TRUE);
 		instance.setIsSandbox(Boolean.FALSE);
 		instance.setIsValid(Boolean.TRUE);

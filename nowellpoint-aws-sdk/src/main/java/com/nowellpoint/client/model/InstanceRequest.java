@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public class EnvironmentRequest {
+public class InstanceRequest {
 	
 	private String environmentName;
 	
@@ -16,7 +16,7 @@ public class EnvironmentRequest {
 	
 	private String securityToken;
 	
-	public EnvironmentRequest() {
+	public InstanceRequest() {
 
 	}
 
@@ -76,37 +76,37 @@ public class EnvironmentRequest {
 		this.securityToken = securityToken;
 	}
 	
-	public EnvironmentRequest withEnvironmentName(String environmentName) {
+	public InstanceRequest withEnvironmentName(String environmentName) {
 		setEnvironmentName(environmentName);
 		return this;
 	}
 	
-	public EnvironmentRequest withIsActive(Boolean isActive) {
+	public InstanceRequest withIsActive(Boolean isActive) {
 		setIsActive(isActive);
 		return this;
 	}
 	
-	public EnvironmentRequest withAuthEndpoint(String authEndpoint) {
+	public InstanceRequest withAuthEndpoint(String authEndpoint) {
 		setAuthEndpoint(authEndpoint);
 		return this;
 	}
 	
-	public EnvironmentRequest withApiVersion(String apiVersion) {
+	public InstanceRequest withApiVersion(String apiVersion) {
 		setApiVersion(apiVersion);
 		return this;
 	}
 	
-	public EnvironmentRequest withUsername(String username) {
+	public InstanceRequest withUsername(String username) {
 		setUsername(username);
 		return this;
 	}
 	
-	public EnvironmentRequest withPassword(String password) {
+	public InstanceRequest withPassword(String password) {
 		setPassword(password);
 		return this;
 	}
 	
-	public EnvironmentRequest withSecurityToken(String securityToken) {
+	public InstanceRequest withSecurityToken(String securityToken) {
 		setSecurityToken(securityToken);
 		return this;
 	}
