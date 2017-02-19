@@ -14,7 +14,7 @@ import javax.ws.rs.core.UriInfo;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.model.document.Lead;
-import com.nowellpoint.api.model.document.UserInfo;
+import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.rest.LeadResource;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -47,7 +47,7 @@ public class LeadResourceImpl implements LeadResource {
     		String company,
     		String message) {
 		
-		UserInfo userInfo = new UserInfo(new ObjectId(System.getProperty(Properties.DEFAULT_SUBJECT)));
+		UserRef userRef = new UserRef(new ObjectId(System.getProperty(Properties.DEFAULT_SUBJECT)));
 		
 		Date now = Date.from(Instant.now());
 		
@@ -60,9 +60,9 @@ public class LeadResourceImpl implements LeadResource {
 		lead.setCompany(company);
 		lead.setPhone(phone);
 		lead.setCreatedOn(now);
-		lead.setCreatedBy(userInfo);
+		lead.setCreatedBy(userRef);
 		lead.setLastUpdatedOn(now);
-		lead.setLastUpdatedBy(userInfo);
+		lead.setLastUpdatedBy(userRef);
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( lead );

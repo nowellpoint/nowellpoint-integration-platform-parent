@@ -15,10 +15,9 @@
         <title>${messages["application.title"]}</title>
 
         <!-- Bootstrap core CSS -->
-        <!-- <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" /> -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
-        <!-- Include the CSS -->
+        <!-- Theme CSS -->
         <link rel="stylesheet" href="/v4/dist/toolkit-light.min.css" type="text/css">
 
         <!-- Custom CSS -->
@@ -27,23 +26,14 @@
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
 
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-
-        <script src="/v4/dist/toolkit.min.js"></script>
-        <script src="/js/common.js"></script>
-
-
     </head>
 
     <body>
 
-        <#include "navbar.html" />
-
         <div id="wrapper">
 
             <#include "sidebar.html" />
+            <#include "navbar.html" />
 
             <div class="container-fluid">
                 <div id="page-content-wrapper">
@@ -55,7 +45,14 @@
                 </div>
             </div>
         </div>
-
+        
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        
+        <script src="/v4/dist/toolkit.min.js"></script>
+        <script src="/js/common.js"></script>
+        
 
     </body>
 

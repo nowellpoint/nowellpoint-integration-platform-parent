@@ -23,7 +23,7 @@ import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@Document(collectionName="scheduled.job.types")
+@Document(collectionName="job.types")
 public class ScheduledJobType extends MongoDocument {
 
 	private static final long serialVersionUID = -5368597023270502005L;
@@ -32,10 +32,10 @@ public class ScheduledJobType extends MongoDocument {
 	private Meta meta;
 	
 	@Reference
-	private UserInfo createdBy;
+	private UserRef createdBy;
 	
 	@Reference
-	private UserInfo lastUpdatedBy;
+	private UserRef lastUpdatedBy;
 	
 	private String name;
 	
@@ -60,19 +60,19 @@ public class ScheduledJobType extends MongoDocument {
 		this.meta = meta;
 	}
 
-	public UserInfo getCreatedBy() {
+	public UserRef getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(UserRef createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public UserRef getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 

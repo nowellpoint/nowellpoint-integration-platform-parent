@@ -7,8 +7,8 @@ import javax.enterprise.event.Observes;
 import com.nowellpoint.annotation.Deactivate;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.rest.domain.ScheduledJob;
-import com.nowellpoint.api.rest.domain.ScheduledJobList;
+import com.nowellpoint.api.rest.domain.JobSchedule;
+import com.nowellpoint.api.rest.domain.JobScheduleList;
 
 public interface ScheduledJobService {
 	
@@ -18,7 +18,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public ScheduledJobList findByOwner(String ownerId);
+	public JobScheduleList findByOwner(String ownerId);
 	
 	/**
 	 * 
@@ -26,7 +26,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public ScheduledJobList findScheduled();
+	public JobScheduleList findScheduled();
 	
 	/**
 	 * 
@@ -34,7 +34,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public ScheduledJob createScheduledJob(String scheduledJobTypeId);
+	public JobSchedule createScheduledJob(String scheduledJobTypeId);
 	
 	/**
 	 * 
@@ -42,7 +42,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public void updateScheduledJob(String id, ScheduledJob scheduledJob);
+	public void updateScheduledJob(String id, JobSchedule jobSchedule);
 	
 	/**
 	 * 
@@ -50,7 +50,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public ScheduledJob terminateScheduledJob(String id);
+	public JobSchedule terminateScheduledJob(String id);
 	
 	/**
 	 * 
@@ -58,7 +58,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public ScheduledJob startScheduledJob(String id);
+	public JobSchedule startScheduledJob(String id);
 	
 	/**
 	 * 
@@ -66,7 +66,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public ScheduledJob stopScheduledJob(String id);
+	public JobSchedule stopScheduledJob(String id);
 	
 	/**
 	 * 
@@ -82,7 +82,7 @@ public interface ScheduledJobService {
 	 * 
 	 */
 
-	public ScheduledJob findById(String id);
+	public JobSchedule findById(String id);
 	
 	/**
 	 * 

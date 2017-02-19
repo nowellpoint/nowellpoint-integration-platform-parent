@@ -29,7 +29,7 @@ import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Id;
 
 @Document(collectionName="account.profiles")
-public class UserInfo implements Serializable {
+public class UserRef implements Serializable {
 	
 	private static final long serialVersionUID = -6822014779492972113L;
 
@@ -71,11 +71,11 @@ public class UserInfo implements Serializable {
 	@EmbedOne
 	private Photos photos;
 	
-	public UserInfo() {
+	public UserRef() {
 		
 	}
 	
-	public UserInfo(ObjectId id) {
+	public UserRef(ObjectId id) {
 		setId(id);
 	}
 

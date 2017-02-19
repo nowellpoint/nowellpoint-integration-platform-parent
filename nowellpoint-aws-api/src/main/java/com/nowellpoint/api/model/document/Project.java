@@ -39,7 +39,7 @@ public class Project extends MongoDocument {
 	private String stage;
 	
 	@Reference
-	private UserInfo owner;
+	private UserRef owner;
 	
 	@EmbedMany
 	private List<Application> salesforceOrganizations;
@@ -76,11 +76,11 @@ public class Project extends MongoDocument {
 		this.stage = stage;
 	}
 
-	public UserInfo getOwner() {
+	public UserRef getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserInfo owner) {
+	public void setOwner(UserRef owner) {
 		this.owner = owner;
 	}
 	

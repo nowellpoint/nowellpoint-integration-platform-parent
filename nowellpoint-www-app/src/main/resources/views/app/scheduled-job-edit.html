@@ -17,11 +17,11 @@
             <div class="hr-divider"></div>
             <br>
             <form class="form-vertical" role="form" method="post" action="${action}">
-                <input type="hidden" name="id" id="id" value="${scheduledJob.id}" />
+                <input type="hidden" name="id" id="id" value="${jobSchedule.id}" />
                 <div class="row">
                     <div class="form-group col-md-2">
                         <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
-                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(scheduledJob.notificationEmail)!}" required autofocus="" />
+                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(jobSchedule.notificationEmail)!}" required autofocus="" />
                     </div>
                     <div class="col-md-10"></div>
                 </div>
@@ -29,7 +29,7 @@
                 <div class="row">
                     <div class="form-group col-md-2">
                         <label class="control-label" for="description">${labels["description"]}</label>
-                        <textarea class="form-control" name="description" id="description" rows="3">${(scheduledJob.description)!}</textarea>
+                        <textarea class="form-control" name="description" id="description" rows="3">${(jobSchedule.description)!}</textarea>
                     </div>
                     <div class="col-md-10"></div>
                 </div>
@@ -38,24 +38,91 @@
                     <div class="form-group col-md-2">
                         <label class="control-label" for="scheduleDate">${labels["scheduled.date"]}*</label>
                         <div class="input-group">
-                            <input type="text" id="scheduleDate" name="scheduleDate" value="${(scheduledJob.scheduleDate?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
+                            <input type="text" id="scheduleDate" name="scheduleDate" value="${(jobSchedule.scheduleDate?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
                             <span class="input-group-addon"><span class="icon icon-calendar"></span></span>
                         </div>
                     </div>
                     <div class="col-md-10"></div>
                 </div>
-
+                
                 <div class="row">
                     <div class="form-group col-md-2">
-                        <label class="control-label" for="scheduleTime">${labels["scheduled.time"]}*</label>
+                        <label class="control-label" for="seconds">${labels["seconds"]}</label>
                         <div class="input-group">
-                            <input type="text" id="scheduleTime" name="scheduleTime" value="${(scheduledJob.scheduleDate?time?string['HH:mm'])!}" class="form-control" required/>
-                            <span class="input-group-addon">${labels["time.format"]}</span>
+                            <input type="text" id="seconds" name="seconds" value="${(jobSchedule.seconds)!}" class="form-control"/>
+                             <span class="input-group-addon">[0,59]</span>
                         </div>
                     </div>
                     <div class="col-md-10"></div>
                 </div>
-
+                
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="minutes">${labels["minutes"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="minutes" name="minutes" value="${(jobSchedule.minutes)!}" class="form-control"/>
+                             <span class="input-group-addon">[0,59]</span>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="hours">${labels["hours"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="hours" name="hours" value="${(jobSchedule.hours)!}" class="form-control"/>
+                            <span class="input-group-addon">[0,23]</span>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+                
+                 <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="dayOfMonth">${labels["day.of.month"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="dayOfMonth" name="dayOfMonth" value="${(jobSchedule.dayOfMonth)!}" class="form-control"/>
+                            <span class="input-group-addon">[1,31] ${labels["or"]} ${labels["last"]}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="month">${labels["month"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="month" name="month" value="${(jobSchedule.month)!}" class="form-control"/>
+                            <span class="input-group-addon">[1,12]</span>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="dayOfWeek">${labels["day.of.week"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="dayOfWeek" name="dayOfWeek" value="${(jobSchedule.dayOfWeek)!}" class="form-control"/>
+                            <span class="input-group-addon">[0,7]</span>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="form-group col-md-2">
+                        <label class="control-label" for="year">${labels["year"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="year" name="year" value="${(jobSchedule.year)!}" class="form-control"/>
+                            <span class="input-group-addon">${labels["year.format"]}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-10"></div>
+                </div>
+                
+                 
                 <div class="row">
                     <div class="form-group col-md-2">
                         <div class="pull-right">

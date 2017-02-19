@@ -31,10 +31,10 @@ public class SObjectDetail extends MongoDocument {
 	private static final long serialVersionUID = 8161621113389201360L;
 	
 	@Reference
-	private UserInfo createdBy;
+	private UserRef createdBy;
 	
 	@Reference
-	private UserInfo lastUpdatedBy;
+	private UserRef lastUpdatedBy;
 	
 	private ObjectId connectorId;
 	
@@ -50,19 +50,19 @@ public class SObjectDetail extends MongoDocument {
 		
 	}
 	
-	public UserInfo getCreatedBy() {
+	public UserRef getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(UserRef createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public UserRef getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 

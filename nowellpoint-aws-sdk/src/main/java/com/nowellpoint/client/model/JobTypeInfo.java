@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public class JobType {
+public class JobTypeInfo {
 
 	private String id;
 	
@@ -12,7 +12,7 @@ public class JobType {
 	
 	private ConnectorType connectorType;
 	
-	public JobType() {
+	public JobTypeInfo() {
 		
 	}
 	

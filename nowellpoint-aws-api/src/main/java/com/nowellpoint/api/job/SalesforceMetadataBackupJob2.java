@@ -36,7 +36,7 @@ import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.rest.domain.ScheduledJob;
+import com.nowellpoint.api.rest.domain.JobSchedule;
 import com.nowellpoint.api.rest.service.SalesforceConnectorServiceImpl;
 import com.nowellpoint.api.rest.service.ScheduledJobServiceImpl;
 import com.nowellpoint.api.service.SalesforceConnectorService;
@@ -87,10 +87,10 @@ public class SalesforceMetadataBackupJob2 implements Job {
 		
 		ScheduledJobService scheduledJobService = new ScheduledJobServiceImpl();
 		
-		ScheduledJob scheduledJob = null;
+		JobSchedule jobSchedule = null;
 		
 		try {
-			scheduledJob = scheduledJobService.findById(context.getJobDetail().getKey().getName());
+			jobSchedule = scheduledJobService.findById(context.getJobDetail().getKey().getName());
 		} catch (DocumentNotFoundException e) {
 			LOGGER.error(e);
 			return;
@@ -100,14 +100,14 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			
 			SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorServiceImpl();
 			
-			scheduledJob.setStatus("Running");
-			scheduledJobService.updateScheduledJob(scheduledJob.getId(), scheduledJob);
+			jobSchedule.setStatus("Running");
+			scheduledJobService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
 			
 			//
 			// get environment associated with the ScheduledJob
 			//
 			
-			Instance instance = salesforceConnectorService.getInstance(scheduledJob.getConnectorId(), scheduledJob.getEnvironmentKey());
+			Instance instance = salesforceConnectorService.getInstance(jobSchedule.getConnectorId(), jobSchedule.getEnvironmentKey());
 			
 			//
 			// get User Properties
@@ -161,7 +161,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
 			//
 			
-			List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
+			List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, jobSchedule.getLastRunDate());
 			
 			//
 			// if describeSobjectResults is not empty then save to S3
@@ -241,18 +241,18 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			// update ScheduledJob
 			//
 			
-			if (scheduledJob.getRunHistories() == null) {
-				scheduledJob.setRunHistories(new HashSet<RunHistory>());
-			} else if (scheduledJob.getRunHistories().size() == 10) {
-				List<RunHistory> runHistories = scheduledJob.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList());
+			if (jobSchedule.getRunHistories() == null) {
+				jobSchedule.setRunHistories(new HashSet<RunHistory>());
+			} else if (jobSchedule.getRunHistories().size() == 10) {
+				List<RunHistory> runHistories = jobSchedule.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList());
 				runHistories.remove(0);
-				scheduledJob.setRunHistories(new HashSet<RunHistory>(runHistories));
+				jobSchedule.setRunHistories(new HashSet<RunHistory>(runHistories));
 			}
 			
-			scheduledJob.getRunHistories().add(runHistory);
+			jobSchedule.getRunHistories().add(runHistory);
 			
-			scheduledJob.setStatus("Scheduled");
-			scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
+			jobSchedule.setStatus("Scheduled");
+			jobSchedule.setScheduleDate(Date.from(ZonedDateTime.ofInstant(jobSchedule.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 			//scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 			//scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
 			//scheduledJob.setLastRunDate(fireTime);		    	
@@ -268,7 +268,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			//scheduledJobRequest.setStatus("Failure");
 			//scheduledJobRequest.setFailureMessage(e.getMessage());
 		} finally {
-			scheduledJobService.updateScheduledJob(scheduledJob.getId(), scheduledJob);
+			scheduledJobService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
 		}
 	}
 	

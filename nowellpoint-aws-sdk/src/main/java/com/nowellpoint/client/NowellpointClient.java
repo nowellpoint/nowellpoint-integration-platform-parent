@@ -15,7 +15,7 @@ import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
-import com.nowellpoint.client.resource.ScheduledJobResource;
+import com.nowellpoint.client.resource.JobScheduleResource;
 import com.nowellpoint.client.resource.ScheduledJobTypeResource;
 import com.nowellpoint.client.resource.UserResource;
 
@@ -105,8 +105,8 @@ public class NowellpointClient {
 		return new PlanResource(token);
 	}
 	
-	public ScheduledJobResource scheduledJob() {
-		return new ScheduledJobResource(token);
+	public JobScheduleResource jobSchedule() {
+		return new JobScheduleResource(token);
 	}
 	
 	public SalesforceConnectorResource salesforceConnector() {

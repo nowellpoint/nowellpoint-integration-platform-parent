@@ -39,13 +39,13 @@ public class SalesforceConnector extends MongoDocument {
 	private String name;
 	
 	@Reference
-	private UserInfo createdBy;
+	private UserRef createdBy;
 	
 	@Reference
-	private UserInfo lastUpdatedBy;
+	private UserRef lastUpdatedBy;
 
 	@Reference
-	private UserInfo owner;
+	private UserRef owner;
 	
 	@EmbedOne
 	private Identity identity;
@@ -78,27 +78,27 @@ public class SalesforceConnector extends MongoDocument {
 		this.name = name;
 	}
 
-	public UserInfo getCreatedBy() {
+	public UserRef getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(UserRef createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public UserRef getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public UserInfo getOwner() {
+	public UserRef getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserInfo owner) {
+	public void setOwner(UserRef owner) {
 		this.owner = owner;
 	}
 

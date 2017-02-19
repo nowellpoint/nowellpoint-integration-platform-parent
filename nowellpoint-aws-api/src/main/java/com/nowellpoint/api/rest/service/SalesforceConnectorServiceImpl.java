@@ -729,10 +729,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 					sobjectDetail.setInstanceKey(instanceKey);
 					sobjectDetail.setName(describeSobjectResult.getName());
 					sobjectDetail.setCreatedOn(now);
-					sobjectDetail.setCreatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));
+					sobjectDetail.setCreatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserRef.class, id));
 				}
 				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
-				sobjectDetail.setLastUpdatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserInfo.class, id));
+				sobjectDetail.setLastUpdatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserRef.class, id));
 				sobjectDetail.setLastUpdatedOn(now);
 				sobjectDetail.setResult(describeSobjectResult);
 				if (isNull(sobjectDetail.getId())) {

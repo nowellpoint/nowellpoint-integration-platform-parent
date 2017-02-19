@@ -1,19 +1,48 @@
-package com.nowellpoint.api.rest.domain;
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
+package com.nowellpoint.api.model.document;
 
 import java.util.Date;
 import java.util.Set;
 
-import org.hibernate.validator.constraints.Email;
-
+import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-public class ScheduledJob extends AbstractResource {
+@Document(collectionName="job.schedules")
+public class JobSchedule extends MongoDocument {
+
+	private static final long serialVersionUID = 4880299116047933778L;
 	
-	private UserInfo createdBy;
+	@EmbedOne
+	private Meta meta;
 	
-	private UserInfo lastUpdatedBy;
+	@Reference
+	private UserRef createdBy;
 	
-	private UserInfo owner;
+	@Reference
+	private UserRef lastUpdatedBy;
+	
+	@Reference
+	private UserRef owner;
 	
 	private String environmentKey;
 	
@@ -23,7 +52,8 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String connectorId;
 	
-	private JobType jobType;
+	@EmbedOne
+	private JobTypeInfo jobType;
 	
 	private String description;
 	
@@ -37,7 +67,6 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String lastRunFailureMessage;
 	
-	@Email
 	private String notificationEmail;
 	
 	private String seconds;
@@ -54,37 +83,42 @@ public class ScheduledJob extends AbstractResource {
 	
 	private String year;
 	
+	@EmbedMany
 	private Set<RunHistory> runHistories;
 	
-	public ScheduledJob() {
+	public JobSchedule() {
 		
 	}
-	
-	public ScheduledJob(MongoDocument document) {
-		super(document);
+
+	public Meta getMeta() {
+		return meta;
 	}
 
-	public UserInfo getCreatedBy() {
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
+
+	public UserRef getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(UserRef createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public UserRef getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public UserInfo getOwner() {
+	public UserRef getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserInfo owner) {
+	public void setOwner(UserRef owner) {
 		this.owner = owner;
 	}
 
@@ -120,11 +154,11 @@ public class ScheduledJob extends AbstractResource {
 		this.connectorId = connectorId;
 	}
 
-	public JobType getJobType() {
+	public JobTypeInfo getJobType() {
 		return jobType;
 	}
 
-	public void setJobType(JobType jobType) {
+	public void setJobType(JobTypeInfo jobType) {
 		this.jobType = jobType;
 	}
 
@@ -191,7 +225,7 @@ public class ScheduledJob extends AbstractResource {
 	public void setRunHistories(Set<RunHistory> runHistories) {
 		this.runHistories = runHistories;
 	}
-	
+
 	public String getSeconds() {
 		return seconds;
 	}
@@ -246,10 +280,5 @@ public class ScheduledJob extends AbstractResource {
 
 	public void setYear(String year) {
 		this.year = year;
-	}
-
-	@Override
-	public MongoDocument toDocument() {
-		return modelMapper.map(this, com.nowellpoint.api.model.document.ScheduledJob.class);
 	}
 }

@@ -2,7 +2,7 @@ package com.nowellpoint.api.rest.domain;
 
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 
-public class JobType {
+public class JobTypeInfo {
 
 	private String id;
 	
@@ -15,7 +15,7 @@ public class JobType {
 	@EmbedOne
 	private ConnectorType connectorType;
 	
-	public JobType() {
+	public JobTypeInfo() {
 		
 	}
 

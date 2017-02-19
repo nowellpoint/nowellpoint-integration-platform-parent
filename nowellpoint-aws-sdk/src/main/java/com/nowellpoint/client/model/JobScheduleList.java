@@ -3,16 +3,16 @@ package com.nowellpoint.client.model;
 import java.util.Iterator;
 import java.util.List;
 
-public class ScheduledJobList implements CollectionResource<ScheduledJob> {
+public class JobScheduleList implements CollectionResource<JobSchedule> {
 	
-	private List<ScheduledJob> items;
+	private List<JobSchedule> items;
 	
 	private int size;
 	
 	private Meta meta;
 
 	@Override
-	public Iterator<ScheduledJob> iterator() {
+	public Iterator<JobSchedule> iterator() {
 		return items.iterator();
 	}
 	
@@ -25,12 +25,12 @@ public class ScheduledJobList implements CollectionResource<ScheduledJob> {
 		return size;
 	}
 	
-	public void setItems(List<ScheduledJob> items) {
+	public void setItems(List<JobSchedule> items) {
 		this.items = items;
 	}
 
 	@Override
-	public List<ScheduledJob> getItems() {
+	public List<JobSchedule> getItems() {
 		return items;
 	}
 	

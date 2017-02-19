@@ -1,47 +1,14 @@
-/**
- * 
- * Copyright 2015-2016 the original author or authors.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
+package com.nowellpoint.client.model;
 
-package com.nowellpoint.api.model.document;
-
+import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
-import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedMany;
-import com.nowellpoint.mongodb.annotation.EmbedOne;
-import com.nowellpoint.mongodb.annotation.Reference;
-import com.nowellpoint.mongodb.document.MongoDocument;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Document(collectionName="scheduled.jobs")
-public class ScheduledJob extends MongoDocument {
-
-	private static final long serialVersionUID = 4880299116047933778L;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class JobSchedule extends AbstractResource {
 	
-	@EmbedOne
-	private Meta meta;
-	
-	@Reference
-	private UserInfo createdBy;
-	
-	@Reference
-	private UserInfo lastUpdatedBy;
-	
-	@Reference
 	private UserInfo owner;
 	
 	private String environmentKey;
@@ -52,8 +19,7 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String connectorId;
 	
-	@EmbedOne
-	private JobType jobType;
+	private JobTypeInfo jobTypeInfo;
 	
 	private String description;
 	
@@ -83,35 +49,14 @@ public class ScheduledJob extends MongoDocument {
 	
 	private String year;
 	
-	@EmbedMany
-	private Set<RunHistory> runHistories;
+	private List<RunHistory> runHistories;
 	
-	public ScheduledJob() {
-		
+	public JobSchedule() {
+		setRunHistories(Collections.emptyList());
 	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
-
-	public UserInfo getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UserInfo createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UserInfo getLastUpdatedBy() {
-		return lastUpdatedBy;
-	}
-
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
-		this.lastUpdatedBy = lastUpdatedBy;
+	
+	public JobSchedule(String id) {
+		setId(id);
 	}
 
 	public UserInfo getOwner() {
@@ -154,12 +99,12 @@ public class ScheduledJob extends MongoDocument {
 		this.connectorId = connectorId;
 	}
 
-	public JobType getJobType() {
-		return jobType;
+	public JobTypeInfo getJobType() {
+		return jobTypeInfo;
 	}
 
-	public void setJobType(JobType jobType) {
-		this.jobType = jobType;
+	public void setJobType(JobTypeInfo jobTypeInfo) {
+		this.jobTypeInfo = jobTypeInfo;
 	}
 
 	public String getDescription() {
@@ -202,14 +147,6 @@ public class ScheduledJob extends MongoDocument {
 		this.lastRunStatus = lastRunStatus;
 	}
 
-	public String getLastRunFailureMessage() {
-		return lastRunFailureMessage;
-	}
-
-	public void setLastRunFailureMessage(String lastRunFailureMessage) {
-		this.lastRunFailureMessage = lastRunFailureMessage;
-	}
-
 	public String getNotificationEmail() {
 		return notificationEmail;
 	}
@@ -218,11 +155,19 @@ public class ScheduledJob extends MongoDocument {
 		this.notificationEmail = notificationEmail;
 	}
 
-	public Set<RunHistory> getRunHistories() {
+	public String getLastRunFailureMessage() {
+		return lastRunFailureMessage;
+	}
+
+	public void setLastRunFailureMessage(String lastRunFailureMessage) {
+		this.lastRunFailureMessage = lastRunFailureMessage;
+	}
+
+	public List<RunHistory> getRunHistories() {
 		return runHistories;
 	}
 
-	public void setRunHistories(Set<RunHistory> runHistories) {
+	public void setRunHistories(List<RunHistory> runHistories) {
 		this.runHistories = runHistories;
 	}
 

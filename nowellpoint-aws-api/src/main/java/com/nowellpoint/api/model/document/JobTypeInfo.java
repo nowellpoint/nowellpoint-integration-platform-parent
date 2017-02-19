@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 
-public class JobType implements Serializable {
+public class JobTypeInfo implements Serializable {
 	
 	private static final long serialVersionUID = -715880262310009511L;
 
@@ -21,7 +21,7 @@ public class JobType implements Serializable {
 	@EmbedOne
 	private ConnectorType connectorType;
 	
-	public JobType() {
+	public JobTypeInfo() {
 		
 	}
 

@@ -1,10 +1,6 @@
-<nav class="navbar navbar-toggleable-md fixed-top" role="navigation">
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand custom-brand" style="width: 250px;">${messages["application.title"]}</a>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-2 mr-auto">
+    
+    <nav id="top-nav" class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="/app/start">
                     <span class="icon icon-star"></span>&nbsp;${messages["start"]}
@@ -25,6 +21,9 @@
                     <a class="dropdown-item" href="/logout">${messages["log.out"]}</a>
                 </div>
             </li>
+            <li class="nav-item">
+                <a href="#menu-toggle" class="btn btn-secondary btn-sm" id="menu-toggle" data-toggle="tooltip" title="${messages['collapse.menu']}"><span class="icon icon-menu fa fa-2x"></span></a>                
+            </li>
+            
         </ul>
-    </div>
-</nav>
+    </nav>

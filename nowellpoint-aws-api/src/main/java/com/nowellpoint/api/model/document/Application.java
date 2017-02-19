@@ -31,7 +31,7 @@ public class Application extends MongoDocument implements Serializable {
 	private static final long serialVersionUID = -1315510190045597737L;
 	
 	@Reference
-	private UserInfo owner;
+	private UserRef owner;
 	
 	private String name;
 	
@@ -45,11 +45,11 @@ public class Application extends MongoDocument implements Serializable {
 		
 	}
 	
-	public UserInfo getOwner() {
+	public UserRef getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserInfo owner) {
+	public void setOwner(UserRef owner) {
 		this.owner = owner;
 	}
 

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.ScheduledJob;
-import com.nowellpoint.client.model.ScheduledJobList;
+import com.nowellpoint.client.model.JobSchedule;
+import com.nowellpoint.client.model.JobScheduleList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
@@ -30,17 +30,17 @@ public class DashboardController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		ScheduledJobList list = new NowellpointClient(token)
-				.scheduledJob()
-				.getScheduledJobs();
+		JobScheduleList list = new NowellpointClient(token)
+				.jobSchedule()
+				.getJobSchedules();
 		
-		List<ScheduledJob> scheduledJobs = list.getItems()
+		List<JobSchedule> jobSchedules = list.getItems()
 				.stream()
 				.filter(job -> job.getEnvironmentKey() != null)
 				.collect(Collectors.toList());
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", scheduledJobs);
+		model.put("scheduledJobList", jobSchedules);
 		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
     	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};

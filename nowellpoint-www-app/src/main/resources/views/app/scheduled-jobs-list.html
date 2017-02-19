@@ -7,7 +7,7 @@
                 <h6 class="dashhead-subtitle">&emsp;</h6>
                 <h2 class="dashhead-title">${labels["scheduled.jobs"]}</h2>
             </div>
-            <#if scheduledJobList?size gt 0>
+            <#if jobScheduleList?size gt 0>
                 <div class="dashhead-toolbar">
                     <p class="pull-right">
                         <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-primary btn-lg" role="button">${labels["create.scheduled.job"]}</a>
@@ -16,7 +16,7 @@
             </#if>
         </div>
         <div class="hr-divider"></div>
-        <#if scheduledJobList?size==0>
+        <#if jobScheduleList?size==0>
             <br>
             <br>
             <br>
@@ -30,26 +30,26 @@
         </#if>
         <br>
         <div class="flexgrid">
-            <#list scheduledJobList?sort_by( "createdOn") as scheduledJob>
+            <#list jobScheduleList?sort_by( "createdOn") as jobSchedule>
                 <div class="offer offer-radius offer-info">
-                    <a href="${labels['base.path']}/${scheduledJob.id}" style="text-decoration: none">
+                    <a href="${labels['base.path']}/${jobSchedule.id}" style="text-decoration: none">
                     <div class="offer-content">
                         <h3 class="lead">
-							${scheduledJob.jobType.name}
+							${jobSchedule.jobType.name}
 						</h3>
-                        <p>
-                            ${(scheduledJob.instanceName)!} - 
-                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
-                            <span class="text-danger">(${(scheduledJob.lastRunStatus)!})</span>
-                            <!-- </#if> -->
-                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
-                            <span class="text-success">(${(scheduledJob.lastRunStatus)!})</span>
-                            <!-- </#if> -->
-                            <br> <small>${labels["by"]}</small>&nbsp;${scheduledJob.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${scheduledJob.createdOn?date?string.long}
-                        </p>
                         <div class="text-right">
-                            <a href="${labels['base.path']}/${scheduledJob.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                            <a href="${labels['base.path']}/${jobSchedule.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
                         </div>
+                        <p>
+                            ${(jobSchedule.instanceName)!} - 
+                            <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
+                            <span class="text-danger">(${(jobSchedule.lastRunStatus)!})</span>
+                            <!-- </#if> -->
+                            <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Success"> -->
+                            <span class="text-success">(${(jobSchedule.lastRunStatus)!})</span>
+                            <!-- </#if> -->
+                            <br> <small>${labels["by"]}</small>&nbsp;${jobSchedule.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${jobSchedule.createdOn?date?string.long}
+                        </p>
                     </div>
                     </a>    
                 </div>

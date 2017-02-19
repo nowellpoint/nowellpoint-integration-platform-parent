@@ -14,10 +14,10 @@ public class Lead extends MongoDocument {
 	private Meta meta;
 	
 	@Reference
-	private UserInfo createdBy;
+	private UserRef createdBy;
 	
 	@Reference
-	private UserInfo lastUpdatedBy;
+	private UserRef lastUpdatedBy;
 	
 	private String firstName;
 	
@@ -61,19 +61,19 @@ public class Lead extends MongoDocument {
 		this.meta = meta;
 	}
 
-	public UserInfo getCreatedBy() {
+	public UserRef getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(UserRef createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public UserRef getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
