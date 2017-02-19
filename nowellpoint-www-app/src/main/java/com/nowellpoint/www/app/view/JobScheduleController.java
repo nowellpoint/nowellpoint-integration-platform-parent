@@ -19,10 +19,11 @@ import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.JobScheduleList;
 import com.nowellpoint.client.model.JobSchedule;
 import com.nowellpoint.client.model.JobScheduleRequest;
+import com.nowellpoint.client.model.JobType;
 import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
-import com.nowellpoint.client.model.ScheduledJobType;
+import com.nowellpoint.client.model.JobTypeList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.www.app.util.MessageProvider;
@@ -99,15 +100,13 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		Identity identity = getIdentity(request);
 		
-		List<ScheduledJobType> scheduledJobTypes = new NowellpointClient(token)
+		JobTypeList jobTypeList = new NowellpointClient(token)
 				.scheduledJobType()
-				.getScheduledJobTypesByLanguage(identity.getLanguageSidKey())
-				.getItems();
+				.getScheduledJobTypesByLanguage(identity.getLanguageSidKey());
 		
 		Map<String, Object> model = getModel();
 		model.put("step", "select-type");
-    	model.put("scheduledJobTypeList", scheduledJobTypes);
-    	model.put("title", getLabel(JobScheduleController.class, request, "select.scheduled.job.type"));
+    	model.put("jobTypeList", jobTypeList.getItems());
     	
     	return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 	}
@@ -125,23 +124,17 @@ public class JobScheduleController extends AbstractStaticController {
 
 		Token token = getToken(request);
 		
-		String scheduledJobTypeId = request.queryParams("scheduledJobTypeId");
+		String jobTypeId = request.queryParams("jobTypeId");
 		
-		JobScheduleRequest createScheduledJobRequest = new JobScheduleRequest()
-				.withScheduledJobTypeId(scheduledJobTypeId);
-		
-		CreateResult<JobSchedule> createScheduledJobResult = new NowellpointClient(token)
-				.jobSchedule()
-				.create(createScheduledJobRequest);
-		
-		JobSchedule jobSchedule = createScheduledJobResult.getTarget();
+		JobType jobType = new NowellpointClient(token)
+				.scheduledJobType()
+				.get(jobTypeId);
 		
 		Map<String, Object> model = getModel();
 		model.put("step", "select-connector");
-		model.put("scheduledJob", jobSchedule);
-    	model.put("title", getLabel(JobScheduleController.class, request, "select.connector"));
+		model.put("jobType", jobType);
 		
-		if ("SALESFORCE_METADATA_BACKUP".equals(jobSchedule.getJobType().getCode())) {
+		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
 			
 			SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
 					.salesforceConnector()
@@ -166,27 +159,24 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		String connectorId = request.queryParams("connector-id");
+		String jobTypeId = request.queryParams("jobTypeId");
+		String connectorId = request.queryParams("connectorId");
 		
-		JobSchedule jobSchedule = new JobSchedule(); //objectMapper.readValue(getValue(token, id), ScheduledJob.class);
-		jobSchedule.setConnectorId(connectorId);
-		
-		//putValue(token, scheduledJob.getId(), objectMapper.writeValueAsString(scheduledJob));
+		JobType jobType = new NowellpointClient(token)
+				.scheduledJobType()
+				.get(jobTypeId);
 		
 		Map<String, Object> model = getModel();
 		model.put("step", "select-environment");
-		model.put("scheduledJob", jobSchedule);
-		model.put("title", getLabel(JobScheduleController.class, request, "select.environment"));
+		model.put("jobType", jobType);
 		
-		if ("SALESFORCE_METADATA_BACKUP".equals(jobSchedule.getJobType().getCode())) {
+		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
 			
 			SalesforceConnector salesforceConnector = new NowellpointClient(token)
 					.salesforceConnector()
 					.get(connectorId);
 			
-			List<Instance> instances = salesforceConnector.getInstances();
-			
-			model.put("environments", instances);
+			model.put("salesforceConnector", salesforceConnector);
 		}
 		
     	return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);

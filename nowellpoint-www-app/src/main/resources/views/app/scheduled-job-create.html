@@ -1,15 +1,17 @@
 <#import "template.html" as t>
 
     <@t.page>
+        
+
+        <!-- <#if step=="select-type"> -->
+        
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title">${title}</h3>
+                <h3 class="dashhead-title">${labels["select.job.type"]}</h3>
             </div>
         </div>
 
         <br>
-
-        <!-- <#if step=="select-type"> -->
 
         <div class="content table-responsive">
             <table class="table table-hover">
@@ -20,12 +22,12 @@
                     <th></th>
                 </thead>
                 <tbody>
-                    <#list scheduledJobTypeList?sort_by( "createdOn") as scheduledJobType>
+                    <#list jobTypeList?sort_by( "createdOn") as jobType>
                         <tr>
-                            <td>${scheduledJobType.name}</td>
-                            <td class="p-r">${scheduledJobType.description}</td>
-                            <td>${scheduledJobType.connectorType.name}</td>
-                            <td><a href="${labels['base.path']}/new/select-connector?scheduledJobTypeId=${scheduledJobType.id}">${labels["select"]}</a></td>
+                            <td>${jobType.name}</td>
+                            <td class="p-r">${jobType.description}</td>
+                            <td>${jobType.connectorType.name}</td>
+                            <td><a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobType.id}">${labels["select"]}</a></td>
                         </tr>
                     </#list>
                 </tbody>
@@ -41,10 +43,41 @@
         <!-- </#if> -->
 
         <!-- <#if step=="select-connector"> -->
+        
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["job.type"]}</h3>
+            </div>
+        </div>
 
+        <br>
+        
+        <dl class="dl-horizontal">
+            <dt>${labels["name"]}</dt>
+            <dd>${jobType.name}&emsp;</dd>
+            <hr>
+            <dt>${labels["description"]}</dt>
+            <dd>${jobType.description}&emsp;</dd>
+            <hr>
+            <dt>${labels["connector.type"]}</dt>
+            <dd>${jobType.connectorType.name}&emsp;</dd>
+            <hr>
+        </dl>    
+        
+        <br>
+        
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["select.connector"]}</h3>
+            </div>
+        </div>
+
+        <br>
+        
         <div class="content table-responsive">
             <table class="table table-hover">
                 <thead>
+                    <th>${labels["name"]}</th>
                     <th>${labels["organization.name"]}</th>
                     <th>${labels["organization.type"]}</th>
                     <th>${labels["instance.name"]}</th>
@@ -54,11 +87,12 @@
                 <tbody>
                     <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
                         <tr>
+                            <td>${(salesforceConnector.name)!}</td>
                             <td>${salesforceConnector.organization.name}</td>
                             <td>${salesforceConnector.organization.organizationType}</td>
                             <td>${salesforceConnector.organization.instanceName}</td>
                             <td>${salesforceConnector.identity.displayName}</td>
-                            <td><a href="${labels['base.path']}/new/select-environment?id=${scheduledJob.id}&connector-id=${salesforceConnector.id}">${labels["select"]}</a></td>
+                            <td><a href="${labels['base.path']}/new/select-environment?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}">${labels["select"]}</a></td>
                         </tr>
                     </#list>
                 </tbody>
@@ -75,6 +109,58 @@
         <!-- </#if> -->
 
         <!-- <#if step=="select-environment"> -->
+        
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["job.type"]}</h3>
+            </div>
+        </div>
+
+        <br>
+        
+        <dl class="dl-horizontal">
+            <dt>${labels["name"]}</dt>
+            <dd>${jobType.name}</dd>
+            <hr>
+            <dt>${labels["description"]}</dt>
+            <dd>${jobType.description}</dd>
+            <hr>
+            <dt>${labels["connector.type"]}</dt>
+            <dd>${jobType.connectorType.name}</dd>
+            <hr>
+        </dl>    
+        
+        <br>
+        
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["connector"]}</h3>
+            </div>
+        </div>
+
+        <br>
+        
+        <dl class="dl-horizontal">
+            <dt>${labels["name"]}</dt>
+            <dd>${(salesforceConnector.name)!}</dd>
+            <hr>
+            <dt>${labels["organization.name"]}</dt>
+            <dd>${salesforceConnector.organization.name}</dd>
+            <hr>
+            <dt>${labels["instance.name"]}</dt>
+            <dd>${salesforceConnector.organization.instanceName}</dd>
+            <hr>
+        </dl>    
+        
+        <br>
+        
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["select.instance"]}</h3>
+            </div>
+        </div>
+
+        <br>
 
         <div class="content table-responsive">
             <table class="table table-hover">
@@ -85,12 +171,12 @@
                     <th></th>
                 </thead>
                 <tbody>
-                    <#list environments?sort_by( "addedOn") as environment>
+                    <#list salesforceConnector.instances?sort_by( "addedOn") as instance>
                         <tr>
-                            <td>${(environment.environmentName)!}</td>
-                            <td>${(environment.serviceEndpoint)!}</td>
-                            <td>${(environment.apiVersion)!}</td>
-                            <td><a href="${labels['base.path']}/new/set-schedule?id=${scheduledJob.id}&environment-key=${environment.key}">${labels["select"]}</a></td>
+                            <td>${(instance.environmentName)!}</td>
+                            <td>${(instance.serviceEndpoint)!}</td>
+                            <td>${(instance.apiVersion)!}</td>
+                            <td><a href="${labels['base.path']}/new/set-schedule?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}&instanceKey=${instance.key}">${labels["select"]}</a></td>
                         </tr>
                     </#list>
                 </tbody>
@@ -101,7 +187,7 @@
 
         <div class="pull-right">
             <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-            <a href="${labels['base.path']}/new/select-connector?job-type-id=${scheduledJob.jobTypeId}" class="btn btn-primary" role="button">${labels["previous"]}</a>
+            <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobType.id}" class="btn btn-primary" role="button">${labels["previous"]}</a>
         </div>
 
         <!-- </#if> -->

@@ -109,7 +109,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 
 		if (isNotNullOrEmpty(scheduleDate)) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
 				jobSchedule.setScheduleDate(sdf.parse(scheduleDate));
 			} catch (Exception e) {
 				LOGGER.warn(e.getMessage());

@@ -3,7 +3,7 @@ package com.nowellpoint.client.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScheduledJobType extends AbstractResource {
+public class JobType extends AbstractResource {
 	
 	private String name;
 	
@@ -15,7 +15,7 @@ public class ScheduledJobType extends AbstractResource {
 	
 	private ConnectorType connectorType;
 	
-	public ScheduledJobType() {
+	public JobType() {
 		
 	}
 
