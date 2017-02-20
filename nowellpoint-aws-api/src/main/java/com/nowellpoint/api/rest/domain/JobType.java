@@ -2,7 +2,7 @@ package com.nowellpoint.api.rest.domain;
 
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-public class ScheduledJobType extends AbstractResource {
+public class JobType extends AbstractResource {
 	
 	private Meta meta;
 	
@@ -20,7 +20,7 @@ public class ScheduledJobType extends AbstractResource {
 	
 	private ConnectorType connectorType;
 	
-	public ScheduledJobType() {
+	public JobType() {
 		
 	}
 	
@@ -48,7 +48,7 @@ public class ScheduledJobType extends AbstractResource {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public ScheduledJobType(MongoDocument document) {
+	public JobType(MongoDocument document) {
 		super(document);
 	}
 
@@ -94,6 +94,6 @@ public class ScheduledJobType extends AbstractResource {
 	
 	@Override
 	public MongoDocument toDocument() {
-		return modelMapper.map(this, com.nowellpoint.api.model.document.ScheduledJobType.class);
+		return modelMapper.map(this, com.nowellpoint.api.model.document.JobType.class);
 	}
 }

@@ -245,13 +245,13 @@
 
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${(salesforceConnector.name)!}</dd>
+            <dd>${(jobSchedule.connector.name)!}</dd>
             <hr>
             <dt>${labels["organization.name"]}</dt>
-            <dd>${salesforceConnector.organization.name}</dd>
+            <dd>${jobSchedule.connector.organizationName}</dd>
             <hr>
             <dt>${labels["instance.name"]}</dt>
-            <dd>${salesforceConnector.organization.instanceName}</dd>
+            <dd>${jobSchedule.connector.serverName}</dd>
             <hr>
         </dl>
 
@@ -265,13 +265,13 @@
 
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${(instance.name)!}</dd>
+            <dd>${(jobSchedule.connector.instance.name)!}</dd>
             <hr>
             <dt>${labels["service.endpoint"]}</dt>
-            <dd>${(instance.serviceEndpoint)!}</dd>
+            <dd>${(jobSchedule.connector.instance.serviceEndpoint)!}</dd>
             <hr>
             <dt>${labels["api.version"]}</dt>
-            <dd>${(instance.apiVersion)!}</dd>
+            <dd>${(jobSchedule.connector.instance.apiVersion)!}</dd>
             <hr>
         </dl>
 

@@ -1,6 +1,7 @@
 package com.nowellpoint.api.service;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
@@ -10,7 +11,7 @@ import com.nowellpoint.api.rest.domain.RunHistory;
 import com.nowellpoint.api.rest.domain.JobSchedule;
 import com.nowellpoint.api.rest.domain.JobScheduleList;
 
-public interface ScheduledJobService {
+public interface JobScheduleService {
 	
 	/**
 	 * 
@@ -34,7 +35,18 @@ public interface ScheduledJobService {
 	 * 
 	 */
 	
-	public JobSchedule createScheduledJob(String scheduledJobTypeId);
+	public JobSchedule createJobSchedule(
+			String jobTypeId, 
+			String connectorId, 
+			String instanceKey, 
+			Date scheduleDate, 
+			String seconds,
+			String minutes,
+			String hours,
+			String dayOfMonth,
+			String month,
+			String dayOfWeek,
+			String year);
 	
 	/**
 	 * 

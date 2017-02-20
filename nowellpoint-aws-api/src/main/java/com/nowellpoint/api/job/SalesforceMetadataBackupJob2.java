@@ -38,9 +38,9 @@ import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.RunHistory;
 import com.nowellpoint.api.rest.domain.JobSchedule;
 import com.nowellpoint.api.rest.service.SalesforceConnectorServiceImpl;
-import com.nowellpoint.api.rest.service.ScheduledJobServiceImpl;
+import com.nowellpoint.api.rest.service.JobScheduleServiceImpl;
 import com.nowellpoint.api.service.SalesforceConnectorService;
-import com.nowellpoint.api.service.ScheduledJobService;
+import com.nowellpoint.api.service.JobScheduleService;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -85,12 +85,12 @@ public class SalesforceMetadataBackupJob2 implements Job {
 		System.out.println(context.getJobDetail().getKey().getGroup());
 		System.out.println(context.getJobDetail().getKey().getName());
 		
-		ScheduledJobService scheduledJobService = new ScheduledJobServiceImpl();
+		JobScheduleService jobScheduleService = new JobScheduleServiceImpl();
 		
 		JobSchedule jobSchedule = null;
 		
 		try {
-			jobSchedule = scheduledJobService.findById(context.getJobDetail().getKey().getName());
+			jobSchedule = jobScheduleService.findById(context.getJobDetail().getKey().getName());
 		} catch (DocumentNotFoundException e) {
 			LOGGER.error(e);
 			return;
@@ -101,7 +101,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorServiceImpl();
 			
 			jobSchedule.setStatus("Running");
-			scheduledJobService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
+			jobScheduleService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
 			
 			//
 			// get environment associated with the ScheduledJob
@@ -268,7 +268,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			//scheduledJobRequest.setStatus("Failure");
 			//scheduledJobRequest.setFailureMessage(e.getMessage());
 		} finally {
-			scheduledJobService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
+			jobScheduleService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
 		}
 	}
 	

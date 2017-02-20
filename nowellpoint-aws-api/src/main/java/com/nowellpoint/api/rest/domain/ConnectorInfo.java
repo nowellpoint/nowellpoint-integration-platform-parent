@@ -8,7 +8,7 @@ public class ConnectorInfo {
 	
 	private String organizationName;
 	
-	private String instanceName;
+	private String serverName;
 	
 	private InstanceInfo instance;
 	
@@ -40,12 +40,12 @@ public class ConnectorInfo {
 		this.organizationName = organizationName;
 	}
 
-	public String getInstanceName() {
-		return instanceName;
+	public String getServerName() {
+		return serverName;
 	}
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
 	}
 
 	public InstanceInfo getInstance() {

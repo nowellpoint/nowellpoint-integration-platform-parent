@@ -20,8 +20,8 @@ import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 
 import com.nowellpoint.api.rest.domain.JobSchedule;
-import com.nowellpoint.api.rest.service.ScheduledJobServiceImpl;
-import com.nowellpoint.api.service.ScheduledJobService;
+import com.nowellpoint.api.rest.service.JobScheduleServiceImpl;
+import com.nowellpoint.api.service.JobScheduleService;
 
 public class JobSchedulerManager2 {
 	
@@ -38,8 +38,8 @@ public class JobSchedulerManager2 {
 		
 		Date runTime = evenMinuteDate(new Date());
 		
-		ScheduledJobService scheduledJobService = new ScheduledJobServiceImpl();
-		Set<JobSchedule> jobSchedules = scheduledJobService.findScheduled().getItems();
+		JobScheduleService jobScheduleService = new JobScheduleServiceImpl();
+		Set<JobSchedule> jobSchedules = jobScheduleService.findScheduled().getItems();
 		
 		jobSchedules.stream().forEach(job -> {
 			

@@ -10,37 +10,33 @@
         <div>
             <a href="${labels['base.path']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.scheduled.jobs"]}
         </div>
+        <br>
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <div class="dashhead-titles">
                     <h3 class="dashhead-title">${labels["scheduled.job"]}</h3>
                 </div>
             </div>
-            <div class="flextable-item">
-                <a id="edit-scheduled-job" href="${labels['base.path']}/${scheduledJob.id!}/edit" class="btn btn-primary-outline" role="button">${labels["edit.scheduled.job"]}</a>
-            </div>
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group">
-                <!--  <#if scheduledJob.status == "Stopped"> -->
-                <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/start">
-                    <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-default">${labels["start.scheduled.job"]}</button>
+                <a id="edit-scheduled-job" href="${labels['base.path']}/${jobSchedule.id!}/edit" class="btn btn-primary" role="button">${labels["edit.scheduled.job"]}</a>&emsp;
+                <!--  <#if jobSchedule.status == "Stopped" || jobSchedule.status == "Not Scheduled"> -->
+                <form method="post" action="${labels['base.path']}/${jobSchedule.id!}/start">
+                    <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-secondary">${labels["start.scheduled.job"]}</button>
                 </form>
                 <!-- </#if> -->
-                <!--  <#if scheduledJob.status == "Scheduled"> -->
-                <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/stop">
-                    <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-default">${labels["stop.scheduled.job"]}</button>
+                <!--  <#if jobSchedule.status == "Scheduled"> -->
+                <form method="post" action="${labels['base.path']}/${jobSchedule.id!}/stop">
+                    <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-secondary">${labels["stop.scheduled.job"]}</button>&emsp;
+                </form>
+                <form method="post" action="${labels['base.path']}/${jobSchedule.id!}/terminate">
+                    <button type="submit" name="terminate-scheduled-job" id="terminate-scheduled-job" class="btn btn-secondary">${labels["terminate.scheduled.job"]}</button>
                 </form>
                 <!-- </#if> -->
-            </div>
-            <div class="btn-group">
-                <form method="post" action="${labels['base.path']}/${scheduledJob.id!}/terminate">
-                    <button type="submit" name="terminate-scheduled-job" id="terminate-scheduled-job" class="btn btn-default">${labels["terminate.scheduled.job"]}</button>
-                </form>
             </div>
         </div>
-
         <br>
 
         <div class="row">
@@ -49,22 +45,22 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["owner"]}</dt>
-                    <dd>${(scheduledJob.owner.name)!}</dd>
+                    <dd>${(jobSchedule.owner.name)!}</dd>
                     <hr>
                     <dt>${labels["connector.type"]}</dt>
-                    <dd><a href="${connectorHref!}">${(scheduledJob.connectorType)!}</a>&emsp;</dd>
+                    <dd><a href="${connectorHref!}">${(jobSchedule.jobType.connectorType.name)!}</a>&emsp;</dd>
                     <hr>
-                    <dt>${labels["environment.name"]}</dt>
-                    <dd>${(scheduledJob.environmentName)!}&emsp;</dd>
+                    <dt>${labels["instance.name"]}</dt>
+                    <dd>${(jobSchedule.connector.instance.name)!}&emsp;</dd>
                     <hr>
                     <dt>${labels["status"]}</dt>
-                    <!--  <#if scheduledJob.status == "Stopped"> -->
+                    <!--  <#if jobSchedule.status == "Stopped"> -->
                     <dd class="text-danger">
                         <!-- </#if> -->
-                        <!--  <#if scheduledJob.status == "Scheduled"> -->
+                        <!--  <#if jobSchedule.status == "Scheduled"> -->
                         <dd class="text-success">
                             <!-- </#if> -->
-                            ${(scheduledJob.status)!}&emsp;
+                            ${(jobSchedule.status)!}&emsp;
                         </dd>
                         <hr>
                 </dl>
@@ -74,25 +70,25 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["next.run.date"]}</dt>
-                    <dd>${(scheduledJob.scheduleDate?date?string.iso)!} ${(scheduledJob.scheduleDate?time?string["HH:mm"])!}&emsp;</dd>
+                    <dd>${(jobSchedule.scheduleDate?date?string.iso)!} ${(jobSchedule.scheduleDate?time?string["HH:mm"])!}&emsp;</dd>
                     <hr>
                     <dt>${labels["last.run.status"]}</dt>
-                    <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
+                    <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
                     <dd class="text-danger">
                         <!-- </#if> -->
-                        <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Success"> -->
+                        <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Success"> -->
                         <dd class="text-success">
                             <!-- </#if> -->
-                            ${(scheduledJob.lastRunStatus)!}&emsp;
-                            <!--  <#if scheduledJob.lastRunStatus?? && scheduledJob.lastRunStatus == "Failure"> -->
-                            <span class="icon icon-squared-cross"></span>&emsp;${scheduledJob.lastRunFailureMessage!}</dd>
+                            ${(jobSchedule.lastRunStatus)!}&emsp;
+                            <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
+                            <span class="icon icon-squared-cross"></span>&emsp;${jobSchedule.lastRunFailureMessage!}</dd>
                         <!-- </#if> -->
                         <hr>
                         <dt>${labels["last.run.date"]}</dt>
-                        <dd>${(scheduledJob.lastRunDate?date?string.iso)!} ${(scheduledJob.lastRunDate?time?string["HH:mm"])!}&emsp;</dd>
+                        <dd>${(jobSchedule.lastRunDate?date?string.iso)!} ${(jobSchedule.lastRunDate?time?string["HH:mm"])!}&emsp;</dd>
                         <hr>
                         <dt>${labels["notification.email"]}</dt>
-                        <dd>${(scheduledJob.notificationEmail)!}&emsp;</dd>
+                        <dd>${(jobSchedule.notificationEmail)!}&emsp;</dd>
                         <hr>
                 </dl>
             </div>
@@ -109,7 +105,7 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["description"]}</dt>
-                    <dd>${scheduledJob.description!}&emsp;</dd>
+                    <dd>${jobSchedule.description!}&emsp;</dd>
                     <hr>
                 </dl>
 
@@ -132,8 +128,6 @@
                     </div>
                 </div>
                 <br>
-                <div class="hr-divider"></div>
-                <br>
                 <div class="content table-responsive">
                     <table id="run-history-table" class="table table-hover">
                         <thead>
@@ -145,7 +139,7 @@
                             <th class="col-xs-5"></th>
                         </thead>
                         <tbody>
-                            <#list scheduledJob.runHistories?sort_by( "fireTime")?reverse as runHistory>
+                            <#list jobSchedule.runHistories?sort_by( "fireTime")?reverse as runHistory>
                                 <tr id="${(runHistory.fireInstanceId)!}">
                                     <td>${(runHistory.fireInstanceId)!}</td>
                                     <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
@@ -165,29 +159,21 @@
         </div>
 
         <br>
+        <div class="hr-divider"></div>
         <br>
 
         <div class="row" id="settings">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["settings"]}</h3>
-                    </div>
-                </div>
-                <br>
-                <div class="hr-divider"></div>
-                <br>
-            </div>
+            <br>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${createdByHref}">${(scheduledJob.createdBy.name)!}</a>, ${scheduledJob.createdOn?date?string.long!} ${scheduledJob.createdOn?time?string.medium!}</dd>
+                    <dd><a href="${createdByHref}">${(jobSchedule.createdBy.name)!}</a>, ${jobSchedule.createdOn?date?string.long!} ${jobSchedule.createdOn?time?string.medium!}</dd>
                 </dl>
             </div>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${lastModifiedByHref}">${(scheduledJob.lastUpdatedBy.name)!}</a>, ${scheduledJob.lastUpdatedOn?date?string.long!} ${scheduledJob.lastUpdatedOn?time?string.medium!}</dd>
+                    <dd><a href="${lastModifiedByHref}">${(jobSchedule.lastUpdatedBy.name)!}</a>, ${jobSchedule.lastUpdatedOn?date?string.long!} ${jobSchedule.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
         </div>

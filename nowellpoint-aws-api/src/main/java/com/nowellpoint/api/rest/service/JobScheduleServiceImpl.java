@@ -23,6 +23,7 @@ import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Backup;
 import com.nowellpoint.api.rest.domain.ConnectorInfo;
 import com.nowellpoint.api.rest.domain.Instance;
+import com.nowellpoint.api.rest.domain.InstanceInfo;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.JobTypeInfo;
@@ -30,21 +31,21 @@ import com.nowellpoint.api.rest.domain.RunHistory;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.JobSchedule;
 import com.nowellpoint.api.rest.domain.JobScheduleList;
-import com.nowellpoint.api.rest.domain.ScheduledJobType;
+import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.SalesforceConnectorService;
-import com.nowellpoint.api.service.ScheduledJobService;
-import com.nowellpoint.api.service.ScheduledJobTypeService;
+import com.nowellpoint.api.service.JobScheduleService;
+import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
 
-public class ScheduledJobServiceImpl extends AbstractScheduledJobService implements ScheduledJobService {
+public class JobScheduleServiceImpl extends AbstractJobScheduleService implements JobScheduleService {
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
 	
 	@Inject
-	private ScheduledJobTypeService scheduledJobTypeService;
+	private JobTypeService jobTypeService;
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
@@ -57,7 +58,7 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 	 * 
 	 */
 	
-	public ScheduledJobServiceImpl() {
+	public JobScheduleServiceImpl() {
 		
 	}
 
@@ -86,34 +87,94 @@ public class ScheduledJobServiceImpl extends AbstractScheduledJobService impleme
 	}
 	
 	@Override
-	public JobSchedule createScheduledJob(String scheduledJobTypeId) {
-		ScheduledJobType scheduledJobType = scheduledJobTypeService.findById(scheduledJobTypeId);
+	public JobSchedule createJobSchedule(
+			String jobTypeId, 
+			String connectorId, 
+			String instanceKey, 
+			Date scheduleDate, 
+			String seconds,
+			String minutes,
+			String hours,
+			String dayOfMonth,
+			String month,
+			String dayOfWeek,
+			String year) {
+		
+		JobType jobType = jobTypeService.findById(jobTypeId);
 		
 		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		Date now = Date.from(Instant.now());
 		
 		JobSchedule jobSchedule = new JobSchedule();
-		jobSchedule.setScheduleDate(new Date());
+		jobSchedule.setScheduleDate(Assert.isNull(scheduleDate) ? new Date() : scheduleDate);
 		jobSchedule.setStatus(JobStatus.NOT_SCHEDULED);
 		jobSchedule.setOwner(userInfo);
 		jobSchedule.setCreatedOn(now);
 		jobSchedule.setCreatedBy(userInfo);
 		jobSchedule.setLastUpdatedOn(now);
 		jobSchedule.setLastUpdatedBy(userInfo);
-		jobSchedule.setSeconds("*");
-		jobSchedule.setMinutes("*");
-		jobSchedule.setHours("*");
-		jobSchedule.setMonth("*");
-		jobSchedule.setYear("*");
+		jobSchedule.setSeconds(Assert.isNull(seconds) ? "*" : seconds);
+		jobSchedule.setMinutes(Assert.isNull(minutes) ? "*" : minutes);
+		jobSchedule.setHours(Assert.isNull(hours) ? "*" : hours);
+		jobSchedule.setDayOfMonth(dayOfMonth);
+		jobSchedule.setMonth(Assert.isNull(month) ? "*" : month);
+		jobSchedule.setDayOfWeek(dayOfWeek);
+		jobSchedule.setYear(Assert.isNull(year) ? "*" : year);
 		
-		JobTypeInfo jobTypeInfo = new JobTypeInfo();
-		jobTypeInfo.setCode(scheduledJobType.getCode());
-		jobTypeInfo.setConnectorType(scheduledJobType.getConnectorType());
-		jobTypeInfo.setDescription(scheduledJobType.getDescription());
-		jobTypeInfo.setId(scheduledJobType.getId());
-		jobTypeInfo.setName(scheduledJobType.getName());
+		jobSchedule.setJobType(new JobTypeInfo(jobType));
 		
-		jobSchedule.setJobType(jobTypeInfo);
+		/**
+		 * add type specific elements
+		 */
+		
+		if ("SALESFORCE".equals(jobSchedule.getJobType().getConnectorType().getCode())) {
+			
+			SalesforceConnector salesforceConnector = null;
+			try {
+				salesforceConnector = salesforceConnectorService.findById( connectorId );
+			} catch (DocumentNotFoundException e) {
+				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", connectorId));
+			}
+
+			Optional<Instance> instance = null;
+			
+			if (Assert.isNullOrEmpty(instanceKey)) {
+				instance = salesforceConnector.getInstances()
+						.stream()
+						.filter(e -> ! e.getIsSandbox())
+						.findFirst();				
+			} else {
+				instance = salesforceConnector.getInstances()
+						.stream()
+						.filter(i -> instanceKey.equals(i.getKey()))
+						.findFirst();
+				
+				if (! instance.isPresent()) {
+					throw new ValidationException(String.format("Invalid instance key: %s", instanceKey));
+				}
+			}
+
+			if (jobSchedule.getNotificationEmail() == null) {
+				jobSchedule.setNotificationEmail(instance.get().getEmail());
+			}
+			
+			InstanceInfo instanceInfo = new InstanceInfo();
+			instanceInfo.setApiVersion(instance.get().getApiVersion());
+			instanceInfo.setIsSandbox(instance.get().getIsSandbox());
+			instanceInfo.setKey(instance.get().getKey());
+			instanceInfo.setName(instance.get().getName());
+			instanceInfo.setServiceEndpoint(instance.get().getServiceEndpoint());
+			
+			ConnectorInfo connectorInfo = new ConnectorInfo();
+			connectorInfo.setId(salesforceConnector.getId());
+			connectorInfo.setName(salesforceConnector.getName());
+			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
+			connectorInfo.setServerName(salesforceConnector.getOrganization().getInstanceName());
+			connectorInfo.setInstance(instanceInfo);
+			
+			jobSchedule.setConnector(connectorInfo);
+			
+		}
 		
 		create(jobSchedule);
 		

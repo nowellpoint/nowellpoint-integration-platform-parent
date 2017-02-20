@@ -20,7 +20,7 @@ import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
-public class AbstractScheduledJobService extends AbstractCacheService {
+public class AbstractJobScheduleService extends AbstractCacheService {
 
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;

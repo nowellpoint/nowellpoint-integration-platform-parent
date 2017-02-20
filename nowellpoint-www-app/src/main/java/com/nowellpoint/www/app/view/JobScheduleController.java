@@ -12,6 +12,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.ConnectorInfo;
 import com.nowellpoint.client.model.CreateResult;
@@ -207,10 +208,7 @@ public class JobScheduleController extends AbstractStaticController {
 				.get(jobTypeId);
 		
 		Map<String, Object> model = getModel();
-		model.put("step", "set-schedule");
-		
-		SalesforceConnector salesforceConnector = null;
-		Instance instance = null;
+		model.put("step", "set-schedule");		
 		
 		JobTypeInfo jobTypeInfo = new JobTypeInfo();
 		jobTypeInfo.setCode(jobType.getCode());
@@ -224,7 +222,7 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
 			
-			salesforceConnector = new NowellpointClient(token)
+			SalesforceConnector salesforceConnector = new NowellpointClient(token)
 					.salesforceConnector()
 					.get(connectorId);
 			
@@ -232,6 +230,7 @@ public class JobScheduleController extends AbstractStaticController {
 			connectorInfo.setId(salesforceConnector.getId());
 			connectorInfo.setName(salesforceConnector.getName());
 			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
+			connectorInfo.setServerName(salesforceConnector.getOrganization().getInstanceName());
 			
 			Optional<Instance> optional = salesforceConnector.getInstances()
 					.stream()
@@ -240,7 +239,7 @@ public class JobScheduleController extends AbstractStaticController {
 			
 			if (optional.isPresent()) {
 				
-				instance = optional.get();
+				Instance instance = optional.get();
 				
 				InstanceInfo instanceInfo = new InstanceInfo();
 				instanceInfo.setApiVersion(instance.getApiVersion());
@@ -251,14 +250,14 @@ public class JobScheduleController extends AbstractStaticController {
 				
 				connectorInfo.setInstance(instanceInfo);
 				
+				System.out.println(new ObjectMapper().writeValueAsString(instanceInfo));
+				
 				jobSchedule.setConnector(connectorInfo);
 				jobSchedule.setNotificationEmail(instance.getEmail());
 
 			}
 		}
 
-		model.put("salesforceConnector", salesforceConnector);
-		model.put("instance", instance);
 		model.put("jobSchedule", jobSchedule);
 		model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
 		
@@ -287,7 +286,13 @@ public class JobScheduleController extends AbstractStaticController {
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		String scheduleDate = request.queryParams("scheduleDate");
-		
+		String seconds = request.queryParams("seconds");
+		String minutes = request.queryParams("minutes");
+		String hours = request.queryParams("hours");
+		String dayOfMonth = request.queryParams("dayOfMonth");
+		String month = request.queryParams("month");
+		String dayOfWeek = request.queryParams("dayOfWeek");
+		String year = request.queryParams("year");
 		
 		try {
 			
@@ -296,7 +301,7 @@ public class JobScheduleController extends AbstractStaticController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			JobSchedule jobSchedule = new JobSchedule(); //objectMapper.readValue(getValue(token, id), ScheduledJob.class);
+			JobSchedule jobSchedule = new JobSchedule();
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
@@ -307,19 +312,26 @@ public class JobScheduleController extends AbstractStaticController {
 			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 		}
 		
-		JobScheduleRequest createScheduledJobRequest = new JobScheduleRequest()
+		JobScheduleRequest createJobScheduleRequest = new JobScheduleRequest()
 				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
 				.withInstanceKey(instanceKey)
 				.withJobTypeId(jobTypeId)
-				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
+				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
+				.withSeconds(seconds)
+				.withMinutes(minutes)
+				.withHours(hours)
+				.withDayOfMonth(dayOfMonth)
+				.withMonth(month)
+				.withDayOfWeek(dayOfWeek)
+				.withYear(year);
 		
-		CreateResult<JobSchedule> createScheduledJobResult = new NowellpointClient(token)
+		CreateResult<JobSchedule> createJobScheduleResult = new NowellpointClient(token)
 				.jobSchedule()
-				.create(createScheduledJobRequest);
+				.create(createJobScheduleRequest);
 		
-		if (! createScheduledJobResult.isSuccess()) {
+		if (! createJobScheduleResult.isSuccess()) {
 			
 			JobSchedule jobSchedule = new JobSchedule();
 			jobSchedule.setNotificationEmail(notificationEmail);
@@ -330,12 +342,11 @@ public class JobScheduleController extends AbstractStaticController {
 			model.put("step", "set-schedule");
 			model.put("scheduledJob", jobSchedule);
 			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-			model.put("title", getLabel(JobScheduleController.class, request, "schedule.job"));
-			model.put("errorMessage", createScheduledJobResult.getErrorMessage());
+			model.put("errorMessage", createJobScheduleResult.getErrorMessage());
 			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
 		}
 		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createScheduledJobResult.getTarget().getId()));
+		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createJobScheduleResult.getTarget().getId()));
 		
 		return "";
 	}
@@ -499,7 +510,6 @@ public class JobScheduleController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		String notificationEmail = request.queryParams("notificationEmail");
-		String environmentKey = request.queryParams("environmentKey");
 		String description = request.queryParams("description");
 		String scheduleDate = request.queryParams("scheduleDate");
 		String seconds = request.queryParams("seconds");
@@ -540,7 +550,6 @@ public class JobScheduleController extends AbstractStaticController {
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
-				.withInstanceKey(environmentKey)
 				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
 				.withSeconds(seconds)
 				.withMinutes(minutes)

@@ -5,6 +5,7 @@ import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -22,14 +23,14 @@ import com.nowellpoint.api.rest.JobScheduleResource;
 import com.nowellpoint.api.rest.domain.JobSchedule;
 import com.nowellpoint.api.rest.domain.JobScheduleList;
 import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.service.ScheduledJobService;
+import com.nowellpoint.api.service.JobScheduleService;
 
 public class JobScheduleResourceImpl implements JobScheduleResource {
 	
 	private static final Logger LOGGER = Logger.getLogger(JobScheduleResourceImpl.class);
 	
 	@Inject
-	private ScheduledJobService scheduledJobService;
+	private JobScheduleService jobScheduleService;
 	
 	@Context
 	private HttpServletRequest httpServletRequest;
@@ -42,13 +43,13 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	
 	@Override
     public Response findAllByOwner() {
-		JobScheduleList resources = scheduledJobService.findByOwner(securityContext.getUserPrincipal().getName());
+		JobScheduleList resources = jobScheduleService.findByOwner(securityContext.getUserPrincipal().getName());
 		return Response.ok(resources).build();
     }
 	
 	@Override
 	public Response getScheduledJob(String id) {
-		JobSchedule jobSchedule = scheduledJobService.findById( id );
+		JobSchedule jobSchedule = jobScheduleService.findById( id );
 		
 		if (jobSchedule == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobSchedule.class.getSimpleName(), id ) );
@@ -60,13 +61,13 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	
 	@Override
 	public Response deleteScheduledJob(String id) {
-		scheduledJobService.deleteScheduledJob( id );
+		jobScheduleService.deleteScheduledJob( id );
 		return Response.noContent().build();
 	}
 	
 	@Override
 	public Response createScheduledJob(
-			String scheduledJobTypeId,
+			String jobTypeId,
 			String instanceKey,
 			String notificationEmail,
 			String description,
@@ -80,10 +81,33 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSchedule jobSchedule = scheduledJobService.createScheduledJob(scheduledJobTypeId);
+		Date parsedDate = null;
+		
+		if (isNotNullOrEmpty(scheduleDate)) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+				parsedDate = sdf.parse(scheduleDate);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+				throw new BadRequestException(e.getMessage());
+			}
+		}
+		
+		JobSchedule jobSchedule = jobScheduleService.createJobSchedule(
+				jobTypeId, 
+				connectorId, 
+				instanceKey, 
+				parsedDate,
+				seconds,
+				minutes,
+				hours,
+				dayOfMonth,
+				month,
+				dayOfWeek,
+				year);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(JobScheduleResourceImpl.class)
+				.path(JobScheduleResource.class)
 				.path("/{id}")
 				.build(jobSchedule.getId());
 		
@@ -127,7 +151,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			}
 		}
 		
-		scheduledJobService.updateScheduledJob(id, jobSchedule);
+		jobScheduleService.updateScheduledJob(id, jobSchedule);
 		
 		return Response.ok()
 				.entity(jobSchedule)
@@ -140,11 +164,11 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 		JobSchedule jobSchedule = null;
 		
 		if ("terminate".equalsIgnoreCase(action)) {
-			jobSchedule = scheduledJobService.terminateScheduledJob(id);
+			jobSchedule = jobScheduleService.terminateScheduledJob(id);
 		} else if ("start".equalsIgnoreCase(action)) {
-			jobSchedule = scheduledJobService.startScheduledJob(id);
+			jobSchedule = jobScheduleService.startScheduledJob(id);
 		} else if ("stop".equalsIgnoreCase(action)) {
-			jobSchedule = scheduledJobService.stopScheduledJob(id);
+			jobSchedule = jobScheduleService.stopScheduledJob(id);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
@@ -157,7 +181,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	@Override
 	public Response getRunHistory(String id, String fireInstanceId) {
 		
-		RunHistory resource = scheduledJobService.findRunHistory(id, fireInstanceId);
+		RunHistory resource = jobScheduleService.findRunHistory(id, fireInstanceId);
 		
 		if (resource == null) {
 			throw new NotFoundException(String.format("Run History for Scheduled Job: %s with Instance Id: %s was not found", id, fireInstanceId));
@@ -174,7 +198,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 		String content = null;
 		
 		try {
-			content = scheduledJobService.getFile(id, fireInstanceId, filename);
+			content = jobScheduleService.getFile(id, fireInstanceId, filename);
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			throw new BadRequestException(e.getMessage());

@@ -24,7 +24,7 @@ import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Document(collectionName="job.types")
-public class ScheduledJobType extends MongoDocument {
+public class JobType extends MongoDocument {
 
 	private static final long serialVersionUID = -5368597023270502005L;
 	
@@ -48,7 +48,7 @@ public class ScheduledJobType extends MongoDocument {
 	@EmbedOne
 	private ConnectorType connectorType;
 	
-	public ScheduledJobType() {
+	public JobType() {
 		
 	}
 

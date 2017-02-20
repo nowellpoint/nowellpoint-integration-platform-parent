@@ -50,7 +50,7 @@ public class JobScheduleResource extends AbstractResource {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.parameter("scheduledJobTypeId", jobScheduleRequest.getJobTypeId())
+				.parameter("jobTypeId", jobScheduleRequest.getJobTypeId())
 				.parameter("instanceKey", jobScheduleRequest.getInstanceKey())
 				.parameter("notificationEmail", jobScheduleRequest.getNotificationEmail())
 				.parameter("description", jobScheduleRequest.getDescription())

@@ -34,11 +34,11 @@ public interface JobScheduleResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createScheduledJob(
-			@FormParam("scheduledJobTypeId") @NotEmpty String scheduledJobTypeId,
-			@FormParam("instanceKey") String instanceKey,
+			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
+			@FormParam("instanceKey") @NotEmpty String instanceKey,
 			@FormParam("notificationEmail") String notificationEmail,
 			@FormParam("description") String description,
-			@FormParam("connectorId") String connectorId,
+			@FormParam("connectorId") @NotEmpty String connectorId,
 			@FormParam("scheduleDate") String scheduleDate,
 			@FormParam("seconds") String seconds,
 			@FormParam("minutes") String minutes,
