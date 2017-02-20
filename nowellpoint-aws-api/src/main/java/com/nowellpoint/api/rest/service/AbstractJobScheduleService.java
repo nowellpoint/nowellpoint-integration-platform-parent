@@ -6,6 +6,7 @@ import static com.mongodb.client.model.Filters.or;
 
 import java.util.Set;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.bson.conversions.Bson;
@@ -21,6 +22,9 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
 public class AbstractJobScheduleService extends AbstractCacheService {
+	
+	@Inject
+	private Event<com.nowellpoint.api.model.document.Job> jobEvent;
 
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
@@ -69,6 +73,9 @@ public class AbstractJobScheduleService extends AbstractCacheService {
 				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" ))); 
 		
 		MongoDocument document = job.toDocument();
+		
+		//jobEvent.fire(job.toDocument());
+		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.upsert(query, document);
 	}

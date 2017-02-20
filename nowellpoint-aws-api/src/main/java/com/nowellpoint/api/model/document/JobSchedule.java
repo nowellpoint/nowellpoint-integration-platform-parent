@@ -52,7 +52,9 @@ public class JobSchedule extends MongoDocument {
 	
 	private String description;
 	
-	private Date scheduleDate;
+	private Date start;
+	
+	private Date end;
 	
 	private String status;
 	
@@ -77,6 +79,8 @@ public class JobSchedule extends MongoDocument {
 	private String dayOfWeek;
 	
 	private String year;
+	
+	private String timeZone;
 	
 	@EmbedMany
 	private Set<RunHistory> runHistories;
@@ -141,12 +145,20 @@ public class JobSchedule extends MongoDocument {
 		this.description = description;
 	}
 
-	public Date getScheduleDate() {
-		return scheduleDate;
+	public Date getStart() {
+		return start;
 	}
 
-	public void setScheduleDate(Date scheduleDate) {
-		this.scheduleDate = scheduleDate;
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
 	}
 
 	public String getStatus() {
@@ -251,5 +263,13 @@ public class JobSchedule extends MongoDocument {
 
 	public void setYear(String year) {
 		this.year = year;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 }

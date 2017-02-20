@@ -101,7 +101,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorServiceImpl();
 			
 			jobSchedule.setStatus("Running");
-			jobScheduleService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
+			//jobScheduleService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
 			
 			//
 			// get environment associated with the ScheduledJob
@@ -252,7 +252,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			jobSchedule.getRunHistories().add(runHistory);
 			
 			jobSchedule.setStatus("Scheduled");
-			jobSchedule.setScheduleDate(Date.from(ZonedDateTime.ofInstant(jobSchedule.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
+			//jobSchedule.setScheduleDate(Date.from(ZonedDateTime.ofInstant(jobSchedule.setStart(start);().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
 			//scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
 			//scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
 			//scheduledJob.setLastRunDate(fireTime);		    	
@@ -268,7 +268,7 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			//scheduledJobRequest.setStatus("Failure");
 			//scheduledJobRequest.setFailureMessage(e.getMessage());
 		} finally {
-			jobScheduleService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
+			//jobScheduleService.updateScheduledJob(jobSchedule.getId(), jobSchedule);
 		}
 	}
 	

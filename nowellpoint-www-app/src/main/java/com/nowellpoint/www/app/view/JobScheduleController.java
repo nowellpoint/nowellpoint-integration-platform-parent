@@ -318,7 +318,7 @@ public class JobScheduleController extends AbstractStaticController {
 				.withDescription(description)
 				.withInstanceKey(instanceKey)
 				.withJobTypeId(jobTypeId)
-				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
+				.withStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
 				.withSeconds(seconds)
 				.withMinutes(minutes)
 				.withHours(hours)
@@ -336,7 +336,7 @@ public class JobScheduleController extends AbstractStaticController {
 			JobSchedule jobSchedule = new JobSchedule();
 			jobSchedule.setNotificationEmail(notificationEmail);
 			jobSchedule.setDescription(description);
-			jobSchedule.setScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
+			jobSchedule.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
@@ -377,6 +377,7 @@ public class JobScheduleController extends AbstractStaticController {
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
 		model.put("connectorHref", jobSchedule.getConnector() != null ? Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", jobSchedule.getConnector().getId()) : null);
+		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 		model.put("successMessage", null); //getValue(token, "success.message"));
 		
 		if (model.get("successMessage") != null) {
@@ -520,37 +521,11 @@ public class JobScheduleController extends AbstractStaticController {
 		String dayOfWeek = request.queryParams("dayOfWeek");
 		String year = request.queryParams("year");
 		
-		try {
-
-			new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate);
-			
-		} catch (ParseException e) {
-			LOGGER.error(e.getMessage());
-			
-			JobSchedule jobSchedule = new NowellpointClient(token)
-					.jobSchedule()
-					.get(id);
-			
-			String view = request.queryParams("view");
-			
-			Map<String, Object> model = getModel();
-			model.put("scheduledJob", jobSchedule);
-			model.put("mode", "edit");
-			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
-			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
-			if (view != null && view.equals("1")) {
-				model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
-			} else {
-				model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
-			}
-			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_EDIT);
-		}	
-		
 		JobScheduleRequest jobScheduleRequest = new JobScheduleRequest()
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
-				.withScheduleDate(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
+				.withStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
 				.withSeconds(seconds)
 				.withMinutes(minutes)
 				.withHours(hours)
@@ -572,7 +547,7 @@ public class JobScheduleController extends AbstractStaticController {
 			String view = request.queryParams("view");
 			
 			Map<String, Object> model = getModel();
-			model.put("scheduledJob", jobSchedule);
+			model.put("jobSchedule", jobSchedule);
 			model.put("mode", "edit");
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 			model.put("errorMessage", updateResult.getErrorMessage());

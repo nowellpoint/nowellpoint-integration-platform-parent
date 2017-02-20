@@ -18,6 +18,8 @@
 
 package com.nowellpoint.api.rest.domain;
 
+import java.util.Date;
+
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class Job extends AbstractResource {
@@ -35,6 +37,12 @@ public class Job extends AbstractResource {
 	private String jobName;
 	
 	private Long jobRunTime;
+	
+	private Date start;
+	
+	private Date end;
+	
+	private String timeZone;
 	
 	private String seconds;
 	
@@ -116,6 +124,30 @@ public class Job extends AbstractResource {
 
 	public void setJobRunTime(Long jobRunTime) {
 		this.jobRunTime = jobRunTime;
+	}
+
+	public Date getStart() {
+		return start;
+	}
+
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 
 	public String getSeconds() {

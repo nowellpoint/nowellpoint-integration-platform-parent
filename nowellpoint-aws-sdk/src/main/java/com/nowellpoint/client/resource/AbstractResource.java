@@ -1,6 +1,7 @@
 package com.nowellpoint.client.resource;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import com.nowellpoint.client.model.CreateResult;
@@ -11,15 +12,25 @@ import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.util.Assert;
 
 public abstract class AbstractResource {
 		
-	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+	protected final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 	
 	protected Token token;
 	
 	public AbstractResource(Token token) {
 		this.token = token;
+	}
+	
+	protected String formatDate(Date value) {
+		return Assert.isNotNull(value) ? dateFormat.format(value) : null;
+	}
+	
+	protected String formatDateTime(Date value) {
+		return Assert.isNotNull(value) ? dateTimeFormat.format(value) : null;
 	}
 	
 	class DeleteResultImpl extends ResultImpl implements DeleteResult {

@@ -37,10 +37,11 @@ public class DashboardController extends AbstractStaticController {
 		List<JobSchedule> jobSchedules = list.getItems()
 				.stream()
 				.filter(job -> job.getConnector().getInstance().getKey() != null)
+				.sorted((job1, job2) -> job1.getConnector().getInstance().getName().compareTo(job2.getConnector().getInstance().getName()))
 				.collect(Collectors.toList());
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJobList", jobSchedules);
+		model.put("jobScheduleList", jobSchedules);
 		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
     	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};

@@ -11,7 +11,7 @@
             </#if>
             <div class="dashhead m-t-md">
                 <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["edit.scheduled.job"]}</h3>
+                    <h3 class="dashhead-title">${labels["edit.schedule"]}</h3>
                 </div>
             </div>
             <div class="hr-divider"></div>
@@ -36,9 +36,9 @@
 
                 <div class="row">
                     <div class="form-group col-md-2">
-                        <label class="control-label" for="scheduleDate">${labels["scheduled.date"]}*</label>
+                        <label class="control-label" for="start">${labels["start"]}*</label>
                         <div class="input-group">
-                            <input type="text" id="scheduleDate" name="scheduleDate" value="${(jobSchedule.scheduleDate?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
+                            <input type="text" id="start" name="start" value="${(jobSchedule.start?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
                             <span class="input-group-addon"><span class="icon icon-calendar"></span></span>
                         </div>
                     </div>

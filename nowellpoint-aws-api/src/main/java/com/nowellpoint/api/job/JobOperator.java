@@ -2,9 +2,7 @@ package com.nowellpoint.api.job;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.util.Properties;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -15,6 +13,7 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
@@ -31,7 +30,7 @@ public class JobOperator {
 	TimerService timerService;
 	
 	@Inject
-	private DocumentManagerFactory documentManagerFactory;
+	DocumentManagerFactory documentManagerFactory;
 	
 	@PostConstruct
 	public void scheduleJobs() {
@@ -39,28 +38,33 @@ public class JobOperator {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
 		Set<com.nowellpoint.api.model.document.Job> documents = documentManager.find(
 				com.nowellpoint.api.model.document.Job.class, 
-				eq ( "status", "scheduled" ) );
+				eq ( "status", "Scheduled" ) );
 		
 		documents.stream().forEach(job -> {
-			TimerConfig timerConfig = new TimerConfig();
-			timerConfig.setInfo(job.getId());
-			
-			ScheduleExpression expression = new ScheduleExpression()
-					.dayOfMonth(job.getDayOfMonth())
-					.dayOfWeek(job.getDayOfWeek())
-					.hour(job.getHours())
-					.minute(job.getMinutes())
-					.month(job.getMonth())
-					.second(job.getSeconds())
-					.year(job.getYear())
-					.timezone(TimeZone.getDefault().getID());
-			
-			System.out.println(expression.toString());
-			
-			timerService.createCalendarTimer(expression, timerConfig);
-			
+			submit(job);
 		});
 		
+	}
+	
+	public void submit(@Observes Job job) {
+		TimerConfig timerConfig = new TimerConfig();
+		timerConfig.setInfo(job.getId());
+		
+		ScheduleExpression expression = new ScheduleExpression()
+				.dayOfMonth(job.getDayOfMonth())
+				.dayOfWeek(job.getDayOfWeek())
+				.hour(job.getHours())
+				.minute(job.getMinutes())
+				.month(job.getMonth())
+				.second(job.getSeconds())
+				.year(job.getYear())
+				.start(job.getStart())
+				.end(job.getEnd())
+				.timezone(job.getTimeZone());
+		
+		System.out.println(expression.toString());
+		
+		timerService.createCalendarTimer(expression, timerConfig);
 	}
 	
 	@Timeout 

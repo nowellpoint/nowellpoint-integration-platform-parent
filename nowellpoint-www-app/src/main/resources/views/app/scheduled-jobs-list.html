@@ -10,7 +10,7 @@
             <#if jobScheduleList?size gt 0>
                 <div class="dashhead-toolbar">
                     <p class="pull-right">
-                        <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-primary btn-lg" role="button" >${labels["create.scheduled.job"]}</a>
+                        <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-primary btn-lg" role="button">${labels["create.scheduled.job"]}</a>
                     </p>
                 </div>
             </#if>
@@ -34,14 +34,10 @@
                 <div class="offer offer-radius offer-info">
                     <a href="${labels['base.path']}/${jobSchedule.id}" style="text-decoration: none">
                         <div class="offer-content">
-                            <h3 class="lead">
-							${jobSchedule.jobType.name}
-						</h3>
-                            <div class="text-right">
-                                <a href="${labels['base.path']}/${jobSchedule.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
-                            </div>
+                            <h3 class="lead">${jobSchedule.jobType.name}</h3>
                             <p>
-                                ${(jobSchedule.instanceName)!} -
+                                ${(jobSchedule.connector.instance.name)!} - <span class="text-primary">(${jobSchedule.status})</span>
+                                <br>
                                 <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
                                 <span class="text-danger">(${(jobSchedule.lastRunStatus)!})</span>
                                 <!-- </#if> -->
@@ -50,6 +46,9 @@
                                 <!-- </#if> -->
                                 <br> <small>${labels["by"]}</small>&nbsp;${jobSchedule.createdBy.name}&nbsp;<small>${labels["on"]}</small>&nbsp;${jobSchedule.createdOn?date?string.long}
                             </p>
+                            <div class="text-right">
+                                <a href="${labels['base.path']}/${jobSchedule.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                            </div>
                         </div>
                     </a>
                 </div>

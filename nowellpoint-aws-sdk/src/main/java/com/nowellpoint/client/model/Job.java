@@ -18,11 +18,19 @@
 
 package com.nowellpoint.client.model;
 
+import java.util.Date;
+
 public class Job extends AbstractResource {
 	
 	private String scheduledJobId;
 	
 	private String fireInstanceId;
+	
+	private Date start;
+	
+	private Date end;
+	
+	private String timeZone;
 	
 	private String groupName;
 	
@@ -66,6 +74,30 @@ public class Job extends AbstractResource {
 
 	public void setFireInstanceId(String fireInstanceId) {
 		this.fireInstanceId = fireInstanceId;
+	}
+
+	public Date getStart() {
+		return start;
+	}
+
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 
 	public String getGroupName() {

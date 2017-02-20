@@ -17,7 +17,9 @@ public class JobSchedule extends AbstractResource {
 	
 	private String description;
 	
-	private Date scheduleDate;
+	private Date start;
+	
+	private Date end;
 	
 	private String status;
 	
@@ -42,6 +44,8 @@ public class JobSchedule extends AbstractResource {
 	private String dayOfWeek;
 	
 	private String year;
+	
+	private String timeZone;
 	
 	private List<RunHistory> runHistories;
 	
@@ -85,12 +89,28 @@ public class JobSchedule extends AbstractResource {
 		this.description = description;
 	}
 
-	public Date getScheduleDate() {
-		return scheduleDate;
+	public Date getStart() {
+		return start;
 	}
 
-	public void setScheduleDate(Date scheduleDate) {
-		this.scheduleDate = scheduleDate;
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
 	}
 
 	public String getStatus() {

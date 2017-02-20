@@ -6,6 +6,8 @@ import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
@@ -91,14 +93,22 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			String jobTypeId, 
 			String connectorId, 
 			String instanceKey, 
-			Date scheduleDate, 
+			LocalDate start, 
+			LocalDate end,
+			String timeZone,
 			String seconds,
 			String minutes,
 			String hours,
 			String dayOfMonth,
 			String month,
 			String dayOfWeek,
-			String year) {
+			String year,
+			String notificationEmail,
+			String description) {
+		
+		if (Assert.isNotNull(start) && start.isBefore(LocalDate.now())) {
+			throw new ValidationException( "Schedule Date cannot be before current date" );
+		}
 		
 		JobType jobType = jobTypeService.findById(jobTypeId);
 		
@@ -106,20 +116,24 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		Date now = Date.from(Instant.now());
 		
 		JobSchedule jobSchedule = new JobSchedule();
-		jobSchedule.setScheduleDate(Assert.isNull(scheduleDate) ? new Date() : scheduleDate);
+		jobSchedule.setStart(Assert.isNull(start) ? new Date() : Date.from(start.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		jobSchedule.setEnd(Assert.isNull(end) ? null : Date.from(end.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		jobSchedule.setTimeZone(Assert.isNullOrEmpty(timeZone) ? ZoneId.systemDefault().getId() : timeZone);
 		jobSchedule.setStatus(JobStatus.NOT_SCHEDULED);
 		jobSchedule.setOwner(userInfo);
 		jobSchedule.setCreatedOn(now);
 		jobSchedule.setCreatedBy(userInfo);
 		jobSchedule.setLastUpdatedOn(now);
 		jobSchedule.setLastUpdatedBy(userInfo);
-		jobSchedule.setSeconds(Assert.isNull(seconds) ? "*" : seconds);
-		jobSchedule.setMinutes(Assert.isNull(minutes) ? "*" : minutes);
-		jobSchedule.setHours(Assert.isNull(hours) ? "*" : hours);
-		jobSchedule.setDayOfMonth(dayOfMonth);
-		jobSchedule.setMonth(Assert.isNull(month) ? "*" : month);
-		jobSchedule.setDayOfWeek(dayOfWeek);
-		jobSchedule.setYear(Assert.isNull(year) ? "*" : year);
+		jobSchedule.setDescription(description);
+		jobSchedule.setNotificationEmail(notificationEmail);
+		jobSchedule.setSeconds(Assert.isNullOrEmpty(seconds) ? "*" : seconds);
+		jobSchedule.setMinutes(Assert.isNullOrEmpty(minutes) ? "*" : minutes);
+		jobSchedule.setHours(Assert.isNullOrEmpty(hours) ? "*" : hours);
+		jobSchedule.setDayOfMonth(Assert.isNullOrEmpty(dayOfMonth) ? null : dayOfMonth);
+		jobSchedule.setMonth(Assert.isNullOrEmpty(month) ? "*" : month);
+		jobSchedule.setDayOfWeek(Assert.isNullOrEmpty(dayOfWeek) ? null : dayOfWeek);
+		jobSchedule.setYear(Assert.isNullOrEmpty(year) ? "*" : year);
 		
 		jobSchedule.setJobType(new JobTypeInfo(jobType));
 		
@@ -154,7 +168,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 				}
 			}
 
-			if (jobSchedule.getNotificationEmail() == null) {
+			if (Assert.isNullOrEmpty(jobSchedule.getNotificationEmail())) {
 				jobSchedule.setNotificationEmail(instance.get().getEmail());
 			}
 			
@@ -191,7 +205,20 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public void updateScheduledJob(String id, JobSchedule jobSchedule) {
+	public JobSchedule updateScheduledJob(
+			String id, 
+			LocalDate start, 
+			LocalDate end,
+			String timeZone,
+			String seconds,
+			String minutes,
+			String hours,
+			String dayOfMonth,
+			String month,
+			String dayOfWeek,
+			String year,
+			String notificationEmail,
+			String description) {
 		
 		/**
 		 * retrieve the original record
@@ -207,19 +234,34 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
 		}
 		
-		if (jobSchedule.getScheduleDate().before(Date.from(Instant.now()))) {
+		if (Assert.isNotNull(start) && start.isBefore(LocalDate.now())) {
 			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
 		
-		if (! (JobStatus.SCHEDULED.equals(jobSchedule.getStatus()) || JobStatus.STOPPED.equals(jobSchedule.getStatus())) || JobStatus.TERMINATED.equals(jobSchedule.getStatus())) {
-			throw new ValidationException( String.format( "Invalid status: %s", jobSchedule.getStatus() ) );
-		}
+		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		Date now = Date.from(Instant.now());
+		
+		JobSchedule jobSchedule = new JobSchedule();
+		jobSchedule.setId(id);
+		jobSchedule.setStart(Assert.isNull(start) ? new Date() : Date.from(start.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		jobSchedule.setEnd(Assert.isNull(end) ? null : Date.from(end.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		jobSchedule.setTimeZone(timeZone);
+		jobSchedule.setLastUpdatedOn(now);
+		jobSchedule.setLastUpdatedBy(userInfo);
+		jobSchedule.setDescription(description);
+		jobSchedule.setNotificationEmail(notificationEmail);
+		jobSchedule.setSeconds(seconds);
+		jobSchedule.setMinutes(minutes);
+		jobSchedule.setHours(hours);
+		jobSchedule.setDayOfMonth(dayOfMonth);
+		jobSchedule.setMonth(month);
+		jobSchedule.setDayOfWeek(dayOfWeek);
+		jobSchedule.setYear(year);
 		
 		/**
 		 * add read-only fields
 		 */
 		
-		jobSchedule.setId(id);
 		jobSchedule.setStatus(original.getStatus());
 		jobSchedule.setJobType(original.getJobType());
 		jobSchedule.setConnector(original.getConnector());
@@ -228,9 +270,10 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		jobSchedule.setLastRunStatus(original.getLastRunStatus());
 		jobSchedule.setLastRunFailureMessage(original.getLastRunFailureMessage());
 		jobSchedule.setCreatedBy(original.getCreatedBy());
+		jobSchedule.setOwner(original.getOwner());
 		
 		/**
-		 * ensure a complete record for fields that can be updated
+		 * validate the JobSchedule record to ensure a complete record for fields that can be updated
 		 */
 		
 		if (isNull(jobSchedule.getDescription())) {
@@ -243,8 +286,8 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			jobSchedule.setOwner(original.getOwner());
 		}
 		
-		if (isNull(jobSchedule.getScheduleDate())) {
-			jobSchedule.setScheduleDate(original.getScheduleDate());
+		if (isNull(jobSchedule.getStart())) {
+			jobSchedule.setStart(original.getStart());
 		}
 		
 		if (isNull(jobSchedule.getStatus())) {
@@ -253,10 +296,6 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		
 		if (isNullOrEmpty(jobSchedule.getNotificationEmail())) {
 			jobSchedule.setNotificationEmail(original.getNotificationEmail());
-		}
-		
-		if (isNull(jobSchedule.getRunHistories())) {
-			jobSchedule.setRunHistories(original.getRunHistories());
 		}
 		
 		if (isNullOrEmpty(jobSchedule.getSeconds())) {
@@ -271,63 +310,29 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			jobSchedule.setHours("*");
 		}
 		
+		if (isNullOrEmpty(jobSchedule.getDayOfMonth())) {
+			jobSchedule.setDayOfMonth("*");
+		}
+		
 		if (isNullOrEmpty(jobSchedule.getMonth())) {
 			jobSchedule.setMonth("*");
+		}
+		
+		if (isNullOrEmpty(jobSchedule.getDayOfWeek())) {
+			jobSchedule.setDayOfWeek("*");
 		}
 		
 		if (isNullOrEmpty(jobSchedule.getYear())) {
 			jobSchedule.setYear("*");
 		}
-
-		/**
-		 * add type specific elements
-		 */
 		
-//		if ("SALESFORCE".equals(jobSchedule.getJobType().getConnectorType().getCode())) {
-//			
-//			SalesforceConnector salesforceConnector = null;
-//			try {
-//				salesforceConnector = salesforceConnectorService.findById( jobSchedule.getConnector().getId() );
-//			} catch (DocumentNotFoundException e) {
-//				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", jobSchedule.getConnector().getId()));
-//			}
-//
-//			Optional<Instance> instance = null;
-//			if (jobSchedule.getConnector().getInstance().getKey() != null && ! jobSchedule.getConnector().getInstance().getKey().trim().isEmpty()) {
-//				instance = salesforceConnector.getInstances()
-//						.stream()
-//						.filter(e -> jobSchedule.getConnector().getInstance().getKey().equals(e.getKey()))
-//						.findFirst();
-//				
-//				if (! instance.isPresent()) {
-//					throw new ValidationException(String.format("Invalid environment key: %s", jobSchedule.getConnector().getInstance().getKey()));
-//				}
-//				
-//			} else {
-//				instance = salesforceConnector.getInstances().stream().filter(e -> ! e.getIsSandbox()).findFirst();
-//			}
-//
-//			if (jobSchedule.getNotificationEmail() == null) {
-//				jobSchedule.setNotificationEmail(instance.get().getEmail());
-//			}
-//			
-//			ConnectorInfo connectorInfo = new ConnectorInfo();
-//			connectorInfo.setId(salesforceConnector.getId());
-//			connectorInfo.setName(salesforceConnector.getName());
-//			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
-//			
-//		}
+		if (isNullOrEmpty(jobSchedule.getTimeZone())) {
+			jobSchedule.setTimeZone(original.getTimeZone());
+		}
 		
-		/**
-		 * add audit fields
-		 */
-		
-		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
-		
-		Date now = Date.from(Instant.now());
-		
-		jobSchedule.setLastUpdatedOn(now);
-		jobSchedule.setLastUpdatedBy(userInfo);
+		if (isNull(jobSchedule.getRunHistories())) {
+			jobSchedule.setRunHistories(original.getRunHistories());
+		}
 		
 		/**
 		 * perform update
@@ -336,10 +341,10 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		update(jobSchedule);
 		
 		/**
-		 * submit the scheduled job to the job operator
+		 * return the result
 		 */
 		
-		submitJob(jobSchedule);
+		return jobSchedule;
 	}
 	
 	/**
@@ -365,6 +370,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		JobSchedule jobSchedule = findById(id);
 		jobSchedule.setStatus(JobStatus.SCHEDULED);
 		update(jobSchedule);
+		
 		return jobSchedule;
 	}
 	
@@ -488,12 +494,15 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		Job job = new Job();
 		job.setCreatedBy(jobSchedule.getCreatedBy());
 		job.setCreatedOn(now);
-		job.setDayOfMonth(jobSchedule.getDayOfMonth());
-		job.setDayOfWeek(jobSchedule.getDayOfWeek());
 		job.setHours(jobSchedule.getHours());
 		job.setJobName(jobSchedule.getJobType().getCode());
 		job.setLastUpdatedBy(jobSchedule.getLastUpdatedBy());
 		job.setLastUpdatedOn(now);
+		job.setDayOfMonth(jobSchedule.getDayOfMonth());
+		job.setDayOfWeek(jobSchedule.getDayOfWeek());
+		job.setEnd(jobSchedule.getEnd());
+		job.setStart(jobSchedule.getStart());
+		job.setTimeZone(jobSchedule.getTimeZone());
 		job.setMinutes(jobSchedule.getMinutes());
 		job.setMonth(jobSchedule.getMonth());
 		job.setSeconds(jobSchedule.getSeconds());

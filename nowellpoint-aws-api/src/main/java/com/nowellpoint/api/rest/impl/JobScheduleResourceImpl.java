@@ -4,8 +4,8 @@ import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 
 import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -72,7 +72,9 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String notificationEmail,
 			String description,
 			String connectorId,
-			String scheduleDate,
+			String start,
+			String end,
+			String timeZone,
 			String seconds,
 			String minutes,
 			String hours,
@@ -81,12 +83,12 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String dayOfWeek,
 			String year) {
 		
-		Date parsedDate = null;
+		LocalDate localDate = null;
 		
-		if (isNotNullOrEmpty(scheduleDate)) {
+		if (isNotNullOrEmpty(start)) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
-				parsedDate = sdf.parse(scheduleDate);
+				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				localDate = LocalDate.parse(start, format);
 			} catch (Exception e) {
 				LOGGER.warn(e.getMessage());
 				throw new BadRequestException(e.getMessage());
@@ -97,14 +99,18 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 				jobTypeId, 
 				connectorId, 
 				instanceKey, 
-				parsedDate,
+				localDate,
+				null,
+				timeZone,
 				seconds,
 				minutes,
 				hours,
 				dayOfMonth,
 				month,
 				dayOfWeek,
-				year);
+				year,
+				notificationEmail,
+				description);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(JobScheduleResource.class)
@@ -121,7 +127,9 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String id,
 			String notificationEmail,
 			String description,
-			String scheduleDate,
+			String start,
+			String end,
+			String timeZone,
 			String seconds,
 			String minutes,
 			String hours,
@@ -129,29 +137,33 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String month,
 			String dayOfWeek,
 			String year) {
-		
-		JobSchedule jobSchedule = new JobSchedule();
-		jobSchedule.setNotificationEmail(notificationEmail);
-		jobSchedule.setDescription(description);
-		jobSchedule.setSeconds(seconds);
-		jobSchedule.setMinutes(minutes);
-		jobSchedule.setHours(hours);
-		jobSchedule.setDayOfMonth(dayOfMonth);
-		jobSchedule.setMonth(month);
-		jobSchedule.setDayOfWeek(dayOfWeek);
-		jobSchedule.setYear(year);
 
-		if (isNotNullOrEmpty(scheduleDate)) {
+		LocalDate localDate = null;
+		
+		if (isNotNullOrEmpty(start)) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
-				jobSchedule.setScheduleDate(sdf.parse(scheduleDate));
+				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				localDate = LocalDate.parse(start, format);
 			} catch (Exception e) {
 				LOGGER.warn(e.getMessage());
 				throw new BadRequestException(e.getMessage());
 			}
 		}
 		
-		jobScheduleService.updateScheduledJob(id, jobSchedule);
+		JobSchedule jobSchedule = jobScheduleService.updateScheduledJob(
+				id, 
+				localDate, 
+				null,
+				timeZone,
+				seconds, 
+				minutes, 
+				hours, 
+				dayOfMonth, 
+				month, 
+				dayOfWeek, 
+				year,
+				notificationEmail,
+				description);
 		
 		return Response.ok()
 				.entity(jobSchedule)

@@ -16,7 +16,9 @@ public class JobScheduleRequest {
 	
 	private String connectorId;
 	
-	private Date scheduleDate;
+	private Date start;
+	
+	private Date end;
 	
 	private String seconds;
 	
@@ -31,6 +33,8 @@ public class JobScheduleRequest {
 	private String dayOfWeek;
 	
 	private String year;
+	
+	private String timeZone;
 	
 	public JobScheduleRequest() {
 		
@@ -83,15 +87,31 @@ public class JobScheduleRequest {
 	public void setConnectorId(String connectorId) {
 		this.connectorId = connectorId;
 	}
-
-	public Date getScheduleDate() {
-		return scheduleDate;
-	}
-
-	public void setScheduleDate(Date scheduleDate) {
-		this.scheduleDate = scheduleDate;
-	}
 	
+	public Date getStart() {
+		return start;
+	}
+
+	public void setStart(Date start) {
+		this.start = start;
+	}
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	public String getSeconds() {
 		return seconds;
 	}
@@ -178,8 +198,18 @@ public class JobScheduleRequest {
 		return this;
 	}
 	
-	public JobScheduleRequest withScheduleDate(Date scheduleDate) {
-		setScheduleDate(scheduleDate);
+	public JobScheduleRequest withStart(Date start) {
+		setStart(start);
+		return this;
+	}
+	
+	public JobScheduleRequest withEnd(Date end) {
+		setEnd(end);
+		return this;
+	}
+	
+	public JobScheduleRequest withTimeZone(String timeZone) {
+		setTimeZone(timeZone);
 		return this;
 	}
 	
