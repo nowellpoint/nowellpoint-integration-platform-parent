@@ -508,7 +508,6 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		job.setSeconds(jobSchedule.getSeconds());
 		job.setStatus(JobStatus.SCHEDULED);
 		job.setYear(jobSchedule.getYear());
-		
-		submit(job);
+
 	}
 }

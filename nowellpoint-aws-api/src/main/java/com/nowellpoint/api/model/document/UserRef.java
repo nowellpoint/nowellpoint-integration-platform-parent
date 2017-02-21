@@ -75,6 +75,10 @@ public class UserRef implements Serializable {
 		
 	}
 	
+	public UserRef(String id) {
+		setId(new ObjectId(id));
+	}
+	
 	public UserRef(ObjectId id) {
 		setId(id);
 	}

@@ -1,6 +1,8 @@
 package com.nowellpoint.api.job;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 import java.util.Set;
 
@@ -16,6 +18,7 @@ import javax.ejb.TimerService;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.model.document.Job;
@@ -41,12 +44,24 @@ public class JobOperator {
 				eq ( "status", "Scheduled" ) );
 		
 		documents.stream().forEach(job -> {
-			submit(job);
+			submitJob(job);
 		});
 		
 	}
 	
-	public void submit(@Observes Job job) {
+	public void jobEventObserver(@Observes Job job) {
+		System.out.println("observed event");
+		Bson query = and ( 
+				eq ( "scheduledJobId", job.getScheduledJobId() ), 
+				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" )));
+		
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
+		documentManager.upsert(query, job);
+		System.out.println(job.getId());
+		submitJob(job);
+	}
+	
+	public void submitJob(Job job) {
 		TimerConfig timerConfig = new TimerConfig();
 		timerConfig.setInfo(job.getId());
 		

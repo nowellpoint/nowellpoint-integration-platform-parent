@@ -37,6 +37,8 @@ public class TestJobSchedule {
 				.authenticate(request);
 		
 		token = response.getToken();
+		
+		System.out.println(token.getAccessToken());
 	}
 	
 	@Test
@@ -59,6 +61,7 @@ public class TestJobSchedule {
 				.jobSchedule()
 				.create(createRequest);
 		
+		System.out.println(createResult.getErrorMessage());
 		Assert.assertTrue(createResult.isSuccess());
 		Assert.assertEquals(createResult.getTarget().getNotificationEmail(), "john.d.herson@gmail.com");
 		
@@ -71,6 +74,12 @@ public class TestJobSchedule {
 				.get(createResult.getTarget().getId());
 		
 		Assert.assertNotNull(jobSchedule);
+		
+		UpdateResult<JobSchedule> startJobResult = new NowellpointClient(token)
+				.jobSchedule()
+				.start(jobSchedule.getId());
+		
+		System.out.println(startJobResult.isSuccess());
 		
 		JobScheduleRequest updateRequest = new JobScheduleRequest()
 				.withId(jobSchedule.getId())
