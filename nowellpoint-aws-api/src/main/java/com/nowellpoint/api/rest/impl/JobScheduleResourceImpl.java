@@ -1,11 +1,7 @@
 package com.nowellpoint.api.rest.impl;
 
-import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
-
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -83,24 +79,12 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String dayOfWeek,
 			String year) {
 		
-		LocalDate localDate = null;
-		
-		if (isNotNullOrEmpty(start)) {
-			try {
-				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				localDate = LocalDate.parse(start, format);
-			} catch (Exception e) {
-				LOGGER.warn(e.getMessage());
-				throw new BadRequestException(e.getMessage());
-			}
-		}
-		
 		JobSchedule jobSchedule = jobScheduleService.createJobSchedule(
 				jobTypeId, 
 				connectorId, 
 				instanceKey, 
-				localDate,
-				null,
+				start,
+				end,
 				timeZone,
 				seconds,
 				minutes,
@@ -137,23 +121,11 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String month,
 			String dayOfWeek,
 			String year) {
-
-		LocalDate localDate = null;
-		
-		if (isNotNullOrEmpty(start)) {
-			try {
-				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				localDate = LocalDate.parse(start, format);
-			} catch (Exception e) {
-				LOGGER.warn(e.getMessage());
-				throw new BadRequestException(e.getMessage());
-			}
-		}
 		
 		JobSchedule jobSchedule = jobScheduleService.updateScheduledJob(
 				id, 
-				localDate, 
-				null,
+				start, 
+				end,
 				timeZone,
 				seconds, 
 				minutes, 

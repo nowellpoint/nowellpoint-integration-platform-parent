@@ -110,6 +110,10 @@ public class Job extends MongoDocument {
 	public void setScheduledJobId(ObjectId scheduledJobId) {
 		this.scheduledJobId = scheduledJobId;
 	}
+	
+	public void setScheduledJobId(String scheduledJobId) {
+		this.scheduledJobId = new ObjectId(scheduledJobId);
+	}
 
 	public String getFireInstanceId() {
 		return fireInstanceId;

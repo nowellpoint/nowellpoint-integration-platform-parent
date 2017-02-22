@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -218,6 +219,7 @@ public class JobScheduleController extends AbstractStaticController {
 		jobTypeInfo.setName(jobType.getName());
 		
 		JobSchedule jobSchedule = new JobSchedule();
+		jobSchedule.setStart(new Date());
 		jobSchedule.setJobType(jobTypeInfo);
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {

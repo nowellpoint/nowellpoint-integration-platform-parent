@@ -1,8 +1,6 @@
 package com.nowellpoint.api.rest.service;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
 
 import java.time.Instant;
 import java.util.Date;
@@ -11,7 +9,6 @@ import java.util.Set;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.model.document.Job;
@@ -78,6 +75,7 @@ public class AbstractJobScheduleService extends AbstractCacheService {
 		UserRef userRef = new UserRef(jobSchedule.getLastUpdatedBy().getId());
 		
 		Job job = new Job();
+		job.setScheduledJobId(jobSchedule.getId());
 		job.setCreatedBy(userRef);
 		job.setCreatedOn(now);
 		job.setHours(jobSchedule.getHours());
@@ -103,8 +101,9 @@ public class AbstractJobScheduleService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
 		documentManager.refresh( document );
-		jobSchedule.fromDocument(document);
-		set(jobSchedule.getId(), document);
+		jobSchedule.fromDocument( document );
+		set( jobSchedule.getId(), document );
+		
 		if (jobSchedule.getStatus().equals(JobStatus.SCHEDULED)) {
 			submitJob(jobSchedule);
 		}

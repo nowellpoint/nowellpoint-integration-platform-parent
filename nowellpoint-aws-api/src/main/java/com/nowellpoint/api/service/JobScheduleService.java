@@ -1,7 +1,6 @@
 package com.nowellpoint.api.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
 import javax.enterprise.event.Observes;
 
@@ -39,8 +38,8 @@ public interface JobScheduleService {
 			String jobTypeId, 
 			String connectorId, 
 			String instanceKey, 
-			LocalDate start, 
-			LocalDate end,
+			String start, 
+			String end,
 			String timeZone,
 			String seconds,
 			String minutes,
@@ -60,8 +59,8 @@ public interface JobScheduleService {
 	
 	public JobSchedule updateScheduledJob(
 			String id, 
-			LocalDate start, 
-			LocalDate end,
+			String start, 
+			String end,
 			String timeZone, 
 			String seconds,
 			String minutes,

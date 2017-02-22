@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.service;
 
 import static com.nowellpoint.util.Assert.isEmpty;
+import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
@@ -8,12 +9,16 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import javax.ws.rs.BadRequestException;
+
+import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -26,7 +31,6 @@ import com.nowellpoint.api.rest.domain.Backup;
 import com.nowellpoint.api.rest.domain.ConnectorInfo;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.InstanceInfo;
-import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.JobTypeInfo;
 import com.nowellpoint.api.rest.domain.RunHistory;
@@ -43,6 +47,8 @@ import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
 
 public class JobScheduleServiceImpl extends AbstractJobScheduleService implements JobScheduleService {
+	
+	private static final Logger LOGGER = Logger.getLogger(JobScheduleServiceImpl.class);
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
 	
@@ -93,8 +99,8 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			String jobTypeId, 
 			String connectorId, 
 			String instanceKey, 
-			LocalDate start, 
-			LocalDate end,
+			String start, 
+			String end,
 			String timeZone,
 			String seconds,
 			String minutes,
@@ -106,7 +112,32 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			String notificationEmail,
 			String description) {
 		
-		if (Assert.isNotNull(start) && start.isBefore(LocalDate.now())) {
+		LocalDate startDate = null;
+		LocalDate endDate = null;
+		
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		
+		if (isNotNullOrEmpty(start)) {
+			try {
+				startDate = LocalDate.parse(start, format);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+				throw new BadRequestException(e.getMessage());
+			}
+		}
+		
+		if (isNotNullOrEmpty(end)) {
+			try {
+				endDate = LocalDate.parse(end, format);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+				throw new BadRequestException(e.getMessage());
+			}
+		}
+		
+		timeZone = Assert.isNullOrEmpty(timeZone) ? ZoneId.systemDefault().getId() : timeZone;
+		
+		if (Assert.isNotNull(startDate) && startDate.isBefore(LocalDate.now(ZoneId.of(timeZone)))) {
 			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
 		
@@ -116,9 +147,9 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		Date now = Date.from(Instant.now());
 		
 		JobSchedule jobSchedule = new JobSchedule();
-		jobSchedule.setStart(Assert.isNull(start) ? new Date() : Date.from(start.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-		jobSchedule.setEnd(Assert.isNull(end) ? null : Date.from(end.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-		jobSchedule.setTimeZone(Assert.isNullOrEmpty(timeZone) ? ZoneId.systemDefault().getId() : timeZone);
+		jobSchedule.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
+		jobSchedule.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
+		jobSchedule.setTimeZone(timeZone);
 		jobSchedule.setStatus(JobStatus.NOT_SCHEDULED);
 		jobSchedule.setOwner(userInfo);
 		jobSchedule.setCreatedOn(now);
@@ -207,8 +238,8 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	@Override
 	public JobSchedule updateScheduledJob(
 			String id, 
-			LocalDate start, 
-			LocalDate end,
+			String start, 
+			String end,
 			String timeZone,
 			String seconds,
 			String minutes,
@@ -226,6 +257,29 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		
 		JobSchedule original = findById(id);
 		
+		LocalDate startDate = null;
+		LocalDate endDate = null;
+		
+		if (isNotNullOrEmpty(start)) {
+			try {
+				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				startDate = LocalDate.parse(start, format);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+				throw new BadRequestException(e.getMessage());
+			}
+		}
+		
+		if (isNotNullOrEmpty(end)) {
+			try {
+				DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				endDate = LocalDate.parse(end, format);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+				throw new BadRequestException(e.getMessage());
+			}
+		}
+		
 		/**
 		 * validation steps
 		 */
@@ -234,17 +288,19 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
 		}
 		
-		if (Assert.isNotNull(start) && start.isBefore(LocalDate.now())) {
+		timeZone = Assert.isNullOrEmpty(timeZone) ? original.getTimeZone() : timeZone;
+		
+		if (Assert.isNotNull(startDate) && startDate.isBefore(LocalDate.now(ZoneId.of(timeZone)))) {
 			throw new ValidationException( "Schedule Date cannot be before current date" );
 		}
-		
+				
 		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		Date now = Date.from(Instant.now());
 		
 		JobSchedule jobSchedule = new JobSchedule();
 		jobSchedule.setId(id);
-		jobSchedule.setStart(Assert.isNull(start) ? new Date() : Date.from(start.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-		jobSchedule.setEnd(Assert.isNull(end) ? null : Date.from(end.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		jobSchedule.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
+		jobSchedule.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
 		jobSchedule.setTimeZone(timeZone);
 		jobSchedule.setLastUpdatedOn(now);
 		jobSchedule.setLastUpdatedBy(userInfo);
@@ -324,10 +380,6 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		
 		if (isNullOrEmpty(jobSchedule.getYear())) {
 			jobSchedule.setYear("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getTimeZone())) {
-			jobSchedule.setTimeZone(original.getTimeZone());
 		}
 		
 		if (isNull(jobSchedule.getRunHistories())) {
@@ -486,28 +538,5 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 			scheduledJob.setStatus(JobStatus.TERMINATED);
 			update(scheduledJob);
 		});
-	}
-	
-	private void submitJob(JobSchedule jobSchedule) {
-		Date now = Date.from(Instant.now());
-		
-		Job job = new Job();
-		job.setCreatedBy(jobSchedule.getCreatedBy());
-		job.setCreatedOn(now);
-		job.setHours(jobSchedule.getHours());
-		job.setJobName(jobSchedule.getJobType().getCode());
-		job.setLastUpdatedBy(jobSchedule.getLastUpdatedBy());
-		job.setLastUpdatedOn(now);
-		job.setDayOfMonth(jobSchedule.getDayOfMonth());
-		job.setDayOfWeek(jobSchedule.getDayOfWeek());
-		job.setEnd(jobSchedule.getEnd());
-		job.setStart(jobSchedule.getStart());
-		job.setTimeZone(jobSchedule.getTimeZone());
-		job.setMinutes(jobSchedule.getMinutes());
-		job.setMonth(jobSchedule.getMonth());
-		job.setSeconds(jobSchedule.getSeconds());
-		job.setStatus(JobStatus.SCHEDULED);
-		job.setYear(jobSchedule.getYear());
-
 	}
 }

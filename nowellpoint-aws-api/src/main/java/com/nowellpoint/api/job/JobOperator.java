@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.model.document.Job;
 import com.nowellpoint.mongodb.DocumentManager;
@@ -28,6 +29,8 @@ import com.nowellpoint.mongodb.DocumentManagerFactory;
 @Singleton
 @Startup
 public class JobOperator {
+	
+	private static final Logger LOGGER = Logger.getLogger(JobOperator.class);
 	
 	@Resource
 	TimerService timerService;
@@ -50,14 +53,15 @@ public class JobOperator {
 	}
 	
 	public void jobEventObserver(@Observes Job job) {
-		System.out.println("observed event");
 		Bson query = and ( 
 				eq ( "scheduledJobId", job.getScheduledJobId() ), 
 				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" )));
 		
+		LOGGER.debug("Observed for Job: " + documentManagerFactory.bsonToString(query));
+		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
 		documentManager.upsert(query, job);
-		System.out.println(job.getId());
+
 		submitJob(job);
 	}
 	
@@ -77,9 +81,7 @@ public class JobOperator {
 				.end(job.getEnd())
 				.timezone(job.getTimeZone());
 		
-		System.out.println(expression.toString());
-		
-		timerService.createCalendarTimer(expression, timerConfig);
+		Timer timer = timerService.createCalendarTimer(expression, timerConfig);
 	}
 	
 	@Timeout 

@@ -37,8 +37,6 @@ public class TestJobSchedule {
 				.authenticate(request);
 		
 		token = response.getToken();
-		
-		System.out.println(token.getAccessToken());
 	}
 	
 	@Test
@@ -49,25 +47,25 @@ public class TestJobSchedule {
 				.withConnectorId("58a3a9bc1ed1fec30b6a46fd")
 				.withInstanceKey("8ff183a8339f4810a10d832248efe7db")
 				.withStart(new Date())
-				.withSeconds("0")
-				.withMinutes("60")
+				.withSeconds("*")
+				.withMinutes("*/2")
 				.withHours("*")
 				.withDayOfMonth("*")
 				.withMonth("*")
 				.withDayOfWeek("*")
-				.withYear("*");
+				.withYear("*")
+				.withTimeZone("America/New_York");
 		
 		CreateResult<JobSchedule> createResult = new NowellpointClient(token)
 				.jobSchedule()
 				.create(createRequest);
-		
-		System.out.println(createResult.getErrorMessage());
-		Assert.assertTrue(createResult.isSuccess());
-		Assert.assertEquals(createResult.getTarget().getNotificationEmail(), "john.d.herson@gmail.com");
-		
+				
 		if (! createResult.isSuccess()) {
 			System.out.println(createResult.getErrorMessage());
 		}
+		
+		Assert.assertTrue(createResult.isSuccess());
+		Assert.assertEquals(createResult.getTarget().getNotificationEmail(), "john.d.herson@gmail.com");
 		
 		JobSchedule jobSchedule = new NowellpointClient(token)
 				.jobSchedule()
@@ -81,28 +79,28 @@ public class TestJobSchedule {
 		
 		System.out.println(startJobResult.isSuccess());
 		
-		JobScheduleRequest updateRequest = new JobScheduleRequest()
-				.withId(jobSchedule.getId())
-				.withNotificationEmail("john.d.herson@gmail.com")
-				.withDescription("Here is my new description")
-				.withStart(new Date())
-				.withSeconds(jobSchedule.getSeconds())
-				.withMinutes(jobSchedule.getMinutes())
-				.withHours(jobSchedule.getHours())
-				.withDayOfMonth(jobSchedule.getDayOfMonth())
-				.withMonth(jobSchedule.getMonth())
-				.withDayOfWeek(jobSchedule.getDayOfWeek())
-				.withYear(jobSchedule.getYear());
-
-		UpdateResult<JobSchedule> updateResult = new NowellpointClient(token)
-				.jobSchedule() 
-				.update(updateRequest);
-		
-		Assert.assertTrue(updateResult.isSuccess());
-		
-		if (! updateResult.isSuccess()) {
-			System.out.println(updateResult.getErrorMessage());
-		}
+//		JobScheduleRequest updateRequest = new JobScheduleRequest()
+//				.withId(jobSchedule.getId())
+//				.withNotificationEmail("john.d.herson@gmail.com")
+//				.withDescription("Here is my new description")
+//				.withStart(new Date())
+//				.withSeconds(jobSchedule.getSeconds())
+//				.withMinutes(jobSchedule.getMinutes())
+//				.withHours(jobSchedule.getHours())
+//				.withDayOfMonth(jobSchedule.getDayOfMonth())
+//				.withMonth(jobSchedule.getMonth())
+//				.withDayOfWeek(jobSchedule.getDayOfWeek())
+//				.withYear(jobSchedule.getYear());
+//
+//		UpdateResult<JobSchedule> updateResult = new NowellpointClient(token)
+//				.jobSchedule() 
+//				.update(updateRequest);
+//		
+//		Assert.assertTrue(updateResult.isSuccess());
+//		
+//		if (! updateResult.isSuccess()) {
+//			System.out.println(updateResult.getErrorMessage());
+//		}
 		
 	}
 	
