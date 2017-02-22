@@ -15,18 +15,18 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.rest.JobScheduleResource;
-import com.nowellpoint.api.rest.domain.JobSchedule;
-import com.nowellpoint.api.rest.domain.JobScheduleList;
+import com.nowellpoint.api.rest.JobSpecificationResource;
+import com.nowellpoint.api.rest.domain.JobSpecification;
+import com.nowellpoint.api.rest.domain.JobSpecificationList;
 import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.service.JobScheduleService;
+import com.nowellpoint.api.service.JobSpecificationService;
 
-public class JobScheduleResourceImpl implements JobScheduleResource {
+public class JobSpecificationResourceImpl implements JobSpecificationResource {
 	
-	private static final Logger LOGGER = Logger.getLogger(JobScheduleResourceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(JobSpecificationResourceImpl.class);
 	
 	@Inject
-	private JobScheduleService jobScheduleService;
+	private JobSpecificationService jobScheduleService;
 	
 	@Context
 	private HttpServletRequest httpServletRequest;
@@ -39,16 +39,16 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	
 	@Override
     public Response findAllByOwner() {
-		JobScheduleList resources = jobScheduleService.findByOwner(securityContext.getUserPrincipal().getName());
+		JobSpecificationList resources = jobScheduleService.findByOwner(securityContext.getUserPrincipal().getName());
 		return Response.ok(resources).build();
     }
 	
 	@Override
 	public Response getScheduledJob(String id) {
-		JobSchedule jobSchedule = jobScheduleService.findById( id );
+		JobSpecification jobSchedule = jobScheduleService.findById( id );
 		
 		if (jobSchedule == null) {
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobSchedule.class.getSimpleName(), id ) );
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobSpecification.class.getSimpleName(), id ) );
 		}
 		
 		return Response.ok(jobSchedule).build();
@@ -62,7 +62,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	}
 	
 	@Override
-	public Response createScheduledJob(
+	public Response createJobSpecification(
 			String jobTypeId,
 			String instanceKey,
 			String notificationEmail,
@@ -79,7 +79,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSchedule jobSchedule = jobScheduleService.createJobSchedule(
+		JobSpecification jobSchedule = jobScheduleService.createJobSchedule(
 				jobTypeId, 
 				connectorId, 
 				instanceKey, 
@@ -97,7 +97,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 				description);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(JobScheduleResource.class)
+				.path(JobSpecificationResource.class)
 				.path("/{id}")
 				.build(jobSchedule.getId());
 		
@@ -107,7 +107,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	}
 	
 	@Override
-	public Response updateScheduledJob(
+	public Response updateJobSpecification(
 			String id,
 			String notificationEmail,
 			String description,
@@ -122,7 +122,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSchedule jobSchedule = jobScheduleService.updateScheduledJob(
+		JobSpecification jobSchedule = jobScheduleService.updateScheduledJob(
 				id, 
 				start, 
 				end,
@@ -145,7 +145,7 @@ public class JobScheduleResourceImpl implements JobScheduleResource {
 	@Override
 	public Response invokeAction(String id, String action) {
 		
-		JobSchedule jobSchedule = null;
+		JobSpecification jobSchedule = null;
 		
 		if ("terminate".equalsIgnoreCase(action)) {
 			jobSchedule = jobScheduleService.terminateScheduledJob(id);

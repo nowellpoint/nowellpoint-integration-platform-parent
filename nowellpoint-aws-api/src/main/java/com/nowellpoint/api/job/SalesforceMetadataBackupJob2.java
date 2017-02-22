@@ -36,11 +36,11 @@ import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.rest.domain.JobSchedule;
+import com.nowellpoint.api.rest.domain.JobSpecification;
 import com.nowellpoint.api.rest.service.SalesforceConnectorServiceImpl;
-import com.nowellpoint.api.rest.service.JobScheduleServiceImpl;
+import com.nowellpoint.api.rest.service.JobSpecificationServiceImpl;
 import com.nowellpoint.api.service.SalesforceConnectorService;
-import com.nowellpoint.api.service.JobScheduleService;
+import com.nowellpoint.api.service.JobSpecificationService;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -85,9 +85,9 @@ public class SalesforceMetadataBackupJob2 implements Job {
 		System.out.println(context.getJobDetail().getKey().getGroup());
 		System.out.println(context.getJobDetail().getKey().getName());
 		
-		JobScheduleService jobScheduleService = new JobScheduleServiceImpl();
+		JobSpecificationService jobScheduleService = new JobSpecificationServiceImpl();
 		
-		JobSchedule jobSchedule = null;
+		JobSpecification jobSchedule = null;
 		
 		try {
 			jobSchedule = jobScheduleService.findById(context.getJobDetail().getKey().getName());

@@ -14,8 +14,8 @@ import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.JobSchedule;
-import com.nowellpoint.client.model.JobScheduleRequest;
+import com.nowellpoint.client.model.JobSpecification;
+import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 
@@ -42,7 +42,7 @@ public class TestJobSchedule {
 	@Test
 	public void testCreateUpdateJobSchedule() {
 		
-		JobScheduleRequest createRequest = new JobScheduleRequest()
+		JobSpecificationRequest createRequest = new JobSpecificationRequest()
 				.withJobTypeId("57d7e6ccb55f01245754d0af")
 				.withConnectorId("58a3a9bc1ed1fec30b6a46fd")
 				.withInstanceKey("8ff183a8339f4810a10d832248efe7db")
@@ -56,8 +56,8 @@ public class TestJobSchedule {
 				.withYear("*")
 				.withTimeZone("America/New_York");
 		
-		CreateResult<JobSchedule> createResult = new NowellpointClient(token)
-				.jobSchedule()
+		CreateResult<JobSpecification> createResult = new NowellpointClient(token)
+				.jobSpecification()
 				.create(createRequest);
 				
 		if (! createResult.isSuccess()) {
@@ -67,14 +67,14 @@ public class TestJobSchedule {
 		Assert.assertTrue(createResult.isSuccess());
 		Assert.assertEquals(createResult.getTarget().getNotificationEmail(), "john.d.herson@gmail.com");
 		
-		JobSchedule jobSchedule = new NowellpointClient(token)
-				.jobSchedule()
+		JobSpecification jobSchedule = new NowellpointClient(token)
+				.jobSpecification()
 				.get(createResult.getTarget().getId());
 		
 		Assert.assertNotNull(jobSchedule);
 		
-		UpdateResult<JobSchedule> startJobResult = new NowellpointClient(token)
-				.jobSchedule()
+		UpdateResult<JobSpecification> startJobResult = new NowellpointClient(token)
+				.jobSpecification()
 				.start(jobSchedule.getId());
 		
 		System.out.println(startJobResult.isSuccess());

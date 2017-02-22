@@ -4,8 +4,8 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.RunHistory;
-import com.nowellpoint.client.model.JobSchedule;
-import com.nowellpoint.client.model.JobScheduleList;
+import com.nowellpoint.client.model.JobSpecification;
+import com.nowellpoint.client.model.JobSpecificationList;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
@@ -13,30 +13,30 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
-import com.nowellpoint.client.model.JobScheduleRequest;
+import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.Token;
 
-public class JobScheduleResource extends AbstractResource {
+public class JobSpecificationResource extends AbstractResource {
 	
-	private static final String RESOURCE_CONTEXT = "job-schedules";
+	private static final String RESOURCE_CONTEXT = "job-specifications";
 	private static final String START = "start";
 	private static final String STOP = "stop";
 	private static final String TERMINATE = "terminate";
 	
-	public JobScheduleResource(Token token) {
+	public JobSpecificationResource(Token token) {
 		super(token);
 	}
 
-	public JobScheduleList getJobSchedules() {
+	public JobSpecificationList getJobSpecifications() {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.execute();
 		
-		JobScheduleList resources = null;
+		JobSpecificationList resources = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resources = httpResponse.getEntity(JobScheduleList.class);
+			resources = httpResponse.getEntity(JobSpecificationList.class);
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}
@@ -44,7 +44,7 @@ public class JobScheduleResource extends AbstractResource {
 		return resources;
 	}
 	
-	public CreateResult<JobSchedule> create(JobScheduleRequest jobScheduleRequest) {		
+	public CreateResult<JobSpecification> create(JobSpecificationRequest jobScheduleRequest) {		
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -67,16 +67,16 @@ public class JobScheduleResource extends AbstractResource {
 				.parameter("year", jobScheduleRequest.getYear())
 				.execute();
 		
-		CreateResult<JobSchedule> result = null;
+		CreateResult<JobSpecification> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.CREATED) {
-			JobSchedule resource = httpResponse.getEntity(JobSchedule.class);
-			result = new CreateResultImpl<JobSchedule>(resource);
+			JobSpecification resource = httpResponse.getEntity(JobSpecification.class);
+			result = new CreateResultImpl<JobSpecification>(resource);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new CreateResultImpl<JobSchedule>(error);
+			result = new CreateResultImpl<JobSpecification>(error);
 		}
 		
 		return result;
@@ -87,7 +87,7 @@ public class JobScheduleResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public UpdateResult<JobSchedule> update(JobScheduleRequest jobScheduleRequest) {
+	public UpdateResult<JobSpecification> update(JobSpecificationRequest jobScheduleRequest) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -108,22 +108,22 @@ public class JobScheduleResource extends AbstractResource {
 				.parameter("year", jobScheduleRequest.getYear())
 				.execute();
 		
-		UpdateResult<JobSchedule> result = null;
+		UpdateResult<JobSpecification> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSchedule jobSchedule = httpResponse.getEntity(JobSchedule.class);
-			result = new UpdateResultImpl<JobSchedule>(jobSchedule);
+			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
+			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSchedule>(error);
+			result = new UpdateResultImpl<JobSpecification>(error);
 		}
 		
 		return result;
 	}
 	
-	public UpdateResult<JobSchedule> stop(String id) {
+	public UpdateResult<JobSpecification> stop(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -135,22 +135,22 @@ public class JobScheduleResource extends AbstractResource {
 				.path("invoke")
 				.execute();
 		
-		UpdateResult<JobSchedule> result = null;
+		UpdateResult<JobSpecification> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSchedule jobSchedule = httpResponse.getEntity(JobSchedule.class);
-			result = new UpdateResultImpl<JobSchedule>(jobSchedule);
+			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
+			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSchedule>(error);
+			result = new UpdateResultImpl<JobSpecification>(error);
 		}
 		
 		return result;
 	}
 	
-	public UpdateResult<JobSchedule> terminate(String id) {
+	public UpdateResult<JobSpecification> terminate(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -162,22 +162,22 @@ public class JobScheduleResource extends AbstractResource {
 				.path("invoke")
 				.execute();
 		
-		UpdateResult<JobSchedule> result = null;
+		UpdateResult<JobSpecification> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSchedule jobSchedule = httpResponse.getEntity(JobSchedule.class);
-			result = new UpdateResultImpl<JobSchedule>(jobSchedule);
+			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
+			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSchedule>(error);
+			result = new UpdateResultImpl<JobSpecification>(error);
 		}
 		
 		return result;
 	}
 	
-	public UpdateResult<JobSchedule> start(String id) {
+	public UpdateResult<JobSpecification> start(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -189,32 +189,32 @@ public class JobScheduleResource extends AbstractResource {
 				.path("invoke")
 				.execute();
 		
-		UpdateResult<JobSchedule> result = null;
+		UpdateResult<JobSpecification> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSchedule jobSchedule = httpResponse.getEntity(JobSchedule.class);
-			result = new UpdateResultImpl<JobSchedule>(jobSchedule);
+			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
+			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSchedule>(error);
+			result = new UpdateResultImpl<JobSpecification>(error);
 		}
 		
 		return result;
 	}
 	
-	public JobSchedule get(String id) {
+	public JobSpecification get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
 		
-		JobSchedule resource = null;
+		JobSpecification resource = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resource = httpResponse.getEntity(JobSchedule.class);
+			resource = httpResponse.getEntity(JobSpecification.class);
 		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {

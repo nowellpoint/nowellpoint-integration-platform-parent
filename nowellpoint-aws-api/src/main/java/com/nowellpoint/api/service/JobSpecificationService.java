@@ -7,10 +7,10 @@ import javax.enterprise.event.Observes;
 import com.nowellpoint.annotation.Deactivate;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.rest.domain.JobSchedule;
-import com.nowellpoint.api.rest.domain.JobScheduleList;
+import com.nowellpoint.api.rest.domain.JobSpecification;
+import com.nowellpoint.api.rest.domain.JobSpecificationList;
 
-public interface JobScheduleService {
+public interface JobSpecificationService {
 	
 	/**
 	 * 
@@ -18,7 +18,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobScheduleList findByOwner(String ownerId);
+	public JobSpecificationList findByOwner(String ownerId);
 	
 	/**
 	 * 
@@ -26,7 +26,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobScheduleList findScheduled();
+	public JobSpecificationList findScheduled();
 	
 	/**
 	 * 
@@ -34,7 +34,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobSchedule createJobSchedule(
+	public JobSpecification createJobSchedule(
 			String jobTypeId, 
 			String connectorId, 
 			String instanceKey, 
@@ -57,7 +57,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobSchedule updateScheduledJob(
+	public JobSpecification updateScheduledJob(
 			String id, 
 			String start, 
 			String end,
@@ -78,7 +78,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobSchedule terminateScheduledJob(String id);
+	public JobSpecification terminateScheduledJob(String id);
 	
 	/**
 	 * 
@@ -86,7 +86,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobSchedule startScheduledJob(String id);
+	public JobSpecification startScheduledJob(String id);
 	
 	/**
 	 * 
@@ -94,7 +94,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 	
-	public JobSchedule stopScheduledJob(String id);
+	public JobSpecification stopScheduledJob(String id);
 	
 	/**
 	 * 
@@ -110,7 +110,7 @@ public interface JobScheduleService {
 	 * 
 	 */
 
-	public JobSchedule findById(String id);
+	public JobSpecification findById(String id);
 	
 	/**
 	 * 

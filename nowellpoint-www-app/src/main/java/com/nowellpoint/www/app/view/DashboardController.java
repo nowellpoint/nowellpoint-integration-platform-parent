@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.JobSchedule;
-import com.nowellpoint.client.model.JobScheduleList;
+import com.nowellpoint.client.model.JobSpecification;
+import com.nowellpoint.client.model.JobSpecificationList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 
@@ -30,11 +30,11 @@ public class DashboardController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		JobScheduleList list = new NowellpointClient(token)
-				.jobSchedule()
-				.getJobSchedules();
+		JobSpecificationList list = new NowellpointClient(token)
+				.jobSpecification()
+				.getJobSpecifications();
 		
-		List<JobSchedule> jobSchedules = list.getItems()
+		List<JobSpecification> jobSchedules = list.getItems()
 				.stream()
 				.filter(job -> job.getConnector().getInstance().getKey() != null)
 				.sorted((job1, job2) -> job1.getConnector().getInstance().getName().compareTo(job2.getConnector().getInstance().getName()))
@@ -42,7 +42,7 @@ public class DashboardController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
 		model.put("jobScheduleList", jobSchedules);
-		model.put("scheduledJobPath", Path.Route.SCHEDULED_JOBS_LIST);
+		model.put("scheduledJobPath", Path.Route.JOB_SPECIFICATION_LIST);
     	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};
 }

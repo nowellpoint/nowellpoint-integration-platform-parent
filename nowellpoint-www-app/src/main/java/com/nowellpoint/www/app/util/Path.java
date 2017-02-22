@@ -49,8 +49,8 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
-		public static final String SCHEDULED_JOBS_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
-		public static final String SCHEDULED_JOB_SELECT_TYPE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-type");
+		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
+		public static final String JOB_SPECIFICATION_SELECT_TYPE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-type");
 		public static final String SCHEDULED_JOB_SELECT_CONNECTOR = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-connector");
 		public static final String SCHEDULED_JOB_SELECT_ENVIRONMENT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-environment");
 		public static final String SCHEDULED_JOB_SET_SCHEDULE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/set-schedule");

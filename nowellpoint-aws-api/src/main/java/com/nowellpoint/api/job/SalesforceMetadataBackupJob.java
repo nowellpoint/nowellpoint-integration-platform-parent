@@ -43,7 +43,7 @@ import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Instance;
 import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
-import com.nowellpoint.api.model.document.JobSchedule;
+import com.nowellpoint.api.model.document.JobSpecification;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.model.dynamodb.UserProperties;
 import com.nowellpoint.api.model.dynamodb.UserProperty;

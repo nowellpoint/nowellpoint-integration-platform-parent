@@ -11,7 +11,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.api.resource.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.AccountProfileService;
 import com.nowellpoint.api.rest.IdentityResource;
-import com.nowellpoint.api.rest.JobScheduleResource;
+import com.nowellpoint.api.rest.JobSpecificationResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Identity;
 import com.nowellpoint.api.rest.domain.Resources;
@@ -41,7 +41,7 @@ public class IdentityResourceImpl implements IdentityResource {
 		
 		Resources resources = new Resources();
 		resources.setSalesforce(UriBuilder.fromUri(uriInfo.getBaseUri()).path(SalesforceConnectorResource.class).build().toString());
-		resources.setScheduledJobs(UriBuilder.fromUri(uriInfo.getBaseUri()).path(JobScheduleResource.class).build().toString());
+		resources.setScheduledJobs(UriBuilder.fromUri(uriInfo.getBaseUri()).path(JobSpecificationResource.class).build().toString());
 		
 		Identity identity = new Identity();
 		identity.setId(accountProfile.getId());

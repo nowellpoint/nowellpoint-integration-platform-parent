@@ -20,9 +20,9 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.InstanceInfo;
-import com.nowellpoint.client.model.JobScheduleList;
-import com.nowellpoint.client.model.JobSchedule;
-import com.nowellpoint.client.model.JobScheduleRequest;
+import com.nowellpoint.client.model.JobSpecificationList;
+import com.nowellpoint.client.model.JobSpecification;
+import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.JobType;
 import com.nowellpoint.client.model.JobTypeInfo;
 import com.nowellpoint.client.model.RunHistory;
@@ -39,32 +39,31 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class JobScheduleController extends AbstractStaticController {
+public class JobSpecificationController extends AbstractStaticController {
 	
-	private static final Logger LOGGER = Logger.getLogger(JobScheduleController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(JobSpecificationController.class.getName());
 	
 	public static class Template {
-		public static final String SCHEDULED_JOBS_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs-list.html");
-		public static final String SCHEDULED_JOB_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-create.html");
-		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
-		public static final String SCHEDULED_JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
-		public static final String SCHEDULE_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-job-run-detail.html");
-		public static final String SCHEDULE = String.format(APPLICATION_CONTEXT, "schedule.html");
+		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs-list.html");
+		public static final String JOB_SPECIFICATION_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-create.html");
+		public static final String JOB_SPECIFICATION_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
+		public static final String JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
+		public static final String JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-job-run-detail.html");
 	}
 	
 	public static void configureRoutes(Configuration configuration) {
-        get(Path.Route.SCHEDULED_JOBS_LIST, (request, response) -> listJobSchedules(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_SELECT_TYPE, (request, response) -> listJobTypes(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_LIST, (request, response) -> listJobSpecifications(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_TYPE, (request, response) -> listJobTypes(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
         post(Path.Route.SCHEDULED_JOB_CREATE, (request, response) -> createScheduledJob(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_VIEW, (request, response) -> viewScheduledJob(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_EDIT, (request, response) -> editScheduledJob(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_VIEW, (request, response) -> viewJobSpecifications(configuration, request, response));
+        get(Path.Route.SCHEDULED_JOB_EDIT, (request, response) -> editJobSpecification(configuration, request, response));
         post(Path.Route.SCHEDULED_JOB_UPDATE, (request, response) -> updateScheduledJob(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_START, (request, response) -> startScheduledJob(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_STOP, (request, response) -> stopScheduledJob(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_TERMINATE, (request, response) -> terminateScheduledJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_START, (request, response) -> startJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_STOP, (request, response) -> stopJob(configuration, request, response));
+        post(Path.Route.SCHEDULED_JOB_TERMINATE, (request, response) -> terminateJob(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_RUN_HISTORY, (request, response) -> getRunHistory(configuration, request, response));
         get(Path.Route.SCHEDULED_JOB_DOWNLOAD_FILE, (request, response) -> downloadFile(configuration, request, response));
 	}
@@ -77,18 +76,18 @@ public class JobScheduleController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String listJobSchedules(Configuration configuration, Request request, Response response) {
+	private static String listJobSpecifications(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
-		JobScheduleList list = new NowellpointClient(token)
-				.jobSchedule()
-				.getJobSchedules();
+		JobSpecificationList list = new NowellpointClient(token)
+				.jobSpecification()
+				.getJobSpecifications();
 		
 		Map<String, Object> model = getModel();
 		model.put("jobScheduleList", list.getItems());
 
-		return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOBS_LIST);
+		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_LIST);
 	}
 	
 	/**
@@ -113,7 +112,7 @@ public class JobScheduleController extends AbstractStaticController {
 		model.put("step", "select-type");
     	model.put("jobTypeList", jobTypeList.getItems());
     	
-    	return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+    	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
 	
 	/**
@@ -148,7 +147,7 @@ public class JobScheduleController extends AbstractStaticController {
 	    	model.put("salesforceConnectorsList", salesforceConnectors.getItems());
 		}
 		
-    	return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+    	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
 	
 	/**
@@ -184,7 +183,7 @@ public class JobScheduleController extends AbstractStaticController {
 			model.put("salesforceConnector", salesforceConnector);
 		}
 		
-    	return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+    	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
 
 	/**
@@ -218,7 +217,7 @@ public class JobScheduleController extends AbstractStaticController {
 		jobTypeInfo.setId(jobType.getId());
 		jobTypeInfo.setName(jobType.getName());
 		
-		JobSchedule jobSchedule = new JobSchedule();
+		JobSpecification jobSchedule = new JobSpecification();
 		jobSchedule.setStart(new Date());
 		jobSchedule.setJobType(jobTypeInfo);
 		
@@ -263,7 +262,7 @@ public class JobScheduleController extends AbstractStaticController {
 		model.put("jobSchedule", jobSchedule);
 		model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
 		
-		return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
 	
 	/**
@@ -303,18 +302,18 @@ public class JobScheduleController extends AbstractStaticController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			JobSchedule jobSchedule = new JobSchedule();
+			JobSpecification jobSchedule = new JobSpecification();
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
 			model.put("scheduledJob", jobSchedule);
 			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-			model.put("title", getLabel(JobScheduleController.class, request, "schedule.job"));
+			model.put("title", getLabel(JobSpecificationController.class, request, "schedule.job"));
 			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
-			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 		}
 		
-		JobScheduleRequest createJobScheduleRequest = new JobScheduleRequest()
+		JobSpecificationRequest createJobScheduleRequest = new JobSpecificationRequest()
 				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
@@ -329,13 +328,13 @@ public class JobScheduleController extends AbstractStaticController {
 				.withDayOfWeek(dayOfWeek)
 				.withYear(year);
 		
-		CreateResult<JobSchedule> createJobScheduleResult = new NowellpointClient(token)
-				.jobSchedule()
+		CreateResult<JobSpecification> createJobScheduleResult = new NowellpointClient(token)
+				.jobSpecification()
 				.create(createJobScheduleRequest);
 		
 		if (! createJobScheduleResult.isSuccess()) {
 			
-			JobSchedule jobSchedule = new JobSchedule();
+			JobSpecification jobSchedule = new JobSpecification();
 			jobSchedule.setNotificationEmail(notificationEmail);
 			jobSchedule.setDescription(description);
 			jobSchedule.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
@@ -345,7 +344,7 @@ public class JobScheduleController extends AbstractStaticController {
 			model.put("scheduledJob", jobSchedule);
 			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
 			model.put("errorMessage", createJobScheduleResult.getErrorMessage());
-			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_SELECT);
+			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 		}
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createJobScheduleResult.getTarget().getId()));
@@ -361,14 +360,14 @@ public class JobScheduleController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String viewScheduledJob(Configuration configuration, Request request, Response response) {
+	private static String viewJobSpecifications(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		
-		JobSchedule jobSchedule = new NowellpointClient(token)
-				.jobSchedule()
+		JobSpecification jobSchedule = new NowellpointClient(token)
+				.jobSpecification()
 				.get(id);
 		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", jobSchedule.getCreatedBy().getId());
@@ -386,7 +385,7 @@ public class JobScheduleController extends AbstractStaticController {
 			//removeValue(token, "success.message");
 		}
 		
-		return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB);
+		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB);
 	}
 	
 	/**
@@ -397,15 +396,15 @@ public class JobScheduleController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String editScheduledJob(Configuration configuration, Request request, Response response) {
+	private static String editJobSpecification(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		String view = request.queryParams("view");
 		
 		Token token = getToken(request);
 		
-		JobSchedule jobSchedule = new NowellpointClient(token)
-				.jobSchedule()
+		JobSpecification jobSchedule = new NowellpointClient(token)
+				.jobSpecification()
 				.get(id);
 		
 		Map<String, Object> model = getModel();
@@ -414,12 +413,12 @@ public class JobScheduleController extends AbstractStaticController {
 		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 		
 		if (view != null && view.equals("1")) {
-			model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
+			model.put("cancel", Path.Route.JOB_SPECIFICATION_LIST);
 		} else {
 			model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
 		}
 		
-		return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_EDIT);
+		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_EDIT);
 	}
 	
 	/**
@@ -430,14 +429,14 @@ public class JobScheduleController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String startScheduledJob(Configuration configuration, Request request, Response response) {
+	private static String startJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		
-		UpdateResult<JobSchedule> updateResult = new NowellpointClient(token)
-				.jobSchedule() 
+		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
+				.jobSpecification() 
 				.start(id);
 		
 		//putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "activate.scheduled.job.success"));
@@ -455,14 +454,14 @@ public class JobScheduleController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String stopScheduledJob(Configuration configuration, Request request, Response response) {
+	private static String stopJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		
-		JobSchedule jobSchedule = new NowellpointClient(token)
-				.jobSchedule() 
+		JobSpecification jobSchedule = new NowellpointClient(token)
+				.jobSpecification() 
 				.stop(id)
 				.getTarget();
 		
@@ -481,14 +480,14 @@ public class JobScheduleController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String terminateScheduledJob(Configuration configuration, Request request, Response response) {
+	private static String terminateJob(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		
-		UpdateResult<JobSchedule> updateResult = new NowellpointClient(token)
-				.jobSchedule() 
+		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
+				.jobSpecification() 
 				.terminate(id);
 		
 		//putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "terminate.scheduled.job.success"));
@@ -523,7 +522,7 @@ public class JobScheduleController extends AbstractStaticController {
 		String dayOfWeek = request.queryParams("dayOfWeek");
 		String year = request.queryParams("year");
 		
-		JobScheduleRequest jobScheduleRequest = new JobScheduleRequest()
+		JobSpecificationRequest jobScheduleRequest = new JobSpecificationRequest()
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
@@ -536,14 +535,14 @@ public class JobScheduleController extends AbstractStaticController {
 				.withDayOfWeek(dayOfWeek)
 				.withYear(year);
 
-		UpdateResult<JobSchedule> updateResult = new NowellpointClient(token)
-				.jobSchedule() 
+		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
+				.jobSpecification() 
 				.update(jobScheduleRequest);
 		
 		if (! updateResult.isSuccess()) {
 			
-			JobSchedule jobSchedule = new NowellpointClient(token)
-					.jobSchedule()
+			JobSpecification jobSchedule = new NowellpointClient(token)
+					.jobSpecification()
 					.get(id);
 			
 			String view = request.queryParams("view");
@@ -554,11 +553,11 @@ public class JobScheduleController extends AbstractStaticController {
 			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
 			model.put("errorMessage", updateResult.getErrorMessage());
 			if (view != null && view.equals("1")) {
-				model.put("cancel", Path.Route.SCHEDULED_JOBS_LIST);
+				model.put("cancel", Path.Route.JOB_SPECIFICATION_LIST);
 			} else {
 				model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
 			}
-			return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULED_JOB_EDIT);
+			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_EDIT);
 		}
 		
 		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
@@ -582,15 +581,15 @@ public class JobScheduleController extends AbstractStaticController {
 		String fireInstanceId = request.params(":fireInstanceId");
 		
 		RunHistory runHistory = new NowellpointClient(token)
-				.jobSchedule()
+				.jobSpecification()
 				.runHistory()
 				.get(id, fireInstanceId);
 		
 		Map<String, Object> model = getModel();
-		model.put("scheduledJob", new JobSchedule(id));
+		model.put("scheduledJob", new JobSpecification(id));
 		model.put("runHistory", runHistory);
 		
-		return render(JobScheduleController.class, configuration, request, response, model, Template.SCHEDULE_JOB_RUN_HISTORY);
+		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_RUN_HISTORY);
 	}
 	
 	/**
@@ -610,7 +609,7 @@ public class JobScheduleController extends AbstractStaticController {
 		String filename = request.params(":filename");
 		
 		String file = new NowellpointClient(token)
-				.jobSchedule()
+				.jobSpecification()
 				.runHistory()
 				.getFile(id, fireInstanceId, filename);
 		

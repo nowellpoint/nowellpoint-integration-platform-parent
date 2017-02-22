@@ -13,8 +13,8 @@ import javax.ws.rs.core.Response;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-@Path("job-schedules")
-public interface JobScheduleResource {
+@Path("job-specifications")
+public interface JobSpecificationResource {
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,7 +33,7 @@ public interface JobScheduleResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createScheduledJob(
+	public Response createJobSpecification(
 			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
 			@FormParam("instanceKey") @NotEmpty String instanceKey,
 			@FormParam("notificationEmail") String notificationEmail,
@@ -54,7 +54,7 @@ public interface JobScheduleResource {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateScheduledJob(@PathParam("id") String id,
+	public Response updateJobSpecification(@PathParam("id") String id,
 			@FormParam("notificationEmail") String notificationEmail,
 			@FormParam("description") String description,
 			@FormParam("start") String start,

@@ -1,13 +1,17 @@
-package com.nowellpoint.client.model;
+package com.nowellpoint.api.rest.domain;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.Email;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class JobSchedule extends AbstractResource {
+import com.nowellpoint.mongodb.document.MongoDocument;
+
+public class JobSpecification extends AbstractResource {
+	
+	private UserInfo createdBy;
+	
+	private UserInfo lastUpdatedBy;
 	
 	private UserInfo owner;
 	
@@ -29,6 +33,7 @@ public class JobSchedule extends AbstractResource {
 	
 	private String lastRunFailureMessage;
 	
+	@Email
 	private String notificationEmail;
 	
 	private String seconds;
@@ -47,14 +52,30 @@ public class JobSchedule extends AbstractResource {
 	
 	private String timeZone;
 	
-	private List<RunHistory> runHistories;
+	private Set<RunHistory> runHistories;
 	
-	public JobSchedule() {
-		setRunHistories(Collections.emptyList());
+	public JobSpecification() {
+		
 	}
 	
-	public JobSchedule(String id) {
-		setId(id);
+	public JobSpecification(MongoDocument document) {
+		super(document);
+	}
+
+	public UserInfo getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserInfo createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public UserInfo getOwner() {
@@ -137,14 +158,6 @@ public class JobSchedule extends AbstractResource {
 		this.lastRunStatus = lastRunStatus;
 	}
 
-	public String getNotificationEmail() {
-		return notificationEmail;
-	}
-
-	public void setNotificationEmail(String notificationEmail) {
-		this.notificationEmail = notificationEmail;
-	}
-
 	public String getLastRunFailureMessage() {
 		return lastRunFailureMessage;
 	}
@@ -153,14 +166,22 @@ public class JobSchedule extends AbstractResource {
 		this.lastRunFailureMessage = lastRunFailureMessage;
 	}
 
-	public List<RunHistory> getRunHistories() {
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
+	}
+
+	public Set<RunHistory> getRunHistories() {
 		return runHistories;
 	}
 
-	public void setRunHistories(List<RunHistory> runHistories) {
+	public void setRunHistories(Set<RunHistory> runHistories) {
 		this.runHistories = runHistories;
 	}
-
+	
 	public String getSeconds() {
 		return seconds;
 	}
@@ -215,5 +236,10 @@ public class JobSchedule extends AbstractResource {
 
 	public void setYear(String year) {
 		this.year = year;
+	}
+
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.JobSpecification.class);
 	}
 }

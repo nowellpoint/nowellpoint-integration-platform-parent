@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 import java.util.Date;
 
-public class JobScheduleRequest {
+public class JobSpecificationRequest {
 	
 	private String id;
 	
@@ -36,7 +36,7 @@ public class JobScheduleRequest {
 	
 	private String timeZone;
 	
-	public JobScheduleRequest() {
+	public JobSpecificationRequest() {
 		
 	}
 
@@ -168,82 +168,82 @@ public class JobScheduleRequest {
 		this.year = year;
 	}
 
-	public JobScheduleRequest withId(String id) {
+	public JobSpecificationRequest withId(String id) {
 		setId(id);
 		return this;
 	}
 	
-	public JobScheduleRequest withInstanceKey(String instanceKey) {
+	public JobSpecificationRequest withInstanceKey(String instanceKey) {
 		setInstanceKey(instanceKey);
 		return this;
 	}
 	
-	public JobScheduleRequest withNotificationEmail(String notificationEmail) {
+	public JobSpecificationRequest withNotificationEmail(String notificationEmail) {
 		setNotificationEmail(notificationEmail);
 		return this;
 	}
 	
-	public JobScheduleRequest withDescription(String description) {
+	public JobSpecificationRequest withDescription(String description) {
 		setDescription(description);
 		return this;
 	}
 	
-	public JobScheduleRequest withJobTypeId(String jobTypeId) {
+	public JobSpecificationRequest withJobTypeId(String jobTypeId) {
 		setJobTypeId(jobTypeId);
 		return this;
 	}
 	
-	public JobScheduleRequest withConnectorId(String connectorId) {
+	public JobSpecificationRequest withConnectorId(String connectorId) {
 		setConnectorId(connectorId);
 		return this;
 	}
 	
-	public JobScheduleRequest withStart(Date start) {
+	public JobSpecificationRequest withStart(Date start) {
 		setStart(start);
 		return this;
 	}
 	
-	public JobScheduleRequest withEnd(Date end) {
+	public JobSpecificationRequest withEnd(Date end) {
 		setEnd(end);
 		return this;
 	}
 	
-	public JobScheduleRequest withTimeZone(String timeZone) {
+	public JobSpecificationRequest withTimeZone(String timeZone) {
 		setTimeZone(timeZone);
 		return this;
 	}
 	
-	public JobScheduleRequest withSeconds(String seconds) {
+	public JobSpecificationRequest withSeconds(String seconds) {
 		setSeconds(seconds);
 		return this;
 	}
 	
-	public JobScheduleRequest withMinutes(String minutes) {
+	public JobSpecificationRequest withMinutes(String minutes) {
 		setMinutes(minutes);
 		return this;
 	}
 	
-	public JobScheduleRequest withHours(String hours) {
+	public JobSpecificationRequest withHours(String hours) {
 		setHours(hours);
 		return this;
 	}
 	
-	public JobScheduleRequest withDayOfMonth(String dayOfMonth) {
+	public JobSpecificationRequest withDayOfMonth(String dayOfMonth) {
 		setDayOfMonth(dayOfMonth);
 		return this;
 	}
 	
-	public JobScheduleRequest withMonth(String month) {
+	public JobSpecificationRequest withMonth(String month) {
 		setMonth(month);
 		return this;
 	}
 	
-	public JobScheduleRequest withDayOfWeek(String dayOfWeek) {
+	public JobSpecificationRequest withDayOfWeek(String dayOfWeek) {
 		setDayOfWeek(dayOfWeek);
 		return this;
 	}
 	
-	public JobScheduleRequest withYear(String year) {
+	public JobSpecificationRequest withYear(String year) {
 		setYear(year);
 		return this;
 	}

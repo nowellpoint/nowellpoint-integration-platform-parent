@@ -1,53 +1,18 @@
-/**
- * 
- * Copyright 2015-2016 the original author or authors.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
+package com.nowellpoint.client.model;
 
-package com.nowellpoint.api.model.document;
-
+import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
-import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedMany;
-import com.nowellpoint.mongodb.annotation.EmbedOne;
-import com.nowellpoint.mongodb.annotation.Reference;
-import com.nowellpoint.mongodb.document.MongoDocument;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@Document(collectionName="job.schedules")
-public class JobSchedule extends MongoDocument {
-
-	private static final long serialVersionUID = 4880299116047933778L;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class JobSpecification extends AbstractResource {
 	
-	@EmbedOne
-	private Meta meta;
+	private UserInfo owner;
 	
-	@Reference
-	private UserRef createdBy;
-	
-	@Reference
-	private UserRef lastUpdatedBy;
-	
-	@Reference
-	private UserRef owner;
-	
-	@EmbedOne
 	private ConnectorInfo connector;
 	
-	@EmbedOne
 	private JobTypeInfo jobType;
 	
 	private String description;
@@ -82,42 +47,21 @@ public class JobSchedule extends MongoDocument {
 	
 	private String timeZone;
 	
-	@EmbedMany
-	private Set<RunHistory> runHistories;
+	private List<RunHistory> runHistories;
 	
-	public JobSchedule() {
-		
+	public JobSpecification() {
+		setRunHistories(Collections.emptyList());
+	}
+	
+	public JobSpecification(String id) {
+		setId(id);
 	}
 
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
-
-	public UserRef getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UserRef createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UserRef getLastUpdatedBy() {
-		return lastUpdatedBy;
-	}
-
-	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
-		this.lastUpdatedBy = lastUpdatedBy;
-	}
-
-	public UserRef getOwner() {
+	public UserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserRef owner) {
+	public void setOwner(UserInfo owner) {
 		this.owner = owner;
 	}
 
@@ -161,6 +105,14 @@ public class JobSchedule extends MongoDocument {
 		this.end = end;
 	}
 
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -185,14 +137,6 @@ public class JobSchedule extends MongoDocument {
 		this.lastRunStatus = lastRunStatus;
 	}
 
-	public String getLastRunFailureMessage() {
-		return lastRunFailureMessage;
-	}
-
-	public void setLastRunFailureMessage(String lastRunFailureMessage) {
-		this.lastRunFailureMessage = lastRunFailureMessage;
-	}
-
 	public String getNotificationEmail() {
 		return notificationEmail;
 	}
@@ -201,11 +145,19 @@ public class JobSchedule extends MongoDocument {
 		this.notificationEmail = notificationEmail;
 	}
 
-	public Set<RunHistory> getRunHistories() {
+	public String getLastRunFailureMessage() {
+		return lastRunFailureMessage;
+	}
+
+	public void setLastRunFailureMessage(String lastRunFailureMessage) {
+		this.lastRunFailureMessage = lastRunFailureMessage;
+	}
+
+	public List<RunHistory> getRunHistories() {
 		return runHistories;
 	}
 
-	public void setRunHistories(Set<RunHistory> runHistories) {
+	public void setRunHistories(List<RunHistory> runHistories) {
 		this.runHistories = runHistories;
 	}
 
@@ -263,13 +215,5 @@ public class JobSchedule extends MongoDocument {
 
 	public void setYear(String year) {
 		this.year = year;
-	}
-
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
 	}
 }

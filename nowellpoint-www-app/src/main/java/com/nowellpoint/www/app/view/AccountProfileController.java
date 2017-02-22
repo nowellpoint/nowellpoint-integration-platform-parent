@@ -341,7 +341,7 @@ public class AccountProfileController extends AbstractStaticController {
 		}
 		
 		if (newAccount) {
-			response.redirect(Path.Route.SCHEDULED_JOB_SELECT_TYPE);
+			response.redirect(Path.Route.JOB_SPECIFICATION_SELECT_TYPE);
 		} else {
 			response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "subscription.plan.update.success"), 3);
 			response.redirect(Path.Route.ACCOUNT_PROFILE.replace(":id", request.params(":id")));

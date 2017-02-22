@@ -35,20 +35,20 @@ import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.JobTypeInfo;
 import com.nowellpoint.api.rest.domain.RunHistory;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
-import com.nowellpoint.api.rest.domain.JobSchedule;
-import com.nowellpoint.api.rest.domain.JobScheduleList;
+import com.nowellpoint.api.rest.domain.JobSpecification;
+import com.nowellpoint.api.rest.domain.JobSpecificationList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.SalesforceConnectorService;
-import com.nowellpoint.api.service.JobScheduleService;
+import com.nowellpoint.api.service.JobSpecificationService;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
 
-public class JobScheduleServiceImpl extends AbstractJobScheduleService implements JobScheduleService {
+public class JobSpecificationServiceImpl extends AbstractJobSpecificationService implements JobSpecificationService {
 	
-	private static final Logger LOGGER = Logger.getLogger(JobScheduleServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(JobSpecificationServiceImpl.class);
 	
 	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
 	
@@ -66,7 +66,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 * 
 	 */
 	
-	public JobScheduleServiceImpl() {
+	public JobSpecificationServiceImpl() {
 		
 	}
 
@@ -79,7 +79,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public JobScheduleList findByOwner(String ownerId) {
+	public JobSpecificationList findByOwner(String ownerId) {
 		return super.findAllByOwner(ownerId);
 	}
 	
@@ -90,12 +90,12 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public JobScheduleList findScheduled() {
+	public JobSpecificationList findScheduled() {
 		return super.findByStatus("Scheduled");
 	}
 	
 	@Override
-	public JobSchedule createJobSchedule(
+	public JobSpecification createJobSchedule(
 			String jobTypeId, 
 			String connectorId, 
 			String instanceKey, 
@@ -146,7 +146,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		Date now = Date.from(Instant.now());
 		
-		JobSchedule jobSchedule = new JobSchedule();
+		JobSpecification jobSchedule = new JobSpecification();
 		jobSchedule.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
 		jobSchedule.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
 		jobSchedule.setTimeZone(timeZone);
@@ -236,7 +236,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public JobSchedule updateScheduledJob(
+	public JobSpecification updateScheduledJob(
 			String id, 
 			String start, 
 			String end,
@@ -255,7 +255,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		 * retrieve the original record
 		 */
 		
-		JobSchedule original = findById(id);
+		JobSpecification original = findById(id);
 		
 		LocalDate startDate = null;
 		LocalDate endDate = null;
@@ -297,7 +297,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		Date now = Date.from(Instant.now());
 		
-		JobSchedule jobSchedule = new JobSchedule();
+		JobSpecification jobSchedule = new JobSpecification();
 		jobSchedule.setId(id);
 		jobSchedule.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
 		jobSchedule.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
@@ -405,8 +405,8 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public JobSchedule terminateScheduledJob(String id) {
-		JobSchedule jobSchedule = findById(id);
+	public JobSpecification terminateScheduledJob(String id) {
+		JobSpecification jobSchedule = findById(id);
 		jobSchedule.setStatus(JobStatus.TERMINATED);
 		update(jobSchedule);
 		return jobSchedule;
@@ -418,8 +418,8 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public JobSchedule startScheduledJob(String id) {
-		JobSchedule jobSchedule = findById(id);
+	public JobSpecification startScheduledJob(String id) {
+		JobSpecification jobSchedule = findById(id);
 		jobSchedule.setStatus(JobStatus.SCHEDULED);
 		update(jobSchedule);
 		
@@ -432,8 +432,8 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 	
 	@Override
-	public JobSchedule stopScheduledJob(String id) {
-		JobSchedule jobSchedule = findById(id);
+	public JobSpecification stopScheduledJob(String id) {
+		JobSpecification jobSchedule = findById(id);
 		jobSchedule.setStatus(JobStatus.STOPPED);
 		update(jobSchedule);
 		return jobSchedule;
@@ -449,7 +449,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	
 	@Override
 	public void deleteScheduledJob(String id) {
-		JobSchedule resource = findById(id);
+		JobSpecification resource = findById(id);
 		delete(resource);
 	}
 	
@@ -463,7 +463,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	 */
 
 	@Override
-	public JobSchedule findById(String id) {
+	public JobSpecification findById(String id) {
 		return super.findById(id);
 	}
 	
@@ -479,7 +479,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	
 	@Override
 	public RunHistory findRunHistory(String id, String fireInstanceId) {
-		JobSchedule jobSchedule = findById( id );
+		JobSpecification jobSchedule = findById( id );
 		
 		Optional<RunHistory> filter = jobSchedule.getRunHistories()
 				.stream()
@@ -533,7 +533,7 @@ public class JobScheduleServiceImpl extends AbstractJobScheduleService implement
 	
 	@Override
 	public void terminateAllJobs(@Observes @Deactivate AccountProfile accountProfile) {
-		JobScheduleList list = findByOwner(accountProfile.getId());
+		JobSpecificationList list = findByOwner(accountProfile.getId());
 		list.getItems().stream().forEach(scheduledJob -> {
 			scheduledJob.setStatus(JobStatus.TERMINATED);
 			update(scheduledJob);

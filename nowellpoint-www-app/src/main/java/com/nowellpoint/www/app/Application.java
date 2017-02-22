@@ -34,7 +34,7 @@ import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
-import com.nowellpoint.www.app.view.JobScheduleController;
+import com.nowellpoint.www.app.view.JobSpecificationController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
 
@@ -152,7 +152,7 @@ public class Application implements SparkApplication {
         AdministrationController.configureRoutes(configuration);
         AccountProfileController.configureRoutes(configuration);
         SalesforceOauthController.configureRoutes(configuration);
-        JobScheduleController.configureRoutes(configuration);
+        JobSpecificationController.configureRoutes(configuration);
         SalesforceConnectorController.configureRoutes(configuration);
         NotificationController.configureRoutes(configuration);
 	}
