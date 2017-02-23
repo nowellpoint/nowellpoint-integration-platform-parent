@@ -21,7 +21,7 @@ import com.nowellpoint.client.model.UpdateResult;
 
 import org.junit.Assert;
 
-public class TestJobSchedule {
+public class TestJobSpecification {
 	
 	private static Token token;
 
@@ -40,7 +40,7 @@ public class TestJobSchedule {
 	}
 	
 	@Test
-	public void testCreateUpdateJobSchedule() {
+	public void testCreateUpdateJobSpecification() {
 		
 		JobSpecificationRequest createRequest = new JobSpecificationRequest()
 				.withJobTypeId("57d7e6ccb55f01245754d0af")
@@ -67,15 +67,16 @@ public class TestJobSchedule {
 		Assert.assertTrue(createResult.isSuccess());
 		Assert.assertEquals(createResult.getTarget().getNotificationEmail(), "john.d.herson@gmail.com");
 		
-		JobSpecification jobSchedule = new NowellpointClient(token)
+		JobSpecification jobSpecification = new NowellpointClient(token)
 				.jobSpecification()
 				.get(createResult.getTarget().getId());
 		
-		Assert.assertNotNull(jobSchedule);
+		Assert.assertNotNull(jobSpecification);
+		Assert.assertNotNull(jobSpecification.getOwner());
 		
 		UpdateResult<JobSpecification> startJobResult = new NowellpointClient(token)
 				.jobSpecification()
-				.start(jobSchedule.getId());
+				.start(jobSpecification.getId());
 		
 		System.out.println(startJobResult.isSuccess());
 		

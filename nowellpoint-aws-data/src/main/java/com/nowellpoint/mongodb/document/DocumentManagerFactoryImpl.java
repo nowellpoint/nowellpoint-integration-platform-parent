@@ -2,6 +2,9 @@ package com.nowellpoint.mongodb.document;
 
 import java.util.List;
 
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+
 import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -21,6 +24,7 @@ import com.mongodb.connection.ClusterSettings;
 import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.connection.SslSettings;
+import com.mongodb.connection.netty.NettyStreamFactoryFactory;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 
@@ -29,6 +33,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	private static final Logger LOGGER = Logger.getLogger(DocumentManagerFactory.class);
 	
 	private static CollectionNameResolver collectionNameResolver = new CollectionNameResolver();
+	private static EventLoopGroup eventLoopGroup = new NioEventLoopGroup(); 
 	
 	private static MongoClient client;
 	private static MongoDatabase database;
@@ -40,6 +45,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	            .codecRegistry(MongoClients.getDefaultCodecRegistry())
 	            .connectionPoolSettings(ConnectionPoolSettings.builder().applyConnectionString(connectionString).build())
 	            .sslSettings(SslSettings.builder().applyConnectionString(connectionString).build())
+	            .streamFactoryFactory(NettyStreamFactoryFactory.builder().eventLoopGroup(eventLoopGroup).build())
 	            .writeConcern(WriteConcern.ACKNOWLEDGED)
 	            .clusterSettings(ClusterSettings.builder().applyConnectionString(connectionString).build())
 	            .credentialList(connectionString.getCredentialList())
@@ -97,6 +103,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	
 	@Override
 	public void close() {
+		eventLoopGroup.shutdownGracefully();
 		client.close();
 		LOGGER.info("***Closed connection to: " + database.getName());
 	}

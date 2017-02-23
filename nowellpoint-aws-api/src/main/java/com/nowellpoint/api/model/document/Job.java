@@ -35,15 +35,13 @@ public class Job extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef createdBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef lastUpdatedBy;
 	
 	private ObjectId scheduledJobId;
-
-	private String fireInstanceId;
 	
 	private Date start;
 	
@@ -113,14 +111,6 @@ public class Job extends MongoDocument {
 	
 	public void setScheduledJobId(String scheduledJobId) {
 		this.scheduledJobId = new ObjectId(scheduledJobId);
-	}
-
-	public String getFireInstanceId() {
-		return fireInstanceId;
-	}
-
-	public void setFireInstanceId(String fireInstanceId) {
-		this.fireInstanceId = fireInstanceId;
 	}
 
 	public Date getStart() {

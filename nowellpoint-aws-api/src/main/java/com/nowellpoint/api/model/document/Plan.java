@@ -34,10 +34,10 @@ public class Plan extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef createdBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef lastUpdatedBy;
 	
 	private Boolean recommendedPlan;

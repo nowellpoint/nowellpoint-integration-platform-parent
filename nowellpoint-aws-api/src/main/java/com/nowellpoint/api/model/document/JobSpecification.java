@@ -21,6 +21,8 @@ package com.nowellpoint.api.model.document;
 import java.util.Date;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
+
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
@@ -35,14 +37,18 @@ public class JobSpecification extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef createdBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef lastUpdatedBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef owner;
+	
+	private ObjectId jobId;
+	
+	private String deploymentStatus;
 	
 	@EmbedOne
 	private ConnectorInfo connector;
@@ -119,6 +125,22 @@ public class JobSpecification extends MongoDocument {
 
 	public void setOwner(UserRef owner) {
 		this.owner = owner;
+	}
+
+	public ObjectId getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(ObjectId jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getDeploymentStatus() {
+		return deploymentStatus;
+	}
+
+	public void setDeploymentStatus(String deploymentStatus) {
+		this.deploymentStatus = deploymentStatus;
 	}
 
 	public ConnectorInfo getConnector() {

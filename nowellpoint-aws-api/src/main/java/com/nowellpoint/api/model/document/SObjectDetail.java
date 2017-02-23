@@ -30,10 +30,10 @@ public class SObjectDetail extends MongoDocument {
 
 	private static final long serialVersionUID = 8161621113389201360L;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef createdBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef lastUpdatedBy;
 	
 	private ObjectId connectorId;

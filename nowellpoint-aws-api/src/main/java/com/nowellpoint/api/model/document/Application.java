@@ -30,7 +30,7 @@ public class Application extends MongoDocument implements Serializable {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef owner;
 	
 	private String name;

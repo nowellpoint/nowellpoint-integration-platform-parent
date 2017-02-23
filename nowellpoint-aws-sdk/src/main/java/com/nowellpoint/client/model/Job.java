@@ -24,8 +24,6 @@ public class Job extends AbstractResource {
 	
 	private String scheduledJobId;
 	
-	private String fireInstanceId;
-	
 	private Date start;
 	
 	private Date end;
@@ -66,14 +64,6 @@ public class Job extends AbstractResource {
 
 	public void setScheduledJobId(String scheduledJobId) {
 		this.scheduledJobId = scheduledJobId;
-	}
-
-	public String getFireInstanceId() {
-		return fireInstanceId;
-	}
-
-	public void setFireInstanceId(String fireInstanceId) {
-		this.fireInstanceId = fireInstanceId;
 	}
 
 	public Date getStart() {

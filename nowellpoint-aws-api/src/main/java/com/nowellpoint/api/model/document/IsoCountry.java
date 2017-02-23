@@ -39,10 +39,10 @@ public class IsoCountry extends MongoDocument {
 	
 	private String description;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef createdBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef lastUpdatedBy;
 
 	public IsoCountry() {

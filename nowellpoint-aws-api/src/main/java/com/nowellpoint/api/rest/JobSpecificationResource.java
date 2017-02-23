@@ -23,12 +23,12 @@ public interface JobSpecificationResource {
 	@GET
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response getScheduledJob(@PathParam("id") String id);
+	public Response getJobSpecification(@PathParam("id") String id);
 	
 	@DELETE
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-	public Response deleteScheduledJob(@PathParam("id") String id);
+	public Response deleteJobSpecification(@PathParam("id") String id);
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -80,13 +80,4 @@ public interface JobSpecificationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action);
 	
-	@GET
-	@Path("{id}/run-history/{fireInstanceId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getRunHistory(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId);
-	
-	@GET
-	@Path("{id}/run-history/{fireInstanceId}/file/{filename}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public Response getFile(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId, @PathParam("filename") String filename);
 }

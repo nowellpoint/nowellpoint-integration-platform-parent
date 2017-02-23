@@ -293,16 +293,12 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	@SuppressWarnings("unchecked")
 	private <T> T parseReference(Field referenceField, Object value) {
 		
-		if (! referenceField.getType().isAnnotationPresent(com.nowellpoint.mongodb.annotation.Document.class)) {
-    		throw new DocumentManagerException("Missing Document annotation from " + referenceField.getType().getClass().getName());
-    	}
-		
 		if (value != null) {
 			Object object = referenceCache.get(value);
 			if (object == null) {
 				object = instantiate(referenceField.getType());
 				
-				MongoCollection<Document> collection = documentManagerFactory.getCollection( documentManagerFactory.resolveCollectionName( referenceField.getType() ) );
+				MongoCollection<Document> collection = documentManagerFactory.getCollection( referenceField.getAnnotation(Reference.class).collectionName() );
 				Document bson = findOne(collection, Filters.eq ( ID, value ));
 				
 				if (bson == null) {

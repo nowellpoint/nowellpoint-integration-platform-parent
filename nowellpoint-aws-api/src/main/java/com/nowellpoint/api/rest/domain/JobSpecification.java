@@ -15,6 +15,10 @@ public class JobSpecification extends AbstractResource {
 	
 	private UserInfo owner;
 	
+	private String jobId;
+	
+	private String deploymentStatus;
+	
 	private ConnectorInfo connector;
 	
 	private JobTypeInfo jobType;
@@ -84,6 +88,22 @@ public class JobSpecification extends AbstractResource {
 
 	public void setOwner(UserInfo owner) {
 		this.owner = owner;
+	}
+
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getDeploymentStatus() {
+		return deploymentStatus;
+	}
+
+	public void setDeploymentStatus(String deploymentStatus) {
+		this.deploymentStatus = deploymentStatus;
 	}
 
 	public ConnectorInfo getConnector() {

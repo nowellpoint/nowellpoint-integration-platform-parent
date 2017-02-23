@@ -15,10 +15,10 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private String name;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserInfo createdBy;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserInfo lastUpdatedBy;
 	
 	public SalesforceConnector() {

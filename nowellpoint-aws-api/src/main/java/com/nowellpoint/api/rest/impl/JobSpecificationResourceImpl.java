@@ -1,6 +1,5 @@
 package com.nowellpoint.api.rest.impl;
 
-import java.io.IOException;
 import java.net.URI;
 
 import javax.inject.Inject;
@@ -13,20 +12,15 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.jboss.logging.Logger;
-
 import com.nowellpoint.api.rest.JobSpecificationResource;
 import com.nowellpoint.api.rest.domain.JobSpecification;
 import com.nowellpoint.api.rest.domain.JobSpecificationList;
-import com.nowellpoint.api.rest.domain.RunHistory;
 import com.nowellpoint.api.service.JobSpecificationService;
 
 public class JobSpecificationResourceImpl implements JobSpecificationResource {
 	
-	private static final Logger LOGGER = Logger.getLogger(JobSpecificationResourceImpl.class);
-	
 	@Inject
-	private JobSpecificationService jobScheduleService;
+	private JobSpecificationService jobSpecificationService;
 	
 	@Context
 	private HttpServletRequest httpServletRequest;
@@ -39,13 +33,13 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 	
 	@Override
     public Response findAllByOwner() {
-		JobSpecificationList resources = jobScheduleService.findByOwner(securityContext.getUserPrincipal().getName());
+		JobSpecificationList resources = jobSpecificationService.findByOwner(securityContext.getUserPrincipal().getName());
 		return Response.ok(resources).build();
     }
 	
 	@Override
-	public Response getScheduledJob(String id) {
-		JobSpecification jobSchedule = jobScheduleService.findById( id );
+	public Response getJobSpecification(String id) {
+		JobSpecification jobSchedule = jobSpecificationService.findById( id );
 		
 		if (jobSchedule == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobSpecification.class.getSimpleName(), id ) );
@@ -56,8 +50,8 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 	}
 	
 	@Override
-	public Response deleteScheduledJob(String id) {
-		jobScheduleService.deleteScheduledJob( id );
+	public Response deleteJobSpecification(String id) {
+		jobSpecificationService.deleteScheduledJob( id );
 		return Response.noContent().build();
 	}
 	
@@ -79,7 +73,7 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSpecification jobSchedule = jobScheduleService.createJobSchedule(
+		JobSpecification jobSchedule = jobSpecificationService.createJobSchedule(
 				jobTypeId, 
 				connectorId, 
 				instanceKey, 
@@ -122,7 +116,7 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSpecification jobSchedule = jobScheduleService.updateScheduledJob(
+		JobSpecification jobSchedule = jobSpecificationService.updateScheduledJob(
 				id, 
 				start, 
 				end,
@@ -147,12 +141,8 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 		
 		JobSpecification jobSchedule = null;
 		
-		if ("terminate".equalsIgnoreCase(action)) {
-			jobSchedule = jobScheduleService.terminateScheduledJob(id);
-		} else if ("start".equalsIgnoreCase(action)) {
-			jobSchedule = jobScheduleService.startScheduledJob(id);
-		} else if ("stop".equalsIgnoreCase(action)) {
-			jobSchedule = jobScheduleService.stopScheduledJob(id);
+		if ("deploy".equalsIgnoreCase(action)) {
+			jobSchedule = jobSpecificationService.terminateScheduledJob(id);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
@@ -160,37 +150,5 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 		return Response.ok()
 				.entity(jobSchedule)
 				.build(); 
-	}
-	
-	@Override
-	public Response getRunHistory(String id, String fireInstanceId) {
-		
-		RunHistory resource = jobScheduleService.findRunHistory(id, fireInstanceId);
-		
-		if (resource == null) {
-			throw new NotFoundException(String.format("Run History for Scheduled Job: %s with Instance Id: %s was not found", id, fireInstanceId));
-		}
-		
-		return Response
-				.ok(resource)
-				.build();
-	}
-	
-	@Override
-	public Response getFile(String id, String fireInstanceId, String filename) {
-
-		String content = null;
-		
-		try {
-			content = jobScheduleService.getFile(id, fireInstanceId, filename);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-			throw new BadRequestException(e.getMessage());
-		}
-		
-		return Response.ok()
-				.header("Content-Disposition", String.format("attachment; filename=\"%s.json\"", filename))
-				.entity(content)
-				.build();	
 	}
 }

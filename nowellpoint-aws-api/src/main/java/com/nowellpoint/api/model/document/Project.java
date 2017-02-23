@@ -38,7 +38,7 @@ public class Project extends MongoDocument {
 	
 	private String stage;
 	
-	@Reference
+	@Reference(collectionName="account.profiles")
 	private UserRef owner;
 	
 	@EmbedMany
