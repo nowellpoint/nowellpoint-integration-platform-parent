@@ -49,20 +49,15 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
-		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
-		public static final String JOB_SPECIFICATION_SELECT_TYPE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-type");
-		public static final String SCHEDULED_JOB_SELECT_CONNECTOR = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-connector");
-		public static final String SCHEDULED_JOB_SELECT_ENVIRONMENT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/select-environment");
-		public static final String SCHEDULED_JOB_SET_SCHEDULE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/new/set-schedule");
-		public static final String SCHEDULED_JOB_VIEW = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id");
-		public static final String SCHEDULED_JOB_CREATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs");
-		public static final String SCHEDULED_JOB_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/edit");
-		public static final String SCHEDULED_JOB_UPDATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id");
-		public static final String SCHEDULED_JOB_START = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/start");
-		public static final String SCHEDULED_JOB_STOP = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/stop");
-		public static final String SCHEDULED_JOB_TERMINATE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/terminate");
-		public static final String SCHEDULED_JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId");
-		public static final String SCHEDULED_JOB_DOWNLOAD_FILE = String.format(APPLICATION_CONTEXT, "scheduled-jobs/:id/run-history/:fireInstanceId/download/:filename");
+		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "job-specifications");
+		public static final String JOB_SPECIFICATION_SELECT_TYPE = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-type");
+		public static final String JOB_SPECIFICATION_SELECT_CONNECTOR = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-connector");
+		public static final String JOB_SPECIFICATION_SELECT_ENVIRONMENT = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-environment");
+		public static final String JOB_SPECIFICATION_SET_SCHEDULE = String.format(APPLICATION_CONTEXT, "job-specifications/new/set-schedule");
+		public static final String JOB_SPECIFICATION_VIEW = String.format(APPLICATION_CONTEXT, "job-specifications/:id");
+		public static final String JOB_SPECIFICATION_CREATE = String.format(APPLICATION_CONTEXT, "job-specifications");
+		public static final String JOB_SPECIFICATION_EDIT = String.format(APPLICATION_CONTEXT, "job-specifications/:id/edit");
+		public static final String JOB_SPECIFICATION_UPDATE = String.format(APPLICATION_CONTEXT, "job-specifications/:id");
 		
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
 		

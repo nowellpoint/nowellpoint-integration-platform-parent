@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="statcard p-3">
-                    <h3 class="statcard-number">${jobScheduleList?size}</h3>
+                    <h3 class="statcard-number">${jobSpecificationList?size}</h3>
                     <span class="statcard-desc">${labels["connectors"]}</span>
                 </div>
             </div>
@@ -13,65 +13,74 @@
 
         <hr>
 
-        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h4>${labels["salesforce.metadata.backups"]}</h4>
-                    <br>
-                    <div class="content table-responsive">
-                        <table id="salesforce-metadata-backup-status" class="table">
-                            <thead>
-                                <th class="col-xs-2 text-center">${labels["status"]}</th>
-                                <th class="col-xs-6">${labels["instance"]}</th>
-                                <th class="col-xs-4 text-right">${labels["run.date"]}</th>
-                            </thead>
-                            <tbody>
-                                <#if jobScheduleList?size==0>
-                                    <tr>
-                                        <td class="text-center" colspan="3">&nbsp;</td>
-                                    </tr>
-                                </#if>
-                                <#list jobScheduleList as jobSchedule>
-                                    <tr>
-                                        <td class="text-center">
-                                            <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Success"> -->
-                                            <i class="fa fa-circle text-success"></i>
-                                            <!--  <#elseif jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
-                                            <i class="fa fa-circle text-danger"></i>
-                                            <!--  <#elseif jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Stopped"> -->
-                                            <i class="fa fa-circle text-warning"></i>
-                                            <!--  <#elseif jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Terminated"> -->
-                                            <i class="fa fa-circle text-info"></i>
-                                            <!-- <#else> -->
-                                            <i class="fa fa-circle text-muted"></i>
-                                            <!-- </#if> -->
-                                        </td>
-                                        <td>
-                                            <a href="${scheduledJobPath}/${jobSchedule.id}">${jobSchedule.connector.instance.name}</a>
-                                        </td>
-                                        <td class="text-right">
-                                            <!--  <#if jobSchedule.lastRunDate??> -->
-                                            ${(jobSchedule.lastRunDate?date?string.iso)!} ${(jobSchedule.lastRunDate?time?string["HH:mm"])!}
-                                            <!-- </#if> -->
-                                        </td>
-                                    </tr>
-                                </#list>
-                            </tbody>
-                        </table>
-                    </div>
-                    <hr>
-                    <div class="stats">
-                        <i class="fa fa-circle text-muted"></i>&nbsp;${labels["not.run"]}&emsp;
-                        <i class="fa fa-circle text-success"></i>&nbsp;${labels["success"]}&emsp;
-                        <i class="fa fa-circle text-danger"></i>&nbsp;${labels["fail"]}&emsp;
-                        <i class="fa fa-circle text-warning"></i>&nbsp;${labels["stopped"]}&emsp;
-                        <i class="fa fa-circle text-info"></i>&nbsp;${labels["terminated"]}
-                    </div>
-                    <div class="stats">
-                        <!-- <#assign refreshTime = .now> -->
-                        <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.iso} ${refreshTime?time?string["HH:mm:ss"]}
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-block">
+                        <h4 class="card-title">${labels["salesforce.metadata.backups"]}</h4>
+                        <br>
+                        <div class="content table-responsive">
+                            <table id="salesforce-metadata-backup-status" class="table">
+                                <thead>
+                                    <th class="col-xs-2 text-center">${labels["status"]}</th>
+                                    <th class="col-xs-6">${labels["instance"]}</th>
+                                    <th class="col-xs-4 text-right">${labels["run.date"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#if jobSpecificationList?size==0>
+                                        <tr>
+                                            <td class="text-center" colspan="3">&nbsp;</td>
+                                        </tr>
+                                    </#if>
+                                    <#list jobSpecificationList as jobSpecification>
+                                        <tr>
+                                            <td class="text-center">
+                                                <!--  <#if jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Success"> -->
+                                                <i class="fa fa-circle text-success"></i>
+                                                <!--  <#elseif jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Failure"> -->
+                                                <i class="fa fa-circle text-danger"></i>
+                                                <!--  <#elseif jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Stopped"> -->
+                                                <i class="fa fa-circle text-warning"></i>
+                                                <!--  <#elseif jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Terminated"> -->
+                                                <i class="fa fa-circle text-info"></i>
+                                                <!-- <#else> -->
+                                                <i class="fa fa-circle text-muted"></i>
+                                                <!-- </#if> -->
+                                            </td>
+                                            <td>
+                                                <a href="${scheduledJobPath}/${jobSpecification.id}">${jobSpecification.connector.instance.name}</a>
+                                            </td>
+                                            <td class="text-right">
+                                                <!--  <#if jobSpecification.lastRunDate??> -->
+                                                ${(jobSpecification.lastRunDate?date?string.iso)!} ${(jobSpecification.lastRunDate?time?string["HH:mm"])!}
+                                                <!-- </#if> -->
+                                            </td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                        <hr>
+                        <div class="stats">
+                            <i class="fa fa-circle text-muted"></i>&nbsp;${labels["not.run"]}&emsp;
+                            <i class="fa fa-circle text-success"></i>&nbsp;${labels["success"]}&emsp;
+                            <i class="fa fa-circle text-danger"></i>&nbsp;${labels["fail"]}&emsp;
+                            <i class="fa fa-circle text-warning"></i>&nbsp;${labels["stopped"]}&emsp;
+                            <i class="fa fa-circle text-info"></i>&nbsp;${labels["terminated"]}
+                        </div>
+                        <div class="stats">
+                            <!-- <#assign refreshTime = .now> -->
+                            <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.iso} ${refreshTime?time?string["HH:mm:ss"]}
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="col">
+            </div>
+            <div class="w-100"></div>
+            <div class="col"></div>
+            <div class="col"></div>
         </div>
+
+
     </@t.page>

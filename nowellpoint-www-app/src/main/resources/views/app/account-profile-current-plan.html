@@ -62,7 +62,6 @@
         </div>
 
         <br>
-        <br>
         
         <div id="transactions" class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -73,18 +72,16 @@
                 </div>
 
                 <br>
-                <div class="hr-divider"></div>
-                <br>
 
                 <div class="content table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <th>${labels["id"]}</th>
                             <th>${labels["payment.method"]}</th>
-                            <th class="text-right p-r-md">${labels["amount"]}</th>
+                            <th class="text-right">${labels["amount"]}</th>
                             <th>${labels["transaction.date"]}</th>
                             <th>${labels["status"]}</th>
-                            <th class="col-lg-2 col-md-2 col-sm-2 col-xs-2">${labels["action"]}</th>
+                            <th>${labels["action"]}</th>
                         </thead>
                         <tbody>
                             <#list accountProfile.transactions?sort_by( "createdOn")?reverse as transaction>

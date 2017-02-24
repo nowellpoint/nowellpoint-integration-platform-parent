@@ -14,26 +14,13 @@
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <div class="dashhead-titles">
-                    <h3 class="dashhead-title">${labels["scheduled.job"]}</h3>
+                    <h3 class="dashhead-title">${labels["job.specification"]}</h3>
                 </div>
             </div>
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-                <button type="button" id="edit-scheduled-job" class="btn btn-primary" data-toggle="modal" data-target="#schedule-dialog">${labels["edit.schedule"]}</button>&emsp;
-                <!--  <#if jobSchedule.status == "Stopped" || jobSchedule.status == "Not Scheduled"> -->
-                <form method="post" action="${labels['base.path']}/${jobSchedule.id!}/start">
-                    <button type="submit" name="activate-scheduled-job" id="activate-scheduled-job" class="btn btn-secondary">${labels["start.scheduled.job"]}</button>
-                </form>
-                <!-- </#if> -->
-                <!--  <#if jobSchedule.status == "Scheduled"> -->
-                <form method="post" action="${labels['base.path']}/${jobSchedule.id!}/stop">
-                    <button type="submit" name="deactivate-scheduled-job" id="deactivate-scheduled-job" class="btn btn-secondary">${labels["stop.scheduled.job"]}</button>&emsp;
-                </form>
-                <form method="post" action="${labels['base.path']}/${jobSchedule.id!}/terminate">
-                    <button type="submit" name="terminate-scheduled-job" id="terminate-scheduled-job" class="btn btn-secondary">${labels["terminate.scheduled.job"]}</button>
-                </form>
-                <!-- </#if> -->
+            <button type="button" id="edit-job-specification" class="btn btn-primary" data-toggle="modal" data-target="#schedule-dialog">${labels["edit"]}</button>&emsp;
         </div>
         <br>
 
@@ -43,22 +30,22 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["owner"]}</dt>
-                    <dd>${(jobSchedule.owner.name)!}</dd>
+                    <dd>${(jobSpecification.owner.name)!}</dd>
                     <hr>
                     <dt>${labels["connector.type"]}</dt>
-                    <dd><a href="${connectorHref!}">${(jobSchedule.jobType.connectorType.name)!}</a>&emsp;</dd>
+                    <dd><a href="${connectorHref!}">${(jobSpecification.jobType.connectorType.name)!}</a>&emsp;</dd>
                     <hr>
                     <dt>${labels["instance.name"]}</dt>
-                    <dd>${(jobSchedule.connector.instance.name)!}&emsp;</dd>
+                    <dd>${(jobSpecification.connector.instance.name)!}&emsp;</dd>
                     <hr>
                     <dt>${labels["status"]}</dt>
-                    <!--  <#if jobSchedule.status == "Stopped"> -->
+                    <!--  <#if jobSpecification.status == "Stopped"> -->
                     <dd class="text-danger">
                         <!-- </#if> -->
-                        <!--  <#if jobSchedule.status == "Scheduled"> -->
+                        <!--  <#if jobSpecification.status == "Scheduled"> -->
                         <dd class="text-success">
                             <!-- </#if> -->
-                            ${(jobSchedule.status)!}&emsp;
+                            ${(jobSpecification.status)!}&emsp;
                         </dd>
                         <hr>
                 </dl>
@@ -68,25 +55,25 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["next.run.date"]}</dt>
-                    <dd>${(jobSchedule.start?date?string.iso)!} ${(jobSchedule.start?time?string["HH:mm"])!}&emsp;</dd>
+                    <dd>${(jobSpecification.start?date?string.iso)!} ${(jobSpecification.start?time?string["HH:mm"])!}&emsp;</dd>
                     <hr>
                     <dt>${labels["last.run.status"]}</dt>
-                    <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
+                    <!--  <#if jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Failure"> -->
                     <dd class="text-danger">
                         <!-- </#if> -->
-                        <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Success"> -->
+                        <!--  <#if jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Success"> -->
                         <dd class="text-success">
                             <!-- </#if> -->
-                            ${(jobSchedule.lastRunStatus)!}&emsp;
-                            <!--  <#if jobSchedule.lastRunStatus?? && jobSchedule.lastRunStatus == "Failure"> -->
-                            <span class="icon icon-squared-cross"></span>&emsp;${jobSchedule.lastRunFailureMessage!}</dd>
+                            ${(jobSpecification.lastRunStatus)!}&emsp;
+                            <!--  <#if jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Failure"> -->
+                            <span class="icon icon-squared-cross"></span>&emsp;${jobSpecification.lastRunFailureMessage!}</dd>
                         <!-- </#if> -->
                         <hr>
                         <dt>${labels["last.run.date"]}</dt>
-                        <dd>${(jobSchedule.lastRunDate?date?string.iso)!} ${(jobSchedule.lastRunDate?time?string["HH:mm"])!}&emsp;</dd>
+                        <dd>${(jobSpecification.lastRunDate?date?string.iso)!} ${(jobSpecification.lastRunDate?time?string["HH:mm"])!}&emsp;</dd>
                         <hr>
                         <dt>${labels["notification.email"]}</dt>
-                        <dd>${(jobSchedule.notificationEmail)!}&emsp;</dd>
+                        <dd>${(jobSpecification.notificationEmail)!}&emsp;</dd>
                         <hr>
                 </dl>
             </div>
@@ -103,7 +90,7 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["description"]}</dt>
-                    <dd>${jobSchedule.description!}&emsp;</dd>
+                    <dd>${jobSpecification.description!}&emsp;</dd>
                     <hr>
                 </dl>
 
@@ -116,47 +103,6 @@
         </div>
 
         <br>
-        <br>
-
-        <div id="runHistories" class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["run.history"]}</h3>
-                    </div>
-                </div>
-                <br>
-                <div class="content table-responsive">
-                    <table id="run-history-table" class="table table-hover">
-                        <thead>
-                            <th class="col-xs-2">${labels["instance.id"]}</th>
-                            <th class="col-xs-2">${labels["fire.time"]}</th>
-                            <th class="col-xs-1 text-right">${labels["run.time"]}</th>
-                            <th class="col-xs-1 text-center">${labels["status"]}</th>
-                            <th class="col-xs-1 text-center">${labels["files"]}</th>
-                            <th class="col-xs-5"></th>
-                        </thead>
-                        <tbody>
-                            <#list jobSchedule.runHistories?sort_by( "fireTime")?reverse as runHistory>
-                                <tr id="${(runHistory.fireInstanceId)!}">
-                                    <td>${(runHistory.fireInstanceId)!}</td>
-                                    <td>${(runHistory.fireTime?date?string.iso)!} ${(runHistory.fireTime?time?string["HH:mm:ss"])!}</td>
-                                    <td class="text-right">${(runHistory.jobRunTime)!}</td>
-                                    <td class="text-center">${(runHistory.status)!}</td>
-                                    <td class="text-center">
-                                        <#if runHistory.backups??>
-                                            <a id="view-run-history" href="${labels['base.path']}/${scheduledJob.id!}/run-history/${(runHistory.fireInstanceId)!}"><span class="icon icon-folder"></span></a></#if>
-                                    </td>
-                                    <td>${(runHistory.failureMessage)!}</td>
-                                </tr>
-                            </#list>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <br>
         <div class="hr-divider"></div>
         <br>
 
@@ -165,13 +111,13 @@
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${createdByHref}">${(jobSchedule.createdBy.name)!}</a>, ${jobSchedule.createdOn?date?string.long!} ${jobSchedule.createdOn?time?string.medium!}</dd>
+                    <dd><a href="${createdByHref}">${(jobSpecification.createdBy.name)!}</a>, ${jobSpecification.createdOn?date?string.long!} ${jobSpecification.createdOn?time?string.medium!}</dd>
                 </dl>
             </div>
             <div class="col-md-6">
                 <dl class="dl-vertical">
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${lastModifiedByHref}">${(jobSchedule.lastUpdatedBy.name)!}</a>, ${jobSchedule.lastUpdatedOn?date?string.long!} ${jobSchedule.lastUpdatedOn?time?string.medium!}</dd>
+                    <dd><a href="${lastModifiedByHref}">${(jobSpecification.lastUpdatedBy.name)!}</a>, ${jobSpecification.lastUpdatedOn?date?string.long!} ${jobSpecification.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
         </div>
@@ -180,7 +126,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="edit-schedule-title">${labels["edit.schedule"]}</h5>
+                        <h5 class="modal-title" id="edit-schedule-title">${labels["edit.job.specification"]}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -189,18 +135,18 @@
                         <#include "spinner.html"/>
                         <div id="error"></div>
                         <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" action="${action}">
-                            <input type="hidden" name="id" id="id" value="${jobSchedule.id}" />
+                            <input type="hidden" name="id" id="id" value="${jobSpecification.id}" />
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
-                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(jobSchedule.notificationEmail)!}" required autofocus="" />
+                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(jobSpecification.notificationEmail)!}" required autofocus="" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="description">${labels["description"]}</label>
-                                    <textarea class="form-control" name="description" id="description" rows="3">${(jobSchedule.description)!}</textarea>
+                                    <textarea class="form-control" name="description" id="description" rows="3">${(jobSpecification.description)!}</textarea>
                                 </div>
 
                             </div>
@@ -209,7 +155,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="start">${labels["start"]}*</label>
                                     <div class="input-group">
-                                        <input type="text" id="start" name="start" value="${(jobSchedule.start?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
+                                        <input type="text" id="start" name="start" value="${(jobSpecification.start?date?string.iso)!}" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
                                         <span class="input-group-addon"><span class="icon icon-calendar"></span></span>
                                     </div>
                                 </div>
@@ -219,7 +165,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="seconds">${labels["seconds"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="seconds" name="seconds" value="${(jobSchedule.seconds)!}" class="form-control" />
+                                        <input type="text" id="seconds" name="seconds" value="${(jobSpecification.seconds)!}" class="form-control" />
                                         <span class="input-group-addon">[0,59]</span>
                                     </div>
                                 </div>
@@ -229,7 +175,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="minutes">${labels["minutes"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="minutes" name="minutes" value="${(jobSchedule.minutes)!}" class="form-control" />
+                                        <input type="text" id="minutes" name="minutes" value="${(jobSpecification.minutes)!}" class="form-control" />
                                         <span class="input-group-addon">[0,59]</span>
                                     </div>
                                 </div>
@@ -239,7 +185,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="hours">${labels["hours"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="hours" name="hours" value="${(jobSchedule.hours)!}" class="form-control" />
+                                        <input type="text" id="hours" name="hours" value="${(jobSpecification.hours)!}" class="form-control" />
                                         <span class="input-group-addon">[0,23]</span>
                                     </div>
                                 </div>
@@ -249,7 +195,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="dayOfMonth">${labels["day.of.month"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="dayOfMonth" name="dayOfMonth" value="${(jobSchedule.dayOfMonth)!}" class="form-control" />
+                                        <input type="text" id="dayOfMonth" name="dayOfMonth" value="${(jobSpecification.dayOfMonth)!}" class="form-control" />
                                         <span class="input-group-addon">[1,31] ${labels["or"]} ${labels["last"]}</span>
                                     </div>
                                 </div>
@@ -259,7 +205,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="month">${labels["month"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="month" name="month" value="${(jobSchedule.month)!}" class="form-control" />
+                                        <input type="text" id="month" name="month" value="${(jobSpecification.month)!}" class="form-control" />
                                         <span class="input-group-addon">[1,12]</span>
                                     </div>
                                 </div>
@@ -269,7 +215,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="dayOfWeek">${labels["day.of.week"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="dayOfWeek" name="dayOfWeek" value="${(jobSchedule.dayOfWeek)!}" class="form-control" />
+                                        <input type="text" id="dayOfWeek" name="dayOfWeek" value="${(jobSpecification.dayOfWeek)!}" class="form-control" />
                                         <span class="input-group-addon">[0,7]</span>
                                     </div>
                                 </div>
@@ -279,7 +225,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="year">${labels["year"]}</label>
                                     <div class="input-group">
-                                        <input type="text" id="year" name="year" value="${(jobSchedule.year)!}" class="form-control" />
+                                        <input type="text" id="year" name="year" value="${(jobSpecification.year)!}" class="form-control" />
                                         <span class="input-group-addon">${labels["year.format"]}</span>
                                     </div>
                                 </div>

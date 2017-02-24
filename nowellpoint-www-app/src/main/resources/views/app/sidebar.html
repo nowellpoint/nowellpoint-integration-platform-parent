@@ -8,25 +8,38 @@
         </li>    
         <li class="nav-item">
             <a class="nav-link" href="/app/dashboard">
-                <span class="icon icon-gauge"></span>&nbsp;
                ${messages["dashboard"]}
             </a>
         </li>
         <li class="nav-item">
+            &nbsp;
+        </li> 
+        <li class="nav-item">
             <a class="nav-link" href="/app/connectors/salesforce">
-                <span class="icon icon-database"></span>&nbsp;
                ${messages["connectors"]}
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/app/scheduled-jobs">
-                <span class="icon icon-clock"></span>&nbsp;
+            &nbsp;
+        </li> 
+        <li class="nav-item menu-title text-muted">
                 ${messages["scheduled.jobs"]}
+        </li>    
+        <li class="nav-item">
+            <a class="nav-link" href="#">
+                ${messages["jobs"]}
+            </a>
+        </li>
+         <li class="nav-item">
+            <a class="nav-link" href="/app/job-specifications">
+                ${messages["job.specifications"]}
             </a>
         </li>
         <li class="nav-item">
+            &nbsp;
+        </li> 
+        <li class="nav-item">
             <a class="nav-link" href="/app/account-profile/${identity.id}">
-                <span class="icon icon-user"></span>&nbsp;
                 ${messages["account.profile"]}
             </a>
         </li>

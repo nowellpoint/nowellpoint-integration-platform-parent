@@ -3,7 +3,6 @@ package com.nowellpoint.client.resource;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.JobSpecification;
 import com.nowellpoint.client.model.JobSpecificationList;
 import com.nowellpoint.client.model.UpdateResult;
@@ -19,9 +18,6 @@ import com.nowellpoint.client.model.Token;
 public class JobSpecificationResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "job-specifications";
-	private static final String START = "start";
-	private static final String STOP = "stop";
-	private static final String TERMINATE = "terminate";
 	
 	public JobSpecificationResource(Token token) {
 		super(token);
@@ -123,87 +119,6 @@ public class JobSpecificationResource extends AbstractResource {
 		return result;
 	}
 	
-	public UpdateResult<JobSpecification> stop(String id) {
-		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.path("actions")
-				.path(STOP)
-				.path("invoke")
-				.execute();
-		
-		UpdateResult<JobSpecification> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
-			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSpecification>(error);
-		}
-		
-		return result;
-	}
-	
-	public UpdateResult<JobSpecification> terminate(String id) {
-		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.path("actions")
-				.path(TERMINATE)
-				.path("invoke")
-				.execute();
-		
-		UpdateResult<JobSpecification> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
-			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSpecification>(error);
-		}
-		
-		return result;
-	}
-	
-	public UpdateResult<JobSpecification> start(String id) {
-		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.path("actions")
-				.path(START)
-				.path("invoke")
-				.execute();
-		
-		UpdateResult<JobSpecification> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			JobSpecification jobSchedule = httpResponse.getEntity(JobSpecification.class);
-			result = new UpdateResultImpl<JobSpecification>(jobSchedule);
-		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<JobSpecification>(error);
-		}
-		
-		return result;
-	}
-	
 	public JobSpecification get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
@@ -243,62 +158,5 @@ public class JobSpecificationResource extends AbstractResource {
 		}
 		
 		return result;
-	}
-	
-	public RunHistoryResource runHistory() {
-		return new RunHistoryResource(token);
-	}
-	
-	public class RunHistoryResource extends AbstractResource {
-
-		public RunHistoryResource(Token token) {
-			super(token);
-		}
-		
-		public RunHistory get(String scheduledJobId, String fireInstanceId) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-					.path(scheduledJobId)
-					.path("run-history")
-					.path(fireInstanceId)
-					.execute();
-			
-			RunHistory resource = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				resource = httpResponse.getEntity(RunHistory.class);
-			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-			}
-			
-			return resource;
-		}
-		
-		public String getFile(String scheduledJobId, String fireInstanceId, String filename) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-					.path(scheduledJobId)
-					.path("run-history")
-					.path(fireInstanceId)
-					.path("file")
-					.path(filename)
-					.execute();
-			
-			String resource = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				resource = httpResponse.getAsString();
-			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-			}
-			
-			return resource;
-		}
 	}
 }

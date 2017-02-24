@@ -4,7 +4,6 @@ import java.net.URI;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -33,25 +32,25 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 	
 	@Override
     public Response findAllByOwner() {
-		JobSpecificationList resources = jobSpecificationService.findByOwner(securityContext.getUserPrincipal().getName());
-		return Response.ok(resources).build();
+		JobSpecificationList list = jobSpecificationService.findByOwner(securityContext.getUserPrincipal().getName());
+		return Response.ok(list).build();
     }
 	
 	@Override
 	public Response getJobSpecification(String id) {
-		JobSpecification jobSchedule = jobSpecificationService.findById( id );
+		JobSpecification jobSpecification = jobSpecificationService.findById( id );
 		
-		if (jobSchedule == null) {
+		if (jobSpecification == null) {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobSpecification.class.getSimpleName(), id ) );
 		}
 		
-		return Response.ok(jobSchedule).build();
+		return Response.ok(jobSpecification).build();
 		
 	}
 	
 	@Override
 	public Response deleteJobSpecification(String id) {
-		jobSpecificationService.deleteScheduledJob( id );
+		jobSpecificationService.deleteJobSpecification( id );
 		return Response.noContent().build();
 	}
 	
@@ -73,7 +72,7 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSpecification jobSchedule = jobSpecificationService.createJobSchedule(
+		JobSpecification jobSchedule = jobSpecificationService.createJobSpecification(
 				jobTypeId, 
 				connectorId, 
 				instanceKey, 
@@ -116,7 +115,7 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 			String dayOfWeek,
 			String year) {
 		
-		JobSpecification jobSchedule = jobSpecificationService.updateScheduledJob(
+		JobSpecification jobSchedule = jobSpecificationService.updateJobSpecification(
 				id, 
 				start, 
 				end,
@@ -134,21 +133,5 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 		return Response.ok()
 				.entity(jobSchedule)
 				.build();	
-	}
-	
-	@Override
-	public Response invokeAction(String id, String action) {
-		
-		JobSpecification jobSchedule = null;
-		
-		if ("deploy".equalsIgnoreCase(action)) {
-			jobSchedule = jobSpecificationService.terminateScheduledJob(id);
-		} else {
-			throw new BadRequestException(String.format("Invalid action: %s", action));
-		}
-		
-		return Response.ok()
-				.entity(jobSchedule)
-				.build(); 
 	}
 }

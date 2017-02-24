@@ -67,7 +67,6 @@ body {
 
 .sidebar-nav li {
     text-indent: 10px;
-    line-height: 50px;
 }
 
 .sidebar-nav li a {
@@ -75,7 +74,6 @@ body {
     text-decoration: none;
     color: #fff;
     font-size: 18px;
-    line-height: 45px;
 }
 
 .sidebar-nav li a:hover {
@@ -97,10 +95,15 @@ body {
     height: 75px;
     font-size: 24px;
     line-height: 60px;
-    color: #49AB2F;
+    color: #fff;
+    padding-left: 15px;
     padding-top: 7px;
-    padding-left: 20px;
     background: #454545;
+}
+
+.sidebar-nav > .menu-title {
+    font-size: 18px;
+    padding-left: 15px;
 }
 
 .navbar {

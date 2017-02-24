@@ -51,10 +51,8 @@ public class JobSpecification extends AbstractResource {
 	
 	private String timeZone;
 	
-	private List<RunHistory> runHistories;
-	
 	public JobSpecification() {
-		setRunHistories(Collections.emptyList());
+
 	}
 	
 	public JobSpecification(String id) {
@@ -171,14 +169,6 @@ public class JobSpecification extends AbstractResource {
 
 	public void setLastRunFailureMessage(String lastRunFailureMessage) {
 		this.lastRunFailureMessage = lastRunFailureMessage;
-	}
-
-	public List<RunHistory> getRunHistories() {
-		return runHistories;
-	}
-
-	public void setRunHistories(List<RunHistory> runHistories) {
-		this.runHistories = runHistories;
 	}
 
 	public String getSeconds() {

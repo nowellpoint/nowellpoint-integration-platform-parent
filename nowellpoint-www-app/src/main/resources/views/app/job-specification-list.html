@@ -1,0 +1,52 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h6 class="dashhead-subtitle">&emsp;</h6>
+                <h2 class="dashhead-title">${labels["job.specifications"]}</h2>
+            </div>
+            <#if jobSpecificationList?size gt 0>
+                <div class="dashhead-toolbar">
+                    <p class="pull-right">
+                        <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-primary" role="button">${labels["create.job.specification"]}</a>
+                    </p>
+                </div>
+            </#if>
+        </div>
+        <#if jobSpecificationList?size==0>
+            <br>
+            <br>
+            <br>
+            <p class="text-center">
+                <span class="icon icon-clock fa fa-4x"></span>
+            </p>
+            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+            <p class="text-center">
+                <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-info btn-lg" role="button">${labels["create.scheduled.job"]}</a>
+            </p>
+        </#if>
+        <br>
+        <div class="content table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th>${labels["source"]}</th>
+                    <th>${labels["job.type"]}</th>
+                    <th>${labels["status"]}</th>
+                    <th>${labels["action"]}</th>
+                </thead>
+                <tbody>
+                    <#list jobSpecificationList?sort_by( "createdOn") as jobSpecification>
+                        <tr id="${jobSpecification.id}">
+                            <td><a href="${labels['base.path']}/${jobSpecification.id}">${jobSpecification.connector.organizationName}</a></td>
+                            <td>${jobSpecification.jobType.name}</td>
+                            <td>${jobSpecification.status}</td>
+                            <td><a href="${labels['base.path']}/${jobSpecification.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a></td>
+                        </tr>
+                    </#list>
+                </tbody>
+            </table>
+        </div>
+
+    </@t.page>

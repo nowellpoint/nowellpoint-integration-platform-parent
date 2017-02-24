@@ -5,7 +5,6 @@ import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 import static com.nowellpoint.util.Assert.isNullOrEmpty;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,35 +12,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
 
 import org.jboss.logging.Logger;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
-import com.nowellpoint.annotation.Deactivate;
-import com.nowellpoint.api.rest.domain.AccountProfile;
-import com.nowellpoint.api.rest.domain.Backup;
 import com.nowellpoint.api.rest.domain.ConnectorInfo;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.InstanceInfo;
-import com.nowellpoint.api.rest.domain.JobStatus;
-import com.nowellpoint.api.rest.domain.JobTypeInfo;
-import com.nowellpoint.api.rest.domain.RunHistory;
-import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.JobSpecification;
 import com.nowellpoint.api.rest.domain.JobSpecificationList;
+import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.JobType;
+import com.nowellpoint.api.rest.domain.JobTypeInfo;
+import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.UserInfo;
-import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.JobSpecificationService;
 import com.nowellpoint.api.service.JobTypeService;
+import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
@@ -49,8 +38,6 @@ import com.nowellpoint.util.Assert;
 public class JobSpecificationServiceImpl extends AbstractJobSpecificationService implements JobSpecificationService {
 	
 	private static final Logger LOGGER = Logger.getLogger(JobSpecificationServiceImpl.class);
-	
-	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
 	
 	@Inject
 	private JobTypeService jobTypeService;
@@ -90,12 +77,7 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 	 */
 	
 	@Override
-	public JobSpecificationList findScheduled() {
-		return super.findByStatus("Scheduled");
-	}
-	
-	@Override
-	public JobSpecification createJobSchedule(
+	public JobSpecification createJobSpecification(
 			String jobTypeId, 
 			String connectorId, 
 			String instanceKey, 
@@ -236,7 +218,7 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 	 */
 	
 	@Override
-	public JobSpecification updateScheduledJob(
+	public JobSpecification updateJobSpecification(
 			String id, 
 			String start, 
 			String end,
@@ -401,46 +383,6 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 	
 	/**
 	 * 
-	 * @param id
-	 */
-	
-	@Override
-	public JobSpecification terminateScheduledJob(String id) {
-		JobSpecification jobSchedule = findById(id);
-		jobSchedule.setStatus(JobStatus.TERMINATED);
-		update(jobSchedule);
-		return jobSchedule;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	
-	@Override
-	public JobSpecification startScheduledJob(String id) {
-		JobSpecification jobSchedule = findById(id);
-		jobSchedule.setStatus(JobStatus.SCHEDULED);
-		update(jobSchedule);
-		
-		return jobSchedule;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	
-	@Override
-	public JobSpecification stopScheduledJob(String id) {
-		JobSpecification jobSchedule = findById(id);
-		jobSchedule.setStatus(JobStatus.STOPPED);
-		update(jobSchedule);
-		return jobSchedule;
-	}
-	
-	/**
-	 * 
 	 * 
 	 * @param id
 	 * 
@@ -448,7 +390,7 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 	 */
 	
 	@Override
-	public void deleteScheduledJob(String id) {
+	public void deleteJobSpecification(String id) {
 		JobSpecification resource = findById(id);
 		delete(resource);
 	}
@@ -465,78 +407,5 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 	@Override
 	public JobSpecification findById(String id) {
 		return super.findById(id);
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param fireInstanceId
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	@Override
-	public RunHistory findRunHistory(String id, String fireInstanceId) {
-		JobSpecification jobSchedule = findById( id );
-		
-		Optional<RunHistory> filter = jobSchedule.getRunHistories()
-				.stream()
-				.filter(r -> r.getFireInstanceId().equals(fireInstanceId))
-				.findFirst();
-		
-		return filter.get();
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param filename
-	 * @return
-	 * @throws IOException
-	 * 
-	 * 
-	 */
-	
-	@Override
-	public String getFile(String id, String fireInstanceId, String filename) throws IOException {
-		RunHistory runHistory = findRunHistory(id, fireInstanceId);
-		
-		Backup backup = null;
-		
-		if (Assert.isNotNull(runHistory)) {
-			Optional<Backup> filter = runHistory.getBackups()
-					.stream()
-					.filter(r -> r.getType().equals(filename))
-					.findFirst();
-			
-			if (filter.isPresent()) {
-				backup = filter.get();
-			}
-		}
-		
-		AmazonS3 s3client = new AmazonS3Client();
-		
-		GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, backup.getFilename());
-    	
-    	S3Object s3Object = s3client.getObject(getObjectRequest);
-    	
-    	return IOUtils.toString(s3Object.getObjectContent());
-	}
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	
-	@Override
-	public void terminateAllJobs(@Observes @Deactivate AccountProfile accountProfile) {
-		JobSpecificationList list = findByOwner(accountProfile.getId());
-		list.getItems().stream().forEach(scheduledJob -> {
-			scheduledJob.setStatus(JobStatus.TERMINATED);
-			update(scheduledJob);
-		});
 	}
 }

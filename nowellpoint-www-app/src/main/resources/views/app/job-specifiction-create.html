@@ -220,13 +220,13 @@
 
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${jobSchedule.jobType.name}&emsp;</dd>
+            <dd>${jobSpecification.jobType.name}&emsp;</dd>
             <hr>
             <dt>${labels["description"]}</dt>
-            <dd>${jobSchedule.jobType.description}</dd>
+            <dd>${jobSpecification.jobType.description}</dd>
             <hr>
             <dt>${labels["connector.type"]}</dt>
-            <dd>${jobSchedule.jobType.connectorType.name}</dd>
+            <dd>${jobSpecification.jobType.connectorType.name}</dd>
             <hr>
         </dl>
 
@@ -238,20 +238,20 @@
             </div>
             <div class="dashhead-toolbar">
                 <p class="pull-right">
-                    <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobSchedule.jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
+                    <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobSpecification.jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
                 </p>
             </div>
         </div>
 
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${(jobSchedule.connector.name)!}</dd>
+            <dd>${(jobSpecification.connector.name)!}</dd>
             <hr>
             <dt>${labels["organization.name"]}</dt>
-            <dd>${jobSchedule.connector.organizationName}</dd>
+            <dd>${jobSpecification.connector.organizationName}</dd>
             <hr>
             <dt>${labels["instance.name"]}</dt>
-            <dd>${jobSchedule.connector.serverName}</dd>
+            <dd>${jobSpecification.connector.serverName}</dd>
             <hr>
         </dl>
 
@@ -265,13 +265,13 @@
 
         <dl class="dl-horizontal">
             <dt>${labels["name"]}</dt>
-            <dd>${(jobSchedule.connector.instance.name)!}</dd>
+            <dd>${(jobSpecification.connector.instance.name)!}</dd>
             <hr>
             <dt>${labels["service.endpoint"]}</dt>
-            <dd>${(jobSchedule.connector.instance.serviceEndpoint)!}</dd>
+            <dd>${(jobSpecification.connector.instance.serviceEndpoint)!}</dd>
             <hr>
             <dt>${labels["api.version"]}</dt>
-            <dd>${(jobSchedule.connector.instance.apiVersion)!}</dd>
+            <dd>${(jobSpecification.connector.instance.apiVersion)!}</dd>
             <hr>
         </dl>
 
@@ -285,21 +285,21 @@
 
         <form class="form-vertical" role="form" id="schedule-form" method="post" action="${action}">
 
-            <input type="hidden" name="jobTypeId" id="jobTypeId" value="${jobSchedule.jobType.id}" />
-            <input type="hidden" name="connectorId" id="connectorId" value="${jobSchedule.connector.id}" />
-            <input type="hidden" name="instanceKey" id="instanceKey" value="${jobSchedule.connector.instance.key}" />
+            <input type="hidden" name="jobTypeId" id="jobTypeId" value="${jobSpecification.jobType.id}" />
+            <input type="hidden" name="connectorId" id="connectorId" value="${jobSpecification.connector.id}" />
+            <input type="hidden" name="instanceKey" id="instanceKey" value="${jobSpecification.connector.instance.key}" />
 
             <div class="row">
                 <div class="form-group col-md-2">
                     <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
-                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(jobSchedule.notificationEmail)!}" required autofocus="" />
+                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(jobSpecification.notificationEmail)!}" required autofocus="" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="form-group col-md-2">
                     <label class="control-label" for="description">${labels["description"]}</label>
-                    <textarea class="form-control" name="description" id="description" value="${(jobSchedule.description)!}" rows="3"></textarea>
+                    <textarea class="form-control" name="description" id="description" value="${(jobSpecification.description)!}" rows="3"></textarea>
                 </div>
             </div>
 
@@ -320,7 +320,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="seconds">${labels["seconds"]}</label>
                     <div class="input-group">
-                        <input type="text" id="seconds" name="seconds" value="${(jobSchedule.seconds)!}" class="form-control" />
+                        <input type="text" id="seconds" name="seconds" value="${(jobSpecification.seconds)!}" class="form-control" />
                         <span class="input-group-addon">[0,59]</span>
                     </div>
                 </div>
@@ -331,7 +331,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="minutes">${labels["minutes"]}</label>
                     <div class="input-group">
-                        <input type="text" id="minutes" name="minutes" value="${(jobSchedule.minutes)!}" class="form-control" />
+                        <input type="text" id="minutes" name="minutes" value="${(jobSpecification.minutes)!}" class="form-control" />
                         <span class="input-group-addon">[0,59]</span>
                     </div>
                 </div>
@@ -342,7 +342,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="hours">${labels["hours"]}</label>
                     <div class="input-group">
-                        <input type="text" id="hours" name="hours" value="${(jobSchedule.hours)!}" class="form-control" />
+                        <input type="text" id="hours" name="hours" value="${(jobSpecification.hours)!}" class="form-control" />
                         <span class="input-group-addon">[0,23]</span>
                     </div>
                 </div>
@@ -353,7 +353,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="dayOfMonth">${labels["day.of.month"]}</label>
                     <div class="input-group">
-                        <input type="text" id="dayOfMonth" name="dayOfMonth" value="${(jobSchedule.dayOfMonth)!}" class="form-control" />
+                        <input type="text" id="dayOfMonth" name="dayOfMonth" value="${(jobSpecification.dayOfMonth)!}" class="form-control" />
                         <span class="input-group-addon">[1,31] ${labels["or"]} ${labels["last"]}</span>
                     </div>
                 </div>
@@ -364,7 +364,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="month">${labels["month"]}</label>
                     <div class="input-group">
-                        <input type="text" id="month" name="month" value="${(jobSchedule.month)!}" class="form-control" />
+                        <input type="text" id="month" name="month" value="${(jobSpecification.month)!}" class="form-control" />
                         <span class="input-group-addon">[1,12]</span>
                     </div>
                 </div>
@@ -375,7 +375,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="dayOfWeek">${labels["day.of.week"]}</label>
                     <div class="input-group">
-                        <input type="text" id="dayOfWeek" name="dayOfWeek" value="${(jobSchedule.dayOfWeek)!}" class="form-control" />
+                        <input type="text" id="dayOfWeek" name="dayOfWeek" value="${(jobSpecification.dayOfWeek)!}" class="form-control" />
                         <span class="input-group-addon">[0,7]</span>
                     </div>
                 </div>
@@ -386,7 +386,7 @@
                 <div class="form-group col-md-2">
                     <label class="control-label" for="year">${labels["year"]}</label>
                     <div class="input-group">
-                        <input type="text" id="year" name="year" value="${(jobSchedule.year)!}" class="form-control" />
+                        <input type="text" id="year" name="year" value="${(jobSpecification.year)!}" class="form-control" />
                         <span class="input-group-addon">${labels["year.format"]}</span>
                     </div>
                 </div>

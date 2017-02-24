@@ -25,7 +25,6 @@ import com.nowellpoint.client.model.JobSpecification;
 import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.JobType;
 import com.nowellpoint.client.model.JobTypeInfo;
-import com.nowellpoint.client.model.RunHistory;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.JobTypeList;
@@ -44,28 +43,22 @@ public class JobSpecificationController extends AbstractStaticController {
 	private static final Logger LOGGER = Logger.getLogger(JobSpecificationController.class.getName());
 	
 	public static class Template {
-		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "scheduled-jobs-list.html");
-		public static final String JOB_SPECIFICATION_SELECT = String.format(APPLICATION_CONTEXT, "scheduled-job-create.html");
-		public static final String JOB_SPECIFICATION_EDIT = String.format(APPLICATION_CONTEXT, "scheduled-job-edit.html");
-		public static final String JOB = String.format(APPLICATION_CONTEXT, "scheduled-job.html");
-		public static final String JOB_RUN_HISTORY = String.format(APPLICATION_CONTEXT, "scheduled-job-run-detail.html");
+		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "job-specification-list.html");
+		public static final String JOB_SPECIFICATION_SELECT = String.format(APPLICATION_CONTEXT, "job-specifiction-create.html");
+		public static final String JOB_SPECIFICATION_EDIT = String.format(APPLICATION_CONTEXT, "job-specification-edit.html");
+		public static final String JOB_SPECIFICATION_VIEW = String.format(APPLICATION_CONTEXT, "job-specification-view.html");
 	}
 	
 	public static void configureRoutes(Configuration configuration) {
         get(Path.Route.JOB_SPECIFICATION_LIST, (request, response) -> listJobSpecifications(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_SELECT_TYPE, (request, response) -> listJobTypes(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_CREATE, (request, response) -> createScheduledJob(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_VIEW, (request, response) -> viewJobSpecifications(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_EDIT, (request, response) -> editJobSpecification(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_UPDATE, (request, response) -> updateScheduledJob(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_START, (request, response) -> startJob(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_STOP, (request, response) -> stopJob(configuration, request, response));
-        post(Path.Route.SCHEDULED_JOB_TERMINATE, (request, response) -> terminateJob(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_RUN_HISTORY, (request, response) -> getRunHistory(configuration, request, response));
-        get(Path.Route.SCHEDULED_JOB_DOWNLOAD_FILE, (request, response) -> downloadFile(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
+        post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> createScheduledJob(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_VIEW, (request, response) -> viewJobSpecifications(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_EDIT, (request, response) -> editJobSpecification(configuration, request, response));
+        post(Path.Route.JOB_SPECIFICATION_UPDATE, (request, response) -> updateScheduledJob(configuration, request, response));
 	}
 	
 	/**
@@ -85,7 +78,7 @@ public class JobSpecificationController extends AbstractStaticController {
 				.getJobSpecifications();
 		
 		Map<String, Object> model = getModel();
-		model.put("jobScheduleList", list.getItems());
+		model.put("jobSpecificationList", list.getItems());
 
 		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_LIST);
 	}
@@ -217,9 +210,9 @@ public class JobSpecificationController extends AbstractStaticController {
 		jobTypeInfo.setId(jobType.getId());
 		jobTypeInfo.setName(jobType.getName());
 		
-		JobSpecification jobSchedule = new JobSpecification();
-		jobSchedule.setStart(new Date());
-		jobSchedule.setJobType(jobTypeInfo);
+		JobSpecification jobSpecification = new JobSpecification();
+		jobSpecification.setStart(new Date());
+		jobSpecification.setJobType(jobTypeInfo);
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
 			
@@ -253,14 +246,14 @@ public class JobSpecificationController extends AbstractStaticController {
 				
 				System.out.println(new ObjectMapper().writeValueAsString(instanceInfo));
 				
-				jobSchedule.setConnector(connectorInfo);
-				jobSchedule.setNotificationEmail(instance.getEmail());
+				jobSpecification.setConnector(connectorInfo);
+				jobSpecification.setNotificationEmail(instance.getEmail());
 
 			}
 		}
 
-		model.put("jobSchedule", jobSchedule);
-		model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
+		model.put("jobSpecification", jobSpecification);
+		model.put("action", Path.Route.JOB_SPECIFICATION_CREATE);
 		
 		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
@@ -302,18 +295,18 @@ public class JobSpecificationController extends AbstractStaticController {
 		} catch (ParseException e) {
 			LOGGER.error(e.getMessage());
 			
-			JobSpecification jobSchedule = new JobSpecification();
+			JobSpecification jobSpecification = new JobSpecification();
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
-			model.put("scheduledJob", jobSchedule);
-			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
+			model.put("scheduledJob", jobSpecification);
+			model.put("action", Path.Route.JOB_SPECIFICATION_CREATE);
 			model.put("title", getLabel(JobSpecificationController.class, request, "schedule.job"));
 			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
 			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 		}
 		
-		JobSpecificationRequest createJobScheduleRequest = new JobSpecificationRequest()
+		JobSpecificationRequest createjobSpecificationRequest = new JobSpecificationRequest()
 				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
@@ -328,26 +321,26 @@ public class JobSpecificationController extends AbstractStaticController {
 				.withDayOfWeek(dayOfWeek)
 				.withYear(year);
 		
-		CreateResult<JobSpecification> createJobScheduleResult = new NowellpointClient(token)
+		CreateResult<JobSpecification> createjobSpecificationResult = new NowellpointClient(token)
 				.jobSpecification()
-				.create(createJobScheduleRequest);
+				.create(createjobSpecificationRequest);
 		
-		if (! createJobScheduleResult.isSuccess()) {
+		if (! createjobSpecificationResult.isSuccess()) {
 			
-			JobSpecification jobSchedule = new JobSpecification();
-			jobSchedule.setNotificationEmail(notificationEmail);
-			jobSchedule.setDescription(description);
-			jobSchedule.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
+			JobSpecification jobSpecification = new JobSpecification();
+			jobSpecification.setNotificationEmail(notificationEmail);
+			jobSpecification.setDescription(description);
+			jobSpecification.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
-			model.put("scheduledJob", jobSchedule);
-			model.put("action", Path.Route.SCHEDULED_JOB_CREATE);
-			model.put("errorMessage", createJobScheduleResult.getErrorMessage());
+			model.put("scheduledJob", jobSpecification);
+			model.put("action", Path.Route.JOB_SPECIFICATION_CREATE);
+			model.put("errorMessage", createjobSpecificationResult.getErrorMessage());
 			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 		}
 		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", createJobScheduleResult.getTarget().getId()));
+		response.redirect(Path.Route.JOB_SPECIFICATION_VIEW.replace(":id", createjobSpecificationResult.getTarget().getId()));
 		
 		return "";
 	}
@@ -366,26 +359,26 @@ public class JobSpecificationController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		JobSpecification jobSchedule = new NowellpointClient(token)
+		JobSpecification jobSpecification = new NowellpointClient(token)
 				.jobSpecification()
 				.get(id);
 		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", jobSchedule.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", jobSchedule.getLastUpdatedBy().getId());
+		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", jobSpecification.getCreatedBy().getId());
+		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", jobSpecification.getLastUpdatedBy().getId());
 		
 		Map<String, Object> model = getModel();
-		model.put("jobSchedule", jobSchedule);
+		model.put("jobSpecification", jobSpecification);
 		model.put("createdByHref", createdByHref);
 		model.put("lastModifiedByHref", lastModifiedByHref);
-		model.put("connectorHref", jobSchedule.getConnector() != null ? Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", jobSchedule.getConnector().getId()) : null);
-		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
+		model.put("connectorHref", jobSpecification.getConnector() != null ? Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", jobSpecification.getConnector().getId()) : null);
+		model.put("action", Path.Route.JOB_SPECIFICATION_UPDATE.replace(":id", id));
 		model.put("successMessage", null); //getValue(token, "success.message"));
 		
 		if (model.get("successMessage") != null) {
 			//removeValue(token, "success.message");
 		}
 		
-		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB);
+		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_VIEW);
 	}
 	
 	/**
@@ -403,98 +396,22 @@ public class JobSpecificationController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		JobSpecification jobSchedule = new NowellpointClient(token)
+		JobSpecification jobSpecification = new NowellpointClient(token)
 				.jobSpecification()
 				.get(id);
 		
 		Map<String, Object> model = getModel();
-		model.put("jobSchedule", jobSchedule);
+		model.put("jobSpecification", jobSpecification);
 		model.put("mode", "edit");
-		model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
+		model.put("action", Path.Route.JOB_SPECIFICATION_UPDATE.replace(":id", id));
 		
 		if (view != null && view.equals("1")) {
 			model.put("cancel", Path.Route.JOB_SPECIFICATION_LIST);
 		} else {
-			model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
+			model.put("cancel", Path.Route.JOB_SPECIFICATION_VIEW.replace(":id", id));
 		}
 		
 		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_EDIT);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String startJob(Configuration configuration, Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
-				.jobSpecification() 
-				.start(id);
-		
-		//putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "activate.scheduled.job.success"));
-		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
-		
-		return "";
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String stopJob(Configuration configuration, Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		JobSpecification jobSchedule = new NowellpointClient(token)
-				.jobSpecification() 
-				.stop(id)
-				.getTarget();
-		
-		//putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "deactivate.scheduled.job.success"));
-		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", jobSchedule.getId()));
-		
-		return "";
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String terminateJob(Configuration configuration, Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
-				.jobSpecification() 
-				.terminate(id);
-		
-		//putValue(token, "success.message", MessageProvider.getMessage(getLocale(request), "terminate.scheduled.job.success"));
-		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
-		
-		return "";
 	}
 	
 	/**
@@ -522,7 +439,7 @@ public class JobSpecificationController extends AbstractStaticController {
 		String dayOfWeek = request.queryParams("dayOfWeek");
 		String year = request.queryParams("year");
 		
-		JobSpecificationRequest jobScheduleRequest = new JobSpecificationRequest()
+		JobSpecificationRequest jobSpecificationRequest = new JobSpecificationRequest()
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
@@ -537,82 +454,31 @@ public class JobSpecificationController extends AbstractStaticController {
 
 		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
 				.jobSpecification() 
-				.update(jobScheduleRequest);
+				.update(jobSpecificationRequest);
 		
 		if (! updateResult.isSuccess()) {
 			
-			JobSpecification jobSchedule = new NowellpointClient(token)
+			JobSpecification jobSpecification = new NowellpointClient(token)
 					.jobSpecification()
 					.get(id);
 			
 			String view = request.queryParams("view");
 			
 			Map<String, Object> model = getModel();
-			model.put("jobSchedule", jobSchedule);
+			model.put("jobSpecification", jobSpecification);
 			model.put("mode", "edit");
-			model.put("action", Path.Route.SCHEDULED_JOB_UPDATE.replace(":id", id));
+			model.put("action", Path.Route.JOB_SPECIFICATION_UPDATE.replace(":id", id));
 			model.put("errorMessage", updateResult.getErrorMessage());
 			if (view != null && view.equals("1")) {
 				model.put("cancel", Path.Route.JOB_SPECIFICATION_LIST);
 			} else {
-				model.put("cancel", Path.Route.SCHEDULED_JOB_VIEW.replace(":id", id));
+				model.put("cancel", Path.Route.JOB_SPECIFICATION_VIEW.replace(":id", id));
 			}
 			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_EDIT);
 		}
 		
-		response.redirect(Path.Route.SCHEDULED_JOB_VIEW.replace(":id", updateResult.getTarget().getId()));
+		response.redirect(Path.Route.JOB_SPECIFICATION_VIEW.replace(":id", updateResult.getTarget().getId()));
 		
 		return "";
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String getRunHistory(Configuration configuration, Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String fireInstanceId = request.params(":fireInstanceId");
-		
-		RunHistory runHistory = new NowellpointClient(token)
-				.jobSpecification()
-				.runHistory()
-				.get(id, fireInstanceId);
-		
-		Map<String, Object> model = getModel();
-		model.put("scheduledJob", new JobSpecification(id));
-		model.put("runHistory", runHistory);
-		
-		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_RUN_HISTORY);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String downloadFile(Configuration configuration, Request request, Response response) {
-		
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String fireInstanceId = request.params(":fireInstanceId");
-		String filename = request.params(":filename");
-		
-		String file = new NowellpointClient(token)
-				.jobSpecification()
-				.runHistory()
-				.getFile(id, fireInstanceId, filename);
-		
-		return file;
 	}
 }

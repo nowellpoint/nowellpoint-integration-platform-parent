@@ -12,6 +12,7 @@ import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
 import com.nowellpoint.client.resource.ApplicationResource;
 import com.nowellpoint.client.resource.IdentityResource;
+import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
@@ -107,6 +108,10 @@ public class NowellpointClient {
 	
 	public JobSpecificationResource jobSpecification() {
 		return new JobSpecificationResource(token);
+	}
+	
+	public JobResource job() {
+		return new JobResource(token);
 	}
 	
 	public SalesforceConnectorResource salesforceConnector() {

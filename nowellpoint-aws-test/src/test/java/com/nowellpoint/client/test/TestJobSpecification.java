@@ -74,34 +74,28 @@ public class TestJobSpecification {
 		Assert.assertNotNull(jobSpecification);
 		Assert.assertNotNull(jobSpecification.getOwner());
 		
-		UpdateResult<JobSpecification> startJobResult = new NowellpointClient(token)
-				.jobSpecification()
-				.start(jobSpecification.getId());
+		JobSpecificationRequest updateRequest = new JobSpecificationRequest()
+				.withId(jobSpecification.getId())
+				.withNotificationEmail("john.d.herson@gmail.com")
+				.withDescription("Here is my new description")
+				.withStart(new Date())
+				.withSeconds(jobSpecification.getSeconds())
+				.withMinutes(jobSpecification.getMinutes())
+				.withHours(jobSpecification.getHours())
+				.withDayOfMonth(jobSpecification.getDayOfMonth())
+				.withMonth(jobSpecification.getMonth())
+				.withDayOfWeek(jobSpecification.getDayOfWeek())
+				.withYear(jobSpecification.getYear());
+
+		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
+				.jobSpecification() 
+				.update(updateRequest);
 		
-		System.out.println(startJobResult.isSuccess());
+		Assert.assertTrue(updateResult.isSuccess());
 		
-//		JobScheduleRequest updateRequest = new JobScheduleRequest()
-//				.withId(jobSchedule.getId())
-//				.withNotificationEmail("john.d.herson@gmail.com")
-//				.withDescription("Here is my new description")
-//				.withStart(new Date())
-//				.withSeconds(jobSchedule.getSeconds())
-//				.withMinutes(jobSchedule.getMinutes())
-//				.withHours(jobSchedule.getHours())
-//				.withDayOfMonth(jobSchedule.getDayOfMonth())
-//				.withMonth(jobSchedule.getMonth())
-//				.withDayOfWeek(jobSchedule.getDayOfWeek())
-//				.withYear(jobSchedule.getYear());
-//
-//		UpdateResult<JobSchedule> updateResult = new NowellpointClient(token)
-//				.jobSchedule() 
-//				.update(updateRequest);
-//		
-//		Assert.assertTrue(updateResult.isSuccess());
-//		
-//		if (! updateResult.isSuccess()) {
-//			System.out.println(updateResult.getErrorMessage());
-//		}
+		if (! updateResult.isSuccess()) {
+			System.out.println(updateResult.getErrorMessage());
+		}
 		
 	}
 	

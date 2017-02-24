@@ -67,17 +67,4 @@ public interface JobSpecificationResource {
 			@FormParam("month") String month,
 			@FormParam("dayOfWeek") String dayOfWeek,
 			@FormParam("year") String year);
-	
-	/**
-	 * 
-	 * @param id
-	 * @param action
-	 * @return
-	 */
-	
-	@POST
-	@Path("{id}/actions/{action}/invoke")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action);
-	
 }
