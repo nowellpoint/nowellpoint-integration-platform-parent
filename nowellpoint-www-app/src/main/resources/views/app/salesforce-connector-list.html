@@ -1,0 +1,51 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h4 class="dashhead-subtitle">&nbsp;</h4>
+                <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
+            </div>
+            <#if salesforceConnectorsList?size gt 0>
+                <div class="dashhead-toolbar">
+                    <p class="pull-right">
+                        <a href="${labels['base.path']}/new" class="btn btn-outline-primary" role="button">${labels["add.salesforce.connector"]}</a>
+                    </p>
+                </div>
+            </#if>
+        </div>
+        <#if salesforceConnectorsList?size==0>
+            <br>
+            <br>
+            <br>
+            <p class="text-center">
+                <span class="icon icon-database fa fa-4x"></span>
+            </p>    
+            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+            <p class="text-center">
+                <a href="${labels['base.path']}/new" class="btn btn-lg btn-primary-outline" role="button">${labels["add.salesforce.connector"]}</a>
+            </p>
+        </#if>
+        <br>
+         <div class="content table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th>${labels["name"]}</th>
+                    <th>${labels["organization.name"]}</th>
+                    <th>${labels["instance.name"]}</th>
+                    <th>${labels["action"]}</th>
+                </thead>
+                <tbody>
+                    <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
+                        <tr id="${salesforceConnector.id}">
+                            <td>${(salesforceConnector.name!)}</td>
+                            <td><a href="${labels['base.path']}/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                            <td>${salesforceConnector.organization.instanceName}</td>
+                            <td><a href="${labels['base.path']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a></td>
+                        </tr>
+                    </#list>
+                </tbody>
+            </table>
+        </div>
+    </@t.page>

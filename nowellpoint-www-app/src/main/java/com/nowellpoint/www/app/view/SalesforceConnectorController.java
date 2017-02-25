@@ -37,7 +37,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
-		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connectors-list.html");
+		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-list.html");
 		public static final String SALESFORCE_INSTANCE = String.format(APPLICATION_CONTEXT, "salesforce-instance.html");
 		public static final String SOBJECTS = String.format(APPLICATION_CONTEXT, "sobject-list.html");
 		public static final String SOBJECT_DETAIL = String.format(APPLICATION_CONTEXT, "sobject-detail.html");
@@ -45,7 +45,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	}
 	
 	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> getSalesforceConnectors(configuration, request, response));
+		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> listSalesforceConnectors(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> newSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> viewSalesforceConnector(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> updateSalesforceConnector(configuration, request, response));
@@ -453,7 +453,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	 * @return
 	 */
 
-	private static String getSalesforceConnectors(Configuration configuration, Request request, Response response) {	
+	private static String listSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
 		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)

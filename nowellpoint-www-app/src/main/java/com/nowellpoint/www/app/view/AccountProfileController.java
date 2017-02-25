@@ -382,50 +382,17 @@ public class AccountProfileController extends AbstractStaticController {
 				.accountProfile()
 				.update(request.params(":id"), accountProfileRequest);
 		
+		String html;
+		
 		if (! updateResult.isSuccess()) {
-			
-//			AccountProfile accountProfile = new AccountProfile()
-//					.withId(request.params(":id"))
-//					.withFirstName(request.queryParams("firstName"))
-//					.withLastName(request.queryParams("lastName"))
-//					.withCompany(request.queryParams("company"))
-//					.withDivision(request.queryParams("division"))
-//					.withDepartment(request.queryParams("department"))
-//					.withTitle(request.queryParams("title"))
-//					.withEmail(request.queryParams("email"))
-//					.withFax(request.queryParams("fax"))
-//					.withMobilePhone(request.queryParams("mobilePhone"))
-//					.withPhone(request.queryParams("phone"))
-//					.withExtension(request.queryParams("extension"))
-//					.withLanguageSidKey(request.queryParams("languageSidKey"))
-//					.withLocaleSidKey(request.queryParams("localeSidKey"))
-//					.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
-//					.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
-//
-//			Map<String, Object> model = getModel();
-//			model.put("account", identity);
-//			model.put("accountProfile", accountProfile);
-//			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
-//			model.put("languages", getSupportedLanguages());
-//			model.put("timeZones", getTimeZones());
-//			model.put("errorMessage", updateResult.getErrorMessage());
-//			
-//			String output = render(configuration, request, response, model, "");
-//			
-//			throw new BadRequestException(output);	
-			
-			String html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			
+			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
 			response.status(400);
-			
-			return html;
 		} else {
-			String html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.profile.success") + "</strong></div></div>";
-			
-			return html;
+			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.profile.success") + "</strong></div></div>";
+			response.status(200);	
 		}
 		
-		
+		return html;
 	}
 	
 	/**

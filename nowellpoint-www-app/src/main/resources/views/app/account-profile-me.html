@@ -1,5 +1,6 @@
 <#import "template.html" as t>
     <@t.page>
+        <div id="error"></div>
         <div class="flextable mt-1">
             <div class="flextable-item flextable-primary">
                 <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
@@ -170,8 +171,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <#include "spinner.html"/>
-                        <div id="error"></div>
                         <form class="form-vertical" name="address-form" id="address-form" role="form" action="${labels['base.path']}/${accountProfile.id}/address">
                             <div class="row">
                                 <div class="form-group col-md-12">
@@ -236,8 +235,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <#include "spinner.html"/>
-                        <div id="error1"></div>
                         <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form" action="${labels['base.path']}/${accountProfile.id}">
                             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
                             <div class="row">
@@ -357,26 +354,8 @@
         <#include "confirm-dialog.html"/>
 
         <script>
-            
-            $("#edit-user-profile").click(function (e) {
-                accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
-                $("#firstName").val(accountProfile.firstName);
-                $("#lastName").val(accountProfile.lastName);
-                $("#division").val(accountProfile.division);
-                $("#company").val(accountProfile.company);
-                $("#department").val(accountProfile.department);
-                $("#title").val(accountProfile.title);
-                $("#email").val(accountProfile.email);
-                $("#mobilePhone").val(accountProfile.mobilePhone);
-                $("#phone").val(accountProfile.phone);
-                $("#extension").val(accountProfile.extension);
-                $("#fax").val(accountProfile.fax);
-                $("#languageSidKey").val(accountProfile.languageSidKey);
-                $("#localeSidKey").val(accountProfile.localeSidKey);
-                $("#timeZoneSidKey").val(accountProfile.timeZoneSidKey);                
-            });
-            
             $("#update-account-profile").click(function(e) {
+
 
                 $form = $("#account-profile-form");
                 $dialog = $("#account-profile-dialog")
@@ -387,17 +366,14 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
+                        $form.prepend(response.responseText);
                         if (response.status == 200) {
-                            $dialog.html(response.responseText);
                             setTimeout(function() {
                                 $dialog.slideUp('slow').fadeOut(function() {
                                     window.location = "${labels['base.path']}/${accountProfile.id}";
                                 });
                             }, 1000);
-                        } else {
-                            $("#error1").html(response.responseText);
                         }
-
                     }
                 });
 
@@ -416,15 +392,13 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
+                        $form.prepend(response.responseText);
                         if (response.status == 200) {
-                            $dialog.html(response.responseText);
                             setTimeout(function() {
                                 $dialog.slideUp('slow').fadeOut(function() {
                                     window.location = "${labels['base.path']}/${accountProfile.id}";
                                 });
                             }, 1000);
-                        } else {
-                            $("#error").html(response.responseText);
                         }
                     }
 
@@ -432,6 +406,49 @@
 
                 e.preventDefault();
 
+            });
+
+            $("#edit-user-profile").click(function(e) {
+                var accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
+                $("#firstName").val(accountProfile.firstName);
+                $("#lastName").val(accountProfile.lastName);
+                $("#division").val(accountProfile.division);
+                $("#company").val(accountProfile.company);
+                $("#department").val(accountProfile.department);
+                $("#title").val(accountProfile.title);
+                $("#email").val(accountProfile.email);
+                $("#mobilePhone").val(accountProfile.mobilePhone);
+                $("#phone").val(accountProfile.phone);
+                $("#extension").val(accountProfile.extension);
+                $("#fax").val(accountProfile.fax);
+                $("#languageSidKey").val(accountProfile.languageSidKey);
+                $("#localeSidKey").val(accountProfile.localeSidKey);
+                $("#timeZoneSidKey").val(accountProfile.timeZoneSidKey);
+            });
+
+            $("#use-contact-info").change(function() {
+                if (this.checked) {
+                    var accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
+                    $("#cardholderName").val((accountProfile.firstName ? accountProfile.firstName + ' ' : '') + accountProfile.lastName);
+                    $("#firstName").val(accountProfile.firstName);
+                    $("#lastName").val(accountProfile.lastName);
+                    $("#street").val(accountProfile.street);
+                    $("#city").val(accountProfile.city);
+                    $("#state").val(accountProfile.state);
+                    $("#postalCode").val(accountProfile.postalCode);
+                    $("#countryCode").val(accountProfile.countryCode);
+                    $("#number").focus();
+                } else {
+                    $('#cardholderName').val('');
+                    $("#firstName").val('');
+                    $("#lastName").val('');
+                    $("#street").val('');
+                    $("#city").val('');
+                    $("#state").val('');
+                    $("#postalCode").val('');
+                    $("#countryCode").val('');
+                    $("#countryCode").focus();
+                }
             });
 
             var accountProfile = {
@@ -456,9 +473,8 @@
                 localeSidKey: "${(accountProfile.localeSidKey)!}",
                 timeZoneSidKey: "${(accountProfile.timeZoneSidKey)!}"
             }
-            
+
             sessionStorage.setItem("accountProfile", JSON.stringify(accountProfile));
-            
         </script>
 
         <script src="/js/account-profile.js"></script>
