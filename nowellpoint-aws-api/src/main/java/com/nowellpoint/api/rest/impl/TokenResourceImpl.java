@@ -110,7 +110,7 @@ public class TokenResourceImpl implements TokenResource {
 		//
 		
 		AccountProfile accountProfile = accountProfileServiceImpl.findByAccountHref(result.getAccessToken().getAccount().getHref());
-        
+
 		//
 		// create the token
 		//
@@ -122,7 +122,7 @@ public class TokenResourceImpl implements TokenResource {
 		//
 		
 		loggedInEvent.fire(token);
-		
+
 		//
 		// build cache control
 		//

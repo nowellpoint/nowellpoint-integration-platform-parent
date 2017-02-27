@@ -139,6 +139,11 @@ public interface AccountProfileResource {
 			@FormParam("firstName") String firstName,
 			@FormParam("lastName") String lastName);
 	
+	@POST
+	@Path("{id}/credit-card/{token}/primary")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setPrimary(@PathParam("id") String id, @PathParam("token") String token);
+	
 	@DELETE
 	@Path("{id}/credit-card/{token}")
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token);

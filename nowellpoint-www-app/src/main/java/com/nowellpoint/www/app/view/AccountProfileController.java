@@ -54,7 +54,7 @@ public class AccountProfileController extends AbstractStaticController {
 	
 	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> getAccountProfile(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> viewAccountProfile(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> reviewPlan(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> currentPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> setPlan(configuration, request, response));
@@ -64,7 +64,6 @@ public class AccountProfileController extends AbstractStaticController {
         delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> removeProfilePicture(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> getCreditCard(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/new"), (request, response) -> newCreditCard(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> editCreditCard(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> addCreditCard(configuration, request, response));  
         post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> updateCreditCard(configuration, request, response));
@@ -122,7 +121,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String getAccountProfile(Configuration configuration, Request request, Response response) {
+	private static String viewAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -133,11 +132,30 @@ public class AccountProfileController extends AbstractStaticController {
 				.accountProfile()
 				.get(id);
 		
+		Address address = new Address();
+		address.setCity(identity.getAddress().getCity());
+		address.setPostalCode(identity.getAddress().getPostalCode());
+		address.setState(identity.getAddress().getState());
+		address.setStreet(identity.getAddress().getStreet());
+		address.setCountryCode(accountProfile.getAddress().getCountryCode());
+		
+		Contact contact = new Contact();
+		contact.setFirstName(identity.getFirstName());
+		contact.setLastName(identity.getLastName());
+		
+		CreditCard creditCard = new CreditCard();
+		creditCard.setCardholderName((identity.getFirstName() != null ? identity.getFirstName().concat(" ") : "").concat(identity.getLastName()));
+		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
+		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
+		creditCard.setBillingAddress(address);
+		creditCard.setBillingContact(contact);
+		
 		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());
 		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastUpdatedBy().getId());
 		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);
+		model.put("creditCard", creditCard);
 		model.put("locales", getLocales(accountProfile.getLocaleSidKey()));
 		model.put("languages", getSupportedLanguages());
 		model.put("createdByHref", createdByHref);
@@ -384,12 +402,12 @@ public class AccountProfileController extends AbstractStaticController {
 		
 		String html;
 		
-		if (! updateResult.isSuccess()) {
-			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			response.status(400);
-		} else {
+		if (updateResult.isSuccess()) {
 			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.profile.success") + "</strong></div></div>";
 			response.status(200);	
+		} else {
+			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
+			response.status(400);			
 		}
 		
 		return html;
@@ -488,34 +506,15 @@ public class AccountProfileController extends AbstractStaticController {
 				.address()
 				.update(request.params(":id"), addressRequest);
 		
-		if (! updateResult.isSuccess()) {
-//			Address address = new Address()
-//					.withCity(request.queryParams("city"))
-//					.withCountryCode(request.queryParams("countryCode"))
-//					.withPostalCode(request.queryParams("postalCode"))
-//					.withState(request.queryParams("state"))
-//					.withStreet(request.queryParams("street"));
-//
-//			Map<String, Object> model = getModel();
-//			model.put("account", identity);
-//			model.put("accountProfile", new AccountProfile(request.params(":id")));
-//			model.put("address", address);
-//			model.put("errorMessage", updateResult.getErrorMessage());
-//			
-//			String output = render(configuration, request, response, model, "");
-			
-			//throw new BadRequestException(output);
-			
-			String html = "<div class='alert alert-danger'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			
+		String html;
+		
+		if (updateResult.isSuccess()) {
+			html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.address.success") + "</strong></div></div>";
+			response.status(200);
+		} else {
+			html = "<div class='alert alert-danger'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
 			response.status(400);
-			
-			return html;
 		}
-		
-		String html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.address.success") + "</strong></div></div>";
-		
-		//response.status(400);
 		
 		return html;	
 	}
@@ -540,39 +539,6 @@ public class AccountProfileController extends AbstractStaticController {
 		model.put("accountProfile", new AccountProfile(request.params(":id")));
 		model.put("creditCard", creditCard);
 		model.put("mode", "view");
-		
-		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String newCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		AccountProfile accountProfile = new NowellpointClient(token)
-				.accountProfile()
-				.get(request.params(":id"));
-		
-		Address address = new Address();
-		address.setCountryCode(accountProfile.getAddress().getCountryCode());
-		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingAddress(address);
-		creditCard.setBillingContact(new Contact());
-			
-		Map<String, Object> model = getModel();
-		model.put("creditCard", creditCard);
-		model.put("accountProfile", accountProfile);
-		model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
-		model.put("mode", "new");
 		
 		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
 	};
@@ -653,39 +619,17 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.add(creditCardRequest);
 		
-		Map<String, Object> model = getModel();
-		model.put("accountProfile", new AccountProfile(request.params(":id")));
-			
+		String html;
+		
 		if (createResult.isSuccess()) {
-			CreditCard creditCard = createResult.getTarget();
-			
-			model.put("creditCard", creditCard);
-			model.put("mode", "view");
-			model.put("successMessage", MessageProvider.getMessage(getLocale(request), "add.credit.card.success"));
-		} else {	
-			
-			CreditCard creditCard = new CreditCard()
-					.withBillingAddress(new Address()
-							.withCity(city)
-							.withCountryCode(countryCode)
-							.withPostalCode(postalCode)
-							.withState(state)
-							.withStreet(street))
-					.withBillingContact(new Contact()
-							.withFirstName(firstName)
-							.withLastName(lastName))
-					.withCardholderName(cardholderName)
-					.withExpirationMonth(expirationMonth)
-					.withExpirationYear(expirationYear)
-					.withPrimary(primary);
-			
-			model.put("creditCard", creditCard);
-			model.put("action", String.format("/app/account-profile/%s/payment-methods", request.params(":id")));
-			model.put("mode", "new");
-			model.put("errorMessage", createResult.getErrorMessage());
+			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "add.credit.card.success") + "</strong></div></div>";
+			response.status(200);	
+		} else {
+			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + createResult.getErrorMessage() + "</strong></div></div>";
+			response.status(400);			
 		}
 		
-		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		return html;
 	};
 	
 	/**

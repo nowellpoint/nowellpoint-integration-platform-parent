@@ -177,14 +177,6 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	@Override
 	public void updateAccountProfile(AccountProfile accountProfile) {
 		
-//		if (Assert.isNullOrEmpty(accountProfile.getLastName())) {
-//			throw new IllegalArgumentException("Missing required value last name");
-//		}
-//		
-//		if (Assert.isNullOrEmpty(accountProfile.getLocaleSidKey())) {
-//			throw new IllegalArgumentException("Missing required value locale sid key");
-//		}
-		
 		AccountProfile original = findById( accountProfile.getId() );
 		
 		accountProfile.setEmailEncodingKey(original.getEmailEncodingKey());
@@ -652,6 +644,42 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		}
 	}
 	
+	@Override
+	public CreditCard setPrimary(String id, String token) {
+		System.out.println("setting primary");
+		AccountProfile accountProfile = findById(id);
+		
+		Optional<CreditCard> query = accountProfile.getCreditCards()
+				.stream()
+				.filter(c -> token.equals(c.getToken()))
+				.findFirst();
+		
+		CreditCard creditCard = null;
+		
+		if (query.isPresent()) {
+			Date now = Date.from(Instant.now());
+			
+			creditCard = query.get();
+			creditCard.setPrimary(Boolean.TRUE);
+			creditCard.setUpdatedOn(now);
+			
+			accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
+				if (c.getPrimary()) {
+					c.setPrimary(Boolean.FALSE);
+					c.setUpdatedOn(now);
+				}
+			});	
+			
+			accountProfile.setLastUpdatedOn(now);
+			accountProfile.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
+			
+			update(accountProfile);
+		}
+		
+		return creditCard;
+		
+	}
+	
 	/**
 	 * 
 	 * 
@@ -666,8 +694,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.cardholderName(creditCard.getCardholderName())
 				.expirationMonth(creditCard.getExpirationMonth())
-				.expirationYear(creditCard.getExpirationYear())
-				.number(creditCard.getNumber());
+				.expirationYear(creditCard.getExpirationYear());
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = null;
 		
@@ -699,14 +726,6 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 				throw new ValidationException(e.getMessage());
 			}
 			
-			if (creditCard.getPrimary()) {
-				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
-					if (c.getPrimary()) {
-						c.setPrimary(Boolean.FALSE);
-					}
-				});			
-			}
-			
 			CreditCard original = accountProfile.getCreditCards()
 					.stream()
 					.filter(c -> token.equals(c.getToken()))
@@ -720,7 +739,46 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			creditCard.setImageUrl(original.getImageUrl());
 			creditCard.setToken(original.getToken());
 			creditCard.setUpdatedOn(Date.from(Instant.now()));
-			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+			
+			if (Assert.isNull(creditCard.getPrimary())) {
+				creditCard.setPrimary(original.getPrimary());
+			}
+			
+			if (Assert.isNull(creditCard.getBillingAddress())) {
+				creditCard.setBillingAddress(original.getBillingAddress());
+			}
+			
+			if (Assert.isNull(creditCard.getBillingContact())) {
+				creditCard.setBillingContact(original.getBillingContact());
+			}
+			
+			if (Assert.isNull(creditCard.getCardholderName())) {
+				creditCard.setCardholderName(original.getCardholderName());
+			}
+			
+			if (Assert.isNull(creditCard.getCardType())) {
+				creditCard.setCardType(original.getCardType());
+			}
+			
+			if (Assert.isNull(creditCard.getCvv())) {
+				creditCard.setCvv(original.getCvv());
+			}
+			
+			if (Assert.isNull(creditCard.getExpirationMonth())) {
+				creditCard.setExpirationMonth(original.getExpirationMonth());
+			}
+			
+			if (Assert.isNull(creditCard.getExpirationYear())) {
+				creditCard.setExpirationYear(original.getExpirationYear());
+			}
+			
+			if (Assert.isNull(creditCard.getPrimary())) {
+				creditCard.setPrimary(original.getPrimary());
+			}
+			
+			if (addressResult.isSuccess()) {
+				creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+			}
 			
 			accountProfile.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 			

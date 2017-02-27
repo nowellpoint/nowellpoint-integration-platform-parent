@@ -122,6 +122,15 @@ public interface AccountProfileService {
 	 * 
 	 */
 	
+	CreditCard setPrimary(String id, String token);
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
 	void addCreditCard(String id, CreditCard creditCard);
 	
 	/**

@@ -436,7 +436,7 @@ public class AccountProfileResource extends AbstractResource {
 					.path(accountProfileId)
 					.path("credit-card")
 					.path(paymentMethodToken)
-					.parameter("primary", "true")
+					.path("primary")
 					.execute();
 			
 			UpdateResult<CreditCard> result = null;

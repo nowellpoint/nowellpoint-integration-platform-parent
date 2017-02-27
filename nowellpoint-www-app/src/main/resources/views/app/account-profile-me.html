@@ -106,7 +106,7 @@
                 </div>
                 <br>
                 <div class="btn-toolbar" role="toolbar">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#address-dialog">${labels["add.payment.method"]}</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#payment-method-dialog">${labels["add.payment.method"]}</button>
                 </div>
                 <br>
                 <div class="content table-responsive">
@@ -127,12 +127,7 @@
                                     </td>
                                     <td>${creditCard.cardholderName}</td>
                                     <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
-                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a>
-                                        <#if ! creditCard.primary>
-                                            &emsp;
-                                            <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" class="make-primary"><span class="icon icon-check"></span>${labels["make.primary"]}</a> &emsp;
-                                            <a href="#" data-target="#confirm-dialog" class="confirm-delete" data-toggle="modal" aria-hidden="true" data-id="${creditCard.token}" data-backdrop="static" data-title="${labels['remove.card']}" data-message="${(creditCard.cardType)!} ${labels['ending.in']} ${(creditCard.lastFour)!}"><span class="icon icon-trash"></span>${labels["delete"]}</a></#if>
-                                    </td>
+                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a></td>
                                 </tr>
                             </#list>
                         </tbody>
@@ -161,21 +156,21 @@
             </div>
         </div>
 
-        <div class="modal fade" id="address-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-title" aria-hidden="true">
+        <div class="modal fade" id="address-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-dialog-title" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="account-profile-title">${labels["edit.user.address"]}</h5>
+                        <h5 class="modal-title" id="account-profile-dialog-title">${labels["edit.user.address"]}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-vertical" name="address-form" id="address-form" role="form" action="${labels['base.path']}/${accountProfile.id}/address">
+                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/address">
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="street">${labels["street"]}</label>
-                                    <input type="text" class="form-control" name="street" id="street" autofocus="" value="${(accountProfile.address.street)!}" />
+                                    <input type="text" class="form-control" name="street" id="street" value="${(accountProfile.address.street)!}" />
                                 </div>
                             </div>
 
@@ -225,22 +220,22 @@
             </div>
         </div>
 
-        <div class="modal fade" id="account-profile-dialog" tabindex="-1" role="dialog" aria-labelledby="account-profile-dialog" aria-hidden="true">
+        <div class="modal fade" id="account-profile-dialog" tabindex="-1" role="dialog" aria-labelledby="edit-user-profile-title" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">${labels["edit.user.profile"]}</h5>
+                        <h5 class="modal-title" id="edit-user-profile-title">${labels["edit.user.profile"]}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form" action="${labels['base.path']}/${accountProfile.id}">
+                        <form class="form-vertical" name="account-profile-form" id="account-profile-form" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}">
                             <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="firstName">${labels["first.name"]}</label>
-                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" autofocus="" value="${accountProfile.firstName!}" />
+                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${accountProfile.firstName!}" />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="lastName">${labels["last.name"]}</label>
@@ -350,18 +345,136 @@
             </div>
         </div>
 
+        <div class="modal fade" id="payment-method-dialog" tabindex="-1" role="dialog" aria-labelledby="payment-method-dialog-title" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="payment-method-dialog-title">${labels["add.payment.method"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/payment-methods">
 
-        <#include "confirm-dialog.html"/>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['name.on.card']}</label>
+                                    <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" tabindex="1" placeholder="${labels['name.on.card']}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['country']}</label>
+                                    <select class="form-control" id="countryCode" name="countryCode" tabindex="8" required>
+                                        <option value="">${labels["select.one"]}</option>
+                                        <#list countryList as country>
+                                            <#if creditCard.billingAddress.countryCode??>
+                                                <#if country.code==creditCard.billingAddress.countryCode>
+                                                    <option value="${country.code}" selected="selected">${country.name}</option>
+                                                </#if>
+                                                <#if country.code !=creditCard.billingAddress.countryCode>
+                                                    <option value="${country.code}">${country.name}</option>
+                                                </#if>
+                                            </#if>
+                                            <#if ! creditCard.billingAddress.countryCode??>
+                                                <option value="${country.code}">${country.name}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['number']}</label>
+                                    <input type="text" class="form-control" name="number" id="number" tabindex="2" value="${(creditCard.number)!}" placeholder="${labels['number']}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['street']}</label>
+                                    <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-2">
+                                    <label class="control-label" for="localeSidKey">${labels['month']}</label>
+                                    <select class="form-control" name="expirationMonth" id="expirationMonth" tabindex="3">
+                                        <#assign x=12 />
+                                        <#list 1..x as month>
+                                            <#if creditCard.expirationMonth?eval==month>
+                                                <option value="${month?c}" selected="selected">${month?c}</option>
+                                            </#if>
+                                            <#if creditCard.expirationMonth?eval !=month>
+                                                <option value="${month?c}">${month?c}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label class="control-label" for="localeSidKey">${labels['year']}</label>
+                                    <select class="form-control" name="expirationYear" id="expirationYear" tabindex="4">
+                                        <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                        <#list .now?string[ "yyyy"]?number..x as year>
+                                            <#if creditCard.expirationYear?eval==year>
+                                                <option value="${year?c}" selected="selected">${year?c}</option>
+                                            </#if>
+                                            <#if creditCard.expirationYear?eval !=year>
+                                                <option value="${year?c}">${year?c}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label class="control-label" for="localeSidKey">${labels['cvv']}</label>
+                                    <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" value="${(creditCard.cvv)!}" tabindex="5" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['city']}</label>
+                                    <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['first.name']}</label>
+                                    <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" placeholder="${labels['first.name']}" tabindex="6" />
+
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['state']}</label>
+                                    <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['last.name']}</label>
+                                    <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" placeholder="${labels['last.name']}" tabindex="7" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="localeSidKey">${labels['zip.postal.code']}</label>
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" value="${(creditCard.billingAddress.postalCode)!}" tabindex="12" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" tabindex="12">${labels["cancel"]}</button>
+                        <button type="button" class="btn btn-primary" id="add-payment-method" tabindex="13">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script>
+            
             $("#update-account-profile").click(function(e) {
-
+                e.preventDefault();
 
                 $form = $("#account-profile-form");
                 $dialog = $("#account-profile-dialog")
 
                 $.ajax({
-                    method: "POST",
+                    method: $form.attr('method'),
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
@@ -376,18 +489,16 @@
                         }
                     }
                 });
-
-                e.preventDefault();
-
             });
 
             $("#update-address").click(function(e) {
+                e.preventDefault();
 
                 $form = $("#address-form");
                 $dialog = $("#address-dialog");
 
                 $.ajax({
-                    method: "POST",
+                    method: $form.attr('method'),
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
@@ -403,9 +514,31 @@
                     }
 
                 });
+            });
 
+            $("#add-payment-method").click(function(e) {
                 e.preventDefault();
 
+                $form = $("#payment-method-form");
+                $dialog = $("#payment-method-dialog");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $form.prepend(response.responseText);
+                        if (response.status == 200) {
+                            setTimeout(function() {
+                                $dialog.slideUp('slow').fadeOut(function() {
+                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                });
+                            }, 1000);
+                        }
+                    }
+
+                });
             });
 
             $("#edit-user-profile").click(function(e) {
@@ -426,29 +559,16 @@
                 $("#timeZoneSidKey").val(accountProfile.timeZoneSidKey);
             });
 
-            $("#use-contact-info").change(function() {
-                if (this.checked) {
-                    var accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
-                    $("#cardholderName").val((accountProfile.firstName ? accountProfile.firstName + ' ' : '') + accountProfile.lastName);
-                    $("#firstName").val(accountProfile.firstName);
-                    $("#lastName").val(accountProfile.lastName);
-                    $("#street").val(accountProfile.street);
-                    $("#city").val(accountProfile.city);
-                    $("#state").val(accountProfile.state);
-                    $("#postalCode").val(accountProfile.postalCode);
-                    $("#countryCode").val(accountProfile.countryCode);
-                    $("#number").focus();
-                } else {
-                    $('#cardholderName').val('');
-                    $("#firstName").val('');
-                    $("#lastName").val('');
-                    $("#street").val('');
-                    $("#city").val('');
-                    $("#state").val('');
-                    $("#postalCode").val('');
-                    $("#countryCode").val('');
-                    $("#countryCode").focus();
-                }
+            $('#account-profile-dialog').on('shown.bs.modal', function() {
+                $('#firstName').focus();
+            });
+
+            $('#address-dialog').on('shown.bs.modal', function() {
+                $('#street').focus();
+            });
+
+            $('#payment-method-dialog').on('shown.bs.modal', function() {
+                $('#cardholderName').focus();
             });
 
             var accountProfile = {

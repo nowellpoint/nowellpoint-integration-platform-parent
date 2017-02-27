@@ -4,6 +4,7 @@ import java.net.URI;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -200,15 +201,28 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
     @Override
 	public Response getCreditCard(String id, String token) {
 		
-		CreditCard resource = accountProfileService.getCreditCard( id, token );
+		CreditCard creditCard = accountProfileService.getCreditCard( id, token );
 		
-		if (resource == null) {
+		if (creditCard == null) {
 			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
 		}
 		
-		return Response.ok(resource)
+		return Response.ok(creditCard)
 				.build();
 	}
+    
+    @Override
+    public Response setPrimary(@PathParam("id") String id, @PathParam("token") String token) {
+    	
+    	CreditCard creditCard = accountProfileService.setPrimary(id, token);
+    	
+    	if (creditCard == null) {
+			throw new NotFoundException(String.format("Credit Card for token %s was not found", token));
+		}
+    	
+    	return Response.ok(creditCard)
+				.build();
+    }
 	
 	@Override
 	public Response removeCreditCard(String id, String token) {
@@ -285,7 +299,8 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 	}
 
 	@Override
-	public Response updateCreditCard(String id, 
+	public Response updateCreditCard(
+			String id, 
 			String token, 
 			String cardholderName, 
 			String cvv, 
