@@ -631,6 +631,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			creditCard.setCardType(creditCardResult.getTarget().getCardType());
 			creditCard.setAddedOn(Date.from(Instant.now()));
 			creditCard.setUpdatedOn(Date.from(Instant.now()));
+			creditCard.setCvv(null);
 			
 			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
 			
@@ -726,6 +727,14 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 				throw new ValidationException(e.getMessage());
 			}
 			
+			if (creditCard.getPrimary()) {
+				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
+					if (c.getPrimary()) {
+						c.setPrimary(Boolean.FALSE);
+					}
+				});			
+			}
+			
 			CreditCard original = accountProfile.getCreditCards()
 					.stream()
 					.filter(c -> token.equals(c.getToken()))
@@ -739,6 +748,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			creditCard.setImageUrl(original.getImageUrl());
 			creditCard.setToken(original.getToken());
 			creditCard.setUpdatedOn(Date.from(Instant.now()));
+			creditCard.setCvv(null);
 			
 			if (Assert.isNull(creditCard.getPrimary())) {
 				creditCard.setPrimary(original.getPrimary());
@@ -758,10 +768,6 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			
 			if (Assert.isNull(creditCard.getCardType())) {
 				creditCard.setCardType(original.getCardType());
-			}
-			
-			if (Assert.isNull(creditCard.getCvv())) {
-				creditCard.setCvv(original.getCvv());
 			}
 			
 			if (Assert.isNull(creditCard.getExpirationMonth())) {

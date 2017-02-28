@@ -11,6 +11,7 @@
         <div>
             <a href="${labels['base.path']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connectors"]}
         </div>
+        <br>
         <div id="success" class="collapse panel panel-success">
             <div class="panel-body">
                 <div class="text-center">
@@ -29,16 +30,13 @@
             <div class="flextable-item flextable-primary">
                 <h3 class="dashhead-title">${labels["salesforce.connector"]}</h3>
             </div>
-            <div class="flextable-item">
-                <a id="edit-salesforce-connector" href="${labels['base.path']}/${salesforceConnector.id!}/edit" class="btn btn-primary-outline" role="button">${labels["edit.salesforce.connector"]}</a>
-            </div>
         </div>
-
         <br>
-
+        <div class="btn-toolbar" role="toolbar">
+            <a id="edit-salesforce-connector" href="${labels['base.path']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${labels['base.path']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>
+        </div>
+        <br>
         <div class="row">
-
-            <br>
 
             <div class="col-md-3">
 

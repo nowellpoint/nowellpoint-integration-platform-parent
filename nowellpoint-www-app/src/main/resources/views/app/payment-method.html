@@ -8,13 +8,6 @@
         </div>
         <br>
 
-        <#if successMessage??>
-            <div id="success" class="alert alert-success">
-                <a class="close" data-dismiss="alert">&times;</a>
-                <div class="text-center">${successMessage!}</div>
-            </div>
-        </#if>
-
         <#if errorMessage??>
             <div id="alert" class="alert alert-danger">
                 <a class="close" data-dismiss="alert">×</a>
@@ -24,17 +17,17 @@
 
         <#if mode=="edit">
 
-            <form name="payment-method-form" class="form-horizontal" role="form" method="post" action="${action}">
-                
+            <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${action}">
+
                 <input type="hidden" name="primary" id="primary" value="${(creditCard.primary?c)!}">
 
                 <div class="row">
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['name.on.card']}</label>
+                        <label class="control-label" for="cardholderName">${labels['name.on.card']}</label>
                         <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" tabindex="1" placeholder="${labels['name.on.card']}" />
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['country']}</label>
+                        <label class="control-label" for="country">${labels['country']}</label>
                         <select class="form-control" id="countryCode" name="countryCode" tabindex="8" required>
                             <option value="">${labels["select.one"]}</option>
                             <#list countryList as country>
@@ -55,19 +48,12 @@
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['number']}</label>
-                        <p class="form-control-static">${(creditCard.number)!}</p>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['street']}</label>
-                        <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
-                    </div>
-                </div>
-
-                <div class="row">
                     <div class="form-group col-md-1">
-                        <label class="control-label" for="localeSidKey">${labels['month']}</label>
+                        <label class="control-label" for="number">${labels['number']}</label>
+                        <p class="form-control-static">${(creditCard.lastFour)!}</p>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label class="control-label" for="month">${labels['month']}</label>
                         <select class="form-control" name="expirationMonth" id="expirationMonth" tabindex="3">
                             <#assign x=12 />
                             <#list 1..x as month>
@@ -81,7 +67,7 @@
                         </select>
                     </div>
                     <div class="form-group col-md-1">
-                        <label class="control-label" for="localeSidKey">${labels['year']}</label>
+                        <label class="control-label" for="year">${labels['year']}</label>
                         <select class="form-control" name="expirationYear" id="expirationYear" tabindex="4">
                             <#assign x=.now?string[ "yyyy"]?number + 19/>
                             <#list .now?string[ "yyyy"]?number..x as year>
@@ -94,57 +80,64 @@
                             </#list>
                         </select>
                     </div>
-                    <div class="form-group col-md-1">
-                        <label class="control-label" for="localeSidKey">${labels['cvv']}</label>
-                        <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" value="${(creditCard.cvv)!}" tabindex="5" />
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="street">${labels['street']}</label>
+                        <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="firstName">${labels['first.name']}</label>
+                        <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" placeholder="${labels['first.name']}" tabindex="6" />
+
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['city']}</label>
+                        <label class="control-label" for="city">${labels['city']}</label>
                         <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['first.name']}</label>
-                        <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" placeholder="${labels['first.name']}" tabindex="6" />
-
+                        <label class="control-label" for="lastName">${labels['last.name']}</label>
+                        <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" placeholder="${labels['last.name']}" tabindex="7" />
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['state']}</label>
+                        <label class="control-label" for="state">${labels['state']}</label>
                         <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['last.name']}</label>
-                        <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" placeholder="${labels['last.name']}" tabindex="7" />
-                    </div>
+                        &nbsp;
+                    </div>    
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="localeSidKey">${labels['zip.postal.code']}</label>
+                        <label class="control-label" for="postalCode">${labels['zip.postal.code']}</label>
                         <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" value="${(creditCard.billingAddress.postalCode)!}" tabindex="12" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="pull-right">
-                        <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button">${labels["cancel"]}</a>
-                        <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
                     </div>
                 </div>
 
             </form>
 
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="pull-right">
+                        <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                        <button type="button" id="save" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+
         </#if>
 
         <#if mode=="view">
+            
+            <br>
+            
             <div class="row">
-
-                <br>
-
                 <div class="col-md-3">
-
                     <dl class="dl-vertical">
                         <dt>${labels["name.on.card"]}</dt>
                         <dd>${creditCard.cardholderName}&emsp;</dd>
@@ -227,7 +220,30 @@
 
         </#if>
 
+        <#include "spinner.html"/>
+
         <script>
+            $('#save').click(function(e) {
+                e.preventDefault();
+
+                $form = $("#payment-method-form");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    success: function() {
+                        jQuery("#notification").modal('show');
+                        setTimeout(function() {
+                            $("#notification").slideUp('slow').fadeOut(function() {
+                                $(location).attr("href", "${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view");
+                            });
+                        }, 1000);
+                    }
+                });
+            });
+
             $('#make-primary').click(function(e) {
                 e.preventDefault();
 
@@ -235,11 +251,15 @@
                     method: "POST",
                     url: $(this).attr("href"),
                     success: function() {
-                        $(location).attr("href", "${labels['base.path']}/${accountProfile.id}#payment-methods");
+                        jQuery("#notification").modal('show');
+                        setTimeout(function() {
+                            $("#notification").slideUp('slow').fadeOut(function() {
+                                $(location).attr("href", location.href);
+                            });
+                        }, 1000);
                     }
                 });
             });
-
 
             $('#confirm-delete').click(function(e) {
                 e.preventDefault();
@@ -248,12 +268,16 @@
                     type: "DELETE",
                     url: "${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}",
                     success: function() {
-                        $(location).attr("href", "${labels['base.path']}/${accountProfile.id}#payment-methods");
+                        jQuery("#notification").modal('show');
+                        setTimeout(function() {
+                            $("#notification").slideUp('slow').fadeOut(function() {
+                                location.href = "${labels['base.path']}/${accountProfile.id}#payment-methods";
+                            });
+                        }, 1000);
                     }
                 });
                 $('#confirm-dialog').modal('hide');
             });
         </script>
-
 
     </@t.page>

@@ -73,7 +73,8 @@ body {
     display: block;
     text-decoration: none;
     color: #fff;
-    font-size: 18px;
+    font-family: 'Open Sans';
+    font-size: 16px;
 }
 
 .sidebar-nav li a:hover {
@@ -93,6 +94,7 @@ body {
 
 .sidebar-nav > .sidebar-brand {
     height: 75px;
+    font-family: 'Open Sans';
     font-size: 24px;
     line-height: 60px;
     color: #fff;
@@ -102,7 +104,8 @@ body {
 }
 
 .sidebar-nav > .menu-title {
-    font-size: 18px;
+    font-family: 'Open Sans';
+    font-size: 16px;
     padding-left: 15px;
 }
 

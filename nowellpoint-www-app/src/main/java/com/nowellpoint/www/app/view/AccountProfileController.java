@@ -94,7 +94,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.withLanguageSidKey(identity.getLanguageSidKey())
 				.withLocaleSidKey(identity.getLocaleSidKey());
 		
-		List<Plan> plans = new NowellpointClient().plan()
+		List<Plan> plans = new NowellpointClient(token).plan()
 				.getPlans(getPlansRequest)
 				.getItems()
 				.stream()
@@ -656,7 +656,6 @@ public class AccountProfileController extends AbstractStaticController {
 		String street = request.queryParams("street");
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
-		String cvv = request.queryParams("cvv");
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
@@ -665,7 +664,6 @@ public class AccountProfileController extends AbstractStaticController {
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
-				.withCvv(cvv)
 				.withPrimary(primary)
 				.withCity(city)
 				.withCountryCode(countryCode)
@@ -680,38 +678,17 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.update(creditCardRequest);
 		
-		Map<String, Object> model = getModel();
-		model.put("accountProfile", new AccountProfile(accountProfileId));
-			
+		String html;
+		
 		if (updateResult.isSuccess()) {
-			CreditCard creditCard = updateResult.getTarget();
-			
-			model.put("creditCard", creditCard);
-			model.put("mode", "view");
-			model.put("successMessage", MessageProvider.getMessage(getLocale(request), "update.credit.card.success"));
+			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "add.credit.card.success") + "</strong></div></div>";
+			response.status(200);	
 		} else {
-			CreditCard creditCard = new CreditCard()
-					.withBillingAddress(new Address()
-							.withCity(city)
-							.withCountryCode(countryCode)
-							.withPostalCode(postalCode)
-							.withState(state)
-							.withStreet(street))
-					.withBillingContact(new Contact()
-							.withFirstName(firstName)
-							.withLastName(lastName))
-					.withCardholderName(cardholderName)
-					.withExpirationMonth(expirationMonth)
-					.withExpirationYear(expirationYear)
-					.withPrimary(primary);
-			
-			model.put("creditCard", creditCard);
-			model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", accountProfileId, creditCardToken));
-			model.put("mode", "edit");
-			model.put("errorMessage", updateResult.getErrorMessage());
+			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
+			response.status(400);			
 		}
-			
-		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PAYMENT_METHOD);
+		
+		return html;
 	};
 	
 	/**
@@ -729,14 +706,18 @@ public class AccountProfileController extends AbstractStaticController {
 				.accountProfile()
 				.creditCard()
 				.setPrimary(request.params(":id"), request.params(":token"));
+		
+		String html;
 			
-		if (! updateResult.isSuccess()) {
-			throw new BadRequestException(updateResult.getErrorMessage());
+		if (updateResult.isSuccess()) {
+			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "add.credit.card.success") + "</strong></div></div>";
+			response.status(200);	
+		} else {
+			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
+			response.status(400);			
 		}
 		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getLocale(request), "primary.credit.card.set"), 3, Boolean.FALSE);
-		
-		return "";
+		return html;
 	};
 	
 	/**

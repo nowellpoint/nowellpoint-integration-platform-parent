@@ -394,7 +394,6 @@ public class AccountProfileResource extends AbstractResource {
 					.path("credit-card")
 					.path(creditCardRequest.getToken())
 					.parameter("cardholderName", creditCardRequest.getCardholderName())
-					.parameter("cvv", creditCardRequest.getCvv())
 					.parameter("expirationMonth", creditCardRequest.getExpirationMonth())
 					.parameter("expirationYear", creditCardRequest.getExpirationYear())
 					.parameter("primary", creditCardRequest.getPrimary())

@@ -89,7 +89,7 @@
                             ${(accountProfile.address.street)!}<br>
                             ${(accountProfile.address.city)!}<#if accountProfile.address.city??>,</#if> ${(accountProfile.address.state)!} ${(accountProfile.address.postalCode)!}<br>
                             ${(accountProfile.address.country)!}<br>
-                        </address>
+                </address>
             </div>
         </div>
 
@@ -465,8 +465,9 @@
             </div>
         </div>
 
+        <#include "spinner.html"/>
+
         <script>
-            
             $("#update-account-profile").click(function(e) {
                 e.preventDefault();
 
@@ -479,13 +480,16 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
-                        $form.prepend(response.responseText);
                         if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
                             setTimeout(function() {
-                                $dialog.slideUp('slow').fadeOut(function() {
-                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${labels['base.path']}/${accountProfile.id}";
                                 });
                             }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
                         }
                     }
                 });
@@ -503,13 +507,16 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
-                        $form.prepend(response.responseText);
                         if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
                             setTimeout(function() {
-                                $dialog.slideUp('slow').fadeOut(function() {
-                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${labels['base.path']}/${accountProfile.id}";
                                 });
                             }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
                         }
                     }
 
@@ -528,13 +535,16 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
-                        $form.prepend(response.responseText);
                         if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
                             setTimeout(function() {
-                                $dialog.slideUp('slow').fadeOut(function() {
-                                    window.location = "${labels['base.path']}/${accountProfile.id}";
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${labels['base.path']}/${accountProfile.id}";
                                 });
                             }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
                         }
                     }
 

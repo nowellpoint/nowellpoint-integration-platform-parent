@@ -4,6 +4,18 @@ $("#menu-toggle").click(function (e) {
 });
 
 $(document).ready(function () {
+    $('.dropdown-toggle').dropdown();
+});
+
+$(document)
+    .ajaxStart(function () {
+        $('#spinner').show();
+    })
+    .ajaxStop(function () {
+        $('#spinner').hide();
+    });
+
+$(document).ready(function () {
     var path = window.location.pathname;
     path = path.replace(/\/$/, "");
     path = decodeURIComponent(path);

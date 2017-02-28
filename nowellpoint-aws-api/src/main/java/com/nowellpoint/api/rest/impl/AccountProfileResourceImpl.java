@@ -329,7 +329,6 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		CreditCard creditCard = new CreditCard();
 		creditCard.setToken(token);
 		creditCard.setCardholderName(cardholderName);
-		creditCard.setCvv(cvv);
 		creditCard.setExpirationMonth(expirationMonth);
 		creditCard.setExpirationYear(expirationYear);
 		creditCard.setPrimary(primary);
