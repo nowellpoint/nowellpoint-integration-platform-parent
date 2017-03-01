@@ -127,7 +127,7 @@
                                     </td>
                                     <td>${creditCard.cardholderName}</td>
                                     <td>${(creditCard.expirationMonth)!}/${(creditCard.expirationYear)!}</td>
-                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit"><span class="icon icon-edit"></span>${labels["edit"]}</a></td>
+                                    <td><a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" data-toggle="tooltip" title="${labels['edit']}"><span class="icon icon-edit"></span></a></td>
                                 </tr>
                             </#list>
                         </tbody>

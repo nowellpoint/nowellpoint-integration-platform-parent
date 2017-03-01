@@ -442,7 +442,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			}
 			
 			if (! subscriptionResult.isSuccess()) {
-				LOGGER.error(subscriptionResult.getErrors().forIndex(0).toString());
+				LOGGER.error(subscriptionResult.getMessage());
 				throw new ValidationException(subscriptionResult.getMessage());
 			}
 			
@@ -647,7 +647,6 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	
 	@Override
 	public CreditCard setPrimary(String id, String token) {
-		System.out.println("setting primary");
 		AccountProfile accountProfile = findById(id);
 		
 		Optional<CreditCard> query = accountProfile.getCreditCards()

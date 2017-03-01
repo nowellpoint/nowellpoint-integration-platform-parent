@@ -45,11 +45,11 @@
                     <dt>${labels["name"]}</dt>
                     <dd>${(salesforceConnector.name)!}&emsp;</dd>
                     <hr>
-
-                    <dt>${labels["organization.name"]}</dt>
-                    <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
+                    
+                    <dt>${labels["instance.name"]}</dt>
+                    <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
                     <hr>
-
+                    
                     <dt>${labels["organization.type"]}</dt>
                     <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
                     <hr>
@@ -73,13 +73,9 @@
             <div class="col-md-3">
 
                 <dl class="dl-vertical">
-                    
-                    <dt>${labels["tag"]}</dt>
-                    <dd>${(salesforceConnector.tag)!}&emsp;</dd>
-                    <hr>
-
-                    <dt>${labels["instance.name"]}</dt>
-                    <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
+                                        
+                    <dt>${labels["organization.name"]}</dt>
+                    <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
                     <hr>
 
                     <dt>${labels["fiscal.year.start.month"]}</dt>
@@ -96,6 +92,10 @@
 
                     <dt>${labels["phone"]}</dt>
                     <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
+                    <hr>
+                    
+                    <dt>${labels["tag"]}</dt>
+                    <dd>${(salesforceConnector.tag)!}&emsp;</dd>
                     <hr>
 
                 </dl>
@@ -170,8 +170,6 @@
                         <a href="${labels['base.path']}/${salesforceConnector.id}/instances/new" id="add-service" class="btn btn-primary-outline" role="button">${labels["add.sandbox"]}</a>
                     </div>
                 </div>
-                <br>
-                <div class="hr-divider"></div>
                 <br>
                 <div class="content table-responsive">
                     <table id="instances-table" class="table table-hover">

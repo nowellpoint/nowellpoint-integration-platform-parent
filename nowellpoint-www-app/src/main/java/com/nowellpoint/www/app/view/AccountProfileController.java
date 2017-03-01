@@ -1,5 +1,9 @@
 package com.nowellpoint.www.app.view;
 
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.div;
+import static j2html.TagCreator.tag;
+import static j2html.TagCreator.strong;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -33,7 +37,6 @@ import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.util.Assert;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
@@ -199,13 +202,22 @@ public class AccountProfileController extends AbstractStaticController {
 				.get(planId);
 		
 		Address address = new Address();
-		address.setCountryCode(identity.getAddress().getCountryCode());
+		address.setCity(identity.getAddress().getCity());
+		address.setPostalCode(identity.getAddress().getPostalCode());
+		address.setState(identity.getAddress().getState());
+		address.setStreet(identity.getAddress().getStreet());
+		address.setCountryCode(accountProfile.getAddress().getCountryCode());
+		
+		Contact contact = new Contact();
+		contact.setFirstName(identity.getFirstName());
+		contact.setLastName(identity.getLastName());
 		
 		CreditCard creditCard = new CreditCard();
+		creditCard.setCardholderName((identity.getFirstName() != null ? identity.getFirstName().concat(" ") : "").concat(identity.getLastName()));
 		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
 		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
 		creditCard.setBillingAddress(address);
-		creditCard.setBillingContact(new Contact());
+		creditCard.setBillingContact(contact);
 
 		Map<String, Object> model = getModel();
 		model.put("account", identity);
@@ -251,91 +263,14 @@ public class AccountProfileController extends AbstractStaticController {
 	private static String setPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		Identity identity = getIdentity(request);
-		
 		String id = request.params(":id");
 		
 		AccountProfile accountProfile = new NowellpointClient(token)
 				.accountProfile()
-				.get(id);
-		
-		Boolean newAccount = Assert.isNull(accountProfile.getSubscription().getPlanId()); 
+				.get(id); 
 		
 		String planId = request.params(":planId");
 		String paymentMethodToken = request.queryParams("paymentMethodToken");
-		String cardholderName = request.queryParams("cardholderName");
-		String number = request.queryParams("number");
-		String expirationMonth = request.queryParams("expirationMonth");
-		String expirationYear = request.queryParams("expirationYear");
-		String city = request.queryParams("city");
-		String countryCode = request.queryParams("countryCode");
-		String postalCode = request.queryParams("postalCode");
-		String state = request.queryParams("state");
-		String street = request.queryParams("street");
-		String firstName = request.queryParams("firstName");
-		String lastName = request.queryParams("lastName");
-		String cvv = request.queryParams("cvv");
-		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
-		
-		Map<String, Object> model = getModel();
-		model.put("accountProfile", new AccountProfile(id));
-		
-		if (Assert.isNotNull(cardholderName) || Assert.isNotNull(number)) {
-			
-			CreditCardRequest creditCardRequest = new CreditCardRequest()
-					.withAccountProfileId(id)
-					.withCardholderName(cardholderName)
-					.withExpirationMonth(expirationMonth)
-					.withExpirationYear(expirationYear)
-					.withNumber(number)
-					.withCvv(cvv)
-					.withPrimary(primary)
-					.withCity(city)
-					.withCountryCode(countryCode)
-					.withPostalCode(postalCode)
-					.withState(state)
-					.withStreet(street)
-					.withFirstName(firstName)
-					.withLastName(lastName);
-			
-			CreateResult<CreditCard> createResult = new NowellpointClient(token)
-					.accountProfile()
-					.creditCard()
-					.add(creditCardRequest);
-				
-			if (createResult.isSuccess()) {
-				paymentMethodToken = createResult.getTarget().getToken();
-			} else { 
-				
-				Plan plan = new NowellpointClient(token)
-						.plan()
-						.get(planId);
-				
-				CreditCard creditCard = new CreditCard()
-						.withBillingAddress(new Address()
-								.withCity(city)
-								.withCountryCode(countryCode)
-								.withPostalCode(postalCode)
-								.withState(state)
-								.withStreet(street))
-						.withBillingContact(new Contact()
-								.withFirstName(firstName)
-								.withLastName(lastName))
-						.withCardholderName(cardholderName)
-						.withExpirationMonth(expirationMonth)
-						.withExpirationYear(expirationYear)
-						.withPrimary(primary);
-				
-				model.put("account", identity);
-				model.put("accountProfile", accountProfile);
-				model.put("plan", plan);
-				model.put("creditCard", creditCard);
-				model.put("action", "reviewPlan");
-				model.put("errorMessage", createResult.getErrorMessage());
-				
-				return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
-			}
-		}
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.withAccountProfileId(accountProfile.getId())
@@ -347,25 +282,22 @@ public class AccountProfileController extends AbstractStaticController {
 				.subscription()
 				.set(subscriptionRequest);
 		
+		String html = "";
+		
 		if (! updateResult.isSuccess()) {
+			response.status(400);		
+			html = div().withId("error").withClass("alert alert-danger")
+					.with(a().withClass("close").withData("dismiss", "alert").with(tag("&times;")))
+							.with(div().withClass("text-center")
+									.with(strong().withText(updateResult.getErrorMessage()))
+							).render();
 			
-			model.put("account", identity);
-			model.put("accountProfile", accountProfile);
-			model.put("errorMessage", updateResult.getErrorMessage());
+			System.out.println(html);
 			
-			String output = render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);
-			
-			throw new BadRequestException(output);	
-		}
+		} 
 		
-		if (newAccount) {
-			response.redirect(Path.Route.JOB_SPECIFICATION_SELECT_TYPE);
-		} else {
-			response.cookie("successMessage", MessageProvider.getMessage(getLocale(request), "subscription.plan.update.success"), 3);
-			response.redirect(Path.Route.ACCOUNT_PROFILE.replace(":id", request.params(":id")));
-		}
-		
-		return "";	
+		return html;
+			
 	}
 	
 	/**

@@ -39,8 +39,8 @@
                 <tbody>
                     <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
                         <tr id="${salesforceConnector.id}">
-                            <td>${(salesforceConnector.name!)}</td>
-                            <td><a href="${labels['base.path']}/${salesforceConnector.id}">${salesforceConnector.organization.name}</a></td>
+                            <td><a href="${labels['base.path']}/${salesforceConnector.id}">${(salesforceConnector.name!)}</a></td>
+                            <td>${salesforceConnector.organization.name}</td>
                             <td>${salesforceConnector.organization.instanceName}</td>
                             <td><a href="${labels['base.path']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a></td>
                         </tr>

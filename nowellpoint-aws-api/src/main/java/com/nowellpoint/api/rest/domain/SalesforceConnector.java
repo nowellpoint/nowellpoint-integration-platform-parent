@@ -9,7 +9,7 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class SalesforceConnector extends AbstractResource {
 	
-	public String name;
+	private String name;
 	
 	private UserInfo createdBy;
 	

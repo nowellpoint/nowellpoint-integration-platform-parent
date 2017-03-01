@@ -2,8 +2,6 @@ package com.nowellpoint.api.rest.service;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.util.Assert.isEmpty;
-import static com.nowellpoint.util.Assert.isNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -48,6 +46,7 @@ import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.CountRequest;
@@ -139,6 +138,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
 		SalesforceConnector resource = new SalesforceConnector();
+		resource.setName(organization.getName().concat(":").concat(organization.getId()));
 		resource.setOrganization(organization);
 		resource.setIdentity(identity);
 		
@@ -197,9 +197,13 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		salesforceConnector.setId(original.getId());
 		salesforceConnector.setCreatedOn(original.getCreatedOn());
 		
-		if (isNull(salesforceConnector.getTag())) {
+		if (Assert.isNullOrEmpty(salesforceConnector.getName())) {
+			salesforceConnector.setName(original.getName());
+		}
+		
+		if (Assert.isNull(salesforceConnector.getTag())) {
 			salesforceConnector.setTag(original.getTag());
-		} else if (isEmpty(salesforceConnector.getTag())) {
+		} else if (Assert.isEmpty(salesforceConnector.getTag())) {
 			salesforceConnector.setTag(null);
 		}
 		
@@ -735,7 +739,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				sobjectDetail.setLastUpdatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserRef.class, id));
 				sobjectDetail.setLastUpdatedOn(now);
 				sobjectDetail.setResult(describeSobjectResult);
-				if (isNull(sobjectDetail.getId())) {
+				if (Assert.isNull(sobjectDetail.getId())) {
 					documentManager.insertOne(sobjectDetail);
 				} else {
 					documentManager.replaceOne(sobjectDetail);

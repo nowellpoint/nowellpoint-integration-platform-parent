@@ -34,7 +34,7 @@ import spark.Response;
 public class SalesforceConnectorController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String SALESFORCE_CONNECTOR = String.format(APPLICATION_CONTEXT, "salesforce-connector.html");
+		public static final String SALESFORCE_CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-view.html");
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
 		public static final String SALESFORCE_CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-list.html");
@@ -412,7 +412,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("createdByHref", createdByHref);
     	model.put("lastModifiedByHref", lastModifiedByHref);
 		
-    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
+    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_VIEW);
 	};
 
 	/**
@@ -502,7 +502,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	    	model.put("salesforceConnector", salesforceConnector);
 	    	model.put("errorMessage", message);
 			
-	    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR);
+	    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_VIEW);
 		}
 
 		response.redirect(Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
