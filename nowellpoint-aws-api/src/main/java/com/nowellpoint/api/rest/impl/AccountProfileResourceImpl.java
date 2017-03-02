@@ -142,7 +142,7 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		// update account
 		//
 		
-		AccountProfile accountProfile = new AccountProfile();
+		AccountProfile accountProfile = AccountProfile.createAccountProfile();
 		accountProfile.setId(id);
 		accountProfile.setFirstName(firstName);
 		accountProfile.setLastName(lastName);

@@ -1,8 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -17,7 +14,6 @@ import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.MessageProvider;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -32,11 +28,6 @@ public class IndexController extends AbstractStaticController {
 		public static final String INDEX = "index.html";
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.INDEX, (request, response) -> index(configuration, request, response));
-		post(Path.Route.CONTACT, (request, response) -> contact(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -45,7 +36,7 @@ public class IndexController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String index(Configuration configuration, Request request, Response response) {
+	public static String serveIndexPage(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -80,7 +71,7 @@ public class IndexController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String contact(Configuration configuration, Request request, Response response) {
+	public static String contact(Configuration configuration, Request request, Response response) {
 		
     	HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
     			.contentType(MediaType.APPLICATION_FORM_URLENCODED)

@@ -43,7 +43,6 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		MongoDocument document = salesforceConnector.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		documentManager.refresh( document );
 		salesforceConnector.fromDocument(document);
 		set(salesforceConnector.getId(), document);
 	}
@@ -52,7 +51,6 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		MongoDocument document = salesforceConnector.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		documentManager.refresh( document );
 		salesforceConnector.fromDocument(document);
 		set(salesforceConnector.getId(), document);
 	}

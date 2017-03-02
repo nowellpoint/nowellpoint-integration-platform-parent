@@ -1,5 +1,8 @@
 package com.nowellpoint.www.app.view;
 
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.div;
+import static j2html.TagCreator.strong;
 import static spark.Spark.halt;
 
 import java.io.StringWriter;
@@ -19,6 +22,7 @@ import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
+import j2html.tags.UnescapedText;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -58,21 +62,30 @@ public class AbstractStaticController {
 	}
 	
 	protected static Locale getLocale(Request request) {
-		return request.attribute("com.nowellpoint.default.locale");
+		return request.attribute("com.nowellpoint.default.locale") != null ? request.attribute("com.nowellpoint.default.locale") : Locale.getDefault();
 	}
 	
 	protected static TimeZone getTimeZone(Request request) {		
-		return request.attribute("com.nowellpoint.default.timezone");
+		return request.attribute("com.nowellpoint.default.timezone") != null ? request.attribute("com.nowellpoint.default.timezone") : TimeZone.getDefault();
 	}
 	
 	protected static String getLabel(Class<?> controllerClass, Request request, String key) {
 		return ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)).getString(key);
 	}
 	
+	protected static String error(String errorMessage) {
+		return div().withId("error").withClass("alert alert-danger")
+				.with(a().withClass("close").withData("dismiss", "alert")
+						.with(new UnescapedText("&times;")))
+				.with(div().withClass("text-center")
+						.with(strong().withText(errorMessage)))
+				.render();
+	}
+	
 	protected static String render(Class<?> controllerClass, Configuration configuration, Request request, Response response, Map<String,Object> model, String templateName) {	
 		Identity identity = getIdentity(request);
-		Locale locale = getLocale(request) != null ? getLocale(request) : configuration.getLocale();
-		TimeZone timeZone = getTimeZone(request) != null ? getTimeZone(request) : configuration.getTimeZone();
+		Locale locale = getLocale(request);
+		TimeZone timeZone = getTimeZone(request);
 		model.put("identity", identity);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

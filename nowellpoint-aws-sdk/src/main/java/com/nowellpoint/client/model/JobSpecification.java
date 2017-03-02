@@ -1,8 +1,6 @@
 package com.nowellpoint.client.model;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

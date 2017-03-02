@@ -123,7 +123,7 @@ public class SignUpServiceImpl implements SignUpService {
 			
 			account = identityProviderService.createAccount(email, firstName, lastName, password);
 					
-			accountProfile = new AccountProfile();
+			accountProfile = AccountProfile.createAccountProfile();
 			accountProfile.setAccountHref(account.getHref());
 			accountProfile.setEmailVerificationToken(account.getEmailVerificationToken().getValue());
 			accountProfile.setFirstName(firstName);

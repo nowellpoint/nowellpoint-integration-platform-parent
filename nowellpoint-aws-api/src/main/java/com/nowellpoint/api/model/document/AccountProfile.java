@@ -18,6 +18,7 @@
 
 package com.nowellpoint.api.model.document;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -91,10 +92,10 @@ public class AccountProfile extends MongoDocument {
 	private Subscription subscription;
 	
 	@EmbedMany
-	private Set<CreditCard> creditCards;
+	private Set<CreditCard> creditCards = Collections.emptySet();
 	
 	@EmbedMany
-	private Set<Transaction> transactions;
+	private Set<Transaction> transactions = Collections.emptySet();
 	
 	private Boolean hasFullAccess;
 	

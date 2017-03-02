@@ -237,19 +237,6 @@ public class SalesforceMetadataBackupJob2 implements Job {
 			//runHistory.setFailureMessage(scheduledJobRequest.getFailureMessage());
 			//runHistory.setJobRunTime(scheduledJobRequest.getJobRunTime());
 			
-			//
-			// update ScheduledJob
-			//
-			
-			if (jobSchedule.getRunHistories() == null) {
-				jobSchedule.setRunHistories(new HashSet<RunHistory>());
-			} else if (jobSchedule.getRunHistories().size() == 10) {
-				List<RunHistory> runHistories = jobSchedule.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList());
-				runHistories.remove(0);
-				jobSchedule.setRunHistories(new HashSet<RunHistory>(runHistories));
-			}
-			
-			jobSchedule.getRunHistories().add(runHistory);
 			
 			jobSchedule.setStatus("Scheduled");
 			//jobSchedule.setScheduleDate(Date.from(ZonedDateTime.ofInstant(jobSchedule.setStart(start);().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));

@@ -42,7 +42,6 @@ abstract class AbstractJobTypeService extends AbstractCacheService {
 		MongoDocument document = jobType.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		documentManager.refresh( document );
 		jobType.fromDocument(document);
 		set(jobType.getId(), document);
 	}
@@ -51,7 +50,6 @@ abstract class AbstractJobTypeService extends AbstractCacheService {
 		MongoDocument document = jobType.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		documentManager.refresh( document );
 		jobType.fromDocument(document);
 		set(jobType.getId(), document);
 	}

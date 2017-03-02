@@ -19,12 +19,10 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
-import java.util.Set;
 
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -87,9 +85,6 @@ public class JobSpecification extends MongoDocument {
 	private String year;
 	
 	private String timeZone;
-	
-	@EmbedMany
-	private Set<RunHistory> runHistories;
 	
 	public JobSpecification() {
 		
@@ -221,14 +216,6 @@ public class JobSpecification extends MongoDocument {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
-	}
-
-	public Set<RunHistory> getRunHistories() {
-		return runHistories;
-	}
-
-	public void setRunHistories(Set<RunHistory> runHistories) {
-		this.runHistories = runHistories;
 	}
 
 	public String getSeconds() {

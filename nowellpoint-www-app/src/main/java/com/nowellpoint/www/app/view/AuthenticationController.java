@@ -1,9 +1,6 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.before;
-import static spark.Spark.get;
 import static spark.Spark.halt;
-import static spark.Spark.post;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -46,13 +43,6 @@ public class AuthenticationController extends AbstractStaticController {
 		public static final String LOGIN = "login.html";
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-		before("/app/*", (request, response) -> verify(configuration, request, response));
-		get(Path.Route.LOGIN, (request, response) -> showLoginPage(configuration, request, response));
-        post(Path.Route.LOGIN, (request, response) -> login(configuration, request, response));
-        get(Path.Route.LOGOUT, (request, response) -> logout(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -63,7 +53,7 @@ public class AuthenticationController extends AbstractStaticController {
 	 * @throws IOException
 	 */
 	
-	public static void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
+	public static void verify(Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
 		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
     	if (cookie.isPresent()) {
     		
@@ -76,8 +66,8 @@ public class AuthenticationController extends AbstractStaticController {
     				.get(token.getId());
     		
     		request.attribute("com.nowellpoint.auth.identity", identity);
-    		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(configuration, identity));
-    		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(configuration, identity));
+    		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(identity));
+    		request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(identity));
     		
     	} else {
     		response.redirect(Path.Route.LOGIN.concat("?").concat(REDIRECT_URI).concat("=").concat(URLEncoder.encode(request.pathInfo(), "UTF-8")));
@@ -94,7 +84,7 @@ public class AuthenticationController extends AbstractStaticController {
 	 * @throws UnsupportedEncodingException 
 	 */
 	
-	public static String showLoginPage(Configuration configuration, Request request, Response response) {
+	public static String serveLoginPage(Configuration configuration, Request request, Response response) {
 		Map<String, Object> model = getModel();
 		model.put(REDIRECT_URI, request.queryParams(REDIRECT_URI));
         return render(AuthenticationController.class, configuration, request, response, model, Template.LOGIN);
@@ -210,16 +200,16 @@ public class AuthenticationController extends AbstractStaticController {
 	/**
 	 * 
 	 * @param configuration
-	 * @param accountProfile
+	 * @param identity
 	 * @return
 	 */
 	
-	private static TimeZone getDefaultTimeZone(Configuration configuration, Identity identity) {		
+	private static TimeZone getDefaultTimeZone(Identity identity) {		
 		TimeZone timeZone = null;
 		if (identity != null && identity.getTimeZoneSidKey() != null) {
 			timeZone = TimeZone.getTimeZone(identity.getTimeZoneSidKey());
 		} else {
-			timeZone = TimeZone.getTimeZone(configuration.getTimeZone().getID());
+			timeZone = TimeZone.getDefault();
 		}
 		
 		return timeZone;
@@ -228,11 +218,11 @@ public class AuthenticationController extends AbstractStaticController {
 	/**
 	 * 
 	 * @param configuration
-	 * @param accountProfile
+	 * @param identity
 	 * @return
 	 */
 	
-	private static Locale getDefaultLocale(Configuration configuration, Identity identity) {
+	private static Locale getDefaultLocale(Identity identity) {
 		Locale locale = null;
 		if (identity != null && identity.getLocaleSidKey() != null) {
 			String[] attrs = identity.getLocaleSidKey().split("_");
@@ -244,8 +234,9 @@ public class AuthenticationController extends AbstractStaticController {
 				locale = new Locale(attrs[0], attrs[1], attrs[3]);
 			}
 		} else {
-			locale = configuration.getLocale();
+			locale = Locale.getDefault();
 		}
+		
 		return locale;
 	}
 }

@@ -1,12 +1,9 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -22,12 +19,6 @@ public class AdministrationController extends AbstractStaticController {
 		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "cache.html");
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.ADMINISTRATION, (request, response) -> showAdministrationHome(configuration, request, response));	
-        get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> showManageCache(configuration, request, response));	
-		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -36,7 +27,7 @@ public class AdministrationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String showAdministrationHome(Configuration configuration, Request request, Response response) {
+	public static String serveAdminHomePage(Configuration configuration, Request request, Response response) {
 		return render(AdministrationController.class, configuration, request, response, getModel(), Template.ADMINISTRATION_HOME);
 		
 	};
@@ -49,7 +40,7 @@ public class AdministrationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String showManageCache(Configuration configuration, Request request, Response response) {
+	public static String showManageCache(Configuration configuration, Request request, Response response) {
 		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
 		
 	};
@@ -62,7 +53,7 @@ public class AdministrationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String purgeCache(Configuration configuration, Request request, Response response) {
+	public static String purgeCache(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())

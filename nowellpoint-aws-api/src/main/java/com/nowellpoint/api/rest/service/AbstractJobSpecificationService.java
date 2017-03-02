@@ -63,7 +63,6 @@ public class AbstractJobSpecificationService extends AbstractCacheService {
 		MongoDocument document = jobSchedule.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		documentManager.refresh( document );
 		jobSchedule.fromDocument(document);
 		set(jobSchedule.getId(), document);
 	}
@@ -100,7 +99,6 @@ public class AbstractJobSpecificationService extends AbstractCacheService {
 		MongoDocument document = jobSchedule.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		documentManager.refresh( document );
 		jobSchedule.fromDocument( document );
 		set( jobSchedule.getId(), document );
 		

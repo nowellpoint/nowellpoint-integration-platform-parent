@@ -12,7 +12,7 @@ import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class AccountProfile extends AbstractResource {
-	
+
 	private UserInfo createdBy;
 	
 	private UserInfo lastUpdatedBy;
@@ -90,6 +90,10 @@ public class AccountProfile extends AbstractResource {
 	
 	public AccountProfile(MongoDocument document) {
 		super(document);
+	}
+	
+	public static AccountProfile createAccountProfile() {
+		return new AccountProfile();
 	}
 
 	public UserInfo getCreatedBy() {
@@ -308,28 +312,12 @@ public class AccountProfile extends AbstractResource {
 		this.creditCards = creditCards;
 	}
 
-	public void addCreditCard(CreditCard creditCard) {
-		if (this.getCreditCards() == null) {
-			this.creditCards = new HashSet<CreditCard>();
-		}
-		this.creditCards.add(creditCard);
-	}
-
 	public Set<Transaction> getTransactions() {
 		return transactions;
 	}
 
 	public void setTransactions(Set<Transaction> transactions) {
 		this.transactions = transactions;
-	}
-	
-	public void addTransaction(Transaction transaction) {
-		if (this.getTransactions() == null) {
-			this.transactions = new HashSet<Transaction>();
-		} else {
-			this.transactions.removeIf(t -> t.getId().equals(transaction.getId()));
-		}
-		this.transactions.add(transaction);
 	}
 
 	public Boolean getHasFullAccess() {
@@ -353,6 +341,26 @@ public class AccountProfile extends AbstractResource {
 			return null;
 		}
 		return creditCards.stream().filter(c -> c.getPrimary()).findFirst().get();
+	}
+	
+	public void addCreditCard(CreditCard creditCard) {
+		if (creditCards == null) {
+			creditCards = new HashSet<>();
+		}
+		if (creditCards.contains(creditCard)) {
+			creditCards.remove(creditCard);
+		}
+		creditCards.add(creditCard);
+	}
+	
+	public void addTransaction(Transaction transaction) {
+		if (transactions == null) {
+			transactions = new HashSet<>();
+		}
+		if (transactions.contains(transaction)) {
+			transactions.remove(transaction);
+		}
+		transactions.add(transaction);
 	}
 	
 	@Override

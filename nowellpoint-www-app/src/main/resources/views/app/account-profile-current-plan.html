@@ -6,14 +6,7 @@
                 <h3 class="input-with-icon dashhead-title">${labels["current.plan"]}</h3>
             </div>
         </div>
-        <#if successMessage??>
-            <div id="success" class="alert alert-success">
-                <a class="close" data-dismiss="alert">&times;</a>
-                <div class="text-center">${successMessage!}</div>
-            </div>
-        </#if>
         <br>
-
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group">
                  <a href="${labels['base.path']}/${accountProfile.id}/plans" id="update-plan" class="btn btn-success" role="button">${labels["change.plan"]}</a>
@@ -31,7 +24,7 @@
                     <dd>${(accountProfile.subscription.planName)!}&emsp;</dd>
                     <hr>
                     <dt>${labels["price"]}</dt>
-                    <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.##"])!}&emsp;</dd>
+                    <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.00"])!}&emsp;</dd>
                     <hr>
                     <dt>${labels["billed"]}&emsp;</dt>
                     <dd>${(accountProfile.subscription.billingFrequency)!}
@@ -51,7 +44,6 @@
                     <hr>
                     <dt>&emsp;</dt>
                     <dd>&emsp;</dd>
-
                 </dl>
 
             </div>
@@ -88,7 +80,7 @@
                                 <tr>
                                     <td>${transaction.id}</td>
                                     <td><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
-                                    <td class="text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.##"]}</td>
+                                    <td class="text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}</td>
                                     <td>${(transaction.updatedOn?date?string.long)!}</td>
                                     <td>${transaction.status}</td>
                                     <td>

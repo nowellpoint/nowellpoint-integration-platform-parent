@@ -89,6 +89,7 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 		Document bson = toBsonDocument(document);
 		insertOne(collection, bson);
 		setIdValue(document, bson.get(ID));
+		refresh(document);
 	}
 	
 	@Override
@@ -97,6 +98,7 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 		Document bson = toBsonDocument(document);
 		upsert(collection, bson, query);
 		setIdValue(document, bson.get(ID));
+		refresh(document);
 	}
 	
 	@Override
@@ -105,6 +107,7 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 		MongoCollection<Document> collection = getCollection( document.getClass() );
 		Document bson = toBsonDocument(document);
 		replaceOne( collection, bson, Filters.eq ( ID, id ) );
+		refresh(document);
 	}
 	
 	@Override

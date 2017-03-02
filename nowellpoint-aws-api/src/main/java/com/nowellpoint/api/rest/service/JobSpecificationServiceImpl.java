@@ -77,6 +77,17 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 	 */
 	
 	@Override
+	public void createJobSpecification(JobSpecification jobSpecification) {
+		create(jobSpecification);
+	}
+	
+	@Override
+	public void udpateJobSpecification(String id, JobSpecification jobSpecification) {
+		JobSpecification original = findById(id);
+		
+	}
+	
+	@Override
 	public JobSpecification createJobSpecification(
 			String jobTypeId, 
 			String connectorId, 
@@ -128,33 +139,33 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		Date now = Date.from(Instant.now());
 		
-		JobSpecification jobSchedule = new JobSpecification();
-		jobSchedule.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
-		jobSchedule.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
-		jobSchedule.setTimeZone(timeZone);
-		jobSchedule.setStatus(JobStatus.NOT_SCHEDULED);
-		jobSchedule.setOwner(userInfo);
-		jobSchedule.setCreatedOn(now);
-		jobSchedule.setCreatedBy(userInfo);
-		jobSchedule.setLastUpdatedOn(now);
-		jobSchedule.setLastUpdatedBy(userInfo);
-		jobSchedule.setDescription(description);
-		jobSchedule.setNotificationEmail(notificationEmail);
-		jobSchedule.setSeconds(Assert.isNullOrEmpty(seconds) ? "*" : seconds);
-		jobSchedule.setMinutes(Assert.isNullOrEmpty(minutes) ? "*" : minutes);
-		jobSchedule.setHours(Assert.isNullOrEmpty(hours) ? "*" : hours);
-		jobSchedule.setDayOfMonth(Assert.isNullOrEmpty(dayOfMonth) ? null : dayOfMonth);
-		jobSchedule.setMonth(Assert.isNullOrEmpty(month) ? "*" : month);
-		jobSchedule.setDayOfWeek(Assert.isNullOrEmpty(dayOfWeek) ? null : dayOfWeek);
-		jobSchedule.setYear(Assert.isNullOrEmpty(year) ? "*" : year);
+		JobSpecification jobSpecification = new JobSpecification();
+		jobSpecification.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
+		jobSpecification.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
+		jobSpecification.setTimeZone(timeZone);
+		jobSpecification.setStatus(JobStatus.NOT_SCHEDULED);
+		jobSpecification.setOwner(userInfo);
+		jobSpecification.setCreatedOn(now);
+		jobSpecification.setCreatedBy(userInfo);
+		jobSpecification.setLastUpdatedOn(now);
+		jobSpecification.setLastUpdatedBy(userInfo);
+		jobSpecification.setDescription(description);
+		jobSpecification.setNotificationEmail(notificationEmail);
+		jobSpecification.setSeconds(Assert.isNullOrEmpty(seconds) ? "*" : seconds);
+		jobSpecification.setMinutes(Assert.isNullOrEmpty(minutes) ? "*" : minutes);
+		jobSpecification.setHours(Assert.isNullOrEmpty(hours) ? "*" : hours);
+		jobSpecification.setDayOfMonth(Assert.isNullOrEmpty(dayOfMonth) ? null : dayOfMonth);
+		jobSpecification.setMonth(Assert.isNullOrEmpty(month) ? "*" : month);
+		jobSpecification.setDayOfWeek(Assert.isNullOrEmpty(dayOfWeek) ? null : dayOfWeek);
+		jobSpecification.setYear(Assert.isNullOrEmpty(year) ? "*" : year);
 		
-		jobSchedule.setJobType(new JobTypeInfo(jobType));
+		jobSpecification.setJobType(new JobTypeInfo(jobType));
 		
 		/**
 		 * add type specific elements
 		 */
 		
-		if ("SALESFORCE".equals(jobSchedule.getJobType().getConnectorType().getCode())) {
+		if ("SALESFORCE".equals(jobSpecification.getJobType().getConnectorType().getCode())) {
 			
 			SalesforceConnector salesforceConnector = null;
 			try {
@@ -181,8 +192,8 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 				}
 			}
 
-			if (Assert.isNullOrEmpty(jobSchedule.getNotificationEmail())) {
-				jobSchedule.setNotificationEmail(instance.get().getEmail());
+			if (Assert.isNullOrEmpty(jobSpecification.getNotificationEmail())) {
+				jobSpecification.setNotificationEmail(instance.get().getEmail());
 			}
 			
 			InstanceInfo instanceInfo = new InstanceInfo();
@@ -199,13 +210,13 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 			connectorInfo.setServerName(salesforceConnector.getOrganization().getInstanceName());
 			connectorInfo.setInstance(instanceInfo);
 			
-			jobSchedule.setConnector(connectorInfo);
+			jobSpecification.setConnector(connectorInfo);
 			
 		}
 		
-		create(jobSchedule);
+		create(jobSpecification);
 		
-		return jobSchedule;
+		return jobSpecification;
 	}
 	
 	/**
@@ -362,10 +373,6 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 		
 		if (isNullOrEmpty(jobSchedule.getYear())) {
 			jobSchedule.setYear("*");
-		}
-		
-		if (isNull(jobSchedule.getRunHistories())) {
-			jobSchedule.setRunHistories(original.getRunHistories());
 		}
 		
 		/**

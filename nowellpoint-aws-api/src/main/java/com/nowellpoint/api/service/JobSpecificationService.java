@@ -19,6 +19,10 @@ public interface JobSpecificationService {
 	 * 
 	 */
 	
+	public void createJobSpecification(JobSpecification jobSpecification);
+	
+	public void udpateJobSpecification(String id, JobSpecification jobSpecification);
+	
 	public JobSpecification createJobSpecification(
 			String jobTypeId, 
 			String connectorId, 

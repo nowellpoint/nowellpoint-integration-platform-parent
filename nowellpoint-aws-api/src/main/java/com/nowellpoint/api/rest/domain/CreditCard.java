@@ -3,6 +3,8 @@ package com.nowellpoint.api.rest.domain;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
 
@@ -152,5 +154,29 @@ public class CreditCard {
 
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("token", token)
+				.add("cardType", cardType)
+				.add("cardholderName", cardholderName)
+				.add("lastFour", lastFour)
+				.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(this.token);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof CreditCard) {
+			CreditCard other = (CreditCard) obj;
+			return Objects.equal(this.token, other.token);
+		}
+		return false;
 	}
 }

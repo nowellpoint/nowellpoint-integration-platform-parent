@@ -1,13 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static j2html.TagCreator.a;
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.tag;
-import static j2html.TagCreator.strong;
-import static spark.Spark.delete;
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,25 +47,6 @@ public class AccountProfileController extends AbstractStaticController {
 		public static final String ACCOUNT_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> listPlans(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> viewAccountProfile(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> reviewPlan(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> currentPlan(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> setPlan(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE, (request, response) -> updateAccountProfile(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> confirmDeactivateAccountProfile(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> deactivateAccountProfile(configuration, request, response));
-        delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> removeProfilePicture(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> updateAccountProfileAddress(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> getCreditCard(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> editCreditCard(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> addCreditCard(configuration, request, response));  
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> updateCreditCard(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> setPrimaryCreditCard(configuration, request, response));
-        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> removeCreditCard(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -82,7 +55,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String listPlans(Configuration configuration, Request request, Response response) {
+	public static String listPlans(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -124,7 +97,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String viewAccountProfile(Configuration configuration, Request request, Response response) {
+	public static String viewAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -184,7 +157,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String reviewPlan(Configuration configuration, Request request, Response response) {
+	public static String reviewPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -237,7 +210,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String currentPlan(Configuration configuration, Request request, Response response) {
+	public static String currentPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -260,7 +233,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String setPlan(Configuration configuration, Request request, Response response) {
+	public static String setPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -286,14 +259,7 @@ public class AccountProfileController extends AbstractStaticController {
 		
 		if (! updateResult.isSuccess()) {
 			response.status(400);		
-			html = div().withId("error").withClass("alert alert-danger")
-					.with(a().withClass("close").withData("dismiss", "alert").with(tag("&times;")))
-							.with(div().withClass("text-center")
-									.with(strong().withText(updateResult.getErrorMessage()))
-							).render();
-			
-			System.out.println(html);
-			
+			html = error(updateResult.getErrorMessage());
 		} 
 		
 		return html;
@@ -308,7 +274,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String updateAccountProfile(Configuration configuration, Request request, Response response) {
+	public static String updateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfileRequest accountProfileRequest = new AccountProfileRequest()
@@ -332,15 +298,12 @@ public class AccountProfileController extends AbstractStaticController {
 				.accountProfile()
 				.update(request.params(":id"), accountProfileRequest);
 		
-		String html;
+		String html = "";
 		
-		if (updateResult.isSuccess()) {
-			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.profile.success") + "</strong></div></div>";
-			response.status(200);	
-		} else {
-			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			response.status(400);			
-		}
+		if (! updateResult.isSuccess()) {
+			response.status(400);		
+			html = error(updateResult.getErrorMessage());
+		} 
 		
 		return html;
 	}
@@ -353,7 +316,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String confirmDeactivateAccountProfile(Configuration configuration, Request request, Response response) {
+	public static String confirmDeactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AccountProfile accountProfile = new NowellpointClient(token)
@@ -374,7 +337,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
+	public static String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		DeleteResult deleteResult = new NowellpointClient(token)
@@ -398,7 +361,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String removeProfilePicture(Configuration configuration, Request request, Response response) {
+	public static String removeProfilePicture(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		UpdateResult<AccountProfile> updateResult = new NowellpointClient(token)
@@ -423,7 +386,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
+	public static String updateAccountProfileAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AddressRequest addressRequest = new AddressRequest()
@@ -438,17 +401,14 @@ public class AccountProfileController extends AbstractStaticController {
 				.address()
 				.update(request.params(":id"), addressRequest);
 		
-		String html;
+		String html = "";
 		
-		if (updateResult.isSuccess()) {
-			html = "<div class='alert alert-success'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "update.address.success") + "</strong></div></div>";
-			response.status(200);
-		} else {
-			html = "<div class='alert alert-danger'><a class='close data-dismiss='alert'>&times;</a><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			response.status(400);
-		}
+		if (! updateResult.isSuccess()) {
+			response.status(400);		
+			html = error(updateResult.getErrorMessage());
+		} 
 		
-		return html;	
+		return html;
 	}
 	
 	/**
@@ -459,7 +419,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String getCreditCard(Configuration configuration, Request request, Response response) {
+	public static String getCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		CreditCard creditCard = new NowellpointClient(token)
@@ -483,7 +443,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String editCreditCard(Configuration configuration, Request request, Response response) {
+	public static String editCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		CreditCard creditCard = new NowellpointClient(token)
@@ -512,7 +472,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String addCreditCard(Configuration configuration, Request request, Response response) {
+	public static String addCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
@@ -551,15 +511,12 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.add(creditCardRequest);
 		
-		String html;
+		String html = "";
 		
-		if (createResult.isSuccess()) {
-			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "add.credit.card.success") + "</strong></div></div>";
-			response.status(200);	
-		} else {
-			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + createResult.getErrorMessage() + "</strong></div></div>";
-			response.status(400);			
-		}
+		if (! createResult.isSuccess()) {
+			response.status(400);		
+			html = error(createResult.getErrorMessage());
+		} 
 		
 		return html;
 	};
@@ -572,7 +529,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String updateCreditCard(Configuration configuration, Request request, Response response) {
+	public static String updateCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String accountProfileId = request.params(":id");
@@ -610,15 +567,12 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.update(creditCardRequest);
 		
-		String html;
+		String html = "";
 		
-		if (updateResult.isSuccess()) {
-			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "add.credit.card.success") + "</strong></div></div>";
-			response.status(200);	
-		} else {
-			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			response.status(400);			
-		}
+		if (! updateResult.isSuccess()) {
+			response.status(400);		
+			html = error(updateResult.getErrorMessage());
+		} 
 		
 		return html;
 	};
@@ -631,7 +585,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
+	public static String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		UpdateResult<CreditCard> updateResult = new NowellpointClient(token)
@@ -639,15 +593,12 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.setPrimary(request.params(":id"), request.params(":token"));
 		
-		String html;
-			
-		if (updateResult.isSuccess()) {
-			html = "<div class='alert alert-success'><div class='text-center'><strong>" + MessageProvider.getMessage(getLocale(request), "add.credit.card.success") + "</strong></div></div>";
-			response.status(200);	
-		} else {
-			html = "<div class='alert alert-danger'><div class='text-center'><strong>" + updateResult.getErrorMessage() + "</strong></div></div>";
-			response.status(400);			
-		}
+		String html = "";
+		
+		if (! updateResult.isSuccess()) {
+			response.status(400);		
+			html = error(updateResult.getErrorMessage());
+		} 
 		
 		return html;
 	};
@@ -660,7 +611,7 @@ public class AccountProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String removeCreditCard(Configuration configuration, Request request, Response response) {
+	public static String removeCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		DeleteResult deleteResult = new NowellpointClient(token)

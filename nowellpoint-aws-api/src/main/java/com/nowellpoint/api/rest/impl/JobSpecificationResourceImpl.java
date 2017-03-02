@@ -72,6 +72,16 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 			String dayOfWeek,
 			String year) {
 		
+		JobSpecification jobSpecification = JobSpecification.builder()
+				.withCreatedBy(securityContext.getUserPrincipal().getName())
+				.withDescription(description)
+				.withJobId("")
+				.withJobType("")
+				.withLastUpdatedBy(securityContext.getUserPrincipal().getName())
+				.withNotificationEmail(notificationEmail)
+				.withOwner(securityContext.getUserPrincipal().getName())
+				.build();
+		
 		JobSpecification jobSchedule = jobSpecificationService.createJobSpecification(
 				jobTypeId, 
 				connectorId, 

@@ -1,8 +1,11 @@
 package com.nowellpoint.www.app;
 
+import static spark.Spark.before;
+import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
+import static spark.Spark.post;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -11,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
@@ -31,10 +33,10 @@ import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
+import com.nowellpoint.www.app.view.JobSpecificationController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
-import com.nowellpoint.www.app.view.JobSpecificationController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
 
@@ -48,7 +50,11 @@ import spark.servlet.SparkApplication;
 public class Application implements SparkApplication {
 	
     public static void main(String[] args) throws Exception {
-    	new Application().init();
+    	new Application();
+    }
+    
+    public Application() {
+    	init();
     }
 
 	@Override
@@ -66,8 +72,6 @@ public class Application implements SparkApplication {
 
         configuration.setClassForTemplateLoading(this.getClass(), "/views");
 		configuration.setDefaultEncoding("UTF-8");
-		configuration.setLocale(Locale.getDefault());
-		configuration.setTimeZone(TimeZone.getDefault());
         
         //
         // load countries list
@@ -81,6 +85,56 @@ public class Application implements SparkApplication {
 			e.printStackTrace();
 			halt();
 		}
+		
+		//
+		// verify secure requests
+		//
+		
+		before("/app/*", (request, response) -> AuthenticationController.verify(request, response));
+		
+		//
+		// index routes
+		//
+		
+		get(Path.Route.INDEX, (request, response) -> IndexController.serveIndexPage(configuration, request, response));
+		post(Path.Route.CONTACT, (request, response) -> IndexController.contact(configuration, request, response));
+		
+		//
+		// account profile routes
+		//
+		
+		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> AccountProfileController.listPlans(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.viewAccountProfile(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.reviewPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> AccountProfileController.currentPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.setPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.updateAccountProfile(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.confirmDeactivateAccountProfile(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.deactivateAccountProfile(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> AccountProfileController.removeProfilePicture(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> AccountProfileController.updateAccountProfileAddress(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> AccountProfileController.addCreditCard(configuration, request, response));  
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> AccountProfileController.getCreditCard(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> AccountProfileController.editCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> AccountProfileController.updateCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> AccountProfileController.setPrimaryCreditCard(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> AccountProfileController.removeCreditCard(configuration, request, response));
+		
+		//
+		// authentication routes
+		//
+		
+		get(Path.Route.LOGIN, (request, response) -> AuthenticationController.serveLoginPage(configuration, request, response));
+        post(Path.Route.LOGIN, (request, response) -> AuthenticationController.login(configuration, request, response));
+        get(Path.Route.LOGOUT, (request, response) -> AuthenticationController.logout(configuration, request, response));
+        
+        //
+        // administration routes
+        //
+        
+        get(Path.Route.ADMINISTRATION, (request, response) -> AdministrationController.serveAdminHomePage(configuration, request, response));	
+        get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> AdministrationController.showManageCache(configuration, request, response));	
+		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> AdministrationController.purgeCache(configuration, request, response));
         
         //
         // configure routes
@@ -144,13 +198,9 @@ public class Application implements SparkApplication {
 	}
 	
 	private static void configureRoutes(Configuration configuration) {
-		IndexController.configureRoutes(configuration);
 		SignUpController.configureRoutes(configuration);
-        AuthenticationController.configureRoutes(configuration);
         StartController.configureRoutes(configuration);
         DashboardController.configureRoutes(configuration);
-        AdministrationController.configureRoutes(configuration);
-        AccountProfileController.configureRoutes(configuration);
         SalesforceOauthController.configureRoutes(configuration);
         JobSpecificationController.configureRoutes(configuration);
         SalesforceConnectorController.configureRoutes(configuration);
