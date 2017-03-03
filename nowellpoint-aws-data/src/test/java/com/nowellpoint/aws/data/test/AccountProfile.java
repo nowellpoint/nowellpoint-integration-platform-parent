@@ -17,10 +17,10 @@ public class AccountProfile extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserInfo createdBy;
 	
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserInfo lastUpdatedBy;
 
 	private String username;

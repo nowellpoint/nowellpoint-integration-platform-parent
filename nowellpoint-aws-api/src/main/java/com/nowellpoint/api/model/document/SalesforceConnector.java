@@ -38,13 +38,13 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private String name;
 	
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef lastUpdatedBy;
 
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef owner;
 	
 	@EmbedOne

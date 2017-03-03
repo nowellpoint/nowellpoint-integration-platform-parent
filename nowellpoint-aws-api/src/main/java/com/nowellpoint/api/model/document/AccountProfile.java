@@ -36,10 +36,10 @@ public class AccountProfile extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(collectionName="account.profiles")
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef lastUpdatedBy;
 
 	private String username;

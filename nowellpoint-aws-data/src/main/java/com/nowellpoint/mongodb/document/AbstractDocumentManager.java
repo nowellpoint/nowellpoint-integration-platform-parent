@@ -297,8 +297,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			Object object = referenceCache.get(value);
 			if (object == null) {
 				object = instantiate(referenceField.getType());
-				
-				MongoCollection<Document> collection = documentManagerFactory.getCollection( referenceField.getAnnotation(Reference.class).collectionName() );
+				// right here
+				MongoCollection<Document> collection = documentManagerFactory.getCollection( documentManagerFactory.resolveCollectionName( referenceField.getAnnotation(Reference.class).referenceClass() ) );
 				Document bson = findOne(collection, Filters.eq ( ID, value ));
 				
 				if (bson == null) {
