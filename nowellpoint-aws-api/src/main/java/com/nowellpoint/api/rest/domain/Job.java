@@ -64,8 +64,12 @@ public class Job extends AbstractResource {
 		
 	}
 	
-	public Job(MongoDocument document) {
-		super(document);
+	private <T> Job(T document) {
+		modelMapper.map(document, this);
+	}
+	
+	public static Job of(MongoDocument document) {
+		return new Job(document);
 	}
 
 	public UserInfo getCreatedBy() {

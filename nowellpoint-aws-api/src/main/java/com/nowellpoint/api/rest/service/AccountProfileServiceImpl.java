@@ -88,7 +88,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		
 		String id = UserContext.getPrincipal().getName();
 		
-		AccountProfile accountProfile = new AccountProfile(id);
+		AccountProfile accountProfile = AccountProfile.of(id);
 		accountProfile.setLastLoginDate(Date.from(Instant.now()));
 		
 		updateAccountProfile( accountProfile );

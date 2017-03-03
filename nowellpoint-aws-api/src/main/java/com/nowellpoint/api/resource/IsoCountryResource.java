@@ -53,7 +53,7 @@ public class IsoCountryResource {
 	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		IsoCountry document = documentManager.findOne(IsoCountry.class, and ( eq ( "language", language ), eq ( "code", code ) ) );
-		com.nowellpoint.api.rest.domain.IsoCountry isoCountry = new com.nowellpoint.api.rest.domain.IsoCountry(document);
+		com.nowellpoint.api.rest.domain.IsoCountry isoCountry = com.nowellpoint.api.rest.domain.IsoCountry.of( document );
 		return Response.ok(isoCountry).build();
 	}
 }

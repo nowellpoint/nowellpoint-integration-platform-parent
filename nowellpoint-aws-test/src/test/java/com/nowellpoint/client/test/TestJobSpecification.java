@@ -1,7 +1,5 @@
 package com.nowellpoint.client.test;
 
-import java.util.Date;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,16 +43,7 @@ public class TestJobSpecification {
 		JobSpecificationRequest createRequest = new JobSpecificationRequest()
 				.withJobTypeId("57d7e6ccb55f01245754d0af")
 				.withConnectorId("58a3a9bc1ed1fec30b6a46fd")
-				.withInstanceKey("8ff183a8339f4810a10d832248efe7db")
-				.withStart(new Date())
-				.withSeconds("*")
-				.withMinutes("*/2")
-				.withHours("*")
-				.withDayOfMonth("*")
-				.withMonth("*")
-				.withDayOfWeek("*")
-				.withYear("*")
-				.withTimeZone("America/New_York");
+				.withInstanceKey("8ff183a8339f4810a10d832248efe7db");
 		
 		CreateResult<JobSpecification> createResult = new NowellpointClient(token)
 				.jobSpecification()
@@ -77,15 +66,7 @@ public class TestJobSpecification {
 		JobSpecificationRequest updateRequest = new JobSpecificationRequest()
 				.withId(jobSpecification.getId())
 				.withNotificationEmail("john.d.herson@gmail.com")
-				.withDescription("Here is my new description")
-				.withStart(new Date())
-				.withSeconds(jobSpecification.getSeconds())
-				.withMinutes(jobSpecification.getMinutes())
-				.withHours(jobSpecification.getHours())
-				.withDayOfMonth(jobSpecification.getDayOfMonth())
-				.withMonth(jobSpecification.getMonth())
-				.withDayOfWeek(jobSpecification.getDayOfWeek())
-				.withYear(jobSpecification.getYear());
+				.withDescription("Here is my new description");
 
 		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
 				.jobSpecification() 

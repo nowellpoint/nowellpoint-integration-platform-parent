@@ -80,20 +80,28 @@ public class AccountProfile extends AbstractResource {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean enableSalesforceLogin;
 	
-	public AccountProfile() {
+	private AccountProfile() {
 		
 	}
 	
-	public AccountProfile(String id) {
-		super(id);
+	private AccountProfile(String id) {
+		setId(id);
 	}
 	
-	public AccountProfile(MongoDocument document) {
-		super(document);
+	private <T> AccountProfile(T document) {
+		modelMapper.map(document, this);
 	}
 	
 	public static AccountProfile createAccountProfile() {
 		return new AccountProfile();
+	}
+	
+	public static AccountProfile of(String id) {
+		return new AccountProfile(id);
+	}
+	
+	public static AccountProfile of(MongoDocument document) {
+		return new AccountProfile(document);
 	}
 
 	public UserInfo getCreatedBy() {

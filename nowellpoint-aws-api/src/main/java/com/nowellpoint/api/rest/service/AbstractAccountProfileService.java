@@ -22,8 +22,8 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		MongoDocument document = accountProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		accountProfile.fromDocument(document);
-		set(accountProfile.getId(), document);
+		accountProfile.fromDocument( document );
+		set( accountProfile.getId(), document );
 	}
 	
 	protected void update(AccountProfile accountProfile) {
@@ -48,28 +48,28 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 			document = documentManager.fetch( com.nowellpoint.api.model.document.AccountProfile.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		AccountProfile accountProfile = new AccountProfile( document );
+		AccountProfile accountProfile = AccountProfile.of( document );
 		return accountProfile;
 	}
 	
 	protected AccountProfile findByAccountHref(String accountHref) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "accountHref", accountHref ) );
-		AccountProfile accountProfile = new AccountProfile( document );
+		AccountProfile accountProfile = AccountProfile.of( document );
 		return accountProfile;
 	}
 	
 	protected AccountProfile findByUsername(String username) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "username", username ) );			
-		AccountProfile accountProfile = new AccountProfile( document );
+		AccountProfile accountProfile = AccountProfile.of( document );
 		return accountProfile;
 	}
 	
 	protected AccountProfile findBySubscriptionId(String subscriptionId) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "subscription.subscriptionId", subscriptionId ) );
-		AccountProfile accountProfile = new AccountProfile( document );
+		AccountProfile accountProfile = AccountProfile.of( document );
 		return accountProfile;
 	}
 }

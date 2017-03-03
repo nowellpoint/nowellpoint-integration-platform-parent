@@ -414,16 +414,25 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	 */
 	
 	private Object getFieldValue(Object object, Field field) {
+		Method method = null;
 		try {
-		    Method method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});	
+			method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});
+		} catch (NoSuchMethodException e) {
+			try {
+				method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});
+				method.setAccessible(Boolean.TRUE);
+			} catch (NoSuchMethodException | SecurityException e1) {
+				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+				return null;
+			}				
+		} 
+		
+		try {	
 		    Object value = method.invoke(object, new Object[] {});
             if (field.getType().isAssignableFrom(Locale.class)) {            	
 		    	value = String.valueOf(value);
 		    }
             return value;
-		} catch (NoSuchMethodException e) {
-			LOGGER.info("Unable to find get method for mapped property field: " + field.getName());
-			return null;
 		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new DocumentManagerException(e);
 		}
@@ -442,17 +451,26 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	private void setFieldValue(Class<?> clazz, Object object, Field field, Object value) {
 		if (value != null) {
+			Method method = null;
 			try {
-			    Method method = clazz.getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
+				method = clazz.getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
+			} catch (NoSuchMethodException e) {
+				try {
+					method = clazz.getDeclaredMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
+					method.setAccessible(Boolean.TRUE);
+				} catch (NoSuchMethodException | SecurityException e1) {
+					LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+					return;
+				}				
+			} 
+			
+			try {
 			    if (field.getType().isAssignableFrom(Locale.class)) {
 			    	value = Locale.forLanguageTag(value.toString());
 			    } else if (field.getType().isAssignableFrom(Double.class)) {
 			    	value = Double.valueOf(value.toString());
 			    }
 			    method.invoke(object, new Object[] {value});
-			} catch (NoSuchMethodException e) {
-				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
-				return;
 			} catch (IllegalArgumentException e) {
 				LOGGER.info("Illegal Argument for " + field.getName() + " invalid type " + value.getClass().getName());
 				return;

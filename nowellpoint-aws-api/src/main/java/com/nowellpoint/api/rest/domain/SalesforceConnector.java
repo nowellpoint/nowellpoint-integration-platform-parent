@@ -29,12 +29,12 @@ public class SalesforceConnector extends AbstractResource {
 		
 	}
 	
-	public SalesforceConnector(String id) {
-		super(id);
+	private <T> SalesforceConnector(T document) {
+		modelMapper.map(document, this);
 	}
 	
-	public SalesforceConnector(MongoDocument document) {
-		super(document);
+	public static SalesforceConnector of(MongoDocument document) {
+		return new SalesforceConnector(document);
 	}
 
 	public String getName() {

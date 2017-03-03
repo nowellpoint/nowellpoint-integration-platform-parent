@@ -21,8 +21,12 @@ public class SObjectDetail extends AbstractResource {
 		
 	}
 	
-	public SObjectDetail(MongoDocument document) {
-		super(document);
+	private <T> SObjectDetail(T document) {
+		modelMapper.map(document, this);
+	}
+	
+	public static SObjectDetail of(MongoDocument document) {
+		return new SObjectDetail(document);
 	}
 
 	public UserInfo getCreatedBy() {

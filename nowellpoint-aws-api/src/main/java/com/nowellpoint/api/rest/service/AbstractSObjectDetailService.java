@@ -30,7 +30,7 @@ public class AbstractSObjectDetailService extends AbstractCacheService {
 	protected SObjectDetail query(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.SObjectDetail document = documentManager.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, query );
-		SObjectDetail sobjectDetail = new SObjectDetail(document);
+		SObjectDetail sobjectDetail = SObjectDetail.of( document );
 		return sobjectDetail;
 	}
 }

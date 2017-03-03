@@ -20,12 +20,12 @@ public class IsoCountry extends AbstractResource {
 		
 	}
 	
-	public IsoCountry(String id) {
-		super(id);
+	private <T> IsoCountry(T document) {
+		modelMapper.map(document, this);
 	}
-
-	public IsoCountry(MongoDocument document) {
-		super(document);
+	
+	public static IsoCountry of(MongoDocument document) {
+		return new IsoCountry(document);
 	}
 
 	public UserInfo getCreatedBy() {

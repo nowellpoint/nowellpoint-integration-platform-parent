@@ -17,51 +17,24 @@ public class JobSpecification extends AbstractResource {
 	
 	private String jobId;
 	
-	private String deploymentStatus;
-	
 	private ConnectorInfo connector;
 	
 	private JobTypeInfo jobType;
 	
 	private String description;
 	
-	private Date start;
-	
-	private Date end;
-	
-	private String status;
-	
-	private Date lastRunDate;
-	
-	private String lastRunStatus;
-	
-	private String lastRunFailureMessage;
-	
-	@Email
 	private String notificationEmail;
-	
-	private String seconds;
-	
-	private String minutes;
-	
-	private String hours;
-	
-	private String dayOfMonth;
-	
-	private String month;
-	
-	private String dayOfWeek;
-	
-	private String year;
-	
-	private String timeZone;
 	
 	public JobSpecification() {
 		
 	}
 	
-	public JobSpecification(MongoDocument document) {
-		super(document);
+	private <T> JobSpecification(T document) {
+		modelMapper.map(document, this);
+	}
+	
+	public static JobSpecification of(MongoDocument document) {
+		return new JobSpecification(document);
 	}
 
 	public UserInfo getCreatedBy() {
@@ -96,14 +69,6 @@ public class JobSpecification extends AbstractResource {
 		this.jobId = jobId;
 	}
 
-	public String getDeploymentStatus() {
-		return deploymentStatus;
-	}
-
-	public void setDeploymentStatus(String deploymentStatus) {
-		this.deploymentStatus = deploymentStatus;
-	}
-
 	public ConnectorInfo getConnector() {
 		return connector;
 	}
@@ -127,125 +92,13 @@ public class JobSpecification extends AbstractResource {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public Date getStart() {
-		return start;
-	}
-
-	public void setStart(Date start) {
-		this.start = start;
-	}
-
-	public Date getEnd() {
-		return end;
-	}
-
-	public void setEnd(Date end) {
-		this.end = end;
-	}
-
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Date getLastRunDate() {
-		return lastRunDate;
-	}
-
-	public void setLastRunDate(Date lastRunDate) {
-		this.lastRunDate = lastRunDate;
-	}
-
-	public String getLastRunStatus() {
-		return lastRunStatus;
-	}
-
-	public void setLastRunStatus(String lastRunStatus) {
-		this.lastRunStatus = lastRunStatus;
-	}
-
-	public String getLastRunFailureMessage() {
-		return lastRunFailureMessage;
-	}
-
-	public void setLastRunFailureMessage(String lastRunFailureMessage) {
-		this.lastRunFailureMessage = lastRunFailureMessage;
-	}
-
+	
 	public String getNotificationEmail() {
 		return notificationEmail;
 	}
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
-	}
-	
-	public String getSeconds() {
-		return seconds;
-	}
-
-	public void setSeconds(String seconds) {
-		this.seconds = seconds;
-	}
-
-	public String getMinutes() {
-		return minutes;
-	}
-
-	public void setMinutes(String minutes) {
-		this.minutes = minutes;
-	}
-
-	public String getHours() {
-		return hours;
-	}
-
-	public void setHours(String hours) {
-		this.hours = hours;
-	}
-
-	public String getDayOfMonth() {
-		return dayOfMonth;
-	}
-
-	public void setDayOfMonth(String dayOfMonth) {
-		this.dayOfMonth = dayOfMonth;
-	}
-
-	public String getMonth() {
-		return month;
-	}
-
-	public void setMonth(String month) {
-		this.month = month;
-	}
-
-	public String getDayOfWeek() {
-		return dayOfWeek;
-	}
-
-	public void setDayOfWeek(String dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
-
-	public String getYear() {
-		return year;
-	}
-
-	public void setYear(String year) {
-		this.year = year;
 	}
 
 	@Override

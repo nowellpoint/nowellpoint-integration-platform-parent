@@ -41,7 +41,7 @@
                         <tr id="${jobSpecification.id}">
                             <td><a href="${labels['base.path']}/${jobSpecification.id}">${jobSpecification.connector.organizationName}</a></td>
                             <td>${jobSpecification.jobType.name}</td>
-                            <td>${jobSpecification.status}</td>
+                            <td>${(jobSpecification.jobTypeId)!}</td>
                             <td><a href="${labels['base.path']}/${jobSpecification.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a></td>
                         </tr>
                     </#list>

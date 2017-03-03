@@ -140,10 +140,10 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 		Date now = Date.from(Instant.now());
 		
 		JobSpecification jobSpecification = new JobSpecification();
-		jobSpecification.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
-		jobSpecification.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
-		jobSpecification.setTimeZone(timeZone);
-		jobSpecification.setStatus(JobStatus.NOT_SCHEDULED);
+		//jobSpecification.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
+		//jobSpecification.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
+		//jobSpecification.setTimeZone(timeZone);
+		//jobSpecification.setStatus(JobStatus.NOT_SCHEDULED);
 		jobSpecification.setOwner(userInfo);
 		jobSpecification.setCreatedOn(now);
 		jobSpecification.setCreatedBy(userInfo);
@@ -151,13 +151,13 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 		jobSpecification.setLastUpdatedBy(userInfo);
 		jobSpecification.setDescription(description);
 		jobSpecification.setNotificationEmail(notificationEmail);
-		jobSpecification.setSeconds(Assert.isNullOrEmpty(seconds) ? "*" : seconds);
-		jobSpecification.setMinutes(Assert.isNullOrEmpty(minutes) ? "*" : minutes);
-		jobSpecification.setHours(Assert.isNullOrEmpty(hours) ? "*" : hours);
-		jobSpecification.setDayOfMonth(Assert.isNullOrEmpty(dayOfMonth) ? null : dayOfMonth);
-		jobSpecification.setMonth(Assert.isNullOrEmpty(month) ? "*" : month);
-		jobSpecification.setDayOfWeek(Assert.isNullOrEmpty(dayOfWeek) ? null : dayOfWeek);
-		jobSpecification.setYear(Assert.isNullOrEmpty(year) ? "*" : year);
+		//jobSpecification.setSeconds(Assert.isNullOrEmpty(seconds) ? "*" : seconds);
+		//jobSpecification.setMinutes(Assert.isNullOrEmpty(minutes) ? "*" : minutes);
+		//jobSpecification.setHours(Assert.isNullOrEmpty(hours) ? "*" : hours);
+		//jobSpecification.setDayOfMonth(Assert.isNullOrEmpty(dayOfMonth) ? null : dayOfMonth);
+		//jobSpecification.setMonth(Assert.isNullOrEmpty(month) ? "*" : month);
+		//jobSpecification.setDayOfWeek(Assert.isNullOrEmpty(dayOfWeek) ? null : dayOfWeek);
+		//jobSpecification.setYear(Assert.isNullOrEmpty(year) ? "*" : year);
 		
 		jobSpecification.setJobType(new JobTypeInfo(jobType));
 		
@@ -277,47 +277,23 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 		 * validation steps
 		 */
 		
-		if (JobStatus.TERMINATED.equals(original.getStatus())) {
-			throw new ValidationException( "Scheduled Job has been terminated and cannot be altered" );
-		}
-		
-		timeZone = Assert.isNullOrEmpty(timeZone) ? original.getTimeZone() : timeZone;
-		
-		if (Assert.isNotNull(startDate) && startDate.isBefore(LocalDate.now(ZoneId.of(timeZone)))) {
-			throw new ValidationException( "Schedule Date cannot be before current date" );
-		}
-				
 		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 		Date now = Date.from(Instant.now());
 		
 		JobSpecification jobSchedule = new JobSpecification();
 		jobSchedule.setId(id);
-		jobSchedule.setStart(Assert.isNotNull(startDate) ? Date.from(startDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : new Date());
-		jobSchedule.setEnd(Assert.isNotNull(endDate) ? Date.from(endDate.atStartOfDay().atZone(ZoneId.of(timeZone)).toInstant()) : null);
-		jobSchedule.setTimeZone(timeZone);
 		jobSchedule.setLastUpdatedOn(now);
 		jobSchedule.setLastUpdatedBy(userInfo);
 		jobSchedule.setDescription(description);
 		jobSchedule.setNotificationEmail(notificationEmail);
-		jobSchedule.setSeconds(seconds);
-		jobSchedule.setMinutes(minutes);
-		jobSchedule.setHours(hours);
-		jobSchedule.setDayOfMonth(dayOfMonth);
-		jobSchedule.setMonth(month);
-		jobSchedule.setDayOfWeek(dayOfWeek);
-		jobSchedule.setYear(year);
 		
 		/**
 		 * add read-only fields
 		 */
 		
-		jobSchedule.setStatus(original.getStatus());
 		jobSchedule.setJobType(original.getJobType());
 		jobSchedule.setConnector(original.getConnector());
 		jobSchedule.setCreatedOn(original.getCreatedOn());
-		jobSchedule.setLastRunDate(original.getLastRunDate());
-		jobSchedule.setLastRunStatus(original.getLastRunStatus());
-		jobSchedule.setLastRunFailureMessage(original.getLastRunFailureMessage());
 		jobSchedule.setCreatedBy(original.getCreatedBy());
 		jobSchedule.setOwner(original.getOwner());
 		
@@ -335,44 +311,8 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 			jobSchedule.setOwner(original.getOwner());
 		}
 		
-		if (isNull(jobSchedule.getStart())) {
-			jobSchedule.setStart(original.getStart());
-		}
-		
-		if (isNull(jobSchedule.getStatus())) {
-			jobSchedule.setStatus(original.getStatus());
-		}
-		
 		if (isNullOrEmpty(jobSchedule.getNotificationEmail())) {
 			jobSchedule.setNotificationEmail(original.getNotificationEmail());
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getSeconds())) {
-			jobSchedule.setSeconds("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getMinutes())) {
-			jobSchedule.setMinutes("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getHours())) {
-			jobSchedule.setHours("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getDayOfMonth())) {
-			jobSchedule.setDayOfMonth("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getMonth())) {
-			jobSchedule.setMonth("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getDayOfWeek())) {
-			jobSchedule.setDayOfWeek("*");
-		}
-		
-		if (isNullOrEmpty(jobSchedule.getYear())) {
-			jobSchedule.setYear("*");
 		}
 		
 		/**

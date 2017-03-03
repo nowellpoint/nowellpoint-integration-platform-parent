@@ -2,20 +2,14 @@ package com.nowellpoint.api.rest.service;
 
 import static com.mongodb.client.model.Filters.eq;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.Set;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.model.document.Job;
-import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.rest.domain.JobSpecification;
 import com.nowellpoint.api.rest.domain.JobSpecificationList;
-import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -23,9 +17,6 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
 public class AbstractJobSpecificationService extends AbstractCacheService {
-	
-	@Inject
-	private Event<Job> jobEvent;
 
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
@@ -55,7 +46,7 @@ public class AbstractJobSpecificationService extends AbstractCacheService {
 			document = documentManager.fetch( com.nowellpoint.api.model.document.JobSpecification.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		JobSpecification jobSchedule = new JobSpecification( document );
+		JobSpecification jobSchedule = JobSpecification.of( document );
 		return jobSchedule;
 	}
 	
@@ -67,44 +58,12 @@ public class AbstractJobSpecificationService extends AbstractCacheService {
 		set(jobSchedule.getId(), document);
 	}
 	
-	private void submitJob(JobSpecification jobSchedule) {
-		
-		Date now = Date.from(Instant.now());
-		
-		UserRef userRef = new UserRef(jobSchedule.getLastUpdatedBy().getId());
-		
-		Job job = new Job();
-		job.setScheduledJobId(jobSchedule.getId());
-		job.setCreatedBy(userRef);
-		job.setCreatedOn(now);
-		job.setHours(jobSchedule.getHours());
-		job.setJobName(jobSchedule.getJobType().getCode());
-		job.setLastUpdatedBy(userRef);
-		job.setLastUpdatedOn(now);
-		job.setDayOfMonth(jobSchedule.getDayOfMonth());
-		job.setDayOfWeek(jobSchedule.getDayOfWeek());
-		job.setEnd(jobSchedule.getEnd());
-		job.setStart(jobSchedule.getStart());
-		job.setTimeZone(jobSchedule.getTimeZone());
-		job.setMinutes(jobSchedule.getMinutes());
-		job.setMonth(jobSchedule.getMonth());
-		job.setSeconds(jobSchedule.getSeconds());
-		job.setStatus(JobStatus.SCHEDULED);
-		job.setYear(jobSchedule.getYear());
-		
-		jobEvent.fire(job);
-	}
-	
 	protected void update(JobSpecification jobSchedule) {
 		MongoDocument document = jobSchedule.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
 		jobSchedule.fromDocument( document );
 		set( jobSchedule.getId(), document );
-		
-		if (jobSchedule.getStatus().equals(JobStatus.SCHEDULED)) {
-			submitJob(jobSchedule);
-		}
 	}
 	
 	protected void delete(JobSpecification jobSchedule) {

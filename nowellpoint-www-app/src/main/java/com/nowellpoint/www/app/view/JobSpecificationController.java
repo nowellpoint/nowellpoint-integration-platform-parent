@@ -5,8 +5,6 @@ import static spark.Spark.post;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,17 +28,13 @@ import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.JobTypeList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
-import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
 public class JobSpecificationController extends AbstractStaticController {
-	
-	private static final Logger LOGGER = Logger.getLogger(JobSpecificationController.class.getName());
 	
 	public static class Template {
 		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "job-specification-list.html");
@@ -55,10 +49,10 @@ public class JobSpecificationController extends AbstractStaticController {
         get(Path.Route.JOB_SPECIFICATION_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
-        post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> createScheduledJob(configuration, request, response));
+        post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> createJobSpecification(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_VIEW, (request, response) -> viewJobSpecifications(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_EDIT, (request, response) -> editJobSpecification(configuration, request, response));
-        post(Path.Route.JOB_SPECIFICATION_UPDATE, (request, response) -> updateScheduledJob(configuration, request, response));
+        post(Path.Route.JOB_SPECIFICATION_UPDATE, (request, response) -> updateJobSpecification(configuration, request, response));
 	}
 	
 	/**
@@ -211,7 +205,6 @@ public class JobSpecificationController extends AbstractStaticController {
 		jobTypeInfo.setName(jobType.getName());
 		
 		JobSpecification jobSpecification = new JobSpecification();
-		jobSpecification.setStart(new Date());
 		jobSpecification.setJobType(jobTypeInfo);
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
@@ -270,7 +263,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws ParseException
 	 */
 	
-	private static String createScheduledJob(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException, ParseException {
+	private static String createJobSpecification(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		Token token = getToken(request);
 		
@@ -279,47 +272,13 @@ public class JobSpecificationController extends AbstractStaticController {
 		String instanceKey = request.queryParams("instanceKey");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
-		String scheduleDate = request.queryParams("scheduleDate");
-		String seconds = request.queryParams("seconds");
-		String minutes = request.queryParams("minutes");
-		String hours = request.queryParams("hours");
-		String dayOfMonth = request.queryParams("dayOfMonth");
-		String month = request.queryParams("month");
-		String dayOfWeek = request.queryParams("dayOfWeek");
-		String year = request.queryParams("year");
-		
-		try {
-			
-			new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate);
-			
-		} catch (ParseException e) {
-			LOGGER.error(e.getMessage());
-			
-			JobSpecification jobSpecification = new JobSpecification();
-			
-			Map<String, Object> model = getModel();
-			model.put("step", "set-schedule");
-			model.put("scheduledJob", jobSpecification);
-			model.put("action", Path.Route.JOB_SPECIFICATION_CREATE);
-			model.put("title", getLabel(JobSpecificationController.class, request, "schedule.job"));
-			model.put("errorMessage", MessageProvider.getMessage(getLocale(request), "unparseable.date.time"));
-			return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
-		}
 		
 		JobSpecificationRequest createjobSpecificationRequest = new JobSpecificationRequest()
 				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
 				.withInstanceKey(instanceKey)
-				.withJobTypeId(jobTypeId)
-				.withStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
-				.withSeconds(seconds)
-				.withMinutes(minutes)
-				.withHours(hours)
-				.withDayOfMonth(dayOfMonth)
-				.withMonth(month)
-				.withDayOfWeek(dayOfWeek)
-				.withYear(year);
+				.withJobTypeId(jobTypeId);
 		
 		CreateResult<JobSpecification> createjobSpecificationResult = new NowellpointClient(token)
 				.jobSpecification()
@@ -330,7 +289,6 @@ public class JobSpecificationController extends AbstractStaticController {
 			JobSpecification jobSpecification = new JobSpecification();
 			jobSpecification.setNotificationEmail(notificationEmail);
 			jobSpecification.setDescription(description);
-			jobSpecification.setStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate));
 			
 			Map<String, Object> model = getModel();
 			model.put("step", "set-schedule");
@@ -423,34 +381,18 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws ParseException
 	 */
 	
-	private static String updateScheduledJob(Configuration configuration, Request request, Response response) throws ParseException {
+	private static String updateJobSpecification(Configuration configuration, Request request, Response response) throws ParseException {
 		
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
-		String scheduleDate = request.queryParams("scheduleDate");
-		String seconds = request.queryParams("seconds");
-		String minutes = request.queryParams("minutes");
-		String hours = request.queryParams("hours");
-		String dayOfMonth = request.queryParams("dayOfMonth");
-		String month = request.queryParams("month");
-		String dayOfWeek = request.queryParams("dayOfWeek");
-		String year = request.queryParams("year");
 		
 		JobSpecificationRequest jobSpecificationRequest = new JobSpecificationRequest()
 				.withId(id)
 				.withNotificationEmail(notificationEmail)
-				.withDescription(description)
-				.withStart(new SimpleDateFormat("yyyy-MM-dd").parse(scheduleDate))
-				.withSeconds(seconds)
-				.withMinutes(minutes)
-				.withHours(hours)
-				.withDayOfMonth(dayOfMonth)
-				.withMonth(month)
-				.withDayOfWeek(dayOfWeek)
-				.withYear(year);
+				.withDescription(description);
 
 		UpdateResult<JobSpecification> updateResult = new NowellpointClient(token)
 				.jobSpecification() 

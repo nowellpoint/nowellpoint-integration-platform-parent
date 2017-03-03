@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.MongoDocument; 
 
 @JsonInclude(Include.NON_EMPTY)
@@ -24,7 +23,7 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	
 	static {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PROTECTED); 
+		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PRIVATE); 
 		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
 			
 			@Override
@@ -51,19 +50,9 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	private Date lastUpdatedOn;
 	
 	private Meta meta;
-	
-	protected DocumentManagerFactory datastore;
 		
 	public AbstractResource() {
 		
-	}
-	
-	public <T> AbstractResource(T document) {
-		modelMapper.map(document, this);
-	}
- 	
-	public AbstractResource(String id) {
-		setId(id);
 	}
 
 	public String getId() {

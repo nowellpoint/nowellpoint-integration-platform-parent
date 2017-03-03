@@ -24,6 +24,14 @@ public class JobType extends AbstractResource {
 		
 	}
 	
+	private <T> JobType(T document) {
+		modelMapper.map(document, this);
+	}
+	
+	public static JobType of(MongoDocument document) {
+		return new JobType(document);
+	}
+	
 	public Meta getMeta() {
 		return meta;
 	}
@@ -46,10 +54,6 @@ public class JobType extends AbstractResource {
 
 	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
-	}
-
-	public JobType(MongoDocument document) {
-		super(document);
 	}
 
 	public String getName() {

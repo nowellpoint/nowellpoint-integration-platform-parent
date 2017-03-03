@@ -26,8 +26,12 @@ public class Plan extends AbstractResource {
 		
 	}
 	
-	public Plan(MongoDocument document) {
-		super(document);
+	private <T> Plan(T document) {
+		modelMapper.map(document, this);
+	}
+	
+	public static Plan of(MongoDocument document) {
+		return new Plan(document);
 	}
 
 	public Boolean getRecommendedPlan() {

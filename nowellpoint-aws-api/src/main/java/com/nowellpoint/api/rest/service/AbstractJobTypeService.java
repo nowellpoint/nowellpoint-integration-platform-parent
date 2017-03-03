@@ -27,7 +27,7 @@ abstract class AbstractJobTypeService extends AbstractCacheService {
 			document = documentManager.fetch(com.nowellpoint.api.model.document.JobType.class, new ObjectId( id ) ); 
 			set(id, document);
 		}
-		JobType jobType = new JobType( document );
+		JobType jobType = JobType.of( document );
 		return jobType;
 	}
 	

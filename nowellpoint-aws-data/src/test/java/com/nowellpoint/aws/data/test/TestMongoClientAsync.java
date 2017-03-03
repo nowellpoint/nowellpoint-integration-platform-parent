@@ -67,8 +67,8 @@ public class TestMongoClientAsync {
 		Assert.assertNotNull(accountProfile.getCreatedBy().getId());
 		Assert.assertNotNull(accountProfile.getPhotos());
 		Assert.assertNotNull(accountProfile.getAddress());
-		Assert.assertNull(accountProfile.getCreatedBy().getName());
-		Assert.assertNull(accountProfile.getLastUpdatedBy().getName());
+		Assert.assertNotNull(accountProfile.getCreatedBy().getName());
+		Assert.assertNotNull(accountProfile.getLastUpdatedBy().getName());
 				
 		dm.refresh( identity );
 		

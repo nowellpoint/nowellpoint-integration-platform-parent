@@ -1,13 +1,18 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
+
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 public abstract class AbstractCollectionResource<R extends AbstractResource, D extends MongoDocument> implements CollectionResource<R> {
+	
+	private static final Logger LOGGER = Logger.getLogger(AbstractCollectionResource.class);
 	
 	private Set<R> items = new HashSet<R>();
 	private Meta meta = new Meta();
@@ -16,10 +21,12 @@ public abstract class AbstractCollectionResource<R extends AbstractResource, D e
 		if (documents != null && ! documents.isEmpty()) {
 			documents.forEach(document -> {
 				try {
+					Method method = Class.forName(getItemType().getName()).getMethod("of", MongoDocument.class);
 					@SuppressWarnings("unchecked")
-					Constructor<R> constructor = (Constructor<R>) Class.forName(getItemType().getName()).getConstructor(MongoDocument.class);
-					items.add(constructor.newInstance(document));
-				} catch (Exception e) {
+					R object = (R) method.invoke(null, document);
+					items.add(object);
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
+					LOGGER.info("Unable to invoke of method for: " + getItemType().getName());
 					e.printStackTrace();
 				}
 			});

@@ -51,16 +51,6 @@ public class JobSpecificationResource extends AbstractResource {
 				.parameter("instanceKey", jobScheduleRequest.getInstanceKey())
 				.parameter("notificationEmail", jobScheduleRequest.getNotificationEmail())
 				.parameter("description", jobScheduleRequest.getDescription())
-				.parameter("start", formatDate(jobScheduleRequest.getStart()))
-				.parameter("end", formatDate(jobScheduleRequest.getEnd()))
-				.parameter("timeZone", jobScheduleRequest.getTimeZone())
-				.parameter("seconds", jobScheduleRequest.getSeconds())
-				.parameter("minutes", jobScheduleRequest.getMinutes())
-				.parameter("hours", jobScheduleRequest.getHours())
-				.parameter("dayOfMonth", jobScheduleRequest.getDayOfMonth())
-				.parameter("month", jobScheduleRequest.getMonth())
-				.parameter("dayOfWeek", jobScheduleRequest.getDayOfWeek())
-				.parameter("year", jobScheduleRequest.getYear())
 				.execute();
 		
 		CreateResult<JobSpecification> result = null;
@@ -92,16 +82,6 @@ public class JobSpecificationResource extends AbstractResource {
 				.path(jobScheduleRequest.getId())
 				.parameter("notificationEmail", jobScheduleRequest.getNotificationEmail())
 				.parameter("description", jobScheduleRequest.getDescription())
-				.parameter("start", formatDate(jobScheduleRequest.getStart()))
-				.parameter("end", formatDate(jobScheduleRequest.getEnd()))
-				.parameter("timeZone", jobScheduleRequest.getTimeZone())
-				.parameter("seconds", jobScheduleRequest.getSeconds())
-				.parameter("minutes", jobScheduleRequest.getMinutes())
-				.parameter("hours", jobScheduleRequest.getHours())
-				.parameter("dayOfMonth", jobScheduleRequest.getDayOfMonth())
-				.parameter("month", jobScheduleRequest.getMonth())
-				.parameter("dayOfWeek", jobScheduleRequest.getDayOfWeek())
-				.parameter("year", jobScheduleRequest.getYear())
 				.execute();
 		
 		UpdateResult<JobSpecification> result = null;

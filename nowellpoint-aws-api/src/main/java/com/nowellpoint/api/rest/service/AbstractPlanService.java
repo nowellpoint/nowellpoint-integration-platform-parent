@@ -51,14 +51,14 @@ public class AbstractPlanService extends AbstractCacheService {
 			document = documentManager.fetch(com.nowellpoint.api.model.document.Plan.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		Plan resource = new Plan( document );
+		Plan resource = Plan.of( document );
 		return resource;
 	}
 	
 	public Plan findByPlanCode(String planCode) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Plan document = documentManager.findOne(com.nowellpoint.api.model.document.Plan.class, eq ( "planCode", planCode ));
-		Plan resource = new Plan( document );
+		Plan resource = Plan.of( document );
 		return resource;
 	}
 }

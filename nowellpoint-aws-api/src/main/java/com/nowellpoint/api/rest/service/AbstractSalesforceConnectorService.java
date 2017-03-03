@@ -74,7 +74,7 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 			document = documentManager.fetch(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		SalesforceConnector resource = new SalesforceConnector( document );
+		SalesforceConnector resource = SalesforceConnector.of( document );
 		return resource;
 	}
 }
