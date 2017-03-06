@@ -29,8 +29,8 @@ public class VaultEntryServiceImpl implements VaultEntryService {
 	}
 
 	@Override
-	public VaultEntry retrive(String token) {
-		VaultEntry vaultEntry = dynamoDBMapper.load(VaultEntry.class, token);
+	public VaultEntry retrive(String token, String key) {
+		VaultEntry vaultEntry = dynamoDBMapper.load(VaultEntry.class, token, key);
 		return vaultEntry;
 	}
 

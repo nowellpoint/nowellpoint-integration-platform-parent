@@ -21,12 +21,7 @@ import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.InstanceRequest;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Instance;
-import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
@@ -75,6 +70,23 @@ public class TestAuthenticators {
 		System.out.println(identity.getName());
 	}
 	
+	@Test
+	public void testSalesforceConnectorBuild() {
+		
+		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
+				.salesforceConnector()
+				.getSalesforceConnectors();
+		
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
+		
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+				.salesforceConnector()
+				.test(salesforceConnector.getId());
+		
+		System.out.println(updateResult.isSuccess());
+		System.out.println(updateResult.getTarget().getConnectStatus());
+	}
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void testIllegalArgumentException() {
 		OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder().build();
@@ -110,23 +122,6 @@ public class TestAuthenticators {
 	}
 	
 	@Test
-	@Ignore
-	public void createAndDeleteEnvironment() {
-		
-		LOG.info("start createAndDeleteEnvironment");
-		
-		SalesforceConnector salesforceConnector = new NowellpointClient(token)
-				.salesforceConnector()
-				.get("5838ae0d25075c7a81115253");
-		
-		String authEndpoint = "https://login.salesforce.com";
-		String environmentName = "Test Environment";
-		String password = System.getenv("SALESFORCE_PASSWORD");
-		String username = System.getenv("SALESFORCE_USERNAME");
-		String securityToken = System.getenv("SALESFORCE_SECURITY_TOKEN");
-	}
-	
-	@Test
 	public void testGetIdentity() {
 		
 		long start = System.currentTimeMillis();
@@ -142,15 +137,6 @@ public class TestAuthenticators {
 		System.out.println(identity.getName());
 	}
 	
-	@Test
-	@Ignore
-	public void buildEnvironment() {
-		long start = System.currentTimeMillis();
-		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
-				.salesforceConnector()
-				.getSalesforceConnectors();
-	}
 	
 	@Test
 	@Ignore

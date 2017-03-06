@@ -10,7 +10,7 @@ public interface VaultEntryService {
 	
 	public VaultEntry replace(String token, String key, String type, String value, String lastUpdatedBy);
 	
-	public VaultEntry retrive(String token);
+	public VaultEntry retrive(String token, String key);
 	
 	public void remove(String token);
 	

@@ -425,7 +425,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		String tokenStr = getToken(salesforceConnector.getConnectString().getUri());
 		
-		VaultEntry vaultEntry = vaultEntryService.retrive(tokenStr);
+		VaultEntry vaultEntry = vaultEntryService.retrive(tokenStr, salesforceConnector.getOrganization().getId());
 
 		try {
 			
@@ -460,6 +460,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				salesforceConnector.setOrganization(organization);
 			}
 			salesforceConnector.setIsValid(Boolean.TRUE);
+			salesforceConnector.setConnectStatus("Connection Success");
 		} catch (OauthException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setConnectStatus(e.getErrorDescription());
