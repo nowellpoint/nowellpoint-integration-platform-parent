@@ -18,8 +18,6 @@
 
 package com.nowellpoint.api.model.document;
 
-import org.bson.types.ObjectId;
-
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
@@ -42,7 +40,7 @@ public class JobSpecification extends MongoDocument {
 	@Reference(referenceClass = AccountProfile.class)
 	private UserRef owner;
 	
-	private ObjectId jobId;
+	private String name;
 	
 	@EmbedOne
 	private ConnectorInfo connector;
@@ -90,12 +88,12 @@ public class JobSpecification extends MongoDocument {
 		this.owner = owner;
 	}
 
-	public ObjectId getJobId() {
-		return jobId;
+	public String getName() {
+		return name;
 	}
 
-	public void setJobId(ObjectId jobId) {
-		this.jobId = jobId;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public ConnectorInfo getConnector() {

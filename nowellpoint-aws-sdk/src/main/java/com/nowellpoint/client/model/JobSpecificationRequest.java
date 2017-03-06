@@ -6,7 +6,7 @@ public class JobSpecificationRequest {
 	
 	private String jobTypeId;
 	
-	private String instanceKey;
+	private String name;
 	
 	private String notificationEmail;
 	
@@ -26,12 +26,12 @@ public class JobSpecificationRequest {
 		this.id = id;
 	}
 
-	public String getInstanceKey() {
-		return instanceKey;
+	public String getName() {
+		return name;
 	}
 
-	public void setInstanceKey(String instanceKey) {
-		this.instanceKey = instanceKey;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getNotificationEmail() {
@@ -71,8 +71,8 @@ public class JobSpecificationRequest {
 		return this;
 	}
 	
-	public JobSpecificationRequest withInstanceKey(String instanceKey) {
-		setInstanceKey(instanceKey);
+	public JobSpecificationRequest withName(String name) {
+		setName(name);
 		return this;
 	}
 	

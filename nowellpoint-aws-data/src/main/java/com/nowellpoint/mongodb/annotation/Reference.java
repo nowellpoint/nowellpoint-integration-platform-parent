@@ -11,6 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({FIELD})
 public @interface Reference {
-	//String collectionName();
-	Class<?> referenceClass();
+	Class<?> referenceClass() default Object.class;
 }

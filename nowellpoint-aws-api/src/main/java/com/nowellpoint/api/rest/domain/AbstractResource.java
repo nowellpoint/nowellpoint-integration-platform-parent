@@ -41,15 +41,15 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		});
 	}
 	
-	private String id;
+	protected String id;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date createdOn;
+	protected Date createdOn;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date lastUpdatedOn;
+	protected Date lastUpdatedOn;
 	
-	private Meta meta;
+	protected Meta meta;
 		
 	public AbstractResource() {
 		

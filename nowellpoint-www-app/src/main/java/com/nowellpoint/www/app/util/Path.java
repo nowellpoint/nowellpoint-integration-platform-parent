@@ -29,16 +29,6 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/edit");
 		public static final String CONNECTORS_SALESFORCE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_DELETE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/delete");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_SOBJECTS = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key/sobjects");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_SOBJECT_DETAIL = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key/sobject/:sobjectName");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_NEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/new");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key/view");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_ADD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key/edit");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/environments/:key");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_TEST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key/test");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_BUILD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key/build");
-		public static final String CONNECTORS_SALESFORCE_INSTANCE_REMOVE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/instances/:key");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
 		public static final String ACCOUNT_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "account-profile/:id/picture");

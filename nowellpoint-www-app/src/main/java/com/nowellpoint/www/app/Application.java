@@ -135,6 +135,17 @@ public class Application implements SparkApplication {
         get(Path.Route.ADMINISTRATION, (request, response) -> AdministrationController.serveAdminHomePage(configuration, request, response));	
         get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> AdministrationController.showManageCache(configuration, request, response));	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> AdministrationController.purgeCache(configuration, request, response));
+		
+		//
+		// salesforce connector routes
+		//
+		
+		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> SalesforceConnectorController.listSalesforceConnectors(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> SalesforceConnectorController.newSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> SalesforceConnectorController.viewSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> SalesforceConnectorController.updateSalesforceConnector(configuration, request, response));
+        delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> SalesforceConnectorController.deleteSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));
         
         //
         // configure routes
@@ -203,7 +214,6 @@ public class Application implements SparkApplication {
         DashboardController.configureRoutes(configuration);
         SalesforceOauthController.configureRoutes(configuration);
         JobSpecificationController.configureRoutes(configuration);
-        SalesforceConnectorController.configureRoutes(configuration);
         NotificationController.configureRoutes(configuration);
 	}
 	

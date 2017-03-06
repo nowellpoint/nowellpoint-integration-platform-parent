@@ -11,8 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 @Path("job-specifications")
 public interface JobSpecificationResource {
 	
@@ -34,37 +32,18 @@ public interface JobSpecificationResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createJobSpecification(
-			@FormParam("jobTypeId") @NotEmpty String jobTypeId,
-			@FormParam("instanceKey") @NotEmpty String instanceKey,
+			@FormParam("jobTypeId") String jobTypeId,
+			@FormParam("connectorId") String connectorId,
+			@FormParam("name") String name,
 			@FormParam("notificationEmail") String notificationEmail,
-			@FormParam("description") String description,
-			@FormParam("connectorId") @NotEmpty String connectorId,
-			@FormParam("start") String start,
-			@FormParam("end") String end,
-			@FormParam("timeZone") String timeZone,
-			@FormParam("seconds") String seconds,
-			@FormParam("minutes") String minutes,
-			@FormParam("hours") String hours,
-			@FormParam("dayOfMonth") String dayOfMonth,
-			@FormParam("month") String month,
-			@FormParam("dayOfWeek") String dayOfWeek,
-			@FormParam("year") String year);
+			@FormParam("description") String description);
 	
 	@POST
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJobSpecification(@PathParam("id") String id,
+			@FormParam("name") String name,
 			@FormParam("notificationEmail") String notificationEmail,
-			@FormParam("description") String description,
-			@FormParam("start") String start,
-			@FormParam("end") String end,
-			@FormParam("timeZone") String timeZone,
-			@FormParam("seconds") String seconds,
-			@FormParam("minutes") String minutes,
-			@FormParam("hours") String hours,
-			@FormParam("dayOfMonth") String dayOfMonth,
-			@FormParam("month") String month,
-			@FormParam("dayOfWeek") String dayOfWeek,
-			@FormParam("year") String year);
+			@FormParam("description") String description);
 }

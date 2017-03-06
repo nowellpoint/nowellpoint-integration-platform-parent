@@ -7,7 +7,7 @@ public class JobSpecification extends AbstractResource {
 	
 	private UserInfo owner;
 	
-	private String jobId;
+	private String name;
 	
 	private ConnectorInfo connector;
 	
@@ -33,12 +33,12 @@ public class JobSpecification extends AbstractResource {
 		this.owner = owner;
 	}
 
-	public String getJobId() {
-		return jobId;
+	public String getName() {
+		return name;
 	}
 
-	public void setJobId(String jobId) {
-		this.jobId = jobId;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public ConnectorInfo getConnector() {

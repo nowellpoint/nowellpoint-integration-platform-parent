@@ -297,12 +297,20 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			Object object = referenceCache.get(value);
 			if (object == null) {
 				object = instantiate(referenceField.getType());
-				// right here
-				MongoCollection<Document> collection = documentManagerFactory.getCollection( documentManagerFactory.resolveCollectionName( referenceField.getAnnotation(Reference.class).referenceClass() ) );
+
+				Class<?> referenceClass = referenceField.getAnnotation(Reference.class).referenceClass().equals(Object.class) ? referenceField.getType() : referenceField.getAnnotation(Reference.class).referenceClass();
+				
+				MongoCollection<Document> collection = null;
+				try {
+					collection = documentManagerFactory.getCollection( referenceClass );
+				} catch (IllegalArgumentException e) {
+					throw new DocumentManagerException(e);
+				}
+				
 				Document bson = findOne(collection, Filters.eq ( ID, value ));
 				
 				if (bson == null) {
-					throw new DocumentManagerException(String.format("Unable to find reference document from collection %s with id %s", documentManagerFactory.resolveCollectionName( referenceField.getType() ), value.toString()));
+					throw new DocumentManagerException(String.format("Unable to find reference document from collection %s with id %s", documentManagerFactory.resolveCollectionName( referenceClass ), value.toString()));
 				}
 				
 				Set<Field> fields = getAllFields(object);

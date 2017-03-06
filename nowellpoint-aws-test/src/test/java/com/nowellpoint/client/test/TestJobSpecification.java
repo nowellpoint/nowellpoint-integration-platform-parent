@@ -42,8 +42,7 @@ public class TestJobSpecification {
 		
 		JobSpecificationRequest createRequest = new JobSpecificationRequest()
 				.withJobTypeId("57d7e6ccb55f01245754d0af")
-				.withConnectorId("58a3a9bc1ed1fec30b6a46fd")
-				.withInstanceKey("8ff183a8339f4810a10d832248efe7db");
+				.withConnectorId("58a3a9bc1ed1fec30b6a46fd");
 		
 		CreateResult<JobSpecification> createResult = new NowellpointClient(token)
 				.jobSpecification()

@@ -159,8 +159,6 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 		//jobSpecification.setDayOfWeek(Assert.isNullOrEmpty(dayOfWeek) ? null : dayOfWeek);
 		//jobSpecification.setYear(Assert.isNullOrEmpty(year) ? "*" : year);
 		
-		jobSpecification.setJobType(new JobTypeInfo(jobType));
-		
 		/**
 		 * add type specific elements
 		 */
@@ -174,41 +172,15 @@ public class JobSpecificationServiceImpl extends AbstractJobSpecificationService
 				throw new ValidationException(String.format("Invalid Connector Id: %s for SalesforceConnector", connectorId));
 			}
 
-			Optional<Instance> instance = null;
-			
-			if (Assert.isNullOrEmpty(instanceKey)) {
-				instance = salesforceConnector.getInstances()
-						.stream()
-						.filter(e -> ! e.getIsSandbox())
-						.findFirst();				
-			} else {
-				instance = salesforceConnector.getInstances()
-						.stream()
-						.filter(i -> instanceKey.equals(i.getKey()))
-						.findFirst();
-				
-				if (! instance.isPresent()) {
-					throw new ValidationException(String.format("Invalid instance key: %s", instanceKey));
-				}
-			}
-
 			if (Assert.isNullOrEmpty(jobSpecification.getNotificationEmail())) {
-				jobSpecification.setNotificationEmail(instance.get().getEmail());
+				jobSpecification.setNotificationEmail(salesforceConnector.getIdentity().getEmail());
 			}
-			
-			InstanceInfo instanceInfo = new InstanceInfo();
-			instanceInfo.setApiVersion(instance.get().getApiVersion());
-			instanceInfo.setIsSandbox(instance.get().getIsSandbox());
-			instanceInfo.setKey(instance.get().getKey());
-			instanceInfo.setName(instance.get().getName());
-			instanceInfo.setServiceEndpoint(instance.get().getServiceEndpoint());
 			
 			ConnectorInfo connectorInfo = new ConnectorInfo();
 			connectorInfo.setId(salesforceConnector.getId());
 			connectorInfo.setName(salesforceConnector.getName());
 			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
 			connectorInfo.setServerName(salesforceConnector.getOrganization().getInstanceName());
-			connectorInfo.setInstance(instanceInfo);
 			
 			jobSpecification.setConnector(connectorInfo);
 			

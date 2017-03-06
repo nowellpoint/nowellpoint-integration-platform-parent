@@ -3,10 +3,8 @@ package com.nowellpoint.client.resource;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.InstanceRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.SObjectDetail;
-import com.nowellpoint.client.model.Instance;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
@@ -97,6 +95,59 @@ public class SalesforceConnectorResource extends AbstractResource {
     			.path(id)
     			.parameter("tag", salesforceConnectorRequest.getTag())
     			.parameter("name", salesforceConnectorRequest.getName())
+    			.parameter("ownerId", salesforceConnectorRequest.getOwnerId())
+    			.execute();
+		
+		UpdateResult<SalesforceConnector> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			SalesforceConnector resource = httpResponse.getEntity(SalesforceConnector.class);
+			result = new UpdateResultImpl<SalesforceConnector>(resource);  
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<SalesforceConnector>(error);
+		}
+		
+		return result;
+	}
+	
+	public UpdateResult<SalesforceConnector> test(String id) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("actions")
+    			.path("test")
+    			.path("invoke")
+    			.execute();
+		
+		UpdateResult<SalesforceConnector> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			SalesforceConnector resource = httpResponse.getEntity(SalesforceConnector.class);
+			result = new UpdateResultImpl<SalesforceConnector>(resource);  
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<SalesforceConnector>(error);
+		}
+		
+		return result;
+	}
+	
+	public UpdateResult<SalesforceConnector> build(String id) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("actions")
+    			.path("build")
+    			.path("invoke")
     			.execute();
 		
 		UpdateResult<SalesforceConnector> result = null;
@@ -133,10 +184,6 @@ public class SalesforceConnectorResource extends AbstractResource {
 		return deleteResult;
 	}
 	
-	public InstanceResource instance() {
-		return new InstanceResource(token);
-	}
-	
 	public class SObjectDetailResource extends AbstractResource {
 		
 		public SObjectDetailResource(Token token) {
@@ -149,8 +196,6 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
 					.path(RESOURCE_CONTEXT)
 	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.path(key)
 	    			.path("sobject")
 	    			.path(sobjectName)
 	    			.execute();
@@ -164,182 +209,6 @@ public class SalesforceConnectorResource extends AbstractResource {
 			} 
 			
 			return resource;
-		}
-	}
-	
-	public class InstanceResource extends AbstractResource {
-		
-		public InstanceResource(Token token) {
-			super(token);
-		}
-		
-		public Instance get(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-					.path(RESOURCE_CONTEXT)
-	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.path(key)
-	    			.execute();
-			
-			Instance resource = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				resource = httpResponse.getEntity(Instance.class);  
-			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} 
-			
-			return resource;
-		}
-		
-		public CreateResult<Instance> add(String salesforceConnectorId, InstanceRequest instanceRequest) {
-			Instance instance = new Instance()
-					.withIsActive(instanceRequest.getIsActive())
-					.withAuthEndpoint(instanceRequest.getAuthEndpoint())
-					.withName(instanceRequest.getEnvironmentName())
-					.withPassword(instanceRequest.getPassword())
-					.withUsername(instanceRequest.getUsername())
-					.withSecurityToken(instanceRequest.getSecurityToken());
-			
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
-					.path(RESOURCE_CONTEXT)
-	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.body(instance)
-					.execute();
-			
-			CreateResult<Instance> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Instance resource = httpResponse.getEntity(Instance.class);
-				result = new CreateResultImpl<Instance>(resource);  
-			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new CreateResultImpl<Instance>(error);
-			}
-			
-			return result;
-		}
-		
-		public UpdateResult<Instance> update(String salesforceConnectorId, String key, InstanceRequest instanceRequest) {
-			Instance instance = new Instance()
-					.withIsActive(instanceRequest.getIsActive())
-					.withAuthEndpoint(instanceRequest.getAuthEndpoint())
-					.withName(instanceRequest.getEnvironmentName())
-					.withPassword(instanceRequest.getPassword())
-					.withUsername(instanceRequest.getUsername())
-					.withSecurityToken(instanceRequest.getUsername());
-			
-			HttpResponse httpResponse = RestResource.put(token.getEnvironmentUrl())
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getEnvironmentUrl())
-					.path(RESOURCE_CONTEXT)
-	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.path(key)
-	    			.body(instance)
-					.execute();
-			
-			UpdateResult<Instance> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Instance resource = httpResponse.getEntity(Instance.class);
-				result = new UpdateResultImpl<Instance>(resource);  
-			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Instance>(error);
-			}
-			
-			return result;
-		}
-		
-		public DeleteResult delete(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.path(key)
-					.execute();
-			
-			DeleteResult deleteResult = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				deleteResult = new DeleteResultImpl();
-			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-				Error error = httpResponse.getEntity(Error.class);
-				deleteResult = new DeleteResultImpl(error);
-			}
-			
-			return deleteResult;
-		}
-		
-		public UpdateResult<Instance> test(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-					.path(RESOURCE_CONTEXT)
-	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.path(key)
-	    			.path("actions")
-	    			.path("test")
-	    			.path("invoke")
-	    			.execute();
-			
-			UpdateResult<Instance> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Instance resource = httpResponse.getEntity(Instance.class);
-				result = new UpdateResultImpl<Instance>(resource);  
-			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Instance>(error);
-			}
-			
-			return result;
-		}
-		
-		public UpdateResult<Instance> build(String salesforceConnectorId, String key) {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-					.path(RESOURCE_CONTEXT)
-	    			.path(salesforceConnectorId)
-	    			.path("instance")
-	    			.path(key)
-	    			.path("actions")
-	    			.path("build")
-	    			.path("invoke")
-	    			.execute();
-			
-			UpdateResult<Instance> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Instance resource = httpResponse.getEntity(Instance.class);
-				result = new UpdateResultImpl<Instance>(resource);  
-			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Instance>(error);
-			}
-			
-			return result;
-		}
-		
-		public SObjectDetailResource sobjectDetail() {
-			return new SObjectDetailResource(token);
 		}
 	}
 }

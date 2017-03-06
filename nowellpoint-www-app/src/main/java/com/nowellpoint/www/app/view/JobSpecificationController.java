@@ -219,30 +219,8 @@ public class JobSpecificationController extends AbstractStaticController {
 			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
 			connectorInfo.setServerName(salesforceConnector.getOrganization().getInstanceName());
 			
-			Optional<Instance> optional = salesforceConnector.getInstances()
-					.stream()
-					.filter(i -> i.getKey().equals(instanceKey))
-					.findFirst();
-			
-			if (optional.isPresent()) {
-				
-				Instance instance = optional.get();
-				
-				InstanceInfo instanceInfo = new InstanceInfo();
-				instanceInfo.setApiVersion(instance.getApiVersion());
-				instanceInfo.setIsSandbox(instance.getIsSandbox());
-				instanceInfo.setKey(instance.getKey());
-				instanceInfo.setName(instance.getName());
-				instanceInfo.setServiceEndpoint(instance.getServiceEndpoint());
-				
-				connectorInfo.setInstance(instanceInfo);
-				
-				System.out.println(new ObjectMapper().writeValueAsString(instanceInfo));
-				
-				jobSpecification.setConnector(connectorInfo);
-				jobSpecification.setNotificationEmail(instance.getEmail());
-
-			}
+			jobSpecification.setConnector(connectorInfo);
+			jobSpecification.setNotificationEmail(salesforceConnector.getIdentity().getEmail());
 		}
 
 		model.put("jobSpecification", jobSpecification);
@@ -269,7 +247,6 @@ public class JobSpecificationController extends AbstractStaticController {
 		
 		String jobTypeId = request.queryParams("jobTypeId");
 		String connectorId = request.queryParams("connectorId");
-		String instanceKey = request.queryParams("instanceKey");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		
@@ -277,7 +254,6 @@ public class JobSpecificationController extends AbstractStaticController {
 				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)
-				.withInstanceKey(instanceKey)
 				.withJobTypeId(jobTypeId);
 		
 		CreateResult<JobSpecification> createjobSpecificationResult = new NowellpointClient(token)

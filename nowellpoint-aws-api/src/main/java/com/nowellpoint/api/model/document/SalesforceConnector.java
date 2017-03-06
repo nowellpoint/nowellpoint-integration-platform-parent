@@ -22,8 +22,9 @@ import java.util.Set;
 
 import com.nowellpoint.api.model.sforce.Identity;
 import com.nowellpoint.api.model.sforce.Organization;
+import com.nowellpoint.client.sforce.model.Theme;
+import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -53,10 +54,20 @@ public class SalesforceConnector extends MongoDocument {
 	@EmbedOne
 	private Organization organization;
 	
+	@EmbedOne
+	private ConnectString connectString;
+	
+	private Boolean isValid;
+	
+	private String serviceEndpoint;
+	
+	private String connectStatus;
+	
 	private String tag;
 	
-	@EmbedMany
-	private Set<Instance> instances;
+	private Set<Sobject> sobjects;
+	
+	private Theme theme;
 	
 	public SalesforceConnector() {
 		
@@ -118,6 +129,38 @@ public class SalesforceConnector extends MongoDocument {
 		this.organization = organization;
 	}
 
+	public ConnectString getConnectString() {
+		return connectString;
+	}
+
+	public void setConnectString(ConnectString connectString) {
+		this.connectString = connectString;
+	}
+
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+
+	public String getConnectStatus() {
+		return connectStatus;
+	}
+
+	public void setConnectStatus(String connectStatus) {
+		this.connectStatus = connectStatus;
+	}
+
+	public String getServiceEndpoint() {
+		return serviceEndpoint;
+	}
+
+	public void setServiceEndpoint(String serviceEndpoint) {
+		this.serviceEndpoint = serviceEndpoint;
+	}
+
 	public String getTag() {
 		return tag;
 	}
@@ -126,11 +169,19 @@ public class SalesforceConnector extends MongoDocument {
 		this.tag = tag;
 	}
 
-	public Set<Instance> getInstances() {
-		return instances;
+	public Set<Sobject> getSobjects() {
+		return sobjects;
 	}
 
-	public void setInstances(Set<Instance> instances) {
-		this.instances = instances;
+	public void setSobjects(Set<Sobject> sobjects) {
+		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

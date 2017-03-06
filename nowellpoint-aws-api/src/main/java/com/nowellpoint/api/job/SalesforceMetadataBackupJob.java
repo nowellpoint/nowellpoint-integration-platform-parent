@@ -45,8 +45,6 @@ import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
 import com.nowellpoint.api.model.document.JobSpecification;
 import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dynamodb.UserProperties;
-import com.nowellpoint.api.model.dynamodb.UserProperty;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -468,27 +466,6 @@ public class SalesforceMetadataBackupJob implements Job {
 		Token token = authenticationResponse.getToken();
 		
 		return token.getAccessToken();
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param environmentKey
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	private Map<String, UserProperty> getUserProperties(String environmentKey) {
-		
-		UserProperty userProperty = new UserProperty();
-		userProperty.setSubject(environmentKey);
-		
-		Map<String, UserProperty> properties = UserProperties.query(userProperty)
-				.stream()
-				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
-		
-		return properties;
 	}
 	
 	/**

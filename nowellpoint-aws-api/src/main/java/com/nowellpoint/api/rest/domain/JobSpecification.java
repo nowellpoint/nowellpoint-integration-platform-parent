@@ -15,7 +15,7 @@ public class JobSpecification extends AbstractResource {
 	
 	private UserInfo owner;
 	
-	private String jobId;
+	private String name;
 	
 	private ConnectorInfo connector;
 	
@@ -61,12 +61,12 @@ public class JobSpecification extends AbstractResource {
 		this.owner = owner;
 	}
 
-	public String getJobId() {
-		return jobId;
+	public String getName() {
+		return name;
 	}
 
-	public void setJobId(String jobId) {
-		this.jobId = jobId;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public ConnectorInfo getConnector() {
@@ -122,7 +122,7 @@ public class JobSpecification extends AbstractResource {
 		
 		private String owner;
 		
-		private String jobId;
+		private String name;
 		
 		private String description;
 		
@@ -139,7 +139,7 @@ public class JobSpecification extends AbstractResource {
 			createdBy = jobSpecification.getCreatedBy().getId();
 			lastUpdatedBy = jobSpecification.getLastUpdatedBy().getId();
 			owner = jobSpecification.getOwner().getId();
-			jobId = jobSpecification.getJobId();
+			name = jobSpecification.getName();
 			description = jobSpecification.getDescription();
 			//jobType = jobSpecification.getJobType();
 			notificationEmail = jobSpecification.getNotificationEmail();
@@ -160,8 +160,8 @@ public class JobSpecification extends AbstractResource {
 			return this;
 		}
 		
-		public JobSpecificationBuilder withJobId(String jobId) {
-			this.jobId = jobId;
+		public JobSpecificationBuilder withName(String name) {
+			this.name = name;
 			return this;
 		}
 		
@@ -187,7 +187,7 @@ public class JobSpecification extends AbstractResource {
 			jobSpecification.setCreatedOn(Date.from(Instant.now()));
 			jobSpecification.setLastUpdatedOn(Date.from(Instant.now()));
 			jobSpecification.setOwner(new UserInfo(owner));
-			jobSpecification.setJobId(jobId);
+			jobSpecification.setName(name);
 			jobSpecification.setDescription(description);
 			//jobSpecification.setJobType(jobType);
 			jobSpecification.setNotificationEmail(notificationEmail);

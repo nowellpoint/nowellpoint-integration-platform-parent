@@ -4,13 +4,11 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Id;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collectionName="account.profiles")
 public class UserInfo extends MongoDocument implements Serializable {
 	

@@ -15,14 +15,27 @@ import com.nowellpoint.http.Status;
 import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.Token;
 
+/**
+ * @author John Herson
+ *
+ */
+
 public class JobSpecificationResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "job-specifications";
+	
+	/**
+	 * @param token
+	 */
 	
 	public JobSpecificationResource(Token token) {
 		super(token);
 	}
 
+	/**
+	 * @return JobSpecificationList
+	 */
+	
 	public JobSpecificationList getJobSpecifications() {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
@@ -40,17 +53,22 @@ public class JobSpecificationResource extends AbstractResource {
 		return resources;
 	}
 	
-	public CreateResult<JobSpecification> create(JobSpecificationRequest jobScheduleRequest) {		
+	/**
+	 * @param jobSpecificationRequest
+	 * @return CreateResult<JobSpecification>
+	 */
+	
+	public CreateResult<JobSpecification> create(JobSpecificationRequest jobSpecificationRequest) {		
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.parameter("jobTypeId", jobScheduleRequest.getJobTypeId())
-				.parameter("connectorId", jobScheduleRequest.getConnectorId())
-				.parameter("instanceKey", jobScheduleRequest.getInstanceKey())
-				.parameter("notificationEmail", jobScheduleRequest.getNotificationEmail())
-				.parameter("description", jobScheduleRequest.getDescription())
+				.parameter("jobTypeId", jobSpecificationRequest.getJobTypeId())
+				.parameter("connectorId", jobSpecificationRequest.getConnectorId())
+				.parameter("name", jobSpecificationRequest.getName())
+				.parameter("notificationEmail", jobSpecificationRequest.getNotificationEmail())
+				.parameter("description", jobSpecificationRequest.getDescription())
 				.execute();
 		
 		CreateResult<JobSpecification> result = null;
@@ -69,19 +87,20 @@ public class JobSpecificationResource extends AbstractResource {
 	}
 	
 	/**
-	 * @param jobScheduleRequest
-	 * @return
+	 * @param jobSpecificationRequest
+	 * @return UpdateResult<JobSpecification>
 	 */
 	
-	public UpdateResult<JobSpecification> update(JobSpecificationRequest jobScheduleRequest) {
+	public UpdateResult<JobSpecification> update(JobSpecificationRequest jobSpecificationRequest) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-				.path(jobScheduleRequest.getId())
-				.parameter("notificationEmail", jobScheduleRequest.getNotificationEmail())
-				.parameter("description", jobScheduleRequest.getDescription())
+				.path(jobSpecificationRequest.getId())
+				.parameter("name", jobSpecificationRequest.getName())
+				.parameter("notificationEmail", jobSpecificationRequest.getNotificationEmail())
+				.parameter("description", jobSpecificationRequest.getDescription())
 				.execute();
 		
 		UpdateResult<JobSpecification> result = null;
@@ -98,6 +117,11 @@ public class JobSpecificationResource extends AbstractResource {
 		
 		return result;
 	}
+	
+	/**
+	 * @param id
+	 * @return JobSpecification
+	 */
 	
 	public JobSpecification get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
@@ -118,6 +142,11 @@ public class JobSpecificationResource extends AbstractResource {
 		
 		return resource;
 	}
+	
+	/**
+	 * @param id
+	 * @return DeleteResult
+	 */
 	
 	public DeleteResult delete(String id) {
 		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())

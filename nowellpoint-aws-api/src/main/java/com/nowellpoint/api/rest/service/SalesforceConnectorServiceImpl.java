@@ -10,8 +10,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +21,6 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.ValidationException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
 import org.bson.types.ObjectId;
@@ -37,14 +34,15 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.nowellpoint.api.model.dynamodb.UserProperties;
-import com.nowellpoint.api.model.dynamodb.UserProperty;
+import com.nowellpoint.api.model.dynamodb.VaultEntry;
+import com.nowellpoint.api.rest.domain.ConnectString;
 import com.nowellpoint.api.rest.domain.Instance;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.SalesforceService;
+import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
@@ -83,14 +81,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	@Inject
 	private SalesforceService salesforceService;
 	
-	private static final String IS_ACTIVE = "isActive";
-	private static final String API_VERSION = "apiVersion";
-	private static final String AUTH_ENDPOINT = "authEndpoint";
-	private static final String USERNAME = "username";
-	private static final String SECURITY_TOKEN_PARAM = "securityToken";
-	private static final String PASSWORD = "password";
-	private static final String SECURITY_TOKEN_PROPERTY = "security.token";
-	private static final String REFRESH_TOKEN_PROPERTY = "refresh.token";
+	@Inject
+	private VaultEntryService vaultEntryService;
 	
 	private static final AmazonS3 s3Client = new AmazonS3Client();
 	
@@ -137,51 +129,27 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
-		SalesforceConnector resource = new SalesforceConnector();
-		resource.setName(organization.getName().concat(":").concat(organization.getId()));
-		resource.setOrganization(organization);
-		resource.setIdentity(identity);
+		VaultEntry vaultEntry = vaultEntryService.store(
+				organization.getId(), 
+				Organization.class.getName(), 
+				token.getRefreshToken(), 
+				UserContext.getPrincipal().getName());
 		
-		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		ConnectString connectString = ConnectString.salesforce(vaultEntry.getToken(), token.getId());
 		
-		if (resource.getOwner() == null) {
-			resource.setOwner(userInfo);
-		}
+		SalesforceConnector salesforceConnector = SalesforceConnector.createSalesforceConnector( 
+				UserContext.getPrincipal().getName(),
+				UserContext.getPrincipal().getName(), 
+				identity, 
+				organization, 
+				connectString, 
+				Boolean.TRUE, 
+				token.getInstanceUrl(),
+				null);
 		
-		Instance instance = new Instance();
-		instance.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
-		instance.setIdentityId(identity.getId());
-		instance.setEmail(identity.getEmail());
-		instance.setGrantType("token");
-		instance.setIsActive(Boolean.TRUE);
-		instance.setName("Production");
-		instance.setIsReadOnly(Boolean.TRUE);
-		instance.setIsSandbox(Boolean.FALSE);
-		instance.setIsValid(Boolean.TRUE);
-		instance.setAddedOn(Date.from(Instant.now()));
-		instance.setUpdatedOn(Date.from(Instant.now()));
-		instance.setUserId(identity.getUserId());
-		instance.setUsername(identity.getUsername());
-		instance.setOrganizationId(organization.getId());
-		instance.setOrganizationName(organization.getName());
-		instance.setServiceEndpoint(token.getInstanceUrl());
-		instance.setAuthEndpoint("https://login.salesforce.com");
-		instance.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
+		create(salesforceConnector);
 		
-		resource.addInstance(instance);
-		
-		Date now = Date.from(Instant.now());
-		
-		resource.setCreatedOn(now);
-		resource.setCreatedBy(userInfo);
-		resource.setLastUpdatedOn(now);
-		resource.setLastUpdatedBy(userInfo);
-		
-		create(resource);
-		
-		UserProperties.saveSalesforceTokens(UserContext.getPrincipal().getName(), instance.getKey(), token);
-		
-		return resource;
+		return salesforceConnector;
 	}
 	
 	/**
@@ -191,30 +159,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public void updateSalesforceConnector(String id, SalesforceConnector salesforceConnector) {		
+	public SalesforceConnector updateSalesforceConnector(String id, String name, String tag, String ownerId) {		
 		SalesforceConnector original = findById(id);
-		
-		salesforceConnector.setId(original.getId());
-		salesforceConnector.setCreatedOn(original.getCreatedOn());
-		
-		if (Assert.isNullOrEmpty(salesforceConnector.getName())) {
-			salesforceConnector.setName(original.getName());
-		}
-		
-		if (Assert.isNull(salesforceConnector.getTag())) {
-			salesforceConnector.setTag(original.getTag());
-		} else if (Assert.isEmpty(salesforceConnector.getTag())) {
-			salesforceConnector.setTag(null);
-		}
-		
-		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
-		
-		Date now = Date.from(Instant.now());
-		
-		salesforceConnector.setLastUpdatedOn(now);
-		salesforceConnector.setLastUpdatedBy(userInfo);
-		
-		update(salesforceConnector);
+		updateSalesforceConnector(original, name, tag, ownerId, null, null);
+		return original;
 	}
 	
 	/**
@@ -227,6 +175,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	public void deleteSalesforceConnector(String id) {
 		SalesforceConnector salesforceConnector = findById( id );
 		
+		String token = getToken(salesforceConnector.getConnectString().getUri());
+		
+		vaultEntryService.remove(token);
+		
 		Photos photos = salesforceConnector.getIdentity().getPhotos();
 
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
@@ -236,10 +188,6 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
 
 		s3Client.deleteObjects(deleteObjectsRequest);
-		
-		salesforceConnector.getInstances().stream().forEach(e -> {
-			removeInstance(e);
-		});
 		
 		delete(salesforceConnector);
 	}
@@ -258,310 +206,28 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	/**
 	 * 
 	 * @param id
-	 * @return
-	 */
-	
-	@Override
-	public Set<Instance> getInstances(String id) {
-		SalesforceConnector salesforceConnector = findById(id);
-		return salesforceConnector.getInstances();
-	}
-	
-	/**
-	 * 
-	 * @param id
 	 * @param key
 	 * @return
 	 */
 	
 	@Override
-	public Instance getInstance(String id, String key) {
-		SalesforceConnector resource = findById(id);
-		
-		Instance instance = resource.getInstances()
-				.stream()
-				.filter(p -> p.getKey().equals(key))
-				.findFirst()
-				.get();
-		
-		return instance;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param instance
-	 */
-	
-	@Override
-	public void addInstance(String id, Instance instance) {
-		LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
-
-		SalesforceConnector resource = findById(id);
-		
-		if (resource.getInstances() != null && resource.getInstances().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
-			throw new ValidationException(String.format("Unable to add new environment. Conflict with existing organization: %s with Id: %s", loginResult.getOrganizationName(), loginResult.getOrganizationId()));
-		}
-		
-		instance.setKey(UUID.randomUUID().toString().replace("-", ""));
-		instance.setEmail(loginResult.getEmail());
-		instance.setIdentityId(loginResult.getId());
-		instance.setGrantType("password");
-		instance.setIsActive(Boolean.TRUE);
-		instance.setIsReadOnly(Boolean.FALSE);
-		instance.setIsValid(Boolean.TRUE);
-		instance.setAddedOn(Date.from(Instant.now()));
-		instance.setUpdatedOn(Date.from(Instant.now()));
-		instance.setApiVersion(System.getProperty(Properties.SALESFORCE_API_VERSION));
-		instance.setIsSandbox(Boolean.TRUE);
-		instance.setUserId(loginResult.getUserId());
-		instance.setUsername(loginResult.getUserName());
-		instance.setOrganizationId(loginResult.getOrganizationId());
-		instance.setOrganizationName(loginResult.getOrganizationName());
-		instance.setServiceEndpoint(loginResult.getServiceEndpoint());
-		
-		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
-		
-		instance.setPassword(null);
-		instance.setSecurityToken(null);
-		
-		resource.addInstance(instance);
-		
-		updateSalesforceConnector(id, resource);
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param instance
-	 * 
-	 */
-	
-	@Override
-	public void updateInstance(String id, String key, Instance instance) {
+	public SalesforceConnector test(String id) {		
 		SalesforceConnector salesforceConnector = findById( id );
 		
-		instance.setKey(key);
+		test(salesforceConnector);
 		
-		updateInstance(salesforceConnector, instance);
-
-	} 
-
-	/**
-	 * 
-	 * @param resource
-	 * @param instance
-	 * 
-	 */
-	
-	@Override
-	public void updateInstance(SalesforceConnector resource, Instance instance) {
+		update(salesforceConnector);
 		
-		Instance original = resource.getInstances()
-				.stream()
-				.filter(e -> instance.getKey().equals(e.getKey()))
-				.findFirst()
-				.get();
-		
-		resource.getInstances().removeIf(e -> instance.getKey().equals(e.getKey()));
-		
-		instance.setAddedOn(original.getAddedOn());
-		instance.setUpdatedOn(Date.from(Instant.now()));
-		instance.setIsReadOnly(original.getIsReadOnly());
-		instance.setIsSandbox(original.getIsSandbox());
-		instance.setApiVersion(original.getApiVersion());
-		instance.setTestMessage(original.getTestMessage());
-		instance.setGrantType(original.getGrantType());
-		instance.setTheme(original.getTheme());
-		instance.setSobjects(original.getSobjects());
-		
-		if (instance.getIsActive()) {
-			LoginResult loginResult = salesforceService.login(instance.getAuthEndpoint(), instance.getUsername(), instance.getPassword(), instance.getSecurityToken());
-			
-			if (! loginResult.getOrganizationId().equals(original.getOrganizationId()) 
-					&& resource.getInstances().stream().filter(e -> e.getOrganizationId().equals(loginResult.getOrganizationId())).findFirst().isPresent()) {
-				
-				throw new ValidationException(String.format("Unable to update environment. Conflict with existing organization: %s", loginResult.getOrganizationId()));
-			}
-			
-			instance.setIdentityId(loginResult.getId());
-			instance.setEmail(loginResult.getEmail());
-			instance.setUserId(loginResult.getUserId());
-			instance.setOrganizationId(loginResult.getOrganizationId());
-			instance.setOrganizationName(loginResult.getOrganizationName());
-			instance.setServiceEndpoint(loginResult.getServiceEndpoint());
-			instance.setIsValid(Boolean.TRUE);
-		} else {
-			instance.setIdentityId(original.getIdentityId());
-			instance.setEmail(original.getEmail());
-			instance.setUserId(original.getUserId());
-			instance.setOrganizationId(original.getOrganizationId());
-			instance.setOrganizationName(original.getOrganizationName());
-			instance.setServiceEndpoint(original.getServiceEndpoint());
-			instance.setIsValid(Boolean.FALSE);
-		}
-		
-		UserProperties.saveSalesforceCredentials(UserContext.getPrincipal().getName(), instance.getKey(), instance.getPassword(), instance.getSecurityToken());
-		
-		instance.setPassword(null);
-		instance.setSecurityToken(null);
-		
-		resource.addInstance(instance);
-		
-		updateSalesforceConnector(resource.getId(), resource);
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @param parameters
-	 * @return
-	 */
-	
-	@Override
-	public Instance updateInstance(String id, String key, MultivaluedMap<String, String> parameters) {
-		
-		SalesforceConnector resource = findById( id );
-		
-		Instance instance = resource.getInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.get();
-		
-		if (parameters.containsKey(IS_ACTIVE)) {
-			instance.setIsActive(Boolean.valueOf(parameters.getFirst(IS_ACTIVE)));
-		}
-		
-		if (parameters.containsKey(API_VERSION)) {
-			instance.setApiVersion(parameters.getFirst(API_VERSION));
-		}
-		
-		if (parameters.containsKey(AUTH_ENDPOINT)) {
-			instance.setAuthEndpoint(parameters.getFirst(AUTH_ENDPOINT));
-		}
-		
-		if (parameters.containsKey(PASSWORD)) {
-			instance.setPassword(parameters.getFirst(PASSWORD));
-		}
-		
-		if (parameters.containsKey(USERNAME)) {
-			instance.setUsername(parameters.getFirst(USERNAME));
-		}
-		
-		if (parameters.containsKey(SECURITY_TOKEN_PARAM)) {
-			instance.setSecurityToken(parameters.getFirst(SECURITY_TOKEN_PARAM));
-		}
-		
-		updateInstance(resource, instance);
-		
-		return instance;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 * @return
-	 */
-	
-	@Override
-	public Instance testConnection(String id, String key) {		
-		SalesforceConnector resource = findById( id );
-		
-		Instance instance = resource.getInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.get();
-		
-		Map<String, UserProperty> properties = UserProperties.queryBySubject(instance.getKey())
-				.stream()
-				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
-		
-		if (instance.getIsSandbox()) {
-			instance.setPassword(properties.get(PASSWORD).getValue());
-			instance.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
-		} else {
-			instance.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
-		}
-		
-		testConnection( instance );
-		
-		instance.setPassword(null);
-		instance.setSecurityToken(null);
-		instance.setRefreshToken(null);
-		
-		updateSalesforceConnector( id, resource );
-		
-		return instance;
+		return salesforceConnector;
 	}
 	
 	@Override
-	public Instance buildEnvironment(String id, String key) {
-		SalesforceConnector resource = findById( id );
+	public SalesforceConnector build(String id) {
+		SalesforceConnector original = findById( id );
 		
-		Instance instance = resource.getInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.get();
+		update(original);
 		
-		Map<String, UserProperty> properties = UserProperties.queryBySubject(instance.getKey())
-				.stream()
-				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
-		
-		if (instance.getIsSandbox()) {
-			instance.setPassword(properties.get(PASSWORD).getValue());
-			instance.setSecurityToken(properties.get(SECURITY_TOKEN_PROPERTY).getValue());
-		} else {
-			instance.setRefreshToken(properties.get(REFRESH_TOKEN_PROPERTY).getValue());
-		}
-		
-		buildInstance( instance );
-		
-		instance.setPassword(null);
-		instance.setSecurityToken(null);
-		instance.setRefreshToken(null);
-		
-		updateSalesforceConnector( id, resource );
-		
-		return instance;
-	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @param key
-	 */
-	
-	@Override
-	public void removeInstance(String id, String key) {
-		SalesforceConnector resource = findById(id);
-		
-		Instance instance = resource.getInstances()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.get();
-		
-		removeInstance(instance);
-		
-		resource.getInstances().removeIf(e -> key.equals(e.getKey()));
-		
-		updateSalesforceConnector(id, resource);
-	} 
-	
-	/**
-	 * 
-	 * @param instance
-	 */
-	
-	private void removeInstance(Instance instance) {
-		UserProperties.clear(instance.getKey());
-		deleteSobjects(instance.getKey());
+		return new SalesforceConnector();
 	}
 	
 	/**
@@ -598,6 +264,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	private void buildConnection(ConnectString connectString) {
+		
 	}
 	
 	private void buildInstance(Instance instance) {
@@ -751,27 +421,26 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		executor.awaitTermination(30, TimeUnit.SECONDS);
 	}
 	
-	private void testConnection(Instance instance) {
+	private void test(SalesforceConnector salesforceConnector) {
+		
+		String tokenStr = getToken(salesforceConnector.getConnectString().getUri());
+		
+		VaultEntry vaultEntry = vaultEntryService.retrive(tokenStr);
 
 		try {
 			
-			if (instance.getIsSandbox()) {
+			if (salesforceConnector.getOrganization().getIsSandbox()) {
 				
-				String authEndpoint = instance.getAuthEndpoint();
-				String username = instance.getUsername();
-				String password = instance.getPassword();
-				String securityToken = instance.getSecurityToken();
+				String authEndpoint = getAuthEndpoint(tokenStr);
+				String username = vaultEntry.getValue().split(":")[0];
+				String password = vaultEntry.getValue().split(":")[1];
+				String securityToken = vaultEntry.getValue().split(":")[2];
 				
 				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
 				
-				instance.setUserId(loginResult.getUserId());
-				instance.setOrganizationId(loginResult.getOrganizationId());
-				instance.setOrganizationName(loginResult.getOrganizationName());
-				instance.setServiceEndpoint(loginResult.getServiceEndpoint());
-				
 			} else {
 				
-				String refreshToken = instance.getRefreshToken();
+				String refreshToken = vaultEntry.getValue();
 				
 				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
 				
@@ -787,21 +456,63 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				
 				Organization organization = client.getOrganization(getOrganizationRequest);
 				
-				instance.setUserId(identity.getUserId());
-				instance.setOrganizationId(identity.getOrganizationId());
-				instance.setOrganizationName(organization.getName());
-				instance.setServiceEndpoint(token.getInstanceUrl());
+				salesforceConnector.setIdentity(identity);
+				salesforceConnector.setOrganization(organization);
 			}
-			instance.setIsValid(Boolean.TRUE);
+			salesforceConnector.setIsValid(Boolean.TRUE);
 		} catch (OauthException e) {
-			instance.setIsValid(Boolean.FALSE);
-			instance.setTestMessage(e.getErrorDescription());
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setConnectStatus(e.getErrorDescription());
 		} catch (ValidationException e) {
-			instance.setIsValid(Boolean.FALSE);
-			instance.setTestMessage(e.getMessage());
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setConnectStatus(e.getMessage());
 		} catch (Exception e) {
-			instance.setIsValid(Boolean.FALSE);
-			instance.setTestMessage(e.getMessage());
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setConnectStatus(e.getMessage());
 		}			
+		
+		update(salesforceConnector);
+	}
+	
+	private void updateSalesforceConnector(SalesforceConnector salesforceConnector, String name, String tag, String ownerId, Boolean isValid, String connectStatus) {
+		if (Assert.isNullOrEmpty(name)) {
+			name = salesforceConnector.getName();
+		}
+		
+		if (Assert.isNullOrEmpty(ownerId)) {
+			ownerId = salesforceConnector.getOwner().getId();
+		}
+		
+		if (Assert.isNull(tag)) {
+			tag = salesforceConnector.getTag();
+		} else if (Assert.isEmpty(tag)) {
+			tag = null;
+		}
+		
+		if (Assert.isNullOrEmpty(connectStatus)) {
+			connectStatus = salesforceConnector.getConnectStatus();
+		}
+		
+		if (Assert.isNull(isValid)) {
+			isValid = salesforceConnector.getIsValid();
+		}
+		
+		salesforceConnector.setName(name);
+		salesforceConnector.setTag(tag);
+		salesforceConnector.setOwner(new UserInfo(ownerId));
+		salesforceConnector.setIsValid(isValid);
+		salesforceConnector.setConnectStatus(connectStatus);
+		salesforceConnector.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
+		salesforceConnector.setLastUpdatedOn(Date.from(Instant.now()));
+		
+		update(salesforceConnector);
+	}
+	
+	private String getToken(String uri) {
+		return uri.substring(0, uri.indexOf("@")).replace("salesforce://", "");
+	}
+	
+	private String getAuthEndpoint(String uri) {
+		return null;
 	}
 }

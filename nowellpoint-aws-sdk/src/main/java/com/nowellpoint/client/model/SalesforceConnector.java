@@ -1,11 +1,12 @@
 package com.nowellpoint.client.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.client.model.sforce.Identity;
 import com.nowellpoint.client.model.sforce.Organization;
+import com.nowellpoint.client.model.sforce.Sobject;
+import com.nowellpoint.client.model.sforce.Theme;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends AbstractResource {
@@ -16,14 +17,24 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private Organization organization;
 	
+	private ConnectString connectString;
+	
+	private Boolean isValid;
+	
+	private String serviceEndpoint;
+	
+	private String connectStatus;
+	
 	private UserInfo owner;
 	
 	private String tag;
 	
-	private List<Instance> instances;
+	private Set<Sobject> sobjects;
+	
+	private Theme theme;
 	
 	public SalesforceConnector() {
-		setInstances(new ArrayList<Instance>());
+		
 	}
 	
 	public SalesforceConnector(String id) {
@@ -54,6 +65,38 @@ public class SalesforceConnector extends AbstractResource {
 		this.organization = organization;
 	}
 
+	public ConnectString getConnectString() {
+		return connectString;
+	}
+
+	public void setConnectString(ConnectString connectString) {
+		this.connectString = connectString;
+	}
+
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+
+	public String getConnectStatus() {
+		return connectStatus;
+	}
+
+	public void setConnectStatus(String connectStatus) {
+		this.connectStatus = connectStatus;
+	}
+
+	public String getServiceEndpoint() {
+		return serviceEndpoint;
+	}
+
+	public void setServiceEndpoint(String serviceEndpoint) {
+		this.serviceEndpoint = serviceEndpoint;
+	}
+
 	public UserInfo getOwner() {
 		return owner;
 	}
@@ -70,11 +113,19 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public List<Instance> getInstances() {
-		return instances;
+	public Set<Sobject> getSobjects() {
+		return sobjects;
 	}
 
-	public void setInstances(List<Instance> instances) {
-		this.instances = instances;
+	public void setSobjects(Set<Sobject> sobjects) {
+		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

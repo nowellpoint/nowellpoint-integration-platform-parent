@@ -24,29 +24,30 @@
             </p>
             <h4 class="text-muted text-center">${labels["no.records"]}</h4>
             <p class="text-center">
-                <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-info btn-lg" role="button">${labels["create.scheduled.job"]}</a>
+                <a href="${labels['base.path']}/new/select-type" class="btn btn-outline-primary btn-lg" role="button">${labels["create.scheduled.job"]}</a>
             </p>
         </#if>
-        <br>
-        <div class="content table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <th>${labels["source"]}</th>
-                    <th>${labels["job.type"]}</th>
-                    <th>${labels["status"]}</th>
-                    <th>${labels["action"]}</th>
-                </thead>
-                <tbody>
-                    <#list jobSpecificationList?sort_by( "createdOn") as jobSpecification>
-                        <tr id="${jobSpecification.id}">
-                            <td><a href="${labels['base.path']}/${jobSpecification.id}">${jobSpecification.connector.organizationName}</a></td>
-                            <td>${jobSpecification.jobType.name}</td>
-                            <td>${(jobSpecification.jobTypeId)!}</td>
-                            <td><a href="${labels['base.path']}/${jobSpecification.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a></td>
-                        </tr>
-                    </#list>
-                </tbody>
-            </table>
-        </div>
-
+        <#if jobSpecificationList?size gt 0>
+            <br>
+            <div class="content table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <th>${labels["source"]}</th>
+                        <th>${labels["job.type"]}</th>
+                        <th>${labels["status"]}</th>
+                        <th>${labels["action"]}</th>
+                    </thead>
+                    <tbody>
+                        <#list jobSpecificationList?sort_by( "createdOn") as jobSpecification>
+                            <tr id="${jobSpecification.id}">
+                                <td><a href="${labels['base.path']}/${jobSpecification.id}">${jobSpecification.connector.organizationName}</a></td>
+                                <td>${jobSpecification.jobType.name}</td>
+                                <td>${(jobSpecification.jobTypeId)!}</td>
+                                <td><a href="${labels['base.path']}/${jobSpecification.id!}/edit?view=1" class="btn btn-sm btn-primary-outline" data-toggle="tooltip" title="${labels['edit']}" role="button"><span class="icon icon-edit fa-1x"></span></a></td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
+            </div>
+        </#if>
     </@t.page>

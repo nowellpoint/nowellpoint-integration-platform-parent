@@ -20,7 +20,7 @@ public class AccountProfile extends MongoDocument {
 	@Reference(referenceClass = AccountProfile.class)
 	private UserInfo createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference
 	private UserInfo lastUpdatedBy;
 
 	private String username;

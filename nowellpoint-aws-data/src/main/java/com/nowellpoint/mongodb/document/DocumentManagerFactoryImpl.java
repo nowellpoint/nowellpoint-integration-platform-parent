@@ -27,6 +27,7 @@ import com.mongodb.connection.SslSettings;
 import com.mongodb.connection.netty.NettyStreamFactoryFactory;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
+import com.nowellpoint.util.Assert;
 
 public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoCloseable {
 	
@@ -88,6 +89,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	
 	@Override
 	public MongoCollection<Document> getCollection(String collectionName) {
+		Assert.assertNotNullOrEmpty(collectionName, "getCollection function is missing collectionName parameter");
 		return (MongoCollection<Document>) database.getCollection(collectionName);
 	}
 	
@@ -98,6 +100,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	
 	@Override
 	public <T> String resolveCollectionName(Class<T> documentClass) {
+		Assert.assertNotNull(documentClass, "resolveCollectionName function is missing documentClass parameter");
 		return collectionNameResolver.resolveCollectionName(documentClass);
 	}
 	

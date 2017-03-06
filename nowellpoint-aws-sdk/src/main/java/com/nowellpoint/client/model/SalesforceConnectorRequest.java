@@ -5,17 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnectorRequest {
 
-	/**
-	 * 
-	 */
-
 	private String name;
 
-	/**
-	 * 
-	 */
-	
 	private String tag;
+	
+	private String ownerId;
 	
 	public SalesforceConnectorRequest() {
 
@@ -37,6 +31,14 @@ public class SalesforceConnectorRequest {
 		this.tag = tag;
 	}
 	
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
 	public SalesforceConnectorRequest withName(String name) {
 		setName(name);
 		return this;
@@ -44,6 +46,11 @@ public class SalesforceConnectorRequest {
 	
 	public SalesforceConnectorRequest withTag(String tag) {
 		setTag(tag);
+		return this;
+	}
+	
+	public SalesforceConnectorRequest withOwnerId(String ownerId) {
+		setOwnerId(ownerId);
 		return this;
 	}
 }

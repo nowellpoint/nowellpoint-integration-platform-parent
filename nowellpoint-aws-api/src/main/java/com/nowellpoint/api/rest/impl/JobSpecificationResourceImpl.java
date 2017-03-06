@@ -57,91 +57,52 @@ public class JobSpecificationResourceImpl implements JobSpecificationResource {
 	@Override
 	public Response createJobSpecification(
 			String jobTypeId,
-			String instanceKey,
-			String notificationEmail,
-			String description,
 			String connectorId,
-			String start,
-			String end,
-			String timeZone,
-			String seconds,
-			String minutes,
-			String hours,
-			String dayOfMonth,
-			String month,
-			String dayOfWeek,
-			String year) {
+			String name,
+			String notificationEmail,
+			String description) {
 		
 		JobSpecification jobSpecification = JobSpecification.builder()
 				.withCreatedBy(securityContext.getUserPrincipal().getName())
 				.withDescription(description)
-				.withJobId("")
+				.withName(name)
 				.withJobType("")
 				.withLastUpdatedBy(securityContext.getUserPrincipal().getName())
 				.withNotificationEmail(notificationEmail)
 				.withOwner(securityContext.getUserPrincipal().getName())
 				.build();
 		
-		JobSpecification jobSchedule = jobSpecificationService.createJobSpecification(
-				jobTypeId, 
-				connectorId, 
-				instanceKey, 
-				start,
-				end,
-				timeZone,
-				seconds,
-				minutes,
-				hours,
-				dayOfMonth,
-				month,
-				dayOfWeek,
-				year,
-				notificationEmail,
-				description);
+		jobSpecificationService.createJobSpecification(jobSpecification);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(JobSpecificationResource.class)
 				.path("/{id}")
-				.build(jobSchedule.getId());
+				.build(jobSpecification.getId());
 		
 		return Response.created(uri)
-				.entity(jobSchedule)
+				.entity(jobSpecification)
 				.build();	
 	}
 	
 	@Override
 	public Response updateJobSpecification(
 			String id,
+			String name,
 			String notificationEmail,
-			String description,
-			String start,
-			String end,
-			String timeZone,
-			String seconds,
-			String minutes,
-			String hours,
-			String dayOfMonth,
-			String month,
-			String dayOfWeek,
-			String year) {
+			String description) {
 		
-		JobSpecification jobSchedule = jobSpecificationService.updateJobSpecification(
-				id, 
-				start, 
-				end,
-				timeZone,
-				seconds, 
-				minutes, 
-				hours, 
-				dayOfMonth, 
-				month, 
-				dayOfWeek, 
-				year,
-				notificationEmail,
-				description);
+		JobSpecification jobSpecification = JobSpecification.builder()
+				.withDescription(description)
+				.withName(name)
+				.withJobType("")
+				.withLastUpdatedBy(securityContext.getUserPrincipal().getName())
+				.withNotificationEmail(notificationEmail)
+				.build();
+		
+		jobSpecificationService.createJobSpecification(jobSpecification);
 		
 		return Response.ok()
-				.entity(jobSchedule)
+				.entity(jobSpecification)
 				.build();	
 	}
 }

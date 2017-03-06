@@ -8,10 +8,10 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.resource.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.AccountProfileService;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.JobSpecificationResource;
+import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Identity;
 import com.nowellpoint.api.rest.domain.Resources;
