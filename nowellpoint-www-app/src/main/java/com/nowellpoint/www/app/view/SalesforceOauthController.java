@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
@@ -12,7 +10,6 @@ import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.sforce.OauthToken;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -24,12 +21,6 @@ public class SalesforceOauthController extends AbstractStaticController {
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth-callback.html");
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.SALESFORCE_OAUTH, (request, response) -> oauth(configuration, request, response));
-        get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), (request, response) -> callback(configuration, request, response));
-        get(Path.Route.SALESFORCE_OAUTH.concat("/token"), (request, response) -> getSalesforceToken(configuration, request, response));
-	}
-	
 	/**
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
@@ -38,7 +29,7 @@ public class SalesforceOauthController extends AbstractStaticController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	private static String oauth(Configuration configuration, Request request, Response response) {
+	public static String oauth(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String oauthRedirect = new NowellpointClient(token)
@@ -58,7 +49,7 @@ public class SalesforceOauthController extends AbstractStaticController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	private static String callback(Configuration configuration, Request request, Response response) {
+	public static String callback(Configuration configuration, Request request, Response response) {
     	
     	Optional<String> code = Optional.ofNullable(request.queryParams("code"));
     	
@@ -77,7 +68,7 @@ public class SalesforceOauthController extends AbstractStaticController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-    private static String getSalesforceToken(Configuration configuration, Request request, Response response) {
+    public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
     	Token token = getToken(request);
     	
     	OauthToken oauthToken = new NowellpointClient(token)

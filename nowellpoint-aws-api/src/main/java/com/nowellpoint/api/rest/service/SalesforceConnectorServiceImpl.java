@@ -35,8 +35,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
-import com.nowellpoint.api.rest.domain.ConnectString;
-import com.nowellpoint.api.rest.domain.Instance;
+import com.nowellpoint.api.rest.domain.ConnectionString;
+import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.UserInfo;
@@ -46,6 +46,7 @@ import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
+import com.sforce.ws.ConnectionException;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.CountRequest;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -57,7 +58,6 @@ import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Identity;
-import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Theme;
@@ -129,20 +129,19 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		Organization organization = client.getOrganization(getOrganizationRequest);
 		
-		VaultEntry vaultEntry = vaultEntryService.store(
-				organization.getId(), 
-				Organization.class.getName(), 
+		ConnectionString connectString = ConnectionString.salesforce(
 				token.getRefreshToken(), 
-				UserContext.getPrincipal().getName());
+				token.getId(), 
+				SalesforceConnectionString.REFRESH_TOKEN);
 		
-		ConnectString connectString = ConnectString.salesforce(vaultEntry.getToken(), token.getId());
+		VaultEntry vaultEntry = vaultEntryService.store(connectString.get());
 		
 		SalesforceConnector salesforceConnector = SalesforceConnector.createSalesforceConnector( 
 				UserContext.getPrincipal().getName(),
 				UserContext.getPrincipal().getName(), 
 				identity, 
 				organization, 
-				connectString, 
+				vaultEntry, 
 				Boolean.TRUE, 
 				token.getInstanceUrl(),
 				null);
@@ -174,8 +173,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	@Override
 	public void deleteSalesforceConnector(String id) {
 		SalesforceConnector salesforceConnector = findById( id );
-		
-		String token = getToken(salesforceConnector.getConnectString().getUri());
+				
+		String token = SalesforceConnectionString.of(salesforceConnector.getConnectionString()).getCredentials();
 		
 		vaultEntryService.remove(token);
 		
@@ -223,9 +222,11 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Override
 	public SalesforceConnector build(String id) {
-		SalesforceConnector original = findById( id );
+		SalesforceConnector salesforceConnector = findById( id );
 		
-		update(original);
+		//build(salesforceConnector);
+		
+		update(salesforceConnector);
 		
 		return new SalesforceConnector();
 	}
@@ -266,106 +267,65 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		}
 	}
 	
-	private void buildConnection(ConnectString connectString) {
+	private Token connect(String connectionString) throws OauthException, ConnectionException {
 		
+		Token token = null;
+		
+		VaultEntry vaultEntry = vaultEntryService.retrive(connectionString);
+		
+		SalesforceConnectionString salesforce = SalesforceConnectionString.of(vaultEntry.getValue());
+
+		if (SalesforceConnectionString.PASSWORD.equals(salesforce.getGrantType())) {
+			
+			String[] credentials = salesforce.getCredentials().split(":");
+			
+			String authEndpoint = salesforce.getHostname();
+			String username = credentials[0];
+			String password = credentials[1];
+			String securityToken = credentials[2];
+			
+			token = salesforceService.login(authEndpoint, username, password, securityToken);
+			
+			return token;
+			
+		} else {
+			
+			String refreshToken = vaultEntry.getValue();
+			
+			OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
+			
+			token = authenticationResponse.getToken();
+			
+			return token;
+		}
 	}
 	
-	private void buildInstance(Instance instance) {
-
-		try {
-			
-			if (instance.getIsSandbox()) {
-				
-				String authEndpoint = instance.getAuthEndpoint();
-				String username = instance.getUsername();
-				String password = instance.getPassword();
-				String securityToken = instance.getSecurityToken();
-				
-				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
-				instance.setUserId(loginResult.getUserId());
-				instance.setOrganizationId(loginResult.getOrganizationId());
-				instance.setOrganizationName(loginResult.getOrganizationName());
-				instance.setServiceEndpoint(loginResult.getServiceEndpoint());
-				
-				Client client = new Client();
-				
-				GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
-						.setAccessToken(loginResult.getSessionId())
-						.setId(loginResult.getId());
-				
-				Identity identity = client.getIdentity(getIdentityRequest);
-				
-				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
-						.setAccessToken(loginResult.getSessionId())
-						.setSobjectsUrl(identity.getUrls().getSobjects());
-				
-				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
-				
-				instance.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
-				
-				ThemeRequest themeRequest = new ThemeRequest()
-						.withAccessToken(loginResult.getSessionId())
-						.withRestEndpoint(identity.getUrls().getRest());
-				
-				Theme theme = client.getTheme(themeRequest);
-				
-				instance.setTheme(theme);
-				
-				describeSobjects(loginResult.getSessionId(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, instance.getKey());
-				
-			} else {
-				
-				String refreshToken = instance.getRefreshToken();
-				
-				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
-				
-				Token token = authenticationResponse.getToken();
-				Identity identity = authenticationResponse.getIdentity();
-				
-				Client client = new Client();
-
-				GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
-						.setAccessToken(token.getAccessToken())
-						.setOrganizationId(identity.getOrganizationId())
-						.setSobjectUrl(identity.getUrls().getSobjects());
-				
-				Organization organization = client.getOrganization(getOrganizationRequest);
-				
-				instance.setUserId(identity.getUserId());
-				instance.setOrganizationId(identity.getOrganizationId());
-				instance.setOrganizationName(organization.getName());
-				instance.setServiceEndpoint(token.getInstanceUrl());
-				instance.setIsValid(Boolean.TRUE);
-				
-				DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
-						.setAccessToken(token.getAccessToken())
-						.setSobjectsUrl(identity.getUrls().getSobjects());
-				
-				DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
-				
-				instance.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
-				
-				ThemeRequest themeRequest = new ThemeRequest()
-						.withAccessToken(token.getAccessToken())
-						.withRestEndpoint(identity.getUrls().getRest());
-				
-				Theme theme = client.getTheme(themeRequest);
-				
-				instance.setTheme(theme);
-				
-				describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), identity.getUrls().getQuery(), describeGlobalSobjectsResult, instance.getKey());
-			}
-			instance.setIsValid(Boolean.TRUE);
-		} catch (OauthException e) {
-			instance.setIsValid(Boolean.FALSE);
-			instance.setTestMessage(e.getErrorDescription());
-		} catch (ValidationException e) {
-			instance.setIsValid(Boolean.FALSE);
-			instance.setTestMessage(e.getMessage());
-		} catch (Exception e) {
-			instance.setIsValid(Boolean.FALSE);
-			instance.setTestMessage(e.getMessage());
-		}	
+	private void build(Token token) {
+	
+		Client client = new Client();
+		
+		GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+				.setAccessToken(token.getAccessToken())
+				.setId(token.getId());
+		
+		Identity identity = client.getIdentity(getIdentityRequest);
+		
+		DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
+				.setAccessToken(token.getAccessToken())
+				.setSobjectsUrl(identity.getUrls().getSobjects());
+		
+		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+		
+		//salesforceConnector.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+		
+		ThemeRequest themeRequest = new ThemeRequest()
+				.withAccessToken(token.getAccessToken())
+				.withRestEndpoint(identity.getUrls().getRest());
+		
+		Theme theme = client.getTheme(themeRequest);
+		
+		//salesforceConnector.setTheme(theme);
+		
 	}
 	
 	private void describeSobjects(String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String instanceKey) throws InterruptedException, ExecutionException, JsonProcessingException {
@@ -423,59 +383,61 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	private void test(SalesforceConnector salesforceConnector) {
 		
-		String tokenStr = getToken(salesforceConnector.getConnectString().getUri());
+		//Salesforce salesforceConnectString = new Salesforce(salesforceConnector.getConnectString());
 		
-		VaultEntry vaultEntry = vaultEntryService.retrive(tokenStr, salesforceConnector.getOrganization().getId());
+		//VaultEntry vaultEntry = vaultEntryService.retrive(salesforceConnectString.getEncryptedToken(), salesforceConnector.getOrganization().getId());
 
 		try {
 			
 			if (salesforceConnector.getOrganization().getIsSandbox()) {
 				
-				String authEndpoint = getAuthEndpoint(tokenStr);
-				String username = vaultEntry.getValue().split(":")[0];
-				String password = vaultEntry.getValue().split(":")[1];
-				String securityToken = vaultEntry.getValue().split(":")[2];
+				//String authEndpoint = salesforceConnectString.getAuthEndpoint();
+				//String username = vaultEntry.getValue().split(":")[0];
+				//String password = vaultEntry.getValue().split(":")[1];
+				//String securityToken = vaultEntry.getValue().split(":")[2];
 				
-				LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);		
+				//LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);
+				
+
 				
 			} else {
 				
-				String refreshToken = vaultEntry.getValue();
+				//String refreshToken = vaultEntry.getValue();
 				
-				OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
+				//OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
 				
-				Token token = authenticationResponse.getToken();
-				Identity identity = authenticationResponse.getIdentity();
+				//Token token = authenticationResponse.getToken();
+				//Identity identity = authenticationResponse.getIdentity();
 				
-				Client client = new Client();
+				//Client client = new Client();
 
-				GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
-						.setAccessToken(token.getAccessToken())
-						.setOrganizationId(identity.getOrganizationId())
-						.setSobjectUrl(identity.getUrls().getSobjects());
+				//GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
+				//		.setAccessToken(token.getAccessToken())
+				//		.setOrganizationId(identity.getOrganizationId())
+				//		.setSobjectUrl(identity.getUrls().getSobjects());
 				
-				Organization organization = client.getOrganization(getOrganizationRequest);
+				//Organization organization = client.getOrganization(getOrganizationRequest);
 				
-				salesforceConnector.setIdentity(identity);
-				salesforceConnector.setOrganization(organization);
+				//salesforceConnector.setIdentity(identity);
+				//salesforceConnector.setOrganization(organization);
 			}
 			salesforceConnector.setIsValid(Boolean.TRUE);
-			salesforceConnector.setConnectStatus("Connection Success");
+			salesforceConnector.setStatus("Connection Success");
 		} catch (OauthException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setConnectStatus(e.getErrorDescription());
+			salesforceConnector.setStatus(e.getErrorDescription());
 		} catch (ValidationException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setConnectStatus(e.getMessage());
+			salesforceConnector.setStatus(e.getMessage());
 		} catch (Exception e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setConnectStatus(e.getMessage());
+			salesforceConnector.setStatus(e.getMessage());
 		}			
 		
 		update(salesforceConnector);
 	}
 	
-	private void updateSalesforceConnector(SalesforceConnector salesforceConnector, String name, String tag, String ownerId, Boolean isValid, String connectStatus) {
+	private void updateSalesforceConnector(SalesforceConnector salesforceConnector, String name, String tag, String ownerId, Boolean isValid, String connectionStatus) {
 		if (Assert.isNullOrEmpty(name)) {
 			name = salesforceConnector.getName();
 		}
@@ -490,8 +452,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 			tag = null;
 		}
 		
-		if (Assert.isNullOrEmpty(connectStatus)) {
-			connectStatus = salesforceConnector.getConnectStatus();
+		if (Assert.isNullOrEmpty(connectionStatus)) {
+			connectionStatus = salesforceConnector.getStatus();
 		}
 		
 		if (Assert.isNull(isValid)) {
@@ -502,18 +464,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		salesforceConnector.setTag(tag);
 		salesforceConnector.setOwner(new UserInfo(ownerId));
 		salesforceConnector.setIsValid(isValid);
-		salesforceConnector.setConnectStatus(connectStatus);
+		salesforceConnector.setStatus(connectionStatus);
 		salesforceConnector.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
 		salesforceConnector.setLastUpdatedOn(Date.from(Instant.now()));
 		
 		update(salesforceConnector);
-	}
-	
-	private String getToken(String uri) {
-		return uri.substring(0, uri.indexOf("@")).replace("salesforce://", "");
-	}
-	
-	private String getAuthEndpoint(String uri) {
-		return null;
 	}
 }

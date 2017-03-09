@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,11 +20,7 @@ public class DashboardController extends AbstractStaticController {
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-        get(Path.Route.DASHBOARD, (request, response) -> showDashboard(configuration, request, response));
-	}
-	
-	private static String showDashboard(Configuration configuration, Request request, Response response) {
+	public static String showDashboard(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		

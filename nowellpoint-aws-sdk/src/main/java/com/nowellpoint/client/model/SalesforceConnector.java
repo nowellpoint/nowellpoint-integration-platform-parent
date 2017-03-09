@@ -17,13 +17,13 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private Organization organization;
 	
-	private ConnectString connectString;
+	private String connectionString;
 	
 	private Boolean isValid;
 	
 	private String serviceEndpoint;
 	
-	private String connectStatus;
+	private String status;
 	
 	private UserInfo owner;
 	
@@ -65,12 +65,12 @@ public class SalesforceConnector extends AbstractResource {
 		this.organization = organization;
 	}
 
-	public ConnectString getConnectString() {
-		return connectString;
+	public String getConnectionString() {
+		return connectionString;
 	}
 
-	public void setConnectString(ConnectString connectString) {
-		this.connectString = connectString;
+	public void setConnectionString(String connectionString) {
+		this.connectionString = connectionString;
 	}
 
 	public Boolean getIsValid() {
@@ -81,12 +81,12 @@ public class SalesforceConnector extends AbstractResource {
 		this.isValid = isValid;
 	}
 
-	public String getConnectStatus() {
-		return connectStatus;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setConnectStatus(String connectStatus) {
-		this.connectStatus = connectStatus;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getServiceEndpoint() {

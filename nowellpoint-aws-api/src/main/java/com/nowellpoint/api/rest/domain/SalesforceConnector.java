@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
+import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Theme;
@@ -24,13 +25,13 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private Organization organization;
 	
-	private ConnectString connectString;
+	private String connectionString;
 	
 	private Boolean isValid;
 	
 	private String serviceEndpoint;
 	
-	private String connectStatus;
+	private String status;
 	
 	private String tag;
 	
@@ -52,7 +53,7 @@ public class SalesforceConnector extends AbstractResource {
 			Date lastUpdatedOn, 
 			Identity identity, 
 			Organization organization, 
-			ConnectString connectString, 
+			String connectionString, 
 			Boolean isValid, 
 			String serviceEndpoint,
 			String tag) {
@@ -66,7 +67,7 @@ public class SalesforceConnector extends AbstractResource {
 		this.lastUpdatedOn = lastUpdatedOn;
 		this.identity = identity;
 		this.organization = organization;
-		this.connectString = connectString;
+		this.connectionString = connectionString;
 		this.isValid = isValid;
 		this.serviceEndpoint = serviceEndpoint;
 		this.tag = tag;
@@ -77,7 +78,7 @@ public class SalesforceConnector extends AbstractResource {
 			String ownerId, 
 			Identity identity, 
 			Organization organization, 
-			ConnectString connectString, 
+			VaultEntry connectionEntry, 
 			Boolean isValid, 
 			String serviceEndpoint,
 			String tag) {
@@ -95,7 +96,7 @@ public class SalesforceConnector extends AbstractResource {
 				now, 
 				identity, 
 				organization, 
-				connectString, 
+				connectionEntry.getToken(), 
 				isValid, 
 				serviceEndpoint, 
 				tag);
@@ -107,7 +108,7 @@ public class SalesforceConnector extends AbstractResource {
 			String ownerId, 
 			Identity identity, 
 			Organization organization, 
-			ConnectString connectString, 
+			VaultEntry connectionEntry, 
 			Boolean isValid, 
 			String serviceEndpoint,
 			String tag) {
@@ -124,7 +125,7 @@ public class SalesforceConnector extends AbstractResource {
 				now, 
 				identity, 
 				organization, 
-				connectString, 
+				connectionEntry.getToken(), 
 				isValid, 
 				serviceEndpoint, 
 				tag);
@@ -184,14 +185,14 @@ public class SalesforceConnector extends AbstractResource {
 
 	public void setOrganization(Organization organization) {
 		this.organization = organization;
+	}	
+	
+	public String getConnectionString() {
+		return connectionString;
 	}
 
-	public ConnectString getConnectString() {
-		return connectString;
-	}
-
-	public void setConnectString(ConnectString connectString) {
-		this.connectString = connectString;
+	public void setConnectionString(String connectionString) {
+		this.connectionString = connectionString;
 	}
 
 	public Boolean getIsValid() {
@@ -210,12 +211,12 @@ public class SalesforceConnector extends AbstractResource {
 		this.serviceEndpoint = serviceEndpoint;
 	}
 
-	public String getConnectStatus() {
-		return connectStatus;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setConnectStatus(String connectStatus) {
-		this.connectStatus = connectStatus;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getTag() {

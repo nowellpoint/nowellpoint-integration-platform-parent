@@ -4,12 +4,11 @@ import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.util.Optional;
 
-import javax.validation.ValidationException;
 import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.InternalServerErrorException;
 
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.aws.data.AbstractCacheService;
+import com.nowellpoint.util.DigitalSignature;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
@@ -22,8 +21,8 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
-import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.sforce.soap.partner.PartnerConnection;
@@ -46,7 +45,7 @@ public class SalesforceServiceImpl extends AbstractCacheService implements Sales
 	 * @return
 	 */
 	
-	public LoginResult login(String authEndpoint, String username, String password, String securityToken) {
+	public Token login(String authEndpoint, String username, String password, String securityToken) throws ConnectionException {
 		Optional.of(authEndpoint).orElseThrow(() -> new IllegalArgumentException("missing authEndpoint"));
 		Optional.of(username).orElseThrow(() -> new IllegalArgumentException("missing username")); 
 		Optional.of(password).orElseThrow(() -> new IllegalArgumentException("missing password")); 
@@ -61,30 +60,33 @@ public class SalesforceServiceImpl extends AbstractCacheService implements Sales
 			PartnerConnection connection = newConnection(config);
 			
 			String id = String.format("%s/id/%s/%s", authEndpoint, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
+			String accessToken = connection.getConfig().getSessionId();
+			String instanceUrl = connection.getConfig().getServiceEndpoint().substring(0, connection.getConfig().getServiceEndpoint().indexOf("/services"));
+			String issuedAt = String.valueOf(connection.getServerTimestamp().getTimestamp().getTimeInMillis());
+			String signature = DigitalSignature.sign(System.getenv("SALESFORCE_CLIENT_SECRET"), id.concat(issuedAt));
 			
-			LoginResult result = new LoginResult()
-					.withId(id)
-					.withEmail(connection.getUserInfo().getUserEmail())
-					.withAuthEndpoint(connection.getConfig().getAuthEndpoint())
-					.withDisplayName(connection.getUserInfo().getUserFullName())
-					.withOrganizationId(connection.getUserInfo().getOrganizationId())
-					.withOrganziationName(connection.getUserInfo().getOrganizationName())
-					.withServiceEndpoint(connection.getConfig().getServiceEndpoint().substring(0, connection.getConfig().getServiceEndpoint().indexOf("/services")))
-					.withSessionId(connection.getConfig().getSessionId())
-					.withUserId(connection.getUserInfo().getUserId())
-					.withUserName(connection.getUserInfo().getUserName())
-					.withServerTimestamp(connection.getServerTimestamp().getTimestamp().getTimeInMillis());
+			Token token = new Token();
+			token.setId(id);
+			token.setAccessToken(accessToken);
+			token.setInstanceUrl(instanceUrl);
+			token.setIssuedAt(issuedAt);
+			token.setTokenType("Bearer");
+			token.setSignature(signature);
 			
-			return result;
+			return token;
 			
 		} catch (ConnectionException e) {
 			if (e instanceof LoginFault) {
 				LoginFault loginFault = (LoginFault) e;
-				throw new ValidationException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+				throw new ConnectionException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
 			} else {
-				throw new InternalServerErrorException(e.getMessage());
+				throw e;
 			}
 		}
+	}
+	
+	public Token login(String encryptedConnectionString) {
+		return null;
 	}
 	
 	/**
@@ -95,21 +97,21 @@ public class SalesforceServiceImpl extends AbstractCacheService implements Sales
 	
 	public DescribeGlobalSobjectsResult describe(String id) {
 		
-		LoginResult result = get(LoginResult.class, id);
+		Token result = get(Token.class, id);
 		
 		if (result == null) {
 			throw new ForbiddenException("Invalid id or Session has expired");
 		}
 			
 		GetIdentityRequest request = new GetIdentityRequest()
-				.setAccessToken(result.getSessionId())
+				.setAccessToken(result.getAccessToken())
 				.setId(id);
 			
 		Client client = new Client();
 			
 		Identity identity = client.getIdentity(request);
 			
-		return describe(result.getSessionId(), identity.getUrls().getSobjects());
+		return describe(result.getAccessToken(), identity.getUrls().getSobjects());
 	}
 	
 	/**

@@ -1,14 +1,17 @@
 package com.nowellpoint.api.service;
 
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
-import com.nowellpoint.client.sforce.model.LoginResult;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
+import com.sforce.ws.ConnectionException;
 
 public interface SalesforceService {
 	
-	LoginResult login(String authEndpoint, String username, String password, String securityToken);
+	Token login(String authEndpoint, String username, String password, String securityToken) throws ConnectionException;
+	
+	Token login(String encryptedConnectionString);
 	
 	DescribeGlobalSobjectsResult describe(String id);
 	

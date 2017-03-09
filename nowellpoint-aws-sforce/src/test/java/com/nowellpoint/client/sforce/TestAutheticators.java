@@ -36,7 +36,12 @@ public class TestAutheticators {
 			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
 			
-			System.out.println(response.getToken().getAccessToken());
+			System.out.println(response.getToken().getAccessToken());			
+			System.out.println(response.getToken().getId());
+			System.out.println(response.getToken().getInstanceUrl());
+			System.out.println(response.getToken().getIssuedAt());
+			System.out.println(response.getToken().getSignature());
+			System.out.println(response.getToken().getTokenType());
 			
 			assertNotNull(response.getToken());
 			assertNotNull(response.getIdentity());

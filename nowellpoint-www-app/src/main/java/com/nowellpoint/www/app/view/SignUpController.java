@@ -1,8 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +23,6 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.MessageProvider;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -40,14 +36,6 @@ public class SignUpController extends AbstractStaticController {
 		public static final String VERIFY_EMAIL = "verify-email.html";
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.PLANS, (request, response) -> plans(configuration, request, response));
-		get(Path.Route.FREE_ACCOUNT, (request, response) -> freeAccount(configuration, request, response));
-		get(Path.Route.SIGN_UP, (request, response) -> paidAccount(configuration, request, response));
-		post(Path.Route.SIGN_UP, (request, response) -> signUp(configuration, request, response));
-		get(Path.Route.VERIFY_EMAIL, (request, response) -> verifyEmail(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -56,7 +44,7 @@ public class SignUpController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String plans(Configuration configuration, Request request, Response response) {
+	public static String plans(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -91,7 +79,7 @@ public class SignUpController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String freeAccount(Configuration configuration, Request request, Response response) {
+	public static String freeAccount(Configuration configuration, Request request, Response response) {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
@@ -138,7 +126,7 @@ public class SignUpController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String paidAccount(Configuration configuration, Request request, Response response) {
+	public static String paidAccount(Configuration configuration, Request request, Response response) {
 		
 		String planId = request.queryParams("planId");
 		
@@ -213,7 +201,7 @@ public class SignUpController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String signUp(Configuration configuration, Request request, Response response) {
+	public static String signUp(Configuration configuration, Request request, Response response) {
 		
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
@@ -273,7 +261,7 @@ public class SignUpController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String verifyEmail(Configuration configuration, Request request, Response response) {
+	public static String verifyEmail(Configuration configuration, Request request, Response response) {
 		
 		String emailVerificationToken = request.queryParams("emailVerificationToken");
 		

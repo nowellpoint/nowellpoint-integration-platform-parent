@@ -84,7 +84,7 @@ public class TestAuthenticators {
 				.test(salesforceConnector.getId());
 		
 		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getTarget().getConnectStatus());
+		System.out.println(updateResult.getTarget().getStatus());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)

@@ -100,6 +100,18 @@ public class Application implements SparkApplication {
 		post(Path.Route.CONTACT, (request, response) -> IndexController.contact(configuration, request, response));
 		
 		//
+		// dashboard controller
+		//
+		
+		get(Path.Route.DASHBOARD, (request, response) -> DashboardController.showDashboard(configuration, request, response));
+		
+		//
+		// notifications controller
+		//
+		
+		get(Path.Route.NOTIFICATIONS, (request, response) -> NotificationController.serveNotificationsPage(configuration, request, response));
+		
+		//
 		// account profile routes
 		//
 		
@@ -129,12 +141,37 @@ public class Application implements SparkApplication {
         get(Path.Route.LOGOUT, (request, response) -> AuthenticationController.logout(configuration, request, response));
         
         //
+        // start routes
+        //
+        
+        get(Path.Route.START, (request, response) -> StartController.serveStartPage(configuration, request, response));
+        
+        //
         // administration routes
         //
         
         get(Path.Route.ADMINISTRATION, (request, response) -> AdministrationController.serveAdminHomePage(configuration, request, response));	
         get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> AdministrationController.showManageCache(configuration, request, response));	
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> AdministrationController.purgeCache(configuration, request, response));
+		
+		//
+		// salesforce oauth routes
+		//
+		
+		get(Path.Route.SALESFORCE_OAUTH, (request, response) -> SalesforceOauthController.oauth(configuration, request, response));
+        get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), (request, response) -> SalesforceOauthController.callback(configuration, request, response));
+        get(Path.Route.SALESFORCE_OAUTH.concat("/token"), (request, response) -> SalesforceOauthController.getSalesforceToken(configuration, request, response));
+        
+        //
+        // signup routes
+        //
+        
+        get(Path.Route.PLANS, (request, response) -> SignUpController.plans(configuration, request, response));
+		get(Path.Route.FREE_ACCOUNT, (request, response) -> SignUpController.freeAccount(configuration, request, response));
+		get(Path.Route.SIGN_UP, (request, response) -> SignUpController.paidAccount(configuration, request, response));
+		post(Path.Route.SIGN_UP, (request, response) -> SignUpController.signUp(configuration, request, response));
+		get(Path.Route.VERIFY_EMAIL, (request, response) -> SignUpController.verifyEmail(configuration, request, response));
+        
 		
 		//
 		// salesforce connector routes
@@ -148,17 +185,24 @@ public class Application implements SparkApplication {
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));
         
         //
-        // configure routes
+        // job specification routes
         //
         
-		configureRoutes(configuration);
+        get(Path.Route.JOB_SPECIFICATION_LIST, (request, response) -> JobSpecificationController.listJobSpecifications(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_TYPE, (request, response) -> JobSpecificationController.listJobTypes(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_CONNECTOR, (request, response) -> JobSpecificationController.selectConnector(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_ENVIRONMENT, (request, response) -> JobSpecificationController.selectEnvironment(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SET_SCHEDULE, (request, response) -> JobSpecificationController.setSchedule(configuration, request, response));
+        post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> JobSpecificationController.createJobSpecification(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_VIEW, (request, response) -> JobSpecificationController.viewJobSpecifications(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_EDIT, (request, response) -> JobSpecificationController.editJobSpecification(configuration, request, response));
+        post(Path.Route.JOB_SPECIFICATION_UPDATE, (request, response) -> JobSpecificationController.updateJobSpecification(configuration, request, response));
         
 		//
-		//
+		// health check route
 		//
         
-        get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
-        
+        get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));        
         
         //
         // exception handlers
@@ -206,15 +250,6 @@ public class Application implements SparkApplication {
         	response.status(500);
             response.body(exception.getMessage());
         });
-	}
-	
-	private static void configureRoutes(Configuration configuration) {
-		SignUpController.configureRoutes(configuration);
-        StartController.configureRoutes(configuration);
-        DashboardController.configureRoutes(configuration);
-        SalesforceOauthController.configureRoutes(configuration);
-        JobSpecificationController.configureRoutes(configuration);
-        NotificationController.configureRoutes(configuration);
 	}
 	
 	/**

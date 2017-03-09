@@ -6,11 +6,11 @@ import com.nowellpoint.api.model.dynamodb.VaultEntry;
 
 public interface VaultEntryService {
 	
-	public VaultEntry store(String key, String type, String value, String lastUpdatedBy);
+	public VaultEntry store(String value);
 	
-	public VaultEntry replace(String token, String key, String type, String value, String lastUpdatedBy);
+	public VaultEntry replace(String token, String value);
 	
-	public VaultEntry retrive(String token, String key);
+	public VaultEntry retrive(String token);
 	
 	public void remove(String token);
 	

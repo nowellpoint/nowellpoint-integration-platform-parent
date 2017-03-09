@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,7 +22,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.util.Properties;
-import com.nowellpoint.client.sforce.model.LoginResult;
+import com.sforce.ws.ConnectionException;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 
@@ -97,9 +98,15 @@ public class SalesforceResource {
 			@FormParam(value="password") @NotEmpty String password,
 			@FormParam(value="securityToken") @NotEmpty String securityToken) {
 		
-		LoginResult result = salesforceService.login(authEndpoint, username, password, securityToken);
+		Token token = null;
 		
-		return Response.ok(result)
+		try {
+			token = salesforceService.login(authEndpoint, username, password, securityToken);
+		} catch (ConnectionException e) {
+			throw new NotAuthorizedException(e);
+		}
+		
+		return Response.ok(token)
 				.build();
 	}
 	

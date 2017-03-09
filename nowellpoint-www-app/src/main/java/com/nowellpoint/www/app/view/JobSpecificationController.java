@@ -1,31 +1,24 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
-import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.ConnectorInfo;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Instance;
-import com.nowellpoint.client.model.InstanceInfo;
-import com.nowellpoint.client.model.JobSpecificationList;
 import com.nowellpoint.client.model.JobSpecification;
+import com.nowellpoint.client.model.JobSpecificationList;
 import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.JobType;
 import com.nowellpoint.client.model.JobTypeInfo;
+import com.nowellpoint.client.model.JobTypeList;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
-import com.nowellpoint.client.model.JobTypeList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.www.app.util.Path;
@@ -43,18 +36,6 @@ public class JobSpecificationController extends AbstractStaticController {
 		public static final String JOB_SPECIFICATION_VIEW = String.format(APPLICATION_CONTEXT, "job-specification-view.html");
 	}
 	
-	public static void configureRoutes(Configuration configuration) {
-        get(Path.Route.JOB_SPECIFICATION_LIST, (request, response) -> listJobSpecifications(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_TYPE, (request, response) -> listJobTypes(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_CONNECTOR, (request, response) -> selectConnector(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_ENVIRONMENT, (request, response) -> selectEnvironment(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SET_SCHEDULE, (request, response) -> setSchedule(configuration, request, response));
-        post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> createJobSpecification(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_VIEW, (request, response) -> viewJobSpecifications(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_EDIT, (request, response) -> editJobSpecification(configuration, request, response));
-        post(Path.Route.JOB_SPECIFICATION_UPDATE, (request, response) -> updateJobSpecification(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -63,7 +44,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String listJobSpecifications(Configuration configuration, Request request, Response response) {
+	public static String listJobSpecifications(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -85,7 +66,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String listJobTypes(Configuration configuration, Request request, Response response) {
+	public static String listJobTypes(Configuration configuration, Request request, Response response) {
 
 		Token token = getToken(request);
 		
@@ -111,7 +92,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws JsonProcessingException
 	 */
 	
-	private static String selectConnector(Configuration configuration, Request request, Response response) throws JsonProcessingException {
+	public static String selectConnector(Configuration configuration, Request request, Response response) throws JsonProcessingException {
 
 		Token token = getToken(request);
 		
@@ -146,7 +127,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws IOException
 	 */
 	
-	private static String selectEnvironment(Configuration configuration, Request request, Response response) throws IOException {
+	public static String selectEnvironment(Configuration configuration, Request request, Response response) throws IOException {
 		
 		Token token = getToken(request);
 		
@@ -182,7 +163,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws IOException
 	 */
 	
-	private static String setSchedule(Configuration configuration, Request request, Response response) throws IOException {
+	public static String setSchedule(Configuration configuration, Request request, Response response) throws IOException {
 		
 		Token token = getToken(request);
 		
@@ -241,7 +222,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws ParseException
 	 */
 	
-	private static String createJobSpecification(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException, ParseException {
+	public static String createJobSpecification(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		Token token = getToken(request);
 		
@@ -287,7 +268,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String viewJobSpecifications(Configuration configuration, Request request, Response response) {
+	public static String viewJobSpecifications(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
@@ -323,7 +304,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	private static String editJobSpecification(Configuration configuration, Request request, Response response) {
+	public static String editJobSpecification(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		String view = request.queryParams("view");
@@ -357,7 +338,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @throws ParseException
 	 */
 	
-	private static String updateJobSpecification(Configuration configuration, Request request, Response response) throws ParseException {
+	public static String updateJobSpecification(Configuration configuration, Request request, Response response) throws ParseException {
 		
 		Token token = getToken(request);
 		
