@@ -204,16 +204,27 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	/**
 	 * 
-	 * @param id
-	 * @param key
-	 * @return
 	 */
 	
 	@Override
-	public SalesforceConnector test(String id) {		
+	public SalesforceConnector test(String id) {	
+		
 		SalesforceConnector salesforceConnector = findById( id );
 		
-		test(salesforceConnector);
+		try {
+			connect(salesforceConnector.getConnectionString());
+			salesforceConnector.setIsValid(Boolean.TRUE);
+			salesforceConnector.setStatus("Connection Success");
+		} catch (OauthException e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus(e.getErrorDescription());
+		} catch (ValidationException e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus(e.getMessage());
+		} catch (Exception e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus(e.getMessage());
+		}			
 		
 		update(salesforceConnector);
 		
@@ -269,35 +280,14 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	private Token connect(String connectionString) throws OauthException, ConnectionException {
 		
-		Token token = null;
-		
 		VaultEntry vaultEntry = vaultEntryService.retrive(connectionString);
 		
-		SalesforceConnectionString salesforce = SalesforceConnectionString.of(vaultEntry.getValue());
-
-		if (SalesforceConnectionString.PASSWORD.equals(salesforce.getGrantType())) {
-			
-			String[] credentials = salesforce.getCredentials().split(":");
-			
-			String authEndpoint = salesforce.getHostname();
-			String username = credentials[0];
-			String password = credentials[1];
-			String securityToken = credentials[2];
-			
-			token = salesforceService.login(authEndpoint, username, password, securityToken);
-			
-			return token;
-			
-		} else {
-			
-			String refreshToken = vaultEntry.getValue();
-			
-			OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
-			
-			token = authenticationResponse.getToken();
-			
-			return token;
-		}
+		SalesforceConnectionString salesforceConnectionString = SalesforceConnectionString.of(vaultEntry.getValue());
+		
+		Token token = salesforceService.login(salesforceConnectionString);
+		
+		return token;
+		
 	}
 	
 	private void build(Token token) {
@@ -379,62 +369,6 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		executor.shutdown();
 		executor.awaitTermination(30, TimeUnit.SECONDS);
-	}
-	
-	private void test(SalesforceConnector salesforceConnector) {
-		
-		//Salesforce salesforceConnectString = new Salesforce(salesforceConnector.getConnectString());
-		
-		//VaultEntry vaultEntry = vaultEntryService.retrive(salesforceConnectString.getEncryptedToken(), salesforceConnector.getOrganization().getId());
-
-		try {
-			
-			if (salesforceConnector.getOrganization().getIsSandbox()) {
-				
-				//String authEndpoint = salesforceConnectString.getAuthEndpoint();
-				//String username = vaultEntry.getValue().split(":")[0];
-				//String password = vaultEntry.getValue().split(":")[1];
-				//String securityToken = vaultEntry.getValue().split(":")[2];
-				
-				//LoginResult loginResult = salesforceService.login(authEndpoint, username, password, securityToken);
-				
-
-				
-			} else {
-				
-				//String refreshToken = vaultEntry.getValue();
-				
-				//OauthAuthenticationResponse authenticationResponse = salesforceService.refreshToken(refreshToken);
-				
-				//Token token = authenticationResponse.getToken();
-				//Identity identity = authenticationResponse.getIdentity();
-				
-				//Client client = new Client();
-
-				//GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
-				//		.setAccessToken(token.getAccessToken())
-				//		.setOrganizationId(identity.getOrganizationId())
-				//		.setSobjectUrl(identity.getUrls().getSobjects());
-				
-				//Organization organization = client.getOrganization(getOrganizationRequest);
-				
-				//salesforceConnector.setIdentity(identity);
-				//salesforceConnector.setOrganization(organization);
-			}
-			salesforceConnector.setIsValid(Boolean.TRUE);
-			salesforceConnector.setStatus("Connection Success");
-		} catch (OauthException e) {
-			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus(e.getErrorDescription());
-		} catch (ValidationException e) {
-			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus(e.getMessage());
-		} catch (Exception e) {
-			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus(e.getMessage());
-		}			
-		
-		update(salesforceConnector);
 	}
 	
 	private void updateSalesforceConnector(SalesforceConnector salesforceConnector, String name, String tag, String ownerId, Boolean isValid, String connectionStatus) {

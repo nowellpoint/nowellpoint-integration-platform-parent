@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.ws.rs.ForbiddenException;
 
+import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.util.DigitalSignature;
@@ -18,6 +19,7 @@ import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.GetUserRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -85,8 +87,33 @@ public class SalesforceServiceImpl extends AbstractCacheService implements Sales
 		}
 	}
 	
-	public Token login(String encryptedConnectionString) {
-		return null;
+	public Token login(SalesforceConnectionString salesforceConnectionString) throws ConnectionException, OauthException {
+		
+		Token token = null;
+		
+		if (SalesforceConnectionString.PASSWORD.equals(salesforceConnectionString.getGrantType())) {
+			
+			String[] credentials = salesforceConnectionString.getCredentials().split(":");
+			
+			String authEndpoint = salesforceConnectionString.getHostname();
+			String username = credentials[0];
+			String password = credentials[1];
+			String securityToken = credentials[2];
+			
+			token = login(authEndpoint, username, password, securityToken);
+			
+			return token;
+			
+		} else {
+			
+			String refreshToken = salesforceConnectionString.getCredentials();
+			
+			OauthAuthenticationResponse authenticationResponse = refreshToken(refreshToken);
+			
+			token = authenticationResponse.getToken();
+			
+			return token;
+		}
 	}
 	
 	/**
