@@ -1,8 +1,5 @@
 package com.nowellpoint.api.rest.service;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -10,7 +7,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -24,8 +20,6 @@ import javax.validation.ValidationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import org.bson.types.ObjectId;
-
 import javax.ws.rs.core.UriBuilder;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -37,6 +31,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.ConnectionString;
+import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
@@ -44,7 +39,6 @@ import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
-import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
@@ -66,8 +60,6 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
-import com.nowellpoint.mongodb.DocumentManager;
-import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 /**
  * 
@@ -189,6 +181,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 
 		s3Client.deleteObjects(deleteObjectsRequest);
 		
+		deleteSObjectDetail(salesforceConnector.getId());
+		
 		delete(salesforceConnector);
 	}
 	
@@ -225,9 +219,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		} catch (Exception e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getMessage());
-		}			
-		
-		update(salesforceConnector);
+		} finally {
+			update(salesforceConnector);
+		}
 		
 		return salesforceConnector;
 	}
@@ -241,29 +235,41 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		try {
 			token = connect(salesforceConnector.getConnectionString());
 			salesforceConnector.setIsValid(Boolean.TRUE);
-			salesforceConnector.setStatus(MessageProvider.getMessage(Locale.US, "success"));
+			salesforceConnector.setStatus("Successful Connection: " + Instant.now().toString());
+			
+			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describe(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getSobjects());
+			
+			salesforceConnector.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+			
+			Theme theme = getTheme(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getRest());
+			
+			salesforceConnector.setTheme(theme);
+			
+			deleteSObjectDetail(salesforceConnector.getId());
+			
+			describeSobjects(
+					salesforceConnector.getId(), 
+					token.getAccessToken(), 
+					salesforceConnector.getIdentity().getUrls().getSobjects(), 
+					salesforceConnector.getIdentity().getUrls().getQuery(), 
+					describeGlobalSobjectsResult);
+			
 		} catch (OauthException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getErrorDescription());
-		} catch (ValidationException e) {
-			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus("Error: " + e.getMessage());
 		} catch (Exception e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getMessage());
-		}	
+		} finally {
+			update(salesforceConnector);
+		}
 		
-		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describe(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getSobjects());
-		
-		salesforceConnector.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
-		
-		Theme theme = getTheme(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getRest());
-		
-		salesforceConnector.setTheme(theme);
-		
-		update(salesforceConnector);
-		
-		return new SalesforceConnector();
+		return salesforceConnector;
+	}
+	
+	@Override
+	public SObjectDetail findSObjectDetail(String id, String sobjectName) {
+		return super.findSObjectDetail(id, sobjectName);
 	}
 	
 	/**
@@ -326,12 +332,12 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		return describeGlobalSobjectsResult;
 	}
 	
-	private Theme getTheme(String accessToken, String rest) {
+	private Theme getTheme(String accessToken, String restUrl) {
 		Client client = new Client();
 		
 		ThemeRequest themeRequest = new ThemeRequest()
 				.withAccessToken(accessToken)
-				.withRestEndpoint(rest);
+				.withRestEndpoint(restUrl);
 		
 		Theme theme = client.getTheme(themeRequest);
 		
@@ -339,12 +345,11 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 	}
 	
-	private void describeSobjects(String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, String instanceKey) throws InterruptedException, ExecutionException, JsonProcessingException {
+	private void describeSobjects(String connectorId, String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult) throws InterruptedException, ExecutionException, JsonProcessingException {
+		
 		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
 		
 		final Client client = new Client();
-		
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		
 		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
 			executor.submit(() -> {
@@ -364,27 +369,17 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 
 				Date now = Date.from(Instant.now());
 				
-				ObjectId id = new ObjectId( UserContext.getPrincipal().getName() );
+				UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
 
-				com.nowellpoint.api.model.document.SObjectDetail sobjectDetail = null;
-				try {
-					sobjectDetail = documentManager.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, and ( eq ( "name", sobject.getName() ), eq ( "instanceKey", instanceKey ) ) );
-				} catch (DocumentNotFoundException e) {
-					sobjectDetail = new com.nowellpoint.api.model.document.SObjectDetail();
-					sobjectDetail.setInstanceKey(instanceKey);
-					sobjectDetail.setName(describeSobjectResult.getName());
-					sobjectDetail.setCreatedOn(now);
-					sobjectDetail.setCreatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserRef.class, id));
-				}
-				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
-				sobjectDetail.setLastUpdatedBy(documentManager.getReference(com.nowellpoint.api.model.document.UserRef.class, id));
+				SObjectDetail sobjectDetail = new SObjectDetail();
+				sobjectDetail.setCreatedOn(now);
+				sobjectDetail.setCreatedBy(userInfo);
+				sobjectDetail.setLastUpdatedBy(userInfo);
 				sobjectDetail.setLastUpdatedOn(now);
+				sobjectDetail.setConnectorId(connectorId);
+				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
 				sobjectDetail.setResult(describeSobjectResult);
-				if (Assert.isNull(sobjectDetail.getId())) {
-					documentManager.insertOne(sobjectDetail);
-				} else {
-					documentManager.replaceOne(sobjectDetail);
-				}
+				create(sobjectDetail);
 			});
 		}
 		

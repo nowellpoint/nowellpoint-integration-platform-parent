@@ -78,6 +78,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		mappedClasses.add(Date.class);
 		mappedClasses.add(Calendar.class);
 		mappedClasses.add(URL.class);
+		mappedClasses.add(ObjectId.class);
 	}
 	
 	/**
@@ -171,9 +172,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			Document document = new Document();
 			Set<Field> fields = getAllFields(object);
 			fields.stream().forEach(field -> {
-				if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
-					document.put(field.getName(), getFieldValue(object, field));
-				} else if (field.isAnnotationPresent(Id.class)) {
+				if (field.isAnnotationPresent(Id.class)) {
 					document.put(ID, getIdValue(object, field));
 				} else if (field.isAnnotationPresent(Reference.class)) {
 					document.put(field.getName(), resolveId(getFieldValue( object, field )));
@@ -181,6 +180,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 					document.put(field.getName(), toBsonDocument(getFieldValue( object, field )));
 				} else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Set.class)) {
 					document.put(field.getName(), toBsonArray(field, getFieldValue(object, field)));
+				} else if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
+					document.put(field.getName(), getFieldValue(object, field));
 				} else {	
 					document.put(field.getName(), toBsonDocument(getFieldValue( object, field )));
 				}
@@ -245,9 +246,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	protected void toObject(Object object, Document bson) {
 		Set<Field> fields = getAllFields(object);
 		for (Field field : fields) {
-			if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
-				setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
-			} else if (field.isAnnotationPresent(Id.class)) {
+			if (field.isAnnotationPresent(Id.class)) {
 				setFieldValue(field.getDeclaringClass(), object, field, bson.get(ID));
 			} else if (field.isAnnotationPresent(Reference.class)) {
 		    	setFieldValue(field.getDeclaringClass(), object, field, parseReference(field, bson.get(field.getName())));
@@ -255,7 +254,10 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
 		    } else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Set.class)) {
 		    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
+			} else if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
+				setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
 			} else {
+				System.out.println(field.getName());
 				setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
 			}
 		}
@@ -405,13 +407,6 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	private Object getIdValue(Object object, Field field) {
 		Object id = getFieldValue(object, field);
-		if (field.getType().isAssignableFrom(ObjectId.class)) {
-			if (id != null) {
-				id = new ObjectId(id.toString()); 	
-			} else {
-				id = new ObjectId();
-			}
-	    } 
 		return id;
 	}
 	
@@ -451,15 +446,10 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	private Object getFieldValue(Object object, Field field) {
 		Method method = null;
 		try {
-			method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});
+			method = resolveGetter(object, field);
 		} catch (NoSuchMethodException e) {
-			try {
-				method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});
-				method.setAccessible(Boolean.TRUE);
-			} catch (NoSuchMethodException | SecurityException e1) {
-				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
-				return null;
-			}				
+			LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+			return null;			
 		} 
 		
 		try {	
@@ -472,6 +462,12 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		    	value = String.valueOf(value);
 		    } else if (field.getType().isAssignableFrom(URL.class)) {
 		    	value = String.valueOf(value);
+		    } else if (field.getType().isAssignableFrom(ObjectId.class)) {
+		    	if (value == null) {
+		    		value = new ObjectId();
+		    	} else {
+		    		value = new ObjectId(String.valueOf(value));
+		    	}
 		    }
             return value;
 		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -494,15 +490,10 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		if (value != null) {
 			Method method = null;
 			try {
-				method = clazz.getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
+				method = resolveSetter(clazz, field);
 			} catch (NoSuchMethodException e) {
-				try {
-					method = clazz.getDeclaredMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
-					method.setAccessible(Boolean.TRUE);
-				} catch (NoSuchMethodException | SecurityException e1) {
-					LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
-					return;
-				}				
+				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+				return;				
 			} 
 			
 			try {
@@ -516,6 +507,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			    	value = Currency.getInstance(value.toString());
 			    } else if (field.getType().isAssignableFrom(URL.class)) {
 			    	value = new URL(value.toString());
+			    } else if (field.getType().isAssignableFrom(ObjectId.class)) {
+			    	value = new ObjectId(value.toString());
 			    }
 			    method.invoke(object, new Object[] {value});
 			} catch (IllegalArgumentException e) {
@@ -541,5 +534,27 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new DocumentManagerException(e);
 		}
+	}
+	
+	private Method resolveSetter(Class<?> clazz, Field field) throws NoSuchMethodException, SecurityException {
+		Method method = null;
+		try {
+			method = clazz.getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
+		} catch (NoSuchMethodException e) {
+			method = clazz.getDeclaredMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
+			method.setAccessible(Boolean.TRUE);				
+		} 
+		return method;
+	}
+	
+	private Method resolveGetter(Object object, Field field) throws NoSuchMethodException, SecurityException {
+		Method method = null;
+		try {
+			method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});
+		} catch (NoSuchMethodException e) {
+			method = object.getClass().getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {});
+			method.setAccessible(Boolean.TRUE);			
+		} 
+		return method;
 	}
 }

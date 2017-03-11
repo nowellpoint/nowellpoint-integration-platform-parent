@@ -184,6 +184,7 @@ public class Application implements SparkApplication {
         delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> SalesforceConnectorController.deleteSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
         
         //
         // job specification routes

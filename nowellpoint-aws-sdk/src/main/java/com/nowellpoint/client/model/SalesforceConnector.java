@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.client.model.sforce.Identity;
@@ -29,7 +29,7 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String tag;
 	
-	private Set<Sobject> sobjects;
+	private List<Sobject> sobjects;
 	
 	private Theme theme;
 	
@@ -113,11 +113,11 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public Set<Sobject> getSobjects() {
+	public List<Sobject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(Set<Sobject> sobjects) {
+	public void setSobjects(List<Sobject> sobjects) {
 		this.sobjects = sobjects;
 	}
 

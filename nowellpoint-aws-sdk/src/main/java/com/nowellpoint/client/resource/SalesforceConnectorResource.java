@@ -69,7 +69,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 	public SalesforceConnector get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.header("Content-Type", MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
     			.path(id)
     			.execute();
@@ -184,16 +184,20 @@ public class SalesforceConnectorResource extends AbstractResource {
 		return deleteResult;
 	}
 	
+	public SObjectDetailResource sobject() {
+		return new SObjectDetailResource(token);
+	}
+	
 	public class SObjectDetailResource extends AbstractResource {
 		
 		public SObjectDetailResource(Token token) {
 			super(token);
 		}
 		
-		public SObjectDetail get(String salesforceConnectorId, String key, String sobjectName) {
+		public SObjectDetail get(String salesforceConnectorId, String sobjectName) {
 			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
-					.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+					.header("Content-Type", MediaType.APPLICATION_JSON)
 					.path(RESOURCE_CONTEXT)
 	    			.path(salesforceConnectorId)
 	    			.path("sobject")

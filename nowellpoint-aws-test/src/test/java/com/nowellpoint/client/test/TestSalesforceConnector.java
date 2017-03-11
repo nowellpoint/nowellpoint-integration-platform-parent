@@ -9,6 +9,7 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.Token;
@@ -64,5 +65,12 @@ public class TestSalesforceConnector {
 		
 		System.out.println(updateResult.isSuccess());
 		System.out.println(updateResult.getTarget().getStatus());
+		
+		SObjectDetail sobject = new NowellpointClient(token)
+				.salesforceConnector()
+				.sobject()
+				.get(salesforceConnector.getId(), salesforceConnector.getSobjects().get(0).getName());
+		
+		System.out.println(sobject.getId());
 	}
 }

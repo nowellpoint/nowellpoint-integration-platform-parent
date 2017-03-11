@@ -30,6 +30,7 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_DELETE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/delete");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects");
+		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects/:sobjectName");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
 		public static final String ACCOUNT_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "account-profile/:id/picture");
@@ -49,7 +50,5 @@ public class Path {
 		public static final String JOB_SPECIFICATION_CREATE = String.format(APPLICATION_CONTEXT, "job-specifications");
 		public static final String JOB_SPECIFICATION_EDIT = String.format(APPLICATION_CONTEXT, "job-specifications/:id/edit");
 		public static final String JOB_SPECIFICATION_UPDATE = String.format(APPLICATION_CONTEXT, "job-specifications/:id");
-		
-		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
 	}
 }

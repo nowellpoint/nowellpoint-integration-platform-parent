@@ -6,6 +6,7 @@ import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.DeleteResult;
+import com.nowellpoint.client.model.SObjectDetail;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
@@ -25,6 +26,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
 		public static final String SALESFORCE_CONNECTOR_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-list.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-list.html");
+		public static final String SALESFORCE_CONNECTOR_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-view.html");
 	}
 	
 	/**
@@ -204,5 +206,24 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("salesforceConnector", salesforceConnector);
 
 		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_LIST);
+	}
+	
+	public static String viewSObject(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String sobjectName = request.params(":sobjectName");
+		
+		SObjectDetail sobject = new NowellpointClient(token)
+				.salesforceConnector().sobject()
+				.get(id, sobjectName);
+		
+		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", salesforceConnector);
+    	model.put("sobject", sobject);
+
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_VIEW);
 	}
 }

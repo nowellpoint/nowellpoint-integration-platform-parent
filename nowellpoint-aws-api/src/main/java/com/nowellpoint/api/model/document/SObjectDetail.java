@@ -38,10 +38,6 @@ public class SObjectDetail extends MongoDocument {
 	
 	private ObjectId connectorId;
 	
-	private String instanceKey;
-	
-	private String name;
-	
 	private Long totalSize;
 	
 	private DescribeSobjectResult result;
@@ -72,22 +68,6 @@ public class SObjectDetail extends MongoDocument {
 
 	public void setConnectorId(ObjectId connectorId) {
 		this.connectorId = connectorId;
-	}
-
-	public String getInstanceKey() {
-		return instanceKey;
-	}
-
-	public void setInstanceKey(String instanceKey) {
-		this.instanceKey = instanceKey;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Long getTotalSize() {

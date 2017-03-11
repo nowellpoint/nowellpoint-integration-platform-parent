@@ -16,7 +16,6 @@ import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
-import com.nowellpoint.api.service.SObjectDetailService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -24,9 +23,6 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
-	
-	@Inject
-	private SObjectDetailService sobjectDetailService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -112,16 +108,16 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.build(); 
 	}
 	
-	public Response getSObjectDetails(String id, String key, String sobjectName) {		
+	public Response getSObjectDetails(String id, String sobjectName) {		
 		
-		SObjectDetail resource = sobjectDetailService.findByName(key, sobjectName);
+		SObjectDetail sobjectDetail = salesforceConnectorService.findSObjectDetail(id, sobjectName);
 		
-		if (resource == null) {
+		if (sobjectDetail == null) {
 			throw new NotFoundException(String.format("SObject for name %s was not found", sobjectName));
 		}
 		
 		return Response.ok()
-				.entity(resource)
+				.entity(sobjectDetail)
 				.build(); 
 	}
 	

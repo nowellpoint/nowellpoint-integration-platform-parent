@@ -42,7 +42,7 @@ public class Field {
 
     private Boolean custom;
 
-    private String[] referenceTo;
+    private List<String> referenceTo;
 
     private String precision;
 
@@ -200,11 +200,11 @@ public class Field {
 		this.custom = custom;
 	}
 
-	public String[] getReferenceTo() {
+	public List<String> getReferenceTo() {
 		return referenceTo;
 	}
 
-	public void setReferenceTo(String[] referenceTo) {
+	public void setReferenceTo(List<String> referenceTo) {
 		this.referenceTo = referenceTo;
 	}
 

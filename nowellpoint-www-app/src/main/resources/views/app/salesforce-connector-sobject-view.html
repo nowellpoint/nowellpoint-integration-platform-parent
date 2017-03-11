@@ -2,38 +2,37 @@
     <@t.page>
 
         <div>
-            <a href="${labels['base.path']}/${id}/instances/${key}/sobjects" id="back" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.sobject.list"]}
+            <a href="${labels['base.path']}/${salesforceConnector.id}/sobjects" id="back" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.sobject.list"]}
         </div>
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${sobjectDetail.result.name}</h6>
-                        <h3 class="dashhead-title">${sobjectDetail.result.label}</h3>
+                        <h6 class="dashhead-subtitle">${sobject.result.name}</h6>
+                        <h3 class="dashhead-title">${sobject.result.label}</h3>
                     </div>
                 </div>
             </div>
         </div>
         <div class="hr-divider"></div>
 
-
         <br>
 
         <div class="col-md-3">
             <p class="text-center">${labels["query"]}</p>
-            <p class="text-center ${sobjectDetail.result.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobjectDetail.result.queryable?then('icon-check', 'icon-cross')}"></span></p>
+            <p class="text-center ${sobject.result.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.queryable?then('icon-check', 'icon-cross')}"></span></p>
         </div>
         <div class="col-md-3">
             <p class="text-center">${labels["create"]}</p>
-            <p class="text-center ${sobjectDetail.result.createable?then('text-success', 'text-danger')}"><span class="icon ${sobjectDetail.result.createable?then('icon-check', 'icon-cross')}"></span></p>
+            <p class="text-center ${sobject.result.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.createable?then('icon-check', 'icon-cross')}"></span></p>
         </div>
         <div class="col-md-3">
             <p class="text-center">${labels["update"]}</p>
-            <p class="text-center ${sobjectDetail.result.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobjectDetail.result.updateable?then('icon-check', 'icon-cross')}"></span></p>
+            <p class="text-center ${sobject.result.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.updateable?then('icon-check', 'icon-cross')}"></span></p>
         </div>
         <div class="col-md-3">
             <p class="text-center">${labels["delete"]}</p>
-            <p class="text-center ${sobjectDetail.result.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobjectDetail.result.deletable?then('icon-check', 'icon-cross')}"></span></p>
+            <p class="text-center ${sobject.result.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.deletable?then('icon-check', 'icon-cross')}"></span></p>
         </div>
 
         <br>
@@ -56,7 +55,7 @@
                     <th class="text-center">${labels["custom"]}</th>
                 </thead>
                 <tbody>
-                    <#list sobjectDetail.result.fields as field>
+                    <#list sobject.result.fields as field>
                         <tr>
                             <td>${field.name}</td>
                             <td>${field.label}</td>
@@ -87,7 +86,7 @@
                     <th>${labels["relationship.name"]}</th>
                 </thead>
                 <tbody>
-                    <#list sobjectDetail.result.childRelationships as relationship>
+                    <#list sobject.result.childRelationships as relationship>
                         <tr>
                             <td>${relationship.field}</td>
                             <td>${relationship.childSObject}</td>

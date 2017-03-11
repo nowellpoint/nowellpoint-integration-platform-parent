@@ -7,13 +7,11 @@ public class SObjectDetail extends AbstractResource {
 	
 	private UserInfo createdBy;
 	
-	private UserInfo lastModifiedBy;
+	private UserInfo lastUpdatedBy;
 	
-	private String instanceKey;
+	private String connectorId;
 	
 	private Long totalSize;
-	
-	private String name;
 	
 	private DescribeSobjectResult result;
 	
@@ -37,28 +35,20 @@ public class SObjectDetail extends AbstractResource {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserInfo getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserInfo lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public String getInstanceKey() {
-		return instanceKey;
+	public String getConnectorId() {
+		return connectorId;
 	}
 
-	public void setInstanceKey(String instanceKey) {
-		this.instanceKey = instanceKey;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setConnectorId(String connectorId) {
+		this.connectorId = connectorId;
 	}
 
 	public Long getTotalSize() {

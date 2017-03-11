@@ -1,5 +1,6 @@
 package com.nowellpoint.api.service;
 
+import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.client.sforce.model.Token;
@@ -27,4 +28,6 @@ public interface SalesforceConnectorService {
 	SalesforceConnector test(String id);
 	
 	SalesforceConnector build(String id);
+	
+	SObjectDetail findSObjectDetail(String id, String sobjectName);
 }

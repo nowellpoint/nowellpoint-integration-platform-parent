@@ -184,7 +184,7 @@
                         <tbody>
                             <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
                                 <tr id="${sobject.name}">
-                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}">${(sobject.name!)}</a></td>
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}/sobjects/${(sobject.name!)}">${(sobject.name!)}</a></td>
                                     <td>${(sobject.label!)}</td>
                                     <td class="text-center">
                                         <#if sobject.queryable>
