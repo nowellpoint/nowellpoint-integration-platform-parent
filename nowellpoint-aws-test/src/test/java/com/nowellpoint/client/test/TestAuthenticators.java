@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -30,7 +29,6 @@ import com.nowellpoint.client.model.UpdateResult;
 
 public class TestAuthenticators {
 	
-	private static Logger LOG = Logger.getLogger(TestAuthenticators.class.getName());
 	private static Token token = null;
 	
 	@BeforeClass
@@ -68,23 +66,6 @@ public class TestAuthenticators {
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
 		System.out.println(identity.getName());
-	}
-	
-	@Test
-	public void testSalesforceConnectorBuild() {
-		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
-				.salesforceConnector()
-				.getSalesforceConnectors();
-		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
-		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
-				.salesforceConnector()
-				.test(salesforceConnector.getId());
-		
-		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getTarget().getStatus());
 	}
 	
 	@Test(expected = IllegalArgumentException.class)

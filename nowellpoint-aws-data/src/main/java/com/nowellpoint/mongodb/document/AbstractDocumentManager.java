@@ -5,13 +5,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Currency;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -51,8 +58,26 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	private DocumentManagerFactory documentManagerFactory;
 	
+	private Set<Class<?>> mappedClasses = new HashSet<Class<?>>();
+ 
 	public AbstractDocumentManager(DocumentManagerFactory documentManagerFactory) {
 		this.documentManagerFactory = documentManagerFactory;
+		mappedClasses.add(String.class);
+		mappedClasses.add(Boolean.class);
+		mappedClasses.add(Character.class);
+		mappedClasses.add(Byte.class);
+		mappedClasses.add(Short.class);
+		mappedClasses.add(Integer.class);
+		mappedClasses.add(Long.class);
+		mappedClasses.add(Float.class);
+		mappedClasses.add(Double.class);
+		mappedClasses.add(Void.class);
+		mappedClasses.add(Locale.class);
+		mappedClasses.add(TimeZone.class);
+		mappedClasses.add(Currency.class);
+		mappedClasses.add(Date.class);
+		mappedClasses.add(Calendar.class);
+		mappedClasses.add(URL.class);
 	}
 	
 	/**
@@ -146,16 +171,18 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			Document document = new Document();
 			Set<Field> fields = getAllFields(object);
 			fields.stream().forEach(field -> {
-				if (field.isAnnotationPresent(Id.class)) {
+				if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
+					document.put(field.getName(), getFieldValue(object, field));
+				} else if (field.isAnnotationPresent(Id.class)) {
 					document.put(ID, getIdValue(object, field));
 				} else if (field.isAnnotationPresent(Reference.class)) {
 					document.put(field.getName(), resolveId(getFieldValue( object, field )));
 				} else if (field.isAnnotationPresent(EmbedOne.class)) {
 					document.put(field.getName(), toBsonDocument(getFieldValue( object, field )));
-				} else if (field.isAnnotationPresent(EmbedMany.class)) {
+				} else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Set.class)) {
 					document.put(field.getName(), toBsonArray(field, getFieldValue(object, field)));
 				} else {	
-					document.put(field.getName(), getFieldValue(object, field));
+					document.put(field.getName(), toBsonDocument(getFieldValue( object, field )));
 				}
 			});
 			
@@ -178,7 +205,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	protected List<Document> toBsonArray(Field field, Object object) {
 		if ( object != null ) {
 			List<Document> documents = new ArrayList<>();
-			Set<?> items = (Set<?>) object;
+			Collection<?> items = (Collection<?>) object;
 			items.stream().forEach(item -> {
 				documents.add(toBsonDocument(item));
 			});
@@ -218,32 +245,42 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	protected void toObject(Object object, Document bson) {
 		Set<Field> fields = getAllFields(object);
 		for (Field field : fields) {
-			if (field.isAnnotationPresent(Id.class)) {
+			if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
+				setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
+			} else if (field.isAnnotationPresent(Id.class)) {
 				setFieldValue(field.getDeclaringClass(), object, field, bson.get(ID));
 			} else if (field.isAnnotationPresent(Reference.class)) {
 		    	setFieldValue(field.getDeclaringClass(), object, field, parseReference(field, bson.get(field.getName())));
 		    } else if (field.isAnnotationPresent(EmbedOne.class)) {
 		    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
-		    } else if (field.isAnnotationPresent(EmbedMany.class)) {
+		    } else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Set.class)) {
 		    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
 			} else {
-				setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
+				setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
 			}
 		}
 	}
 	
-	private <T> Set<T> parseEmbedMany(Field embeddedField, ArrayList<?> items) {
+	private <T> Collection<T> parseEmbedMany(Field embeddedField, ArrayList<?> items) {
 		if ( items != null ) {
 			ParameterizedType type = (ParameterizedType) embeddedField.getGenericType();
 			Class<?> embeddedClass = (Class<?>) type.getActualTypeArguments()[0];
 			
-			Set<T> list = new HashSet<>();
-			items.stream().forEach(item -> {
-				T object = parseEmbedOne(embeddedClass, (Document) item);
-				list.add(object);
-			});
-			
-			return list;
+			if (embeddedField.getType().isAssignableFrom(Set.class)) {
+				Collection<T> list = new HashSet<>();
+				items.stream().forEach(item -> {
+					T object = parseEmbedOne(embeddedClass, (Document) item);
+					list.add(object);
+				});
+				return list;
+			} else {
+				Collection<T> list = new ArrayList<>();
+				items.stream().forEach(item -> {
+					T object = parseEmbedOne(embeddedClass, (Document) item);
+					list.add(object);
+				});
+				return list;
+			}
 		}
 		
 		return null;
@@ -263,17 +300,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	private <T> T parseEmbedOne(Class<?> type, Document bson) {
 		if ( bson != null ) {
 			Object object = instantiate(type);
-			Set<Field> fields = getAllFields(object);
-			for (Field field : fields) {
-				if (field.isAnnotationPresent(EmbedOne.class)) {
-					setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
-				} else if (field.isAnnotationPresent(EmbedMany.class)) {
-			    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));	
-				} else {
-					setFieldValue(object.getClass(), object, field, bson.get(field.getName()));
-				}
-			};
-			
+			toObject(object, bson);
 			return (T) object;
 		}
 		
@@ -320,7 +347,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 							setFieldValue(object.getClass(), object, field, bson.get(ID));
 						} else if (field.isAnnotationPresent(EmbedOne.class)) {
 							setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
-						} else if (field.isAnnotationPresent(EmbedMany.class)) {
+						} else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(Collection.class)) {
 					    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
 						} else {
 							setFieldValue(object.getClass(), object, field, bson.get(field.getName()));
@@ -439,6 +466,12 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		    Object value = method.invoke(object, new Object[] {});
             if (field.getType().isAssignableFrom(Locale.class)) {            	
 		    	value = String.valueOf(value);
+		    } else if (field.getType().isAssignableFrom(TimeZone.class)) {
+		    	value = String.valueOf(value);
+		    } else if (field.getType().isAssignableFrom(Currency.class)) {
+		    	value = String.valueOf(value);
+		    } else if (field.getType().isAssignableFrom(URL.class)) {
+		    	value = String.valueOf(value);
 		    }
             return value;
 		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -477,12 +510,18 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			    	value = Locale.forLanguageTag(value.toString());
 			    } else if (field.getType().isAssignableFrom(Double.class)) {
 			    	value = Double.valueOf(value.toString());
+			    } else if (field.getType().isAssignableFrom(TimeZone.class)) {
+			    	value = TimeZone.getTimeZone(value.toString());
+			    } else if (field.getType().isAssignableFrom(Currency.class)) {
+			    	value = Currency.getInstance(value.toString());
+			    } else if (field.getType().isAssignableFrom(URL.class)) {
+			    	value = new URL(value.toString());
 			    }
 			    method.invoke(object, new Object[] {value});
 			} catch (IllegalArgumentException e) {
 				LOGGER.info("Illegal Argument for " + field.getName() + " invalid type " + value.getClass().getName());
 				return;
-			} catch (SecurityException | IllegalAccessException | InvocationTargetException e) {
+			} catch (SecurityException | IllegalAccessException | InvocationTargetException | MalformedURLException e) {
 				throw new DocumentManagerException(e);
 			}
 		}

@@ -25,6 +25,7 @@ import com.nowellpoint.api.model.sforce.Organization;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -64,8 +65,10 @@ public class SalesforceConnector extends MongoDocument {
 	
 	private String tag;
 	
+	@EmbedMany
 	private Set<Sobject> sobjects;
 	
+	@EmbedOne
 	private Theme theme;
 	
 	public SalesforceConnector() {

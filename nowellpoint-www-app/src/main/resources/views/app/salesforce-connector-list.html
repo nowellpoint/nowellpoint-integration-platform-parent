@@ -33,6 +33,7 @@
                 <table class="table table-hover">
                     <thead>
                         <th>${labels["name"]}</th>
+                        <th>${labels["connection.status"]}</th>
                         <th>${labels["organization.name"]}</th>
                         <th>${labels["instance.name"]}</th>
                         <th>${labels["action"]}</th>
@@ -41,6 +42,10 @@
                         <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
                             <tr id="${salesforceConnector.id}">
                                 <td><a href="${labels['base.path']}/${salesforceConnector.id}">${(salesforceConnector.name!)}</a></td>
+                                <td>
+                                    <#if salesforceConnector.isValid><span class="text-success">${(salesforceConnector.status)!}</span></#if>
+                                    <#if !salesforceConnector.isValid><span class="text-danger">${(salesforceConnector.status)!}</span></#if>
+                                </td>
                                 <td>${salesforceConnector.organization.name}</td>
                                 <td>${salesforceConnector.organization.instanceName}</td>
                                 <td><a href="${labels['base.path']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a></td>

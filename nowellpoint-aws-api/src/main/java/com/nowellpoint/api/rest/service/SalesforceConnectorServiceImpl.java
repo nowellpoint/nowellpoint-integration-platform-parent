@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +44,7 @@ import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
+import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
@@ -53,7 +55,6 @@ import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
 import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
-import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Count;
@@ -214,16 +215,16 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		try {
 			connect(salesforceConnector.getConnectionString());
 			salesforceConnector.setIsValid(Boolean.TRUE);
-			salesforceConnector.setStatus("Connection Success");
+			salesforceConnector.setStatus("Successful Connection: " + Instant.now().toString());
 		} catch (OauthException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus(e.getErrorDescription());
+			salesforceConnector.setStatus("Error: " + e.getErrorDescription());
 		} catch (ValidationException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus(e.getMessage());
+			salesforceConnector.setStatus("Error: " + e.getMessage());
 		} catch (Exception e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
-			salesforceConnector.setStatus(e.getMessage());
+			salesforceConnector.setStatus("Error: " + e.getMessage());
 		}			
 		
 		update(salesforceConnector);
@@ -235,7 +236,30 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	public SalesforceConnector build(String id) {
 		SalesforceConnector salesforceConnector = findById( id );
 		
-		//build(salesforceConnector);
+		Token token = null;
+		
+		try {
+			token = connect(salesforceConnector.getConnectionString());
+			salesforceConnector.setIsValid(Boolean.TRUE);
+			salesforceConnector.setStatus(MessageProvider.getMessage(Locale.US, "success"));
+		} catch (OauthException e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus("Error: " + e.getErrorDescription());
+		} catch (ValidationException e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus("Error: " + e.getMessage());
+		} catch (Exception e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus("Error: " + e.getMessage());
+		}	
+		
+		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describe(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getSobjects());
+		
+		salesforceConnector.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+		
+		Theme theme = getTheme(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getRest());
+		
+		salesforceConnector.setTheme(theme);
 		
 		update(salesforceConnector);
 		
@@ -290,31 +314,28 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 	}
 	
-	private void build(Token token) {
-	
+	private DescribeGlobalSobjectsResult describe(String accessToken, String sobjectsUrl) {
 		Client client = new Client();
 		
-		GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
-				.setAccessToken(token.getAccessToken())
-				.setId(token.getId());
-		
-		Identity identity = client.getIdentity(getIdentityRequest);
-		
 		DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
-				.setAccessToken(token.getAccessToken())
-				.setSobjectsUrl(identity.getUrls().getSobjects());
+				.setAccessToken(accessToken)
+				.setSobjectsUrl(sobjectsUrl);
 		
 		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 		
-		//salesforceConnector.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
+		return describeGlobalSobjectsResult;
+	}
+	
+	private Theme getTheme(String accessToken, String rest) {
+		Client client = new Client();
 		
 		ThemeRequest themeRequest = new ThemeRequest()
-				.withAccessToken(token.getAccessToken())
-				.withRestEndpoint(identity.getUrls().getRest());
+				.withAccessToken(accessToken)
+				.withRestEndpoint(rest);
 		
 		Theme theme = client.getTheme(themeRequest);
 		
-		//salesforceConnector.setTheme(theme);
+		return theme;
 		
 	}
 	

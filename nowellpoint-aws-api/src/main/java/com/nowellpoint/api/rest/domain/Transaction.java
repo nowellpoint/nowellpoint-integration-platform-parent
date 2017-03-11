@@ -3,8 +3,6 @@ package com.nowellpoint.api.rest.domain;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 public class Transaction {
 	
@@ -86,27 +84,20 @@ public class Transaction {
 	
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("id", id)
-				.add("amount", amount)
-				.add("currencyIsoCode", currencyIsoCode)
-				.add("status", status)
-				.add("createdOn", createdOn)
-				.add("updatedOn", updatedOn)
-				.toString();
+		return null;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(this.id);
+		return 0; //Objects.hashCode(this.id);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof CreditCard) {
-			Transaction other = (Transaction) obj;
-			return Objects.equal(this.id, other.id);
-		}
+//		if (obj instanceof CreditCard) {
+//			Transaction other = (Transaction) obj;
+//			return Objects.equal(this.id, other.id);
+//		}
 		return false;
 	}
 }

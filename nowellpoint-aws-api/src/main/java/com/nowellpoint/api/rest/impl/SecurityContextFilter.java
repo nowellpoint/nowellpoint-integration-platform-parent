@@ -43,6 +43,10 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		
+		if (requestContext.getUriInfo().getPath().contains("/swagger")) {
+			return;
+		}
+		
 		Method method = resourceInfo.getResourceMethod();
 		
 		if (! method.isAnnotationPresent(PermitAll.class)) {

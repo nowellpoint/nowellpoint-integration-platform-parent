@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
+import org.wildfly.swarm.swagger.SwaggerArchive;
 
 import com.nowellpoint.util.Properties;
 
@@ -37,7 +38,7 @@ public class Main {
 		// build the container
 		//
 		
-        Swarm container = new Swarm(args); 
+        Swarm container = new Swarm(args);
 		
 		//
 		// set default system properties
@@ -66,10 +67,19 @@ public class Main {
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class, "nowellpoint-api.war")
         		.addPackages(true, Package.getPackage("com.nowellpoint.api"))
-        		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties")
+        		.addAsWebResource(new ClassLoaderAsset("messages_en_US.properties", Main.class.getClassLoader()), "messages_en_US.properties")
+        		.addAsWebResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
         		.addAllDependencies();
+        
+        //
+        // enable swagger
+        //
+        
+        final SwaggerArchive archive = deployment.as(SwaggerArchive.class);
+        archive.setResourcePackages("com.nowellpoint.api.rest");
+        archive.setPrettyPrint(Boolean.TRUE);
         
         //
         // start the container and deploy the archive

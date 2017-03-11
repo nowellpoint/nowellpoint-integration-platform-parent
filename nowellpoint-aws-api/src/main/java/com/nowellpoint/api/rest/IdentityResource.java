@@ -7,7 +7,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.annotations.Api;
+
 @Path("identity")
+@Api(value = "/identity")
 public interface IdentityResource {
 	
 	@GET

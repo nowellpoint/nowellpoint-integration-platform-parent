@@ -61,7 +61,6 @@ public class AccountProfile extends MongoDocument {
 
 	private Date lastLoginDate;
 	
-	@EmbedOne
 	private Address address;
 
 	private String accountHref;
@@ -75,7 +74,6 @@ public class AccountProfile extends MongoDocument {
 	@EmbedMany
 	private Set<CreditCard> creditCards;
 	
-	@EmbedMany
 	private Set<Transaction> transactions;
 	
 	private Boolean hasFullAccess;
