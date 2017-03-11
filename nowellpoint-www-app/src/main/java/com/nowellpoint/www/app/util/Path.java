@@ -29,6 +29,7 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/edit");
 		public static final String CONNECTORS_SALESFORCE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_DELETE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/delete");
+		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
 		public static final String ACCOUNT_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "account-profile/:id/picture");
@@ -50,22 +51,5 @@ public class Path {
 		public static final String JOB_SPECIFICATION_UPDATE = String.format(APPLICATION_CONTEXT, "job-specifications/:id");
 		
 		public static final String SETUP = String.format(APPLICATION_CONTEXT, "setup");
-		
-		public static final String APPLICATION_LIST = String.format(APPLICATION_CONTEXT, "applications");
-		public static final String APPLICATION_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id");
-		public static final String APPLICATION_CONNECTOR_SELECT = String.format(APPLICATION_CONTEXT, "applications/select");
-		public static final String APPLICATION_EDIT = String.format(APPLICATION_CONTEXT, "applications/:id/edit");
-		public static final String APPLICATION_DELETE = String.format(APPLICATION_CONTEXT, "applications/:id/delete");
-		public static final String APPLICATION_NEW = String.format(APPLICATION_CONTEXT, "applications/new");
-		public static final String APPLICATION_CREATE = String.format(APPLICATION_CONTEXT, "applications");
-		public static final String APPLICATION_UPDATE = String.format(APPLICATION_CONTEXT, "applications/:id");
-		public static final String APPLICATION_ENVIRONMENT_VIEW = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key/view");
-		public static final String APPLICATION_ENVIRONMENT_NEW = String.format(APPLICATION_CONTEXT, "applications/:id/environments/new");
-		public static final String APPLICATION_ENVIRONMENT_ADD = String.format(APPLICATION_CONTEXT, "applications/:id/environments");
-		public static final String APPLICATION_ENVIRONMENT_EDIT = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key/edit");
-		public static final String APPLICATION_ENVIRONMENT_UPDATE = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key");
-		public static final String APPLICATION_ENVIRONMENT_TEST = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key/test");
-		public static final String APPLICATION_ENVIRONMENT_REMOVE = String.format(APPLICATION_CONTEXT, "applications/:id/environments/:key");
-		public static final String PROJECTS = String.format(APPLICATION_CONTEXT, "projects");
 	}
 }

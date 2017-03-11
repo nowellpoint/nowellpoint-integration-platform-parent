@@ -35,15 +35,15 @@
             <div class="col-md-3">
 
                 <dl class="dl-vertical">
-                    
-                    <dt>${labels["name"]}</dt>
+
+                    <dt>${labels["connector.name"]}</dt>
                     <dd>${(salesforceConnector.name)!}&emsp;</dd>
                     <hr>
-                    
+
                     <dt>${labels["instance.name"]}</dt>
                     <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
                     <hr>
-                    
+
                     <dt>${labels["organization.type"]}</dt>
                     <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
                     <hr>
@@ -67,7 +67,7 @@
             <div class="col-md-3">
 
                 <dl class="dl-vertical">
-                                        
+
                     <dt>${labels["organization.name"]}</dt>
                     <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
                     <hr>
@@ -87,7 +87,7 @@
                     <dt>${labels["phone"]}</dt>
                     <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
                     <hr>
-                    
+
                     <dt>${labels["tag"]}</dt>
                     <dd>${(salesforceConnector.tag)!}&emsp;</dd>
                     <hr>
@@ -143,12 +143,90 @@
                     <dt>${labels["query"]}</dt>
                     <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
                     <hr>
-                    
+
                 </dl>
             </div>
 
             <div class="col-md-6"></div>
 
+        </div>
+
+        <br>
+        <br>
+
+        <div class="row" id="sobjects">
+
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["sobjects"]}</h3>
+                    </div>
+                </div>
+                <br>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="btn-toolbar" role="toolbar">
+                    <a href="${labels['base.path']}/${salesforceConnector.id!}/sobjects" class="btn btn-primary">${labels["show.all"]}</a>
+                </div>
+                <br>
+            </div>
+            <div class="content table-responsive">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>${labels["name"]}</th>
+                            <th>${labels["label"]}</th>
+                            <th class="text-center">${labels["query"]}</th>
+                            <th class="text-center">${labels["create"]}</th>
+                            <th class="text-center">${labels["update"]}</th>
+                            <th class="text-center">${labels["delete"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
+                                <tr id="${sobject.name}">
+                                    <td><a href="${labels['base.path']}/${salesforceConnector.id}">${(sobject.name!)}</a></td>
+                                    <td>${(sobject.label!)}</td>
+                                    <td class="text-center">
+                                        <#if sobject.queryable>
+                                            <span class="text-success icon icon-check"></span>
+                                        </#if>
+                                        <#if ! sobject.queryable>
+                                            <span class="text-danger icon icon-cross"></span>
+                                        </#if>
+                                    </td>
+                                    <td class="text-center">
+                                        <#if sobject.createable>
+                                            <span class="text-success icon icon-check"></span>
+                                        </#if>
+                                        <#if ! sobject.createable>
+                                            <span class="text-danger icon icon-cross"></span>
+                                        </#if>
+                                    </td>
+                                    <td class="text-center">
+                                        <#if sobject.updateable>
+                                            <span class="text-success icon icon-check"></span>
+                                        </#if>
+                                        <#if ! sobject.updateable>
+                                            <span class="text-danger icon icon-cross"></span>
+                                        </#if>
+                                    </td>
+                                    <td class="text-center">
+                                        <#if sobject.deletable>
+                                            <span class="text-success icon icon-check"></span>
+                                        </#if>
+                                        <#if ! sobject.deletable>
+                                            <span class="text-danger icon icon-cross"></span>
+                                        </#if>
+                                    </td>
+                                </tr>
+                                <#if sobject?counter==10>
+                                    <#break/>
+                                </#if>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <br>

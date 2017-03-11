@@ -24,6 +24,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
 		public static final String SALESFORCE_CONNECTOR_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-list.html");
+		public static final String SALESFORCE_CONNECTOR_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-list.html");
 	}
 	
 	/**
@@ -65,7 +66,6 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
-    	model.put("successMessage", request.cookie("successMessage"));
     	model.put("createdByHref", createdByHref);
     	model.put("lastModifiedByHref", lastModifiedByHref);
 		
@@ -190,4 +190,19 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		return "";
 	};
+	
+	public static String listSObjects(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		SalesforceConnector salesforceConnector = new NowellpointClient(token)
+				.salesforceConnector()
+				.get(id);
+		
+		Map<String, Object> model = getModel();
+    	model.put("salesforceConnector", salesforceConnector);
+
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_LIST);
+	}
 }
