@@ -19,6 +19,7 @@
                 <thead>
                     <th>${labels["name"]}</th>
                     <th>${labels["label"]}</th>
+                    <th>${labels["key.prefix"]}</th>
                     <th class="text-center">${labels["query"]}</th>
                     <th class="text-center">${labels["create"]}</th>
                     <th class="text-center">${labels["update"]}</th>
@@ -27,8 +28,9 @@
                 <tbody>
                     <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
                         <tr id="${sobject.name}">
-                            <td><a href="${labels['base.path']}/${salesforceConnector.id}">${(sobject.name!)}</a></td>
+                            <td><a href="${labels['base.path']}/${salesforceConnector.id}/sobjects/${(sobject.name!)}">${(sobject.name!)}</a></td>
                             <td>${(sobject.label!)}</td>
+                            <td>${(sobject.keyPrefix!)}</td>
                             <td class="text-center">
                                 <#if sobject.queryable>
                                     <span class="text-success icon icon-check"></span>

@@ -257,7 +257,6 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			} else if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
 				setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
 			} else {
-				System.out.println(field.getName());
 				setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
 			}
 		}

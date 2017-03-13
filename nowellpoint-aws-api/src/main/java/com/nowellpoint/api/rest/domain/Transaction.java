@@ -2,6 +2,9 @@ package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Transaction {
@@ -89,15 +92,26 @@ public class Transaction {
 
 	@Override
 	public int hashCode() {
-		return 0; //Objects.hashCode(this.id);
+		return new HashCodeBuilder()
+				.append(this.id)
+		        .toHashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-//		if (obj instanceof CreditCard) {
-//			Transaction other = (Transaction) obj;
-//			return Objects.equal(this.id, other.id);
-//		}
-		return false;
+		if (obj == null) { 
+			return false;
+		}
+		if (obj == this) { 
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		Transaction transaction = (Transaction) obj;
+		return new EqualsBuilder()
+				.appendSuper(super.equals(obj))
+				.append(this.id, transaction.id)
+				.isEquals();
 	}
 }

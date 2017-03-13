@@ -126,23 +126,18 @@ public class AccountProfileController extends AbstractStaticController {
 		creditCard.setBillingAddress(address);
 		creditCard.setBillingContact(contact);
 		
-		String createdByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getCreatedBy().getId());
-		String lastModifiedByHref = Path.Route.ACCOUNT_PROFILE.replace(":id", accountProfile.getLastUpdatedBy().getId());
-		
 		Map<String, Object> model = getModel();
 		model.put("accountProfile", accountProfile);
 		model.put("creditCard", creditCard);
 		model.put("locales", getLocales(accountProfile.getLocaleSidKey()));
 		model.put("languages", getSupportedLanguages());
-		model.put("createdByHref", createdByHref);
-		model.put("lastModifiedByHref", lastModifiedByHref);
 		model.put("successMessage", request.cookie("update.profile.success"));
 		
 		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocaleSidKey())));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 		
-		if (accountProfile.getId().equals(id)) {
+		if (accountProfile.getId().equals(identity.getId())) {
 			return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_ME);
 		}
 
@@ -255,14 +250,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.subscription()
 				.set(subscriptionRequest);
 		
-		String html = "";
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);		
-			html = error(updateResult.getErrorMessage());
-		} 
-		
-		return html;
+		return response(updateResult);
 			
 	}
 	
@@ -298,14 +286,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.accountProfile()
 				.update(request.params(":id"), accountProfileRequest);
 		
-		String html = "";
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);		
-			html = error(updateResult.getErrorMessage());
-		} 
-		
-		return html;
+		return response(updateResult);
 	}
 	
 	/**
@@ -401,14 +382,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.address()
 				.update(request.params(":id"), addressRequest);
 		
-		String html = "";
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);		
-			html = error(updateResult.getErrorMessage());
-		} 
-		
-		return html;
+		return response(updateResult);
 	}
 	
 	/**
@@ -511,14 +485,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.add(creditCardRequest);
 		
-		String html = "";
-		
-		if (! createResult.isSuccess()) {
-			response.status(400);		
-			html = error(createResult.getErrorMessage());
-		} 
-		
-		return html;
+		return response(createResult);
 	};
 	
 	/**
@@ -567,14 +534,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.update(creditCardRequest);
 		
-		String html = "";
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);		
-			html = error(updateResult.getErrorMessage());
-		} 
-		
-		return html;
+		return response(updateResult);
 	};
 	
 	/**
@@ -593,14 +553,7 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.setPrimary(request.params(":id"), request.params(":token"));
 		
-		String html = "";
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);		
-			html = error(updateResult.getErrorMessage());
-		} 
-		
-		return html;
+		return response(updateResult);
 	};
 	
 	/**

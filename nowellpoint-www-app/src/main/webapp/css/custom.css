@@ -331,6 +331,4 @@ body {
     text-align: center;
     z-index:1234;
     overflow: auto;
-    width: 100px; /* width of the spinner gif */
-    height: 102px; /*hight of the spinner gif +2px to fix IE8 issue */
 }

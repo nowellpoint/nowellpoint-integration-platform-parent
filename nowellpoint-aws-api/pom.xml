@@ -70,10 +70,10 @@
 			<artifactId>management</artifactId>
 		</dependency>
 		<dependency>
-    <groupId>org.wildfly.swarm</groupId>
-    <artifactId>swagger</artifactId>
-    <version>2017.1.1</version>
-</dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>swagger</artifactId>
+			<version>2017.1.1</version>
+		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
 			</dependency> -->
 		<dependency>
@@ -111,6 +111,11 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>

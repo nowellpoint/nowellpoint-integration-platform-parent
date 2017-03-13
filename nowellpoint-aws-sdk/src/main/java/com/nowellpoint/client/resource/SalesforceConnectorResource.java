@@ -4,7 +4,7 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.SObjectDetail;
+import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
@@ -194,7 +194,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 			super(token);
 		}
 		
-		public SObjectDetail get(String salesforceConnectorId, String sobjectName) {
+		public SObject get(String salesforceConnectorId, String sobjectName) {
 			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.header("Content-Type", MediaType.APPLICATION_JSON)
@@ -204,10 +204,10 @@ public class SalesforceConnectorResource extends AbstractResource {
 	    			.path(sobjectName)
 	    			.execute();
 			
-			SObjectDetail resource = null;
+			SObject resource = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				resource = httpResponse.getEntity(SObjectDetail.class); 
+				resource = httpResponse.getEntity(SObject.class); 
 			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} 

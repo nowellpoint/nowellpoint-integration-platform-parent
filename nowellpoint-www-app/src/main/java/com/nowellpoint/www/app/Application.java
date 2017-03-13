@@ -183,6 +183,8 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> SalesforceConnectorController.updateSalesforceConnector(configuration, request, response));
         delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> SalesforceConnectorController.deleteSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_TEST, (request, response) -> SalesforceConnectorController.testSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_BUILD, (request, response) -> SalesforceConnectorController.buildSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
         

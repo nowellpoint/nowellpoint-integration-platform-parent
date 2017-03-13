@@ -15,6 +15,7 @@ import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.model.Identity;
+import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.Token;
 
 import freemarker.core.Environment;
@@ -73,15 +74,6 @@ public class AbstractStaticController {
 		return ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)).getString(key);
 	}
 	
-	protected static String error(String errorMessage) {
-		return div().withId("error").withClass("alert alert-danger")
-				.with(a().withClass("close").withData("dismiss", "alert")
-						.with(new UnescapedText("&times;")))
-				.with(div().withClass("text-center")
-						.with(strong().withText(errorMessage)))
-				.render();
-	}
-	
 	protected static String render(Class<?> controllerClass, Configuration configuration, Request request, Response response, Map<String,Object> model, String templateName) {	
 		Identity identity = getIdentity(request);
 		Locale locale = getLocale(request);
@@ -89,6 +81,19 @@ public class AbstractStaticController {
 		model.put("identity", identity);
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+        model.put("links", new ResourceBundleModel(ResourceBundle.getBundle("links"), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
+	
+	protected static String response(Result result) {
+		if (result.isSuccess()) {
+			return "";
+		}
+		return div().withId("error").withClass("alert alert-danger")
+				.with(a().withClass("close").withData("dismiss", "alert")
+						.with(new UnescapedText("&times;")))
+				.with(div().withClass("text-center")
+						.with(strong().withText(result.getErrorMessage())))
+				.render();
+	}
 }

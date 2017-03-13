@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 import com.nowellpoint.client.model.sforce.DescribeSobjectResult;
 
-public class SObjectDetail extends AbstractResource {
+public class SObject extends AbstractResource {
 	
 	private UserInfo createdBy;
 	
@@ -14,7 +14,7 @@ public class SObjectDetail extends AbstractResource {
 	
 	private DescribeSobjectResult result;
 	
-	public SObjectDetail() {
+	public SObject() {
 		
 	}
 

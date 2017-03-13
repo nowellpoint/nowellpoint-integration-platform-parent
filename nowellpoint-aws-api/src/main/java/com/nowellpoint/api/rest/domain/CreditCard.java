@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class CreditCard {
 
 	private String cardType;
@@ -162,15 +165,26 @@ public class CreditCard {
 
 	@Override
 	public int hashCode() {
-		return 0; //Objects.hashCode(this.token);
+		return new HashCodeBuilder()
+				.append(this.token)
+		        .toHashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-//		if (obj instanceof CreditCard) {
-//			CreditCard other = (CreditCard) obj;
-//			return Objects.equal(this.token, other.token);
-//		}
-		return false;
+		if (obj == null) { 
+			return false;
+		}
+		if (obj == this) { 
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		CreditCard creditCard = (CreditCard) obj;
+		return new EqualsBuilder()
+				.appendSuper(super.equals(obj))
+				.append(this.token, creditCard.token)
+				.isEquals();
 	}
 }
