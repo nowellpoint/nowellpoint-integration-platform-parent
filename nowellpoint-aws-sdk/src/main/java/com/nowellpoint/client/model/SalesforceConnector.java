@@ -1,5 +1,7 @@
 package com.nowellpoint.client.model;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,6 +21,8 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String connectionString;
 	
+	private Date lastTestedOn;
+	
 	private Boolean isValid;
 	
 	private String serviceEndpoint;
@@ -34,7 +38,7 @@ public class SalesforceConnector extends AbstractResource {
 	private Theme theme;
 	
 	public SalesforceConnector() {
-		
+		sobjects = new ArrayList<>();
 	}
 	
 	public SalesforceConnector(String id) {
@@ -71,6 +75,14 @@ public class SalesforceConnector extends AbstractResource {
 
 	public void setConnectionString(String connectionString) {
 		this.connectionString = connectionString;
+	}
+
+	public Date getLastTestedOn() {
+		return lastTestedOn;
+	}
+
+	public void setLastTestedOn(Date lastTestedOn) {
+		this.lastTestedOn = lastTestedOn;
 	}
 
 	public Boolean getIsValid() {

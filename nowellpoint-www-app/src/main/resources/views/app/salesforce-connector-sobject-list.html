@@ -1,7 +1,7 @@
 <#import "template.html" as t>
     <@t.page>
         <div>
-            <a href="${labels['base.path']}/${salesforceConnector.id}#sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
+            <a href="${links['salesforce.connector']}/${salesforceConnector.id}#sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
         </div>
         <br>
         <div class="flextable p-t">
@@ -28,7 +28,7 @@
                 <tbody>
                     <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
                         <tr id="${sobject.name}">
-                            <td><a href="${labels['base.path']}/${salesforceConnector.id}/sobjects/${(sobject.name!)}">${(sobject.name!)}</a></td>
+                            <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${(sobject.name!)}">${(sobject.name!)}</a></td>
                             <td>${(sobject.label!)}</td>
                             <td>${(sobject.keyPrefix!)}</td>
                             <td class="text-center">

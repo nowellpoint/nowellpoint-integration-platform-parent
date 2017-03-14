@@ -250,7 +250,11 @@ public class AccountProfileController extends AbstractStaticController {
 				.subscription()
 				.set(subscriptionRequest);
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 			
 	}
 	
@@ -286,7 +290,11 @@ public class AccountProfileController extends AbstractStaticController {
 				.accountProfile()
 				.update(request.params(":id"), accountProfileRequest);
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 	}
 	
 	/**
@@ -382,7 +390,11 @@ public class AccountProfileController extends AbstractStaticController {
 				.address()
 				.update(request.params(":id"), addressRequest);
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 	}
 	
 	/**
@@ -485,7 +497,11 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.add(creditCardRequest);
 		
-		return response(createResult);
+		if (! createResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(createResult);
 	};
 	
 	/**
@@ -534,7 +550,11 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.update(creditCardRequest);
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 	};
 	
 	/**
@@ -553,7 +573,11 @@ public class AccountProfileController extends AbstractStaticController {
 				.creditCard()
 				.setPrimary(request.params(":id"), request.params(":token"));
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 	};
 	
 	/**

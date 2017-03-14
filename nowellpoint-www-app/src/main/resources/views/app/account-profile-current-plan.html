@@ -9,7 +9,7 @@
         <br>
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group">
-                 <a href="${labels['base.path']}/${accountProfile.id}/plans" id="update-plan" class="btn btn-success" role="button">${labels["change.plan"]}</a>
+                 <a href="${links['account.profile']}/${accountProfile.id}/plans" id="update-plan" class="btn btn-success" role="button">${labels["change.plan"]}</a>
             </div>
         </div>
 
@@ -79,7 +79,7 @@
                             <#list accountProfile.transactions?sort_by( "createdOn")?reverse as transaction>
                                 <tr>
                                     <td>${transaction.id}</td>
-                                    <td><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
+                                    <td><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['account.profile']}/${accountProfile.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
                                     <td class="text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}</td>
                                     <td>${(transaction.updatedOn?date?string.long)!}</td>
                                     <td>${transaction.status}</td>

@@ -9,6 +9,7 @@ import com.nowellpoint.api.model.document.Contact;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class CreditCard {
 
@@ -160,7 +161,7 @@ public class CreditCard {
 
 	@Override
 	public String toString() {
-		return null;
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	@Override

@@ -5,7 +5,7 @@
         <#if action=="listPlans">
 
             <div>
-                <a href="${labels['base.path']}/${accountProfile.id}/current-plan" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.current.plan"]}
+                <a href="${links['account.profile']}/${accountProfile.id}/current-plan" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.current.plan"]}
             </div>
             <br>
 
@@ -67,15 +67,15 @@
                                             </td>
                                             <!--  <#elseif plan.recommendedPlan==true> -->
                                             <td class="action-header">
-                                                <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["upgrade"]}</a>
+                                                <a href="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["upgrade"]}</a>
                                             </td>
                                             <!--  <#elseif accountProfile.subscription?? && plan.price.unitPrice gt accountProfile.subscription.unitPrice> -->
                                             <td class="action-header">
-                                                <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["upgrade"]}</a>
+                                                <a href="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["upgrade"]}</a>
                                             </td>
                                             <!--        <#else> -->
                                             <td class="action-header">
-                                                <a href="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["downgrade"]}</a>
                                             </td>
                                             <!--  </#if> -->
                                         </#list>
@@ -162,15 +162,15 @@
                     </div>
                 </#if>
                 <br>
-                <form id="set-plan-form" name="payment-method-form" class="form-vertical" method="post" action="${labels['base.path']}/${accountProfile.id}/plans/${plan.id}">
+                <form id="set-plan-form" name="payment-method-form" class="form-vertical" method="post" action="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}">
                     <#if plan.price.unitPrice gt 0>
                         <input type="hidden" name="paymentMethodToken" id="paymentMethodToken" value="${(accountProfile.primaryCreditCard.token)!}" />
                     </#if>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="pull-right">
-                                <a href="${labels['base.path']}/${accountProfile.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
-                                <a href="${labels['base.path']}/${accountProfile.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
+                                <a href="${links['account.profile']}/${accountProfile.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                                <a href="${links['account.profile']}/${accountProfile.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
                                 <button type="button" id="set-plan" class="btn btn-primary">${labels["set.plan"]}</button>
                             </div>
                         </div>
@@ -188,7 +188,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${labels['base.path']}/${accountProfile.id}/payment-methods">
+                            <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${links['account.profile']}/${accountProfile.id}/payment-methods">
 
                                 <div class="row">
                                     <div class="form-group col-md-6">
@@ -344,7 +344,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                             $("#notification").slideUp('slow').fadeOut(function() {
-                                $(location).attr("href", "${labels['base.path']}/${accountProfile.id}/current-plan");
+                                $(location).attr("href", "${links['account.profile']}/${accountProfile.id}/current-plan");
                             });
                         }, 1000);
                         } else {

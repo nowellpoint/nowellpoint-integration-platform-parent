@@ -219,6 +219,14 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		return "";
 	};
 	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	public static String testSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -228,7 +236,11 @@ public class SalesforceConnectorController extends AbstractStaticController {
 				.salesforceConnector()
 				.test(id);
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 	}
 	
 	public static String buildSalesforceConnector(Configuration configuration, Request request, Response response) {
@@ -240,7 +252,12 @@ public class SalesforceConnectorController extends AbstractStaticController {
 				.salesforceConnector()
 				.build(id);
 		
-		return response(updateResult);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
+		
 	}
 	
 	public static String listSObjects(Configuration configuration, Request request, Response response) {

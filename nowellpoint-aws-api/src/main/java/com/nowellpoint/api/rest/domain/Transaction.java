@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -87,7 +88,7 @@ public class Transaction {
 	
 	@Override
 	public String toString() {
-		return null;
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	@Override

@@ -85,7 +85,7 @@ public class AbstractStaticController {
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
 	
-	protected static String response(Result result) {
+	protected static String responseBody(Result result) {
 		if (result.isSuccess()) {
 			return "";
 		}

@@ -47,7 +47,7 @@
     <script>
         $(document).ready(function(e) {
             var params = location.search.substr(1);
-            window.location.replace("${labels['base.path']}/token?" + params);
+            window.location.replace("${links['salesforce.oauth']}/token?" + params);
         });
     </script>
 

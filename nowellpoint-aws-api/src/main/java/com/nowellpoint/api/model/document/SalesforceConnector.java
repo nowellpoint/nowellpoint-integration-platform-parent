@@ -18,6 +18,7 @@
 
 package com.nowellpoint.api.model.document;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.nowellpoint.api.model.sforce.Identity;
@@ -56,6 +57,8 @@ public class SalesforceConnector extends MongoDocument {
 	private Organization organization;
 	
 	private String connectionString;
+	
+	private Date lastTestedOn;
 	
 	private Boolean isValid;
 	
@@ -137,6 +140,14 @@ public class SalesforceConnector extends MongoDocument {
 
 	public void setConnectionString(String connectionString) {
 		this.connectionString = connectionString;
+	}
+
+	public Date getLastTestedOn() {
+		return lastTestedOn;
+	}
+
+	public void setLastTestedOn(Date lastTestedOn) {
+		this.lastTestedOn = lastTestedOn;
 	}
 
 	public Boolean getIsValid() {

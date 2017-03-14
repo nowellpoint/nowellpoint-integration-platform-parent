@@ -3,7 +3,7 @@
     <@t.page>
 
         <div>
-            <a href="${labels['base.path']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connectors"]}
+            <a href="${links['salesforce.connector']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connectors"]}
         </div>
         <br>
         <div class="hr-divider"></div>
@@ -12,13 +12,14 @@
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <h3 class="dashhead-title">${labels["salesforce.connector"]}</h3>
-            </div>
+            </div>    
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <a id="edit-salesforce-connector" href="${labels['base.path']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${labels['base.path']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&emsp;
-            <button type="button" id="test-salesforce-connector" class="btn btn-secondary" data-href="${labels['base.path']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&emsp;
-            <button type="button" id="build-salesforce-connector" class="btn btn-secondary" data-href="${labels['base.path']}/${salesforceConnector.id!}/build">${labels["build"]}</button>
+            <a id="edit-salesforce-connector" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&emsp;
+            <button type="button" id="test-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&emsp;
+            <button type="button" id="build-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&emsp;
+            <p class="${salesforceConnector.isValid?then('bg-success', 'text-bg-danger')} text-white"><span class="icon ${salesforceConnector.isValid?then('icon-check', 'icon-cross')}"></span>${salesforceConnector.isValid?then('', salesforceConnector.status)}</p>
         </div>
         <!--
         <ul class="nav nav-bordered">
@@ -95,8 +96,8 @@
                     <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
                     <hr>
 
-                    <dt>${labels["tag"]}</dt>
-                    <dd>${(salesforceConnector.tag)!}&emsp;</dd>
+                    <dt>${labels["tested.on"]}</dt>
+                    <dd>${salesforceConnector.lastTestedOn?date?string.long!} ${salesforceConnector.lastTestedOn?time?string.medium!}</dd>
                     <hr>
 
                     <dt>${labels["last.modified.by"]}</dt>
@@ -177,13 +178,13 @@
                 </div>
                 <br>
                 <div class="btn-toolbar" role="toolbar">
-                    <a href="${labels['base.path']}/${salesforceConnector.id!}/sobjects" class="btn btn-primary">${labels["show.all"]}</a>
+                    <a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects" class="btn btn-primary">${labels["show.all"]}</a>
                 </div>
                 <br>
                 <div class="flexgrid">
                     <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
                         <div class="card" style="width: 400px;">
-                            <a href="${labels['base.path']}/${salesforceConnector.id}/sobjects/${sobject.name}" style="text-decoration: none">
+                            <a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${sobject.name}" style="text-decoration: none">
                                 <div class="card-block">
                                     <div class="media">
                                         <img class="d-flex align-self-start mr-3" src="${icons['${sobject.name}']!}" style="height:32px; width: 32px" />
@@ -236,7 +237,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${labels['base.path']}/${salesforceConnector.id!}";
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id!}";
                                 });
                             }, 1000);
                         } else {
@@ -257,7 +258,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${labels['base.path']}/${salesforceConnector.id!}";
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id!}";
                                 });
                             }, 1000);
                         } else {

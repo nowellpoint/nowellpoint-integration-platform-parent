@@ -124,7 +124,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button">${labels["cancel"]}</a>
+                        <a href="${links['account.profile']}/${accountProfile.id}#payment-methods" class="btn btn-default" role="button">${labels["cancel"]}</a>
                         <button type="button" id="save" class="btn btn-primary">${labels["save"]}</button>
                     </div>
                 </div>
@@ -187,10 +187,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <a href="${labels['base.path']}/${accountProfile.id}#payment-methods" class="btn btn-secondary" role="button">${labels["back"]}</a>
-                        <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-secondary" role="button">${labels["edit"]}</a>
+                        <a href="${links['account.profile']}/${accountProfile.id}#payment-methods" class="btn btn-secondary" role="button">${labels["back"]}</a>
+                        <a href="${links['account.profile']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-secondary" role="button">${labels["edit"]}</a>
                         <#if ! creditCard.primary>
-                            <a href="${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" id="make-primary" class="btn btn-secondary" role="button">${labels["make.primary"]}</a>
+                            <a href="${links['account.profile']}/${accountProfile.id}/payment-methods/${creditCard.token}/primary" id="make-primary" class="btn btn-secondary" role="button">${labels["make.primary"]}</a>
                             <a href="#" data-target="#confirm-dialog" data-toggle="modal" id="remove-card" data-backdrop="static" aria-hidden="true" rol="button" class="btn btn-danger">${labels["delete"]}</a>
                         </#if>
                     </div>
@@ -237,7 +237,7 @@
                         jQuery("#notification").modal('show');
                         setTimeout(function() {
                             $("#notification").slideUp('slow').fadeOut(function() {
-                                $(location).attr("href", "${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}/view");
+                                $(location).attr("href", "${links['account.profile']}/${accountProfile.id}/payment-methods/${creditCard.token}/view");
                             });
                         }, 1000);
                     }
@@ -266,12 +266,12 @@
 
                 $.ajax({
                     type: "DELETE",
-                    url: "${labels['base.path']}/${accountProfile.id}/payment-methods/${creditCard.token}",
+                    url: "${links['account.profile']}/${accountProfile.id}/payment-methods/${creditCard.token}",
                     success: function() {
                         jQuery("#notification").modal('show');
                         setTimeout(function() {
                             $("#notification").slideUp('slow').fadeOut(function() {
-                                location.href = "${labels['base.path']}/${accountProfile.id}#payment-methods";
+                                location.href = "${links['account.profile']}/${accountProfile.id}#payment-methods";
                             });
                         }, 1000);
                     }

@@ -137,7 +137,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				vaultEntry, 
 				Boolean.TRUE, 
 				token.getInstanceUrl(),
-				null);
+				token.getIssuedAt(),
+				Date.from(Instant.now()));
 		
 		create(salesforceConnector);
 		
@@ -207,9 +208,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		SalesforceConnector salesforceConnector = findById( id );
 		
 		try {
-			connect(salesforceConnector.getConnectionString());
+			Token token = connect(salesforceConnector.getConnectionString());
 			salesforceConnector.setIsValid(Boolean.TRUE);
-			salesforceConnector.setStatus("Successful Connection: " + Instant.now().toString());
+			salesforceConnector.setStatus(token.getIssuedAt());
 		} catch (OauthException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getErrorDescription());
@@ -220,6 +221,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getMessage());
 		} finally {
+			salesforceConnector.setLastTestedOn(Date.from(Instant.now()));
 			update(salesforceConnector);
 		}
 		
@@ -228,14 +230,11 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Override
 	public SalesforceConnector build(String id) {
+		
 		SalesforceConnector salesforceConnector = findById( id );
 		
-		Token token = null;
-		
 		try {
-			token = connect(salesforceConnector.getConnectionString());
-			salesforceConnector.setIsValid(Boolean.TRUE);
-			salesforceConnector.setStatus("Successful Connection: " + Instant.now().toString());
+			Token token = connect(salesforceConnector.getConnectionString());
 			
 			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describe(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getSobjects());
 			
@@ -254,6 +253,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 					salesforceConnector.getIdentity().getUrls().getQuery(), 
 					describeGlobalSobjectsResult);
 			
+			salesforceConnector.setIsValid(Boolean.TRUE);
+			salesforceConnector.setStatus(token.getIssuedAt());
 		} catch (OauthException e) {
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getErrorDescription());
@@ -261,6 +262,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 			salesforceConnector.setIsValid(Boolean.FALSE);
 			salesforceConnector.setStatus("Error: " + e.getMessage());
 		} finally {
+			salesforceConnector.setLastTestedOn(Date.from(Instant.now()));
 			update(salesforceConnector);
 		}
 		

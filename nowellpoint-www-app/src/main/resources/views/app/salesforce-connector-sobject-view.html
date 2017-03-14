@@ -1,8 +1,10 @@
 <#import "template.html" as t>
     <@t.page>
         <div>
-            <p class="card-text"><a href="${labels['base.path']}/${salesforceConnector.id}#sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}</p>
+            <p class="card-text"><a href="${links['salesforce.connector']}/${salesforceConnector.id}#sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}</p>
         </div>
+        <br>
+        <div class="hr-divider"></div>
         <br>
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
@@ -104,7 +106,7 @@
                                     <#list sobject.result.childRelationships as relationship>
                                         <tr>
                                             <td>${relationship.field}</td>
-                                            <td><a href="${labels['base.path']}/${salesforceConnector.id}/sobjects/${(relationship.childSObject!)}">${relationship.childSObject}</a></td>
+                                            <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${(relationship.childSObject!)}">${relationship.childSObject}</a></td>
                                             <td>${(relationship.relationshipName)!}</td>
                                         </tr>
                                     </#list>

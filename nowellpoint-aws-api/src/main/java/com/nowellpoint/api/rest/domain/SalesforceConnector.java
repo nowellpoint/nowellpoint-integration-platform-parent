@@ -27,6 +27,8 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String connectionString;
 	
+	private Date lastTestedOn;
+	
 	private Boolean isValid;
 	
 	private String serviceEndpoint;
@@ -56,7 +58,8 @@ public class SalesforceConnector extends AbstractResource {
 			String connectionString, 
 			Boolean isValid, 
 			String serviceEndpoint,
-			String tag) {
+			String status,
+			Date lastTestedOn) {
 		
 		this.id = id;
 		this.name = name;
@@ -70,7 +73,8 @@ public class SalesforceConnector extends AbstractResource {
 		this.connectionString = connectionString;
 		this.isValid = isValid;
 		this.serviceEndpoint = serviceEndpoint;
-		this.tag = tag;
+		this.status = status;
+		this.lastTestedOn = lastTestedOn;
 	}
 	
 	public static SalesforceConnector createSalesforceConnector(
@@ -81,7 +85,8 @@ public class SalesforceConnector extends AbstractResource {
 			VaultEntry connectionEntry, 
 			Boolean isValid, 
 			String serviceEndpoint,
-			String tag) {
+			String status,
+			Date lastTestedOn) {
 		
 		String name = organization.getName().concat(":").concat(organization.getId());
 		Date now = Date.from(Instant.now());
@@ -99,7 +104,8 @@ public class SalesforceConnector extends AbstractResource {
 				connectionEntry.getToken(), 
 				isValid, 
 				serviceEndpoint, 
-				tag);
+				status,
+				lastTestedOn);
 	}
 	
 	public static SalesforceConnector createSalesforceConnector(
@@ -111,7 +117,8 @@ public class SalesforceConnector extends AbstractResource {
 			VaultEntry connectionEntry, 
 			Boolean isValid, 
 			String serviceEndpoint,
-			String tag) {
+			String status,
+			Date lastTestedOn) {
 		
 		Date now = Date.from(Instant.now());
 
@@ -128,7 +135,8 @@ public class SalesforceConnector extends AbstractResource {
 				connectionEntry.getToken(), 
 				isValid, 
 				serviceEndpoint, 
-				tag);
+				status,
+				lastTestedOn);
 	}
 	
 	private <T> SalesforceConnector(T document) {
@@ -193,6 +201,14 @@ public class SalesforceConnector extends AbstractResource {
 
 	public void setConnectionString(String connectionString) {
 		this.connectionString = connectionString;
+	}
+
+	public Date getLastTestedOn() {
+		return lastTestedOn;
+	}
+
+	public void setLastTestedOn(Date lastTestedOn) {
+		this.lastTestedOn = lastTestedOn;
 	}
 
 	public Boolean getIsValid() {
