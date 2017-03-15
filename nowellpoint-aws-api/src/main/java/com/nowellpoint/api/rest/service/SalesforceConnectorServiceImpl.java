@@ -19,16 +19,15 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.validation.ValidationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
-
 import javax.ws.rs.core.UriBuilder;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.ConnectionString;
 import com.nowellpoint.api.rest.domain.SObjectDetail;
@@ -40,9 +39,6 @@ import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
-import com.sforce.ws.ConnectionException;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.CountRequest;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -51,7 +47,6 @@ import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.ThemeRequest;
-import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Photos;
@@ -60,6 +55,9 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
+import com.sforce.ws.ConnectionException;
 
 /**
  * 
@@ -367,7 +365,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 						.withQueryUrl(queryUrl)
 						.withSobject(sobject.getName());
 				
-				Count count = client.getCount(countRequest);
+				Long totalSize = client.getCount(countRequest);
 
 				Date now = Date.from(Instant.now());
 				
@@ -379,9 +377,13 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				sobjectDetail.setLastUpdatedBy(userInfo);
 				sobjectDetail.setLastUpdatedOn(now);
 				sobjectDetail.setConnectorId(connectorId);
-				sobjectDetail.setTotalSize(count.getRecords().get(0).getExpr0());
+				sobjectDetail.setTotalSize(totalSize);
 				sobjectDetail.setResult(describeSobjectResult);
 				create(sobjectDetail);
+				
+				if (sobject.getName().equals("Vote")) {
+					System.out.println( "Vote 4");
+				}
 			});
 		}
 		

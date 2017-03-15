@@ -14,20 +14,22 @@
         <br>
 
         <div class="content table-responsive">
-            <table class="table table-hover">
+            <table class="table">
                 <thead>
                     <th>${labels["name"]}</th>
                     <th>${labels["description"]}</th>
-                    <th>${labels["connector.type"]}</th>
+                    <th>${labels["source"]}</th>
+                    <th>${labels["target"]}</th>
                     <th></th>
                 </thead>
                 <tbody>
                     <#list jobTypeList?sort_by( "createdOn") as jobType>
                         <tr>
                             <td>${jobType.name}</td>
-                            <td class="p-r">${jobType.description}</td>
-                            <td>${jobType.connectorType.name}</td>
-                            <td><a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobType.id}">${labels["select"]}</a></td>
+                            <td>${jobType.description}</td>
+                            <td>${jobType.source.name}</td>
+                            <td>${jobType.target.name}</td>
+                            <td><a href="${links['job.specification']}/new/select-connector?jobTypeId=${jobType.id}">${labels["select"]}</a></td>
                         </tr>
                     </#list>
                 </tbody>
@@ -37,7 +39,7 @@
         <br>
 
         <div class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+            <a href="${links['job.specification']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
         </div>
 
         <!-- </#if> -->
@@ -64,8 +66,11 @@
             <dt>${labels["description"]}</dt>
             <dd>${jobType.description}</dd>
             <hr>
-            <dt>${labels["connector.type"]}</dt>
-            <dd>${jobType.connectorType.name}</dd>
+            <dt>${labels["source"]}</dt>
+            <dd>${jobType.source.name}</dd>
+            <hr>
+            <dt>${labels["target"]}</dt>
+            <dd>${jobType.target.name}</dd>
             <hr>
         </dl>
 
@@ -80,7 +85,7 @@
         <br>
 
         <div class="content table-responsive">
-            <table class="table table-hover">
+            <table class="table">
                 <thead>
                     <th>${labels["name"]}</th>
                     <th>${labels["organization.name"]}</th>
@@ -97,7 +102,7 @@
                             <td>${salesforceConnector.organization.organizationType}</td>
                             <td>${salesforceConnector.organization.instanceName}</td>
                             <td>${salesforceConnector.identity.displayName}</td>
-                            <td><a href="${labels['base.path']}/new/select-environment?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}">${labels["select"]}</a></td>
+                            <td><a href="${links['job.specification']}/new/select-environment?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}">${labels["select"]}</a></td>
                         </tr>
                     </#list>
                 </tbody>
@@ -112,7 +117,7 @@
 
         <!-- </#if> -->
 
-        <!-- <#if step=="select-environment"> -->
+        <!-- <#if step=="review"> -->
 
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
@@ -120,7 +125,7 @@
             </div>
             <div class="dashhead-toolbar">
                 <p class="pull-right">
-                    <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
+                    <a href="${links['job.specification']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
                 </p>
             </div>
         </div>
@@ -134,8 +139,11 @@
             <dt>${labels["description"]}</dt>
             <dd>${jobType.description}</dd>
             <hr>
-            <dt>${labels["connector.type"]}</dt>
-            <dd>${jobType.connectorType.name}</dd>
+            <dt>${labels["source"]}</dt>
+            <dd>${jobType.source.name}</dd>
+            <hr>
+            <dt>${labels["target"]}</dt>
+            <dd>${jobType.target.name}</dd>
             <hr>
         </dl>
 
@@ -147,7 +155,7 @@
             </div>
             <div class="dashhead-toolbar">
                 <p class="pull-right">
-                    <a href="${labels['base.path']}/new/select-connector?jobTypeId=${jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
+                    <a href="${links['job.specification']}/new/select-connector?jobTypeId=${jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
                 </p>
             </div>
         </div>
@@ -170,37 +178,42 @@
 
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">3</span>&nbsp;${labels["select.instance"]}</h3>
+                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">3</span>&nbsp;${labels["review"]}</h3>
             </div>
         </div>
 
         <br>
 
-        <div class="content table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <th>${labels["name"]}</th>
-                    <th>${labels["service.endpoint"]}</th>
-                    <th>${labels["api.version"]}</th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    <#list salesforceConnector.instances?sort_by( "addedOn") as instance>
-                        <tr>
-                            <td>${(instance.name)!}</td>
-                            <td>${(instance.serviceEndpoint)!}</td>
-                            <td>${(instance.apiVersion)!}</td>
-                            <td><a href="${labels['base.path']}/new/set-schedule?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}&instanceKey=${instance.key}">${labels["select"]}</a></td>
-                        </tr>
-                    </#list>
-                </tbody>
-            </table>
-        </div>
+        <form name="job-specification-form" id="job-specification-form" class="form-horizontal" role="form" method="post" action="">
+
+            <input type="hidden" name="jobTypeId" id="jobTypeId" value="${jobType.id}">
+            <input type="hidden" name="connectorId" id="connectorId" value="${salesforceConnector.id}">
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label" for="name">${labels['name']}</label>
+                    <input type="text" class="form-control" name="name" id="name" value="" tabindex="1" placeholder="${labels['name']}" />
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label" for="description">${labels['description']}</label>
+                    <input type="text" class="form-control" name="description" id="description" value="" tabindex="1" placeholder="${labels['description']}" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label class="control-label" for="name">${labels['notification.email']}</label>
+                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" tabindex="1" placeholder="${labels['notification.email']}" />
+                </div>
+                <div class="form-group col-md-3">
+                </div>
+            </div>
+        </form>
 
         <br>
 
         <div class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+            <a href="${links['job.specification']}" role="button">${labels["cancel"]}</a>&nbsp;
+            <button type="button" id="create-job-specification" class="btn btn-primary">${labels["create"]}</button>
         </div>
 
         <!-- </#if> -->

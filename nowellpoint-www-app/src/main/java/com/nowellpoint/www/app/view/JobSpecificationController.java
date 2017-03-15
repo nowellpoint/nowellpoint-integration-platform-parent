@@ -4,18 +4,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.ConnectorInfo;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.JobSpecification;
 import com.nowellpoint.client.model.JobSpecificationList;
 import com.nowellpoint.client.model.JobSpecificationRequest;
 import com.nowellpoint.client.model.JobType;
-import com.nowellpoint.client.model.JobTypeInfo;
 import com.nowellpoint.client.model.JobTypeList;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
@@ -89,10 +84,9 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws JsonProcessingException
 	 */
 	
-	public static String selectConnector(Configuration configuration, Request request, Response response) throws JsonProcessingException {
+	public static String selectConnector(Configuration configuration, Request request, Response response) {
 
 		Token token = getToken(request);
 		
@@ -124,10 +118,9 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws IOException
 	 */
 	
-	public static String selectEnvironment(Configuration configuration, Request request, Response response) throws IOException {
+	public static String reviewJobSpecification(Configuration configuration, Request request, Response response) throws IOException {
 		
 		Token token = getToken(request);
 		
@@ -139,7 +132,7 @@ public class JobSpecificationController extends AbstractStaticController {
 				.get(jobTypeId);
 		
 		Map<String, Object> model = getModel();
-		model.put("step", "select-environment");
+		model.put("step", "review");
 		model.put("jobType", jobType);
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
@@ -153,62 +146,6 @@ public class JobSpecificationController extends AbstractStaticController {
 		
     	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
-
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	
-	public static String setSchedule(Configuration configuration, Request request, Response response) throws IOException {
-		
-		Token token = getToken(request);
-		
-		String jobTypeId = request.queryParams("jobTypeId");
-		String connectorId = request.queryParams("connectorId");
-		String instanceKey = request.queryParams("instanceKey");
-		
-		JobType jobType = new NowellpointClient(token)
-				.scheduledJobType()
-				.get(jobTypeId);
-		
-		Map<String, Object> model = getModel();
-		model.put("step", "set-schedule");		
-		
-		JobTypeInfo jobTypeInfo = new JobTypeInfo();
-		jobTypeInfo.setCode(jobType.getCode());
-		jobTypeInfo.setConnectorType(jobType.getConnectorType());
-		jobTypeInfo.setDescription(jobType.getDescription());
-		jobTypeInfo.setId(jobType.getId());
-		jobTypeInfo.setName(jobType.getName());
-		
-		JobSpecification jobSpecification = new JobSpecification();
-		jobSpecification.setJobType(jobTypeInfo);
-		
-		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
-			
-			SalesforceConnector salesforceConnector = new NowellpointClient(token)
-					.salesforceConnector()
-					.get(connectorId);
-			
-			ConnectorInfo connectorInfo = new ConnectorInfo();
-			connectorInfo.setId(salesforceConnector.getId());
-			connectorInfo.setName(salesforceConnector.getName());
-			connectorInfo.setOrganizationName(salesforceConnector.getOrganization().getName());
-			connectorInfo.setServerName(salesforceConnector.getOrganization().getInstanceName());
-			
-			jobSpecification.setConnector(connectorInfo);
-			jobSpecification.setNotificationEmail(salesforceConnector.getIdentity().getEmail());
-		}
-
-		model.put("jobSpecification", jobSpecification);
-		model.put("action", Path.Route.JOB_SPECIFICATION_CREATE);
-		
-		return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
-	}
 	
 	/**
 	 * 
@@ -216,22 +153,21 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws JsonParseException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 * @throws ParseException
+	 * 
 	 */
 	
-	public static String createJobSpecification(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException, ParseException {
+	public static String createJobSpecification(Configuration configuration, Request request, Response response) {
 		
 		Token token = getToken(request);
 		
 		String jobTypeId = request.queryParams("jobTypeId");
 		String connectorId = request.queryParams("connectorId");
+		String name = request.queryParams("name");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		
 		JobSpecificationRequest createjobSpecificationRequest = new JobSpecificationRequest()
+				.withName(name)
 				.withConnectorId(connectorId)
 				.withNotificationEmail(notificationEmail)
 				.withDescription(description)

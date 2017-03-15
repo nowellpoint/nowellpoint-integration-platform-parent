@@ -243,6 +243,14 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		return responseBody(updateResult);
 	}
 	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	public static String buildSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		

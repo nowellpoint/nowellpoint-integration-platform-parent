@@ -46,7 +46,10 @@ public class JobType extends MongoDocument {
 	private String languageSidKey;
 	
 	@EmbedOne
-	private ConnectorType connectorType;
+	private ConnectorType source;
+	
+	@EmbedOne
+	private ConnectorType target;
 	
 	public JobType() {
 		
@@ -108,11 +111,19 @@ public class JobType extends MongoDocument {
 		this.languageSidKey = languageSidKey;
 	}
 
-	public ConnectorType getConnectorType() {
-		return connectorType;
+	public ConnectorType getSource() {
+		return source;
 	}
 
-	public void setConnectorType(ConnectorType connectorType) {
-		this.connectorType = connectorType;
+	public void setSource(ConnectorType source) {
+		this.source = source;
+	}
+
+	public ConnectorType getTarget() {
+		return target;
+	}
+
+	public void setTarget(ConnectorType target) {
+		this.target = target;
 	}
 }

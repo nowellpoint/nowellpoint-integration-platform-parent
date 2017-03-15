@@ -18,7 +18,9 @@ public class JobType extends AbstractResource {
 	
 	private String languageSidKey;
 	
-	private ConnectorType connectorType;
+	private ConnectorType source;
+	
+	private ConnectorType target;
 	
 	public JobType() {
 		
@@ -87,15 +89,23 @@ public class JobType extends AbstractResource {
 	public void setLanguageSidKey(String languageSidKey) {
 		this.languageSidKey = languageSidKey;
 	}
-
-	public ConnectorType getConnectorType() {
-		return connectorType;
-	}
-
-	public void setConnectorType(ConnectorType connectorType) {
-		this.connectorType = connectorType;
-	}
 	
+	public ConnectorType getSource() {
+		return source;
+	}
+
+	public void setSource(ConnectorType source) {
+		this.source = source;
+	}
+
+	public ConnectorType getTarget() {
+		return target;
+	}
+
+	public void setTarget(ConnectorType target) {
+		this.target = target;
+	}
+
 	@Override
 	public MongoDocument toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.JobType.class);

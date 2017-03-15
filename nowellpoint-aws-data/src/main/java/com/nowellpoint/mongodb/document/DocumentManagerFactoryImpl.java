@@ -2,9 +2,6 @@ package com.nowellpoint.mongodb.document;
 
 import java.util.List;
 
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-
 import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -28,6 +25,9 @@ import com.mongodb.connection.netty.NettyStreamFactoryFactory;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.util.Assert;
+
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 
 public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoCloseable {
 	

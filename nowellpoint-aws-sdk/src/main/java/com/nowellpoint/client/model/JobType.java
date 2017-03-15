@@ -13,7 +13,9 @@ public class JobType extends AbstractResource {
 	
 	private String languageSidKey;
 	
-	private ConnectorType connectorType;
+	private ConnectorType source;
+	
+	private ConnectorType target;
 	
 	public JobType() {
 		
@@ -51,11 +53,19 @@ public class JobType extends AbstractResource {
 		this.languageSidKey = languageSidKey;
 	}
 
-	public ConnectorType getConnectorType() {
-		return connectorType;
+	public ConnectorType getSource() {
+		return source;
 	}
 
-	public void setConnectorType(ConnectorType connectorType) {
-		this.connectorType = connectorType;
+	public void setSource(ConnectorType source) {
+		this.source = source;
+	}
+
+	public ConnectorType getTarget() {
+		return target;
+	}
+
+	public void setTarget(ConnectorType target) {
+		this.target = target;
 	}
 }

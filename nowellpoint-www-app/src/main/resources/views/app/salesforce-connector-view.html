@@ -12,15 +12,19 @@
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <h3 class="dashhead-title">${labels["salesforce.connector"]}</h3>
-            </div>    
+            </div>
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <a id="edit-salesforce-connector" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&emsp;
-            <button type="button" id="test-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&emsp;
+            <a id="edit-salesforce-connector" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&nbsp;
+            <button type="button" id="test-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&nbsp;
             <button type="button" id="build-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&emsp;
-            <p class="${salesforceConnector.isValid?then('bg-success', 'text-bg-danger')} text-white"><span class="icon ${salesforceConnector.isValid?then('icon-check', 'icon-cross')}"></span>${salesforceConnector.isValid?then('', salesforceConnector.status)}</p>
+            <h4><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-warning')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h4>
         </div>
+        <#if ! salesforceConnector.isValid>
+            <br>
+            <p class="text-danger">${(salesforceConnector.status)!}</p>
+        </#if>
         <!--
         <ul class="nav nav-bordered">
             <li class="nav-item">
@@ -110,62 +114,62 @@
 
             </div>
         </div>
-        
+
         <br>
 
         <div class="row" id="endpoints">
-            
+
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-            <div class="flextable-item flextable-primary">
-                <h3 class="dashhead-title">${labels["endpoints"]}</h3>
-            </div>
-
-            <br>
-
-            <div class="row">
-
-                <div class="col-md-6">
-
-                    <dl class="dl-vertical">
-
-                        <dt>${labels["identity"]}</dt>
-                        <dd>${(salesforceConnector.identity.id)!}&emsp;</dd>
-                        <hr>
-
-                        <dt>${labels["metadata"]}</dt>
-                        <dd>${(salesforceConnector.identity.urls.metadata)!}&emsp;</dd>
-                        <hr>
-
-                        <dt>${labels["partner"]}</dt>
-                        <dd>${(salesforceConnector.identity.urls.partner)!}&emsp;</dd>
-                        <hr>
-
-                        <dt>${labels["rest"]}</dt>
-                        <dd>${(salesforceConnector.identity.urls.rest)!}&emsp;</dd>
-                        <hr>
-
-                        <dt>${labels["sobjects"]}</dt>
-                        <dd>${(salesforceConnector.identity.urls.sobjects)!}&emsp;</dd>
-                        <hr>
-
-                        <dt>${labels["profile"]}</dt>
-                        <dd>${(salesforceConnector.identity.urls.profile)!}&emsp;</dd>
-                        <hr>
-
-                        <dt>${labels["query"]}</dt>
-                        <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
-                        <hr>
-
-                    </dl>
+                <div class="flextable-item flextable-primary">
+                    <h3 class="dashhead-title">${labels["endpoints"]}</h3>
                 </div>
 
-                <div class="col-md-6"></div>
+                <br>
 
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <dl class="dl-vertical">
+
+                            <dt>${labels["identity"]}</dt>
+                            <dd>${(salesforceConnector.identity.id)!}&emsp;</dd>
+                            <hr>
+
+                            <dt>${labels["metadata"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.metadata)!}&emsp;</dd>
+                            <hr>
+
+                            <dt>${labels["partner"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.partner)!}&emsp;</dd>
+                            <hr>
+
+                            <dt>${labels["rest"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.rest)!}&emsp;</dd>
+                            <hr>
+
+                            <dt>${labels["sobjects"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.sobjects)!}&emsp;</dd>
+                            <hr>
+
+                            <dt>${labels["profile"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.profile)!}&emsp;</dd>
+                            <hr>
+
+                            <dt>${labels["query"]}</dt>
+                            <dd>${(salesforceConnector.identity.urls.query)!}&emsp;</dd>
+                            <hr>
+
+                        </dl>
+                    </div>
+
+                    <div class="col-md-6"></div>
+
+                </div>
             </div>
         </div>
-        </div>    
-        
+
         <br>
 
         <div class="row" id="sobjects">
@@ -177,27 +181,29 @@
                     </div>
                 </div>
                 <br>
-                <div class="btn-toolbar" role="toolbar">
-                    <a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects" class="btn btn-primary">${labels["show.all"]}</a>
-                </div>
-                <br>
-                <div class="flexgrid">
-                    <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
-                        <div class="card" style="width: 400px;">
-                            <a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${sobject.name}" style="text-decoration: none">
-                                <div class="card-block">
-                                    <div class="media">
-                                        <img class="d-flex align-self-start mr-3" src="${icons['${sobject.name}']!}" style="height:32px; width: 32px" />
-                                        <div class="media-body">
-                                            <h5 class="mt-0">${(sobject.label)!}</h5>
-                                            <p>${(sobject.name)!}</p>
+                <#if salesforceConnector.sobjects?size gt 0>
+                    <div class="btn-toolbar" role="toolbar">
+                        <a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects" class="btn btn-primary">${labels["show.all"]}</a>
+                    </div>
+                    <br>
+                    <div class="flexgrid">
+                        <#list salesforceConnector.sobjects?sort_by( "name") as sobject>
+                            <div class="card" style="width: 400px;">
+                                <a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${sobject.name}" style="text-decoration: none">
+                                    <div class="card-block">
+                                        <div class="media">
+                                            <img class="d-flex align-self-start mr-3" src="${icons['${sobject.name}']!}" />
+                                            <div class="media-body">
+                                                <h5 class="mt-0">${(sobject.label)!}</h5>
+                                                <p>${(sobject.name)!}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
-                    </#list>
-                </div>
+                                </a>
+                            </div>
+                        </#list>
+                    </div>
+                </#if>
             </div>
         </div>
 
@@ -246,7 +252,7 @@
                     }
                 });
             });
-            
+
             $("#build-salesforce-connector").click(function(e) {
                 e.preventDefault();
 
@@ -267,7 +273,7 @@
                     }
                 });
             });
-        </script>    
+        </script>
 
         <script src="/js/salesforce-connector.js"></script>
 

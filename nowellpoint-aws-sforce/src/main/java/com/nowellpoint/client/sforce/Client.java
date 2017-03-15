@@ -2,6 +2,7 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.Count;
@@ -18,6 +19,8 @@ import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 
 public class Client {
+	
+	private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 	
 	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
 			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
@@ -217,7 +220,7 @@ public class Client {
 	 * 
 	 */
 	
-	public Count getCount(CountRequest request) {
+	public Long getCount(CountRequest request) {
 		HttpResponse httpResponse = RestResource.get(request.getQueryUrl())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
@@ -225,14 +228,15 @@ public class Client {
 				.queryParameter("q", request.getQueryString())
 				.execute();
 		
-		Count result = null;
+		Long totalSize = Long.valueOf(0);
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			result = httpResponse.getEntity(Count.class);
+			Count count = httpResponse.getEntity(Count.class);
+			totalSize = count.getRecords().get(0).getExpr0();
 		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+			LOGGER.warning(httpResponse.getAsString());
 		}
 			
-		return result;
+		return totalSize;
 	}
 }

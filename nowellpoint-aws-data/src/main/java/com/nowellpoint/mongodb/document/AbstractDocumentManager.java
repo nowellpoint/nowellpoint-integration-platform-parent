@@ -58,10 +58,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	private DocumentManagerFactory documentManagerFactory;
 	
-	private Set<Class<?>> mappedClasses = new HashSet<Class<?>>();
- 
-	public AbstractDocumentManager(DocumentManagerFactory documentManagerFactory) {
-		this.documentManagerFactory = documentManagerFactory;
+	private static Set<Class<?>> mappedClasses = new HashSet<Class<?>>();
+	static {
 		mappedClasses.add(String.class);
 		mappedClasses.add(Boolean.class);
 		mappedClasses.add(Character.class);
@@ -79,6 +77,10 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		mappedClasses.add(Calendar.class);
 		mappedClasses.add(URL.class);
 		mappedClasses.add(ObjectId.class);
+	}
+ 
+	public AbstractDocumentManager(DocumentManagerFactory documentManagerFactory) {
+		this.documentManagerFactory = documentManagerFactory;
 	}
 	
 	/**
@@ -447,7 +449,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		try {
 			method = resolveGetter(object, field);
 		} catch (NoSuchMethodException e) {
-			LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+			LOGGER.debug(String.format("Unable to find set method for mapped property field %s", field.getName()));
 			return null;			
 		} 
 		

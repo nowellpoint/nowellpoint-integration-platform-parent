@@ -18,7 +18,7 @@ public class JobTypeInfo {
 	
 	public JobTypeInfo(JobType jobType) {
 		setCode(jobType.getCode());
-		setConnectorType(jobType.getConnectorType());
+		setConnectorType(jobType.getSource());
 		setDescription(jobType.getDescription());
 		setId(jobType.getId());
 		setName(jobType.getName());

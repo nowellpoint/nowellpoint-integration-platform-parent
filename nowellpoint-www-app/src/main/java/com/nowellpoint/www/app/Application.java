@@ -195,8 +195,7 @@ public class Application implements SparkApplication {
         get(Path.Route.JOB_SPECIFICATION_LIST, (request, response) -> JobSpecificationController.listJobSpecifications(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_SELECT_TYPE, (request, response) -> JobSpecificationController.listJobTypes(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_SELECT_CONNECTOR, (request, response) -> JobSpecificationController.selectConnector(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_ENVIRONMENT, (request, response) -> JobSpecificationController.selectEnvironment(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SET_SCHEDULE, (request, response) -> JobSpecificationController.setSchedule(configuration, request, response));
+        get(Path.Route.JOB_SPECIFICATION_SELECT_ENVIRONMENT, (request, response) -> JobSpecificationController.reviewJobSpecification(configuration, request, response));
         post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> JobSpecificationController.createJobSpecification(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_VIEW, (request, response) -> JobSpecificationController.viewJobSpecifications(configuration, request, response));
         get(Path.Route.JOB_SPECIFICATION_EDIT, (request, response) -> JobSpecificationController.editJobSpecification(configuration, request, response));
