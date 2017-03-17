@@ -18,7 +18,8 @@
         <div class="btn-toolbar" role="toolbar">
             <a id="edit-salesforce-connector" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&nbsp;
             <button type="button" id="test-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&nbsp;
-            <button type="button" id="build-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&emsp;
+            <button type="button" id="build-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&nbsp;
+            <a id="add-service" class="btn btn-secondary" rol="button" href="${links['salesforce.connector']}/${salesforceConnector.id!}/service">${labels["add.service"]}</a>&emsp;
             <h4><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-warning')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h4>
         </div>
         <#if ! salesforceConnector.isValid>
@@ -104,7 +105,7 @@
                     <dd>${salesforceConnector.lastTestedOn?date?string.long!} ${salesforceConnector.lastTestedOn?time?string.medium!}</dd>
                     <hr>
 
-                    <dt>${labels["last.modified.by"]}</dt>
+                    <dt>${labels["last.updated.by"]}</dt>
                     <dd><a href="${links['account.profile']}/${salesforceConnector.lastUpdatedBy.id}">${salesforceConnector.lastUpdatedBy.name}</a>, ${salesforceConnector.lastUpdatedOn?date?string.long!} ${salesforceConnector.lastUpdatedOn?time?string.medium!}</dd>
                     <hr>
 
@@ -228,8 +229,6 @@
                 </div>
             </div>
         </div>
-
-        <#include "spinner.html"/>
 
         <script>
             $("#test-salesforce-connector").click(function(e) {

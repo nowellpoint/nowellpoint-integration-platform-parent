@@ -33,6 +33,8 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_BUILD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/build");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects/:sobjectName");
+		public static final String CONNECTORS_SALESFORCE_SERVICE_ADD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/service");
+		public static final String CONNECTORS_SALESFORCE_SERVICE_SETUP = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/service/:serviceId");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String ACCOUNT_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile/:id");
 		public static final String ACCOUNT_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "account-profile/:id/picture");
@@ -45,8 +47,8 @@ public class Path {
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 		public static final String JOB_SPECIFICATION_LIST = String.format(APPLICATION_CONTEXT, "job-specifications");
 		public static final String JOB_SPECIFICATION_SELECT_TYPE = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-type");
-		public static final String JOB_SPECIFICATION_SELECT_CONNECTOR = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-connector");
-		public static final String JOB_SPECIFICATION_SELECT_ENVIRONMENT = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-environment");
+		public static final String JOB_SPECIFICATION_SELECT_SOURCE = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-source");
+		public static final String JOB_SPECIFICATION_SELECT_TARGET = String.format(APPLICATION_CONTEXT, "job-specifications/new/select-target");
 		public static final String JOB_SPECIFICATION_SET_SCHEDULE = String.format(APPLICATION_CONTEXT, "job-specifications/new/set-schedule");
 		public static final String JOB_SPECIFICATION_VIEW = String.format(APPLICATION_CONTEXT, "job-specifications/:id");
 		public static final String JOB_SPECIFICATION_CREATE = String.format(APPLICATION_CONTEXT, "job-specifications");

@@ -45,6 +45,8 @@ public class JobType extends MongoDocument {
 	
 	private String languageSidKey;
 	
+	private String template;
+	
 	@EmbedOne
 	private ConnectorType source;
 	
@@ -109,6 +111,14 @@ public class JobType extends MongoDocument {
 
 	public void setLanguageSidKey(String languageSidKey) {
 		this.languageSidKey = languageSidKey;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 	public ConnectorType getSource() {

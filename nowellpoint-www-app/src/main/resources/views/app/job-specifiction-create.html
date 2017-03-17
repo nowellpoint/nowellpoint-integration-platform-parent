@@ -1,220 +1,319 @@
 <#import "template.html" as t>
 
     <@t.page>
-
-
-        <!-- <#if step=="select-type"> -->
-
+        <div>
+            <a href="${links['job.specification']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.scheduled.jobs"]}
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">1</span>&nbsp;${labels["select.job.type"]}</h3>
+                <h3 class="dashhead-title">${labels["create.job.specification"]}</h3>
             </div>
         </div>
-
         <br>
+        <!-- <#if step == 'select-type'> -->
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#properties" data-toggle="tab"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["properties"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#jobType" data-toggle="tab"><span class="badge badge-pill badge-default">2</span>&nbsp;${labels["job.type"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled"><span class="badge badge-pill badge-default">3</span>&nbsp;${labels["source.connector"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled"><span class="badge badge-pill badge-default">4</span>&nbsp;${labels["target.connector"]}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-block">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="properties">
+                        <br>
+                        <form name="job-specification-form" id="job-specification-form" class="form-horizontal" role="form" method="post" action="">
 
-        <div class="content table-responsive">
-            <table class="table">
-                <thead>
-                    <th>${labels["name"]}</th>
-                    <th>${labels["description"]}</th>
-                    <th>${labels["source"]}</th>
-                    <th>${labels["target"]}</th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    <#list jobTypeList?sort_by( "createdOn") as jobType>
-                        <tr>
-                            <td>${jobType.name}</td>
-                            <td>${jobType.description}</td>
-                            <td>${jobType.source.name}</td>
-                            <td>${jobType.target.name}</td>
-                            <td><a href="${links['job.specification']}/new/select-connector?jobTypeId=${jobType.id}">${labels["select"]}</a></td>
-                        </tr>
-                    </#list>
-                </tbody>
-            </table>
-        </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="name">${labels['name']}</label>
+                                    <input type="text" class="form-control" name="name" id="name" value="" tabindex="1" placeholder="${labels['name']}" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="description">${labels['description']}</label>
+                                    <input type="text" class="form-control" name="description" id="description" value="" tabindex="1" placeholder="${labels['description']}" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="name">${labels['notification.email']}</label>
+                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" tabindex="1" placeholder="${labels['notification.email']}" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="jobType">
+                        <br>
+                        <div class="content table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <th>${labels["name"]}</th>
+                                    <th>${labels["description"]}</th>
+                                    <th>${labels["source"]}</th>
+                                    <th>${labels["target"]}</th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <#list jobTypeList?sort_by( "createdOn") as jobType>
+                                        <tr>
+                                            <td>${jobType.name}</td>
+                                            <td>${jobType.description}</td>
+                                            <td>${jobType.source.name}</td>
+                                            <td>${jobType.target.name}</td>
+                                            <td><a href="${links['job.specification']}/new/select-source?jobTypeId=${jobType.id}">${labels["select"]}</a></td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="source">
 
-        <br>
+                    </div>
+                    <div class="tab-pane" id="target">
 
-        <div class="pull-right">
-            <a href="${links['job.specification']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- </#if> -->
 
-        <!-- <#if step=="select-connector"> -->
+        <!-- <#if step == 'select-source'> -->
 
-        <div class="dashhead m-t-md">
-            <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["job.type"]}</h3>
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#properties" data-toggle="tab"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["properties"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#jobType" data-toggle="tab"><span class="badge badge-pill badge-default">2</span>&nbsp;${labels["job.type"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#source" data-toggle="tab"><span class="badge badge-pill badge-default">3</span>&nbsp;${labels["source.connector"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled"><span class="badge badge-pill badge-default">4</span>&nbsp;${labels["target.connector"]}</a>
+                    </li>
+                </ul>
             </div>
-            <div class="dashhead-toolbar">
-                <p class="pull-right">
-                    <a href="${labels['base.path']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
-                </p>
+            <div class="card-block">
+                <div class="tab-content">
+                    <div class="tab-pane" id="properties">
+                        <br>
+                        <form name="job-specification-form" id="job-specification-form" class="form-horizontal" role="form" method="post" action="">
+
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="name">${labels['name']}</label>
+                                    <input type="text" class="form-control" name="name" id="name" value="" tabindex="1" placeholder="${labels['name']}" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="description">${labels['description']}</label>
+                                    <input type="text" class="form-control" name="description" id="description" value="" tabindex="1" placeholder="${labels['description']}" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label class="control-label" for="name">${labels['notification.email']}</label>
+                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" tabindex="1" placeholder="${labels['notification.email']}" />
+                                </div>
+                                <div class="form-group col-md-3">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane" id="jobType">
+                        <p class="pull-right">
+                            <a href="${links['job.specification']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
+                        </p>
+
+                        <dl class="dl-vertical">
+                            <dt>${labels["name"]}</dt>
+                            <dd>${jobType.name}</dd>
+                            <dt>${labels["description"]}</dt>
+                            <dd>${jobType.description}</dd>
+                            <dt>${labels["source"]}</dt>
+                            <dd>${jobType.source.name}</dd>
+                            <dt>${labels["target"]}</dt>
+                            <dd>${jobType.target.name}</dd>
+                        </dl>
+                    </div>
+                    <div class="tab-pane active" id="source">
+                        <br>
+                        <div class="content table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <th>${labels["name"]}</th>
+                                    <th>${labels["organization.name"]}</th>
+                                    <th>${labels["organization.type"]}</th>
+                                    <th>${labels["instance.name"]}</th>
+                                    <th>${labels["identity.name"]}</th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <#if salesforceConnectorsList?size gt 0>
+                                        <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
+                                            <tr>
+                                                <td>${(salesforceConnector.name)!}</td>
+                                                <td>${salesforceConnector.organization.name}</td>
+                                                <td>${salesforceConnector.organization.organizationType}</td>
+                                                <td>${salesforceConnector.organization.instanceName}</td>
+                                                <td>${salesforceConnector.identity.displayName}</td>
+                                                <td><a href="${links['job.specification']}/new/select-target?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}">${labels["select"]}</a></td>
+                                            </tr>
+                                        </#list>
+                                    </#if>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="target">
+
+
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <br>
-
-        <dl class="dl-horizontal">
-            <dt>${labels["name"]}</dt>
-            <dd>${jobType.name}</dd>
-            <hr>
-            <dt>${labels["description"]}</dt>
-            <dd>${jobType.description}</dd>
-            <hr>
-            <dt>${labels["source"]}</dt>
-            <dd>${jobType.source.name}</dd>
-            <hr>
-            <dt>${labels["target"]}</dt>
-            <dd>${jobType.target.name}</dd>
-            <hr>
-        </dl>
-
-        <br>
-
-        <div class="dashhead m-t-md">
-            <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">2</span>&nbsp;${labels["select.connector"]}</h3>
-            </div>
-        </div>
-
-        <br>
-
-        <div class="content table-responsive">
-            <table class="table">
-                <thead>
-                    <th>${labels["name"]}</th>
-                    <th>${labels["organization.name"]}</th>
-                    <th>${labels["organization.type"]}</th>
-                    <th>${labels["instance.name"]}</th>
-                    <th>${labels["identity.name"]}</th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
-                        <tr>
-                            <td>${(salesforceConnector.name)!}</td>
-                            <td>${salesforceConnector.organization.name}</td>
-                            <td>${salesforceConnector.organization.organizationType}</td>
-                            <td>${salesforceConnector.organization.instanceName}</td>
-                            <td>${salesforceConnector.identity.displayName}</td>
-                            <td><a href="${links['job.specification']}/new/select-environment?jobTypeId=${jobType.id}&connectorId=${salesforceConnector.id}">${labels["select"]}</a></td>
-                        </tr>
-                    </#list>
-                </tbody>
-            </table>
-        </div>
-
-        <br>
-
-        <div class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
         </div>
 
         <!-- </#if> -->
 
-        <!-- <#if step=="review"> -->
-
-        <div class="dashhead m-t-md">
-            <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["job.type"]}</h3>
-            </div>
-            <div class="dashhead-toolbar">
-                <p class="pull-right">
-                    <a href="${links['job.specification']}/new/select-type" class="btn btn-primary" role="button">${labels["change"]}</a>
-                </p>
-            </div>
-        </div>
-
-        <br>
-
-        <dl class="dl-horizontal">
-            <dt>${labels["name"]}</dt>
-            <dd>${jobType.name}&emsp;</dd>
-            <hr>
-            <dt>${labels["description"]}</dt>
-            <dd>${jobType.description}</dd>
-            <hr>
-            <dt>${labels["source"]}</dt>
-            <dd>${jobType.source.name}</dd>
-            <hr>
-            <dt>${labels["target"]}</dt>
-            <dd>${jobType.target.name}</dd>
-            <hr>
-        </dl>
-
-        <br>
-
-        <div class="dashhead m-t-md">
-            <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-default">2</span>&nbsp;${labels["connector"]}</h3>
-            </div>
-            <div class="dashhead-toolbar">
-                <p class="pull-right">
-                    <a href="${links['job.specification']}/new/select-connector?jobTypeId=${jobType.id}" class="btn btn-primary" role="button">${labels["change"]}</a>
-                </p>
-            </div>
-        </div>
-
-        <br>
-
-        <dl class="dl-horizontal">
-            <dt>${labels["name"]}</dt>
-            <dd>${(salesforceConnector.name)!}</dd>
-            <hr>
-            <dt>${labels["organization.name"]}</dt>
-            <dd>${salesforceConnector.organization.name}</dd>
-            <hr>
-            <dt>${labels["instance.name"]}</dt>
-            <dd>${salesforceConnector.organization.instanceName}</dd>
-            <hr>
-        </dl>
-
-        <br>
-
-        <div class="dashhead m-t-md">
-            <div class="dashhead-titles">
-                <h3 class="dashhead-title"><span class="badge badge-pill badge-info">3</span>&nbsp;${labels["review"]}</h3>
-            </div>
-        </div>
-
-        <br>
+        <!-- <#if step == 'select-target'> -->
 
         <form name="job-specification-form" id="job-specification-form" class="form-horizontal" role="form" method="post" action="">
 
             <input type="hidden" name="jobTypeId" id="jobTypeId" value="${jobType.id}">
             <input type="hidden" name="connectorId" id="connectorId" value="${salesforceConnector.id}">
 
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label" for="name">${labels['name']}</label>
-                    <input type="text" class="form-control" name="name" id="name" value="" tabindex="1" placeholder="${labels['name']}" />
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#properties" data-toggle="tab"><span class="badge badge-pill badge-default">1</span>&nbsp;${labels["properties"]}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#jobType" data-toggle="tab"><span class="badge badge-pill badge-default">2</span>&nbsp;${labels["job.type"]}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#source" data-toggle="tab"><span class="badge badge-pill badge-default">3</span>&nbsp;${labels["source.connector"]}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link  active" href="#target" data-toggle="tab"><span class="badge badge-pill badge-default">4</span>&nbsp;${labels["target.connector"]}</a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="form-group col-md-3">
-                    <label class="control-label" for="description">${labels['description']}</label>
-                    <input type="text" class="form-control" name="description" id="description" value="" tabindex="1" placeholder="${labels['description']}" />
+                <div class="card-block">
+                    <div class="tab-content">
+                        <div class="tab-pane" id="properties">
+                            <br>
+                            <form name="job-specification-form" id="job-specification-form" class="form-horizontal" role="form" method="post" action="">
+
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <label class="control-label" for="name">${labels['name']}</label>
+                                        <input type="text" class="form-control" name="name" id="name" value="" tabindex="1" placeholder="${labels['name']}" />
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label class="control-label" for="description">${labels['description']}</label>
+                                        <input type="text" class="form-control" name="description" id="description" value="" tabindex="1" placeholder="${labels['description']}" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <label class="control-label" for="name">${labels['notification.email']}</label>
+                                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" tabindex="1" placeholder="${labels['notification.email']}" />
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane" id="jobType">
+                            <div>
+                                <a href="${links['job.specification']}/new/select-type" class="btn btn-secondary" role="button">${labels["change"]}</a>
+                            </div>
+                            <br>
+                            <dl class="dl-vertical">
+                                <dt>${labels["name"]}</dt>
+                                <dd>${jobType.name}</dd>
+                                <dt>${labels["description"]}</dt>
+                                <dd>${jobType.description}</dd>
+                                <dt>${labels["source"]}</dt>
+                                <dd>${jobType.source.name}</dd>
+                                <dt>${labels["target"]}</dt>
+                                <dd>${jobType.target.name}</dd>
+                            </dl>
+                        </div>
+                        <div class="tab-pane" id="source">
+                            <div>
+                                <a href="${links['job.specification']}/new/select-source?jobTypeId=${jobType.id}" class="btn btn-secondary" role="button">${labels["change"]}</a>
+                            </div>
+                            <br>
+                            <dl class="dl-horizontal">
+                                <dt>${labels["name"]}</dt>
+                                <dd>${(salesforceConnector.name)!}</dd>
+                                <dt>${labels["organization.name"]}</dt>
+                                <dd>${salesforceConnector.organization.name}</dd>
+                                <dt>${labels["instance.name"]}</dt>
+                                <dd>${salesforceConnector.organization.instanceName}</dd>
+                            </dl>
+                        </div>
+                        <div class="tab-pane active" id="target">
+                            <h4>${labels["target.note"]}</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    <label class="control-label" for="name">${labels['notification.email']}</label>
-                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" tabindex="1" placeholder="${labels['notification.email']}" />
-                </div>
-                <div class="form-group col-md-3">
-                </div>
+            <br>
+            <div class="pull-right">
+                <button type="button" id="create-job-specification" class="btn btn-primary">${labels["create"]}</button>
             </div>
         </form>
+        
+        <script>
+        
+        $("#create-job-specification").click(function(e) {
+                e.preventDefault();
 
-        <br>
+                $form = $("#job-specification-form");
 
-        <div class="pull-right">
-            <a href="${links['job.specification']}" role="button">${labels["cancel"]}</a>&nbsp;
-            <button type="button" id="create-job-specification" class="btn btn-primary">${labels["create"]}</button>
-        </div>
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['job.specification']}/${accountProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+        
+        </script>
 
         <!-- </#if> -->
 

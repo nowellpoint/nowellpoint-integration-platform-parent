@@ -1,0 +1,32 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div>
+            <a href="${links['salesforce.connector']}/${salesforceConnector.id}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["select.service"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div class="flexgrid">
+            <#list jobTypeList?sort_by( "createdOn") as jobType>
+                <div class="card" style="width: 400px;">
+                    <a href="${links['salesforce.connector']}/${salesforceConnector.id}/service/${jobType.id}" style="text-decoration: none">
+                        <div class="card-block">
+                            <div class="media">
+                                <span class="d-flex mr-3 icon icon-clock fa fa-4x"></span>
+                                <div class="media-body">
+                                    <h5 class="mt-0">${jobType.name}</h5>
+                                    <p>${jobType.description}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </#list>
+        </div>
+    </@t.page>

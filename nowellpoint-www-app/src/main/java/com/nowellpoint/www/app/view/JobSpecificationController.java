@@ -2,6 +2,7 @@ package com.nowellpoint.www.app.view;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
@@ -74,6 +75,7 @@ public class JobSpecificationController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("step", "select-type");
     	model.put("jobTypeList", jobTypeList.getItems());
+    	model.put("salesforceConnectorsList", Collections.emptyList());
     	
     	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
 	}
@@ -86,7 +88,7 @@ public class JobSpecificationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String selectConnector(Configuration configuration, Request request, Response response) {
+	public static String selectSource(Configuration configuration, Request request, Response response) {
 
 		Token token = getToken(request);
 		
@@ -97,7 +99,7 @@ public class JobSpecificationController extends AbstractStaticController {
 				.get(jobTypeId);
 		
 		Map<String, Object> model = getModel();
-		model.put("step", "select-connector");
+		model.put("step", "select-source");
 		model.put("jobType", jobType);
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
@@ -107,6 +109,41 @@ public class JobSpecificationController extends AbstractStaticController {
 					.getSalesforceConnectors();
 
 	    	model.put("salesforceConnectorsList", salesforceConnectors.getItems());
+		}
+		
+    	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String selectTarget(Configuration configuration, Request request, Response response) {
+
+		Token token = getToken(request);
+		
+		String jobTypeId = request.queryParams("jobTypeId");
+		String connectorId = request.queryParams("connectorId");
+		
+		JobType jobType = new NowellpointClient(token)
+				.scheduledJobType()
+				.get(jobTypeId);
+		
+		Map<String, Object> model = getModel();
+		model.put("step", "select-target");
+		model.put("jobType", jobType);
+		
+		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {
+			
+			SalesforceConnector salesforceConnector = new NowellpointClient(token)
+					.salesforceConnector()
+					.get(connectorId);
+			
+			model.put("salesforceConnector", salesforceConnector);
 		}
 		
     	return render(JobSpecificationController.class, configuration, request, response, model, Template.JOB_SPECIFICATION_SELECT);
@@ -132,7 +169,7 @@ public class JobSpecificationController extends AbstractStaticController {
 				.get(jobTypeId);
 		
 		Map<String, Object> model = getModel();
-		model.put("step", "review");
+		//model.put("step", "review");
 		model.put("jobType", jobType);
 		
 		if ("SALESFORCE_METADATA_BACKUP".equals(jobType.getCode())) {

@@ -18,6 +18,8 @@ public class JobType extends AbstractResource {
 	
 	private String languageSidKey;
 	
+	private String template;
+	
 	private ConnectorType source;
 	
 	private ConnectorType target;
@@ -90,6 +92,14 @@ public class JobType extends AbstractResource {
 		this.languageSidKey = languageSidKey;
 	}
 	
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
 	public ConnectorType getSource() {
 		return source;
 	}

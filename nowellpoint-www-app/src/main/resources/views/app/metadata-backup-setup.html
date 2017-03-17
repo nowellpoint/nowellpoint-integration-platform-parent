@@ -1,0 +1,164 @@
+<#import "template.html" as t>
+
+    <@t.page>
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["setup.metadata.backup"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div>
+            <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" action="">
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
+                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" required autofocus="" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="description">${labels["description"]}</label>
+                        <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optradio" id="runWhenScheduled"> ${labels["run.when.submitted"]}</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optradio" id="once"> ${labels["once"]}</label>
+                </div>
+                <div class="radio disabled">
+                    <label>
+                        <input type="radio" name="optradio" id="schedule"> ${labels["schedule"]}</label>
+                </div>
+                <div class="radio disabled">
+                    <label>
+                        <input type="radio" name="optradio" "specificDays"> ${labels["specific.days"]}</label>
+                </div>
+
+                
+
+                <div class="row">
+                    <div id="startform" class="form-group col-md-3 collapse">
+                        <label class="control-label" for="start">${labels["start"]}*</label>
+                        <div class="input-group">
+                            <input type="text" id="start" name="start" value="" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" required>
+                            <span class="input-group-addon"><span class="icon icon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="seconds">${labels["seconds"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="seconds" name="seconds" value="" class="form-control" />
+                            <span class="input-group-addon">[0,59]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="minutes">${labels["minutes"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="minutes" name="minutes" value="" class="form-control" />
+                            <span class="input-group-addon">[0,59]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="hours">${labels["hours"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="hours" name="hours" value="" class="form-control" />
+                            <span class="input-group-addon">[0,23]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="dayOfMonth">${labels["day.of.month"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="dayOfMonth" name="dayOfMonth" value="" class="form-control" />
+                            <span class="input-group-addon">[1,31] ${labels["or"]} ${labels["last"]}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="month">${labels["month"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="month" name="month" value="" class="form-control" />
+                            <span class="input-group-addon">[1,12]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="dayOfWeek">${labels["day.of.week"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="dayOfWeek" name="dayOfWeek" value="" class="form-control" />
+                            <span class="input-group-addon">[0,7]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="year">${labels["year"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="year" name="year" value="" class="form-control" />
+                            <span class="input-group-addon">${labels["year.format"]}</span>
+                        </div>
+                    </div>
+                </div>
+-->
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a href="${links['salesforce.connector']}/${salesforceConnector.id}">${labels["cancel"]}</a>
+            <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                $('#runWhenScheduled').click(function() {
+                    if (this.checked) {
+                        $("#startform").hide();
+                    }
+                });
+
+                $('#once').click(function() {
+                    if (this.checked) {
+                        $("#startform").show();
+                    }
+                });
+                
+                $('#schedule').click(function() {
+                    if (this.checked) {
+                        alert("Transfer Thai Gayo");
+                    }
+                });
+                
+                $('#specificDays').click(function() {
+                    if (this.checked) {
+                        alert("Transfer Thai Gayo");
+                    }
+                });
+            });
+        </script>
+
+    </@t.page>
