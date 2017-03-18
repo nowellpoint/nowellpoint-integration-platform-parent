@@ -28,6 +28,10 @@ public class Service {
 	
 	private String type;
 	
+	private String template;
+	
+	private String whatId;
+	
 	private Date addedOn;
 
 	private Date updatedOn;
@@ -58,6 +62,22 @@ public class Service {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getWhatId() {
+		return whatId;
+	}
+
+	public void setWhatId(String whatId) {
+		this.whatId = whatId;
 	}
 
 	public Date getAddedOn() {

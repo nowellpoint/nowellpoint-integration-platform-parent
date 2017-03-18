@@ -3,6 +3,7 @@ package com.nowellpoint.api.rest.domain;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
@@ -251,11 +252,28 @@ public class SalesforceConnector extends AbstractResource {
 			services = new HashSet<>();
 		} else {
 			if (services.contains(service)) {
-				throw new IllegalArgumentException("Duplicate value: Service has already been added to this Salesforce Connector");
+				throw new IllegalArgumentException(String.format("Unable to add %s since it has already been added to Salesforce Connector", service.getName()));
 			}
 		}
 		
 		services.add(service);
+	}
+	
+	public Service getService(String serviceId) {
+		
+		if (services == null) {
+			services = new HashSet<>();
+		}
+		
+		Optional<Service> optional = services.stream()
+				.filter(s -> serviceId.equals(s.getServiceId()))
+				.findFirst();
+		
+		if (! optional.isPresent()) {
+			throw new IllegalArgumentException(String.format("Service Id: %s does not exist", serviceId));
+		}
+		
+		return optional.get();
 	}
 	
 	public Set<Service> getServices() {

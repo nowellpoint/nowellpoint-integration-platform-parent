@@ -320,12 +320,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		JobType jobType = jobTypeService.findById( jobTypeId );
 		
-		Service service = new Service();
-		service.setId(jobType.getId());
-		service.setName(jobType.getName());
-		service.setType(jobType.getCode());
-		service.setAddedOn(Date.from(Instant.now()));
-		service.setUpdatedOn(Date.from(Instant.now()));
+		Service service = Service.of(jobType);
 		
 		salesforceConnector.addService(service);
 		
@@ -333,6 +328,15 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		return salesforceConnector;
 		
+	}
+	
+	public Service getService(String id, String serviceId) {
+		
+		SalesforceConnector salesforceConnector = findById( id );
+		
+		Service service = salesforceConnector.getService(serviceId);
+		
+		return service;
 	}
 	
 	private Token connect(String connectionString) throws OauthException, ConnectionException {

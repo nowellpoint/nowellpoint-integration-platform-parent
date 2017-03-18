@@ -27,22 +27,20 @@
 
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optradio" id="runWhenScheduled"> ${labels["run.when.submitted"]}</label>
+                        <input type="radio" name="optradio" id="runWhenScheduled" value="runWhenScheduled" checked> ${labels["run.when.submitted"]}</label>
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optradio" id="once"> ${labels["once"]}</label>
+                        <input type="radio" name="optradio" value="once" id="once"> ${labels["once"]}</label>
                 </div>
                 <div class="radio disabled">
                     <label>
-                        <input type="radio" name="optradio" id="schedule"> ${labels["schedule"]}</label>
+                        <input type="radio" name="optradio" value="schedule" id="schedule"> ${labels["schedule"]}</label>
                 </div>
                 <div class="radio disabled">
                     <label>
-                        <input type="radio" name="optradio" "specificDays"> ${labels["specific.days"]}</label>
+                        <input type="radio" name="optradio" value="specificDays" id="specificDays"> ${labels["specific.days"]}</label>
                 </div>
-
-                
 
                 <div class="row">
                     <div id="startform" class="form-group col-md-3 collapse">
@@ -53,7 +51,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!--
 
                 <div class="row">
@@ -129,7 +127,7 @@
             </form>
         </div>
         <div>
-            <a href="${links['salesforce.connector']}/${salesforceConnector.id}">${labels["cancel"]}</a>
+            <a href="${links['salesforce.connector']}/${salesforceConnector.id}#services">${labels["cancel"]}</a>
             <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
         </div>
 
@@ -146,13 +144,13 @@
                         $("#startform").show();
                     }
                 });
-                
+
                 $('#schedule').click(function() {
                     if (this.checked) {
                         alert("Transfer Thai Gayo");
                     }
                 });
-                
+
                 $('#specificDays').click(function() {
                     if (this.checked) {
                         alert("Transfer Thai Gayo");

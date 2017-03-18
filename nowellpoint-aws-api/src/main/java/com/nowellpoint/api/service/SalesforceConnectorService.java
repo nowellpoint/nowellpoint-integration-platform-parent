@@ -3,6 +3,7 @@ package com.nowellpoint.api.service;
 import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.client.sforce.model.Token;
 
 /**
@@ -32,4 +33,6 @@ public interface SalesforceConnectorService {
 	SObjectDetail findSObjectDetail(String id, String sobjectName);
 	
 	SalesforceConnector addService(String id, String serviceId);
+	
+	Service getService(String id, String serviceId);
 }

@@ -43,7 +43,6 @@ import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Instance;
 import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
-import com.nowellpoint.api.model.document.JobSpecification;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;

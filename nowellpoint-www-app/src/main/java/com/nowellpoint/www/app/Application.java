@@ -33,7 +33,6 @@ import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
-import com.nowellpoint.www.app.view.JobSpecificationController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
@@ -187,22 +186,9 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_BUILD, (request, response) -> SalesforceConnectorController.buildSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, (request, response) -> SalesforceConnectorController.addService(configuration, request, response));
-        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_SAVE, (request, response) -> SalesforceConnectorController.saveService(configuration, request, response));
-        
-        
-        //
-        // job specification routes
-        //
-        
-        get(Path.Route.JOB_SPECIFICATION_LIST, (request, response) -> JobSpecificationController.listJobSpecifications(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_TYPE, (request, response) -> JobSpecificationController.listJobTypes(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_SOURCE, (request, response) -> JobSpecificationController.selectSource(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_SELECT_TARGET, (request, response) -> JobSpecificationController.selectTarget(configuration, request, response));
-        post(Path.Route.JOB_SPECIFICATION_CREATE, (request, response) -> JobSpecificationController.createJobSpecification(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_VIEW, (request, response) -> JobSpecificationController.viewJobSpecifications(configuration, request, response));
-        get(Path.Route.JOB_SPECIFICATION_EDIT, (request, response) -> JobSpecificationController.editJobSpecification(configuration, request, response));
-        post(Path.Route.JOB_SPECIFICATION_UPDATE, (request, response) -> JobSpecificationController.updateJobSpecification(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_LIST, (request, response) -> SalesforceConnectorController.listServices(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, (request, response) -> SalesforceConnectorController.addService(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_SETUP, (request, response) -> SalesforceConnectorController.setupService(configuration, request, response));
         
 		//
 		// health check route

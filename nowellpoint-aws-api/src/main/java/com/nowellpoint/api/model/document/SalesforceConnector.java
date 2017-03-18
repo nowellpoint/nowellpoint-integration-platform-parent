@@ -19,6 +19,7 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.nowellpoint.api.model.sforce.Identity;
@@ -69,10 +70,10 @@ public class SalesforceConnector extends MongoDocument {
 	private String tag;
 	
 	@EmbedMany
-	private Set<Service> services;
+	private Set<Service> services = new HashSet<>();
 	
 	@EmbedMany
-	private Set<Sobject> sobjects;
+	private Set<Sobject> sobjects = new HashSet<>();
 	
 	@EmbedOne
 	private Theme theme;

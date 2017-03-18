@@ -8,6 +8,7 @@ import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
+import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.ServiceRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -206,7 +207,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 					.accept(MediaType.APPLICATION_JSON)
 					.path(RESOURCE_CONTEXT)
 	    			.path(serviceRequest.getId())
-	    			.path("service")
+	    			.path("services")
 	    			.parameter("serviceId", serviceRequest.getServiceId())
 	    			.execute();
 			
@@ -223,6 +224,29 @@ public class SalesforceConnectorResource extends AbstractResource {
 			}
 			
 			return result;
+		}
+		
+		public Service get(String salesforceConnectorId, String serviceId) {
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+					.path(salesforceConnectorId)
+					.path("services")
+					.path(serviceId)
+					.execute();
+			
+			Service resource = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				resource = httpResponse.getEntity(Service.class);
+	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+	    	}
+	    	
+	    	return resource;
 		}
 	}
 	

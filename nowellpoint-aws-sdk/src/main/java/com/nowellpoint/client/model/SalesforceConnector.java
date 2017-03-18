@@ -41,6 +41,7 @@ public class SalesforceConnector extends AbstractResource {
 	
 	public SalesforceConnector() {
 		sobjects = new ArrayList<>();
+		services = new ArrayList<>();
 	}
 	
 	public SalesforceConnector(String id) {

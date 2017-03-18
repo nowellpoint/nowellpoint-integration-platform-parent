@@ -16,6 +16,7 @@ import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -115,6 +116,15 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 		return Response.ok()
 				.entity(salesforceConnector)
 				.build(); 
+	}
+	
+	public Response getService(String id, String serviceId) {
+		
+		Service service = salesforceConnectorService.getService(id, serviceId);
+		
+		return Response.ok()
+				.entity(service)
+				.build();
 	}
 	
 	public Response getSObjectDetails(String id, String sobjectName) {		

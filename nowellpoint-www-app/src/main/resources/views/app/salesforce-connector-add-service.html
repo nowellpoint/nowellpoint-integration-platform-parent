@@ -6,6 +6,7 @@
         <br>
         <div class="hr-divider"></div>
         <br>
+        <div id="error"></div>
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
                 <h3 class="dashhead-title">${labels["service.catalog"]}</h3>
@@ -22,7 +23,7 @@
                                 <div class="media-body">
                                     <h4 class="mt-0">${jobType.name}</h4>
                                     <p class="text-muted">${jobType.description}</p>
-                                    <div class="pull-right"><button type="submit" name="submit" id="submit" class="btn btn-primary add-service" data-href="${links['salesforce.connector']}/${salesforceConnector.id}/service/${jobType.id}">${labels["add.service"]}</button>
+                                    <div class="pull-right"><button type="submit" name="submit" id="submit" class="btn btn-primary add-service" data-href="${links['salesforce.connector']}/${salesforceConnector.id}/services/${jobType.id}">${labels["add.service"]}</button>
                                     </div>
                                 </div>
                             </div>
@@ -48,11 +49,11 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id}/service";
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id}";
                                 });
                             }, 1000);
                         } else {
-                            $form.prepend(response.responseText);
+                            $("#error").prepend(response.responseText);
                         }
                     }
                 });

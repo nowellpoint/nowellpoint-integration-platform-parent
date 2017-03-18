@@ -21,7 +21,7 @@ public class Plan extends AbstractResource {
 	
 	private Price price;
 	
-	private List<Service> services;
+	private List<Feature> features;
 	
 	public Plan() {
 		
@@ -83,11 +83,11 @@ public class Plan extends AbstractResource {
 		this.price = price;
 	}
 
-	public List<Service> getServices() {
-		return services;
+	public List<Feature> getFeatures() {
+		return features;
 	}
 
-	public void setServices(List<Service> services) {
-		this.services = services;
+	public void setFeatures(List<Feature> features) {
+		this.features = features;
 	}	
 }

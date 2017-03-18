@@ -58,7 +58,7 @@ public class Plan extends MongoDocument {
 	private Price price;
 	
 	@EmbedMany
-	private Set<Service> services;
+	private Set<Feature> features;
 	
 	public Plan() {
 		
@@ -152,11 +152,11 @@ public class Plan extends MongoDocument {
 		this.price = price;
 	}
 
-	public Set<Service> getServices() {
-		return services;
+	public Set<Feature> getFeatures() {
+		return features;
 	}
 
-	public void setServices(Set<Service> services) {
-		this.services = services;
+	public void setFeatures(Set<Feature> features) {
+		this.features = features;
 	}	
 }

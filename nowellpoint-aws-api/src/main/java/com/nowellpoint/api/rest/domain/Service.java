@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.time.Instant;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -16,13 +17,36 @@ public class Service {
 	
 	private String type;
 	
+	private String template;
+	
+	private String whatId;
+	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date addedOn;
 
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date updatedOn;
 	
-	public Service() {
+	public static Service of(JobType jobType) {
+		return new Service(
+				jobType.getId(), 
+				jobType.getName(), 
+				jobType.getCode(), 
+				jobType.getTemplate(), 
+				Date.from(Instant.now()), 
+				Date.from(Instant.now()));
+	}
+	
+	private Service(String serviceId, String name, String type, String template, Date addedOn, Date updatedOn) {
+		this.serviceId = serviceId;
+		this.name = name;
+		this.type = type;
+		this.template = template;
+		this.addedOn = addedOn;
+		this.updatedOn = updatedOn;
+	}
+	
+	private Service() {
 
 	}
 
@@ -48,6 +72,26 @@ public class Service {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getWhatId() {
+		return whatId;
+	}
+
+	public void setWhatId(String whatId) {
+		this.whatId = whatId;
+	}
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
 	}
 
 	public Date getAddedOn() {
@@ -91,7 +135,6 @@ public class Service {
 		}
 		Service service = (Service) obj;
 		return new EqualsBuilder()
-				.appendSuper(super.equals(obj))
 				.append(this.serviceId, service.serviceId)
 				.isEquals();
 	}

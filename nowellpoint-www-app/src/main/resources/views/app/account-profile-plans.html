@@ -80,11 +80,11 @@
                                             <!--  </#if> -->
                                         </#list>
                                     </tr>
-                                    <#list plans[0].services?sort_by( "sortOrder") as service>
-                                        <tr id="${service?index}">
-                                            <td>${service.name}</td>
+                                    <#list plans[0].features?sort_by( "sortOrder") as feature>
+                                        <tr id="${feature?index}">
+                                            <td>${feature.name}</td>
                                             <#list plans as plan>
-                                                <#assign x=plan.services?sort_by( "sortOrder")[service?index] />
+                                                <#assign x=plan.features?sort_by( "sortOrder")[feature?index] />
                                                 <td>
                                                     <#if x.enabled?? && x.enabled==true>
                                                         <span class="icon-yes glyphicon glyphicon-ok-circle"></span>
@@ -121,23 +121,23 @@
                             <table class="table">
                                 <thead>
                                     <th>${labels["plan.name"]}</th>
-                                    <th>${labels["service"]}</th>
+                                    <th>${labels["feature"]}</th>
                                     <th class="text-center">${labels["quantity"]}</th>
                                     <th class="text-right">${labels["price"]}</th>
                                 </thead>
                                 <tbody>
-                                    <#list plan.services?sort_by( "sortOrder") as service>
+                                    <#list plan.features?sort_by( "sortOrder") as feature>
                                         <tr>
-                                            <#if service?index==0>
+                                            <#if feature?index==0>
                                                 <td>${(plan.planName)!}</td>
-                                                <td>${service.name}</td>
-                                                <td class="text-center">${service.quantity}</td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
                                                 <td class="text-right">${(plan.billingFrequency)!}&nbsp;${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.00"])!}</td>
                                             </#if>
-                                            <#if service?index gt 0>
+                                            <#if feature?index gt 0>
                                                 <td></td>
-                                                <td>${service.name}</td>
-                                                <td class="text-center">${service.quantity}</td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
                                                 <td></td>
                                             </#if>
                                         </tr>
