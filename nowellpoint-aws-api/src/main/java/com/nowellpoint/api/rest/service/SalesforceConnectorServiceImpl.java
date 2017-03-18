@@ -30,11 +30,14 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.ConnectionString;
+import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
@@ -71,6 +74,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Inject
 	private SalesforceService salesforceService;
+	
+	@Inject
+	private JobTypeService jobTypeService;
 	
 	@Inject
 	private VaultEntryService vaultEntryService;
@@ -306,6 +312,27 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	public SalesforceConnector addService(String id, String jobTypeId) {
+		
+		SalesforceConnector salesforceConnector = findById( id );
+		
+		JobType jobType = jobTypeService.findById( jobTypeId );
+		
+		Service service = new Service();
+		service.setId(jobType.getId());
+		service.setName(jobType.getName());
+		service.setType(jobType.getCode());
+		service.setAddedOn(Date.from(Instant.now()));
+		service.setUpdatedOn(Date.from(Instant.now()));
+		
+		salesforceConnector.addService(service);
+		
+		update(salesforceConnector);
+		
+		return salesforceConnector;
+		
 	}
 	
 	private Token connect(String connectionString) throws OauthException, ConnectionException {

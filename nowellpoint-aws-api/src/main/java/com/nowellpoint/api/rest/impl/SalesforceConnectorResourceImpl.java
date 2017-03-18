@@ -108,6 +108,15 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.build(); 
 	}
 	
+	public Response addService(String id, String serviceId) {
+		
+		SalesforceConnector salesforceConnector = salesforceConnectorService.addService(id, serviceId);
+		
+		return Response.ok()
+				.entity(salesforceConnector)
+				.build(); 
+	}
+	
 	public Response getSObjectDetails(String id, String sobjectName) {		
 		
 		SObjectDetail sobjectDetail = salesforceConnectorService.findSObjectDetail(id, sobjectName);

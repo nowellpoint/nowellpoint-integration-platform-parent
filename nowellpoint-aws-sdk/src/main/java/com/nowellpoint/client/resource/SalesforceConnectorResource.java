@@ -8,6 +8,7 @@ import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
+import com.nowellpoint.client.model.ServiceRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
@@ -28,7 +29,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 	public CreateResult<SalesforceConnector> create(CreateSalesforceConnectorRequest request) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
     			.parameter("id", request.getId())
     			.parameter("instanceUrl", request.getInstanceUrl())
@@ -90,7 +92,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 	public UpdateResult<SalesforceConnector> update(String id, SalesforceConnectorRequest salesforceConnectorRequest) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
     			.path(id)
     			.parameter("tag", salesforceConnectorRequest.getTag())
@@ -116,7 +119,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 	public UpdateResult<SalesforceConnector> test(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
     			.path(id)
     			.path("actions")
@@ -142,7 +146,8 @@ public class SalesforceConnectorResource extends AbstractResource {
 	public UpdateResult<SalesforceConnector> build(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
     			.path(id)
     			.path("actions")
@@ -184,6 +189,43 @@ public class SalesforceConnectorResource extends AbstractResource {
 		return deleteResult;
 	}
 	
+	public ServiceResource service() {
+		return new ServiceResource(token);
+	}
+	
+	public class ServiceResource extends AbstractResource {
+		
+		public ServiceResource(Token token) {
+			super(token);
+		}
+		
+		public UpdateResult<SalesforceConnector> addService(ServiceRequest serviceRequest) {
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+	    			.path(serviceRequest.getId())
+	    			.path("service")
+	    			.parameter("serviceId", serviceRequest.getServiceId())
+	    			.execute();
+			
+			UpdateResult<SalesforceConnector> result = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				SalesforceConnector resource = httpResponse.getEntity(SalesforceConnector.class);
+				result = new UpdateResultImpl<SalesforceConnector>(resource);  
+			} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+				Error error = httpResponse.getEntity(Error.class);
+				result = new UpdateResultImpl<SalesforceConnector>(error);
+			}
+			
+			return result;
+		}
+	}
+	
 	public SObjectDetailResource sobject() {
 		return new SObjectDetailResource(token);
 	}
@@ -197,7 +239,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 		public SObject get(String salesforceConnectorId, String sobjectName) {
 			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
-					.header("Content-Type", MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
 					.path(RESOURCE_CONTEXT)
 	    			.path(salesforceConnectorId)
 	    			.path("sobject")

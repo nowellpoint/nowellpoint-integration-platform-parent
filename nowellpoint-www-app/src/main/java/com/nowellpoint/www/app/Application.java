@@ -188,7 +188,7 @@ public class Application implements SparkApplication {
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, (request, response) -> SalesforceConnectorController.addService(configuration, request, response));
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_SETUP, (request, response) -> SalesforceConnectorController.setupService(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_SAVE, (request, response) -> SalesforceConnectorController.saveService(configuration, request, response));
         
         
         //

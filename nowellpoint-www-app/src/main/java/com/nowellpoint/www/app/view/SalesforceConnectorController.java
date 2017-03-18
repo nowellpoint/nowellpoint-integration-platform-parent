@@ -9,12 +9,12 @@ import javax.ws.rs.BadRequestException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.JobType;
 import com.nowellpoint.client.model.JobTypeList;
 import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
+import com.nowellpoint.client.model.ServiceRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.Icon;
@@ -321,23 +321,29 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		model.put("salesforceConnector", new SalesforceConnector(id));
     	model.put("jobTypeList", jobTypeList.getItems());
 
+
 		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_ADD_SERVICE);
 	}
 	
-	public static String setupService(Configuration configuration, Request request, Response response) {
+	public static String saveService(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		String serviceId = request.params(":serviceId");
 		
-		JobType jobType = new NowellpointClient(token)
-				.scheduledJobType()
-				.get(serviceId);
+		ServiceRequest serviceRequest = new ServiceRequest().withId(id)
+				.withServiceId(serviceId);
+		
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+				.salesforceConnector()
+				.service()
+				.addService(serviceRequest);
+		
+		System.out.println(updateResult.isSuccess());
 		
 		Map<String, Object> model = getModel();
 		model.put("salesforceConnector", new SalesforceConnector(id));
-		model.put("jobType", jobType);
-
-		return render(SalesforceConnectorController.class, configuration, request, response, model, String.format(APPLICATION_CONTEXT, jobType.getTemplate()));
+    	//model.put("jobTypeList", jobTypeList.getItems());
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_ADD_SERVICE);
 	}
 }

@@ -33,6 +33,8 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String tag;
 	
+	private List<Service> services;
+	
 	private List<Sobject> sobjects;
 	
 	private Theme theme;
@@ -123,6 +125,14 @@ public class SalesforceConnector extends AbstractResource {
 
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	public List<Service> getServices() {
+		return services;
+	}
+
+	public void setServices(List<Service> services) {
+		this.services = services;
 	}
 
 	public List<Sobject> getSobjects() {

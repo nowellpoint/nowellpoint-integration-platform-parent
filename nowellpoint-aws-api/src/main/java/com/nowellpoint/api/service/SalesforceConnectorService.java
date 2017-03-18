@@ -30,4 +30,6 @@ public interface SalesforceConnectorService {
 	SalesforceConnector build(String id);
 	
 	SObjectDetail findSObjectDetail(String id, String sobjectName);
+	
+	SalesforceConnector addService(String id, String serviceId);
 }

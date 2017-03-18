@@ -69,6 +69,9 @@ public class SalesforceConnector extends MongoDocument {
 	private String tag;
 	
 	@EmbedMany
+	private Set<Service> services;
+	
+	@EmbedMany
 	private Set<Sobject> sobjects;
 	
 	@EmbedOne
@@ -180,6 +183,14 @@ public class SalesforceConnector extends MongoDocument {
 
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	public Set<Service> getServices() {
+		return services;
+	}
+
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 
 	public Set<Sobject> getSobjects() {

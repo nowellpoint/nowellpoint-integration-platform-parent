@@ -1,37 +1,29 @@
 package com.nowellpoint.client.model;
 
+import java.util.Date;
+
 public class Service {
 	
-	private Integer sortOrder;
-	
-	private String code;
+	private String serviceId;
 	
 	private String name;
 	
-	private String description;
+	private String type;
 	
-	private Boolean enabled;
-	
-	private String quantity;
+	private Date addedOn;
+
+	private Date updatedOn;
 	
 	public Service() {
 		
 	}
 
-	public Integer getSortOrder() {
-		return sortOrder;
+	public String getServiceId() {
+		return serviceId;
 	}
 
-	public void setSortOrder(Integer sortOrder) {
-		this.sortOrder = sortOrder;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
 	}
 
 	public String getName() {
@@ -42,27 +34,27 @@ public class Service {
 		this.name = name;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getType() {
+		return type;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public Boolean getEnabled() {
-		return enabled;
+	public Date getAddedOn() {
+		return addedOn;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
 	}
 
-	public String getQuantity() {
-		return quantity;
+	public Date getUpdatedOn() {
+		return updatedOn;
 	}
 
-	public void setQuantity(String quantity) {
-		this.quantity = quantity;
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 }

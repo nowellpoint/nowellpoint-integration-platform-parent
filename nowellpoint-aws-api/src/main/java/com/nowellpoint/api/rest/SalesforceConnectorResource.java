@@ -51,6 +51,12 @@ public interface SalesforceConnectorResource {
 	public Response getSObjectDetails(@PathParam(value="id") String id, @PathParam(value="sobjectName") String sobjectName);
 	
 	@POST
+	@Path("{id}/service")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response addService(@PathParam(value="id") String id, @FormParam(value="serviceId") String serviceId);
+	
+	@POST
 	@Path("{id}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action);

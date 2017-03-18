@@ -32,7 +32,7 @@ public class TestSpreadsheet {
 	
 	private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"), ".credentials/sheets.googleapis.com-java-quickstart");
 	
-	public static final GoogleClientRequestInitializer KEY_INITIALIZER = new SheetsRequestInitializer("");
+	public static final GoogleClientRequestInitializer KEY_INITIALIZER = new SheetsRequestInitializer("AIzaSyCxt5yN3rkNoVCy5n_fwMT-8yzWULmXsqo");
 	
 	static {
         try {

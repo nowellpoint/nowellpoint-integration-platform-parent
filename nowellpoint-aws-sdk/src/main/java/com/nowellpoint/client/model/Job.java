@@ -53,6 +53,8 @@ public class Job extends AbstractResource {
 	private String status;
 	
 	private String failureMessage;
+	
+	private Integer numberOfExecutions;
 
 	public Job() {
 		
@@ -184,5 +186,13 @@ public class Job extends AbstractResource {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
+	}
+
+	public Integer getNumberOfExecutions() {
+		return numberOfExecutions;
+	}
+
+	public void setNumberOfExecutions(Integer numberOfExecutions) {
+		this.numberOfExecutions = numberOfExecutions;
 	}
 }
