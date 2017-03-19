@@ -20,8 +20,6 @@ package com.nowellpoint.api.model.document;
 
 import java.util.Date;
 
-import org.bson.types.ObjectId;
-
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
@@ -41,7 +39,8 @@ public class Job extends MongoDocument {
 	@Reference(referenceClass = AccountProfile.class)
 	private UserRef lastUpdatedBy;
 	
-	private ObjectId scheduledJobId;
+	@Reference(referenceClass = AccountProfile.class)
+	private UserRef owner;
 	
 	private Date start;
 	
@@ -103,16 +102,12 @@ public class Job extends MongoDocument {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public ObjectId getScheduledJobId() {
-		return scheduledJobId;
+	public UserRef getOwner() {
+		return owner;
 	}
 
-	public void setScheduledJobId(ObjectId scheduledJobId) {
-		this.scheduledJobId = scheduledJobId;
-	}
-	
-	public void setScheduledJobId(String scheduledJobId) {
-		this.scheduledJobId = new ObjectId(scheduledJobId);
+	public void setOwner(UserRef owner) {
+		this.owner = owner;
 	}
 
 	public Date getStart() {

@@ -33,6 +33,7 @@ import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
+import com.nowellpoint.www.app.view.JobController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
@@ -189,6 +190,13 @@ public class Application implements SparkApplication {
         get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_LIST, (request, response) -> SalesforceConnectorController.listServices(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, (request, response) -> SalesforceConnectorController.addService(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_SETUP, (request, response) -> SalesforceConnectorController.setupService(configuration, request, response));
+        
+        //
+        // jobs routes
+        //
+        
+        get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
+        
         
 		//
 		// health check route

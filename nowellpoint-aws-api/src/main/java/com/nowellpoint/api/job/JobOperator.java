@@ -53,14 +53,9 @@ public class JobOperator {
 	}
 	
 	public void jobEventObserver(@Observes Job job) {
-		Bson query = and ( 
-				eq ( "scheduledJobId", job.getScheduledJobId() ), 
-				or ( eq ( "status", "Scheduled" ), eq ( "status", "Stopped" )));
-		
-		LOGGER.debug("Observed for Job: " + documentManagerFactory.bsonToString(query));
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
-		documentManager.upsert(query, job);
+
 
 		submitJob(job);
 	}

@@ -10,9 +10,9 @@ import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.util.UserContext;
 
-public class ScheduledJobTypeServiceImpl extends AbstractJobTypeService implements JobTypeService {
+public class JobTypeServiceImpl extends AbstractJobTypeService implements JobTypeService {
 
-	public ScheduledJobTypeServiceImpl() {
+	public JobTypeServiceImpl() {
 		
 	}
 	

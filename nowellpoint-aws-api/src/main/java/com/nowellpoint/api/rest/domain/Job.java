@@ -28,7 +28,7 @@ public class Job extends AbstractResource {
 	
 	private UserInfo lastUpdatedBy;
 	
-	private String scheduledJobId;
+	private UserInfo owner;
 	
 	private String groupName;
 	
@@ -90,12 +90,12 @@ public class Job extends AbstractResource {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public String getScheduledJobId() {
-		return scheduledJobId;
+	public UserInfo getOwner() {
+		return owner;
 	}
 
-	public void setScheduledJobId(String scheduledJobId) {
-		this.scheduledJobId = scheduledJobId;
+	public void setOwner(UserInfo owner) {
+		this.owner = owner;
 	}
 
 	public String getGroupName() {

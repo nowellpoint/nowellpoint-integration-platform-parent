@@ -45,6 +45,9 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "account-profile/:id/address");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
+		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
+		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
+		public static final String JOBS_EDIT = String.format(APPLICATION_CONTEXT, "jobs/:id/edit");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 	}
 }

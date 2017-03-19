@@ -1,28 +1,31 @@
 package com.nowellpoint.api.rest.domain;
 
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import com.nowellpoint.api.rest.JobResource;
+import com.nowellpoint.api.rest.SalesforceConnectorResource;
+
 public class Resources {
 	
 	private String salesforce;
 	
-	private String scheduledJobs;
+	private String jobs;
 	
-	public Resources() {
-		
+	private Resources(UriInfo uriInfo) {
+		this.salesforce = UriBuilder.fromUri(uriInfo.getBaseUri()).path(SalesforceConnectorResource.class).build().toString();
+		this.jobs = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JobResource.class).build().toString();
+	}
+	
+	public static Resources of(UriInfo uriInfo) {
+		return new Resources(uriInfo);
 	}
 
 	public String getSalesforce() {
 		return salesforce;
 	}
 
-	public void setSalesforce(String salesforce) {
-		this.salesforce = salesforce;
-	}
-
-	public String getScheduledJobs() {
-		return scheduledJobs;
-	}
-
-	public void setScheduledJobs(String scheduledJobs) {
-		this.scheduledJobs = scheduledJobs;
+	public String getJobs() {
+		return jobs;
 	}
 }

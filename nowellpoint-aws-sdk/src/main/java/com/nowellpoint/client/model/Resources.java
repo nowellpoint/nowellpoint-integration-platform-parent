@@ -4,7 +4,7 @@ public class Resources {
 	
 	private String salesforce;
 	
-	private String scheduledJobs;
+	private String jobs;
 
 	public Resources() {
 		
@@ -17,12 +17,12 @@ public class Resources {
 	public void setSalesforce(String salesforce) {
 		this.salesforce = salesforce;
 	}
-	
-	public String getScheduledJobs() {
-		return scheduledJobs;
+
+	public String getJobs() {
+		return jobs;
 	}
 
-	public void setScheduledJobs(String scheduledJobs) {
-		this.scheduledJobs = scheduledJobs;
+	public void setJobs(String jobs) {
+		this.jobs = jobs;
 	}
 }

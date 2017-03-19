@@ -22,6 +22,8 @@ import java.util.Date;
 
 public class Job extends AbstractResource {
 	
+	private UserInfo owner;
+	
 	private String scheduledJobId;
 	
 	private Date start;
@@ -58,6 +60,14 @@ public class Job extends AbstractResource {
 
 	public Job() {
 		
+	}
+
+	public UserInfo getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserInfo owner) {
+		this.owner = owner;
 	}
 
 	public String getScheduledJobId() {

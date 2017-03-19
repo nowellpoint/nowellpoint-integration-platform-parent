@@ -1,0 +1,47 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h6 class="dashhead-subtitle">&emsp;</h6>
+                <h2 class="dashhead-title">${labels["jobs"]}</h2>
+            </div>
+            <#if jobList?size gt 0>
+                <div class="dashhead-toolbar">
+                    <p class="pull-right">
+                        <a href="${links['job.specification']}/new" class="btn btn-outline-primary" role="button">${labels["create.job"]}</a>
+                    </p>
+                </div>
+            </#if>
+        </div>
+        <#if jobList?size==0>
+            <br>
+            <br>
+            <br>
+            <p class="text-center">
+                <span class="icon icon-clock fa fa-4x"></span>
+            </p>
+            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+            <p class="text-center">
+                <a href="${links['jobs']}" class="btn btn-outline-primary btn-lg" role="button">${labels["create.job"]}</a>
+            </p>
+        </#if>
+        <#if jobList?size gt 0>
+            <br>
+            <div class="content table-responsive">
+                <table class="table">
+                    <thead>
+                        
+                    </thead>
+                    <tbody>
+                        <#list jobList?sort_by( "createdOn") as jobSpecification>
+                            <tr >
+                                
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
+            </div>
+        </#if>
+    </@t.page>
