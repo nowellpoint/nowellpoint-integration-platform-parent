@@ -13,20 +13,17 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 
 	@Override
 	public Job findById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.findById(id);
 	}
 
 	@Override
-	public Job createJob() {
-		// TODO Auto-generated method stub
-		return null;
+	public void createJob(Job job) {
+		super.create(job);
 	}
 
 	@Override
-	public Job updateJob() {
-		// TODO Auto-generated method stub
-		return null;
+	public void updateJob(Job job) {
+		super.update(job);
 	}
 
 }

@@ -7,8 +7,11 @@
             </div>
         </div>
         <br>
+        <div id="error"></div>
         <div>
-            <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" action="">
+            <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="${service.href}">
+                
+                <input type="hidden" class="form-control" name="jobName" id="jobName" value="${service.name}" />
 
                 <div class="row">
                     <div class="form-group col-md-3">
@@ -27,19 +30,19 @@
 
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optradio" id="runWhenScheduled" value="runWhenScheduled" checked> ${labels["run.when.submitted"]}</label>
+                        <input type="radio" name="scheduleOption" id="runWhenScheduled" value="runWhenScheduled" checked> ${labels["run.when.submitted"]}</label>
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optradio" value="once" id="once"> ${labels["once"]}</label>
+                        <input type="radio" name="scheduleOption" value="once" id="once"> ${labels["once"]}</label>
                 </div>
                 <div class="radio disabled">
                     <label>
-                        <input type="radio" name="optradio" value="schedule" id="schedule"> ${labels["schedule"]}</label>
+                        <input type="radio" name="scheduleOption" value="schedule" id="schedule"> ${labels["schedule"]}</label>
                 </div>
                 <div class="radio disabled">
                     <label>
-                        <input type="radio" name="optradio" value="specificDays" id="specificDays"> ${labels["specific.days"]}</label>
+                        <input type="radio" name="scheduleOption" value="specificDays" id="specificDays"> ${labels["specific.days"]}</label>
                 </div>
 
                 <div class="row">
@@ -128,7 +131,7 @@
         </div>
         <div>
             <a href="${links['salesforce.connector']}/${salesforceConnector.id}#services">${labels["cancel"]}</a>
-            <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["save"]}</button>
+            <button name="save" id="save" class="btn btn-primary">${labels["save"]}</button>
         </div>
 
         <script>
@@ -154,6 +157,33 @@
                 $('#specificDays').click(function() {
                     if (this.checked) {
                         alert("Transfer Thai Gayo");
+                    }
+                });
+            });
+
+            $("#save").click(function(e) {
+                e.preventDefault();
+                
+                $form = $("#schedule-form");
+                
+                console.log($form.attr('action'));
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id}#services";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
                     }
                 });
             });

@@ -9,7 +9,7 @@ public interface JobService {
 	
 	Job findById(String id);
 	
-	Job createJob();
+	void createJob(Job job);
 	
-	Job updateJob();
+	void updateJob(Job job);
 }

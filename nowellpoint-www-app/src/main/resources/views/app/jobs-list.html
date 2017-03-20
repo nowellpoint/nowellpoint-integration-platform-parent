@@ -10,7 +10,7 @@
             <#if jobList?size gt 0>
                 <div class="dashhead-toolbar">
                     <p class="pull-right">
-                        <a href="${links['job.specification']}/new" class="btn btn-outline-primary" role="button">${labels["create.job"]}</a>
+                        <a href="${links['jobs']}/new" class="btn btn-outline-primary" role="button">${labels["create.job"]}</a>
                     </p>
                 </div>
             </#if>
@@ -32,12 +32,16 @@
             <div class="content table-responsive">
                 <table class="table">
                     <thead>
-                        
+                        <th>${labels["job.name"]}</th>
+                        <th>${labels["started.on"]}</th>
+                        <th class="text-right">${labels["number.executions"]}</th>
                     </thead>
                     <tbody>
-                        <#list jobList?sort_by( "createdOn") as jobSpecification>
+                        <#list jobList?sort_by( "createdOn") as job>
                             <tr >
-                                
+                                <td>${job.jobName}</td>
+                                <td>${job.start?date?string.long} ${job.start?time?string.medium}</td>
+                                <td class="text-right">${job.numberOfExecutions}</td>
                             </tr>
                         </#list>
                     </tbody>

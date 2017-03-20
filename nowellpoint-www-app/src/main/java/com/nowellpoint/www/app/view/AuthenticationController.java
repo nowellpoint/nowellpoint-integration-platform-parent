@@ -60,7 +60,7 @@ public class AuthenticationController extends AbstractStaticController {
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
     		
     		request.attribute(AUTH_TOKEN, token);
-    		
+
     		Identity identity = new NowellpointClient(token)
     				.identity()
     				.get(token.getId());

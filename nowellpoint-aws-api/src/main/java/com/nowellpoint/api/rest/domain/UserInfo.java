@@ -46,6 +46,10 @@ public class UserInfo {
 	public UserInfo(String id) {
 		setId(id);
 	}
+	
+	public static UserInfo of(String id) {
+		return new UserInfo(id);
+	}
 
 	public String getId() {
 		return id;

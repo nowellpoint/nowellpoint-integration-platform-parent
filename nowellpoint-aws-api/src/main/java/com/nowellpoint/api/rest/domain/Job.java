@@ -18,9 +18,12 @@
 
 package com.nowellpoint.api.rest.domain;
 
+import java.time.Instant;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 
 public class Job extends AbstractResource {
 	
@@ -30,14 +33,18 @@ public class Job extends AbstractResource {
 	
 	private UserInfo owner;
 	
-	private String groupName;
+	private String description;
+	
+	private String notificationEmail;
 	
 	private String jobName;
 	
 	private Long jobRunTime;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date start;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date end;
 	
 	private String timeZone;
@@ -64,6 +71,118 @@ public class Job extends AbstractResource {
 
 	public Job() {
 		
+	}
+	
+	private Job(
+			String dayOfMonth,
+			String dayOfWeek,
+			String description,
+			String hours,
+			String jobName,
+			Date end,
+			String minutes,
+			String month,
+			String notificationEmail,
+			String seconds,
+			Date start,
+			String timeZone,
+			String year,
+			UserInfo owner,
+			Date createdOn,
+			UserInfo createdBy,
+			Date lastUpdatedOn,
+			UserInfo lastUpdatedBy,
+			Integer numberOfExecutions) {
+		
+		this.dayOfMonth = dayOfMonth;
+		this.dayOfWeek = dayOfWeek;
+		this.description = description;
+		this.hours = hours;
+		this.jobName = jobName;
+		this.end = end;
+		this.minutes = minutes;
+		this.month = month;
+		this.notificationEmail = notificationEmail;
+		this.seconds = seconds;
+		this.start = start;
+		this.timeZone = timeZone;
+		this.year = year;
+		this.owner = owner;
+		this.createdOn = createdOn;
+		this.createdBy = createdBy;
+		this.lastUpdatedOn = lastUpdatedOn;
+		this.lastUpdatedBy = lastUpdatedBy;
+		this.numberOfExecutions = numberOfExecutions;
+	}
+	
+	public static Job of(
+			UserInfo userInfo,
+			String dayOfMonth,
+			String dayOfWeek,
+			String description,
+			String hours,
+			String jobName,
+			Date end,
+			String minutes,
+			String month,
+			String notificationEmail,
+			String seconds,
+			Date start,
+			String timeZone,
+			String year) {
+		
+		if (Assert.isEmpty(dayOfMonth)) {
+			dayOfMonth = null;
+		}
+		
+		if (Assert.isEmpty(dayOfWeek)) {
+			dayOfWeek = null;
+		}
+		
+		if (Assert.isEmpty(description)) {
+			description = null;
+		}
+		
+		if (Assert.isEmpty(hours)) {
+			hours = null;
+		}
+		
+		if (Assert.isEmpty(minutes)) {
+			minutes = null;
+		}
+		
+		if (Assert.isEmpty(month)) {
+			month = null;
+		}
+		
+		if (Assert.isEmpty(seconds)) {
+			seconds = null;
+		}
+		
+		if (Assert.isEmpty(year)) {
+			year = null;
+		}
+		
+		return new Job(
+				dayOfMonth,
+				dayOfWeek,
+				description,
+				hours,
+				jobName,
+				end,
+				minutes,
+				month,
+				notificationEmail,
+				seconds,
+				start,
+				timeZone,
+				year,
+				userInfo,
+				Date.from(Instant.now()),
+				userInfo,
+				Date.from(Instant.now()),
+				userInfo,
+				0);
 	}
 	
 	private <T> Job(T document) {
@@ -98,12 +217,20 @@ public class Job extends AbstractResource {
 		this.owner = owner;
 	}
 
-	public String getGroupName() {
-		return groupName;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
 	}
 
 	public String getJobName() {
@@ -225,6 +352,8 @@ public class Job extends AbstractResource {
 	public void setNumberOfExecutions(Integer numberOfExecutions) {
 		this.numberOfExecutions = numberOfExecutions;
 	}
+	
+	
 
 	@Override
 	public MongoDocument toDocument() {

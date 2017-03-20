@@ -10,7 +10,6 @@ import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.PasswordCredentials;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
-import com.nowellpoint.client.resource.ApplicationResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.PlanResource;
@@ -95,10 +94,6 @@ public class NowellpointClient {
 	
 	public IdentityResource identity() {
 		return new IdentityResource(token);
-	}
-	
-	public ApplicationResource application() {
-		return new ApplicationResource(token);
 	}
 	
 	public PlanResource plan() {

@@ -47,6 +47,8 @@ public class JobType extends MongoDocument {
 	
 	private String template;
 	
+	private String href;
+	
 	@EmbedOne
 	private ConnectorType source;
 	
@@ -119,6 +121,14 @@ public class JobType extends MongoDocument {
 
 	public void setTemplate(String template) {
 		this.template = template;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 
 	public ConnectorType getSource() {

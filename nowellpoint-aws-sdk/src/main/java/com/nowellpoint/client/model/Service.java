@@ -12,6 +12,8 @@ public class Service {
 	
 	private String template;
 	
+	private String href;
+	
 	private String whatId;
 	
 	private Date addedOn;
@@ -52,6 +54,14 @@ public class Service {
 
 	public void setTemplate(String template) {
 		this.template = template;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 
 	public String getWhatId() {

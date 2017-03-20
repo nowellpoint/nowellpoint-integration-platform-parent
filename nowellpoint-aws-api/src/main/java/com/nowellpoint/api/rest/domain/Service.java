@@ -19,6 +19,8 @@ public class Service {
 	
 	private String template;
 	
+	private String href;
+	
 	private String whatId;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -28,22 +30,17 @@ public class Service {
 	private Date updatedOn;
 	
 	public static Service of(JobType jobType) {
-		return new Service(
-				jobType.getId(), 
-				jobType.getName(), 
-				jobType.getCode(), 
-				jobType.getTemplate(), 
-				Date.from(Instant.now()), 
-				Date.from(Instant.now()));
+		return new Service(jobType);
 	}
 	
-	private Service(String serviceId, String name, String type, String template, Date addedOn, Date updatedOn) {
-		this.serviceId = serviceId;
-		this.name = name;
-		this.type = type;
-		this.template = template;
-		this.addedOn = addedOn;
-		this.updatedOn = updatedOn;
+	private Service(JobType jobType) {
+		this.serviceId = jobType.getId();
+		this.name = jobType.getName();
+		this.type = jobType.getCode();
+		this.template = jobType.getTemplate();
+		this.href = jobType.getHref();
+		this.addedOn = Date.from(Instant.now());
+		this.updatedOn = Date.from(Instant.now());
 	}
 	
 	private Service() {
@@ -80,6 +77,14 @@ public class Service {
 
 	public void setTemplate(String template) {
 		this.template = template;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 
 	public String getWhatId() {

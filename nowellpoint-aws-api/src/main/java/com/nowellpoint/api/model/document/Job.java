@@ -42,6 +42,10 @@ public class Job extends MongoDocument {
 	@Reference(referenceClass = AccountProfile.class)
 	private UserRef owner;
 	
+	private String description;
+	
+	private String notificationEmail;
+	
 	private Date start;
 	
 	private Date end;
@@ -104,6 +108,22 @@ public class Job extends MongoDocument {
 
 	public UserRef getOwner() {
 		return owner;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getNotificationEmail() {
+		return notificationEmail;
+	}
+
+	public void setNotificationEmail(String notificationEmail) {
+		this.notificationEmail = notificationEmail;
 	}
 
 	public void setOwner(UserRef owner) {

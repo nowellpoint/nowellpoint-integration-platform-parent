@@ -14,7 +14,6 @@ import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
-import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.ServiceRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -377,34 +376,5 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		}
 		
 		return responseBody(updateResult);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String setupService(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String serviceId = request.params(":serviceId");
-		
-		System.out.println(serviceId);
-		
-		Service service = new NowellpointClient(token)
-				.salesforceConnector()
-				.service()
-				.get(id, serviceId);
-		
-		System.out.println(service.getName());
-		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", new SalesforceConnector(id));
-		model.put("service", service);
-		return render(SalesforceConnectorController.class, configuration, request, response, model, String.format(APPLICATION_CONTEXT, service.getTemplate()));
 	}
 }

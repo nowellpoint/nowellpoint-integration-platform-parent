@@ -20,6 +20,8 @@ public class JobType extends AbstractResource {
 	
 	private String template;
 	
+	private String href;
+	
 	private ConnectorType source;
 	
 	private ConnectorType target;
@@ -98,6 +100,14 @@ public class JobType extends AbstractResource {
 
 	public void setTemplate(String template) {
 		this.template = template;
+	}
+
+	public String getHref() {
+		return href;
+	}
+
+	public void setHref(String href) {
+		this.href = href;
 	}
 
 	public ConnectorType getSource() {

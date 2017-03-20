@@ -1,32 +1,12 @@
-/**
- * 
- * Copyright 2015-2016 the original author or authors.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- */
-
 package com.nowellpoint.client.model;
 
 import java.util.Date;
 
-public class Job extends AbstractResource {
-	
-	private UserInfo owner;
-	
-	private String description;
+public class JobRequest {
 	
 	private String notificationEmail;
+	
+	private String description;
 	
 	private Date start;
 	
@@ -35,8 +15,6 @@ public class Job extends AbstractResource {
 	private String timeZone;
 	
 	private String jobName;
-	
-	private Long jobRunTime;
 	
 	private String seconds;
 	
@@ -50,32 +28,10 @@ public class Job extends AbstractResource {
 	
 	private String dayOfWeek;
 	
-	private String year;
+	private String year; 
 	
-	private String status;
-	
-	private String failureMessage;
-	
-	private Integer numberOfExecutions;
-
-	public Job() {
+	public JobRequest() {
 		
-	}
-
-	public UserInfo getOwner() {
-		return owner;
-	}
-
-	public void setOwner(UserInfo owner) {
-		this.owner = owner;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getNotificationEmail() {
@@ -84,6 +40,14 @@ public class Job extends AbstractResource {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Date getStart() {
@@ -116,14 +80,6 @@ public class Job extends AbstractResource {
 
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
-	}
-
-	public Long getJobRunTime() {
-		return jobRunTime;
-	}
-
-	public void setJobRunTime(Long jobRunTime) {
-		this.jobRunTime = jobRunTime;
 	}
 
 	public String getSeconds() {
@@ -181,28 +137,69 @@ public class Job extends AbstractResource {
 	public void setYear(String year) {
 		this.year = year;
 	}
-
-	public String getStatus() {
-		return status;
+	
+	public JobRequest withNotificationEmail(String notificationEmail) {
+		setNotificationEmail(notificationEmail);
+		return this;
 	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	
+	public JobRequest withDescription(String description) {
+		setDescription(description);
+		return this;
 	}
-
-	public String getFailureMessage() {
-		return failureMessage;
+	
+	public JobRequest withStart(Date start) {
+		setStart(start);
+		return this;
 	}
-
-	public void setFailureMessage(String failureMessage) {
-		this.failureMessage = failureMessage;
+	
+	public JobRequest withEnd(Date end) {
+		setEnd(end);
+		return this;
 	}
-
-	public Integer getNumberOfExecutions() {
-		return numberOfExecutions;
+	
+	public JobRequest withTimeZone(String timeZone) {
+		setTimeZone(timeZone);
+		return this;
 	}
-
-	public void setNumberOfExecutions(Integer numberOfExecutions) {
-		this.numberOfExecutions = numberOfExecutions;
+	
+	public JobRequest withJobName(String jobName) {
+		setJobName(jobName);
+		return this;
+	}
+	
+	public JobRequest withSeconds(String seconds) {
+		setSeconds(seconds);
+		return this;
+	}
+	
+	public JobRequest withMinutes(String minutes) {
+		setMinutes(minutes);
+		return this;
+	}
+	
+	public JobRequest withHours(String hours) {
+		setHours(hours);
+		return this;
+	}
+	
+	public JobRequest withDayOfMonth(String dayOfMonth) {
+		setDayOfMonth(dayOfMonth);
+		return this;
+	}
+	
+	public JobRequest withMonth(String month) {
+		setMonth(month);
+		return this;
+	}
+	
+	public JobRequest withDayOfWeek(String dayOfWeek) {
+		setDayOfWeek(dayOfWeek);
+		return this;
+	}
+	
+	public JobRequest withYear(String year) {
+		setYear(year);
+		return this;
 	}
 }

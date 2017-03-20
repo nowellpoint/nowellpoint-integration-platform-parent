@@ -33,12 +33,9 @@
             </#list>
         </div>
         
-        
         <script>
             $(".add-service").click(function(e) {
                 e.preventDefault();
-                
-                console.log($(this).attr("data-href"));
 
                 $.ajax({
                     method: "post",
