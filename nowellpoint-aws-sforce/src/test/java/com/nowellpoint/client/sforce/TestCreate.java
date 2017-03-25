@@ -1,6 +1,7 @@
 package com.nowellpoint.client.sforce;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,13 +18,15 @@ import com.nowellpoint.util.Properties;
 
 public class TestCreate {
 	
+	private static Logger LOG = Logger.getLogger(TestCreate.class.getName());
+	
 	@BeforeClass
 	public static void init() {
 		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 	}
 	
 	@Test
-	public void testCreateContact() {
+	public void testCreateLead() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
@@ -34,39 +37,49 @@ public class TestCreate {
 				.build();
 		
 		try {
+			
+			LOG.info("********* Singing into Salesforce...");
+			
 			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
 			
 			Token token = response.getToken();
 			
+			LOG.info("********* Id: " + token.getId());
+			LOG.info("********* Instance Url: " + token.getInstanceUrl());
+			LOG.info("********* Token Type: " + token.getTokenType());
+			LOG.info("********* Access Token: " + token.getAccessToken());
+			
 			Identity identity = response.getIdentity();
+			
+			LOG.info("********* Display Name: " + identity.getDisplayName());
+			LOG.info("********* REST Endpoint: " + identity.getUrls().getRest());
 			
 			ObjectMapper mapper = new ObjectMapper();
 			
-			ObjectNode contact = mapper.createObjectNode()
-					.put("Id", "dkhdlkhfdkhjfd")
+			ObjectNode lead = mapper.createObjectNode()
 					.put("FirstName", "John")
 					.put("LastName", "Herson")
-					.put("Email", "test.nowellpoint@mailinator.com ")
-					.put("Phone", "919-000-0000")
-					.put("Company", "Nowellpoint")
+					.put("Email", "my.test@mailinator.com ")
+					.put("Phone", "000-000-0000")
+					.put("Company", "My Company")
 					.put("Description", "Need some help");
 			
-			System.out.println(contact.toString());
+			System.out.println(lead.toString());
 			
 			HttpResponse httpResponse = RestResource.post(identity.getUrls().getSobjects())
 					.contentType(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(token.getAccessToken())
 	    			.path("Lead")
-	    			.body(contact)
+	    			.body(lead)
 	    			.execute();
 			
-			System.out.println(httpResponse.getStatusCode());
+			LOG.info("********* HTTP Response code: " + httpResponse.getStatusCode());
 			
-			if (httpResponse.getStatusCode() == Status.OK) {
+			if (httpResponse.getStatusCode() == Status.CREATED) {
 				CreateResult createResult = httpResponse.getEntity(CreateResult.class);
-				System.out.println(createResult.getSuccess());
-				System.out.println(createResult.getId());
+				LOG.info("********* Create Result status: " + createResult.getSuccess());
+				LOG.info("********* Lead Id: " + createResult.getId());
 			} else {
 				List<Error> errors = httpResponse.getEntityList(Error.class);
 				System.out.println(errors.get(0).getErrorCode());
