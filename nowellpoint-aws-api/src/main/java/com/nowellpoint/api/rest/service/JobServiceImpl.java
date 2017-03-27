@@ -18,6 +18,7 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 
 	@Override
 	public void createJob(Job job) {
+		job.setStatus(Job.SCHEDULED);
 		super.create(job);
 	}
 

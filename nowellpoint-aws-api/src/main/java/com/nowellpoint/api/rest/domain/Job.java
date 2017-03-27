@@ -27,6 +27,10 @@ import com.nowellpoint.util.Assert;
 
 public class Job extends AbstractResource {
 	
+	public static final String SCHEDULED = "Scheduled"; 
+	public static final String STOPPED = "Stopped";
+	public static final String TERMINATED = "Terminated";
+	
 	private UserInfo createdBy;
 	
 	private UserInfo lastUpdatedBy;
@@ -36,6 +40,8 @@ public class Job extends AbstractResource {
 	private String description;
 	
 	private String notificationEmail;
+	
+	private String scheduleOption;
 	
 	private String jobName;
 	
@@ -83,6 +89,7 @@ public class Job extends AbstractResource {
 			String minutes,
 			String month,
 			String notificationEmail,
+			String scheduleOption,
 			String seconds,
 			Date start,
 			String timeZone,
@@ -103,6 +110,7 @@ public class Job extends AbstractResource {
 		this.minutes = minutes;
 		this.month = month;
 		this.notificationEmail = notificationEmail;
+		this.scheduleOption = scheduleOption;
 		this.seconds = seconds;
 		this.start = start;
 		this.timeZone = timeZone;
@@ -126,6 +134,7 @@ public class Job extends AbstractResource {
 			String minutes,
 			String month,
 			String notificationEmail,
+			String scheduleOption,
 			String seconds,
 			Date start,
 			String timeZone,
@@ -173,6 +182,7 @@ public class Job extends AbstractResource {
 				minutes,
 				month,
 				notificationEmail,
+				scheduleOption,
 				seconds,
 				start,
 				timeZone,
@@ -231,6 +241,14 @@ public class Job extends AbstractResource {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getScheduleOption() {
+		return scheduleOption;
+	}
+
+	public void setScheduleOption(String scheduleOption) {
+		this.scheduleOption = scheduleOption;
 	}
 
 	public String getJobName() {
@@ -352,8 +370,6 @@ public class Job extends AbstractResource {
 	public void setNumberOfExecutions(Integer numberOfExecutions) {
 		this.numberOfExecutions = numberOfExecutions;
 	}
-	
-	
 
 	@Override
 	public MongoDocument toDocument() {

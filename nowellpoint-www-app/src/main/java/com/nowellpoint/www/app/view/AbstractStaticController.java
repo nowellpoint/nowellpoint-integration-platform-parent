@@ -96,4 +96,13 @@ public class AbstractStaticController {
 						.with(strong().withText(result.getErrorMessage())))
 				.render();
 	}
+	
+	protected static String showError(String errorMessage) {
+		return div().withId("error").withClass("alert alert-danger")
+				.with(a().withClass("close").withData("dismiss", "alert")
+						.with(new UnescapedText("&times;")))
+				.with(div().withClass("text-center")
+						.with(strong().withText(errorMessage)))
+				.render();
+	}
 }

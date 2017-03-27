@@ -1,7 +1,10 @@
 package com.nowellpoint.www.app.view;
 
-import java.sql.Date;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
@@ -47,17 +50,45 @@ public class JobController extends AbstractStaticController {
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		String scheduleOption = request.queryParams("scheduleOption");
+		String startDate = request.queryParams("startDate");
+		
+		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		JobRequest jobRequest = null;
 		
-		if ("runWhenScheduled".equals(scheduleOption)) {
+		if ("RUN_WHEN_SUBMITTED".equals(scheduleOption)) {
 			
 			jobRequest = new JobRequest().withJobName(jobName)
 					.withDescription(description)
 					.withTimeZone(identity.getTimeZoneSidKey())
 					.withNotificationEmail(notificationEmail)
+					.withScheduleOption(scheduleOption)
 					.withStart(Date.from(Instant.now()))
 					.withEnd(Date.from(Instant.now()));
+			
+		} else if ("ONCE".equals(scheduleOption)) {
+			
+			Date date = null;
+			try {
+				date = dateTimeFormat.parse(startDate);
+			} catch (ParseException e) {
+				response.status(400);
+				return showError(e.getLocalizedMessage());
+			}
+			
+			jobRequest = new JobRequest().withJobName(jobName)
+					.withDescription(description)
+					.withTimeZone(identity.getTimeZoneSidKey())
+					.withNotificationEmail(notificationEmail)
+					.withScheduleOption(scheduleOption)
+					.withStart(date)
+					.withEnd(date);
+			
+		} else if ("SCHEDULE".equals(scheduleOption)) {
+			
+		} else if ("SPECIFIC_DAYS".equals(scheduleOption)) {
+			
+		} else {
 			
 		}
 		

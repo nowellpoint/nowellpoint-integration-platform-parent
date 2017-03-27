@@ -28,6 +28,8 @@ public class Job extends AbstractResource {
 	
 	private String notificationEmail;
 	
+	private String scheduleOption;
+	
 	private Date start;
 	
 	private Date end;
@@ -84,6 +86,14 @@ public class Job extends AbstractResource {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getScheduleOption() {
+		return scheduleOption;
+	}
+
+	public void setScheduleOption(String scheduleOption) {
+		this.scheduleOption = scheduleOption;
 	}
 
 	public Date getStart() {

@@ -4,7 +4,14 @@ import java.util.Date;
 
 public class JobRequest {
 	
+	public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
+	public static final String ONCE = "ONCE";
+	public static final String SCHEDULE = "SCHEDULE";
+	public static final String SPECIFIC_DAYS = "SPECIFIC_DAYS";
+	
 	private String notificationEmail;
+	
+	private String scheduleOption;
 	
 	private String description;
 	
@@ -40,6 +47,14 @@ public class JobRequest {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getScheduleOption() {
+		return scheduleOption;
+	}
+
+	public void setScheduleOption(String scheduleOption) {
+		this.scheduleOption = scheduleOption;
 	}
 
 	public String getDescription() {
@@ -145,6 +160,11 @@ public class JobRequest {
 	
 	public JobRequest withDescription(String description) {
 		setDescription(description);
+		return this;
+	}
+	
+	public JobRequest withScheduleOption(String scheduleOption) {
+		setScheduleOption(scheduleOption);
 		return this;
 	}
 	

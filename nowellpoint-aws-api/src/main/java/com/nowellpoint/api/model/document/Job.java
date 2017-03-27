@@ -46,6 +46,8 @@ public class Job extends MongoDocument {
 	
 	private String notificationEmail;
 	
+	private String scheduleOption;
+	
 	private Date start;
 	
 	private Date end;
@@ -124,6 +126,14 @@ public class Job extends MongoDocument {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getScheduleOption() {
+		return scheduleOption;
+	}
+
+	public void setScheduleOption(String scheduleOption) {
+		this.scheduleOption = scheduleOption;
 	}
 
 	public void setOwner(UserRef owner) {

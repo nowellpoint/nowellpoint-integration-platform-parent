@@ -62,7 +62,6 @@ public class JobResource extends AbstractResource {
 	}
 	
 	public CreateResult<Job> create(JobRequest request) {
-		System.out.println("creating");
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -77,6 +76,7 @@ public class JobResource extends AbstractResource {
     			.parameter("minutes", request.getMinutes())
     			.parameter("month", request.getMonth())
     			.parameter("notificationEmail", request.getNotificationEmail())
+    			.parameter("scheduleOption", request.getScheduleOption())
     			.parameter("seconds", request.getSeconds())
     			.parameter("timeZone", request.getTimeZone())
     			.parameter("year", request.getYear())
