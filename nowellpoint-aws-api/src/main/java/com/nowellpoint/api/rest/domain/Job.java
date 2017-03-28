@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
@@ -44,6 +45,11 @@ public class Job extends AbstractResource {
 	private String scheduleOption;
 	
 	private String jobName;
+	
+	@JsonIgnore
+	private String className;
+	
+	private String groupName;
 	
 	private Long jobRunTime;
 	
@@ -80,11 +86,11 @@ public class Job extends AbstractResource {
 	}
 	
 	private Job(
+			JobType jobType,
 			String dayOfMonth,
 			String dayOfWeek,
 			String description,
 			String hours,
-			String jobName,
 			Date end,
 			String minutes,
 			String month,
@@ -105,7 +111,9 @@ public class Job extends AbstractResource {
 		this.dayOfWeek = dayOfWeek;
 		this.description = description;
 		this.hours = hours;
-		this.jobName = jobName;
+		this.jobName = jobType.getName();
+		this.groupName = jobType.getGroup();
+		this.className = jobType.getClassName();
 		this.end = end;
 		this.minutes = minutes;
 		this.month = month;
@@ -124,12 +132,12 @@ public class Job extends AbstractResource {
 	}
 	
 	public static Job of(
+			JobType jobType,
 			UserInfo userInfo,
 			String dayOfMonth,
 			String dayOfWeek,
 			String description,
 			String hours,
-			String jobName,
 			Date end,
 			String minutes,
 			String month,
@@ -173,11 +181,11 @@ public class Job extends AbstractResource {
 		}
 		
 		return new Job(
+				jobType,
 				dayOfMonth,
 				dayOfWeek,
 				description,
 				hours,
-				jobName,
 				end,
 				minutes,
 				month,
@@ -257,6 +265,22 @@ public class Job extends AbstractResource {
 
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
 	public Long getJobRunTime() {
@@ -372,7 +396,7 @@ public class Job extends AbstractResource {
 	}
 
 	@Override
-	public MongoDocument toDocument() {
+	public com.nowellpoint.api.model.document.Job toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.Job.class);
 	}
 }

@@ -89,7 +89,10 @@ public class SalesforceMetadataBackupJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
-		documentManagerFactory = Datastore.getCurrentSession();
+		System.out.println(context.getJobDetail().getKey().getName());
+		System.out.println(context.getNextFireTime());
+		
+		//documentManagerFactory = Datastore.getCurrentSession();
 		
 //		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
 //		DocumentManager documentManager = documentManagerFactory.createDocumentManager();

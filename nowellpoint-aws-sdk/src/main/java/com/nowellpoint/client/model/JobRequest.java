@@ -1,8 +1,14 @@
 package com.nowellpoint.client.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.nowellpoint.util.Assert;
+
 public class JobRequest {
+	
+	private final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
 	public static final String ONCE = "ONCE";
@@ -21,7 +27,7 @@ public class JobRequest {
 	
 	private String timeZone;
 	
-	private String jobName;
+	private String jobTypeId;
 	
 	private String seconds;
 	
@@ -89,12 +95,12 @@ public class JobRequest {
 		this.timeZone = timeZone;
 	}
 
-	public String getJobName() {
-		return jobName;
+	public String getJobTypeId() {
+		return jobTypeId;
 	}
 
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
+	public void setJobTypeId(String jobTypeId) {
+		this.jobTypeId = jobTypeId;
 	}
 
 	public String getSeconds() {
@@ -173,8 +179,22 @@ public class JobRequest {
 		return this;
 	}
 	
+	public JobRequest withStart(String start) throws ParseException {
+		if (Assert.isNotNullOrEmpty(start)) {
+			setStart(dateTimeFormat.parse(start));
+		}
+		return this;
+	}
+	
 	public JobRequest withEnd(Date end) {
 		setEnd(end);
+		return this;
+	}
+	
+	public JobRequest withEnd(String end) throws ParseException {
+		if (Assert.isNotNullOrEmpty(end)) {
+			setEnd(dateTimeFormat.parse(end));
+		}
 		return this;
 	}
 	
@@ -183,8 +203,8 @@ public class JobRequest {
 		return this;
 	}
 	
-	public JobRequest withJobName(String jobName) {
-		setJobName(jobName);
+	public JobRequest withJobTypeId(String jobTypeId) {
+		setJobTypeId(jobTypeId);
 		return this;
 	}
 	

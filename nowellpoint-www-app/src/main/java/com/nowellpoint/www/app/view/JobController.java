@@ -1,10 +1,6 @@
 package com.nowellpoint.www.app.view;
 
-import java.util.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Locale;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
@@ -46,58 +42,35 @@ public class JobController extends AbstractStaticController {
 		Token token = getToken(request);
 		Identity identity = getIdentity(request);
 		
-		String jobName = request.queryParams("jobName");
+		String jobTypeId = request.queryParams("jobTypeId");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		String scheduleOption = request.queryParams("scheduleOption");
-		String startDate = request.queryParams("startDate");
+		String start = request.queryParams("start");
+		String end = request.queryParams("end");
 		
-		SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
-		JobRequest jobRequest = null;
-		
-		if ("RUN_WHEN_SUBMITTED".equals(scheduleOption)) {
-			
-			jobRequest = new JobRequest().withJobName(jobName)
+		try {
+
+			JobRequest jobRequest = new JobRequest().withJobTypeId(jobTypeId)
 					.withDescription(description)
 					.withTimeZone(identity.getTimeZoneSidKey())
 					.withNotificationEmail(notificationEmail)
 					.withScheduleOption(scheduleOption)
-					.withStart(Date.from(Instant.now()))
-					.withEnd(Date.from(Instant.now()));
+					.withStart(start)
+					.withEnd(end);
 			
-		} else if ("ONCE".equals(scheduleOption)) {
+			CreateResult<Job> createRequest = new NowellpointClient(token)
+					.job()
+					.create(jobRequest);
 			
-			Date date = null;
-			try {
-				date = dateTimeFormat.parse(startDate);
-			} catch (ParseException e) {
+			if (! createRequest.isSuccess()) {
 				response.status(400);
-				return showError(e.getLocalizedMessage());
+				return showError(createRequest.getErrorMessage());
 			}
-			
-			jobRequest = new JobRequest().withJobName(jobName)
-					.withDescription(description)
-					.withTimeZone(identity.getTimeZoneSidKey())
-					.withNotificationEmail(notificationEmail)
-					.withScheduleOption(scheduleOption)
-					.withStart(date)
-					.withEnd(date);
-			
-		} else if ("SCHEDULE".equals(scheduleOption)) {
-			
-		} else if ("SPECIFIC_DAYS".equals(scheduleOption)) {
-			
-		} else {
-			
-		}
 		
-		CreateResult<Job> createRequest = new NowellpointClient(token)
-				.job()
-				.create(jobRequest);
-		
-		if (! createRequest.isSuccess()) {
+		} catch (ParseException e) {
 			response.status(400);
+			return showError(e.getLocalizedMessage());
 		}
 		
 		return "";

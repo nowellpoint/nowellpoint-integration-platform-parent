@@ -35,33 +35,33 @@ public class JobSchedulerManager implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent contextEvent) {
-		try {
-			SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-			
-		    Date runTime = evenMinuteDate(new Date());
-		    
-		    Trigger trigger = newTrigger()
-		    		.withIdentity("EXECUTE_EVERY_MINUTE", "SALESFORCE_METADATA_BACKUP")
-		    		.startAt(runTime)
-		    		.withSchedule(SimpleScheduleBuilder.simpleSchedule()
-		    				.withIntervalInMinutes(1)
-		    				.repeatForever())
-		    		.build();
-		    
-		    JobKey jobKey = new JobKey("SALESFORCE_METADATA_BACKUP", "SALESFORCE");
-
-		    JobDetail jobDetail = newJob(SalesforceMetadataBackupJob.class)
-		    		.withIdentity(jobKey)
-		    		.build();
-		    
-		    scheduler = schedulerFactory.getScheduler();
-		    scheduler.getListenerManager().addJobListener(new SalesforceMetadataBackupListener(), KeyMatcher.keyEquals(jobKey));
-		    scheduler.scheduleJob(jobDetail, trigger); 
-		    scheduler.start();
-		    
-		} catch (SchedulerException e) {
-			LOG.error(e);
-		}
+//		try {
+//			SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+//			
+//		    Date runTime = evenMinuteDate(new Date());
+//		    
+//		    Trigger trigger = newTrigger()
+//		    		.withIdentity("EXECUTE_EVERY_MINUTE", "SALESFORCE_METADATA_BACKUP")
+//		    		.startAt(runTime)
+//		    		.withSchedule(SimpleScheduleBuilder.simpleSchedule()
+//		    				.withIntervalInMinutes(1)
+//		    				.repeatForever())
+//		    		.build();
+//		    
+//		    JobKey jobKey = new JobKey("SALESFORCE_METADATA_BACKUP", "SALESFORCE");
+//
+//		    JobDetail jobDetail = newJob(SalesforceMetadataBackupJob.class)
+//		    		.withIdentity(jobKey)
+//		    		.build();
+//		    
+//		    scheduler = schedulerFactory.getScheduler();
+//		    scheduler.getListenerManager().addJobListener(new SalesforceMetadataBackupListener(), KeyMatcher.keyEquals(jobKey));
+//		    scheduler.scheduleJob(jobDetail, trigger); 
+//		    scheduler.start();
+//		    
+//		} catch (SchedulerException e) {
+//			LOG.error(e);
+//		}
 	}
 	
 	public static void pause() {

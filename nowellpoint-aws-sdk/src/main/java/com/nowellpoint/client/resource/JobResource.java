@@ -71,7 +71,7 @@ public class JobResource extends AbstractResource {
     			.parameter("dayOfWeek", request.getDayOfWeek())
     			.parameter("description", request.getDescription())
     			.parameter("hours", request.getHours())
-    			.parameter("jobName", request.getJobName())
+    			.parameter("jobTypeId", request.getJobTypeId())
     			.parameter("end", formatDateTime(request.getEnd()))
     			.parameter("minutes", request.getMinutes())
     			.parameter("month", request.getMonth())

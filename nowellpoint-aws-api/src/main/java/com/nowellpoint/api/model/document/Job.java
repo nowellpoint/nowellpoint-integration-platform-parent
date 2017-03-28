@@ -58,6 +58,8 @@ public class Job extends MongoDocument {
 	
 	private String jobName;
 	
+	private String className;
+	
 	private Long jobRunTime;
 	
 	private String seconds;
@@ -178,6 +180,14 @@ public class Job extends MongoDocument {
 
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
 	}
 
 	public Long getJobRunTime() {

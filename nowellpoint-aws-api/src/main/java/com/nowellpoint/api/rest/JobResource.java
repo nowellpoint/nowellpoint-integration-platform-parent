@@ -30,7 +30,7 @@ public interface JobResource {
 			@FormParam("dayOfWeek") String dayOfWeek,
 			@FormParam("description") String description,
 			@FormParam("hours") String hours,
-			@FormParam("jobName") String jobName,
+			@FormParam("jobTypeId") String jobTypeId,
 			@FormParam("end") String end,
 			@FormParam("minutes") String minutes,
 			@FormParam("month") String month,

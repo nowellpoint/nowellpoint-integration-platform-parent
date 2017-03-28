@@ -16,8 +16,10 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.api.rest.JobResource;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobList;
+import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.JobService;
+import com.nowellpoint.api.service.JobTypeService;
 
 public class JobResourceImpl implements JobResource {
 	
@@ -25,6 +27,9 @@ public class JobResourceImpl implements JobResource {
 	
 	@Inject
 	private JobService jobService;
+	
+	@Inject
+	private JobTypeService jobTypeService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -44,7 +49,7 @@ public class JobResourceImpl implements JobResource {
 			String dayOfWeek,
 			String description,
 			String hours,
-			String jobName,
+			String jobTypeId,
 			String end,
 			String minutes,
 			String month,
@@ -69,14 +74,16 @@ public class JobResourceImpl implements JobResource {
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Invalid date format for field: start. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		}
-		
+
+		JobType jobType = jobTypeService.findById(jobTypeId);
+
 		Job job = Job.of(
+				jobType,
 				UserInfo.of(securityContext.getUserPrincipal().getName()),
 				dayOfMonth, 
 				dayOfWeek, 
 				description, 
-				hours, 
-				jobName, 
+				hours,
 				endDate, 
 				minutes, 
 				month, 

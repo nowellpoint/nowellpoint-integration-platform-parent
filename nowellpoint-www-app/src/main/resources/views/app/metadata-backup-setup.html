@@ -11,7 +11,7 @@
         <div>
             <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="${service.href}">
 
-                <input type="hidden" class="form-control" name="jobName" id="jobName" value="${service.name}" />
+                <input type="hidden" class="form-control" name="jobTypeId" id="jobTypeId" value="${service.serviceId}" />
 
                 <div class="row">
                     <div class="form-group col-md-3">
@@ -45,11 +45,21 @@
                         <input type="radio" name="scheduleOption" id="specificDays" value="SPECIFIC_DAYS"> ${labels["specific.days"]}</label>
                 </div>
 
-                <div id="startform" class="row collapse">
+                <div id="once-form" class="row collapse">
                     <div class="form-group col-md-3">
                         <label class="control-label" for="start">${labels["start"]}*</label>
                         <div class="input-group">
-                            <input type="text" id="startDate" name="startDate" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
+                            <input type="text" id="start" name="start" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
+                            <span class="input-group-addon">${labels["date.time.format"]}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="schedule-form" class="row collapse">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="start">${labels["start"]}*</label>
+                        <div class="input-group">
+                            <input type="text" id="end" name="end" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
                             <span class="input-group-addon">${labels["date.time.format"]}</span>
                         </div>
                     </div>
@@ -138,13 +148,13 @@
             $(document).ready(function() {
                 $('#runWhenSubmitted').click(function() {
                     if (this.checked) {
-                        $("#startform").hide();
+                        $("#once-form").hide();
                     }
                 });
 
                 $('#once').click(function() {
                     if (this.checked) {
-                        $("#startform").show();
+                        $("#once-form").show();
                     }
                 });
 
@@ -161,10 +171,7 @@
                 });
             });
 
-            $('#start').datepicker({
-                todayBtn: "true",
-                startDate: "${.now?date?iso_utc}",
-            })
+
 
             $("#save").click(function(e) {
                 e.preventDefault();

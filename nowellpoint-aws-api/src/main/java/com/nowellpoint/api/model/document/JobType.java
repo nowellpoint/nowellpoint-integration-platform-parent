@@ -39,7 +39,11 @@ public class JobType extends MongoDocument {
 	
 	private String name;
 	
+	private String group;
+	
 	private String code;
+	
+	private String className;
 	
 	private String description;
 	
@@ -89,6 +93,22 @@ public class JobType extends MongoDocument {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
 	}
 
 	public String getCode() {
