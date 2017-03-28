@@ -7,6 +7,8 @@ public interface JobService {
 	
 	JobList findAllByOwner(String ownerId);
 	
+	JobList findAllScheduled();
+	
 	Job findById(String id);
 	
 	void createJob(Job job);

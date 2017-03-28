@@ -10,6 +10,11 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	public JobList findAllByOwner(String ownerId) {
 		return super.findAllByOwner(ownerId);
 	}
+	
+	@Override
+	public JobList findAllScheduled() {
+		return super.findAllScheduled();
+	}
 
 	@Override
 	public Job findById(String id) {

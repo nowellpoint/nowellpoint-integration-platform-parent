@@ -1,11 +1,8 @@
 package com.nowellpoint.api.job;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -24,9 +21,9 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
-import com.nowellpoint.api.model.document.Job;
-import com.nowellpoint.mongodb.DocumentManager;
-import com.nowellpoint.mongodb.DocumentManagerFactory;
+import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobList;
+import com.nowellpoint.api.service.JobService;
 
 @Singleton
 @Startup
@@ -37,7 +34,7 @@ public class JobOperator {
 	private static Scheduler scheduler;
 	
 	@Inject
-	private DocumentManagerFactory documentManagerFactory;
+	private JobService jobService;
 	
 	@PostConstruct
 	public void scheduleJobs() {
@@ -50,12 +47,9 @@ public class JobOperator {
 			LOGGER.error(e);
 		}
 		
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
-		Set<com.nowellpoint.api.model.document.Job> documents = documentManager.find(
-				com.nowellpoint.api.model.document.Job.class, 
-				eq ( "status", "Scheduled" ) );
+		JobList jobList = jobService.findAllScheduled();
 		
-		documents.stream().forEach(job -> {
+		jobList.getItems().stream().forEach(job -> {
 			LOGGER.info(job.getId());
 			submitJob(job);
 		});
@@ -102,8 +96,7 @@ public class JobOperator {
 		
 		job.setStatus("Submitted");
 		
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
-		documentManager.replaceOne(job);
+		jobService.updateJob(job);
 	}
 	
 	public static void pause() {

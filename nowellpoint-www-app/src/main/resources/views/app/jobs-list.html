@@ -34,6 +34,7 @@
                     <thead>
                         <th>${labels["job.name"]}</th>
                         <th>${labels["started.on"]}</th>
+                        <th>${labels["status"]}</th>
                         <th class="text-right">${labels["number.executions"]}</th>
                     </thead>
                     <tbody>
@@ -41,6 +42,7 @@
                             <tr >
                                 <td>${job.jobName}</td>
                                 <td>${job.start?date?string.long} ${job.start?time?string.medium}</td>
+                                <td>${job.status}</td>
                                 <td class="text-right">${job.numberOfExecutions}</td>
                             </tr>
                         </#list>

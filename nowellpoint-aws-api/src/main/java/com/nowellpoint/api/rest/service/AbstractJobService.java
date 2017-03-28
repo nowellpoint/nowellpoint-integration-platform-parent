@@ -23,7 +23,7 @@ public class AbstractJobService extends AbstractCacheService {
 	protected DocumentManagerFactory documentManagerFactory;
 	
 	@Inject
-	private Event<com.nowellpoint.api.model.document.Job> jobEvent;
+	private Event<Job> jobEvent;
 	
 	protected Job findById(String id) {
 		com.nowellpoint.api.model.document.Job document = get(com.nowellpoint.api.model.document.Job.class, id);
@@ -45,13 +45,22 @@ public class AbstractJobService extends AbstractCacheService {
 		return resources;
 	}
 	
+	protected JobList findAllScheduled() {
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
+		Set<com.nowellpoint.api.model.document.Job> documents = documentManager.find(
+				com.nowellpoint.api.model.document.Job.class,
+				eq ( "status", "Scheduled" ) );
+		JobList resources = new JobList(documents);
+		return resources;
+	}
+	
 	protected void create(Job job) {
 		com.nowellpoint.api.model.document.Job document = job.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
 		job.fromDocument(document);
 		set(job.getId(), document);
-		jobEvent.fire(job.toDocument());
+		jobEvent.fire(job);
 	}
 	
 	protected void update(Job job) {
