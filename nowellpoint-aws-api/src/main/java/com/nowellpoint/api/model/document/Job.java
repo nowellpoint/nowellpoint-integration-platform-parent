@@ -33,6 +33,9 @@ public class Job extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
+	@EmbedOne
+	private Source source;
+	
 	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
 	
@@ -48,11 +51,8 @@ public class Job extends MongoDocument {
 	
 	private String scheduleOption;
 	
-	private Date start;
-	
-	private Date end;
-	
-	private String timeZone;
+	@EmbedOne
+	private Schedule schedule;
 	
 	private String groupName;
 	
@@ -62,19 +62,9 @@ public class Job extends MongoDocument {
 	
 	private Long jobRunTime;
 	
-	private String seconds;
+	private Date fireTime;
 	
-	private String minutes;
-	
-	private String hours;
-	
-	private String dayOfMonth;
-	
-	private String month;
-	
-	private String dayOfWeek;
-	
-	private String year;
+	private Date nextFireTime;
 	
 	private String status;
 	
@@ -92,6 +82,14 @@ public class Job extends MongoDocument {
 
 	public void setMeta(Meta meta) {
 		this.meta = meta;
+	}
+
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
 	}
 
 	public UserRef getCreatedBy() {
@@ -112,6 +110,10 @@ public class Job extends MongoDocument {
 
 	public UserRef getOwner() {
 		return owner;
+	}
+	
+	public void setOwner(UserRef owner) {
+		this.owner = owner;
 	}
 
 	public String getDescription() {
@@ -138,32 +140,12 @@ public class Job extends MongoDocument {
 		this.scheduleOption = scheduleOption;
 	}
 
-	public void setOwner(UserRef owner) {
-		this.owner = owner;
+	public Schedule getSchedule() {
+		return schedule;
 	}
 
-	public Date getStart() {
-		return start;
-	}
-
-	public void setStart(Date start) {
-		this.start = start;
-	}
-
-	public Date getEnd() {
-		return end;
-	}
-
-	public void setEnd(Date end) {
-		this.end = end;
-	}
-
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
 
 	public String getGroupName() {
@@ -198,60 +180,20 @@ public class Job extends MongoDocument {
 		this.jobRunTime = jobRunTime;
 	}
 
-	public String getSeconds() {
-		return seconds;
+	public Date getFireTime() {
+		return fireTime;
 	}
 
-	public void setSeconds(String seconds) {
-		this.seconds = seconds;
+	public void setFireTime(Date fireTime) {
+		this.fireTime = fireTime;
 	}
 
-	public String getMinutes() {
-		return minutes;
+	public Date getNextFireTime() {
+		return nextFireTime;
 	}
 
-	public void setMinutes(String minutes) {
-		this.minutes = minutes;
-	}
-
-	public String getHours() {
-		return hours;
-	}
-
-	public void setHours(String hours) {
-		this.hours = hours;
-	}
-
-	public String getDayOfMonth() {
-		return dayOfMonth;
-	}
-
-	public void setDayOfMonth(String dayOfMonth) {
-		this.dayOfMonth = dayOfMonth;
-	}
-
-	public String getMonth() {
-		return month;
-	}
-
-	public void setMonth(String month) {
-		this.month = month;
-	}
-
-	public String getDayOfWeek() {
-		return dayOfWeek;
-	}
-
-	public void setDayOfWeek(String dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
-
-	public String getYear() {
-		return year;
-	}
-
-	public void setYear(String year) {
-		this.year = year;
+	public void setNextFireTime(Date nextFireTime) {
+		this.nextFireTime = nextFireTime;
 	}
 
 	public String getStatus() {

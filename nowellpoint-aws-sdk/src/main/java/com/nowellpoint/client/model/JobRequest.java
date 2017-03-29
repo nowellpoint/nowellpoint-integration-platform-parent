@@ -29,6 +29,8 @@ public class JobRequest {
 	
 	private String jobTypeId;
 	
+	private String connectorId;
+	
 	private String seconds;
 	
 	private String minutes;
@@ -101,6 +103,14 @@ public class JobRequest {
 
 	public void setJobTypeId(String jobTypeId) {
 		this.jobTypeId = jobTypeId;
+	}
+
+	public String getConnectorId() {
+		return connectorId;
+	}
+
+	public void setConnectorId(String connectorId) {
+		this.connectorId = connectorId;
 	}
 
 	public String getSeconds() {
@@ -205,6 +215,11 @@ public class JobRequest {
 	
 	public JobRequest withJobTypeId(String jobTypeId) {
 		setJobTypeId(jobTypeId);
+		return this;
+	}
+	
+	public JobRequest withConnectorId(String connectorId) {
+		setConnectorId(connectorId);
 		return this;
 	}
 	

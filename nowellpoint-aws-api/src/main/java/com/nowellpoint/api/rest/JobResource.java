@@ -26,16 +26,17 @@ public interface JobResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createJob(
+			@FormParam("connectorId") String connectorId,
+			@FormParam("jobTypeId") String jobTypeId,
+			@FormParam("notificationEmail") String notificationEmail,
+			@FormParam("scheduleOption") String scheduleOption,
 			@FormParam("dayOfMonth") String dayOfMonth,
 			@FormParam("dayOfWeek") String dayOfWeek,
 			@FormParam("description") String description,
 			@FormParam("hours") String hours,
-			@FormParam("jobTypeId") String jobTypeId,
 			@FormParam("end") String end,
 			@FormParam("minutes") String minutes,
 			@FormParam("month") String month,
-			@FormParam("notificationEmail") String notificationEmail,
-			@FormParam("scheduleOption") String scheduleOption,
 			@FormParam("seconds") String seconds,
 			@FormParam("start") String start,
 			@FormParam("timeZone") String timeZone,

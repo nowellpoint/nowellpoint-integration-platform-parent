@@ -202,7 +202,7 @@ public class Application implements SparkApplication {
         //
         
         get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
-        post("/app/jobs/:id/metadata-backup", (request, response) -> JobController.createJob(configuration, request, response));
+        post("/app/jobs/:connectorId/metadata-backup", (request, response) -> JobController.createJob(configuration, request, response));
         
 		//
 		// health check route

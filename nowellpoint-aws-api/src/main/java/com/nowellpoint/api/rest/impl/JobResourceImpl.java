@@ -3,7 +3,9 @@ package com.nowellpoint.api.rest.impl;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -12,14 +14,21 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import com.nowellpoint.api.rest.JobResource;
+import com.nowellpoint.api.rest.domain.Error;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
+import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.Schedule;
+import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
+import com.nowellpoint.api.service.SalesforceConnectorService;
+import com.nowellpoint.util.Assert;
 
 public class JobResourceImpl implements JobResource {
 	
@@ -30,6 +39,9 @@ public class JobResourceImpl implements JobResource {
 	
 	@Inject
 	private JobTypeService jobTypeService;
+	
+	@Inject
+	private SalesforceConnectorService salesforceConnectorService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -45,54 +57,87 @@ public class JobResourceImpl implements JobResource {
 	
 	@Override
 	public Response createJob(
+			String connectorId,
+			String jobTypeId,
+			String notificationEmail,
+			String scheduleOption,
 			String dayOfMonth,
 			String dayOfWeek,
 			String description,
 			String hours,
-			String jobTypeId,
 			String end,
 			String minutes,
 			String month,
-			String notificationEmail,
-			String scheduleOption,
 			String seconds,
 			String start,
 			String timeZone,
 			String year) {
 		
-		Date endDate = null;
-		Date startDate = null;
+		List<String> errors = new ArrayList<>();
 		
-		try {
-			endDate = dateTimeFormat.parse(end);
-		} catch (ParseException e) {
-			throw new IllegalArgumentException("Invalid date format for field: end. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		}
+		Date startDate = null;
 		
 		try {
 			startDate = dateTimeFormat.parse(start);
 		} catch (ParseException e) {
-			throw new IllegalArgumentException("Invalid date format for field: start. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			errors.add("Invalid date format for field: start. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		}
+		
+		Date endDate = null;
+		
+		try {
+			endDate = dateTimeFormat.parse(end);
+		} catch (ParseException e) {
+			errors.add("Invalid date format for parameter: end. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		}
+		
+		if (Assert.isNullOrEmpty(connectorId)) {
+			errors.add("Missing connectorId parameter. Must provide a valid Salesforce Connector Id");
+		}
+		
+		if (Assert.isNullOrEmpty(jobTypeId)) {
+			errors.add("Missing jobTypeId parameter. Must provide a valid Job Type Id");
+		}
+		
+		if (Assert.isNullOrEmpty(scheduleOption)) {
+			errors.add("Missing scheduleOption parameter. Must provide a value of RUN_WHEN_SUBMITTED, ONCE, SCHEDULE or SPECIFIC_DAYS");
+		}
+		
+		if (! errors.isEmpty()) {
+			Error error = new Error(3000, errors.toArray(new String[errors.size()]));
+			ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
+			builder.entity(error);
+			return builder.build();
 		}
 
 		JobType jobType = jobTypeService.findById(jobTypeId);
+		
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findById(connectorId);
+		
+		UserInfo user = UserInfo.of(securityContext.getUserPrincipal().getName());
+		
+		Schedule schedule = Schedule.of(
+				startDate, 
+				endDate, 
+				timeZone, 
+				seconds, 
+				minutes, 
+				hours, 
+				dayOfMonth, 
+				month, 
+				dayOfWeek, 
+				year);
+		
+		Source source = Source.of(salesforceConnector);
 
 		Job job = Job.of(
+				source,
 				jobType,
-				UserInfo.of(securityContext.getUserPrincipal().getName()),
-				dayOfMonth, 
-				dayOfWeek, 
+				schedule,
+				user,
 				description, 
-				hours,
-				endDate, 
-				minutes, 
-				month, 
 				notificationEmail, 
-				scheduleOption,
-				seconds, 
-				startDate, 
-				timeZone, 
-				year);
+				scheduleOption);
 		
 		jobService.createJob(job);
 		

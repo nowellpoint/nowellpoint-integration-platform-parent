@@ -42,6 +42,7 @@ public class JobController extends AbstractStaticController {
 		Token token = getToken(request);
 		Identity identity = getIdentity(request);
 		
+		String connectorId = request.params(":connectorId");
 		String jobTypeId = request.queryParams("jobTypeId");
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
@@ -51,7 +52,8 @@ public class JobController extends AbstractStaticController {
 		
 		try {
 
-			JobRequest jobRequest = new JobRequest().withJobTypeId(jobTypeId)
+			JobRequest jobRequest = new JobRequest().withConnectorId(connectorId)
+					.withJobTypeId(jobTypeId)
 					.withDescription(description)
 					.withTimeZone(identity.getTimeZoneSidKey())
 					.withNotificationEmail(notificationEmail)

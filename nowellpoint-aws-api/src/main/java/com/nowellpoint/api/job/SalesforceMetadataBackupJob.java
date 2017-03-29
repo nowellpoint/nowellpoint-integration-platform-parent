@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -41,6 +40,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.document.Backup;
 import com.nowellpoint.api.model.document.Instance;
+import com.nowellpoint.api.model.document.Job;
 import com.nowellpoint.api.model.document.RunHistory;
 import com.nowellpoint.api.model.document.SalesforceConnector;
 import com.nowellpoint.api.model.document.UserRef;
@@ -77,7 +77,7 @@ import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 
-public class SalesforceMetadataBackupJob implements Job {
+public class SalesforceMetadataBackupJob implements org.quartz.Job {
 	
 	private DocumentManagerFactory documentManagerFactory;
 	
@@ -90,12 +90,28 @@ public class SalesforceMetadataBackupJob implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
 		System.out.println(context.getJobDetail().getKey().getName());
-		System.out.println(context.getNextFireTime());
 		
-		//documentManagerFactory = Datastore.getCurrentSession();
+		documentManagerFactory = Datastore.getCurrentSession();
 		
-//		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
-//		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		//LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail().getKey().getName()));
+		System.out.println(job.getId());
+		System.out.println(job.getJobName());
+		
+		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
+		job.setJobRunTime(context.getJobRunTime());
+		job.setFireTime(context.getFireTime());
+		job.setNextFireTime(context.getNextFireTime());
+		
+		if (Assert.isNull(context.getNextFireTime())) {
+			job.setStatus("Complete");
+		} else {
+			job.setStatus("Scheduled");
+		}
+		
+		documentManager.replaceOne(job);
+		
 //		Set<ScheduledJobRequest> scheduledJobRequests = documentManager.find(ScheduledJobRequest.class, and ( 
 //				eq ( "status", "Scheduled" ), 
 //				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),

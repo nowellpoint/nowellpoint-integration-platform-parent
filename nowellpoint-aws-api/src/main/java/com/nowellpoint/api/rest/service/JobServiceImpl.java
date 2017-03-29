@@ -23,7 +23,7 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 
 	@Override
 	public void createJob(Job job) {
-		job.setStatus(Job.SCHEDULED);
+		job.setStatus(Job.Statuses.SCHEDULED);
 		super.create(job);
 	}
 
@@ -31,5 +31,4 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	public void updateJob(Job job) {
 		super.update(job);
 	}
-
 }

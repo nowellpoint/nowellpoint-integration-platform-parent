@@ -1,9 +1,5 @@
 package com.nowellpoint.api.job;
 
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -66,20 +62,8 @@ public class JobOperator {
 		    JobDetail jobDetail = JobBuilder.newJob(jobClass)
 		    		.withIdentity(jobKey)
 		    		.build();
-		    
-		    Calendar calendar = Calendar.getInstance();
 			
-			if ("RUN_WHEN_SUBMITTED".equals(job.getScheduleOption())) {
-				
-				calendar.setTime(Date.from(Instant.now()));
-				
-				job.setSeconds(String.valueOf(calendar.get(Calendar.SECOND)));
-				job.setMinutes(String.valueOf(calendar.get(Calendar.MINUTE)));
-				job.setHours(String.valueOf(calendar.get(Calendar.HOUR)));
-				job.setMonth(String.valueOf(calendar.get(Calendar.MONTH)));
-				job.setDayOfMonth(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-				job.setYear(String.valueOf(calendar.get(Calendar.YEAR)));
-				job.setDayOfWeek(String.valueOf(calendar.get(Calendar.DAY_OF_WEEK)));
+			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption())) {
 				
 				Trigger trigger = TriggerBuilder.newTrigger().startNow().build();
 				

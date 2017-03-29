@@ -21,16 +21,13 @@ package com.nowellpoint.api.rest.domain;
 import java.time.Instant;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
 public class Job extends AbstractResource {
 	
-	public static final String SCHEDULED = "Scheduled"; 
-	public static final String STOPPED = "Stopped";
-	public static final String TERMINATED = "Terminated";
+	private Source source;
 	
 	private UserInfo createdBy;
 	
@@ -49,31 +46,15 @@ public class Job extends AbstractResource {
 	@JsonIgnore
 	private String className;
 	
+	private Schedule schedule;
+	
 	private String groupName;
 	
 	private Long jobRunTime;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date start;
+	private Date fireTime;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date end;
-	
-	private String timeZone;
-	
-	private String seconds;
-	
-	private String minutes;
-	
-	private String hours;
-	
-	private String dayOfMonth;
-	
-	private String month;
-	
-	private String dayOfWeek;
-	
-	private String year;
+	private Date nextFireTime;
 	
 	private String status;
 	
@@ -81,25 +62,17 @@ public class Job extends AbstractResource {
 	
 	private Integer numberOfExecutions;
 
-	public Job() {
+	private Job() {
 		
 	}
 	
 	private Job(
+			Source source,
 			JobType jobType,
-			String dayOfMonth,
-			String dayOfWeek,
+			Schedule schedule,
 			String description,
-			String hours,
-			Date end,
-			String minutes,
-			String month,
 			String notificationEmail,
 			String scheduleOption,
-			String seconds,
-			Date start,
-			String timeZone,
-			String year,
 			UserInfo owner,
 			Date createdOn,
 			UserInfo createdBy,
@@ -107,94 +80,42 @@ public class Job extends AbstractResource {
 			UserInfo lastUpdatedBy,
 			Integer numberOfExecutions) {
 		
-		this.dayOfMonth = dayOfMonth;
-		this.dayOfWeek = dayOfWeek;
+		this.source = source;
 		this.description = description;
-		this.hours = hours;
+		this.schedule = schedule;
 		this.jobName = jobType.getName();
 		this.groupName = jobType.getGroup();
 		this.className = jobType.getClassName();
-		this.end = end;
-		this.minutes = minutes;
-		this.month = month;
 		this.notificationEmail = notificationEmail;
 		this.scheduleOption = scheduleOption;
-		this.seconds = seconds;
-		this.start = start;
-		this.timeZone = timeZone;
-		this.year = year;
 		this.owner = owner;
 		this.createdOn = createdOn;
 		this.createdBy = createdBy;
 		this.lastUpdatedOn = lastUpdatedOn;
 		this.lastUpdatedBy = lastUpdatedBy;
-		this.numberOfExecutions = numberOfExecutions;
+		this.numberOfExecutions = 0;
 	}
 	
 	public static Job of(
+			Source source,
 			JobType jobType,
+			Schedule schedule,
 			UserInfo userInfo,
-			String dayOfMonth,
-			String dayOfWeek,
 			String description,
-			String hours,
-			Date end,
-			String minutes,
-			String month,
 			String notificationEmail,
-			String scheduleOption,
-			String seconds,
-			Date start,
-			String timeZone,
-			String year) {
-		
-		if (Assert.isEmpty(dayOfMonth)) {
-			dayOfMonth = null;
-		}
-		
-		if (Assert.isEmpty(dayOfWeek)) {
-			dayOfWeek = null;
-		}
+			String scheduleOption) {
 		
 		if (Assert.isEmpty(description)) {
 			description = null;
 		}
 		
-		if (Assert.isEmpty(hours)) {
-			hours = null;
-		}
-		
-		if (Assert.isEmpty(minutes)) {
-			minutes = null;
-		}
-		
-		if (Assert.isEmpty(month)) {
-			month = null;
-		}
-		
-		if (Assert.isEmpty(seconds)) {
-			seconds = null;
-		}
-		
-		if (Assert.isEmpty(year)) {
-			year = null;
-		}
-		
 		return new Job(
+				source,
 				jobType,
-				dayOfMonth,
-				dayOfWeek,
+				schedule,
 				description,
-				hours,
-				end,
-				minutes,
-				month,
 				notificationEmail,
 				scheduleOption,
-				seconds,
-				start,
-				timeZone,
-				year,
 				userInfo,
 				Date.from(Instant.now()),
 				userInfo,
@@ -209,6 +130,14 @@ public class Job extends AbstractResource {
 	
 	public static Job of(MongoDocument document) {
 		return new Job(document);
+	}
+
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
 	}
 
 	public UserInfo getCreatedBy() {
@@ -259,6 +188,14 @@ public class Job extends AbstractResource {
 		this.scheduleOption = scheduleOption;
 	}
 
+	public Schedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+
 	public String getJobName() {
 		return jobName;
 	}
@@ -291,84 +228,20 @@ public class Job extends AbstractResource {
 		this.jobRunTime = jobRunTime;
 	}
 
-	public Date getStart() {
-		return start;
+	public Date getFireTime() {
+		return fireTime;
 	}
 
-	public void setStart(Date start) {
-		this.start = start;
+	public void setFireTime(Date fireTime) {
+		this.fireTime = fireTime;
 	}
 
-	public Date getEnd() {
-		return end;
+	public Date getNextFireTime() {
+		return nextFireTime;
 	}
 
-	public void setEnd(Date end) {
-		this.end = end;
-	}
-
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
-	}
-
-	public String getSeconds() {
-		return seconds;
-	}
-
-	public void setSeconds(String seconds) {
-		this.seconds = seconds;
-	}
-
-	public String getMinutes() {
-		return minutes;
-	}
-
-	public void setMinutes(String minutes) {
-		this.minutes = minutes;
-	}
-
-	public String getHours() {
-		return hours;
-	}
-
-	public void setHours(String hours) {
-		this.hours = hours;
-	}
-
-	public String getDayOfMonth() {
-		return dayOfMonth;
-	}
-
-	public void setDayOfMonth(String dayOfMonth) {
-		this.dayOfMonth = dayOfMonth;
-	}
-
-	public String getMonth() {
-		return month;
-	}
-
-	public void setMonth(String month) {
-		this.month = month;
-	}
-
-	public String getDayOfWeek() {
-		return dayOfWeek;
-	}
-
-	public void setDayOfWeek(String dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
-
-	public String getYear() {
-		return year;
-	}
-
-	public void setYear(String year) {
-		this.year = year;
+	public void setNextFireTime(Date nextFireTime) {
+		this.nextFireTime = nextFireTime;
 	}
 
 	public String getStatus() {
@@ -398,5 +271,15 @@ public class Job extends AbstractResource {
 	@Override
 	public com.nowellpoint.api.model.document.Job toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.Job.class);
+	}
+	
+	public class Statuses {
+		public static final String SCHEDULED = "Scheduled"; 
+		public static final String STOPPED = "Stopped";
+		public static final String TERMINATED = "Terminated";
+	}
+	
+	public class ScheduleOptions {
+		public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
 	}
 }
