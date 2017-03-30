@@ -19,11 +19,15 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 
 @Document(collectionName="jobs")
 public class Job extends MongoDocument {
@@ -71,6 +75,8 @@ public class Job extends MongoDocument {
 	private String failureMessage;
 	
 	private Integer numberOfExecutions;
+	
+	private Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
 
 	public Job() {
 		
@@ -218,5 +224,33 @@ public class Job extends MongoDocument {
 
 	public void setNumberOfExecutions(Integer numberOfExecutions) {
 		this.numberOfExecutions = numberOfExecutions;
+	}
+	
+	public Set<JobExecution> getJobExecutions() {
+		return jobExecutions;
+	}
+
+	public void setJobExecutions(Set<JobExecution> jobExecutions) {
+		this.jobExecutions = jobExecutions;
+		if (this.jobExecutions.size() > 45) {
+			this.jobExecutions = limit(this.jobExecutions);
+		}
+	}
+
+	public void addJobExecution(JobExecution jobExecution) {
+		if (Assert.isNull(this.jobExecutions)) {
+			this.jobExecutions = new HashSet<>();
+		}
+		this.jobExecutions.add(jobExecution);
+		if (this.jobExecutions.size() > 45) {
+			this.jobExecutions = limit(this.jobExecutions);
+		}
+	}
+	
+	private Set<JobExecution> limit(Set<JobExecution> jobExecutions) {
+		return jobExecutions.stream()
+				.sorted((p1,p2) -> p2.getFireTime().compareTo(p1.getFireTime()))
+				.limit(45)
+				.collect(Collectors.toSet());
 	}
 }

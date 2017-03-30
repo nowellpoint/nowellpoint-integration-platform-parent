@@ -18,7 +18,9 @@
 
 package com.nowellpoint.client.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Job extends AbstractResource {
 	
@@ -47,9 +49,11 @@ public class Job extends AbstractResource {
 	private String failureMessage;
 	
 	private Integer numberOfExecutions;
+	
+	private List<JobHistory> jobHistory;
 
 	public Job() {
-		
+		jobHistory = new ArrayList<>();
 	}
 
 	public Source getSource() {
@@ -154,5 +158,13 @@ public class Job extends AbstractResource {
 
 	public void setNumberOfExecutions(Integer numberOfExecutions) {
 		this.numberOfExecutions = numberOfExecutions;
+	}
+
+	public List<JobHistory> getJobHistory() {
+		return jobHistory;
+	}
+
+	public void setJobHistory(List<JobHistory> jobHistory) {
+		this.jobHistory = jobHistory;
 	}
 }

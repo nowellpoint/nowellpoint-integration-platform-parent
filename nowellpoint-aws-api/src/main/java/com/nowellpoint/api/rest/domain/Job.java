@@ -20,6 +20,8 @@ package com.nowellpoint.api.rest.domain;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -61,6 +63,8 @@ public class Job extends AbstractResource {
 	private String failureMessage;
 	
 	private Integer numberOfExecutions;
+	
+	private Set<JobHistory> jobHistory = new HashSet<JobHistory>();
 
 	private Job() {
 		
@@ -266,6 +270,18 @@ public class Job extends AbstractResource {
 
 	public void setNumberOfExecutions(Integer numberOfExecutions) {
 		this.numberOfExecutions = numberOfExecutions;
+	}
+
+	public Set<JobHistory> getJobHistory() {
+		return jobHistory;
+	}
+
+	public void setJobHistory(Set<JobHistory> jobHistory) {
+		this.jobHistory = jobHistory;
+	}
+	
+	public void addJobHistory(JobHistory jobHistory) {
+		this.jobHistory.add(jobHistory);
 	}
 
 	@Override

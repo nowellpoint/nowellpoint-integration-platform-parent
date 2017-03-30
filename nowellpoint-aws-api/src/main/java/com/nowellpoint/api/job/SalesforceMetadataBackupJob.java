@@ -1,31 +1,18 @@
 package com.nowellpoint.api.job;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.util.Assert.isNotNull;
 import static com.sforce.soap.partner.Connector.newConnection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.quartz.JobExecutionContext;
@@ -38,12 +25,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.api.model.document.Backup;
-import com.nowellpoint.api.model.document.Instance;
 import com.nowellpoint.api.model.document.Job;
-import com.nowellpoint.api.model.document.RunHistory;
-import com.nowellpoint.api.model.document.SalesforceConnector;
-import com.nowellpoint.api.model.document.UserRef;
+import com.nowellpoint.api.model.document.JobExecution;
+import com.nowellpoint.api.model.dynamodb.VaultEntry;
+import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
+import com.nowellpoint.api.rest.service.VaultEntryServiceImpl;
+import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -64,6 +51,7 @@ import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.DigitalSignature;
 import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -80,8 +68,7 @@ import com.sforce.ws.ConnectorConfig;
 public class SalesforceMetadataBackupJob implements org.quartz.Job {
 	
 	private DocumentManagerFactory documentManagerFactory;
-	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
+
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String bucketName = "nowellpoint-metadata-backups";
 	private static final Client client = new Client();
@@ -93,16 +80,12 @@ public class SalesforceMetadataBackupJob implements org.quartz.Job {
 		
 		documentManagerFactory = Datastore.getCurrentSession();
 		
-		//LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail().getKey().getName()));
-		System.out.println(job.getId());
-		System.out.println(job.getJobName());
 		
-		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
-		job.setJobRunTime(context.getJobRunTime());
-		job.setFireTime(context.getFireTime());
-		job.setNextFireTime(context.getNextFireTime());
+		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail().getKey().getName()));
+		job.setStatus("Running");
+		
+		documentManager.replaceOne(job);
 		
 		if (Assert.isNull(context.getNextFireTime())) {
 			job.setStatus("Complete");
@@ -110,68 +93,39 @@ public class SalesforceMetadataBackupJob implements org.quartz.Job {
 			job.setStatus("Scheduled");
 		}
 		
+		VaultEntryService vaultEntryService = new VaultEntryServiceImpl();
+		
+		VaultEntry vaultEntry = vaultEntryService.retrive(job.getSource().getConnectionString());
+		
+		SalesforceConnectionString salesforceConnectionString = SalesforceConnectionString.of(vaultEntry.getValue());
+		
+		try {
+			Token token = login(salesforceConnectionString);
+			System.out.println(token.getAccessToken());
+			
+		} catch (OauthException e) {
+			job.setStatus("Error");
+			job.setFailureMessage(e.getError());
+		} catch (ConnectionException e) {
+			job.setStatus("Error");
+			job.setFailureMessage(e.getMessage());
+		}
+		
+		JobExecution jobExecution = new JobExecution();
+		jobExecution.setFireInstanceId(context.getFireInstanceId());
+		jobExecution.setFireTime(context.getFireTime());
+		jobExecution.setJobRunTime(context.getJobRunTime());
+		jobExecution.setStatus(job.getStatus());
+		
+		job.addJobExecution(jobExecution);
+		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
+		job.setJobRunTime(context.getJobRunTime());
+		job.setFireTime(context.getFireTime());
+		job.setNextFireTime(context.getNextFireTime());
+		
 		documentManager.replaceOne(job);
 		
-//		Set<ScheduledJobRequest> scheduledJobRequests = documentManager.find(ScheduledJobRequest.class, and ( 
-//				eq ( "status", "Scheduled" ), 
-//				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
-//				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
-//				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
-//				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
-//				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
-//		
-//		if (scheduledJobRequests.size() > 0) {
-//			ExecutorService executor = Executors.newFixedThreadPool(scheduledJobRequests.size());
-//			
-//			scheduledJobRequests.stream().forEach(scheduledJobRequest -> {
-//				
-//		    	executor.submit(() -> {
-//		    		
-//		    		Date fireTime = Date.from(Instant.now());
-//		    		
-//		    		ScheduledJob scheduledJob = null;
-//		    		
-//		    		try {
-//		    			
-//		    			//
-//		    			// update ScheduledJobRequest
-//		    			//
-//		    			
-//		    			scheduledJobRequest.setStatus("Running");
-//		    			scheduledJobRequest.setFireInstanceId(context.getFireInstanceId());
-//		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
-//		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
-//		    			documentManager.replaceOne( scheduledJobRequest );
-//
-//		    			//
-//		    			// update ScheduledJob
-//		    			//
-//		    			
-//		    			scheduledJob = documentManager.fetch(ScheduledJob.class, scheduledJobRequest.getScheduledJobId() );
-//		    			scheduledJob.setStatus(scheduledJobRequest.getStatus());
-//		    			documentManager.replaceOne(scheduledJob);
-//
-//			    		//
-//			    		// get environment associated with the ScheduledJob
-//			    		//
-//		    			
-//		    			SalesforceConnector salesforceConnector = documentManager.fetch(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( scheduledJobRequest.getConnectorId() ) );
-//		    			
-//		    			Instance instance = salesforceConnector.getInstances()
-//		    					.stream()
-//		    					.filter(p -> p.getKey().equals(scheduledJobRequest.getEnvironmentKey()))
-//		    					.findFirst()
-//		    					.get();
-//			    		
-//			    		//
-//			    		// get User Properties
-//			    		//
-//			    		
-//			    		Map<String, UserProperty> properties = getUserProperties(instance.getKey());
-//			    	
-//			    		// 
-//			    		// authenticate to the environment
-//			    		//
+
 //			    		
 //			    		String accessToken = null;
 //
@@ -366,6 +320,88 @@ public class SalesforceMetadataBackupJob implements org.quartz.Job {
 //				throw new JobExecutionException(e.getMessage());
 //			}
 //		}
+	}
+	
+	public Token login(SalesforceConnectionString salesforceConnectionString) throws ConnectionException, OauthException {
+		
+		Token token = null;
+		
+		if (SalesforceConnectionString.PASSWORD.equals(salesforceConnectionString.getGrantType())) {
+			
+			String[] credentials = salesforceConnectionString.getCredentials().split(":");
+			
+			String authEndpoint = salesforceConnectionString.getHostname();
+			String username = credentials[0];
+			String password = credentials[1];
+			String securityToken = credentials[2];
+			
+			token = login(authEndpoint, username, password, securityToken);
+			
+			return token;
+			
+		} else {
+			
+			String refreshToken = salesforceConnectionString.getCredentials();
+			
+			OauthAuthenticationResponse authenticationResponse = refreshToken(refreshToken);
+			
+			token = authenticationResponse.getToken();
+			
+			return token;
+		}
+	}
+	
+	public OauthAuthenticationResponse refreshToken(String refreshToken) {
+		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
+				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setRefreshToken(refreshToken)
+				.build();
+		
+		OauthAuthenticationResponse authenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		return authenticationResponse;
+	}
+	
+	public Token login(String authEndpoint, String username, String password, String securityToken) throws ConnectionException {
+		Optional.of(authEndpoint).orElseThrow(() -> new IllegalArgumentException("missing authEndpoint"));
+		Optional.of(username).orElseThrow(() -> new IllegalArgumentException("missing username")); 
+		Optional.of(password).orElseThrow(() -> new IllegalArgumentException("missing password")); 
+		Optional.of(securityToken).orElseThrow(() -> new IllegalArgumentException("missing securityToken")); 
+		
+		ConnectorConfig config = new ConnectorConfig();
+		config.setAuthEndpoint(String.format("%s/services/Soap/u/%s", authEndpoint, System.getProperty(Properties.SALESFORCE_API_VERSION)));
+		config.setUsername(username);
+		config.setPassword(password.concat(securityToken));
+		
+		try {
+			PartnerConnection connection = newConnection(config);
+			
+			String id = String.format("%s/id/%s/%s", authEndpoint, connection.getUserInfo().getOrganizationId(), connection.getUserInfo().getUserId());
+			String accessToken = connection.getConfig().getSessionId();
+			String instanceUrl = connection.getConfig().getServiceEndpoint().substring(0, connection.getConfig().getServiceEndpoint().indexOf("/services"));
+			String issuedAt = String.valueOf(connection.getServerTimestamp().getTimestamp().getTimeInMillis());
+			String signature = DigitalSignature.sign(System.getenv("SALESFORCE_CLIENT_SECRET"), id.concat(issuedAt));
+			
+			Token token = new Token();
+			token.setId(id);
+			token.setAccessToken(accessToken);
+			token.setInstanceUrl(instanceUrl);
+			token.setIssuedAt(issuedAt);
+			token.setTokenType("Bearer");
+			token.setSignature(signature);
+			
+			return token;
+			
+		} catch (ConnectionException e) {
+			if (e instanceof LoginFault) {
+				LoginFault loginFault = (LoginFault) e;
+				throw new ConnectionException(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
+			} else {
+				throw e;
+			}
+		}
 	}
 	
 	/**
