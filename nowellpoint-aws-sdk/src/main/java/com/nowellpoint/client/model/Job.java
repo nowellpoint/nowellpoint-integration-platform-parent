@@ -50,10 +50,10 @@ public class Job extends AbstractResource {
 	
 	private Integer numberOfExecutions;
 	
-	private List<JobHistory> jobHistory;
+	private List<JobExecution> jobExecutions;
 
 	public Job() {
-		jobHistory = new ArrayList<>();
+		jobExecutions = new ArrayList<>();
 	}
 
 	public Source getSource() {
@@ -160,11 +160,11 @@ public class Job extends AbstractResource {
 		this.numberOfExecutions = numberOfExecutions;
 	}
 
-	public List<JobHistory> getJobHistory() {
-		return jobHistory;
+	public List<JobExecution> getJobExecutions() {
+		return jobExecutions;
 	}
 
-	public void setJobHistory(List<JobHistory> jobHistory) {
-		this.jobHistory = jobHistory;
+	public void setJobExecutions(List<JobExecution> jobExecutions) {
+		this.jobExecutions = jobExecutions;
 	}
 }

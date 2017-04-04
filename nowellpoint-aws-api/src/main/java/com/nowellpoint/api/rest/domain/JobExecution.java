@@ -1,9 +1,9 @@
-package com.nowellpoint.client.model;
+package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
 import java.util.Set;
 
-public class JobHistory {
+public class JobExecution {
 
 	private String fireInstanceId;
 	
@@ -15,10 +15,27 @@ public class JobHistory {
 	
 	private String failureMessage;
 	
-	private Set<Backup> backups;
+	private Set<JobOutput> jobOutputs;
 	
-	public JobHistory() {
+	private JobExecution() {
 		
+	}
+	
+	private JobExecution(String fireInstanceId, Date fireTime, Long jobRunTime, String status, String failureMessage) {
+		this.fireInstanceId = fireInstanceId;
+		this.fireTime = fireTime;
+		this.jobRunTime = jobRunTime;
+		this.status = status;
+		this.failureMessage = failureMessage;
+	}
+	
+	public static JobExecution of(String fireInstanceId, Date fireTime, Long jobRunTime, String status, String failureMessage) {
+		return new JobExecution(
+				fireInstanceId, 
+				fireTime, 
+				jobRunTime, 
+				status, 
+				failureMessage);
 	}
 
 	public String getFireInstanceId() {
@@ -61,11 +78,11 @@ public class JobHistory {
 		this.failureMessage = failureMessage;
 	}
 
-	public Set<Backup> getBackups() {
-		return backups;
+	public Set<JobOutput> getJobOutputs() {
+		return jobOutputs;
 	}
 
-	public void setBackups(Set<Backup> backups) {
-		this.backups = backups;
+	public void setJobOutputs(Set<JobOutput> jobOutputs) {
+		this.jobOutputs = jobOutputs;
 	}
 }

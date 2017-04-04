@@ -1,6 +1,6 @@
 package com.nowellpoint.client.model;
 
-public class Backup {
+public class JobOutput {
 	
 	private String type;
 	
@@ -8,7 +8,7 @@ public class Backup {
 	
 	private Long filesize;
 	
-	public Backup() {
+	public JobOutput() {
 		
 	}
 

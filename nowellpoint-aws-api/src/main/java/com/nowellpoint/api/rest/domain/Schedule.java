@@ -30,6 +30,10 @@ public class Schedule {
 	
 	private String year;
 	
+	public Schedule() {
+		
+	}
+	
 	private Schedule(
 			Date start, 
 			Date end, 

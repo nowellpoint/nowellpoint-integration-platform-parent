@@ -5,6 +5,8 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.jboss.logging.Logger;
 import org.quartz.JobBuilder;
@@ -23,7 +25,7 @@ import com.nowellpoint.api.service.JobService;
 
 @Singleton
 @Startup
-public class JobOperator {
+public class JobOperator implements ServletContextListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(JobOperator.class);
 	
@@ -31,6 +33,16 @@ public class JobOperator {
 	
 	@Inject
 	private JobService jobService;
+	
+	@Override
+	public void contextDestroyed(ServletContextEvent contextEvent) {
+		shutdown();
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent contextEvent) {
+		
+	}
 	
 	@PostConstruct
 	public void scheduleJobs() {

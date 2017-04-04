@@ -41,7 +41,7 @@
                         <#list jobList?sort_by( "createdOn") as job>
                             <tr >
                                 <td>${job.jobName}</td>
-                                <td>${job.start?date?string.long} ${job.start?time?string.medium}</td>
+                                <td>${job.schedule.start?date?string.long} ${job.schedule.start?time?string.medium}</td>
                                 <td>${job.status}</td>
                                 <td class="text-right">${job.numberOfExecutions}</td>
                             </tr>

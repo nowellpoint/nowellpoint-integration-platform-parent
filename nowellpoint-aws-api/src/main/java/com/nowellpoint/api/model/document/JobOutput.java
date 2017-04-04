@@ -18,7 +18,7 @@
 
 package com.nowellpoint.api.model.document;
 
-public class Backup {
+public class JobOutput {
 	
 	private String type;
 	
@@ -26,11 +26,11 @@ public class Backup {
 	
 	private Long filesize;
 	
-	public Backup() {
+	public JobOutput() {
 		
 	}
 	
-	public Backup(String type, String filename, Long filesize) {
+	public JobOutput(String type, String filename, Long filesize) {
 		this.type = type;
 		this.filename = filename;
 		this.filesize = filesize;

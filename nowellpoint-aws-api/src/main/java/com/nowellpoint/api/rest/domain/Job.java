@@ -64,7 +64,7 @@ public class Job extends AbstractResource {
 	
 	private Integer numberOfExecutions;
 	
-	private Set<JobHistory> jobHistory = new HashSet<JobHistory>();
+	private Set<JobExecution> jobExecutions = new HashSet<>();
 
 	private Job() {
 		
@@ -272,16 +272,12 @@ public class Job extends AbstractResource {
 		this.numberOfExecutions = numberOfExecutions;
 	}
 
-	public Set<JobHistory> getJobHistory() {
-		return jobHistory;
+	public Set<JobExecution> getJobExecutions() {
+		return jobExecutions;
 	}
 
-	public void setJobHistory(Set<JobHistory> jobHistory) {
-		this.jobHistory = jobHistory;
-	}
-	
-	public void addJobHistory(JobHistory jobHistory) {
-		this.jobHistory.add(jobHistory);
+	public void setJobExecutions(Set<JobExecution> jobExecutions) {
+		this.jobExecutions = jobExecutions;
 	}
 
 	@Override

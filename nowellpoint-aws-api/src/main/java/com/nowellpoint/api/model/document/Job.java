@@ -76,7 +76,7 @@ public class Job extends MongoDocument {
 	
 	private Integer numberOfExecutions;
 	
-	private Set<JobExecution> jobExecutions = new HashSet<JobExecution>();
+	private Set<JobExecution> jobExecutions = new HashSet<>();
 
 	public Job() {
 		

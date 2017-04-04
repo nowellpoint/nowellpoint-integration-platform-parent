@@ -39,7 +39,7 @@ public class JobExecution implements Serializable {
 	private String failureMessage;
 	
 	@EmbedMany
-	private Set<Backup> backups;
+	private Set<JobOutput> jobOutputs;
 	
 	public JobExecution() {
 		
@@ -84,12 +84,12 @@ public class JobExecution implements Serializable {
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
 	}
-
-	public Set<Backup> getBackups() {
-		return backups;
+	
+	public Set<JobOutput> getJobOutputs() {
+		return jobOutputs;
 	}
 
-	public void setBackups(Set<Backup> backups) {
-		this.backups = backups;
+	public void setJobOutputs(Set<JobOutput> jobOutputs) {
+		this.jobOutputs = jobOutputs;
 	}
 }
