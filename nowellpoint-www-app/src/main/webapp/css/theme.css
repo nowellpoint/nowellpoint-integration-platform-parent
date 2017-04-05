@@ -696,17 +696,17 @@ header.smaller .Navigation li {
     color: #fff;
     background: url(../img/Develop-hover-icn.png) top center no-repeat;
 }
-.Services_sec .Serviceside li.Desdin {
+.Services_sec .Serviceside li.Design {
     padding: 44px 0px 159px 0px;
     background: url(../img/desgin-bg.jpg) no-repeat;
     box-shadow: 1px 4px 7px -4px rgba(0, 0, 0, 0.75);
 }
-.Services_sec .Serviceside li.Desdin a {
+.Services_sec .Serviceside li.Design a {
     text-decoration: none;
     background: url(../img/desgin-icn.png) top center no-repeat;
     display: block;
 }
-.Services_sec .Serviceside li.Desdin h4 {
+.Services_sec .Serviceside li.Design h4 {
     padding: 138px 0px 0px 0px;
     font-size: 18px;
     color: #ffab3f;
@@ -715,7 +715,7 @@ header.smaller .Navigation li {
     font-family: 'Open Sans', sans-serif;
     font-weight: 400;
 }
-.Services_sec .Serviceside li.Desdin a:hover h4 {
+.Services_sec .Serviceside li.Design a:hover h4 {
     color: #fff;
     background: url(../img/desgin-hover-icn.png) top center no-repeat;
 }

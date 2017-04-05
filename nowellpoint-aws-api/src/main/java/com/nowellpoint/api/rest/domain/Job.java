@@ -293,5 +293,8 @@ public class Job extends AbstractResource {
 	
 	public class ScheduleOptions {
 		public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
+		public static final String ONCE = "ONCE";
+		public static final String SCHEDULE = "SCHEDULE";
+		public static final String SPECIFIC_DAYS = "SPECIFIC_DAYS";
 	}
 }

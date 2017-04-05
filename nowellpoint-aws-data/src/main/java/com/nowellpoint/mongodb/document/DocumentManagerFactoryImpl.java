@@ -70,6 +70,7 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	            .codecRegistry(codecRegistry)
 	            .connectionPoolSettings(ConnectionPoolSettings.builder().applyConnectionString(connectionString).build())
 	            .sslSettings(SslSettings.builder().applyConnectionString(connectionString).build())
+	            .streamFactoryFactory(NettyStreamFactoryFactory.builder().eventLoopGroup(eventLoopGroup).build())
 	            .writeConcern(WriteConcern.ACKNOWLEDGED)
 	            .clusterSettings(ClusterSettings.builder().applyConnectionString(connectionString).build())
 	            .credentialList(connectionString.getCredentialList())

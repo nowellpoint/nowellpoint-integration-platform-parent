@@ -3,7 +3,6 @@ package com.nowellpoint.www.app.view;
 import java.text.ParseException;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
@@ -31,13 +30,6 @@ public class JobController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
     	model.put("jobList", jobList.getItems());
-    	
-    	try {
-			System.out.println(objectMapper.writeValueAsString(jobList.getItems()));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     	
     	return render(JobController.class, configuration, request, response, model, Template.JOBS_LIST);
 	}

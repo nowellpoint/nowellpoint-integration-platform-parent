@@ -1,12 +1,11 @@
 package com.nowellpoint.api.job;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 import org.jboss.logging.Logger;
 import org.quartz.JobBuilder;
@@ -22,10 +21,11 @@ import org.quartz.impl.StdSchedulerFactory;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.service.JobService;
+import com.nowellpoint.util.Assert;
 
 @Singleton
 @Startup
-public class JobOperator implements ServletContextListener {
+public class JobOperator  {
 	
 	private static final Logger LOGGER = Logger.getLogger(JobOperator.class);
 	
@@ -34,18 +34,8 @@ public class JobOperator implements ServletContextListener {
 	@Inject
 	private JobService jobService;
 	
-	@Override
-	public void contextDestroyed(ServletContextEvent contextEvent) {
-		shutdown();
-	}
-
-	@Override
-	public void contextInitialized(ServletContextEvent contextEvent) {
-		
-	}
-	
 	@PostConstruct
-	public void scheduleJobs() {
+	public void startJobOperator() {
 		
 		SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 		try {
@@ -64,6 +54,11 @@ public class JobOperator implements ServletContextListener {
 		
 	}
 	
+	@PreDestroy
+	public void stopJobOperator() {
+		shutdown();
+	}
+	
 	public void submitJob(@Observes Job job) {
 		
 		try {
@@ -74,23 +69,34 @@ public class JobOperator implements ServletContextListener {
 		    JobDetail jobDetail = JobBuilder.newJob(jobClass)
 		    		.withIdentity(jobKey)
 		    		.build();
+		    
+		    Trigger trigger = null;
 			
 			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption())) {
 				
-				Trigger trigger = TriggerBuilder.newTrigger().startNow().build();
+				trigger = TriggerBuilder.newTrigger().startNow().build();
 				
+				job.setStatus("Submitted");
+				
+			} else if (Job.ScheduleOptions.ONCE.equals(job.getScheduleOption())) {
+				
+			} else if (Job.ScheduleOptions.SCHEDULE.equals(job.getScheduleOption())) {
+				
+			} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(job.getScheduleOption())) {
+				
+			} else {
+				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", job.getScheduleOption()));
+			}
+			
+			if (Assert.isNotNull(trigger)) {
 				scheduler.scheduleJob(jobDetail, trigger);
 			}
 			
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException | SchedulerException | IllegalArgumentException e) {
 			LOGGER.error(e.getMessage());
-			return;
-		} catch (SchedulerException e) {
-			LOGGER.error(e.getMessage());
-			return;
+			job.setStatus("Not Submitted");
+			job.setFailureMessage(e.getMessage());
 		}
-		
-		job.setStatus("Submitted");
 		
 		jobService.updateJob(job);
 	}

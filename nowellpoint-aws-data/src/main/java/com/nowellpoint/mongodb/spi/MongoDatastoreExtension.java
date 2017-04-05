@@ -34,7 +34,7 @@ public class MongoDatastoreExtension implements Extension {
 	
 	private static final Logger LOGGER = Logger.getLogger(MongoDatastoreExtension.class.getName());
 	
-	private List<Codec<?>> codecs = new ArrayList<Codec<?>>();
+	//private List<Codec<?>> codecs = new ArrayList<Codec<?>>();
 	
 	private Bean<DocumentManagerFactory> bean;
     
@@ -61,7 +61,7 @@ public class MongoDatastoreExtension implements Extension {
 			
 			bean = new Bean<DocumentManagerFactory>() {
 				
-				DocumentManagerFactory instance = Datastore.createDocumentManagerFactory(codecs);
+				DocumentManagerFactory instance = Datastore.createDocumentManagerFactory();
 
 	            @Override
 	            public Class<?> getBeanClass() {
