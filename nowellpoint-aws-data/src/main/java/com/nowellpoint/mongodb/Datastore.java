@@ -38,6 +38,9 @@ public class Datastore implements Serializable {
 	}
 	
 	public static DocumentManagerFactory getCurrentSession() {
+		if (documentManagerFactory == null) {
+			documentManagerFactory = createDocumentManagerFactory();
+		}
 		return documentManagerFactory;
 	}
 }

@@ -40,8 +40,8 @@ public class IndexController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageSidKey", "en_US")
+				.queryParameter("locale", "en_US")
+				.queryParameter("language", "en_US")
 				.execute();
 		
 		PlanList planList = null;

@@ -48,8 +48,8 @@ public class SignUpController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageSidKey", "en_US")
+				.queryParameter("locale", "en_US")
+				.queryParameter("language", "en_US")
 				.execute();
 		
 		PlanList planList = null;
@@ -83,8 +83,8 @@ public class SignUpController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("localeSidKey", "en_US")
-				.queryParameter("languageSidKey", "en_US")
+				.queryParameter("locale", "en_US")
+				.queryParameter("language", "en_US")
 				.execute();
 		
 		PlanList planList = null;
@@ -168,8 +168,8 @@ public class SignUpController extends AbstractStaticController {
 			
 			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 					.path("plans")
-					.queryParameter("localeSidKey", "en_US")
-					.queryParameter("languageSidKey", "en_US")
+					.queryParameter("locale", "en_US")
+					.queryParameter("language", "en_US")
 					.execute();
 			
 			PlanList planList = null;
@@ -236,9 +236,20 @@ public class SignUpController extends AbstractStaticController {
 		
     	if (! signUpResult.isSuccess()) {
     		
-    		Plan plan = new NowellpointClient()
-    				.plan()
-    				.get(planId);
+    		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+    				.path("plans")
+    				.path(planId)
+    				.execute();
+    		
+    		Plan plan = null;
+    		
+    		if (httpResponse.getStatusCode() == Status.OK) {
+    			plan = httpResponse.getEntity(Plan.class);
+    		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+    			throw new NotFoundException(httpResponse.getAsString());
+    		} else {
+    			throw new ServiceUnavailableException(httpResponse.getAsString());
+        	}
     		
     		model.put("action", "createAccount");
     		model.put("signUpRequest", signUpRequest);

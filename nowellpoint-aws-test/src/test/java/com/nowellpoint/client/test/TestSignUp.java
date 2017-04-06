@@ -80,8 +80,8 @@ public class TestSignUp {
 	public void testSignUp() {
 		
 		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguageSidKey("en_US")
-				.withLocaleSidKey("en_US");
+				.withLanguage("en_US")
+				.withLocale("en_US");
 		
 		List<Plan> plans = new NowellpointClient().plan()
 				.getPlans(getPlansRequest)

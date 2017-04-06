@@ -24,11 +24,9 @@ import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
-import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Id;
 
-@Document(collectionName="account.profiles")
 public class UserRef implements Serializable {
 	
 	private static final long serialVersionUID = -6822014779492972113L;

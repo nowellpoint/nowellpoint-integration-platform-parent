@@ -13,9 +13,9 @@ public class PlanResourceImpl implements PlanResource {
 	@Inject
 	private PlanService planService;
 	
-	public Response getAllActive(String localeSidKey, String languageSidKey) {
+	public Response getAllActive(String locale, String language) {
 		
-		PlanList resources = planService.getAllActive(localeSidKey, languageSidKey);
+		PlanList resources = planService.getAllActive(locale, language);
 		
 		return Response.ok(resources)
 				.build();

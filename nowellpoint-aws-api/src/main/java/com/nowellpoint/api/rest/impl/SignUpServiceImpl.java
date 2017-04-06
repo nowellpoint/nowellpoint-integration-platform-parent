@@ -322,7 +322,7 @@ public class SignUpServiceImpl implements SignUpService {
 		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), accountProfile.getEmailVerificationToken());
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SignUpServiceImpl.class)
+				.path(SignUpService.class)
 				.path("verify-email")
 				.path("{emailVerificationToken}")
 				.build(accountProfile.getEmailVerificationToken());

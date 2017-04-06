@@ -67,8 +67,8 @@ public class AccountProfileController extends AbstractStaticController {
 				.get(id);
 		
 		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguageSidKey(identity.getLanguageSidKey())
-				.withLocaleSidKey(identity.getLocaleSidKey());
+				.withLanguage(identity.getLanguageSidKey())
+				.withLocale(identity.getLocaleSidKey());
 		
 		List<Plan> plans = new NowellpointClient(token).plan()
 				.getPlans(getPlansRequest)

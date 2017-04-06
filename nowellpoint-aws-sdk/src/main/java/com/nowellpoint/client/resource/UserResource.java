@@ -3,6 +3,7 @@ package com.nowellpoint.client.resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.SignUpResult;
@@ -27,7 +28,7 @@ public class UserResource extends AbstractResource {
 	
 	public SignUpResult<User> signUp(SignUpRequest signUpRequest) {
 		try {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.acceptCharset("UTF-8")
 					.path(RESOURCE_CONTEXT)
@@ -63,7 +64,7 @@ public class UserResource extends AbstractResource {
 	}
 	
 	public SignUpResult<User> verifyEmail(String emailVerificationToken) {
-		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path("signup")

@@ -2,10 +2,8 @@ package com.nowellpoint.mongodb.spi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,7 +21,6 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.enterprise.util.AnnotationLiteral;
 
-import org.bson.codecs.Codec;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.mongodb.Datastore;
@@ -33,8 +30,6 @@ import com.nowellpoint.mongodb.annotation.Document;
 public class MongoDatastoreExtension implements Extension {
 	
 	private static final Logger LOGGER = Logger.getLogger(MongoDatastoreExtension.class.getName());
-	
-	//private List<Codec<?>> codecs = new ArrayList<Codec<?>>();
 	
 	private Bean<DocumentManagerFactory> bean;
     

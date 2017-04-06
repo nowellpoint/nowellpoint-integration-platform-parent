@@ -15,7 +15,7 @@ public interface PlanResource {
 	@GET
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllActive(@QueryParam(value="localeSidKey") String localeSidKey, @QueryParam(value="languageSidKey") String languageSidKey);
+	public Response getAllActive(@QueryParam(value="locale") String locale, @QueryParam(value="language") String language);
 	
 	@GET
 	@PermitAll
