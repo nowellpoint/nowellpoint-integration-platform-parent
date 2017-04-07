@@ -73,7 +73,7 @@
                             <th class="text-right">${labels["amount"]}</th>
                             <th>${labels["transaction.date"]}</th>
                             <th>${labels["status"]}</th>
-                            <th>${labels["action"]}</th>
+                            <th class="text-right">${labels["action"]}</th>
                         </thead>
                         <tbody>
                             <#list accountProfile.transactions?sort_by( "createdOn")?reverse as transaction>
