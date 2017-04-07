@@ -4,7 +4,7 @@ public class Environment {
 	
     public static final Environment PRODUCTION = new Environment("https://api.nowellpoint.com/rest", "production");
 
-    public static final Environment SANDBOX = new Environment("http://localhost:5000/rest", "sandbox");
+    public static final Environment SANDBOX = new Environment("https://localhost:5100/rest", "sandbox");
     
     private String environmentUrl;
     
@@ -16,9 +16,9 @@ public class Environment {
     }
     
     public static Environment parseEnvironment(String environment) {
-    	if (environment.equals("sandbox")) {
+    	if (environment.equalsIgnoreCase("sandbox")) {
     		return SANDBOX;
-    	} else if (environment.equals("production")) {
+    	} else if (environment.equalsIgnoreCase("production")) {
     		return PRODUCTION;
     	} else {
             throw new IllegalArgumentException("Unknown environment: " + environment);

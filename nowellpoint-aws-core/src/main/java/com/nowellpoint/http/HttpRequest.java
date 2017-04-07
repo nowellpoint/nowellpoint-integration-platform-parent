@@ -8,6 +8,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -29,11 +32,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -139,7 +145,9 @@ public abstract class HttpRequest {
 	public HttpResponse execute() throws HttpRequestException {
 		try {
 			return new HttpResponseImpl();
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException | URISyntaxException | 
+				KeyManagementException | NoSuchAlgorithmException | 
+				KeyStoreException e) {
 			throw new HttpRequestException(e);
 		}
 	}
@@ -179,11 +187,16 @@ public abstract class HttpRequest {
 		
 		private InputStream entity;
 		
-		public HttpResponseImpl() throws IOException, URISyntaxException {
+		public HttpResponseImpl() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 			
 			URI uri = buildTarget();
 			
-			CloseableHttpClient httpClient = HttpClients.createDefault();
+			SSLContextBuilder builder = new SSLContextBuilder();
+		    builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+		    
+		    SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(builder.build());
+		    CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+			
 			CloseableHttpResponse httpResponse = null;
 			
 			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, uri.getPath()));

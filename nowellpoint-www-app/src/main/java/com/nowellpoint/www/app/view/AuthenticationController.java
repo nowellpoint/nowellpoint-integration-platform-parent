@@ -112,6 +112,8 @@ public class AuthenticationController extends AbstractStaticController {
 			
 			OauthAuthenticationResponse oauthAuthenticationResponse = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(passwordGrantRequest);
+			
+			request.session().invalidate();
 
 			Token token = oauthAuthenticationResponse.getToken();
 

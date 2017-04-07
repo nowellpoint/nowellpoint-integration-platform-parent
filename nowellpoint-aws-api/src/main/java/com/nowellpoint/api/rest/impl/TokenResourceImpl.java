@@ -202,11 +202,13 @@ public class TokenResourceImpl implements TokenResource {
         		.signWith(SignatureAlgorithm.HS512, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
         		.claim("scope", groups.toArray(new String[groups.size()]))
         		.compact();	 
-		
+				
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)
 				.path("/{id}")
 				.build(subject);
+		
+		System.out.println(uriInfo.getBaseUri());
 		
 		Token token = new Token();
 		token.setEnvironmentUrl(uriInfo.getBaseUri().toString());
