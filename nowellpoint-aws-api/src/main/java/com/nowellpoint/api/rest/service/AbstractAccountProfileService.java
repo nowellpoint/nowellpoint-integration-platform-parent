@@ -65,11 +65,4 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		AccountProfile accountProfile = AccountProfile.of( document );
 		return accountProfile;
 	}
-	
-	protected AccountProfile findBySubscriptionId(String subscriptionId) {
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "subscription.subscriptionId", subscriptionId ) );
-		AccountProfile accountProfile = AccountProfile.of( document );
-		return accountProfile;
-	}
 }

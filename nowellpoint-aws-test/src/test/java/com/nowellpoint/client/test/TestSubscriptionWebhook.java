@@ -88,7 +88,7 @@ public class TestSubscriptionWebhook {
 		
 		gateway.clientToken().generate();
 		
-		com.braintreegateway.Subscription subscription = gateway.subscription().find("hqsqsr");
+		com.braintreegateway.Subscription subscription = gateway.subscription().find("123456789");
 		
 		Map<String, MessageAttributeValue> messageAttributes = new HashMap<String, MessageAttributeValue>();
 		messageAttributes.put("WEBHOOK_NOTIFICATION_INSTANCE", new MessageAttributeValue().withDataType("String").withStringValue("sandbox"));

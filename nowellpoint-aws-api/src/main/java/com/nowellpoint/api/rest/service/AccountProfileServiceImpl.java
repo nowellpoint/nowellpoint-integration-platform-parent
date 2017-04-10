@@ -825,16 +825,4 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			LOGGER.error(creditCardResult.getMessage());
 		}
 	}
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	@Override
-	public AccountProfile findBySubscriptionId(String subscriptionId) {
-		return super.findBySubscriptionId(subscriptionId);
-	}
 }

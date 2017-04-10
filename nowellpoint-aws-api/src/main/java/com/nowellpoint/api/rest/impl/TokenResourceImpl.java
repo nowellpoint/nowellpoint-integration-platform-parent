@@ -208,8 +208,6 @@ public class TokenResourceImpl implements TokenResource {
 				.path("/{id}")
 				.build(subject);
 		
-		System.out.println(uriInfo.getBaseUri());
-		
 		Token token = new Token();
 		token.setEnvironmentUrl(uriInfo.getBaseUri().toString());
 		token.setId(uri.toString());

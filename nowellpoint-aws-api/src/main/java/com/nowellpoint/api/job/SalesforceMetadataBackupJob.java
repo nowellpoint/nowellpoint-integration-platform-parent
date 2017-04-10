@@ -64,9 +64,6 @@ import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
 import com.sforce.ws.ConnectionException;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisConnectionException;
-
 public class SalesforceMetadataBackupJob extends AbstractCacheService implements org.quartz.Job {
 	
 	private static final Logger LOGGER = Logger.getLogger(SalesforceMetadataBackupJob.class);
@@ -227,7 +224,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		//
 		//
 		
-		clearCacheEntry(job.getId());
+		CacheManager.del(job.getId().toString());
 		
 		//
 		// compile and send notification
@@ -426,16 +423,5 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		Theme theme = client.getTheme(themeRequest);
 		
 		return theme;
-	}
-	
-	private void clearCacheEntry(ObjectId id) {
-		Jedis jedis = CacheManager.getCache();
-		try {
-			jedis.del(id.toString().getBytes());
-		} catch (JedisConnectionException e) {
-			e.printStackTrace();
-		} finally {
-			jedis.close();
-		}
 	}
 }

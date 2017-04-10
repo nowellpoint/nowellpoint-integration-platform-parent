@@ -20,6 +20,7 @@ package com.nowellpoint.api.model.document;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.nowellpoint.mongodb.annotation.Document;
@@ -27,6 +28,7 @@ import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 
 @Document(collectionName="account.profiles")
 public class AccountProfile extends MongoDocument {
@@ -353,5 +355,12 @@ public class AccountProfile extends MongoDocument {
 
 	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
 		this.enableSalesforceLogin = enableSalesforceLogin;
+	}
+	
+	public void addTransaction(Transaction transaction) {
+		if (Assert.isNull(transactions)) {
+			transactions = new HashSet<>();
+		}
+		transactions.add(transaction);
 	}
 }

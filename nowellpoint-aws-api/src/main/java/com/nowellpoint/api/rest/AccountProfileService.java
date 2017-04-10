@@ -150,13 +150,4 @@ public interface AccountProfileService {
 	 */
 	
 	void removeCreditCard(String id, String token);
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	AccountProfile findBySubscriptionId(String subscriptionId);
 }
