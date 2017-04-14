@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.Path;
 

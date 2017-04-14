@@ -3,7 +3,7 @@ package com.nowellpoint.www.app.view;
 import java.text.ParseException;
 import java.util.Map;
 
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Job;
@@ -24,7 +24,7 @@ public class JobController extends AbstractStaticController {
 	public static String listJobs(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		JobList jobList = new NowellpointClient(token)
+		JobList jobList = new NowellpointClientOrig(token)
 				.job()
 				.getJobs();
 		
@@ -61,7 +61,7 @@ public class JobController extends AbstractStaticController {
 					.withStart(start)
 					.withEnd(end);
 			
-			CreateResult<Job> createRequest = new NowellpointClient(token)
+			CreateResult<Job> createRequest = new NowellpointClientOrig(token)
 					.job()
 					.create(jobRequest);
 			

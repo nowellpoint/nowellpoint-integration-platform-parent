@@ -20,7 +20,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.SignUpRequest;
@@ -83,7 +83,7 @@ public class TestSignUp {
 				.withLanguage("en_US")
 				.withLocale("en_US");
 		
-		List<Plan> plans = new NowellpointClient().plan()
+		List<Plan> plans = new NowellpointClientOrig().plan()
 				.getPlans(getPlansRequest)
 				.getItems();
 		
@@ -110,7 +110,7 @@ public class TestSignUp {
 					.withExpirationYear("2018")
 					.withSecurityCode("123");
 			
-			SignUpResult<User> signUpResult = new NowellpointClient()
+			SignUpResult<User> signUpResult = new NowellpointClientOrig()
 					.user()
 					.signUp(signUpRequest);
 			
@@ -121,7 +121,7 @@ public class TestSignUp {
 			assertNotNull(signUpResult.getTarget().getHref());
 			assertNotNull(signUpResult.getTarget().getEmailVerificationToken());
 			
-			signUpResult = new NowellpointClient()
+			signUpResult = new NowellpointClientOrig()
 					.user()
 					.verifyEmail(signUpResult.getTarget().getEmailVerificationToken());
 			

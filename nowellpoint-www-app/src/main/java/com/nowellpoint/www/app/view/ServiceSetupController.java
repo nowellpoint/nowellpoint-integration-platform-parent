@@ -2,7 +2,7 @@ package com.nowellpoint.www.app.view;
 
 import java.util.Map;
 
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Service;
 import com.nowellpoint.client.model.Token;
@@ -28,7 +28,7 @@ public class ServiceSetupController extends AbstractStaticController {
 		String id = request.params(":id");
 		String serviceId = request.params(":serviceId");
 		
-		Service service = new NowellpointClient(token)
+		Service service = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.service()
 				.get(id, serviceId);

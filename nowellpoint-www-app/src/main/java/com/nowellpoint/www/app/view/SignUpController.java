@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.Plan;
@@ -228,7 +228,7 @@ public class SignUpController extends AbstractStaticController {
 				.withExpirationYear(expirationYear)
 				.withSecurityCode(securityCode);
 		
-		SignUpResult<User> signUpResult = new NowellpointClient()
+		SignUpResult<User> signUpResult = new NowellpointClientOrig()
 				.user()
 				.signUp(signUpRequest);
 		
@@ -276,7 +276,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		String emailVerificationToken = request.queryParams("emailVerificationToken");
 		
-		SignUpResult<User> signUpResult = new NowellpointClient()
+		SignUpResult<User> signUpResult = new NowellpointClientOrig()
 				.user()
 				.verifyEmail(emailVerificationToken);
 		

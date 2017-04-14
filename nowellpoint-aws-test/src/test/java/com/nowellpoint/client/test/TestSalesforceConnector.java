@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -36,13 +36,13 @@ public class TestSalesforceConnector {
 	@Test
 	public void testSalesforceConnectorTest() {
 		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.test(salesforceConnector.getId());
 		
@@ -53,20 +53,20 @@ public class TestSalesforceConnector {
 	@Test
 	public void testSalesforceConnectorBuild() {
 		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.build(salesforceConnector.getId());
 		
 		System.out.println(updateResult.isSuccess());
 		System.out.println(updateResult.getTarget().getStatus());
 		
-		SObject sobject = new NowellpointClient(token)
+		SObject sobject = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.sobject()
 				.get(salesforceConnector.getId(), salesforceConnector.getSobjects().get(0).getName());

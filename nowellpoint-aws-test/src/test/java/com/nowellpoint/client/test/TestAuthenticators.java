@@ -12,7 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -57,7 +57,7 @@ public class TestAuthenticators {
 		
 		start = System.currentTimeMillis();
 		
-		Identity identity = new NowellpointClient(token)
+		Identity identity = new NowellpointClientOrig(token)
 				.identity()
 				.get(token.getId());
 		
@@ -81,19 +81,19 @@ public class TestAuthenticators {
 		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
 				.withName(name);
 		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.update(salesforceConnector.getId(), salesforceConnectorRequest);
 		
 		assertTrue(updateResult.isSuccess());
 		
-		salesforceConnector = new NowellpointClient(token)
+		salesforceConnector = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.get(salesforceConnector.getId());
 		
@@ -107,7 +107,7 @@ public class TestAuthenticators {
 		
 		long start = System.currentTimeMillis();
 		
-		Identity identity = new NowellpointClient(token)
+		Identity identity = new NowellpointClientOrig(token)
 				.identity()
 				.get(token.getId());
 		
@@ -124,7 +124,7 @@ public class TestAuthenticators {
 	public void testConnection() {
 		long start = System.currentTimeMillis();
 		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		

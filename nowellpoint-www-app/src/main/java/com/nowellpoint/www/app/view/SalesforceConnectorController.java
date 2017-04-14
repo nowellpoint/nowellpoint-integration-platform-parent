@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
-import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.JobTypeList;
@@ -67,7 +67,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(token)
+		SalesforceConnector salesforceConnector = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.get(id);
 		
@@ -118,7 +118,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		String id = request.params(":id");
 		String view = request.queryParams("view");
     	
-		SalesforceConnector salesforceConnector = new NowellpointClient(token)
+		SalesforceConnector salesforceConnector = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.get(id);
 		
@@ -145,7 +145,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	public static String listSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClient(token)
+		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
@@ -175,7 +175,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 				.withName(name)
 				.withTag(tag);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.update(id, salesforceConnectorRequest);
 		
@@ -183,7 +183,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		if (! updateResult.isSuccess()) {
 			
-			SalesforceConnector salesforceConnector = new NowellpointClient(token)
+			SalesforceConnector salesforceConnector = new NowellpointClientOrig(token)
 					.salesforceConnector()
 					.get(id);
 			
@@ -212,7 +212,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		DeleteResult deleteResult = new NowellpointClient(token)
+		DeleteResult deleteResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.delete(id);
 		
@@ -236,7 +236,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.test(id);
 		
@@ -260,7 +260,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.build(id);
 		
@@ -285,7 +285,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		SalesforceConnector salesforceConnector = new NowellpointClient(token)
+		SalesforceConnector salesforceConnector = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.get(id);
 		
@@ -309,7 +309,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		String id = request.params(":id");
 		String sobjectName = request.params(":sobjectName");
 		
-		SObject sobject = new NowellpointClient(token)
+		SObject sobject = new NowellpointClientOrig(token)
 				.salesforceConnector().sobject()
 				.get(id, sobjectName);
 		
@@ -337,7 +337,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		JobTypeList jobTypeList = new NowellpointClient(token)
+		JobTypeList jobTypeList = new NowellpointClientOrig(token)
 				.scheduledJobType()
 				.getScheduledJobTypesByLanguage(identity.getLanguageSidKey());
 		
@@ -366,7 +366,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		ServiceRequest serviceRequest = new ServiceRequest().withId(id)
 				.withServiceId(serviceId);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(token)
+		UpdateResult<SalesforceConnector> updateResult = new NowellpointClientOrig(token)
 				.salesforceConnector()
 				.service()
 				.addService(serviceRequest);
