@@ -18,7 +18,6 @@
 
 package com.nowellpoint.api.model.document;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +27,6 @@ import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
-import com.nowellpoint.util.Assert;
 
 @Document(collectionName="account.profiles")
 public class AccountProfile extends MongoDocument {
@@ -94,10 +92,10 @@ public class AccountProfile extends MongoDocument {
 	private Subscription subscription;
 	
 	@EmbedMany
-	private Set<CreditCard> creditCards = Collections.emptySet();
+	private Set<CreditCard> creditCards = new HashSet<>();
 	
 	@EmbedMany
-	private Set<Transaction> transactions = Collections.emptySet();
+	private Set<Transaction> transactions = new HashSet<>();
 	
 	private Boolean hasFullAccess;
 	
@@ -358,9 +356,6 @@ public class AccountProfile extends MongoDocument {
 	}
 	
 	public void addTransaction(Transaction transaction) {
-		if (Assert.isNull(transactions)) {
-			transactions = new HashSet<>();
-		}
 		transactions.add(transaction);
 	}
 }

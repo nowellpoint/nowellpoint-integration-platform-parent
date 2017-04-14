@@ -1,16 +1,18 @@
 package com.nowellpoint.client.test;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.junit.Test;
 
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.MessageAttributeValue;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.amazon.sqs.javamessaging.SQSConnection;
+import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCardRequest;
@@ -90,23 +92,23 @@ public class TestSubscriptionWebhook {
 		
 		com.braintreegateway.Subscription subscription = gateway.subscription().find("123456789");
 		
-		Map<String, MessageAttributeValue> messageAttributes = new HashMap<String, MessageAttributeValue>();
-		messageAttributes.put("WEBHOOK_NOTIFICATION_INSTANCE", new MessageAttributeValue().withDataType("String").withStringValue("sandbox"));
-        messageAttributes.put("WEBHOOK_NOTIFICATION_KIND", new MessageAttributeValue().withDataType("String").withStringValue("SUBSCRIPTION_CANCELED"));
-		
-		AmazonSQS sqs = new AmazonSQSClient();
-		
-		String message = null;
+		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();
 		try {
-			message = new ObjectMapper().writeValueAsString(subscription);
-		} catch (JsonProcessingException e) {
+			SQSConnection connection = connectionFactory.createConnection();
+			Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+			Queue queue = session.createQueue("PAYMENT_GATEWAY_INBOUND");
+			MessageProducer producer = session.createProducer(queue);
+			
+			TextMessage message = session.createTextMessage(new ObjectMapper().writeValueAsString(subscription));
+			message.setStringProperty("WEBHOOK_NOTIFICATION_INSTANCE", "sandbox");
+			message.setStringProperty("WEBHOOK_NOTIFICATION_KIND", "SUBSCRIPTION_CANCELED");
+			
+			producer.send(message);
+			
+			connection.close();
+			
+		} catch (JMSException | JsonProcessingException e) {
 			e.printStackTrace();
-		}
-		
-		SendMessageRequest sendMessageRequest = new SendMessageRequest().withQueueUrl("https://sqs.us-east-1.amazonaws.com/600862814314/PAYMENT_GATEWAY_INBOUND")
-        		.withMessageBody(message)
-        		.withMessageAttributes(messageAttributes);
-        
-        sqs.sendMessage(sendMessageRequest);
+		}		
 	}
 }

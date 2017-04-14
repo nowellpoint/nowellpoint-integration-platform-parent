@@ -4,24 +4,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
+import com.amazon.sqs.javamessaging.SQSConnection;
+import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.MessageAttributeValue;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.WebhookNotification;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.util.Properties;
@@ -67,29 +70,29 @@ public class PaymentGatewayHandler implements RequestStreamHandler {
 			
 			Subscription subscription = webhookNotification.getSubscription();
 			
-			Map<String, MessageAttributeValue> messageAttributes = new HashMap<String, MessageAttributeValue>();
-			messageAttributes.put("WEBHOOK_NOTIFICATION_INSTANCE", new MessageAttributeValue().withDataType("String").withStringValue(node.get("instance").asText()));
-	        messageAttributes.put("WEBHOOK_NOTIFICATION_KIND", new MessageAttributeValue().withDataType("String").withStringValue(webhookNotification.getKind().name()));
-			
-			AmazonSQS sqs = new AmazonSQSClient();
-			
-			SendMessageRequest sendMessageRequest = new SendMessageRequest().withQueueUrl("https://sqs.us-east-1.amazonaws.com/600862814314/PAYMENT_GATEWAY_INBOUND")
-	        		.withMessageBody(objectMapper.writeValueAsString(subscription))
-	        		.withMessageAttributes(messageAttributes);
-	        
-	        sqs.sendMessage(sendMessageRequest);
-			
-			
-			/**
-			 * WebhookNotification.Kind.SUBSCRIPTION_CANCELED
-		WebhookNotification.Kind.SUBSCRIPTION_CHARGED_SUCCESSFULLY
-		WebhookNotification.Kind.SUBSCRIPTION_CHARGED_UNSUCCESSFULLY
-		WebhookNotification.Kind.SUBSCRIPTION_EXPIRED
-		WebhookNotification.Kind.SUBSCRIPTION_TRIAL_ENDED
-		WebhookNotification.Kind.SUBSCRIPTION_WENT_ACTIVE
-		WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
-		
-			 */
+			SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();
+			SQSConnection connection = null;
+			try {
+				connection = connectionFactory.createConnection();
+				Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+				Queue queue = session.createQueue("PAYMENT_GATEWAY_INBOUND");
+				MessageProducer producer = session.createProducer(queue);
+				
+				TextMessage message = session.createTextMessage(new ObjectMapper().writeValueAsString(subscription));
+				message.setStringProperty("WEBHOOK_NOTIFICATION_INSTANCE", node.get("instance").asText());
+				message.setStringProperty("WEBHOOK_NOTIFICATION_KIND", webhookNotification.getKind().name());
+				
+				producer.send(message);
+				
+			} catch (JMSException | JsonProcessingException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					connection.close();
+				} catch (JMSException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	

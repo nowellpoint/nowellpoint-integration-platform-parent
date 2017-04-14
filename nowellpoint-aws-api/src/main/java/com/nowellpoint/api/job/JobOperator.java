@@ -1,5 +1,8 @@
 package com.nowellpoint.api.job;
 
+import java.sql.Date;
+import java.time.Instant;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
@@ -17,6 +20,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.KeyMatcher;
 
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobList;
@@ -74,11 +78,33 @@ public class JobOperator  {
 			
 			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption())) {
 				
-				trigger = TriggerBuilder.newTrigger().startNow().build();
+				trigger = TriggerBuilder
+						.newTrigger()
+						.startNow()
+						.build();
 				
 				job.setStatus("Submitted");
 				
 			} else if (Job.ScheduleOptions.ONCE.equals(job.getScheduleOption())) {
+				
+				if (job.getSchedule().getStart().before(Date.from(Instant.now().plusSeconds(10)))) {
+					
+					trigger = TriggerBuilder
+							.newTrigger()
+							.startNow()
+							.build();
+					
+					job.setStatus("Submitted");
+					
+				} else {
+					
+					trigger = TriggerBuilder
+							.newTrigger()
+							.startAt(job.getSchedule().getStart())
+							.build();
+					
+					job.setStatus("Scheduled");
+				}
 				
 			} else if (Job.ScheduleOptions.SCHEDULE.equals(job.getScheduleOption())) {
 				
@@ -90,6 +116,9 @@ public class JobOperator  {
 			
 			if (Assert.isNotNull(trigger)) {
 				scheduler.scheduleJob(jobDetail, trigger);
+				scheduler.getListenerManager().addJobListener(
+						new SalesforceMetadataBackupListener(), 
+						KeyMatcher.keyEquals(jobKey));
 			}
 			
 		} catch (ClassNotFoundException | SchedulerException | IllegalArgumentException e) {

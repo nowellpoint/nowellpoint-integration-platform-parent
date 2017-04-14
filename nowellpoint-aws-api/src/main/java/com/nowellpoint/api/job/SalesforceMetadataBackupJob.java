@@ -21,7 +21,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
@@ -327,7 +327,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(bytes.length);
 		
-		AmazonS3 s3client = new AmazonS3Client();
+		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
 		PutObjectResult result = s3client.putObject(new PutObjectRequest(
 				bucketName,
