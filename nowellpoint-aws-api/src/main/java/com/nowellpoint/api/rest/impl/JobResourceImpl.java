@@ -100,6 +100,10 @@ public class JobResourceImpl implements JobResource {
 			errors.add("Invalid date format for parameter: run at. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		}
 		
+		if (runDate == null) {
+			System.out.println("run date is null");
+		}
+		
 		if (Assert.isNullOrEmpty(connectorId)) {
 			errors.add("Missing connectorId parameter. Must provide a valid Salesforce Connector Id");
 		}

@@ -50,6 +50,7 @@ public class Schedule {
 			String dayOfWeek, 
 			String year) {
 		
+		this.runAt = runAt;
 		this.dayOfMonth = dayOfMonth;
 		this.dayOfWeek = dayOfWeek;
 		this.hours = hours;
