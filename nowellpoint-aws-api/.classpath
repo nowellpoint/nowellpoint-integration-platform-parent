@@ -101,7 +101,7 @@
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/classmate/1.1.0/classmate-1.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar" sourcepath="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz-jobs/2.2.3/quartz-jobs-2.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/force/api/force-metadata-api/39.0.0/force-metadata-api-39.0.0.jar"/>

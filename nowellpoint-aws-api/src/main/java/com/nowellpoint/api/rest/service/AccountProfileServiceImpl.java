@@ -28,7 +28,7 @@ import org.jboss.logging.Logger;
 import org.modelmapper.ModelMapper;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.braintreegateway.AddressRequest;
@@ -515,7 +515,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	@Override
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
 		
-		AmazonS3 s3Client = new AmazonS3Client();
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 		
 		try {
 			URL url = new URL( profileHref );

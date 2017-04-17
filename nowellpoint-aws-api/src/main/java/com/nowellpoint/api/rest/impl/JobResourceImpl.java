@@ -61,6 +61,7 @@ public class JobResourceImpl implements JobResource {
 			String jobTypeId,
 			String notificationEmail,
 			String scheduleOption,
+			String runAt,
 			String dayOfMonth,
 			String dayOfWeek,
 			String description,
@@ -91,6 +92,14 @@ public class JobResourceImpl implements JobResource {
 			errors.add("Invalid date format for parameter: end. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		}
 		
+		Date runDate = null;
+		
+		try {
+			runDate = dateTimeFormat.parse(runAt);
+		} catch (ParseException e) {
+			errors.add("Invalid date format for parameter: run at. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		}
+		
 		if (Assert.isNullOrEmpty(connectorId)) {
 			errors.add("Missing connectorId parameter. Must provide a valid Salesforce Connector Id");
 		}
@@ -117,6 +126,7 @@ public class JobResourceImpl implements JobResource {
 		UserInfo user = UserInfo.of(securityContext.getUserPrincipal().getName());
 		
 		Schedule schedule = Schedule.of(
+				runDate,
 				startDate, 
 				endDate, 
 				timeZone, 
@@ -156,6 +166,7 @@ public class JobResourceImpl implements JobResource {
 			String dayOfMonth,
 			String dayOfWeek,
 			String description,
+			String runAt,
 			String hours,
 			String jobName,
 			String end,

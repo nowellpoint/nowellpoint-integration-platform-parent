@@ -6,10 +6,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambda;
-import com.amazonaws.services.lambda.AWSLambdaClient;
+import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
 import com.nowellpoint.service.PropertyService;
 
@@ -56,8 +55,10 @@ public class Properties {
 	}
 	
 	public static Map<String,String> getProperties(String propertyStore) {
-		AWSLambda lambdaClient = new AWSLambdaClient();
-		lambdaClient.setRegion(Region.getRegion(Regions.US_EAST_1));
+		AWSLambda lambdaClient = AWSLambdaClientBuilder
+				.standard()
+				.withRegion(Regions.US_EAST_1)
+				.build();
 		
 		Map<String,String> input = buildPropertyStore(propertyStore);
 		

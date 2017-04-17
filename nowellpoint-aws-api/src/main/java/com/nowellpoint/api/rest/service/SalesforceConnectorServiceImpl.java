@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -81,7 +81,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	@Inject
 	private VaultEntryService vaultEntryService;
 	
-	private static final AmazonS3 s3Client = new AmazonS3Client();
+	private static final AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 	
 	/**
 	 * 

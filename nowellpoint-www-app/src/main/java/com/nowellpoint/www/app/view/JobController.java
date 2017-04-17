@@ -47,12 +47,14 @@ public class JobController extends AbstractStaticController {
 		String notificationEmail = request.queryParams("notificationEmail");
 		String description = request.queryParams("description");
 		String scheduleOption = request.queryParams("scheduleOption");
+		String runAt = request.queryParams("runAt");
 		String start = request.queryParams("start");
 		String end = request.queryParams("end");
 		
 		try {
 
 			JobRequest jobRequest = new JobRequest().withConnectorId(connectorId)
+					.withRunAt(runAt)
 					.withJobTypeId(jobTypeId)
 					.withDescription(description)
 					.withTimeZone(identity.getTimeZoneSidKey())

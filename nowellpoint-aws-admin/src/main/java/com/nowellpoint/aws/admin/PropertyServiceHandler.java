@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.AttributeEncryptor;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
@@ -15,7 +15,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.DirectKmsMaterialProvider;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.EncryptionMaterialsProvider;
 import com.amazonaws.services.kms.AWSKMS;
-import com.amazonaws.services.kms.AWSKMSClient;
+import com.amazonaws.services.kms.AWSKMSClientBuilder;
 import com.amazonaws.services.kms.model.AliasListEntry;
 import com.amazonaws.services.kms.model.ListAliasesResult;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PropertyServiceHandler implements RequestStreamHandler {
 	
-	private static AWSKMS kmsClient = new AWSKMSClient();
+	private static AWSKMS kmsClient = AWSKMSClientBuilder.defaultClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
@@ -42,8 +42,8 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 		
 		logger.log("using encryption key: " + keyAlias);
 		
-		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), getKeyId(keyAlias), null);			
-		DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
+		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(kmsClient, getKeyId(keyAlias), null);			
+		DynamoDBMapper mapper = new DynamoDBMapper(AmazonDynamoDBClientBuilder.defaultClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
 		
 		Property property = new Property();
 		property.setSubject(node.get("propertyStore").asText().toUpperCase());

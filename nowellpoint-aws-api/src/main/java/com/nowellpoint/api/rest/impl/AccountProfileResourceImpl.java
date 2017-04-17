@@ -12,7 +12,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
@@ -238,7 +238,7 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		
 		AccountProfile accountProfile = accountProfileService.findById( id );
 		
-		AmazonS3 s3Client = new AmazonS3Client();
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 		
 		DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("nowellpoint-profile-pictures", accountProfile.getId().toString());
 		

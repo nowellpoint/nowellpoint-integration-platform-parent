@@ -21,6 +21,8 @@ public class JobRequest {
 	
 	private String description;
 	
+	private Date runAt;
+	
 	private Date start;
 	
 	private Date end;
@@ -71,6 +73,14 @@ public class JobRequest {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Date getRunAt() {
+		return runAt;
+	}
+
+	public void setRunAt(Date runAt) {
+		this.runAt = runAt;
 	}
 
 	public Date getStart() {
@@ -176,6 +186,18 @@ public class JobRequest {
 	
 	public JobRequest withDescription(String description) {
 		setDescription(description);
+		return this;
+	}
+	
+	public JobRequest withRunAt(Date runAt) {
+		setRunAt(runAt);
+		return this;
+	}
+	
+	public JobRequest withRunAt(String runAt) throws ParseException {
+		if (Assert.isNotNullOrEmpty(runAt)) {
+			setRunAt(dateTimeFormat.parse(runAt));
+		}
 		return this;
 	}
 	

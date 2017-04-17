@@ -83,11 +83,12 @@ public class JobOperator  {
 						.startNow()
 						.build();
 				
+				job.getSchedule().setRunAt(Date.from(Instant.now()));
 				job.setStatus("Submitted");
 				
 			} else if (Job.ScheduleOptions.ONCE.equals(job.getScheduleOption())) {
 				
-				if (job.getSchedule().getStart().before(Date.from(Instant.now().plusSeconds(10)))) {
+				if (job.getSchedule().getRunAt().before(Date.from(Instant.now().plusSeconds(5)))) {
 					
 					trigger = TriggerBuilder
 							.newTrigger()
@@ -100,7 +101,7 @@ public class JobOperator  {
 					
 					trigger = TriggerBuilder
 							.newTrigger()
-							.startAt(job.getSchedule().getStart())
+							.startAt(job.getSchedule().getRunAt())
 							.build();
 					
 					job.setStatus("Scheduled");

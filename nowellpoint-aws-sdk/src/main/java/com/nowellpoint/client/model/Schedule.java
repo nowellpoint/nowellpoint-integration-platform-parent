@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class Schedule {
 	
+	private Date runAt;
+	
 	private Date start;
 	
 	private Date end;
@@ -28,6 +30,14 @@ public class Schedule {
 		
 	}
 	
+	public Date getRunAt() {
+		return runAt;
+	}
+
+	public void setRunAt(Date runAt) {
+		this.runAt = runAt;
+	}
+
 	public Date getStart() {
 		return start;
 	}

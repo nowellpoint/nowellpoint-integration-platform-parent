@@ -9,6 +9,9 @@ import com.nowellpoint.util.Assert;
 public class Schedule {
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	private Date runAt;
+	
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date start;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -35,6 +38,7 @@ public class Schedule {
 	}
 	
 	private Schedule(
+			Date runAt,
 			Date start, 
 			Date end, 
 			String timeZone, 
@@ -58,7 +62,7 @@ public class Schedule {
 		this.year = year;
 	}
 	
-	public static Schedule of(Date start, Date end, String timeZone, Calendar calendar) {
+	public static Schedule of(Date runAt, Date start, Date end, String timeZone, Calendar calendar) {
 		String seconds = String.valueOf(calendar.get(Calendar.SECOND));
 		String minutes = String.valueOf(calendar.get(Calendar.MINUTE));
 		String hours = String.valueOf(calendar.get(Calendar.HOUR));
@@ -96,6 +100,7 @@ public class Schedule {
 		}
 		
 		return new Schedule(
+				runAt,
 				start, 
 				end, 
 				timeZone, 
@@ -110,6 +115,7 @@ public class Schedule {
 	}
 	
 	public static Schedule of(
+			Date runAt,
 			Date start, 
 			Date end, 
 			String timeZone, 
@@ -122,6 +128,7 @@ public class Schedule {
 			String year) {
 		
 		return new Schedule(
+				runAt,
 				start, 
 				end, 
 				timeZone, 
@@ -132,6 +139,14 @@ public class Schedule {
 				month, 
 				dayOfWeek, 
 				year);
+	}
+
+	public Date getRunAt() {
+		return runAt;
+	}
+
+	public void setRunAt(Date runAt) {
+		this.runAt = runAt;
 	}
 
 	public Date getStart() {

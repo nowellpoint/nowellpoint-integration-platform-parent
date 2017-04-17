@@ -7,6 +7,8 @@ public class Schedule implements Serializable {
 
 	private static final long serialVersionUID = 6802216448251749210L;
 	
+	private Date runAt;
+	
 	private Date start;
 	
 	private Date end;
@@ -29,6 +31,14 @@ public class Schedule implements Serializable {
 	
 	public Schedule() {
 		
+	}
+
+	public Date getRunAt() {
+		return runAt;
+	}
+
+	public void setRunAt(Date runAt) {
+		this.runAt = runAt;
 	}
 
 	public Date getStart() {

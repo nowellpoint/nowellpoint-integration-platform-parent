@@ -18,9 +18,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -113,7 +114,10 @@ public class OutboundMessageHandlerTask implements Callable<OutboundMessageResul
 	}
 	
 	private void writeToBucket(Sobject sobject, File file, String bucketName, String awsAccessKey, String awsSecretAccessKey) {
-		AmazonS3 s3Client = new AmazonS3Client(new BasicAWSCredentials(awsAccessKey, awsSecretAccessKey));
+		AmazonS3 s3Client = AmazonS3ClientBuilder
+				.standard()
+				.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsAccessKey, awsSecretAccessKey)))
+				.build();
 		
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentLength(file.length());
